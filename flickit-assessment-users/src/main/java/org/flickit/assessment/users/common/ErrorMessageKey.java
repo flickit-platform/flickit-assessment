@@ -134,5 +134,8 @@ public class ErrorMessageKey {
 
     public static final String CREATE_USER_USER_ID_NOT_NULL = "create-user.userId.notNull";
     public static final String CREATE_USER_EMAIL_NOT_VALID = "create-user.email.notValid";
-    public static final String CREATE_USER_DISPLAY_NAME_NOT_BLANK = "create-user.displayName.notBlank";
+    public static final String CREATE_USER_DISPLAY_NAME_NOT_NULL = "create-user.displayName.notNull";
+    public static final String CREATE_USER_DISPLAY_NAME_SIZE_MIN = "create-user.displayName.size.min";
+    public static final String CREATE_USER_DISPLAY_NAME_SIZE_MAX = "create-user.displayName.size.max";
+
 }

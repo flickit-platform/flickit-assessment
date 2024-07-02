@@ -1,8 +1,8 @@
 package org.flickit.assessment.users.application.port.in.user;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -25,7 +25,9 @@ public interface CreateUserUseCase {
         @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = CREATE_USER_EMAIL_NOT_VALID)
         String email;
 
-        @NotBlank(message = CREATE_USER_DISPLAY_NAME_NOT_BLANK)
+        @NotNull(message = CREATE_USER_DISPLAY_NAME_NOT_NULL)
+        @Size(min = 3, message = CREATE_USER_DISPLAY_NAME_SIZE_MIN)
+        @Size(max = 50, message = CREATE_USER_DISPLAY_NAME_SIZE_MAX)
         String displayName;
 
         public Param(UUID userId, String email, String displayName) {
