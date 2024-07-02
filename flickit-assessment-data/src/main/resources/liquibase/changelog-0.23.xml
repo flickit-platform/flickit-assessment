@@ -92,4 +92,12 @@
     <changeSet id="0.23-17" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fau_user" columnNames="email" constraintName="uq_fau_user_email"/>
     </changeSet>
+
+    <changeSet id="0.23-18" author="Mahnaz Khorsandi">
+        <renameTable oldTableName="account_user_groups" newTableName="fau_user_groups"/>
+    </changeSet>
+
+    <changeSet id="0.23-19" author="Mahnaz Khorsandi">
+        <renameTable oldTableName="account_user_user_permissions" newTableName="fau_user_user_permissions"/>
+    </changeSet>
 </databaseChangeLog>
