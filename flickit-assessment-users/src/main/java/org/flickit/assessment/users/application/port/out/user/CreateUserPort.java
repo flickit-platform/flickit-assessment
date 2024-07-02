@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface CreateUserPort {
 
-    UUID createUser(UUID id, String displayName, String email);
+    UUID persist(UUID id, String displayName, String email);
 }

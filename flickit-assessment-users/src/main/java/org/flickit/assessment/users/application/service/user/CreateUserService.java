@@ -17,7 +17,7 @@ public class CreateUserService implements CreateUserUseCase {
 
     @Override
     public Result createUser(Param param) {
-        UUID userId = createUserPort.createUser(param.getUserId(), param.getDisplayName(), param.getEmail());
+        UUID userId = createUserPort.persist(param.getUserId(), param.getDisplayName(), param.getEmail());
         return new Result(userId);
     }
 }

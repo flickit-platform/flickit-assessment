@@ -45,7 +45,7 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public UUID createUser(UUID id, String displayName, String email) {
+    public UUID persist(UUID id, String displayName, String email) {
         UserJpaEntity userEntity = new UserJpaEntity();
         userEntity.setId(id);
         userEntity.setEmail(email);

@@ -32,7 +32,7 @@ class CreateUserServiceTest {
         CreateUserUseCase.Param param = new CreateUserUseCase.Param(userId,
             email,
             displayName);
-        when(createUserPort.createUser(any(UUID.class), any(), any())).thenReturn(userId);
+        when(createUserPort.persist(any(UUID.class), any(), any())).thenReturn(userId);
 
         CreateUserUseCase.Result result = service.createUser(param);
 
