@@ -20,7 +20,7 @@ public class AnswerHistoryMapper {
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
-            param.currentUserId(),
+            param.modifiedBy(),
             param.modifiedAt(),
             param.historyTypeId()
         );

@@ -19,7 +19,7 @@ public interface CreateAnswerHistoryPort {
                  Long answerOptionId,
                  Integer confidenceLevelId,
                  Boolean isNotApplicable,
-                 UUID currentUserId,
+                 UUID modifiedBy,
                  LocalDateTime modifiedAt,
                  int historyTypeId) {
     }
