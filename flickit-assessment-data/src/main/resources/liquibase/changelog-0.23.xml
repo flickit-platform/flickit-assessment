@@ -68,4 +68,54 @@
     <changeSet id="0.23-11" author="Maziyar Gerami">
         <dropColumn tableName="fac_assessment" columnName="color_id"/>
     </changeSet>
+
+    <changeSet id="0.23-12" author="Mahdi Rezazadeh">
+        <createTable tableName="fac_answer_history">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_answer_history"/>
+            </column>
+            <column name="answer_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="questionnaire_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="answer_option_id" type="bigint"/>
+            <column name="confidence_level_id" type="tinyint"/>
+            <column name="is_not_applicable" type="boolean"/>
+            <column name="modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.23-13" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_answer_history"
+                                 baseColumnNames="assessment_result_id"
+                                 constraintName="fk_facanswerhistory_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.23-14" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_answer_history"
+                                 baseColumnNames="answer_id"
+                                 constraintName="fk_facanswerhistory_answer"
+                                 referencedTableName="fac_answer"
+                                 referencedColumnNames="id"
+                                 onDelete="NO ACTION"/>
+    </changeSet>
 </databaseChangeLog>
