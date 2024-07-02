@@ -20,7 +20,7 @@ public interface CreateAnswerHistoryPort {
                  Integer confidenceLevelId,
                  Boolean isNotApplicable,
                  UUID currentUserId,
-                 LocalDateTime lastModificationTime,
+                 LocalDateTime modifiedAt,
                  int historyTypeId) {
     }
 }

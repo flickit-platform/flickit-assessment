@@ -21,7 +21,7 @@ public class AnswerHistoryMapper {
             param.confidenceLevelId(),
             param.isNotApplicable(),
             param.currentUserId(),
-            param.lastModificationTime(),
+            param.modifiedAt(),
             param.historyTypeId()
         );
     }

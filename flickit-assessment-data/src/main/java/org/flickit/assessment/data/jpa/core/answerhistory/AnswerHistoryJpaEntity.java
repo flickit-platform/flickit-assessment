@@ -51,8 +51,8 @@ public class AnswerHistoryJpaEntity {
     @Column(name = "modified_by", nullable = false)
     private UUID modifiedBy;
 
-    @Column(name = "last_modification_time", nullable = false)
-    private LocalDateTime lastModificationTime;
+    @Column(name = "modified_at", nullable = false)
+    private LocalDateTime modifiedAt;
 
     @Column(name = "type", nullable = false)
     private Integer type;

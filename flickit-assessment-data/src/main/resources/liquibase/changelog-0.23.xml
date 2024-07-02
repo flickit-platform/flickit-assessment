@@ -92,7 +92,7 @@
             <column name="modified_by" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+            <column name="modified_at" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
             <column name="type" type="tinyint">
