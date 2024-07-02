@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.service.user;
 
-import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.CreateUserUseCase;
 import org.flickit.assessment.users.application.port.out.user.CreateUserPort;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +32,7 @@ class CreateUserServiceTest {
         CreateUserUseCase.Param param = new CreateUserUseCase.Param(userId,
             email,
             displayName);
-        when(createUserPort.createUser(any(CreateUserPort.Param.class))).thenReturn(userId);
+        when(createUserPort.createUser(any(UUID.class), any(), any())).thenReturn(userId);
 
         CreateUserUseCase.Result result = service.createUser(param);
 
