@@ -49,7 +49,7 @@ public class SpaceUserAccessJpaEntity {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
-        public static final String CREATION_TIME = "creationTime";
+        public static final String LAST_SEEN = "lastSeen";
     }
 
 }

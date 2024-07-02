@@ -8,6 +8,6 @@ public interface LoadSpaceMembersPort {
 
     PaginatedResponse<Member> loadSpaceMembers(long spaceId, int page, int size);
 
-    record Member(UUID id, String email, String displayName, String bio, String picture, String linkedin) {
+    record Member(UUID id, String email, String displayName, String bio, boolean isOwner, String picture, String linkedin) {
     }
 }

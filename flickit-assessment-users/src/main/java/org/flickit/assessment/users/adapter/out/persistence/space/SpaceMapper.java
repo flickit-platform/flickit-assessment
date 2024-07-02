@@ -17,7 +17,8 @@ public class SpaceMapper {
             space.getCreationTime(),
             space.getLastModificationTime(),
             space.getCreatedBy(),
-            space.getLastModifiedBy());
+            space.getLastModifiedBy(),
+            false);
     }
 
     public static Space mapToDomain(SpaceJpaEntity entity) {

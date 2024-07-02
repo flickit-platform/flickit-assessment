@@ -59,7 +59,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
                     savedAttribute.getWeight() != dslAttribute.getWeight()
                 ) {
                     Long newSubjectId = subjectCodeToSubjectId.get(dslAttribute.getSubjectCode());
-                    updateAttribute(savedAttribute, newSubjectId, dslAttribute, currentUserId);
+                    updateAttribute(savedAttribute, newSubjectId, savedKit.getKitVersionId(), dslAttribute, currentUserId);
                 }
 
                 if (!subjectCode.equals(dslAttribute.getSubjectCode()) ||
@@ -97,9 +97,11 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
 
     private void updateAttribute(Attribute savedAttribute,
                                  Long subjectId,
+                                 long kitVersionId,
                                  AttributeDslModel dslAttribute,
                                  UUID updatedBy) {
         UpdateAttributePort.Param param = new UpdateAttributePort.Param(savedAttribute.getId(),
+            kitVersionId,
             dslAttribute.getTitle(),
             dslAttribute.getIndex(),
             dslAttribute.getDescription(),

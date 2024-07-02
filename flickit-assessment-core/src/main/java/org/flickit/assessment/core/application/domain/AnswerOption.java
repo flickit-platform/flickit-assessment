@@ -10,6 +10,8 @@ import java.util.List;
 public class AnswerOption {
 
     private final long id;
+    private final Integer index;
+    private final String title;
     private final long questionId;
     private final List<AnswerOptionImpact> impacts;
 }

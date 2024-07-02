@@ -11,9 +11,9 @@ public interface LoadSubjectsPort {
      * Loads subjects associated with a specific kit ID and kit's last version,
      * ordered by their index.
      *
-     * @param kitId The ID of the kit for which subjects are to be loaded.
+     * @param kitVersionId The kitVersionID of the kit for which subjects are to be loaded.
      * @return A list of subjects associated with the given kit ID, ordered by index.
      * @throws ResourceNotFoundException if the kit ID is not found.
      */
-    List<Subject> loadByKitId(long kitId);
+    List<Subject> loadByKitVersionId(long kitVersionId);
 }

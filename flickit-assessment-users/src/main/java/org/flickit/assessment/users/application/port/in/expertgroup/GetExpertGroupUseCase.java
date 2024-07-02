@@ -1,10 +1,10 @@
 package org.flickit.assessment.users.application.port.in.expertgroup;
 
-import org.flickit.assessment.users.application.domain.ExpertGroup;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.users.application.domain.ExpertGroup;
 
 import java.util.UUID;
 

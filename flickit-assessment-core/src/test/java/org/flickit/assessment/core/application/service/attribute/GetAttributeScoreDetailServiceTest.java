@@ -1,9 +1,9 @@
 package org.flickit.assessment.core.application.service.attribute;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Questionnaire;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.core.test.fixture.application.QuestionScoreMother;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
 import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.QuestionScore;
@@ -34,7 +34,7 @@ class GetAttributeScoreDetailServiceTest {
     private LoadAttributeScoreDetailPort loadAttributeScoreDetailPort;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
     void testGetAttributeScoreDetail_ValidParam() {
@@ -62,7 +62,7 @@ class GetAttributeScoreDetailServiceTest {
         List<Questionnaire> questionnaires = List.of(devOpsQuestionnaire, testQuestionnaire);
 
         when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(questionnaires);
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(true);
 
         GetAttributeScoreDetailUseCase.Result result = service.getAttributeScoreDetail(param);
 
@@ -94,7 +94,7 @@ class GetAttributeScoreDetailServiceTest {
 
         List<Questionnaire> questionnaires = List.of();
         when(loadAttributeScoreDetailPort.loadScoreDetail(assessmentId, attributeId, maturityLevelId)).thenReturn(questionnaires);
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(true);
 
         GetAttributeScoreDetailUseCase.Result result = service.getAttributeScoreDetail(param);
 
@@ -116,10 +116,9 @@ class GetAttributeScoreDetailServiceTest {
             maturityLevelId,
             currentUserId);
 
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class,
-            () -> service.getAttributeScoreDetail(param));
-        assertThat(throwable).hasMessage(COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreDetail(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

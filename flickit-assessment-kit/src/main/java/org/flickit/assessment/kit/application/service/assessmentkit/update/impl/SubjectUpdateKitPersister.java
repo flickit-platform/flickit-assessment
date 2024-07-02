@@ -56,7 +56,7 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
             } else if (!savedSubject.getTitle().equals(dslSubject.getTitle()) ||
                 savedSubject.getIndex() != dslSubject.getIndex() ||
                 !savedSubject.getDescription().equals(dslSubject.getDescription())) {
-                updateSubjectPort.update(toUpdateParam(savedSubject.getId(), dslSubject, currentUserId));
+                updateSubjectPort.update(toUpdateParam(savedSubject.getId(), savedKit.getKitVersionId(), dslSubject, currentUserId));
                 log.debug("Subject[id={}, code={}] updated", savedSubject.getId(), savedSubject.getCode());
             }
         });
@@ -84,8 +84,9 @@ public class SubjectUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private UpdateSubjectPort.Param toUpdateParam(long id, SubjectDslModel dslSubject, UUID currentUserId) {
+    private UpdateSubjectPort.Param toUpdateParam(long id, long kitVersionId, SubjectDslModel dslSubject, UUID currentUserId) {
         return new UpdateSubjectPort.Param(id,
+            kitVersionId,
             dslSubject.getTitle(),
             dslSubject.getIndex(),
             dslSubject.getDescription(),

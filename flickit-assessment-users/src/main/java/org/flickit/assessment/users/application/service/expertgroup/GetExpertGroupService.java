@@ -4,18 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupPort;
-import org.flickit.assessment.users.application.port.out.expertgroupaccess.UpdateExpertGroupLastSeenPort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GetExpertGroupService implements GetExpertGroupUseCase {
 
@@ -23,7 +21,6 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
 
     private final LoadExpertGroupPort loadExpertGroupPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
-    private final UpdateExpertGroupLastSeenPort updateExpertGroupLastSeenPort;
 
     @Override
     public Result getExpertGroup(Param param) {
@@ -31,8 +28,6 @@ public class GetExpertGroupService implements GetExpertGroupUseCase {
 
         String pictureLink = getPictureDownloadLink(expertGroup.getPicture());
         boolean editable = expertGroup.getOwnerId().equals(param.getCurrentUserId());
-        updateExpertGroupLastSeenPort.updateLastSeen(
-            param.getId(), param.getCurrentUserId(), LocalDateTime.now());
         return new Result(expertGroup, pictureLink, editable);
     }
 

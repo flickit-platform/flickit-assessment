@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.service.subject;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.SubjectAttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.SubjectReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.subject.ReportSubjectUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
@@ -36,7 +37,7 @@ class ReportSubjectServiceTest {
     private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
     void testReportSubject_WhenCurrentUserDoesntHaveAssessmentAccess_ThenThrowsAccessDeniedException() {
@@ -45,9 +46,9 @@ class ReportSubjectServiceTest {
         long subjectId = 1;
         ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(assessmentId, subjectId, currentUserId);
 
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(false);
 
-        AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.reportSubject(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.reportSubject(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
@@ -85,7 +86,7 @@ class ReportSubjectServiceTest {
             List.of(maturityLevel1, maturityLevel2),
             List.of(subjectAttributeReportItem1, subjectAttributeReportItem2));
 
-        when(checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(assessmentId);
         when(loadSubjectReportInfoPort.load(assessmentId, subjectId)).thenReturn(subjectReport);
 

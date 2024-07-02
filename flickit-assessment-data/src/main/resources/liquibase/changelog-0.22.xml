@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.22-01" author="Mahdi Rezazadeh">
+        <sql>
+            INSERT INTO fac_assessment_user_role (assessment_id, user_id, role_id)
+            SELECT a.id        AS assessment_id,
+                   sp.owner_id AS user_id,
+                   3           AS role_id
+            FROM fac_assessment a
+                     JOIN fau_space sp ON a.space_id = sp.id
+            ON CONFLICT (assessment_id, user_id)
+            DO UPDATE SET role_id = EXCLUDED.role_id;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

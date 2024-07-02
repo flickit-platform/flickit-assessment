@@ -51,6 +51,7 @@ public class GetSpaceMembersService implements GetSpaceMembersUseCase {
                 item.email(),
                 item.displayName(),
                 item.bio(),
+                item.isOwner(),
                 createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
                 item.linkedin()
             ))

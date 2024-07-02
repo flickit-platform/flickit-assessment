@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateSpaceUseCaseParamsTest {
 
     @Test
-    void testCreateSpaceParam_TitleIsNull_ErrorMessage() {
+    void testCreateSpace_TitleIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateSpaceUseCase.Param(null, currentUserId));
@@ -22,7 +22,7 @@ class CreateSpaceUseCaseParamsTest {
     }
 
     @Test
-    void testCreateSpaceParam_TitleLengthIsLessThanMin_ErrorMessage() {
+    void testCreateSpace_TitleLengthIsLessThanMin_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         String title = RandomStringUtils.random(2, true, true);
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -31,7 +31,7 @@ class CreateSpaceUseCaseParamsTest {
     }
 
     @Test
-    void testCreateSpaceParam_TitleLengthIsMoreThanMax_ErrorMessage() {
+    void testCreateSpace_TitleLengthIsMoreThanMax_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         String title = RandomStringUtils.random(101, true, true);
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -40,7 +40,7 @@ class CreateSpaceUseCaseParamsTest {
     }
 
     @Test
-    void testCreateSpaceParam_currentUserIdIsNull_ErrorMessage() {
+    void testCreateSpace_currentUserIdIsNull_ErrorMessage() {
         String title = RandomStringUtils.random(10, true, true);
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateSpaceUseCase.Param(title, null));
