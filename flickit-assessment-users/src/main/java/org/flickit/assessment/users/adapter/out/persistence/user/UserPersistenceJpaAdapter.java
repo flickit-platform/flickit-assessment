@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.users.application.domain.User;
+import org.flickit.assessment.users.application.port.out.user.CreateUserPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,8 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FO
 @RequiredArgsConstructor
 public class UserPersistenceJpaAdapter implements
     LoadUserEmailByUserIdPort,
-    LoadUserPort {
+    LoadUserPort,
+    CreateUserPort {
 
     private final UserJpaRepository repository;
 
@@ -39,6 +41,13 @@ public class UserPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(USER_ID_NOT_FOUND));
 
         return UserMapper.mapToDomainModel(userEntity);
+    }
+
+    @Override
+    public UUID persist(UUID id, String displayName, String email) {
+        UserJpaEntity userEntity = UserMapper.mapToJpaEntity(id, email, displayName);
+
+        return repository.save(userEntity).getId();
     }
 }
 
