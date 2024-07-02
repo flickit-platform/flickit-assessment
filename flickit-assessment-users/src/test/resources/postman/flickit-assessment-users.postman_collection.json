@@ -960,7 +960,7 @@
 					],
 					"path": [
 						"{{api_path}}",
-						"users"
+						"user-profile"
 					]
 				}
 			},

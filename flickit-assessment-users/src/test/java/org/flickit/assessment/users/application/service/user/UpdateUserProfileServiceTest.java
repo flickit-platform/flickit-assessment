@@ -1,6 +1,6 @@
 package org.flickit.assessment.users.application.service.user;
 
-import org.flickit.assessment.users.application.port.in.user.UpdateUserUseCase;
+import org.flickit.assessment.users.application.port.in.user.UpdateUserProfileUseCase;
 import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,28 +15,27 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateUserServiceTest {
+class UpdateUserProfileServiceTest {
 
     @InjectMocks
-    private UpdateUserService service;
+    private UpdateUserProfileService service;
 
     @Mock
-    private UpdateUserPort port;
+    private UpdateUserPort updateUserPort;
 
     @Test
-    void testUpdateUser_ValidInput_ValidResult() {
+    void testUpdateUserProfile_ValidInput_ValidResult() {
         UUID userId = UUID.randomUUID();
         String displayName = "Flickit Admin";
         String bio = "Admin bio";
         String linkedin = "linkedin.com/in/flickit-admin";
-        UpdateUserUseCase.Param param = new UpdateUserUseCase.Param(userId,
+        UpdateUserProfileUseCase.Param param = new UpdateUserProfileUseCase.Param(userId,
             displayName,
             bio,
             linkedin);
 
-        doNothing().when(port).updateUser(any());
+        doNothing().when(updateUserPort).updateUser(any());
 
-        assertDoesNotThrow(() -> service.updateUser(param));
+        assertDoesNotThrow(() -> service.updateUserProfile(param));
     }
-
 }

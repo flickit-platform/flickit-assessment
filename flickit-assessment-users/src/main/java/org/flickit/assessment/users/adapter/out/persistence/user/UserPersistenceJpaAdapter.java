@@ -54,12 +54,10 @@ public class UserPersistenceJpaAdapter implements
 
     @Override
     public void updateUser(Param param) {
-        UserJpaEntity userEntity = repository.findById(param.userId())
-            .orElseThrow(() -> new ResourceNotFoundException(USER_ID_NOT_FOUND));
-        userEntity.setDisplayName(param.displayName());
-        userEntity.setBio(param.bio());
-        userEntity.setLinkedin(param.linkedin());
-        repository.save(userEntity);
+        if (!repository.existsById(param.userId()))
+            throw new ResourceNotFoundException(USER_ID_NOT_FOUND);
+
+        repository.update(param.userId(), param.displayName(), param.bio(), param.linkedin());
     }
 }
 
