@@ -18,8 +18,8 @@ public class UpdateUserProfileRestController {
     private final UpdateUserProfileUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/users")
-    public ResponseEntity<Void> updateUser(@RequestBody UpdateUserProfileRequestDto request) {
+    @PutMapping("/user-profile")
+    public ResponseEntity<Void> updateUserProfile(@RequestBody UpdateUserProfileRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateUserProfile(toParam(currentUserId, request));
         return new ResponseEntity<>(HttpStatus.OK);
