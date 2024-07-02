@@ -22,7 +22,7 @@ class CreateUserServiceTest {
     private CreateUserService service;
 
     @Mock
-    CreateUserPort port;
+    private CreateUserPort createUserPort;
 
     @Test
     void testCreateUserService_ValidInput_ValidResult() {
@@ -32,7 +32,7 @@ class CreateUserServiceTest {
         CreateUserUseCase.Param param = new CreateUserUseCase.Param(userId,
             email,
             displayName);
-        when(port.createUser(any(User.class))).thenReturn(userId);
+        when(createUserPort.createUser(any(CreateUserPort.Param.class))).thenReturn(userId);
 
         CreateUserUseCase.Result result = service.createUser(param);
 

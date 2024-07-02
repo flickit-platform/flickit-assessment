@@ -6,5 +6,7 @@ import java.util.UUID;
 
 public interface CreateUserPort {
 
-    UUID createUser(User user);
+    UUID createUser(Param param);
+
+    record Param(UUID id, String displayName, String email) {}
 }
