@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.service.user;
 
-import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.UpdateUserUseCase;
 import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.junit.jupiter.api.Test;
@@ -11,9 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateUserServiceTest {
@@ -35,18 +34,9 @@ class UpdateUserServiceTest {
             bio,
             linkedin);
 
-        User expectedUser = new User(userId,
-            "admin@flickit.org",
-            displayName,
-            bio,
-            linkedin,
-            null);
+        doNothing().when(port).updateUser(any());
 
-        when(port.updateUser(any(UpdateUserPort.Param.class))).thenReturn(expectedUser);
-
-        User actualUser = service.updateUser(param);
-
-        assertEquals(expectedUser, actualUser);
+        assertDoesNotThrow(() -> service.updateUser(param));
     }
 
 }

@@ -7,8 +7,6 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.users.application.port.out.user.LoadUserProfilePort;
-import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.springframework.stereotype.Component;
 
@@ -46,15 +44,13 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public User updateUser(Param param) {
+    public void updateUser(Param param) {
         UserJpaEntity userEntity = repository.findById(param.userId())
             .orElseThrow(() -> new ResourceNotFoundException(USER_ID_NOT_FOUND));
         userEntity.setDisplayName(param.displayName());
         userEntity.setBio(param.bio());
         userEntity.setLinkedin(param.linkedin());
-        UserJpaEntity savedUserEntity = repository.save(userEntity);
-
-        return UserMapper.mapToDomainModel(savedUserEntity);
+        repository.save(userEntity);
     }
 }
 

@@ -1,21 +1,21 @@
 package org.flickit.assessment.users.application.port.in.user;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.users.application.domain.User;
 
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_BIO_SIZE_MAX;
-import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_DISPLAY_NAME_NOT_BLANK;
-import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_LINKEDIN_NOT_VALID;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface UpdateUserUseCase {
 
-    User updateUser(Param param);
+    void updateUser(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

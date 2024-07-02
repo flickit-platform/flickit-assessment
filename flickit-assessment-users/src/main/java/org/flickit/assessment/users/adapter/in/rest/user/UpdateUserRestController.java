@@ -2,7 +2,6 @@ package org.flickit.assessment.users.adapter.in.rest.user;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.UpdateUserUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +19,13 @@ public class UpdateUserRestController {
     private final UserContext userContext;
 
     @PutMapping("/users")
-    public ResponseEntity<UpdateUserResponseDto> updateUser(@RequestBody UpdateUserRequestDto request) {
+    public ResponseEntity<Void> updateUser(@RequestBody UpdateUserRequestDto request) {
         UUID currentUserId = userContext.getUser().id();
-        User user = useCase.updateUser(toParam(currentUserId, request));
-        UpdateUserResponseDto responseDto = toResponse(user);
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        useCase.updateUser(toParam(currentUserId, request));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateUserResponseDto toResponse(User user) {
-        return new UpdateUserResponseDto(user.getId(),
-            user.getEmail(),
-            user.getDisplayName(),
-            user.getBio(),
-            user.getLinkedin(),
-            user.getPicture());
-    }
-
-    private UpdateUserUseCase.Param toParam(UUID id, UpdateUserRequestDto request) {
-        return new UpdateUserUseCase.Param(id, request.displayName(), request.bio(), request.linkedin());
+    private UpdateUserUseCase.Param toParam(UUID currentUserId, UpdateUserRequestDto request) {
+        return new UpdateUserUseCase.Param(currentUserId, request.displayName(), request.bio(), request.linkedin());
     }
 }
