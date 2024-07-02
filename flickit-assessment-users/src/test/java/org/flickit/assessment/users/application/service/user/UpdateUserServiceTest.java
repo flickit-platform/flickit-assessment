@@ -1,6 +1,6 @@
 package org.flickit.assessment.users.application.service.user;
 
-import org.flickit.assessment.users.application.port.in.user.UpdateUserUseCase;
+import org.flickit.assessment.users.application.port.in.user.UpdateUserProfileUseCase;
 import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.doNothing;
 class UpdateUserServiceTest {
 
     @InjectMocks
-    private UpdateUserService service;
+    private UpdateUserProfileService service;
 
     @Mock
     private UpdateUserPort port;
@@ -29,14 +29,14 @@ class UpdateUserServiceTest {
         String displayName = "Flickit Admin";
         String bio = "Admin bio";
         String linkedin = "linkedin.com/in/flickit-admin";
-        UpdateUserUseCase.Param param = new UpdateUserUseCase.Param(userId,
+        UpdateUserProfileUseCase.Param param = new UpdateUserProfileUseCase.Param(userId,
             displayName,
             bio,
             linkedin);
 
         doNothing().when(port).updateUser(any());
 
-        assertDoesNotThrow(() -> service.updateUser(param));
+        assertDoesNotThrow(() -> service.updateUserProfile(param));
     }
 
 }
