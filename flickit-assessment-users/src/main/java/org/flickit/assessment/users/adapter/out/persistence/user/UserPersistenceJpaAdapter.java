@@ -1,7 +1,6 @@
 package org.flickit.assessment.users.adapter.out.persistence.user;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
@@ -46,17 +45,9 @@ public class UserPersistenceJpaAdapter implements
 
     @Override
     public UUID persist(UUID id, String displayName, String email) {
-        UserJpaEntity userEntity = new UserJpaEntity();
-        userEntity.setId(id);
-        userEntity.setEmail(email);
-        userEntity.setDisplayName(displayName);
-        userEntity.setIsSuperUser(false);
-        userEntity.setIsStaff(false);
-        userEntity.setIsActive(true);
-        userEntity.setPassword("!" + RandomStringUtils.randomAlphanumeric(40));
+        UserJpaEntity userEntity = UserMapper.mapToJpaEntity(id, email, displayName);
 
-        UserJpaEntity savedEntity = repository.save(userEntity);
-        return savedEntity.getId();
+        return repository.save(userEntity).getId();
     }
 }
 
