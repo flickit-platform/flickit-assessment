@@ -22,6 +22,7 @@ public interface CreateUserUseCase {
         @NotNull(message = CREATE_USER_USER_ID_NOT_NULL)
         UUID userId;
 
+        @NotNull(message = CREATE_USER_EMAIL_NOT_NULL)
         @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = CREATE_USER_EMAIL_NOT_VALID)
         String email;
 
