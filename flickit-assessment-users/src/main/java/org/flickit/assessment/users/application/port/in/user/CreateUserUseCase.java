@@ -17,7 +17,7 @@ public interface CreateUserUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<GetUserProfileUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = CREATE_USER_USER_ID_NOT_NULL)
         UUID userId;
@@ -40,5 +40,4 @@ public interface CreateUserUseCase {
     }
 
     record Result(UUID userId) {}
-
 }
