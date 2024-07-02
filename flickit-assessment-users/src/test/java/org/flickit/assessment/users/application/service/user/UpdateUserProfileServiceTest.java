@@ -15,16 +15,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateUserServiceTest {
+class UpdateUserProfileServiceTest {
 
     @InjectMocks
     private UpdateUserProfileService service;
 
     @Mock
-    private UpdateUserPort port;
+    private UpdateUserPort updateUserPort;
 
     @Test
-    void testUpdateUser_ValidInput_ValidResult() {
+    void testUpdateUserProfile_ValidInput_ValidResult() {
         UUID userId = UUID.randomUUID();
         String displayName = "Flickit Admin";
         String bio = "Admin bio";
@@ -34,9 +34,8 @@ class UpdateUserServiceTest {
             bio,
             linkedin);
 
-        doNothing().when(port).updateUser(any());
+        doNothing().when(updateUserPort).updateUser(any());
 
         assertDoesNotThrow(() -> service.updateUserProfile(param));
     }
-
 }
