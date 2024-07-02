@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentPort;
+import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_F
 
 @Component("coreMinioAdapter")
 @AllArgsConstructor
-public class MinioAdapter implements CreateFileDownloadLinkPort, DeleteEvidenceAttachmentPort {
+public class MinioAdapter implements CreateFileDownloadLinkPort, DeleteEvidenceAttachmentFilePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -63,7 +63,7 @@ public class MinioAdapter implements CreateFileDownloadLinkPort, DeleteEvidenceA
 
     @SneakyThrows
     @Override
-    public void deleteEvidenceAttachment(String path) {
+    public void deleteEvidenceAttachmentFile(String path) {
         String bucketName = path.replaceFirst("/.*" ,"");
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
