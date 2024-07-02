@@ -29,14 +29,13 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class GetAssessmentService implements GetAssessmentUseCase {
 
+    private final LoadUserPort loadUserPort;
     private final GetAssessmentPort getAssessmentPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadUserPort loadUserPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
     private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
     private final AssessmentPermissionChecker assessmentPermissionChecker;
-
 
     @Override
     public Result getAssessment(Param param) {
