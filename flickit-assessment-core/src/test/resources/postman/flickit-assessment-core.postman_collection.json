@@ -917,7 +917,7 @@
 			"response": []
 		},
 		{
-			"name": "Add Evidence Attachments",
+			"name": "Get Evidence Attachments",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
