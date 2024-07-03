@@ -125,6 +125,7 @@ class GetAssessmentServiceTest {
 
         assertFalse(result.manageable());
         assertTrue(result.viewable());
+        assertNotNull(result.maturityLevel());
 
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verify(getAssessmentPort, times(1)).getAssessmentById(any());
@@ -155,6 +156,7 @@ class GetAssessmentServiceTest {
 
         assertFalse(result.manageable());
         assertFalse(result.viewable());
+        assertNull(result.maturityLevel());
 
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verify(getAssessmentPort, times(1)).getAssessmentById(any());

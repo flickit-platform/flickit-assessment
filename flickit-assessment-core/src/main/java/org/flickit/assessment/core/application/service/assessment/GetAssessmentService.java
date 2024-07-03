@@ -64,7 +64,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
             new User(createdBy.getId(), createdBy.getDisplayName()),
-            assessmentResult.getMaturityLevel(),
+            viewable ? assessmentResult.getMaturityLevel() : null,
             assessmentResult.getIsCalculateValid(),
             manageable,
             viewable);
