@@ -1,11 +1,11 @@
 package org.flickit.assessment.core.application.port.in.evidence;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -32,5 +32,9 @@ public interface GetEvidenceUseCase {
         }
     }
 
-    record Result(){}
+    record Result(UUID id,
+                  String description,
+                  String createdBy,
+                  LocalDateTime creationTime,
+                  LocalDateTime lastModificationTime){}
 }
