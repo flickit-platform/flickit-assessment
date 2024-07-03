@@ -34,17 +34,10 @@ public class GetEvidenceService implements GetEvidenceUseCase {
     Result mapToResult(LoadEvidencePort.Result portResult, String createdBy) {
         return new Result(portResult.id(),
             portResult.description(),
-            mapQuestionToQuestionUseCase(portResult.question()),
+            new Questionnaire(portResult.questionnaire().id(), portResult.questionnaire().title()),
+            new Question(portResult.question().id(), portResult.question().title(), portResult.question().index()),
             createdBy,
             portResult.creationTime(),
             portResult.lastModificationTime());
-    }
-
-    Question mapQuestionToQuestionUseCase(LoadEvidencePort.Question question) {
-        return new Question(question.id(), question.title(), question.index());
-    }
-
-    Questionnaire mapQuestionnaireToQuestionnaireUseCase(LoadEvidencePort.Questionnaire questionnaire) {
-        return new Questionnaire(questionnaire.id(), questionnaire.title());
     }
 }

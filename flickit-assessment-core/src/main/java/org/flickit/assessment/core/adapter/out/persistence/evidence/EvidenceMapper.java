@@ -61,16 +61,8 @@ public class EvidenceMapper {
         return new Result(entity.getId(),
             entity.getDescription(),
             entity.getAssessmentId(),
-            mapQuestionnaireToResult(entity.getQuestionnaire()),
-            mapQuestionToResult(entity.getQuestion()),
+            new Questionnaire(entity.getQuestionnaire().getId(), entity.getQuestionnaire().getTitle()),
+            new Question(entity.getQuestion().getId(), entity.getQuestion().getTitle(), entity.getQuestion().getIndex()),
             null, entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());
-    }
-
-    public static Questionnaire mapQuestionnaireToResult(QuestionnaireJpaEntity entity) {
-        return new Questionnaire(entity.getId(), entity.getTitle());
-    }
-
-    public static Question mapQuestionToResult(QuestionJpaEntity entity) {
-        return new Question(entity.getId(), entity.getTitle(), entity.getIndex());
     }
 }

@@ -38,8 +38,7 @@ public interface GetEvidenceUseCase {
                   Question question,
                   String createdBy,
                   LocalDateTime creationTime,
-                  LocalDateTime lastModificationTime){
-    }
+                  LocalDateTime lastModificationTime){}
 
     record Question(Long id, String title, Integer index){}
     record Questionnaire(Long id, String title){}
