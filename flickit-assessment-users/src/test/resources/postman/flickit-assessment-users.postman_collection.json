@@ -332,7 +332,7 @@
 			"response": []
 		},
 		{
-			"name": "Get User By Email",
+			"name": "Get User Id By Email",
 			"request": {
 				"method": "GET",
 				"header": [],
