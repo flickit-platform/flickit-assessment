@@ -10,8 +10,6 @@ import org.flickit.assessment.core.application.port.out.evidence.CreateEvidenceP
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort.*;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithDetailsViewJpaEntity;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -63,6 +61,9 @@ public class EvidenceMapper {
             entity.getAssessmentId(),
             new Questionnaire(entity.getQuestionnaire().getId(), entity.getQuestionnaire().getTitle()),
             new Question(entity.getQuestion().getId(), entity.getQuestion().getTitle(), entity.getQuestion().getIndex()),
-            null, entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());
+            new Answer(new AnswerOption(entity.getAnswerOption().getId(), entity.getAnswerOption().getTitle(), entity.getAnswerOption().getIndex()),
+                null,
+                null),
+            entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());
     }
 }

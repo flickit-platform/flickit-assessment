@@ -35,6 +35,9 @@ public class GetEvidenceService implements GetEvidenceUseCase {
             portResult.description(),
             new Questionnaire(portResult.questionnaire().id(), portResult.questionnaire().title()),
             new Question(portResult.question().id(), portResult.question().title(), portResult.question().index()),
+            new Answer(new AnswerOption(portResult.answer().answerOption().id(), portResult.answer().answerOption().title(), portResult.answer().answerOption().index()),
+                null,
+                null),
             portResult.createdBy(),
             portResult.creationTime(),
             portResult.lastModificationTime());
