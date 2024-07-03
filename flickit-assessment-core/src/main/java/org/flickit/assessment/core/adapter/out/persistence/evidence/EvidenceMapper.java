@@ -7,10 +7,11 @@ import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
-import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
+import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort.*;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithDetailsViewJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -56,13 +57,20 @@ public class EvidenceMapper {
         );
     }
 
-    public static LoadEvidencePort.Result mapJpaWithDetailsToPortResult(EvidenceWithDetailsViewJpaEntity entity) {
-        return new LoadEvidencePort.Result(entity.getId(),
-            entity.getDescription(),  entity.getAssessmentId(), null, mapQuestionToDomainModel(entity.getQuestion()), null,
-            entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());
+    public static Result mapJpaWithDetailsToPortResult(EvidenceWithDetailsViewJpaEntity entity) {
+        return new Result(entity.getId(),
+            entity.getDescription(),
+            entity.getAssessmentId(),
+            mapQuestionnaireToResult(entity.getQuestionnaire()),
+            mapQuestionToResult(entity.getQuestion()),
+            null, entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());
     }
 
-    public static LoadEvidencePort.Question mapQuestionToDomainModel(QuestionJpaEntity entity) {
-        return new LoadEvidencePort.Question(entity.getId(), entity.getTitle(), entity.getIndex());
+    public static Questionnaire mapQuestionnaireToResult(QuestionnaireJpaEntity entity) {
+        return new Questionnaire(entity.getId(), entity.getTitle());
+    }
+
+    public static Question mapQuestionToResult(QuestionJpaEntity entity) {
+        return new Question(entity.getId(), entity.getTitle(), entity.getIndex());
     }
 }

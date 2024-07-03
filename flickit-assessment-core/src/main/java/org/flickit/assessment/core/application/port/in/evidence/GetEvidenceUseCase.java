@@ -34,6 +34,7 @@ public interface GetEvidenceUseCase {
 
     record Result(UUID id,
                   String description,
+                  Questionnaire questionnaire,
                   Question question,
                   String createdBy,
                   LocalDateTime creationTime,
@@ -41,4 +42,5 @@ public interface GetEvidenceUseCase {
     }
 
     record Question(Long id, String title, Integer index){}
+    record Questionnaire(Long id, String title){}
 }

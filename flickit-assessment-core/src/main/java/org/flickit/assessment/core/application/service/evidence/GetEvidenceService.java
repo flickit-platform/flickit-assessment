@@ -43,4 +43,8 @@ public class GetEvidenceService implements GetEvidenceUseCase {
     Question mapQuestionToQuestionUseCase(LoadEvidencePort.Question question) {
         return new Question(question.id(), question.title(), question.index());
     }
+
+    Questionnaire mapQuestionnaireToQuestionnaireUseCase(LoadEvidencePort.Questionnaire questionnaire) {
+        return new Questionnaire(questionnaire.id(), questionnaire.title());
+    }
 }

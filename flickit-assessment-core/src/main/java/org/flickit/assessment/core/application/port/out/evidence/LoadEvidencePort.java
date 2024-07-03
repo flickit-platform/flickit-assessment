@@ -14,8 +14,6 @@ public interface LoadEvidencePort {
     record Result(UUID id, String description, UUID assessmentId,  Questionnaire questionnaire, Question question, Answer answer,
                   UUID createdBy, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
 
-        record Questionnaire(Long id, String title){}
-
         record Answer(AnswerOption answerOption, Boolean isNotApplicable, ConfidenceLevel ConfidenceLevel){
 
             record AnswerOption(Long id, String title, Integer index){}
@@ -23,4 +21,6 @@ public interface LoadEvidencePort {
         }
     }
     record Question(Long id, String title, Integer index){}
+
+    record Questionnaire(Long id, String title){}
 }

@@ -66,12 +66,13 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         evd.createdBy as createdBy,
         evd.creationTime as creationTime,
         evd.lastModificationTime as lastModificationTime,
-        q as question
-
+        q as question,
+        qe as questionnaire
          from EvidenceJpaEntity evd
          join AssessmentJpaEntity a on evd.assessmentId = a.id
          join AssessmentResultJpaEntity ar on a.id = ar.assessment.id
          join QuestionJpaEntity q on evd.questionId = q.id and q.kitVersionId = ar.kitVersionId
+         join QuestionnaireJpaEntity qe on q.questionnaireId = qe.id and q.kitVersionId = qe.kitVersionId
          where evd.id = :id AND evd.deleted = false
         """)
     Optional<EvidenceWithDetailsViewJpaEntity> findEvidenceWithDetailsById(@Param("id") UUID id);
