@@ -12,7 +12,7 @@ public interface LoadEvidencePort {
     Result loadEvidenceWithDetails(UUID id);
 
     record Result(UUID id, String description, UUID assessmentId,  Questionnaire questionnaire, Question question, Answer answer,
-                  UUID createdBy, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
+                  String createdBy, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
 
         record Answer(AnswerOption answerOption, Boolean isNotApplicable, ConfidenceLevel ConfidenceLevel){
 

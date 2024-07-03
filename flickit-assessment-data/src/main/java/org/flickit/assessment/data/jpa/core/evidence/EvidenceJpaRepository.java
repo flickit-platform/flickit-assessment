@@ -63,12 +63,13 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query("""
         SELECT evd.id as id,
         evd.description as description,
-        evd.createdBy as createdBy,
         evd.creationTime as creationTime,
         evd.lastModificationTime as lastModificationTime,
+        u.displayName as createdBy,
         q as question,
         qe as questionnaire
          from EvidenceJpaEntity evd
+         join UserJpaEntity u on evd.createdBy = u.id
          join AssessmentJpaEntity a on evd.assessmentId = a.id
          join AssessmentResultJpaEntity ar on a.id = ar.assessment.id
          join QuestionJpaEntity q on evd.questionId = q.id and q.kitVersionId = ar.kitVersionId

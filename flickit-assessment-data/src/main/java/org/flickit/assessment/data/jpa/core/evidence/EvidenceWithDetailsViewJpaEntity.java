@@ -24,7 +24,7 @@ public interface EvidenceWithDetailsViewJpaEntity {
 
     AnswerOptionJpaEntity getAnswerOption();
 
-    UUID getCreatedBy();
+    String getCreatedBy();
 
     LocalDateTime getCreationTime();
 

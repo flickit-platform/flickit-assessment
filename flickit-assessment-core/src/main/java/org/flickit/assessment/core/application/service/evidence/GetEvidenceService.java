@@ -24,19 +24,18 @@ public class GetEvidenceService implements GetEvidenceUseCase {
     public Result getEvidence(Param param) {
         var portResult = loadEvidencePort.loadEvidenceWithDetails(param.getId());
 
-        if (!checkUserAssessmentAccessPort.hasAccess(portResult.assessmentId() ,param.getCurrentUserId()))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        /*if (!checkUserAssessmentAccessPort.hasAccess(portResult.assessmentId() ,param.getCurrentUserId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);*/
 
-        var user = loadUserPort.loadById(portResult.createdBy()).orElseThrow();
-        return mapToResult(portResult, user.getDisplayName());
+        return mapToResult(portResult);
     }
 
-    Result mapToResult(LoadEvidencePort.Result portResult, String createdBy) {
+    Result mapToResult(LoadEvidencePort.Result portResult) {
         return new Result(portResult.id(),
             portResult.description(),
             new Questionnaire(portResult.questionnaire().id(), portResult.questionnaire().title()),
             new Question(portResult.question().id(), portResult.question().title(), portResult.question().index()),
-            createdBy,
+            portResult.createdBy(),
             portResult.creationTime(),
             portResult.lastModificationTime());
     }
