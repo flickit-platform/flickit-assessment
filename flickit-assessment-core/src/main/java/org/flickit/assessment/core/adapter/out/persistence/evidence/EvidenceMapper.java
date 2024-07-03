@@ -7,7 +7,9 @@ import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
+import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
+import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithDetailsViewJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -51,5 +53,11 @@ public class EvidenceMapper {
             entity.getLastModificationTime(),
             entity.isDeleted()
         );
+    }
+
+    public static LoadEvidencePort.Result mapJpaWithDetailsToPortResult(EvidenceWithDetailsViewJpaEntity entity) {
+        return new LoadEvidencePort.Result(entity.getId(),
+            entity.getDescription(),  entity.getAssessmentId(), null, null, null,
+            entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());
     }
 }
