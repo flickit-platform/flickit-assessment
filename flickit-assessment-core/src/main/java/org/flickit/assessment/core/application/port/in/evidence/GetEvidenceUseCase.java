@@ -34,7 +34,11 @@ public interface GetEvidenceUseCase {
 
     record Result(UUID id,
                   String description,
+                  Question question,
                   String createdBy,
                   LocalDateTime creationTime,
-                  LocalDateTime lastModificationTime){}
+                  LocalDateTime lastModificationTime){
+    }
+
+    record Question(Long id, String title, Integer index){}
 }

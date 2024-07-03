@@ -15,11 +15,12 @@ public interface LoadEvidencePort {
                   UUID createdBy, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
 
         record Questionnaire(Long id, String title){}
-        record Question(Long id, String title, Integer index){}
+
         record Answer(AnswerOption answerOption, Boolean isNotApplicable, ConfidenceLevel ConfidenceLevel){
 
             record AnswerOption(Long id, String title, Integer index){}
             record ConfidenceLevel(Long id, String title) {}
         }
     }
+    record Question(Long id, String title, Integer index){}
 }

@@ -61,8 +61,17 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                                                                                        @Param(value = "type") Integer type, Pageable pageable);
 
     @Query("""
-        SELECT evd
+        SELECT evd.id as id,
+        evd.description as description,
+        evd.createdBy as createdBy,
+        evd.creationTime as creationTime,
+        evd.lastModificationTime as lastModificationTime,
+        q as question
+
          from EvidenceJpaEntity evd
+         join AssessmentJpaEntity a on evd.assessmentId = a.id
+         join AssessmentResultJpaEntity ar on a.id = ar.assessment.id
+         join QuestionJpaEntity q on evd.questionId = q.id and q.kitVersionId = ar.kitVersionId
          where evd.id = :id AND evd.deleted = false
         """)
     Optional<EvidenceWithDetailsViewJpaEntity> findEvidenceWithDetailsById(@Param("id") UUID id);
