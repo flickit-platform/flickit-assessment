@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.users.common.ErrorMessageKey.USER_BY_EMAIL_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FOUND;
 
 @Component
@@ -43,6 +44,20 @@ public class UserPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(USER_ID_NOT_FOUND));
 
         return UserMapper.mapToDomainModel(userEntity);
+    }
+
+    @Override
+    public Result loadUserByEmail(String email) {
+        UserJpaEntity userEntity = repository.findByEmail(email)
+            .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
+
+        User user = UserMapper.mapToDomainModel(userEntity);
+        return new Result(user,
+            userEntity.getLastLogin(),
+            userEntity.getIsSuperUser(),
+            userEntity.getIsStaff(),
+            userEntity.getIsActive(),
+            userEntity.getPassword());
     }
 
     @Override
