@@ -31,13 +31,14 @@ public class GetEvidenceService implements GetEvidenceUseCase {
     }
 
     Result mapToResult(LoadEvidencePort.Result portResult) {
+        var confidenceLevel = org.flickit.assessment.core.application.domain.ConfidenceLevel.valueOfById(portResult.answer().confidenceLevel());
         return new Result(portResult.id(),
             portResult.description(),
             new Questionnaire(portResult.questionnaire().id(), portResult.questionnaire().title()),
             new Question(portResult.question().id(), portResult.question().title(), portResult.question().index()),
             new Answer(new AnswerOption(portResult.answer().answerOption().id(), portResult.answer().answerOption().title(), portResult.answer().answerOption().index()),
-                null,
-                null),
+                new ConfidenceLevel(confidenceLevel.getId(), confidenceLevel.getTitle()),
+                portResult.answer().isNotApplicable()),
             portResult.createdBy(),
             portResult.creationTime(),
             portResult.lastModificationTime());

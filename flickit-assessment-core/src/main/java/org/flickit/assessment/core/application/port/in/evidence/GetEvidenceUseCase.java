@@ -45,5 +45,5 @@ public interface GetEvidenceUseCase {
     record Questionnaire(Long id, String title){}
     record Answer(AnswerOption answerOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable){}
     record AnswerOption(Long id, String title, Integer index){}
-    record ConfidenceLevel(Long id, String title, Integer index){}
+    record ConfidenceLevel(Integer id, String title){}
 }

@@ -62,8 +62,8 @@ public class EvidenceMapper {
             new Questionnaire(entity.getQuestionnaire().getId(), entity.getQuestionnaire().getTitle()),
             new Question(entity.getQuestion().getId(), entity.getQuestion().getTitle(), entity.getQuestion().getIndex()),
             new Answer(new AnswerOption(entity.getAnswerOption().getId(), entity.getAnswerOption().getTitle(), entity.getAnswerOption().getIndex()),
-                null,
-                null),
+                entity.getAnswer().getConfidenceLevelId(),
+                entity.getAnswer().getIsNotApplicable()),
             entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());
     }
 }

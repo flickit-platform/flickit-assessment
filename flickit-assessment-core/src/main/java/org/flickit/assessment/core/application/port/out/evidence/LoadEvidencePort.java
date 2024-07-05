@@ -19,9 +19,8 @@ public interface LoadEvidencePort {
 
     record Questionnaire(Long id, String title){}
 
-    record Answer(AnswerOption answerOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable){}
+    record Answer(AnswerOption answerOption, Integer confidenceLevel, Boolean isNotApplicable){}
 
     record AnswerOption(Long id, String title, Integer index){}
 
-    record ConfidenceLevel(Long id, String title){}
 }
