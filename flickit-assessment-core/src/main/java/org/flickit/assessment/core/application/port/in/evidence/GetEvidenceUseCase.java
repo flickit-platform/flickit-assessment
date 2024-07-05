@@ -39,11 +39,11 @@ public interface GetEvidenceUseCase {
                   Answer answer,
                   String createdBy,
                   LocalDateTime creationTime,
-                  LocalDateTime lastModificationTime){}
-
-    record Question(Long id, String title, Integer index){}
-    record Questionnaire(Long id, String title){}
-    record Answer(AnswerOption answerOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable){}
-    record AnswerOption(Long id, String title, Integer index){}
-    record ConfidenceLevel(Integer id, String title){}
+                  LocalDateTime lastModificationTime){
+        public record Question(Long id, String title, Integer index){}
+        public record Questionnaire(Long id, String title){}
+        public record Answer(AnswerOption answerOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable){}
+        public record AnswerOption(Long id, String title, Integer index){}
+        public record ConfidenceLevel(Integer id, String title){}
+    }
 }
