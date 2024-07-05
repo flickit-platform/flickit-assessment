@@ -81,5 +81,5 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
          join AnswerOptionJpaEntity anso on anso.id = ans.answerOptionId
          where evd.id = :id AND evd.deleted = false
         """)
-    Optional<EvidenceWithDetailsViewJpaEntity> findEvidenceWithDetailsById(@Param("id") UUID id);
+    Optional<EvidenceWithDetailsView> findEvidenceWithDetailsById(@Param("id") UUID id);
 }

@@ -8,7 +8,7 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface EvidenceWithDetailsViewJpaEntity {
+public interface EvidenceWithDetailsView {
 
     UUID getId();
 

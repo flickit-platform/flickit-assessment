@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListU
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort.*;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
-import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithDetailsViewJpaEntity;
+import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithDetailsView;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -55,7 +55,7 @@ public class EvidenceMapper {
         );
     }
 
-    public static Result mapJpaWithDetailsToPortResult(EvidenceWithDetailsViewJpaEntity entity) {
+    public static Result mapJpaWithDetailsToPortResult(EvidenceWithDetailsView entity) {
         return new Result(entity.getId(),
             entity.getDescription(),
             entity.getAssessmentId(),
