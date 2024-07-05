@@ -81,6 +81,7 @@ public class ErrorMessageKey {
     public static final String CREATE_SPACE_TITLE_NOT_BLANK = "create-space.title.notBlank";
     public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
     public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
+    public static final String CREATE_SPACE_TITLE_DUPLICATE = "create-space.title.duplicate";
 
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_NULL = "delete-space-member.userId.notNull";
     public static final String DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "delete-space-member.spaceId.notNull";
@@ -110,7 +111,7 @@ public class ErrorMessageKey {
     public static final String LEAVE_SPACE_SPACE_ID_NOT_NULL = "leave-space.spaceId.notNull";
     public static final String LEAVE_SPACE_OWNER_NOT_ALLOWED = "leave-space.owner.notAllowed";
 
-    public static final String UPDATE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group.expert-group-id.notNull";
+    public static final String UPDATE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group.expertGroupId.notNull";
     public static final String UPDATE_EXPERT_GROUP_TITLE_NOT_BLANK = "update-expert-group.title.notBlank";
     public static final String UPDATE_EXPERT_GROUP_TITLE_SIZE_MIN = "update-expert-group.title.size.min";
     public static final String UPDATE_EXPERT_GROUP_TITLE_SIZE_MAX = "update-expert-group.title.size.max";
