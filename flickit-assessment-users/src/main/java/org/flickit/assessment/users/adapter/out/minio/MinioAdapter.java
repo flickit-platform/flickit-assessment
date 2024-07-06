@@ -6,6 +6,7 @@ import io.minio.http.Method;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.compress.utils.FileNameUtils;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
@@ -54,11 +55,9 @@ public class MinioAdapter implements
         String bucketName = properties.getBucketNames().getAvatar();
         UUID uniqueDir = UUID.randomUUID();
 
-        String extension = "";
-        if (pictureFile.getOriginalFilename() != null)
-            extension = pictureFile.getOriginalFilename().substring(pictureFile.getOriginalFilename().indexOf(DOT));
+        String extension = FileNameUtils.getExtension(pictureFile.getOriginalFilename());
 
-        String objectName = uniqueDir + PIC_FILE_NAME + extension;
+        String objectName = uniqueDir + PIC_FILE_NAME + DOT + extension;
         writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
         return bucketName + SLASH + objectName;
     }
