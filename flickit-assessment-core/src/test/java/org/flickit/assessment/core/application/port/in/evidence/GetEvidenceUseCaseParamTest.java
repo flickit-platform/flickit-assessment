@@ -27,5 +27,4 @@ class GetEvidenceUseCaseParamTest {
             () -> new GetEvidenceUseCase.Param(id, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
-
 }
