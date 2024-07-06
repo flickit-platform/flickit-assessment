@@ -12,6 +12,7 @@ public class ErrorMessageKey {
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
 
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
+    public static final String GET_USER_BY_EMAIL_EMAIL_NOT_BLANK = "get-user-by-email.email.notBlank";
 
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
@@ -132,4 +133,17 @@ public class ErrorMessageKey {
 
     public static final String DELETE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-picture.expertGroupId.notNull";
 
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_NOT_NULL = "update-user-profile.displayName.notNull";
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_SIZE_MIN = "update-user-profile.displayName.size.min";
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_SIZE_MAX = "update-user-profile.displayName.size.max";
+    public static final String UPDATE_USER_PROFILE_BIO_SIZE_MIN = "update-user-profile.bio.size.min";
+    public static final String UPDATE_USER_PROFILE_BIO_SIZE_MAX = "update-user-profile.bio.size.max";
+    public static final String UPDATE_USER_PROFILE_LINKEDIN_NOT_VALID = "update-user-profile.linkedin.notValid";
+
+    public static final String CREATE_USER_USER_ID_NOT_NULL = "create-user.userId.notNull";
+    public static final String CREATE_USER_EMAIL_NOT_VALID = "create-user.email.notValid";
+    public static final String CREATE_USER_EMAIL_NOT_NULL = "create-user.email.notNull";
+    public static final String CREATE_USER_DISPLAY_NAME_NOT_NULL = "create-user.displayName.notNull";
+    public static final String CREATE_USER_DISPLAY_NAME_SIZE_MIN = "create-user.displayName.size.min";
+    public static final String CREATE_USER_DISPLAY_NAME_SIZE_MAX = "create-user.displayName.size.max";
 }

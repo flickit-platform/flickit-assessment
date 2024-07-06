@@ -69,7 +69,39 @@
         <dropColumn tableName="fac_assessment" columnName="color_id"/>
     </changeSet>
 
-    <changeSet id="0.23-12" author="Mahdi Rezazadeh">
+    <changeSet id="0.23-12" author="Ali Sedaghat">
+        <renameTable oldTableName="account_user" newTableName="fau_user"/>
+    </changeSet>
+
+    <changeSet id="0.23-13" author="Ali Sedaghat">
+        <sql>alter table fau_user rename constraint account_user_pkey to pk_fau_user;</sql>
+    </changeSet>
+
+    <changeSet id="0.23-14" author="Ali Sedaghat">
+        <dropColumn tableName="fau_user" columnName="current_space_id"/>
+    </changeSet>
+
+    <changeSet id="0.23-15" author="Ali Sedaghat">
+        <dropColumn tableName="fau_user" columnName="default_space_id"/>
+    </changeSet>
+
+    <changeSet id="0.23-16" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fau_user" constraintName="account_user_email_key"/>
+    </changeSet>
+
+    <changeSet id="0.23-17" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fau_user" columnNames="email" constraintName="uq_fau_user_email"/>
+    </changeSet>
+
+    <changeSet id="0.23-18" author="Mahnaz Khorsandi">
+        <renameTable oldTableName="account_user_groups" newTableName="fau_user_groups"/>
+    </changeSet>
+
+    <changeSet id="0.23-19" author="Mahnaz Khorsandi">
+        <renameTable oldTableName="account_user_user_permissions" newTableName="fau_user_user_permissions"/>
+    </changeSet>
+
+    <changeSet id="0.23-20" author="Mahdi Rezazadeh">
         <createTable tableName="fac_answer_history">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_answer_history"/>
@@ -101,7 +133,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0.23-13" author="Mahdi Rezazadeh">
+    <changeSet id="0.23-21" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fac_answer_history"
                                  baseColumnNames="assessment_result_id"
                                  constraintName="fk_facanswerhistory_assessmentresult"
@@ -110,7 +142,7 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.23-14" author="Mahdi Rezazadeh">
+    <changeSet id="0.23-22" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fac_answer_history"
                                  baseColumnNames="answer_id"
                                  constraintName="fk_facanswerhistory_answer"
