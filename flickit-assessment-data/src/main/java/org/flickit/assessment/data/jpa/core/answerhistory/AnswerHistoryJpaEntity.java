@@ -9,6 +9,8 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fac_answer_history")
 @Getter
@@ -60,5 +62,10 @@ public class AnswerHistoryJpaEntity {
     @Override
     public String toString() {
         return id.toString();
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String MODIFIED_AT = "modifiedAt";
     }
 }
