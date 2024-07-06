@@ -66,7 +66,7 @@ class LeaveSpaceServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
 
         var throwable = assertThrows(ValidationException.class, ()-> service.leaveSpace(param));
-        assertEquals(LEAVE_SPACE_OWNER_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(LEAVE_SPACE_OWNER_NOT_ALLOWED, throwable.getMessageKey());
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
