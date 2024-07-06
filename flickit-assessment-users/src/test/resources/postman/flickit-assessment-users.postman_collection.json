@@ -854,8 +854,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
+						"value": "{{authorization_header}}"
 					}
 				],
 				"url": {
@@ -960,7 +959,7 @@
 					],
 					"path": [
 						"{{api_path}}",
-						"users"
+						"user-profile"
 					]
 				}
 			},
@@ -988,6 +987,30 @@
 					"path": [
 						"{{api_path}}",
 						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users Me",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/users/me",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"users",
+						"me"
 					]
 				}
 			},

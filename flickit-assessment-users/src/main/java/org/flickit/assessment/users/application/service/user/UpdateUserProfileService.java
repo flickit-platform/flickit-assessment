@@ -2,20 +2,20 @@ package org.flickit.assessment.users.application.service.user;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.users.application.port.in.user.UpdateUserUseCase;
+import org.flickit.assessment.users.application.port.in.user.UpdateUserProfileUseCase;
 import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateUserService implements UpdateUserUseCase {
+public class UpdateUserProfileService implements UpdateUserProfileUseCase {
 
-    private final UpdateUserPort port;
+    private final UpdateUserPort updateUserPort;
 
     @Override
-    public void updateUser(Param param) {
-        port.updateUser(toParam(param));
+    public void updateUserProfile(Param param) {
+        updateUserPort.updateUser(toParam(param));
     }
 
     private UpdateUserPort.Param toParam(Param param) {

@@ -38,6 +38,8 @@ public class GetAssessmentRestController {
             result.lastModificationTime(),
             new UserResponseDto(result.createdBy().getId(), result.createdBy().getDisplayName()),
             result.maturityLevel(),
-            result.isCalculateValid());
+            result.isCalculateValid(),
+            result.manageable(),
+            result.viewable());
     }
 }
