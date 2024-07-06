@@ -158,5 +158,10 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_USERS_SIZE_MAX = "get-assessment-users.size.max";
     public static final String GET_ASSESSMENT_USERS_PAGE_MIN = "get-assessment-users.page.min";
 
+    public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_ID_NOT_NULL = "get-answer-history-list.assessmentId.notNull";
+    public static final String GET_ANSWER_HISTORY_LIST_QUESTION_ID_NOT_NULL = "get-answer-history-list.questionId.notNull";
+    public static final String GET_ANSWER_HISTORY_LIST_SIZE_MIN = "get-answer-history-list.size.min";
+    public static final String GET_ANSWER_HISTORY_LIST_SIZE_MAX = "get-answer-history-list.size.max";
+    public static final String GET_ANSWER_HISTORY_LIST_PAGE_MIN = "get-answer-history-list.page.min";
     public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-answer-history-list.assessmentResult.notFound";
 }

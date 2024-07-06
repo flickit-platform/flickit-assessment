@@ -82,7 +82,8 @@ public enum AssessmentUserRole {
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
-            CREATE_ADVICE)),
+            CREATE_ADVICE,
+            VIEW_ANSWER_HISTORY_LIST)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -90,7 +91,8 @@ public enum AssessmentUserRole {
             GRANT_USER_ASSESSMENT_ROLE,
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
-            GET_ASSESSMENT_USERS)),
+            GET_ASSESSMENT_USERS,
+            VIEW_ANSWER_HISTORY_LIST)),
         ASSOCIATE_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
