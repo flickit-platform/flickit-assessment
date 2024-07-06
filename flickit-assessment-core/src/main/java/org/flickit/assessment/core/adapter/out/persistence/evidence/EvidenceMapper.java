@@ -59,9 +59,9 @@ public class EvidenceMapper {
         return new Result(entity.getId(),
             entity.getDescription(),
             entity.getAssessmentId(),
-            new Questionnaire(entity.getQuestionnaire().getId(), entity.getQuestionnaire().getTitle()),
-            new Question(entity.getQuestion().getId(), entity.getQuestion().getTitle(), entity.getQuestion().getIndex()),
-            new Answer(new AnswerOption(entity.getAnswerOption().getId(), entity.getAnswerOption().getTitle(), entity.getAnswerOption().getIndex()),
+            new Result.Questionnaire(entity.getQuestionnaire().getId(), entity.getQuestionnaire().getTitle()),
+            new Result.Question(entity.getQuestion().getId(), entity.getQuestion().getTitle(), entity.getQuestion().getIndex()),
+            new Result.Answer(new Result.AnswerOption(entity.getAnswerOption().getId(), entity.getAnswerOption().getTitle(), entity.getAnswerOption().getIndex()),
                 entity.getAnswer().getConfidenceLevelId(),
                 entity.getAnswer().getIsNotApplicable()),
             entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());

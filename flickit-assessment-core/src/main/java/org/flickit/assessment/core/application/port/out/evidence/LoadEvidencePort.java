@@ -13,14 +13,14 @@ public interface LoadEvidencePort {
 
     record Result(UUID id, String description, UUID assessmentId, Questionnaire questionnaire, Question question,
                   Answer answer,
-                  String createdBy, LocalDateTime creationTime, LocalDateTime lastModificationTime) {}
+                  String createdBy, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
 
-    record Question(Long id, String title, Integer index){}
+        public record Question(Long id, String title, Integer index){}
 
-    record Questionnaire(Long id, String title){}
+        public record Questionnaire(Long id, String title){}
 
-    record Answer(AnswerOption answerOption, Integer confidenceLevel, Boolean isNotApplicable){}
+        public record Answer(AnswerOption answerOption, Integer confidenceLevel, Boolean isNotApplicable){}
 
-    record AnswerOption(Long id, String title, Integer index){}
-
+        public record AnswerOption(Long id, String title, Integer index){}
+    }
 }

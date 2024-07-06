@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
+import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort.Result;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,11 +58,11 @@ class GetEvidenceServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new Param(id, currentUserId);
         var assessmentId = UUID.randomUUID();
-        var portResult = new LoadEvidencePort.Result(id, "des", assessmentId,
-            new LoadEvidencePort.Questionnaire(0L, "title"),
-            new LoadEvidencePort.Question(1L, "title", 1),
-            new LoadEvidencePort.Answer(
-                new LoadEvidencePort.AnswerOption(2L, "title", 2),
+        var portResult = new Result(id, "des", assessmentId,
+            new Result.Questionnaire(0L, "title"),
+            new Result.Question(1L, "title", 1),
+            new Result.Answer(
+                new Result.AnswerOption(2L, "title", 2),
                 1,
                 true), "DisplayName", LocalDateTime.now(), LocalDateTime.now());
 
@@ -83,11 +84,11 @@ class GetEvidenceServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new Param(id, currentUserId);
         var assessmentId = UUID.randomUUID();
-        var portResult = new LoadEvidencePort.Result(id, "des", assessmentId,
-            new LoadEvidencePort.Questionnaire(0L, "title"),
-            new LoadEvidencePort.Question(1L, "title", 1),
-            new LoadEvidencePort.Answer(
-                new LoadEvidencePort.AnswerOption(2L, "title", 2),
+        var portResult = new Result(id, "des", assessmentId,
+            new Result.Questionnaire(0L, "title"),
+            new Result.Question(1L, "title", 1),
+            new Result.Answer(
+                new Result.AnswerOption(2L, "title", 2),
                 1,
                 true), "DisplayName", LocalDateTime.now(), LocalDateTime.now());
 
