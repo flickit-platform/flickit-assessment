@@ -90,7 +90,7 @@ class UpdateUserAssessmentRoleServiceTest {
             .thenReturn(false);
 
         var exception = assertThrows(ValidationException.class, () -> service.updateAssessmentUserRole(param));
-        assertEquals(UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER, exception.getMessage());
+        assertEquals(UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER, exception.getMessageKey());
 
         verifyNoInteractions(updateUserAssessmentRolePort, loadSpaceOwnerPort);
     }
@@ -111,7 +111,7 @@ class UpdateUserAssessmentRoleServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(param.getAssessmentId())).thenReturn(param.getUserId());
 
         var exception = assertThrows(ValidationException.class, () -> service.updateAssessmentUserRole(param));
-        assertEquals(UPDATE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER, exception.getMessage());
+        assertEquals(UPDATE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER, exception.getMessageKey());
 
         verifyNoInteractions(updateUserAssessmentRolePort);
     }

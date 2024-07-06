@@ -59,7 +59,7 @@ class GrantUserAssessmentRoleServiceTest {
         when(spaceAccessChecker.hasAccess(param.getAssessmentId(), param.getUserId())).thenReturn(false);
 
         var exception = assertThrows(ValidationException.class, () -> service.grantAssessmentUserRole(param));
-        assertEquals(GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER, exception.getMessage());
+        assertEquals(GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER, exception.getMessageKey());
 
         verifyNoInteractions(grantUserAssessmentRolePort);
     }

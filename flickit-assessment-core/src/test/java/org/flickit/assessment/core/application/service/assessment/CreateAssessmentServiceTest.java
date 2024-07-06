@@ -292,6 +292,6 @@ class CreateAssessmentServiceTest {
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
-        assertEquals(CREATE_ASSESSMENT_KIT_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(CREATE_ASSESSMENT_KIT_NOT_ALLOWED, throwable.getMessageKey());
     }
 }
