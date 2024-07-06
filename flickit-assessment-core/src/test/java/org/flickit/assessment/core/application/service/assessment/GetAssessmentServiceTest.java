@@ -5,13 +5,13 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
-import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -51,16 +51,13 @@ class GetAssessmentServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    LoadSpaceOwnerPort loadSpaceOwnerPort;
-
-    @Mock
     private LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
     @Mock
     private AssessmentPermissionChecker assessmentPermissionChecker;
 
     @Test
-    @DisplayName("The Get Assessment service should successfully return the result when the manageable and viewable fields are set to true.")
+    @DisplayName("The GetAssessment service should successfully return the result when the currentUser has Manager role")
     void testGetAssessment_validResultManageableViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
@@ -73,8 +70,8 @@ class GetAssessmentServiceTest {
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        when(loadSpaceOwnerPort.loadOwnerId(assessmentId)).thenReturn(currentUserId);
-        when(assessmentPermissionChecker.isAuthorized (eq(assessmentId), eq(currentUserId),any())).thenReturn(true);
+        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(AssessmentUserRole.MANAGER);
+        when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
@@ -102,7 +99,7 @@ class GetAssessmentServiceTest {
     }
 
     @Test
-    @DisplayName("The Get Assessment service should successfully return the result when the manageable field is set to false and the viewable field is set to true.")
+    @DisplayName("The GetAssessment service should successfully return the result when currentUser has not Manager role but has view permission.")
     void testGetAssessment_validResultNotManageableViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
@@ -115,8 +112,8 @@ class GetAssessmentServiceTest {
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        when(loadSpaceOwnerPort.loadOwnerId(assessmentId)).thenReturn(UUID.randomUUID());
-        when(assessmentPermissionChecker.isAuthorized (eq(assessmentId), eq(currentUserId),any())).thenReturn(true);
+        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(AssessmentUserRole.ASSESSOR);
+        when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
 
@@ -133,7 +130,7 @@ class GetAssessmentServiceTest {
     }
 
     @Test
-    @DisplayName("The Get Assessment service should successfully return the result when the manageable and viewable fields are set to false.")
+    @DisplayName("The GetAssessment service should successfully return the result when the currentUser doesn't have view permission")
     void testGetAssessment_validResultNotManageableNotViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
@@ -146,7 +143,6 @@ class GetAssessmentServiceTest {
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        when(loadSpaceOwnerPort.loadOwnerId(assessmentId)).thenReturn(UUID.randomUUID());
         when(assessmentPermissionChecker.isAuthorized (eq(assessmentId), eq(currentUserId),any())).thenReturn(false);
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
@@ -164,7 +160,7 @@ class GetAssessmentServiceTest {
     }
 
     @Test
-    @DisplayName("The Get Assessment service should throw a ResourceNotFoundException when the assessment ID is invalid.")
+    @DisplayName("The GetAssessment service should throw a ResourceNotFoundException when the assessment ID is invalid.")
     void getAssessment_invalidAssessmentId_ResourceNotFoundException() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
@@ -183,11 +179,11 @@ class GetAssessmentServiceTest {
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verify(getAssessmentPort, times(1)).getAssessmentById(any());
         verify(loadUserPort, never()).loadById(any());
-        verifyNoInteractions(loadSpaceOwnerPort, loadUserRoleForAssessmentPort, assessmentPermissionChecker);
+        verifyNoInteractions(loadUserRoleForAssessmentPort, assessmentPermissionChecker);
     }
 
     @Test
-    @DisplayName("The Get Assessment service should throw an AccessDeniedException when the user does not have access.")
+    @DisplayName("The GetAssessment service should throw an AccessDeniedException when the user does not have access.")
     void getAssessment_UserHasNotAccess_AccessDeniedException() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
@@ -200,6 +196,6 @@ class GetAssessmentServiceTest {
 
         verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verify(getAssessmentPort, never()).getAssessmentById(any());
-        verifyNoInteractions(loadSpaceOwnerPort, loadUserRoleForAssessmentPort, assessmentPermissionChecker);
+        verifyNoInteractions(loadUserRoleForAssessmentPort, assessmentPermissionChecker);
     }
 }

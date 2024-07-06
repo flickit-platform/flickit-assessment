@@ -10,13 +10,11 @@ import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentU
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
-import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
@@ -33,7 +31,6 @@ public class GetAssessmentService implements GetAssessmentUseCase {
     private final GetAssessmentPort getAssessmentPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final LoadSpaceOwnerPort loadSpaceOwnerPort;
     private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
     private final AssessmentPermissionChecker assessmentPermissionChecker;
 
@@ -51,8 +48,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
         var createdBy = loadUserPort.loadById(assessment.getCreatedBy())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_CREATED_BY_ID_NOT_FOUND));
 
-        UUID spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessment.getId());
-        boolean manageable = isManageable(param.getAssessmentId(), param.getCurrentUserId(), spaceOwnerId);
+        var userRole = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId());
 
         boolean viewable = assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT);
 
@@ -66,15 +62,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
             new User(createdBy.getId(), createdBy.getDisplayName()),
             viewable ? assessmentResult.getMaturityLevel() : null,
             assessmentResult.getIsCalculateValid(),
-            manageable,
+            Objects.equals(userRole, MANAGER),
             viewable);
-    }
-
-    private boolean isManageable(UUID assessmentId, UUID currentUserId, UUID spaceOwnerId) {
-        if (Objects.equals(currentUserId, spaceOwnerId))
-            return true;
-
-        var userRole = loadUserRoleForAssessmentPort.load(assessmentId, currentUserId);
-        return Objects.equals(userRole, MANAGER);
     }
 }
