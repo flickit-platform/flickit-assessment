@@ -11,16 +11,12 @@ public interface LoadEvidencePort {
 
     Result loadEvidenceWithDetails(UUID id);
 
-    record Result(UUID id, String description, UUID assessmentId, Questionnaire questionnaire, Question question,
-                  Answer answer,
-                  String createdBy, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
+    record Result(UUID id, String description, UUID assessmentId, EvidenceQuestionnaire evidenceQuestionnaire, EvidenceQuestion evidenceQuestion,
+                  EvidenceAnswer evidenceAnswer, String createdBy, LocalDateTime creationTime, LocalDateTime lastModificationTime) {
 
-        public record Question(Long id, String title, Integer index){}
-
-        public record Questionnaire(Long id, String title){}
-
-        public record Answer(AnswerOption answerOption, Integer confidenceLevel, Boolean isNotApplicable){}
-
-        public record AnswerOption(Long id, String title, Integer index){}
+        public record EvidenceQuestion(Long id, String title, Integer index){}
+        public record EvidenceQuestionnaire(Long id, String title){}
+        public record EvidenceAnswer(EvidenceAnswerOption evidenceAnswerOption, Integer confidenceLevel, Boolean isNotApplicable){}
+        public record EvidenceAnswerOption(Long id, String title, Integer index){}
     }
 }

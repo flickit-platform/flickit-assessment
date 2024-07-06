@@ -34,16 +34,17 @@ public interface GetEvidenceUseCase {
 
     record Result(UUID id,
                   String description,
-                  Questionnaire questionnaire,
-                  Question question,
-                  Answer answer,
+                  EvidenceQuestionnaire evidenceQuestionnaire,
+                  EvidenceQuestion evidenceQuestion,
+                  EvidenceAnswer evidenceAnswer,
                   String createdBy,
                   LocalDateTime creationTime,
                   LocalDateTime lastModificationTime){
-        public record Question(Long id, String title, Integer index){}
-        public record Questionnaire(Long id, String title){}
-        public record Answer(AnswerOption answerOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable){}
-        public record AnswerOption(Long id, String title, Integer index){}
-        public record ConfidenceLevel(Integer id, String title){}
+
+        public record EvidenceQuestion(Long id, String title, Integer index){}
+        public record EvidenceQuestionnaire(Long id, String title){}
+        public record EvidenceAnswer(EvidenceAnswerOption evidenceAnswerOption, EvidenceConfidenceLevel evidenceConfidenceLevel, Boolean isNotApplicable){}
+        public record EvidenceAnswerOption(Long id, String title, Integer index){}
+        public record EvidenceConfidenceLevel(Integer id, String title){}
     }
 }

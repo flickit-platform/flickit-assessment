@@ -59,10 +59,10 @@ class GetEvidenceServiceTest {
         var param = new Param(id, currentUserId);
         var assessmentId = UUID.randomUUID();
         var portResult = new Result(id, "des", assessmentId,
-            new Result.Questionnaire(0L, "title"),
-            new Result.Question(1L, "title", 1),
-            new Result.Answer(
-                new Result.AnswerOption(2L, "title", 2),
+            new Result.EvidenceQuestionnaire(0L, "title"),
+            new Result.EvidenceQuestion(1L, "title", 1),
+            new Result.EvidenceAnswer(
+                new Result.EvidenceAnswerOption(2L, "title", 2),
                 1,
                 true), "DisplayName", LocalDateTime.now(), LocalDateTime.now());
 
@@ -85,10 +85,10 @@ class GetEvidenceServiceTest {
         var param = new Param(id, currentUserId);
         var assessmentId = UUID.randomUUID();
         var portResult = new Result(id, "des", assessmentId,
-            new Result.Questionnaire(0L, "title"),
-            new Result.Question(1L, "title", 1),
-            new Result.Answer(
-                new Result.AnswerOption(2L, "title", 2),
+            new Result.EvidenceQuestionnaire(0L, "title"),
+            new Result.EvidenceQuestion(1L, "title", 1),
+            new Result.EvidenceAnswer(
+                new Result.EvidenceAnswerOption(2L, "title", 2),
                 1,
                 true), "DisplayName", LocalDateTime.now(), LocalDateTime.now());
 
@@ -99,15 +99,15 @@ class GetEvidenceServiceTest {
 
         assertEquals(id, result.id());
         assertEquals(portResult.description(), result.description());
-        assertEquals(portResult.questionnaire().id(), result.questionnaire().id());
-        assertEquals(portResult.questionnaire().title(), result.questionnaire().title());
-        assertEquals(portResult.question().id(), result.question().id());
-        assertEquals(portResult.question().title(), result.question().title());
-        assertEquals(portResult.question().index(), result.question().index());
-        assertEquals(portResult.answer().answerOption().id(), result.answer().answerOption().id());
-        assertEquals(portResult.answer().answerOption().title(), result.answer().answerOption().title());
-        assertEquals(portResult.answer().answerOption().index(), result.answer().answerOption().index());
-        assertEquals(portResult.answer().confidenceLevel(), result.answer().confidenceLevel().id());
+        assertEquals(portResult.evidenceQuestionnaire().id(), result.evidenceQuestionnaire().id());
+        assertEquals(portResult.evidenceQuestionnaire().title(), result.evidenceQuestionnaire().title());
+        assertEquals(portResult.evidenceQuestion().id(), result.evidenceQuestion().id());
+        assertEquals(portResult.evidenceQuestion().title(), result.evidenceQuestion().title());
+        assertEquals(portResult.evidenceQuestion().index(), result.evidenceQuestion().index());
+        assertEquals(portResult.evidenceAnswer().evidenceAnswerOption().id(), result.evidenceAnswer().evidenceAnswerOption().id());
+        assertEquals(portResult.evidenceAnswer().evidenceAnswerOption().title(), result.evidenceAnswer().evidenceAnswerOption().title());
+        assertEquals(portResult.evidenceAnswer().evidenceAnswerOption().index(), result.evidenceAnswer().evidenceAnswerOption().index());
+        assertEquals(portResult.evidenceAnswer().confidenceLevel(), result.evidenceAnswer().evidenceConfidenceLevel().id());
 
         verify(loadEvidencePort).loadEvidenceWithDetails(id);
         verify(checkUserAssessmentAccessPort).hasAccess(assessmentId, currentUserId);

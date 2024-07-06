@@ -30,13 +30,13 @@ public class GetEvidenceService implements GetEvidenceUseCase {
     }
 
     Result mapToResult(LoadEvidencePort.Result portResult) {
-        var confidenceLevel = ConfidenceLevel.valueOfById(portResult.answer().confidenceLevel());
+        var confidenceLevel = ConfidenceLevel.valueOfById(portResult.evidenceAnswer().confidenceLevel());
         return new Result(portResult.id(),
             portResult.description(),
-            new Result.Questionnaire(portResult.questionnaire().id(), portResult.questionnaire().title()),
-            new Result.Question(portResult.question().id(), portResult.question().title(), portResult.question().index()),
-            new Result.Answer(new Result.AnswerOption(portResult.answer().answerOption().id(), portResult.answer().answerOption().title(), portResult.answer().answerOption().index()),
-                new Result.ConfidenceLevel(confidenceLevel.getId(), confidenceLevel.getTitle()), portResult.answer().isNotApplicable()),
+            new Result.EvidenceQuestionnaire(portResult.evidenceQuestionnaire().id(), portResult.evidenceQuestionnaire().title()),
+            new Result.EvidenceQuestion(portResult.evidenceQuestion().id(), portResult.evidenceQuestion().title(), portResult.evidenceQuestion().index()),
+            new Result.EvidenceAnswer(new Result.EvidenceAnswerOption(portResult.evidenceAnswer().evidenceAnswerOption().id(), portResult.evidenceAnswer().evidenceAnswerOption().title(), portResult.evidenceAnswer().evidenceAnswerOption().index()),
+                new Result.EvidenceConfidenceLevel(confidenceLevel.getId(), confidenceLevel.getTitle()), portResult.evidenceAnswer().isNotApplicable()),
             portResult.createdBy(),
             portResult.creationTime(),
             portResult.lastModificationTime());
