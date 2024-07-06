@@ -332,26 +332,6 @@
 			"response": []
 		},
 		{
-			"name": "Get User Id By Email",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/users/emails/example@gmail.com",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"users",
-						"emails",
-						"example@gmail.com"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Add Member to Space",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
