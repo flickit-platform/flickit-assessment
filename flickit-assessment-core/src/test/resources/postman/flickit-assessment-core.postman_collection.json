@@ -217,13 +217,13 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment/3bfa613e-4e50-46a4-96aa-a061f104224e",
+					"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessment",
+						"assessments",
 						"3bfa613e-4e50-46a4-96aa-a061f104224e"
 					]
 				}
@@ -956,6 +956,30 @@
 						"07875b35-51bb-47b3-acc8-c2cc3357dede",
 						"assessment-user-roles",
 						"ac652dd8-8366-4985-915b-fbe76ec95786"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Evidence",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/8c61e111-a64a-430e-84a0-ae584860116f",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"8c61e111-a64a-430e-84a0-ae584860116f"
 					]
 				}
 			},
