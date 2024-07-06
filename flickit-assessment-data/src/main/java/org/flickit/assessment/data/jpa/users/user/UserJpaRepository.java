@@ -10,6 +10,8 @@ import java.util.UUID;
 
 public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
 
+    Optional<UserJpaEntity> findByEmail(String email);
+
     @Query("""
             SELECT u.email AS email
             FROM UserJpaEntity u
