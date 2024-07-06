@@ -12,13 +12,13 @@ public interface LoadUserPort {
 
     User loadUser(UUID id);
 
-    Result loadUserByEmail(String email);
+    Result loadFullUserByEmail(String email);
 
-    record Result(
-        User user,
-        LocalDateTime lastLogin,
-        boolean isSuperUser,
-        boolean isStaff,
-        boolean isActive,
-        String password) {}
+    record Result(User user,
+                  LocalDateTime lastLogin,
+                  boolean isSuperUser,
+                  boolean isStaff,
+                  boolean isActive,
+                  String password) {
+    }
 }

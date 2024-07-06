@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 class GetUserByEmailServiceTest {
 
     @InjectMocks
-    private GetUserByEmailService getUserByEmailService;
+    private GetUserByEmailService service;
 
     @Mock
     private LoadUserPort loadUserPort;
@@ -42,9 +42,9 @@ class GetUserByEmailServiceTest {
             true,
             RandomStringUtils.randomAlphanumeric(50));
 
-        when(loadUserPort.loadUserByEmail(mail)).thenReturn(result);
+        when(loadUserPort.loadFullUserByEmail(mail)).thenReturn(result);
         GetUserByEmailUseCase.Param param = new GetUserByEmailUseCase.Param(mail);
-        GetUserByEmailUseCase.Result actual = getUserByEmailService.getUserByEmail(param);
+        GetUserByEmailUseCase.Result actual = service.getUserByEmail(param);
 
         assertNotNull(actual);
         assertEquals(result.user(), actual.user());

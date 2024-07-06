@@ -15,7 +15,7 @@ public class GetUserByEmailService implements GetUserByEmailUseCase {
 
     @Override
     public Result getUserByEmail(Param param) {
-        LoadUserPort.Result userResult = loadUserPort.loadUserByEmail(param.getEmail());
+        LoadUserPort.Result userResult = loadUserPort.loadFullUserByEmail(param.getEmail());
 
         return new Result(userResult.user(),
             userResult.lastLogin(),

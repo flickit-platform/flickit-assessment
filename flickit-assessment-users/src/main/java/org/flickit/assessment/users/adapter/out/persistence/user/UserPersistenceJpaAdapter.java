@@ -47,12 +47,12 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadUserByEmail(String email) {
+    public LoadUserPort.Result loadFullUserByEmail(String email) {
         UserJpaEntity userEntity = repository.findByEmail(email)
             .orElseThrow(() -> new ResourceNotFoundException(USER_BY_EMAIL_NOT_FOUND));
 
         User user = UserMapper.mapToDomainModel(userEntity);
-        return new Result(user,
+        return new LoadUserPort.Result(user,
             userEntity.getLastLogin(),
             userEntity.getIsSuperUser(),
             userEntity.getIsStaff(),
@@ -68,7 +68,7 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateUser(Param param) {
+    public void updateUser(UpdateUserPort.Param param) {
         if (!repository.existsById(param.userId()))
             throw new ResourceNotFoundException(USER_ID_NOT_FOUND);
 
