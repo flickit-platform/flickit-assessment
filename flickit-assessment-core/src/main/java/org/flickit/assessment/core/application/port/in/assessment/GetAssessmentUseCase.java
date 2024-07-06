@@ -48,6 +48,8 @@ public interface GetAssessmentUseCase {
                   LocalDateTime lastModificationTime,
                   User createdBy,
                   MaturityLevel maturityLevel,
-                  boolean isCalculateValid) {
+                  boolean isCalculateValid,
+                  boolean manageable,
+                  boolean viewable) {
     }
 }
