@@ -14,7 +14,7 @@ public interface LoadUserPort {
 
     Result loadUserByEmail(String email);
 
-    record      Result(
+    record Result(
         User user,
         LocalDateTime lastLogin,
         boolean isSuperUser,

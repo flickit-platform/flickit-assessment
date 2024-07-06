@@ -14,7 +14,7 @@ public class GetUserByEmailRestController {
 
     private final GetUserByEmailUseCase useCase;
 
-    @GetMapping("/users/{email}")
+    @GetMapping("/users/email/{email}")
     public ResponseEntity<GetUserByEmailResponseDto> getUserByEmail(@PathVariable("email") String email) {
         var result = useCase.getUserByEmail(toParam(email));
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);

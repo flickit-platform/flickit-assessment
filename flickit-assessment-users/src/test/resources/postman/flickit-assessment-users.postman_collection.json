@@ -1002,13 +1002,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/users/admin@asta.ir",
+					"raw": "{{base_url}}/{{api_path}}/users/email/admin@asta.ir",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
 						"users",
+						"email",
 						"admin@asta.ir"
 					]
 				}
