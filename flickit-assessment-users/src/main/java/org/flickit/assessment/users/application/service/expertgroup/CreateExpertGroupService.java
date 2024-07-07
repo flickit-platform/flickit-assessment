@@ -34,9 +34,6 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     public Result createExpertGroup(Param param) {
         validatePicture(param.getPicture());
 
-        if (param.getPicture() != null && param.getPicture().getSize() > fileProperties.getPictureMaxSize().toBytes())
-            throw new ValidationException(UPLOAD_FILE_PICTURE_SIZE_MAX);
-
         String pictureFilePath = null;
         if (param.getPicture() != null && !param.getPicture().isEmpty())
             pictureFilePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
@@ -56,7 +53,6 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
         if (!fileProperties.getPictureContentTypes().contains(picture.getContentType()))
             throw new ValidationException(UPLOAD_FILE_FORMAT_NOT_VALID);
     }
-
 
     private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param, String pictureFilePath) {
         return new CreateExpertGroupPort.Param(
