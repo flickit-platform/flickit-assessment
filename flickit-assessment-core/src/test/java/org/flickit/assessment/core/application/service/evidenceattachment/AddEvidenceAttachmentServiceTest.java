@@ -71,15 +71,16 @@ class AddEvidenceAttachmentServiceTest {
         var param = new Param(evidenceId, attachment, description, currentUserId);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenThrow(new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.addAttachment(param));
 
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.addAttachment(param));
         assertEquals(EVIDENCE_ID_NOT_FOUND, throwable.getMessage(), "Should return NotFoundException error");
+
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
         verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("Adding an attachment for an 'evidence' should be done by those who have permission.")
+    @DisplayName("Adding an attachment to an 'evidence' should be done by those who have permission.")
     void addEvidenceAttachment_CurrentUserIsNotEvidenceCreator_ValidationException() {
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
@@ -88,15 +89,16 @@ class AddEvidenceAttachmentServiceTest {
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidence.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(any(), any(), any())).thenReturn(false);
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.addAttachment(param));
 
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.addAttachment(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage(), "Should return AccessDenied error");
+
         verify(loadEvidencePort).loadNotDeletedEvidence(evidence.getId());
         verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("Adding an attachment for an 'evidence' with valid parameters should cause saving the attachment")
+    @DisplayName("Adding an attachment to an 'evidence' with valid parameters should cause saving the attachment")
     void addEvidenceAttachment_ValidParameters_savingTheAttachment() {
         var attachmentId = UUID.randomUUID();
         var description = "Some description";
@@ -128,7 +130,7 @@ class AddEvidenceAttachmentServiceTest {
     }
 
     @Test
-    @DisplayName("Adding an attachment for an evidence should be bound to the maximum number of attachments.")
+    @DisplayName("Adding an attachment to an evidence should be bound to the maximum number of attachments.")
     void addEvidenceAttachment_exceedMaxCountAttachments_ValidationError() {
         var evidenceId = UUID.randomUUID();
         var description = "Some description";
@@ -146,13 +148,13 @@ class AddEvidenceAttachmentServiceTest {
 
         var throwable = assertThrows(ValidationException.class, () -> service.addAttachment(param),
             "When the attachments are more than the predefined maximum count, adding an attachment should fail with ValidationException.");
-
         assertEquals(ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX, throwable.getMessageKey());
+
         verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
     @Test
-    @DisplayName("Adding an attachment for an 'evidence' should be bound to the maximum size of attachments.")
+    @DisplayName("Adding an attachment to an 'evidence' should be bound to the maximum size of attachments.")
     void addEvidenceAttachment_exceedMaxMaxSize_ValidationError() {
         var evidenceId = UUID.randomUUID();
         var description = "Some description";
@@ -177,7 +179,7 @@ class AddEvidenceAttachmentServiceTest {
     }
 
     @Test
-    @DisplayName("Adding an attachment for an 'evidence' should be bound to predefined content types.")
+    @DisplayName("Adding an attachment to an 'evidence' should be bound to predefined content types.")
     void addEvidenceAttachment_InvalidContentType_ValidationError() {
         var evidenceId = UUID.randomUUID();
         var description = "Some description";
