@@ -71,11 +71,8 @@ public class MinioAdapter implements
         String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
         String objectName = filePath.substring(filePath.indexOf(SLASH) + 1);
 
-        try {
-            checkFileExistence(bucketName, objectName);
-        } catch (ResourceNotFoundException e) {
-            return null;
-        }
+        if (!checkFileExistence(bucketName, objectName))
+            throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
 
         String downloadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(bucketName)
@@ -88,15 +85,16 @@ public class MinioAdapter implements
     }
 
     @SneakyThrows
-    private void checkFileExistence(String bucketName, String objectName) {
+    private boolean checkFileExistence(String bucketName, String objectName) {
         try {
             minioClient.statObject(StatObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
                 .build());
         } catch (ErrorResponseException e) {
-            throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
+            return false;
         }
+        return true;
     }
 
     @SneakyThrows
@@ -105,7 +103,8 @@ public class MinioAdapter implements
         String bucketName = path.replaceFirst("/.*" ,"");
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
-        checkFileExistence(bucketName, objectName);
+        if (!checkFileExistence(bucketName, objectName))
+            return;
 
         String latestVersionId = minioClient.listObjects(
             ListObjectsArgs.builder()
