@@ -31,4 +31,7 @@ public class FileProperties {
         "image/gif",
         "image/bmp"
     );
+
+    @NotNull
+    private String kitDslContentTypes = "application/zip";
 }
