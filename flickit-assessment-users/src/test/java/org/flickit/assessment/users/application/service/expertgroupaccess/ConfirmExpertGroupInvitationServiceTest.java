@@ -21,8 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -93,7 +92,7 @@ class ConfirmExpertGroupInvitationServiceTest {
             .thenReturn(Optional.of(expertGroupAccess));
 
         var throwable = assertThrows(ValidationException.class, () -> service.confirmInvitation(param));
-        Assertions.assertThat(throwable).hasMessage(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_EXPIRED);
+        assertEquals(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_EXPIRED, throwable.getMessageKey());
 
         verify(loadExpertGroupAccessPort).loadExpertGroupAccess(anyLong(), any(UUID.class));
         verifyNoInteractions(confirmExpertGroupInvitationPort);
@@ -114,7 +113,7 @@ class ConfirmExpertGroupInvitationServiceTest {
             .thenReturn(Optional.of(expertGroupAccess));
 
         var throwable = assertThrows(ValidationException.class, () -> service.confirmInvitation(param));
-        Assertions.assertThat(throwable).hasMessage(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_INVALID);
+        assertEquals(CONFIRM_EXPERT_GROUP_INVITATION_INVITE_TOKEN_INVALID, throwable.getMessageKey());
 
         verify(loadExpertGroupAccessPort).loadExpertGroupAccess(anyLong(), any(UUID.class));
         verifyNoInteractions(confirmExpertGroupInvitationPort);
