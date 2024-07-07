@@ -57,7 +57,7 @@ public class AddEvidenceAttachmentService implements AddEvidenceAttachmentUseCas
 
     private void validateAttachment(MultipartFile attachment, UUID evidenceId) {
         if (countEvidenceAttachmentsPort.countAttachments(evidenceId) >= fileProperties.getAttachmentMaxCount())
-            throw new ValidationException(ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX);
+            throw new ValidationException(ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX, fileProperties.getAttachmentMaxCount());
 
         if (attachment.getSize() > fileProperties.getAttachmentMaxSize().toBytes())
             throw new ValidationException(UPLOAD_FILE_SIZE_MAX);
