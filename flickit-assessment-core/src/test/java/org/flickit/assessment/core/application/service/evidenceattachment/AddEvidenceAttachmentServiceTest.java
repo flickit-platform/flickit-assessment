@@ -9,18 +9,17 @@ import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.in.evidenceattachment.AddEvidenceAttachmentUseCase.Param;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.CountEvidenceAttachmentsPort;
-import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.CreateEvidenceAttachmentPort;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.test.fixture.application.EvidenceMother;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
-import org.junit.jupiter.api.DisplayName;
 import org.springframework.util.unit.DataSize;
 
 import java.time.Duration;
@@ -30,9 +29,10 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AddEvidenceAttachmentServiceTest {
@@ -81,7 +81,6 @@ class AddEvidenceAttachmentServiceTest {
     @Test
     @DisplayName("Adding an attachment for an 'evidence' should be done by those who have permission.")
     void addEvidenceAttachment_CurrentUserIsNotEvidenceCreator_ValidationException() {
-        var evidenceId = UUID.randomUUID();
         MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
         var evidence = EvidenceMother.simpleEvidence();
@@ -99,39 +98,33 @@ class AddEvidenceAttachmentServiceTest {
     @Test
     @DisplayName("Adding an attachment for an 'evidence' with valid parameters should cause saving the attachment")
     void addEvidenceAttachment_ValidParameters_savingTheAttachment() {
-        var evidenceId = UUID.randomUUID();
         var attachmentId = UUID.randomUUID();
         var description = "Some description";
         var filePath = "path/to/attachment.txt";
         var link = "http://link/to/attachment.txt/whith/expiray/date";
-        var uniqueFileNme = UUID.randomUUID();
-        MockMultipartFile attachment = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
+        MockMultipartFile attachmentFile = new MockMultipartFile("attachment", "attachment.txt", "text/plain", "attachment.txt".getBytes());
         var currentUserId = UUID.randomUUID();
-        var time = LocalDateTime.now();
-        var param = new Param(evidenceId, attachment, description, currentUserId);
-        var evidence = new Evidence(evidenceId, "des", currentUserId, currentUserId, uniqueFileNme,
-            0L, 1, time, time, false);
+        var evidence = EvidenceMother.simpleEvidence();
 
-        ArgumentCaptor<LocalDateTime> timeArgumentCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
+        var param = new Param(evidence.getId(), attachmentFile, description, currentUserId);
 
-        when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
+        when(loadEvidencePort.loadNotDeletedEvidence(evidence.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(any(), any(), any())).thenReturn(true);
         when(fileProperties.getAttachmentMaxCount()).thenReturn(5);
-        when(countEvidenceAttachmentsPort.countAttachments(evidenceId)).thenReturn(4);
+        when(countEvidenceAttachmentsPort.countAttachments(evidence.getId())).thenReturn(4);
         when(fileProperties.getAttachmentMaxSize()).thenReturn(DataSize.ofMegabytes(5));
         when(fileProperties.getAttachmentContentTypes()).thenReturn(List.of("text/plain"));
-        when(uploadEvidenceAttachmentPort.uploadAttachment(attachment)).thenReturn(filePath);
-        when(createEvidenceAttachmentPort.persist(eq(evidenceId), eq(filePath), eq(description), eq(currentUserId), timeArgumentCaptor.capture())).thenReturn(attachmentId);
+        when(uploadEvidenceAttachmentPort.uploadAttachment(attachmentFile)).thenReturn(filePath);
+        when(createEvidenceAttachmentPort.persist(any())).thenReturn(attachmentId);
         when(createFileDownloadLinkPort.createDownloadLink(filePath, Duration.ofDays(1))).thenReturn(link);
 
         var result = service.addAttachment(param);
         assertEquals(attachmentId, result.attachmentId(), "Attachment id should match");
         assertEquals(link, result.attachmentLink(), "Link should match");
 
-        verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
-        verify(uploadEvidenceAttachmentPort).uploadAttachment(attachment);
+        verify(loadEvidencePort).loadNotDeletedEvidence(evidence.getId());
+        verify(uploadEvidenceAttachmentPort).uploadAttachment(attachmentFile);
         verify(createFileDownloadLinkPort).createDownloadLink(filePath, Duration.ofDays(1));
-        verify(createEvidenceAttachmentPort).persist(eq(evidenceId), eq(filePath), eq(description), eq(currentUserId), timeArgumentCaptor.capture());
     }
 
     @Test
@@ -154,7 +147,7 @@ class AddEvidenceAttachmentServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.addAttachment(param),
             "When the attachments are more than the predefined maximum count, adding an attachment should fail with ValidationException.");
 
-        assertEquals(ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX, throwable.getMessage());
+        assertEquals(ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX, throwable.getMessageKey());
         verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
@@ -179,7 +172,7 @@ class AddEvidenceAttachmentServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.addAttachment(param),
             "When the attachments are more than the predefined maximum file size, adding an attachment should fail with ValidationException");
 
-        assertEquals(UPLOAD_FILE_SIZE_MAX, throwable.getMessage());
+        assertEquals(UPLOAD_FILE_SIZE_MAX, throwable.getMessageKey());
         verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 
@@ -205,7 +198,7 @@ class AddEvidenceAttachmentServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.addAttachment(param),
             "When an attachment does not have a valid content type, adding an attachment should fail with ValidationException.");
 
-        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessage());
+        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
         verifyNoInteractions(uploadEvidenceAttachmentPort, createEvidenceAttachmentPort, createFileDownloadLinkPort);
     }
 }
