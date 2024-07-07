@@ -77,6 +77,7 @@ public enum AssessmentUserRole {
             VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
+            ADD_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_QUESTIONNAIRE_QUESTIONS)),
         ASSESSOR_PERMISSIONS(Set.of(
@@ -99,6 +100,7 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
             VIEW_EVIDENCE_LIST,
+            ADD_EVIDENCE_ATTACHMENT,
             UPDATE_EVIDENCE,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_QUESTIONNAIRE_QUESTIONS,
