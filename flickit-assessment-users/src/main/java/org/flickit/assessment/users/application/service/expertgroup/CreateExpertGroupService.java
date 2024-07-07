@@ -32,18 +32,12 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     @Override
     public Result createExpertGroup(Param param) {
-        String pictureFilePath = null;
-        if (param.getPicture() != null) {
-            log.warn("MultipartFile: {}", param.getPicture());
-            log.warn("Supported Content Types: {}", fileProperties.getPictureContentTypes());
-            log.warn("Content Type: {}", param.getPicture().getContentType());
-        }
-
         validatePicture(param.getPicture());
 
         if (param.getPicture() != null && param.getPicture().getSize() > fileProperties.getPictureMaxSize().toBytes())
             throw new ValidationException(UPLOAD_FILE_PICTURE_SIZE_MAX);
 
+        String pictureFilePath = null;
         if (param.getPicture() != null && !param.getPicture().isEmpty())
             pictureFilePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
 
