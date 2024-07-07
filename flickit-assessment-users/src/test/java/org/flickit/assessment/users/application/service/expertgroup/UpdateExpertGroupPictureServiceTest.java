@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -28,12 +27,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -210,7 +207,7 @@ class UpdateExpertGroupPictureServiceTest {
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         var throwable = assertThrows(ValidationException.class, () -> service.update(param));
-        assertThat(throwable).hasMessage(MessageBundle.message(UPLOAD_FILE_FORMAT_NOT_VALID));
+        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
     }
 }
 

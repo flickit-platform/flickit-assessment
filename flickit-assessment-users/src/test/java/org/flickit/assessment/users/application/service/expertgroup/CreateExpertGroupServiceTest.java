@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase.Param;
@@ -147,7 +146,7 @@ class CreateExpertGroupServiceTest {
             UUID.randomUUID());
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(1));
         var throwable = assertThrows(ValidationException.class, () -> service.createExpertGroup(param));
-        assertEquals(MessageBundle.message(UPLOAD_FILE_PICTURE_SIZE_MAX), throwable.getMessage());
+        assertEquals(UPLOAD_FILE_PICTURE_SIZE_MAX, throwable.getMessageKey());
 
     }
 
@@ -166,6 +165,6 @@ class CreateExpertGroupServiceTest {
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         var throwable = assertThrows(ValidationException.class, () -> service.createExpertGroup(param));
-        assertEquals(MessageBundle.message(UPLOAD_FILE_FORMAT_NOT_VALID), throwable.getMessage());
+        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
     }
 }
