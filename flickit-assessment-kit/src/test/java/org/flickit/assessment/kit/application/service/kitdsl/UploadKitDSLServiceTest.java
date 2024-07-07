@@ -128,7 +128,7 @@ public class UploadKitDSLServiceTest {
         when(fileProperties.getDslMaxSize()).thenReturn(DataSize.ofBytes(1));
 
         var throwable = assertThrows(ValidationException.class, () -> service.upload(param));
-        assertThat(throwable).hasMessage(UPLOAD_FILE_DSL_SIZE_MAX);
+        assertEquals(UPLOAD_FILE_DSL_SIZE_MAX, throwable.getMessageKey());
     }
 
     private static MultipartFile convertZipFileToMultipartFile(String dslFilePath) throws IOException {

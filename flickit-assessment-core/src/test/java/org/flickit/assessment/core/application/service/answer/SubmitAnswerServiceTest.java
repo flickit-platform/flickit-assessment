@@ -287,7 +287,7 @@ class SubmitAnswerServiceTest {
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(false);
 
         ValidationException exception = assertThrows(ValidationException.class, () -> service.submitAnswer(param));
-        assertEquals(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE, exception.getMessage());
+        assertEquals(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE, exception.getMessageKey());
 
         verifyNoInteractions(createAnswerPort,
             createAnswerPort,

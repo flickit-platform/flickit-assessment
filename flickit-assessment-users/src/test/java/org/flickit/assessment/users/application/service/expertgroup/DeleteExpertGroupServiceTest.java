@@ -19,8 +19,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_KITS_EXIST;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,19 +90,19 @@ class DeleteExpertGroupServiceTest {
         when(checkExpertGroupExistsPort.existsById(expertGroupId)).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteExpertGroup(param));
-        Assertions.assertThat(throwable).hasMessage(DELETE_EXPERT_GROUP_KITS_EXIST);
+        assertEquals(DELETE_EXPERT_GROUP_KITS_EXIST, throwable.getMessageKey());
 
         result = new CountExpertGroupKitsPort.Result(1, 1);
         when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
 
         throwable = assertThrows(ValidationException.class, () -> service.deleteExpertGroup(param));
-        Assertions.assertThat(throwable).hasMessage(DELETE_EXPERT_GROUP_KITS_EXIST);
+        assertEquals(DELETE_EXPERT_GROUP_KITS_EXIST, throwable.getMessageKey());
 
         result = new CountExpertGroupKitsPort.Result(0, 1);
         when(countExpertGroupKitsPort.countKits(anyLong())).thenReturn(result);
 
         throwable = assertThrows(ValidationException.class, () -> service.deleteExpertGroup(param));
-        Assertions.assertThat(throwable).hasMessage(DELETE_EXPERT_GROUP_KITS_EXIST);
+        assertEquals(DELETE_EXPERT_GROUP_KITS_EXIST, throwable.getMessageKey());
 
         verify(loadExpertGroupOwnerPort, times(3)).loadOwnerId(expertGroupId);
         verify(countExpertGroupKitsPort, times(3)).countKits(expertGroupId);

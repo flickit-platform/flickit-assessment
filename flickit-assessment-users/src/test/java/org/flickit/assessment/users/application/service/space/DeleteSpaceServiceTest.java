@@ -20,8 +20,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_ASSESSMENT_EXIST;
 import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -78,7 +77,7 @@ class DeleteSpaceServiceTest {
         when(countSpaceAssessmentPort.countAssessments(spaceId)).thenReturn(1);
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteSpace(param));
-        Assertions.assertThat(throwable).hasMessage(DELETE_SPACE_ASSESSMENT_EXIST);
+        assertEquals(DELETE_SPACE_ASSESSMENT_EXIST, throwable.getMessageKey());
     }
 
     @Test
