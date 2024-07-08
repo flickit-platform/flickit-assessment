@@ -12,15 +12,15 @@ public interface EvidenceAttachmentJpaRepository extends JpaRepository<EvidenceA
     int countByEvidenceId(UUID evidenceId);
 
     @Query("""
-        SELECT e.id as id,
-            e.filePath as filePath,
-            e.description as description,
-            u.id as userId,
-            u.displayName as displayName,
-            e.creationTime as creationTime
-        FROM EvidenceAttachmentJpaEntity e
-        join UserJpaEntity u on e.createdBy = u.id
-        WHERE e.evidenceId = :evidenceId
+            SELECT e.id as id,
+                e.filePath as filePath,
+                e.description as description,
+                u.id as userId,
+                u.displayName as displayName,
+                e.creationTime as creationTime
+            FROM EvidenceAttachmentJpaEntity e
+            join UserJpaEntity u ON e.createdBy = u.id
+            WHERE e.evidenceId = :evidenceId
         """)
     List<EvidenceAttachmentWithUserView> findByEvidenceId(@Param("evidenceId") UUID evidenceId);
 }
