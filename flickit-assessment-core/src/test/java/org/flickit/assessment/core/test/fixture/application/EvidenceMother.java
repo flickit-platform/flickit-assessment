@@ -22,7 +22,7 @@ public class EvidenceMother {
         );
     }
 
-    public static Evidence simpleEvidenceWithId (UUID id) {
+    public static Evidence simpleEvidenceWithId(UUID id) {
         return new Evidence(
             id,
             "description",
