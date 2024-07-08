@@ -80,13 +80,11 @@ public enum AssessmentUserRole {
             UPDATE_EVIDENCE,
             ADD_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-            VIEW_QUESTIONNAIRE_QUESTIONS,
-            VIEW_EVIDENCE_ATTACHMENT)),
+            VIEW_QUESTIONNAIRE_QUESTIONS)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
-            CREATE_ADVICE,
-            VIEW_EVIDENCE_ATTACHMENT)),
+            CREATE_ADVICE)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -94,8 +92,7 @@ public enum AssessmentUserRole {
             GRANT_USER_ASSESSMENT_ROLE,
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
-            GET_ASSESSMENT_USERS,
-            VIEW_EVIDENCE_ATTACHMENT)),
+            GET_ASSESSMENT_USERS)),
         ASSOCIATE_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
