@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.core.application.domain.User;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,5 +33,5 @@ public interface GetEvidenceAttachmentsUseCase {
         }
     }
 
-    record Attachment(UUID id, String link, String description, String createdBy) {}
+    record Attachment(UUID id, String link, String description, User createdBy) {}
 }
