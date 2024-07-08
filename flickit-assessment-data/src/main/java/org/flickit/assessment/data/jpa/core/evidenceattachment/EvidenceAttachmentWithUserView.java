@@ -7,8 +7,6 @@ public interface EvidenceAttachmentWithUserView {
 
     UUID getId();
 
-    UUID getEvidenceId();
-
     String getFilePath();
 
     String getDescription();
