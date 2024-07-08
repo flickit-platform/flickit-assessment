@@ -47,7 +47,7 @@ public class GetEvidenceAttachmentsService implements GetEvidenceAttachmentsUseC
     private Attachment mapToEvidenceAttachmentsItem(LoadEvidenceAttachmentsPort.Result evidenceAttachment) {
         var user = loadUserPort.loadById(evidenceAttachment.createdBy()).orElseThrow(() -> new ResourceNotFoundException(COMMON_CURRENT_USER_NOT_FOUND));
         return new Attachment(evidenceAttachment.id(),
-            createFileDownloadLinkPort.createDownloadLink(evidenceAttachment.file(), EXPIRY_DURATION),
+            createFileDownloadLinkPort.createDownloadLink(evidenceAttachment.filePath(), EXPIRY_DURATION),
             evidenceAttachment.description(), user.getDisplayName());
     }
 }
