@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.24-01" author="Mahdi Rezazadeh">
+        <createTable tableName="fac_answer_history">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_answer_history"/>
+            </column>
+            <column name="answer_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="questionnaire_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="answer_option_id" type="bigint"/>
+            <column name="confidence_level_id" type="tinyint"/>
+            <column name="is_not_applicable" type="boolean"/>
+            <column name="modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_at" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.24-02" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_answer_history"
+                                 baseColumnNames="assessment_result_id"
+                                 constraintName="fk_facanswerhistory_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.24-03" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_answer_history"
+                                 baseColumnNames="answer_id"
+                                 constraintName="fk_facanswerhistory_answer"
+                                 referencedTableName="fac_answer"
+                                 referencedColumnNames="id"
+                                 onDelete="NO ACTION"/>
+    </changeSet>
+</databaseChangeLog>
