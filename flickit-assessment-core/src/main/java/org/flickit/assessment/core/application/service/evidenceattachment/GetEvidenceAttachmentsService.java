@@ -33,6 +33,7 @@ public class GetEvidenceAttachmentsService implements GetEvidenceAttachmentsUseC
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId());
         if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_ATTACHMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         var portResult = loadEvidenceAttachmentsPort.loadEvidenceAttachments(param.getEvidenceId());
         return portResult
             .stream()
@@ -40,10 +41,11 @@ public class GetEvidenceAttachmentsService implements GetEvidenceAttachmentsUseC
             .toList();
     }
 
-    private Attachment mapToEvidenceAttachmentsItem(LoadEvidenceAttachmentsPort.Result evidenceAttachment) {
-        return new Attachment(evidenceAttachment.id(),
-            createFileDownloadLinkPort.createDownloadLink(evidenceAttachment.filePath(), EXPIRY_DURATION),
-            evidenceAttachment.description(),
-            evidenceAttachment.createdBy());
+    private Attachment mapToEvidenceAttachmentsItem(LoadEvidenceAttachmentsPort.Result attachment) {
+        return new Attachment(
+            attachment.id(),
+            createFileDownloadLinkPort.createDownloadLink(attachment.filePath(), EXPIRY_DURATION),
+            attachment.description(),
+            attachment.createdBy());
     }
 }
