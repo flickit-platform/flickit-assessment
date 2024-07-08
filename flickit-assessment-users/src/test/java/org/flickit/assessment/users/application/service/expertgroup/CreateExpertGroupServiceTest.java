@@ -16,7 +16,6 @@ import org.springframework.util.unit.DataSize;
 import java.util.Random;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -90,6 +89,6 @@ class CreateExpertGroupServiceTest {
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(1));
 
         var throwable = assertThrows(ValidationException.class, () -> service.createExpertGroup(param));
-        assertThat(throwable).hasMessage(UPLOAD_FILE_PICTURE_SIZE_MAX);
+        assertEquals(UPLOAD_FILE_PICTURE_SIZE_MAX, throwable.getMessageKey());
     }
 }
