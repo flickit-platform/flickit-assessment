@@ -7,7 +7,6 @@ import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.compress.utils.FileNameUtils;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -20,7 +19,6 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.PIC_FILE_NAME;
 
 @Component("usersMinioAdapter")
@@ -72,7 +70,7 @@ public class MinioAdapter implements
         String objectName = filePath.substring(filePath.indexOf(SLASH) + 1);
 
         if (!checkFileExistence(bucketName, objectName))
-            throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
+            return null;
 
         String downloadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(bucketName)
