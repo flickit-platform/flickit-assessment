@@ -41,12 +41,11 @@ public class EvidenceAttachmentPersistenceJpaAdapter implements
 
     @Override
     public List<Result> loadEvidenceAttachments(UUID evidenceId) {
-        if (!evidenceRepository.existsById(evidenceId))
+        if (!evidenceRepository.existsByIdAndDeletedFalse(evidenceId))
             throw new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND);
 
-        var jpaEntityList = repository.findByEvidenceId(evidenceId);
-        return jpaEntityList
-            .stream()
-            .map(EvidenceAttachmentMapper::mapToPortResult).toList();
+        return repository.findByEvidenceId(evidenceId).stream()
+            .map(EvidenceAttachmentMapper::mapToLoadPortResult)
+            .toList();
     }
 }

@@ -11,7 +11,6 @@ import java.util.UUID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-
 public interface GetEvidenceAttachmentsUseCase {
 
     List<Attachment> getEvidenceAttachments(Param param);

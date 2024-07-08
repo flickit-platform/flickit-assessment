@@ -3,7 +3,6 @@ package org.flickit.assessment.core.adapter.out.persistence.evidenceattachment;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.EvidenceAttachment;
-import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentsPort.Result;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentsPort;
 import org.flickit.assessment.data.jpa.core.evidenceattachment.EvidenceAttachmentJpaEntity;
 
@@ -20,10 +19,11 @@ public class EvidenceAttachmentMapper {
             attachment.getCreationTime());
     }
 
-    public static LoadEvidenceAttachmentsPort.Result mapToPortResult(EvidenceAttachmentJpaEntity evidenceAttachment) {
-        return new LoadEvidenceAttachmentsPort.Result(evidenceAttachment.getId(),
-            evidenceAttachment.getFilePath(),
-            evidenceAttachment.getDescription(),
-            evidenceAttachment.getCreatedBy());
+    public static LoadEvidenceAttachmentsPort.Result mapToLoadPortResult(EvidenceAttachmentJpaEntity entity) {
+        return new LoadEvidenceAttachmentsPort.Result(
+            entity.getId(),
+            entity.getFilePath(),
+            entity.getDescription(),
+            entity.getCreatedBy());
     }
 }
