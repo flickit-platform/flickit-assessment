@@ -1,8 +1,11 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
+import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
+import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase;
 import org.flickit.assessment.users.application.port.in.expertgroup.UpdateExpertGroupPictureUseCase.Param;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupPort;
@@ -17,15 +20,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.unit.DataSize;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,6 +56,9 @@ class UpdateExpertGroupPictureServiceTest {
 
     @Mock
     CreateFileDownloadLinkPort createFileDownloadLinkPort;
+
+    @Mock
+    FileProperties fileProperties;
 
     @Test
     @DisplayName("An existing expert group should undergo updating.")
@@ -113,6 +121,8 @@ class UpdateExpertGroupPictureServiceTest {
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         assertDoesNotThrow(() -> service.update(param));
 
@@ -141,6 +151,8 @@ class UpdateExpertGroupPictureServiceTest {
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         assertDoesNotThrow(() -> service.update(param));
 
@@ -170,6 +182,8 @@ class UpdateExpertGroupPictureServiceTest {
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(newPicturePath);
         doNothing().when(updateExpertGroupPicturePort).updatePicture(expertGroupId, newPicturePath);
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn(downloadLink);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         assertDoesNotThrow(() -> service.update(param));
 
@@ -178,6 +192,22 @@ class UpdateExpertGroupPictureServiceTest {
         verifyNoInteractions(deleteFilePort);
         verify(uploadExpertGroupPicturePort).uploadPicture(picture);
         verify(createFileDownloadLinkPort).createDownloadLink(any(), any());
+    }
+
+    @Test
+    @DisplayName("The file content should be based on the predefined circumstance")
+    void testUpdateExpertGroupPicture_invalidPictureFileContent_throwException() {
+        var expertGroupId = 0L;
+        var currentUserId = UUID.randomUUID();
+        MockMultipartFile picture = new MockMultipartFile("pic", "pic.png", "application/zip", "some file".getBytes());
+        UpdateExpertGroupPictureUseCase.Param param = new UpdateExpertGroupPictureUseCase.Param(0L, picture, currentUserId);
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.update(param));
+        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
     }
 }
 
