@@ -21,6 +21,7 @@ public interface EvidenceAttachmentJpaRepository extends JpaRepository<EvidenceA
             FROM EvidenceAttachmentJpaEntity e
             join UserJpaEntity u ON e.createdBy = u.id
             WHERE e.evidenceId = :evidenceId
+            ORDER BY e.creationTime asc
         """)
     List<EvidenceAttachmentWithUserView> findByEvidenceId(@Param("evidenceId") UUID evidenceId);
 }
