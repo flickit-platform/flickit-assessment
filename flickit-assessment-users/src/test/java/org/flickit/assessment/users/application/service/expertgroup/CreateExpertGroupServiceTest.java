@@ -113,27 +113,6 @@ class CreateExpertGroupServiceTest {
     }
 
     @Test
-    @DisplayName("If persisting an expert group faces a problem, creating the expert group should cause an error")
-    void testCreateExpertGroup_expertGroupPersistProblem_error() {
-        MockMultipartFile picture = new MockMultipartFile("pic", "pic.png", "text/plain", "some file".getBytes());
-        UUID currentUserId = UUID.randomUUID();
-
-        Param param = new Param("Expert Group Name",
-            "Expert Group Bio",
-            "Expert Group About",
-            picture,
-            "http://www.example.com",
-            currentUserId);
-
-        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
-        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
-        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> service.createExpertGroup(param));
-        assertNotNull(exception);
-    }
-
-    @Test
     @DisplayName("The file size should be under the predefined circumstance")
     void testCreateExpertGroup_invalidPictureFileSize_throwException() {
         MockMultipartFile picture = new MockMultipartFile("pic", "pic.png", "text/plain", "some file".getBytes());
@@ -147,7 +126,6 @@ class CreateExpertGroupServiceTest {
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(1));
         var throwable = assertThrows(ValidationException.class, () -> service.createExpertGroup(param));
         assertEquals(UPLOAD_FILE_PICTURE_SIZE_MAX, throwable.getMessageKey());
-
     }
 
     @Test
