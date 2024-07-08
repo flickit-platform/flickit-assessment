@@ -14,7 +14,9 @@ public record GetAssessmentResponseDto(
     LocalDateTime lastModificationTime,
     UserResponseDto createdBy,
     MaturityLevel maturityLevel,
-    boolean isCalculateValid) {
+    boolean isCalculateValid,
+    boolean manageable,
+    boolean viewable) {
 
     record SpaceResponseDto(long id, String title) {
     }

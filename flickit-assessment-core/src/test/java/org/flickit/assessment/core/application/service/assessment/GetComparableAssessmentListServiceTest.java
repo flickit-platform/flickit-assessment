@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
-import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase;
+import org.flickit.assessment.core.application.port.in.assessment.GetComparableAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
@@ -24,16 +24,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetAssessmentListServiceTest {
+class GetComparableAssessmentListServiceTest {
 
     @InjectMocks
-    private GetAssessmentListService service;
+    private GetComparableAssessmentListService service;
 
     @Mock
     private LoadAssessmentListPort loadAssessmentPort;
 
     @Test
-    void testGetAssessmentList_ResultsFoundWhenKitIdIsNull_ThenAllUserAssessmentsReturned() {
+    void testGetComparableAssessmentList_ResultsFoundWhenKitIdIsNull_ThenAllUserAssessmentsReturned() {
         UUID currentUserId = UUID.randomUUID();
         int page = 0;
         int size = 20;
@@ -50,17 +50,17 @@ class GetAssessmentListServiceTest {
             2
         );
 
-        when(loadAssessmentPort.loadUserAssessments(null, currentUserId, page, size))
+        when(loadAssessmentPort.loadComparableAssessments(null, currentUserId, page, size))
             .thenReturn(paginatedRes);
 
-        var param = new GetAssessmentListUseCase.Param(null, currentUserId, size, page);
-        var assessments = service.getAssessmentList(param);
+        var param = new GetComparableAssessmentListUseCase.Param(null, currentUserId, size, page);
+        var assessments = service.getComparableAssessmentList(param);
 
         ArgumentCaptor<Long> kitIdArgument = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<UUID> currentUserIdArgument = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<Integer> sizeArgument = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<Integer> pageArgument = ArgumentCaptor.forClass(Integer.class);
-        verify(loadAssessmentPort).loadUserAssessments(
+        verify(loadAssessmentPort).loadComparableAssessments(
             kitIdArgument.capture(),
             currentUserIdArgument.capture(),
             pageArgument.capture(),
@@ -78,11 +78,11 @@ class GetAssessmentListServiceTest {
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
         assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
 
-        verify(loadAssessmentPort, times(1)).loadUserAssessments(any(), any(), anyInt(), anyInt());
+        verify(loadAssessmentPort, times(1)).loadComparableAssessments(any(), any(), anyInt(), anyInt());
     }
 
     @Test
-    void testGetAssessmentList_ResultsFoundWithKitId_ItemsReturned() {
+    void testGetComparableAssessmentList_ResultsFoundWithKitId_ItemsReturned() {
         Long kitId = AssessmentKitMother.kit().getId();
         UUID currentUserId = UUID.randomUUID();
         int page = 0;
@@ -100,17 +100,17 @@ class GetAssessmentListServiceTest {
             2
         );
 
-        when(loadAssessmentPort.loadUserAssessments(kitId, currentUserId, page, size))
+        when(loadAssessmentPort.loadComparableAssessments(kitId, currentUserId, page, size))
             .thenReturn(paginatedRes);
 
-        var param = new GetAssessmentListUseCase.Param(kitId, currentUserId, size, page);
-        var assessments = service.getAssessmentList(param);
+        var param = new GetComparableAssessmentListUseCase.Param(kitId, currentUserId, size, page);
+        var assessments = service.getComparableAssessmentList(param);
 
         ArgumentCaptor<Long> kitIdArgument = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<UUID> currentUserIdArgument = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<Integer> sizeArgument = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<Integer> pageArgument = ArgumentCaptor.forClass(Integer.class);
-        verify(loadAssessmentPort).loadUserAssessments(
+        verify(loadAssessmentPort).loadComparableAssessments(
             kitIdArgument.capture(),
             currentUserIdArgument.capture(),
             pageArgument.capture(),
@@ -128,11 +128,11 @@ class GetAssessmentListServiceTest {
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
         assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
 
-        verify(loadAssessmentPort, times(1)).loadUserAssessments(any(), any(), anyInt(), anyInt());
+        verify(loadAssessmentPort, times(1)).loadComparableAssessments(any(), any(), anyInt(), anyInt());
     }
 
     @Test
-    void testGetAssessmentList_NoResultsFound_NoItemReturned() {
+    void testGetComparableAssessmentList_NoResultsFound_NoItemReturned() {
         long kitId = 123L;
         UUID currentUserId = UUID.randomUUID();
         int page = 0;
@@ -146,10 +146,10 @@ class GetAssessmentListServiceTest {
             "DESC",
             2);
 
-        when(loadAssessmentPort.loadUserAssessments(kitId, currentUserId, page, size)).thenReturn(paginatedResponse);
-        var param = new GetAssessmentListUseCase.Param(kitId, currentUserId, size, page);
+        when(loadAssessmentPort.loadComparableAssessments(kitId, currentUserId, page, size)).thenReturn(paginatedResponse);
+        var param = new GetComparableAssessmentListUseCase.Param(kitId, currentUserId, size, page);
 
-        PaginatedResponse<AssessmentListItem> result = service.getAssessmentList(param);
+        PaginatedResponse<GetComparableAssessmentListUseCase.ComparableAssessmentListItem> result = service.getComparableAssessmentList(param);
         assertEquals(0, result.getItems().size());
         assertEquals(page, result.getPage());
         assertEquals(size, result.getSize());

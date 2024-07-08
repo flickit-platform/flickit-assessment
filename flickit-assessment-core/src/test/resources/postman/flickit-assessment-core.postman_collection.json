@@ -135,18 +135,63 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments?spaceId=8&page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/space-assessments?spaceId=8&page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessments"
+						"space-assessments"
 					],
 					"query": [
 						{
 							"key": "spaceId",
 							"value": "8"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comparable Assessment List",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/comparable-assessments?kitId=393&page=0&size=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"comparable-assessments"
+					],
+					"query": [
+						{
+							"key": "kitId",
+							"value": "393"
 						},
 						{
 							"key": "page",
@@ -172,13 +217,13 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessment/3bfa613e-4e50-46a4-96aa-a061f104224e",
+					"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessment",
+						"assessments",
 						"3bfa613e-4e50-46a4-96aa-a061f104224e"
 					]
 				}
@@ -911,6 +956,46 @@
 						"07875b35-51bb-47b3-acc8-c2cc3357dede",
 						"assessment-user-roles",
 						"ac652dd8-8366-4985-915b-fbe76ec95786"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Evidence Attachment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "attachment",
+							"type": "file",
+							"src": "/home/maziyar/Downloads/pic.png"
+						},
+						{
+							"key": "description",
+							"value": "Some Description",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/c4637764-40d7-4068-8bd0-a4d254c7a077/attachments",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"c4637764-40d7-4068-8bd0-a4d254c7a077",
+						"attachments"
 					]
 				}
 			},

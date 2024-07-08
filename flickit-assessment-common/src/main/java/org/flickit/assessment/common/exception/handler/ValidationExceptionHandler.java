@@ -1,6 +1,5 @@
 package org.flickit.assessment.common.exception.handler;
 
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.springframework.core.Ordered;
@@ -21,6 +20,6 @@ public class ValidationExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ErrorResponseDto handle(ValidationException ex) {
-        return new ErrorResponseDto(INVALID_INPUT, MessageBundle.message(ex.getMessage()));
+        return new ErrorResponseDto(INVALID_INPUT, ex.getMessage());
     }
 }

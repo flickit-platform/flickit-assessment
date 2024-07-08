@@ -60,4 +60,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                                                                                        @Param(value = "attributeId") Long attributeId,
                                                                                        @Param(value = "type") Integer type,
                                                                                        Pageable pageable);
+
+    boolean existsByIdAndDeletedFalse(UUID evidenceId);
 }
