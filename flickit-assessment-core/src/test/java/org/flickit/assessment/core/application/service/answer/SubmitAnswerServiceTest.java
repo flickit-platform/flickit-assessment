@@ -96,7 +96,7 @@ class SubmitAnswerServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
-        when(createAnswerHistoryPort.persist(any(CreateAnswerHistoryPort.Param.class))).thenReturn(savedAnswerHistoryId);
+        when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
         service.submitAnswer(param);
 
@@ -109,19 +109,18 @@ class SubmitAnswerServiceTest {
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
-        ArgumentCaptor<CreateAnswerHistoryPort.Param> saveAnswerHistoryParam = ArgumentCaptor.forClass(CreateAnswerHistoryPort.Param.class);
+        ArgumentCaptor<AnswerHistory> saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
-        assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().answerId());
-        assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().assessmentResultId());
-        assertEquals(QUESTIONNAIRE_ID, saveAnswerHistoryParam.getValue().questionnaireId());
-        assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().questionId());
-        assertEquals(answerOptionId, saveAnswerHistoryParam.getValue().answerOptionId());
-        assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().confidenceLevelId());
-        assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().isNotApplicable());
-        assertEquals(HistoryType.PERSIST.ordinal(), saveAnswerHistoryParam.getValue().historyTypeId());
+        assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().getAnswer().getId());
+        assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
+        assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
+        assertEquals(answerOptionId, saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
+        assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
+        assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
+        assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verify(createAnswerHistoryPort, times(1)).persist(any(CreateAnswerHistoryPort.Param.class));
+        verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.FALSE);
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort, updateAnswerPort);
     }
@@ -157,7 +156,7 @@ class SubmitAnswerServiceTest {
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
-        when(createAnswerHistoryPort.persist(any(CreateAnswerHistoryPort.Param.class))).thenReturn(savedAnswerHistoryId);
+        when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
         service.submitAnswer(param);
 
@@ -170,19 +169,18 @@ class SubmitAnswerServiceTest {
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
-        ArgumentCaptor<CreateAnswerHistoryPort.Param> saveAnswerHistoryParam = ArgumentCaptor.forClass(CreateAnswerHistoryPort.Param.class);
+        ArgumentCaptor<AnswerHistory> saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
-        assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().answerId());
-        assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().assessmentResultId());
-        assertEquals(QUESTIONNAIRE_ID, saveAnswerHistoryParam.getValue().questionnaireId());
-        assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().questionId());
-        assertNull(saveAnswerHistoryParam.getValue().answerOptionId());
-        assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().confidenceLevelId());
-        assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().isNotApplicable());
-        assertEquals(HistoryType.PERSIST.ordinal(), saveAnswerHistoryParam.getValue().historyTypeId());
+        assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().getAnswer().getId());
+        assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
+        assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
+        assertNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
+        assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
+        assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
+        assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verify(createAnswerHistoryPort, times(1)).persist(any(CreateAnswerHistoryPort.Param.class));
+        verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class), eq(Boolean.FALSE), eq(Boolean.FALSE));
         verifyNoInteractions(updateAnswerPort);
     }
@@ -201,7 +199,7 @@ class SubmitAnswerServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
-        when(createAnswerHistoryPort.persist(any(CreateAnswerHistoryPort.Param.class))).thenReturn(savedAnswerHistoryId);
+        when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
         service.submitAnswer(param);
 
@@ -212,20 +210,19 @@ class SubmitAnswerServiceTest {
         assertEquals(ConfidenceLevel.getDefault().getId(), updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
 
-        ArgumentCaptor<CreateAnswerHistoryPort.Param> saveAnswerHistoryParam = ArgumentCaptor.forClass(CreateAnswerHistoryPort.Param.class);
+        ArgumentCaptor<AnswerHistory> saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
-        assertEquals(existAnswer.getId(), saveAnswerHistoryParam.getValue().answerId());
-        assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().assessmentResultId());
-        assertEquals(QUESTIONNAIRE_ID, saveAnswerHistoryParam.getValue().questionnaireId());
-        assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().questionId());
-        assertEquals(newAnswerOptionId, saveAnswerHistoryParam.getValue().answerOptionId());
-        assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().confidenceLevelId());
-        assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().isNotApplicable());
-        assertEquals(HistoryType.UPDATE.ordinal(), saveAnswerHistoryParam.getValue().historyTypeId());
+        assertEquals(existAnswer.getId(), saveAnswerHistoryParam.getValue().getAnswer().getId());
+        assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
+        assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
+        assertEquals(newAnswerOptionId, saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
+        assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
+        assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
+        assertEquals(HistoryType.UPDATE, saveAnswerHistoryParam.getValue().getHistoryType());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(createAnswerHistoryPort, times(1)).persist(any(CreateAnswerHistoryPort.Param.class));
+        verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.TRUE);
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort);
     }
@@ -245,7 +242,7 @@ class SubmitAnswerServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
-        when(createAnswerHistoryPort.persist(any(CreateAnswerHistoryPort.Param.class))).thenReturn(savedAnswerHistoryId);
+        when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
         var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
@@ -261,7 +258,7 @@ class SubmitAnswerServiceTest {
         assertEquals(currentUserId, updateAnswerParam.getValue().currentUserId());
 
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(createAnswerHistoryPort, times(1)).persist(any(CreateAnswerHistoryPort.Param.class));
+        verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class), eq(Boolean.FALSE), eq(Boolean.TRUE));
         verifyNoInteractions(createAnswerPort);
     }
@@ -302,7 +299,7 @@ class SubmitAnswerServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
-        when(createAnswerHistoryPort.persist(any(CreateAnswerHistoryPort.Param.class))).thenReturn(savedAnswerHistoryId);
+        when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
         var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
@@ -319,7 +316,7 @@ class SubmitAnswerServiceTest {
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(createAnswerHistoryPort, times(1)).persist(any(CreateAnswerHistoryPort.Param.class));
+        verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.TRUE);
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort);
     }
@@ -392,7 +389,7 @@ class SubmitAnswerServiceTest {
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
-        verify(createAnswerHistoryPort, times(1)).persist(any(CreateAnswerHistoryPort.Param.class));
+        verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.TRUE, Boolean.FALSE);
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort);
     }
