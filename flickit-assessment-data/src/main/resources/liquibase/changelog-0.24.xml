@@ -12,14 +12,22 @@
                 title,
                 created_by,
                 ROW_NUMBER() OVER (PARTITION BY title, created_by ORDER BY ctid) AS row_num
-            FROM fau_space
+            FROM
+                fau_space
         )
         UPDATE fau_space
         SET title = CONCAT(title, '_', id)
-        WHERE ctid IN (SELECT ctid
-                        FROM DuplicateTitles
-                        WHERE row_num > 1);
+        WHERE ctid IN (
+            SELECT ctid
+            FROM DuplicateTitles
+            WHERE row_num > 1
+        );
     </sql>
     <addUniqueConstraint tableName="fau_space" columnNames="title, created_by" constraintName="uq_fau_space_title_createdby"/>
 </changeSet>
+    <changeSet id="0.24.02" author="Maziyar Gerami">
+        <update tableName="fau_space">
+            <column name="code" valueComputed="LOWER(REGEXP_REPLACE(CONCAT(title ,'-',id), '[\s]', '-', 'g'))"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>
