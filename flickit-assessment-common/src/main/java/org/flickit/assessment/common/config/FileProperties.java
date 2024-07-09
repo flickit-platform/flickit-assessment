@@ -54,4 +54,7 @@ public class FileProperties {
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "application/vnd.oasis.opendocument.spreadsheet"
     );
+
+    @NotNull
+    private String kitDslContentTypes = "application/zip";
 }
