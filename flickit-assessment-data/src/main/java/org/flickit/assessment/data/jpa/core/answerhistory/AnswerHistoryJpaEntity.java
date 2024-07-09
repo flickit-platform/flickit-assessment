@@ -53,9 +53,4 @@ public class AnswerHistoryJpaEntity {
 
     @Column(name = "type", nullable = false)
     private Integer type;
-
-    @Override
-    public String toString() {
-        return id.toString();
-    }
 }
