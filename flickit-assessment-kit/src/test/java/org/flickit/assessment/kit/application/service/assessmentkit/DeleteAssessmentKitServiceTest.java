@@ -60,7 +60,7 @@ class DeleteAssessmentKitServiceTest {
         when(countKitAssessmentsPort.count(param.getKitId())).thenReturn(5L);
 
         var throwable = assertThrows(ValidationException.class, () -> deleteAssessmentKitService.delete(param));
-        assertEquals(DELETE_KIT_HAS_ASSESSMENT, throwable.getMessage());
+        assertEquals(DELETE_KIT_HAS_ASSESSMENT, throwable.getMessageKey());
     }
 
     @Test

@@ -158,5 +158,13 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_USERS_SIZE_MAX = "get-assessment-users.size.max";
     public static final String GET_ASSESSMENT_USERS_PAGE_MIN = "get-assessment-users.page.min";
 
+    public static final String ADD_EVIDENCE_ATTACHMENT_EVIDENCE_ID_NOT_NULL = "add-evidence-attachment.evidenceId.notNull";
+    public static final String ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_NOT_NULL = "add-evidence-attachment.attachment.notNull";
+    public static final String ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX = "add-evidence-attachment.attachmentsCount.max";
+    public static final String ADD_EVIDENCE_ATTACHMENT_DESCRIPTION_SIZE_MIN = "add-evidence-attachment.description.size.min";
+    public static final String ADD_EVIDENCE_ATTACHMENT_DESCRIPTION_SIZE_MAX = "add-evidence-attachment.description.size.max";
+
+    public static final String GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL = "get-evidence-attachments.evidenceId.notNull";
+
     public static final String GET_EVIDENCE_ID_NOT_NULL = "get-evidence.id.notNull";
 }

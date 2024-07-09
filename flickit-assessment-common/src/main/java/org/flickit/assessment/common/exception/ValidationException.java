@@ -3,9 +3,9 @@ package org.flickit.assessment.common.exception;
 import lombok.Getter;
 
 @Getter
-public class ValidationException extends RuntimeException {
+public class ValidationException extends ApplicationException {
 
-    public ValidationException(String message) {
-        super(message);
+    public ValidationException(String messageKey, Object... messageArgs) {
+        super(messageKey, messageArgs);
     }
 }

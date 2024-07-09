@@ -33,8 +33,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_DSL_SIZE_MAX;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -128,7 +127,23 @@ public class UploadKitDSLServiceTest {
         when(fileProperties.getDslMaxSize()).thenReturn(DataSize.ofBytes(1));
 
         var throwable = assertThrows(ValidationException.class, () -> service.upload(param));
-        assertThat(throwable).hasMessage(UPLOAD_FILE_DSL_SIZE_MAX);
+        assertEquals(UPLOAD_FILE_DSL_SIZE_MAX, throwable.getMessageKey());
+    }
+
+    @SneakyThrows
+    @Test
+    void testUploadKit_InvalidFileType_ThrowException() {
+        UUID currentUserId = UUID.randomUUID();
+        Long expertGroupId = 1L;
+
+        MockMultipartFile dslFile = new MockMultipartFile("pic", "pic.png", "application/png", "some file".getBytes());
+
+        var param = new UploadKitDslUseCase.Param(dslFile, expertGroupId, currentUserId);
+
+        when(fileProperties.getDslMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.upload(param));
+        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
     }
 
     private static MultipartFile convertZipFileToMultipartFile(String dslFilePath) throws IOException {
@@ -146,6 +161,4 @@ public class UploadKitDSLServiceTest {
             return new MockMultipartFile("dslFile", dslFilePath, null, fileBytes);
         }
     }
-
-
 }

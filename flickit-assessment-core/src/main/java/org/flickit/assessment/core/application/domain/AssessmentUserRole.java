@@ -70,13 +70,15 @@ public enum AssessmentUserRole {
             VIEW_ASSESSMENT_PROGRESS,
             VIEW_ASSESSMENT,
             VIEW_SUBJECT_PROGRESS,
-            VIEW_SUBJECT_REPORT)),
+            VIEW_SUBJECT_REPORT,
+            VIEW_EVIDENCE_ATTACHMENT)),
         COMMENTER_PERMISSIONS(Set.of(
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
             VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
+            ADD_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_QUESTIONNAIRE_QUESTIONS)),
         ASSESSOR_PERMISSIONS(Set.of(
@@ -99,10 +101,12 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
             VIEW_EVIDENCE_LIST,
+            ADD_EVIDENCE_ATTACHMENT,
             UPDATE_EVIDENCE,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_QUESTIONNAIRE_QUESTIONS,
-            ANSWER_QUESTION
+            ANSWER_QUESTION,
+            VIEW_EVIDENCE_ATTACHMENT
         ));
 
         private final Set<AssessmentPermission> permissions;
