@@ -62,7 +62,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                                                                                        Pageable pageable);
 
     boolean existsByIdAndDeletedFalse(UUID evidenceId);
-                                                                                       @Param(value = "type") Integer type, Pageable pageable);
 
     @Query("""
         SELECT evd.id as id,
