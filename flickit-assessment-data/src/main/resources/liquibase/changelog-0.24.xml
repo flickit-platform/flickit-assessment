@@ -23,10 +23,14 @@
                 WHERE row_num > 1
             );
         </sql>
-        <addUniqueConstraint tableName="fau_space" columnNames="title, created_by" constraintName="uq_fau_space_title_createdby"/>
+        <addUniqueConstraint tableName="fau_space" columnNames="title, created_by" constraintName="uq_fau_space_code_createdby"/>
     </changeSet>
 
     <changeSet id="0.24.02" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fau_space" constraintName="uq_fau_space_code"/>
+    </changeSet>
+
+    <changeSet id="0.24.03" author="Maziyar Gerami">
         <update tableName="fau_space">
             <column name="code" valueComputed="LOWER(REGEXP_REPLACE(CONCAT(title ,'-',id), '[\s]', '-', 'g'))"/>
         </update>
