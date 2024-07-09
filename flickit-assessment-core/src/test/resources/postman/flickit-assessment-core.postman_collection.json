@@ -329,6 +329,30 @@
 			"response": []
 		},
 		{
+			"name": "Get Evidence",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/8c61e111-a64a-430e-84a0-ae584860116f",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"8c61e111-a64a-430e-84a0-ae584860116f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Calculate",
 			"request": {
 				"method": "POST",
@@ -962,7 +986,50 @@
 			"response": []
 		},
 		{
-			"name": "Get Evidence",
+			"name": "Add Evidence Attachment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "attachment",
+							"type": "file",
+							"src": "/home/maziyar/Downloads/pic.png"
+						},
+						{
+							"key": "description",
+							"value": "Some Description",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/c4637764-40d7-4068-8bd0-a4d254c7a077/attachments",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"c4637764-40d7-4068-8bd0-a4d254c7a077",
+						"attachments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Evidence Attachments",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -971,15 +1038,31 @@
 						"value": "{{authorization_header}}"
 					}
 				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "attachment",
+							"type": "file",
+							"src": "/home/maziyar/Downloads/pic.png"
+						},
+						{
+							"key": "description",
+							"value": "Some Description",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/evidences/8c61e111-a64a-430e-84a0-ae584860116f",
+					"raw": "{{base_url}}/{{api_path}}/evidences/c4637764-40d7-4068-8bd0-a4d254c7a077/attachments",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
 						"evidences",
-						"8c61e111-a64a-430e-84a0-ae584860116f"
+						"c4637764-40d7-4068-8bd0-a4d254c7a077",
+						"attachments"
 					]
 				}
 			},

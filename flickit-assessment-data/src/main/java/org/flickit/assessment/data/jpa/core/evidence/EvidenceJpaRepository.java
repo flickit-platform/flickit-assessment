@@ -58,7 +58,10 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     Page<String> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(@Param(value = "assessmentId") UUID assessmentId,
                                                                                        @Param(value = "attributeId") Long attributeId,
-                                                                                       @Param(value = "type") Integer type, Pageable pageable);
+                                                                                       @Param(value = "type") Integer type,
+                                                                                       Pageable pageable);
+
+    boolean existsByIdAndDeletedFalse(UUID evidenceId);
 
     @Query("""
         SELECT evd.id as id,

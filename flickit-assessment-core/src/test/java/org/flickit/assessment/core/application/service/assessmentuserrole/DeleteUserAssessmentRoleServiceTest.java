@@ -92,7 +92,7 @@ class DeleteUserAssessmentRoleServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(param.getAssessmentId())).thenReturn(param.getUserId());
 
         var exception = assertThrows(ValidationException.class, () -> service.deleteAssessmentUserRole(param));
-        assertEquals(DELETE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER, exception.getMessage());
+        assertEquals(DELETE_ASSESSMENT_USER_ROLE_USER_ID_IS_SPACE_OWNER, exception.getMessageKey());
 
         verifyNoInteractions(deleteUserAssessmentRolePort);
     }
