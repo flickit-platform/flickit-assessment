@@ -45,11 +45,11 @@ public class AnswerHistoryJpaEntity {
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 
-    @Column(name = "modified_by", nullable = false)
-    private UUID modifiedBy;
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
 
-    @Column(name = "modified_at", nullable = false)
-    private LocalDateTime modifiedAt;
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
 
     @Column(name = "type", nullable = false)
     private Integer type;

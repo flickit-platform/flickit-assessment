@@ -21,10 +21,10 @@
             <column name="answer_option_id" type="bigint"/>
             <column name="confidence_level_id" type="tinyint"/>
             <column name="is_not_applicable" type="boolean"/>
-            <column name="modified_by" type="uuid">
+            <column name="created_by" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="modified_at" type="${datetime_with_time_zone_type}">
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
             <column name="type" type="tinyint">
