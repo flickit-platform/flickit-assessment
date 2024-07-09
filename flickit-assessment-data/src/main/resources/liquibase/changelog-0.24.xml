@@ -15,9 +15,6 @@
             <column name="assessment_result_id" type="uuid">
                 <constraints nullable="false"/>
             </column>
-            <column name="questionnaire_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
             <column name="question_id" type="bigint">
                 <constraints nullable="false"/>
             </column>

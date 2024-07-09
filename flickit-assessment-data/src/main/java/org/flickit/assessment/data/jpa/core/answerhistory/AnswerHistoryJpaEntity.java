@@ -33,9 +33,6 @@ public class AnswerHistoryJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
-    @Column(name = "questionnaire_id", nullable = false)
-    private Long questionnaireId;
-
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 

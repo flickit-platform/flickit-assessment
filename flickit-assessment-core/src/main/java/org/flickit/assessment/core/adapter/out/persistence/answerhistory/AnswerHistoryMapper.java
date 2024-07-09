@@ -15,7 +15,6 @@ public class AnswerHistoryMapper {
             null,
             answer,
             assessmentResult,
-            param.questionnaireId(),
             param.questionId(),
             param.answerOptionId(),
             param.confidenceLevelId(),

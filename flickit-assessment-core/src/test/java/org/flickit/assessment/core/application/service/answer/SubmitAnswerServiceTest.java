@@ -113,7 +113,6 @@ class SubmitAnswerServiceTest {
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
         assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().answerId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().assessmentResultId());
-        assertEquals(QUESTIONNAIRE_ID, saveAnswerHistoryParam.getValue().questionnaireId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().questionId());
         assertEquals(answerOptionId, saveAnswerHistoryParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().confidenceLevelId());
@@ -174,7 +173,6 @@ class SubmitAnswerServiceTest {
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
         assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().answerId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().assessmentResultId());
-        assertEquals(QUESTIONNAIRE_ID, saveAnswerHistoryParam.getValue().questionnaireId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().questionId());
         assertNull(saveAnswerHistoryParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().confidenceLevelId());
@@ -216,7 +214,6 @@ class SubmitAnswerServiceTest {
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
         assertEquals(existAnswer.getId(), saveAnswerHistoryParam.getValue().answerId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().assessmentResultId());
-        assertEquals(QUESTIONNAIRE_ID, saveAnswerHistoryParam.getValue().questionnaireId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().questionId());
         assertEquals(newAnswerOptionId, saveAnswerHistoryParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().confidenceLevelId());

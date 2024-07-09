@@ -122,7 +122,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new CreateAnswerHistoryPort.Param(
             answerId,
             assessmentResultId,
-            param.getQuestionnaireId(),
             param.getQuestionId(),
             answerOptionId,
             confidenceLevelId,

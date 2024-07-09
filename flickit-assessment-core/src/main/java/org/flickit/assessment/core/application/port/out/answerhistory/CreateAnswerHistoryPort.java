@@ -14,7 +14,6 @@ public interface CreateAnswerHistoryPort {
 
     record Param(UUID answerId,
                  UUID assessmentResultId,
-                 Long questionnaireId,
                  Long questionId,
                  Long answerOptionId,
                  Integer confidenceLevelId,
