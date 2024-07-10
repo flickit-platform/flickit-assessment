@@ -39,6 +39,7 @@
 		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
 		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+		<novu.version>1.6.0</novu.version>
 
 		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -177,7 +178,12 @@
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
         </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>co.novu</groupId>
+			<artifactId>novu-java</artifactId>
+			<version>${novu.version}</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>
