@@ -1,14 +1,14 @@
 package org.flickit.assessment.core.application.domain.notification;
 
-public record GrantAssessmentUserRolePayLoad(Assessment assessment,
-                                             User assigner,
-                                             Role role) {
-    public record Assessment(String title) {
+public record GrantAssessmentUserRolePayLoad(AssessmentModel assessment,
+                                             AssignerModel assigner,
+                                             RoleModel role) {
+    public record AssessmentModel(String title) {
     }
 
-    public record User(String displayName) {
+    public record AssignerModel(String displayName) {
     }
 
-    public record Role(String title) {
+    public record RoleModel(String title) {
     }
 }

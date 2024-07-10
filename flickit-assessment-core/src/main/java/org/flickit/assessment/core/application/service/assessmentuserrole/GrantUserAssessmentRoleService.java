@@ -10,6 +10,9 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad;
+import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad.AssessmentModel;
+import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad.AssignerModel;
+import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad.RoleModel;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -58,9 +61,9 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_USER_NOT_FOUND));
 
         return new GrantAssessmentUserRolePayLoad(
-            new GrantAssessmentUserRolePayLoad.Assessment(assessment.getTitle()),
-            new GrantAssessmentUserRolePayLoad.User(assigner.getDisplayName()),
-            new GrantAssessmentUserRolePayLoad.Role(role == null ? null : role.getTitle())
+            new AssessmentModel(assessment.getTitle()),
+            new AssignerModel(assigner.getDisplayName()),
+            new RoleModel(role == null ? null : role.getTitle())
         );
     }
 }
