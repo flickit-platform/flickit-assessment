@@ -34,7 +34,7 @@ public interface UpdateSpaceUseCase {
 
         public Param(Long id, String title, UUID currentUserId) {
             this.id = id;
-            this.title = title != null ? title.strip().toLowerCase() : null;
+            this.title = title.strip();
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
