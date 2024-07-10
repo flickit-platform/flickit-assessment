@@ -23,7 +23,7 @@
                 WHERE row_num > 1
             );
         </sql>
-        <addUniqueConstraint tableName="fau_space" columnNames="title, created_by" constraintName="uq_fau_space_code_createdby"/>
+        <addUniqueConstraint tableName="fau_space" columnNames="code, created_by" constraintName="uq_fau_space_code_createdby"/>
     </changeSet>
 
     <changeSet id="0.24.02" author="Maziyar Gerami">
