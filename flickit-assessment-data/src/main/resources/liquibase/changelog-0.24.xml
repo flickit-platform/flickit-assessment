@@ -50,4 +50,22 @@
                                  referencedColumnNames="id"
                                  onDelete="NO ACTION"/>
     </changeSet>
+
+    <changeSet id="0.24-04" author="Mahdi Rezazadeh">
+        <sql>
+            INSERT INTO fac_answer_history (id, answer_id, assessment_result_id, question_id, answer_option_id,
+                                            confidence_level_id, is_not_applicable, created_by, creation_time, type)
+            SELECT gen_random_uuid()       as id,
+                   fa.id                   as answer_id,
+                   fa.assessment_result_id as assessment_result_id,
+                   fa.question_id          as question_id,
+                   fa.answer_option_id     as answer_option_id,
+                   fa.confidence_level_id  as confidence_level_id,
+                   fa.is_not_applicable    as is_not_applicable,
+                   fa.created_by           as created_by,
+                   now()                   as creation_time,
+                   0                       as type
+            FROM fac_answer fa
+        </sql>
+    </changeSet>
 </databaseChangeLog>
