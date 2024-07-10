@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum NotificationType {
 
-    GRANT_ASSESSMENT_ROLE("grant-assessment-role");
+    GRANT_USER_ASSESSMENT_ROLE("grant-user-assessment-role");
 
     private final String code;
 }

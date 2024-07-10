@@ -31,7 +31,7 @@ public class NovuWorkflowInitializer {
 
     void createWorkflows(Novu novu, String groupId) throws IOException, NovuNetworkException {
         List<String> workflowNames = novu.getWorkflows(null, null).getData().stream()
-            .filter(wf -> Objects.equals(wf.getNotificationGroupId(), groupId))
+            .filter(wf -> Objects.equals(wf.getNotificationGroup().getId(), groupId))
             .map(WorkflowResponse::getName)
             .toList();
 
