@@ -12,4 +12,7 @@ public interface LoadAttributeEvidencesPort {
                                                                         Integer type,
                                                                         int page,
                                                                         int size);
+
+    record Result (String description, Long attachmentsCount) {
+    }
 }

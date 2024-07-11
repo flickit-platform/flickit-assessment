@@ -43,9 +43,11 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     void delete(@Param(value = "id") UUID id);
 
     @Query("""
-            SELECT evd.description
+            SELECT evd.description as description,
+            COUNT(eva.evidenceId) as attachmentsCount
             FROM QuestionJpaEntity q
             LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
+            LEFT JOIN EvidenceAttachmentJpaEntity eva ON evd.id = eva.evidenceId
             WHERE evd.assessmentId = :assessmentId
                 AND evd.type = :type
                 AND evd.deleted = false
@@ -54,12 +56,13 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                              LEFT JOIN AssessmentResultJpaEntity ar ON qs.kitVersionId = ar.kitVersionId
                              LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
                              WHERE qi.attributeId = :attributeId AND ar.assessment.id = :assessmentId)
+            GROUP BY evd.description, evd.lastModificationTime
             ORDER BY evd.lastModificationTime DESC
         """)
-    Page<String> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(@Param(value = "assessmentId") UUID assessmentId,
-                                                                                       @Param(value = "attributeId") Long attributeId,
-                                                                                       @Param(value = "type") Integer type,
-                                                                                       Pageable pageable);
+    Page<EvidenceDescriptionAttachmentsCountView> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(@Param(value = "assessmentId") UUID assessmentId,
+                                                                                                                        @Param(value = "attributeId") Long attributeId,
+                                                                                                                        @Param(value = "type") Integer type,
+                                                                                                                        Pageable pageable);
 
     boolean existsByIdAndDeletedFalse(UUID evidenceId);
 }
