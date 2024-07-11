@@ -4,5 +4,5 @@ public interface EvidenceDescriptionAttachmentsCountView {
 
     String getDescription();
 
-    Long getAttachmentsCount();
+    int getAttachmentsCount();
 }
