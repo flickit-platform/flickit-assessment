@@ -111,7 +111,7 @@ public class EvidencePersistenceJpaAdapter implements
             assessmentId, attributeId, type, PageRequest.of(page, size));
 
         var items = pageResult.getContent().stream()
-            .map(evidence -> new AttributeEvidenceListItem(evidence.getDescription(), evidence.getAttachmentsCount()))
+            .map(evidence -> new AttributeEvidenceListItem(evidence.getId(), evidence.getDescription(), evidence.getAttachmentsCount()))
             .toList();
 
         return new PaginatedResponse<>(

@@ -76,6 +76,6 @@ class GetAttributeEvidenceListServiceTest {
     }
 
     private AttributeEvidenceListItem createAttributeEvidence() {
-        return new AttributeEvidenceListItem("description",1);
+        return new AttributeEvidenceListItem(UUID.randomUUID(),"description",1);
     }
 }
