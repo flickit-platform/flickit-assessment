@@ -65,8 +65,7 @@ public class EvidencePersistenceJpaAdapter implements
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL);
 
-        var pageResult = repository.findByQuestionIdAndAssessmentId(
-            questionId, assessmentId, PageRequest.of(page, size));
+        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, PageRequest.of(page, size));
         var userIds = pageResult.getContent().stream()
             .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();
