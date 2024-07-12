@@ -55,7 +55,8 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
             e.description(),
             e.type(),
             e.lastModificationTime(),
-            e.attachmentsCount(), addPictureLinkToUser(e.createdBy())
+            e.attachmentsCount(),
+            addPictureLinkToUser(e.createdBy())
         )).toList();
     }
 
