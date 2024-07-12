@@ -107,6 +107,7 @@ class GetEvidenceListServiceTest {
             "desc",
             "type",
             LocalDateTime.now(),
+            0,
             new GetEvidenceListUseCase.User(UUID.randomUUID(), "user1", "pictureLink")
         );
     }

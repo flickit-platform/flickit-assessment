@@ -13,9 +13,23 @@ import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
 
-    Page<EvidenceJpaEntity> findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(Long questionId,
-                                                                                                          UUID assessmentId,
-                                                                                                          Pageable pageable);
+    @Query("""
+            SELECT
+                e.id as id,
+                e.description as description,
+                e.type as type,
+                e.createdBy as createdBy,
+                e.lastModificationTime as lastModificationTime,
+                COUNT (a) as attachmentsCount
+            FROM EvidenceJpaEntity e
+            LEFT JOIN EvidenceAttachmentJpaEntity a on e.id = a.evidenceId
+            WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId and e.deleted = false
+            GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
+            ORDER BY e.lastModificationTime desc
+        """)
+    Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentId(@Param("questionId") Long questionId,
+                                                                           @Param("assessmentId") UUID assessmentId,
+                                                                           Pageable pageable);
 
     Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
 
