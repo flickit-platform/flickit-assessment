@@ -5,10 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.flickit.assessment.users.application.domain.User;
-import org.flickit.assessment.users.application.port.out.user.CreateUserPort;
-import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
-import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.users.application.port.out.user.UpdateUserPort;
+import org.flickit.assessment.users.application.port.out.user.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -23,7 +20,8 @@ public class UserPersistenceJpaAdapter implements
     LoadUserEmailByUserIdPort,
     LoadUserPort,
     CreateUserPort,
-    UpdateUserPort {
+    UpdateUserPort,
+    UpdateUserProfilePicturePort {
 
     private final UserJpaRepository repository;
 
@@ -73,6 +71,13 @@ public class UserPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(USER_ID_NOT_FOUND);
 
         repository.update(param.userId(), param.displayName(), param.bio(), param.linkedin());
+    }
+
+    @Override
+    public void updatePicture(UUID userId, String picture) {
+        if (!repository.existsById(userId))
+            throw new ResourceNotFoundException(USER_ID_NOT_FOUND);
+        repository.updatePicture(userId, picture);
     }
 }
 
