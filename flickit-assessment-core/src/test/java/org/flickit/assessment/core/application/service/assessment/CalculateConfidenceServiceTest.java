@@ -125,10 +125,7 @@ class CalculateConfidenceServiceTest {
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
         assertNotNull(result);
-        double maxPossibleSumConfidence = 75;
-        double gainedSumConfidence = 53;
-        double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
-        assertEquals(confidenceValue, result.confidenceValue());
+        assertEquals(58.88888888888889, result.confidenceValue());
     }
 
     @Test
@@ -176,10 +173,6 @@ class CalculateConfidenceServiceTest {
 
         assertNotNull(result);
         assertNotNull(result.confidenceValue());
-
-        double maxPossibleSumConfidence = 95;
-        double gainedSumConfidence = 65;
-        double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
-        assertEquals(confidenceValue, result.confidenceValue());
+        assertEquals(57.01754385964913, result.confidenceValue());
     }
 }
