@@ -11,7 +11,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface InviteAssessmentUserUseCase {
 
-    void inviteUser(UUID assessmentId, UUID userId, Integer roleId);
+    void inviteUser(UUID assessmentId, String email, Integer roleId);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -20,15 +20,15 @@ public interface InviteAssessmentUserUseCase {
         @NotNull(message = INVITE_ASSESSMENT_USER_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = INVITE_ASSESSMENT_USER_USER_ID_NOT_NULL)
-        UUID userId;
+        @NotNull(message = INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL)
+        String email;
 
         @NotNull(message = INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL)
         Integer roleId;
 
-        public Param(UUID assessmentId, UUID userId, Integer roleId) {
+        public Param(UUID assessmentId, String email, Integer roleId) {
             this.assessmentId = assessmentId;
-            this.userId = userId;
+            this.email = email;
             this.roleId = roleId;
             this.validateSelf();
         }

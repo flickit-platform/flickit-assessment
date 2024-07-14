@@ -167,6 +167,6 @@ public class ErrorMessageKey {
     public static final String GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL = "get-evidence-attachments.evidenceId.notNull";
 
     public static final String INVITE_ASSESSMENT_USER_ASSESSMENT_ID_NOT_NULL = "invite-assessment-user.assessmentId.notNull";
-    public static final String INVITE_ASSESSMENT_USER_USER_ID_NOT_NULL = "invite-assessment-user.userId.notNull";
+    public static final String INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL = "invite-assessment-user.email.notNull";
     public static final String INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL = "invite-assessment-role.roleId.notNull";
 }

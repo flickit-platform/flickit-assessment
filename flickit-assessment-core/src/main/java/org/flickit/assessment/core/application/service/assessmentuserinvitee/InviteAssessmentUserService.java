@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessmentuserinvitee;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,6 @@ import java.util.UUID;
 public class InviteAssessmentUserService implements InviteAssessmentUserUseCase {
 
     @Override
-    public void inviteUser(UUID assessmentId, UUID userId, Integer roleId) {
+    public void inviteUser(UUID assessmentId, String email, Integer roleId) {
     }
 }
