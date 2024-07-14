@@ -24,8 +24,6 @@ import org.springframework.util.unit.DataSize;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
@@ -33,9 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UploadKitDSLServiceTest {
-
-    public static final String ZIP_FILE_ADDR = "src/test/resources/correct-kit.zip";
+class UploadKitDSLServiceTest {
 
     @InjectMocks
     private UploadKitDslService service;
