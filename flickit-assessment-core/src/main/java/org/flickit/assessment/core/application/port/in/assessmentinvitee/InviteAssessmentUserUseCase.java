@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.assessmentuserinvitee;
+package org.flickit.assessment.core.application.port.in.assessmentinvitee;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
