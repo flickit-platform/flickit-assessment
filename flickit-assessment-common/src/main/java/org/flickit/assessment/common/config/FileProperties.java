@@ -47,6 +47,7 @@ public class FileProperties {
         "text/plain",
         "application/pdf",
         "application/x-zip",
+        "application/x-zip-compressed",
         "application/x-rar-compressed",
         "application/tar",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -55,5 +56,5 @@ public class FileProperties {
         "application/vnd.oasis.opendocument.spreadsheet"
     );
 
-    private List<String> kitDslContentTypes = Arrays.asList("application/zip", "application/x-zip");
+    private List<String> kitDslContentTypes = Arrays.asList("application/zip", "application/x-zip", "application/x-zip-compressed");
 }
