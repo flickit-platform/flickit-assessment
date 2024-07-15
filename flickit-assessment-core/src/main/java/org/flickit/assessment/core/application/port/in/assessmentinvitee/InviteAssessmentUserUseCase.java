@@ -7,6 +7,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface InviteAssessmentUserUseCase {
@@ -26,10 +27,14 @@ public interface InviteAssessmentUserUseCase {
         @NotNull(message = INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL)
         Integer roleId;
 
-        public Param(UUID assessmentId, String email, Integer roleId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(UUID assessmentId, String email, Integer roleId, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.email = email;
             this.roleId = roleId;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
