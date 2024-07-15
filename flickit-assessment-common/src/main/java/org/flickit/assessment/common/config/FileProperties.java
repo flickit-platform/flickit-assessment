@@ -55,5 +55,5 @@ public class FileProperties {
         "application/vnd.oasis.opendocument.spreadsheet"
     );
 
-    private List<String> kitDslContentTypes = Arrays.asList("application/zip", "application/x-zip");
+    private List<String> kitDslContentTypes = Arrays.asList("application/zip", "application/x-zip", "application/x-zip-compressed");
 }
