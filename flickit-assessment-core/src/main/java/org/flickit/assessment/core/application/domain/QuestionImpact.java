@@ -9,5 +9,6 @@ public class QuestionImpact {
 
     private final long id;
     private final int weight;
+    private final long attributeId;
     private final long maturityLevelId;
 }
