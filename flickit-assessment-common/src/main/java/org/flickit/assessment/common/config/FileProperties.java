@@ -47,6 +47,7 @@ public class FileProperties {
         "text/plain",
         "application/pdf",
         "application/x-zip",
+        "application/x-zip-compressed",
         "application/x-rar-compressed",
         "application/tar",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
