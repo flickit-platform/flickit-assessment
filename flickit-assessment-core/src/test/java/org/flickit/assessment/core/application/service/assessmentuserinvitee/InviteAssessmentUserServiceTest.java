@@ -4,6 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase.*;
+import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
@@ -41,6 +42,9 @@ class InviteAssessmentUserServiceTest {
 
     @Mock
     private InviteAssessmentUserPort inviteAssessmentUserPort;
+
+    @Mock
+    private SendFlickitInviteMailPort sendFlickitInviteMailPort;
 
     @Test
     @DisplayName("If the assessment is not exists, the service should throw a not found exception.")
@@ -99,5 +103,6 @@ class InviteAssessmentUserServiceTest {
         verify(loadUserRoleForAssessmentPort).load(param.getAssessmentId(), param.getCurrentUserId());
         verify(inviteSpaceMemberPort).invite(any(InviteSpaceMemberPort.Param.class));
         verify(inviteAssessmentUserPort).persist(any(InviteAssessmentUserPort.Param.class));
+        verify(sendFlickitInviteMailPort).inviteToFlickit(email);
     }
 }

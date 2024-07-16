@@ -4,6 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
+import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.space.InviteSpaceMemberPort;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
     private final InviteSpaceMemberPort inviteSpaceMemberPort;
     private final InviteAssessmentUserPort inviteAssessmentUserPort;
+    private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
 
     @Override
     public void inviteUser(Param param) {
@@ -44,6 +46,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             param.getEmail(), param.getCurrentUserId(), creationTime, expirationDate));
 
         inviteAssessmentUserPort.persist(toParam(param, creationTime, expirationDate));
+        sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
     }
 
     InviteAssessmentUserPort.Param toParam(Param param, LocalDateTime creationTime, LocalDateTime expirationDate) {
