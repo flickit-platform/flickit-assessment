@@ -12,7 +12,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface InviteAssessmentUserUseCase {
 
-    void inviteUser(UUID assessmentId, String email, Integer roleId);
+    void inviteUser(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
