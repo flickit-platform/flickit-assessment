@@ -712,6 +712,41 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Create Subject",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1,\n    \"expertGroupId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits/336/subjects",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits",
+						"336",
+						"subjects"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
