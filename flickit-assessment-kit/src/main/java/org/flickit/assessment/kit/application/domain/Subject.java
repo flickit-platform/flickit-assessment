@@ -22,4 +22,11 @@ public class Subject {
     private List<Attribute> attributes;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
+
+    public static String generateSlugCode(String title) {
+        return title
+            .toLowerCase()
+            .strip()
+            .replaceAll("\\s+", "-");
+    }
 }
