@@ -70,21 +70,22 @@ public enum AssessmentUserRole {
             VIEW_ASSESSMENT_PROGRESS,
             VIEW_ASSESSMENT,
             VIEW_SUBJECT_PROGRESS,
-            VIEW_SUBJECT_REPORT)),
+            VIEW_SUBJECT_REPORT,
+            VIEW_EVIDENCE_ATTACHMENT)),
         COMMENTER_PERMISSIONS(Set.of(
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
             VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
+            ADD_EVIDENCE_ATTACHMENT,
+            DELETE_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-            VIEW_QUESTIONNAIRE_QUESTIONS,
-            DELETE_EVIDENCE_ATTACHMENT)),
+            VIEW_QUESTIONNAIRE_QUESTIONS)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
-            CREATE_ADVICE,
-            DELETE_EVIDENCE_ATTACHMENT)),
+            CREATE_ADVICE)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -92,8 +93,7 @@ public enum AssessmentUserRole {
             GRANT_USER_ASSESSMENT_ROLE,
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
-            GET_ASSESSMENT_USERS,
-            DELETE_EVIDENCE_ATTACHMENT)),
+            GET_ASSESSMENT_USERS)),
         ASSOCIATE_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
@@ -103,11 +103,12 @@ public enum AssessmentUserRole {
             DELETE_EVIDENCE,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
+            VIEW_EVIDENCE_ATTACHMENT,
+            ADD_EVIDENCE_ATTACHMENT,
+            DELETE_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_QUESTIONNAIRE_QUESTIONS,
-            ANSWER_QUESTION,
-            DELETE_EVIDENCE_ATTACHMENT
-        ));
+            ANSWER_QUESTION));
 
         private final Set<AssessmentPermission> permissions;
     }

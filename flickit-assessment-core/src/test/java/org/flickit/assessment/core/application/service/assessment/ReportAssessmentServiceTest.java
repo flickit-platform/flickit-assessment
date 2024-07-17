@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
@@ -156,7 +157,7 @@ class ReportAssessmentServiceTest {
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
-        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(AssessmentUserRole.VIEWER);
+        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.VIEWER));
 
         ReportAssessmentUseCase.Result result = service.reportAssessment(param);
 
@@ -195,7 +196,7 @@ class ReportAssessmentServiceTest {
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
-        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(AssessmentUserRole.MANAGER);
+        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
 
         ReportAssessmentUseCase.Result result = service.reportAssessment(param);
 
