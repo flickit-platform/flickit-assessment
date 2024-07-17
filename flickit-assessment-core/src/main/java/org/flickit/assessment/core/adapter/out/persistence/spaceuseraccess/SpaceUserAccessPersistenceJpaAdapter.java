@@ -28,7 +28,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(Param param) {
+    public void persist(CreateAssessmentSpaceUserAccessPort.Param param) {
         Long spaceId = assessmentRepository.findById(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND))
             .getSpaceId();
