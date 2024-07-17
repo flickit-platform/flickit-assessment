@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
-import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.DeleteUserAssessmentRoleUseCase;
@@ -23,7 +23,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.DELETE_ASSESSME
 public class DeleteUserAssessmentRoleService implements DeleteUserAssessmentRoleUseCase {
 
     private final AssessmentPermissionChecker permissionChecker;
-    private final SpaceAccessChecker spaceAccessChecker;
+    private final CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
     private final DeleteUserAssessmentRolePort deleteUserAssessmentRolePort;
     private final LoadSpaceOwnerPort loadSpaceOwnerPort;
 
@@ -32,7 +32,7 @@ public class DeleteUserAssessmentRoleService implements DeleteUserAssessmentRole
         if (!permissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), DELETE_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (!spaceAccessChecker.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
+        if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(param.getAssessmentId());

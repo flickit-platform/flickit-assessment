@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -22,7 +22,7 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
 
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final SpaceAccessChecker spaceAccessChecker;
+    private final CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
     private final CreateAssessmentSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Override
@@ -30,7 +30,7 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (!spaceAccessChecker.hasAccess(param.getAssessmentId(), param.getUserId()))
+        if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId()))
             createSpaceUserAccessPort.persist(toCreateSpaceAccessPortParam(param));
 
         grantUserAssessmentRolePort.persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());

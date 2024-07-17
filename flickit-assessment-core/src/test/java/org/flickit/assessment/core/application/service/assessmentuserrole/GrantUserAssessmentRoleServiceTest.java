@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -30,7 +30,7 @@ class GrantUserAssessmentRoleServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private SpaceAccessChecker spaceAccessChecker;
+    private CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
 
     @Mock
     private GrantUserAssessmentRolePort grantUserAssessmentRolePort;
@@ -48,7 +48,7 @@ class GrantUserAssessmentRoleServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAssessmentUserRole(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(spaceAccessChecker, grantUserAssessmentRolePort);
+        verifyNoInteractions(checkAssessmentSpaceMembershipPort, grantUserAssessmentRolePort);
     }
 
     @Test
@@ -58,7 +58,7 @@ class GrantUserAssessmentRoleServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
 
-        when(spaceAccessChecker.hasAccess(param.getAssessmentId(), param.getUserId())).thenReturn(false);
+        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId())).thenReturn(false);
 
         doNothing().when(createSpaceUserAccessPort).persist(any());
 
@@ -84,7 +84,7 @@ class GrantUserAssessmentRoleServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
 
-        when(spaceAccessChecker.hasAccess(param.getAssessmentId(), param.getUserId())).thenReturn(true);
+        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId())).thenReturn(true);
 
         doNothing().when(grantUserAssessmentRolePort)
             .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
