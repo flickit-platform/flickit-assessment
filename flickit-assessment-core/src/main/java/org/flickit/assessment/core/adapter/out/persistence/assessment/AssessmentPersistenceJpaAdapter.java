@@ -44,7 +44,6 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentProgressPort,
     GetAssessmentPort,
     DeleteAssessmentPort,
-    CheckUserAssessmentAccessPort,
     SpaceAccessChecker {
 
     private final AssessmentJpaRepository repository;
