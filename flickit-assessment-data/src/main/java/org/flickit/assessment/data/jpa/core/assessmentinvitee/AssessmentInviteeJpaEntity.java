@@ -7,6 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
 @Table(name = "fac_assessment_invitee")
 @Getter
@@ -41,4 +43,9 @@ public class AssessmentInviteeJpaEntity {
 
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+        public static final String CREATION_TIME = "creationTime";
+    }
 }
