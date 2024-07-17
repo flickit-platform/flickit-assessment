@@ -59,7 +59,7 @@ public class UploadKitDslService implements UploadKitDslUseCase {
         if (dslFile.getSize() >= fileProperties.getDslMaxSize().toBytes())
             throw new ValidationException(UPLOAD_FILE_DSL_SIZE_MAX);
 
-        if (!Objects.equals(fileProperties.getKitDslContentTypes(), dslFile.getContentType()))
+        if (!fileProperties.getKitDslContentTypes().contains(dslFile.getContentType()))
             throw new ValidationException(UPLOAD_FILE_FORMAT_NOT_VALID);
     }
 }
