@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.24-01" author="Mahdi Rezazadeh">
+    <changeSet id="0.25-01" author="Mahdi Rezazadeh">
         <createTable tableName="fac_answer_history">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_answer_history"/>
@@ -33,7 +33,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0.24-02" author="Mahdi Rezazadeh">
+    <changeSet id="0.25-02" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fac_answer_history"
                                  baseColumnNames="assessment_result_id"
                                  constraintName="fk_facanswerhistory_assessmentresult"
@@ -42,7 +42,7 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.24-03" author="Mahdi Rezazadeh">
+    <changeSet id="0.25-03" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fac_answer_history"
                                  baseColumnNames="answer_id"
                                  constraintName="fk_facanswerhistory_answer"
@@ -51,7 +51,7 @@
                                  onDelete="NO ACTION"/>
     </changeSet>
 
-    <changeSet id="0.24-04" author="Mahdi Rezazadeh">
+    <changeSet id="0.25-04" author="Mahdi Rezazadeh">
         <sql>
             INSERT INTO fac_answer_history (id, answer_id, assessment_result_id, question_id, answer_option_id,
                                             confidence_level_id, is_not_applicable, created_by, creation_time, type)
