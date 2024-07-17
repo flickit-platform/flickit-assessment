@@ -4,7 +4,72 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.25-01" author="Maziyar Gerami">
+    <changeSet id="0.25-01" author="Mahdi Rezazadeh">
+        <createTable tableName="fac_answer_history">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_answer_history"/>
+            </column>
+            <column name="answer_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="answer_option_id" type="bigint"/>
+            <column name="confidence_level_id" type="tinyint"/>
+            <column name="is_not_applicable" type="boolean"/>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.25-02" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_answer_history"
+                                 baseColumnNames="assessment_result_id"
+                                 constraintName="fk_facanswerhistory_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.25-03" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_answer_history"
+                                 baseColumnNames="answer_id"
+                                 constraintName="fk_facanswerhistory_answer"
+                                 referencedTableName="fac_answer"
+                                 referencedColumnNames="id"
+                                 onDelete="NO ACTION"/>
+    </changeSet>
+
+    <changeSet id="0.25-04" author="Mahdi Rezazadeh">
+        <sql>
+            INSERT INTO fac_answer_history (id, answer_id, assessment_result_id, question_id, answer_option_id,
+                                            confidence_level_id, is_not_applicable, created_by, creation_time, type)
+            SELECT gen_random_uuid()       as id,
+                   fa.id                   as answer_id,
+                   fa.assessment_result_id as assessment_result_id,
+                   fa.question_id          as question_id,
+                   fa.answer_option_id     as answer_option_id,
+                   fa.confidence_level_id  as confidence_level_id,
+                   fa.is_not_applicable    as is_not_applicable,
+                   fa.created_by           as created_by,
+                   now()                   as creation_time,
+                   0                       as type
+            FROM fac_answer fa
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.25-05" author="Maziyar Gerami">
         <createTable tableName="fac_assessment_invitee">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment_invitee"/>
@@ -27,12 +92,12 @@
             </column>
             <column name="created_by" type="UUID">
                 <constraints nullable="false" foreignKeyName="fk_fac_assessment_invitee_user_createdby"
-                referencedTableName="fau_user" referencedColumnNames="id"/>
+                             referencedTableName="fau_user" referencedColumnNames="id"/>
             </column>
         </createTable>
     </changeSet>
 
-    <changeSet id="0.25-02" author="Maziyar Gerami">
+    <changeSet id="0.25-05" author="Maziyar Gerami">
         <addUniqueConstraint tableName="fac_assessment_invitee"
                              columnNames="assessment_id, email"
                              constraintName="uq_fau_assessment_invitee_assessmentid_email"/>
