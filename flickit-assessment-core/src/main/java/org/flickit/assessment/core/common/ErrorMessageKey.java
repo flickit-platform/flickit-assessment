@@ -170,5 +170,6 @@ public class ErrorMessageKey {
     public static final String INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL = "invite-assessment-user.email.notNull";
     public static final String INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL = "invite-assessment-role.roleId.notNull";
     public static final String INVITE_ASSESSMENT_USER_EMAIL_DUPLICATE = "invite-assessment-user.email.duplicate";
+    public static final String INVITE_ASSESSMENT_USER_ROLE_DUPLICATE = "invite-assessment-user.role.duplicate";
 
 }

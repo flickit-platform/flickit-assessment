@@ -20,6 +20,10 @@ public class SpaceInviteePersistenceJpaAdapter implements InviteSpaceMemberPort 
             param.createdBy(),
             param.creationTime(),
             param.expirationDate());
-        repository.save(entity);
+
+        if (!repository.existsBySpaceIdAndEmail(param.spaceId(), param.email()))
+            repository.save(entity);
+        else
+            repository.update(param.spaceId(), param.email(), param.creationTime(), param.expirationDate(), param.createdBy());
     }
 }
