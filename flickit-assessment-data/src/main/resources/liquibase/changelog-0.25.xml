@@ -68,4 +68,35 @@
             FROM fac_answer fa
         </sql>
     </changeSet>
+
+    <changeSet id="0.25-05" author="Maziyar Gerami">
+        <createTable tableName="fac_assessment_invitee">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment_invitee"/>
+            </column>
+            <column name="assessment_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_fac_assessment_invitee_assessment"
+                             referencedTableName="fac_assessment" referencedColumnNames="id"/>
+            </column>
+            <column name="email" type="varchar(254)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiration_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="UUID"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.25-06" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fac_assessment_invitee"
+                             columnNames="assessment_id, email"
+                             constraintName="uq_fac_assessment_invitee_assessmentid_email"/>
+    </changeSet>
 </databaseChangeLog>
