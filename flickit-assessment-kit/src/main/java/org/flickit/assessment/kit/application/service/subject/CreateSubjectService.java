@@ -22,7 +22,7 @@ public class CreateSubjectService implements CreateSubjectUseCase {
     @Override
     public long createSubject(Param param) {
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId());
-        if (ownerId != param.getCurrentUserId())
+        if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         String code = Subject.generateSlugCode(param.getTitle());
