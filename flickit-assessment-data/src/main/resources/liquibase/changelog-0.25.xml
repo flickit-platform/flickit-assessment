@@ -84,7 +84,7 @@
             <column name="role_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="expiration_date" type="${datetime_with_time_zone_type}">
+            <column name="expiration_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
             <column name="creation_time" type="${datetime_with_time_zone_type}">
