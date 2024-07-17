@@ -13,7 +13,7 @@ public class AssessmentUserPersistenceJpaAdapter implements InviteAssessmentUser
     private final AssessmentInviteeJpaRepository repository;
 
     @Override
-    public void persist(Param param) {
+    public void invite(Param param) {
         var entity = new AssessmentInviteeJpaEntity(null,
             param.assessmentId(),
             param.email(),

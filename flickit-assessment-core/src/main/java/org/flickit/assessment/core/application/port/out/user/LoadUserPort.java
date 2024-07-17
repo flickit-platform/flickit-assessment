@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface LoadUserPort {
 
     Optional<User> loadById(UUID createdBy);
+
+    User loadByEmail(String email);
 }

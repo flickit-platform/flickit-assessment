@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface InviteAssessmentUserPort {
 
-    void persist(Param param);
+    void invite(Param param);
 
     record Param(UUID assessmentId,
                  String email,
