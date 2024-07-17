@@ -11,7 +11,8 @@ class QuestionTest {
 
     @Test
     void testFindImpactByMaturityLevel() {
-        Question question = QuestionMother.withImpactsOnLevel24();
+        long attributeId = 1533;
+        Question question = QuestionMother.withImpactsOnLevel24(attributeId);
 
         QuestionImpact impact = question.findImpactByMaturityLevel(MaturityLevelMother.levelTwo());
 

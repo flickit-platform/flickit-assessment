@@ -6,19 +6,19 @@ public class AnswerOptionImpactMother {
 
     private static long id = 134L;
 
-    public static AnswerOptionImpact onLevelTwo(double value) {
-        return new AnswerOptionImpact(id++, value, QuestionImpactMother.onLevelTwo(1));
+    public static AnswerOptionImpact onLevelTwoOfAttributeId(double value, long attributeId) {
+        return new AnswerOptionImpact(id++, value, QuestionImpactMother.onLevelTwo(1, attributeId));
     }
 
-    public static AnswerOptionImpact onLevelThree(double value) {
-        return new AnswerOptionImpact(id++, value, QuestionImpactMother.onLevelThree(1));
+    public static AnswerOptionImpact onLevelThreeOfAttributeId(double value, long attributeId) {
+        return new AnswerOptionImpact(id++, value, QuestionImpactMother.onLevelThree(1, attributeId));
     }
 
-    public static AnswerOptionImpact onLevelFour(double value) {
-        return new AnswerOptionImpact(id++, value, QuestionImpactMother.onLevelFour(1));
+    public static AnswerOptionImpact onLevelFourOfAttributeId(double value, long attributeId) {
+        return new AnswerOptionImpact(id++, value, QuestionImpactMother.onLevelFour(1, attributeId));
     }
 
-    public static AnswerOptionImpact onLevelFive(double value) {
-        return new AnswerOptionImpact(id++, value, QuestionImpactMother.onLevelFive(1));
+    public static AnswerOptionImpact onLevelFiveOfAttributeId(double value, long attributeId) {
+        return new AnswerOptionImpact(id++, value, QuestionImpactMother.onLevelFive(1, attributeId));
     }
 }
