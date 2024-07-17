@@ -58,15 +58,15 @@ public class EvidenceAttachmentPersistenceJpaAdapter implements
 
     @Override
     public void deleteEvidenceAttachment(UUID attachmentId) {
-        if (evidenceAttachmentRepository.findById(attachmentId).isEmpty())
+        if (repository.findById(attachmentId).isEmpty())
             throw new ResourceNotFoundException(EVIDENCE_ATTACHMENT_ID_NOT_FOUND);
 
-        evidenceAttachmentRepository.deleteById(attachmentId);
+        repository.deleteById(attachmentId);
     }
 
     @Override
     public String loadEvidenceAttachmentFilePath(UUID attachmentId) {
-        EvidenceAttachmentJpaEntity entity = evidenceAttachmentRepository.findById(attachmentId)
+        EvidenceAttachmentJpaEntity entity = repository.findById(attachmentId)
             .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ATTACHMENT_ID_NOT_FOUND));
 
         return entity.getFilePath();
