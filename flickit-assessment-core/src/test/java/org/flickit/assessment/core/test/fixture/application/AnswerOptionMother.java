@@ -5,8 +5,8 @@ import org.flickit.assessment.core.application.domain.AnswerOptionImpact;
 
 import java.util.List;
 
-import static org.flickit.assessment.core.test.fixture.application.AnswerOptionImpactMother.onLevelFour;
-import static org.flickit.assessment.core.test.fixture.application.AnswerOptionImpactMother.onLevelThree;
+import static org.flickit.assessment.core.test.fixture.application.AnswerOptionImpactMother.onLevelFourOfAttributeId;
+import static org.flickit.assessment.core.test.fixture.application.AnswerOptionImpactMother.onLevelThreeOfAttributeId;
 
 public class AnswerOptionMother {
 
@@ -17,26 +17,39 @@ public class AnswerOptionMother {
     }
 
     public static AnswerOption optionOne() {
+        long attributeId = 1533;
         return new AnswerOption(id++, 1, "one", 123L, List.of(
-            onLevelThree(0),
-            onLevelFour(0)));
+            onLevelThreeOfAttributeId(0, attributeId),
+            onLevelFourOfAttributeId(0, attributeId)));
+    }
+    public static AnswerOption optionOne(long attributeId) {
+        return new AnswerOption(id++, 1, "one", 123L, List.of(
+            onLevelThreeOfAttributeId(0, attributeId),
+            onLevelFourOfAttributeId(0, attributeId)));
     }
 
     public static AnswerOption optionTwo() {
+        long attributeId = 1533;
         return new AnswerOption(id++, 2, "two", 123L, List.of(
-            onLevelThree(0.5),
-            onLevelFour(0)));
+            onLevelThreeOfAttributeId(0.5, attributeId),
+            onLevelFourOfAttributeId(0, attributeId)));
     }
 
-    public static AnswerOption optionThree() {
+    public static AnswerOption optionTwo(long attributeId) {
+        return new AnswerOption(id++, 2, "two", 123L, List.of(
+            onLevelThreeOfAttributeId(0.5, attributeId),
+            onLevelFourOfAttributeId(0, attributeId)));
+    }
+
+    public static AnswerOption optionThree(long attributeId) {
         return new AnswerOption(id++, 3, "three", 123L, List.of(
-            onLevelThree(1),
-            onLevelFour(0)));
+            onLevelThreeOfAttributeId(1, attributeId),
+            onLevelFourOfAttributeId(0, attributeId)));
     }
 
-    public static AnswerOption optionFour() {
+    public static AnswerOption optionFour(long attributeId) {
         return new AnswerOption(id++, 4, "four", 123L, List.of(
-            onLevelThree(1),
-            onLevelFour(1)));
+            onLevelThreeOfAttributeId(1, attributeId),
+            onLevelFourOfAttributeId(1, attributeId)));
     }
 }
