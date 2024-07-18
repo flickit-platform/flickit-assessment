@@ -33,8 +33,8 @@ public class AssessmentInviteeJpaEntity {
     @Column(name = "role_id", nullable = false)
     private Integer roleId;
 
-    @Column(name = "expiration_date", nullable = false)
-    private LocalDateTime expirationDate;
+    @Column(name = "expiration_time", nullable = false)
+    private LocalDateTime expirationTime;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

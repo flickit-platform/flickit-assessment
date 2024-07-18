@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -32,10 +33,9 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     private final AssessmentUserRoleJpaRepository repository;
 
     @Override
-    public AssessmentUserRole load(UUID assessmentId, UUID userId) {
+    public Optional<AssessmentUserRole> load(UUID assessmentId, UUID userId) {
         return repository.findByAssessmentIdAndUserId(assessmentId, userId)
-            .map(x -> AssessmentUserRole.valueOfById(x.getRoleId()))
-            .orElse(null);
+            .map(result -> AssessmentUserRole.valueOfById(result.getRoleId()));
     }
 
     @Override

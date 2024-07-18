@@ -20,9 +20,7 @@ public class AssessmentPermissionCheckerService implements AssessmentPermissionC
     public boolean isAuthorized(UUID assessmentId, UUID userId, AssessmentPermission permission) {
         var currentUserRole = loadUserRoleForAssessmentPort.load(assessmentId, userId);
 
-        if (currentUserRole != null)
-            return currentUserRole.hasAccess(permission);
-
-        return false;
+        return currentUserRole.map(assessmentUserRole -> assessmentUserRole.hasAccess(permission))
+            .orElse(false);
     }
 }

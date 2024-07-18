@@ -1,22 +1,26 @@
 package org.flickit.assessment.core.adapter.out.persistence.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.domain.SpaceUserAccess;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.SpaceUserAccessPort;
-import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.core.adapter.out.persistence.spaceuseraccess.SpaceUserAccessMapper.toJpaEntity;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
+
 @Component("coreSpaceUserAccessPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class SpaceUserAccessPersistenceJpaAdapter implements
     CheckSpaceAccessPort,
-    SpaceUserAccessPort {
+    CreateAssessmentSpaceUserAccessPort {
 
     private final SpaceUserAccessJpaRepository repository;
+    private final AssessmentJpaRepository assessmentRepository;
 
     @Override
     public boolean checkIsMember(long spaceId, UUID userId) {
@@ -24,9 +28,10 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(SpaceUserAccess access) {
-        SpaceUserAccessJpaEntity unsavedEntity = new SpaceUserAccessJpaEntity(access.getSpaceId(), access.getUserId(),
-            access.getCreatedBy(), access.getCreationTime(), access.getCreationTime());
-        repository.save(unsavedEntity);
+    public void persist(CreateAssessmentSpaceUserAccessPort.Param param) {
+        Long spaceId = assessmentRepository.findById(param.assessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND))
+            .getSpaceId();
+        repository.save(toJpaEntity(param, spaceId));
     }
 }

@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ class AssessmentPermissionCheckerServiceTest {
         var assessmentId = assessment.getId();
         var userId = UUID.randomUUID();
 
-        when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(null);
+        when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(Optional.empty());
 
         AssessmentUserRole.VIEWER.getPermissions()
             .forEach(x ->
@@ -48,7 +49,7 @@ class AssessmentPermissionCheckerServiceTest {
         var assessmentId = assessment.getId();
         var userId = UUID.randomUUID();
 
-        when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(AssessmentUserRole.VIEWER);
+        when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(Optional.of(AssessmentUserRole.VIEWER));
 
         AssessmentUserRole.VIEWER.getPermissions()
             .forEach(x ->

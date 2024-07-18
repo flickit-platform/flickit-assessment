@@ -84,22 +84,19 @@
             <column name="role_id" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="expiration_date" type="${datetime_with_time_zone_type}">
+            <column name="expiration_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
             <column name="creation_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_by" type="UUID">
-                <constraints nullable="false" foreignKeyName="fk_fac_assessment_invitee_user_createdby"
-                             referencedTableName="fau_user" referencedColumnNames="id"/>
-            </column>
+            <column name="created_by" type="UUID"/>
         </createTable>
     </changeSet>
 
     <changeSet id="0.25-06" author="Maziyar Gerami">
         <addUniqueConstraint tableName="fac_assessment_invitee"
                              columnNames="assessment_id, email"
-                             constraintName="uq_fau_assessment_invitee_assessmentid_email"/>
+                             constraintName="uq_fac_assessment_invitee_assessmentid_email"/>
     </changeSet>
 </databaseChangeLog>

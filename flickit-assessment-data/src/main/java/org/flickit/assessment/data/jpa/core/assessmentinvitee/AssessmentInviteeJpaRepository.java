@@ -16,7 +16,7 @@ public interface AssessmentInviteeJpaRepository extends JpaRepository<Assessment
     @Query("""
         UPDATE AssessmentInviteeJpaEntity a
         SET a.roleId = :roleId,
-            a.expirationDate = :expirationDate,
+            a.expirationTime = :expirationTime,
             a.creationTime = :creationTime,
             a.createdBy = :createdBy
         WHERE a.assessmentId = :assessmentId AND a.email = :email
@@ -24,7 +24,7 @@ public interface AssessmentInviteeJpaRepository extends JpaRepository<Assessment
     void update(@Param("assessmentId") UUID assessmentId,
                 @Param("email") String email,
                 @Param("roleId") Integer roleId,
-                @Param("expirationDate") LocalDateTime expirationDate,
+                @Param("expirationTime") LocalDateTime expirationTime,
                 @Param("creationTime") LocalDateTime creationTime,
                 @Param("createdBy") UUID createdBy);
 }
