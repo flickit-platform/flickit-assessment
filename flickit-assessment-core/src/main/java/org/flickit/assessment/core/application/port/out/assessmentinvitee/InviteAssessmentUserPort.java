@@ -11,6 +11,6 @@ public interface InviteAssessmentUserPort {
                  String email,
                  Integer roleId,
                  LocalDateTime creationTime,
-                 LocalDateTime expirationDate,
+                 LocalDateTime expirationTime,
                  UUID createdBy){}
 }

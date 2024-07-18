@@ -24,7 +24,7 @@ public interface AssessmentInviteeJpaRepository extends JpaRepository<Assessment
     void update(@Param("assessmentId") UUID assessmentId,
                 @Param("email") String email,
                 @Param("roleId") Integer roleId,
-                @Param("expirationTime") LocalDateTime expirationTime,
                 @Param("creationTime") LocalDateTime creationTime,
+                @Param("expirationTime") LocalDateTime expirationTime,
                 @Param("createdBy") UUID createdBy);
 }

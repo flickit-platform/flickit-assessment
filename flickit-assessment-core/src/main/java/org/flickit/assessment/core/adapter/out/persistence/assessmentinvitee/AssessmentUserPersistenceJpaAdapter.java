@@ -18,12 +18,12 @@ public class AssessmentUserPersistenceJpaAdapter implements InviteAssessmentUser
             param.assessmentId(),
             param.email(),
             param.roleId(),
-            param.expirationDate(),
             param.creationTime(),
+            param.expirationTime(),
             param.createdBy());
 
         if (repository.existsByAssessmentIdAndEmail(param.assessmentId(), param.email()))
-            repository.update(param.assessmentId(), param.email(), param.roleId(), param.expirationDate(), param.creationTime(), param.createdBy());
+            repository.update(param.assessmentId(), param.email(), param.roleId(), param.creationTime(), param.expirationTime(), param.createdBy());
         else
             repository.save(entity);
     }
