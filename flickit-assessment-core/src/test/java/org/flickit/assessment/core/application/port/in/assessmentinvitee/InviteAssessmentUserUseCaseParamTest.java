@@ -52,7 +52,4 @@ class InviteAssessmentUserUseCaseParamTest {
             () -> new InviteAssessmentUserUseCase.Param(assessmentId, email, roleId, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
-
-
-
 }

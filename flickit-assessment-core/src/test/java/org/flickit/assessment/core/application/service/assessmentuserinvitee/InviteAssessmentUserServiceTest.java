@@ -68,7 +68,7 @@ class InviteAssessmentUserServiceTest {
     CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
 
     @Test
-    @DisplayName("If the assessment is not exists, the service should throw a not found exception.")
+    @DisplayName("If the assessment does not exist, the service should throw a not found exception.")
     void testInviteAssessmentUser_AssessmentIsNotExist_ResourceNotFoundException() {
         var assessmentId = UUID.randomUUID();
         var email = "test@test.com";
@@ -110,7 +110,7 @@ class InviteAssessmentUserServiceTest {
     }
 
     @Test
-    @DisplayName("If input parameters are valid, and user is not registered previously, the service should save the invitee record")
+    @DisplayName("If input parameters are valid, and the user is not registered previously, the service should save the invitee record.")
     void testInviteAssessmentUser_ValidParametersNotRegisteredUser_SuccessfulInviteePersist() {
         var assessmentId = UUID.randomUUID();
         var email = "test@test.com";
@@ -136,7 +136,7 @@ class InviteAssessmentUserServiceTest {
     }
 
     @Test
-    @DisplayName("If input parameters are valid, and user is registered previously and and is in space, the service should save the role for assessment.")
+    @DisplayName("If input parameters are valid, and the user is registered previously and is in space, the service should save the role for assessment.")
     void testInviteAssessmentUser_ValidParametersRegisteredUserIsInSpace_SuccessfulInviteePersist() {
         var email = "test@test.com";
         var roleId = 1;
@@ -163,7 +163,7 @@ class InviteAssessmentUserServiceTest {
     }
 
     @Test
-    @DisplayName("If input parameters are valid, and user is registered previously and is not in the space, the service should save the role for assessment.")
+    @DisplayName("If input parameters are valid, and the user is registered previously and is not in the space, the service should save the role for assessment.")
     void testInviteAssessmentUser_ValidParametersRegisteredUserIsNotInSpace_SuccessfulInviteePersist() {
         var email = "test@test.com";
         var roleId = 1;
