@@ -61,10 +61,13 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             inviteAssessmentUserPort.invite(toParam(param, creationTime, expirationDate));
             sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
         } else {
+            var createAssessmentParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
+
             if (checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), user.getId()))
                 throw new ResourceAlreadyExistsException(INVITE_ASSESSMENT_USER_ROLE_DUPLICATE);
             if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId()))
-                createAssessmentSpaceUserAccessPort.persist(new CreateAssessmentSpaceUserAccessPort.Param(assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime));
+                createAssessmentSpaceUserAccessPort.persist(createAssessmentParam);
             grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), param.getRoleId());
         }
     }
