@@ -20,8 +20,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.config.EmailConfig.EMAIL_SENDER_THREAD_EXECUTOR;
 import static org.flickit.assessment.users.common.MessageKey.*;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_SPACE_MEMBER_MAIL_SUBJECT;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_SPACE_MEMBER_MAIL_BODY;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 
 @Slf4j
 @Component
