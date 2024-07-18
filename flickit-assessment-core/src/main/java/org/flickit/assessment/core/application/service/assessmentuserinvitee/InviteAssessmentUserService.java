@@ -70,7 +70,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     }
 
     InviteSpaceMemberPort.Param toInviteSpaceParam(long spaceId, String email, UUID createdBy, LocalDateTime creationTime, LocalDateTime expirationDate) {
-        return new InviteSpaceMemberPort.Param(spaceId, email, createdBy, creationTime, expirationDate);
+        return new InviteSpaceMemberPort.Param(spaceId, email, expirationDate, creationTime, createdBy);
     }
 
     InviteAssessmentUserPort.Param toParam(Param param, LocalDateTime creationTime, LocalDateTime expirationDate) {

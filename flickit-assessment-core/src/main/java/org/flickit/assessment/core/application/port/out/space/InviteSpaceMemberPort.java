@@ -7,7 +7,11 @@ public interface InviteSpaceMemberPort {
 
     void invite(Param param);
 
-    record Param(long spaceId, String email, UUID createdBy,
-                 LocalDateTime creationTime, LocalDateTime expirationDate) {
+    record Param(long spaceId,
+                 String email,
+                 LocalDateTime expirationDate,
+                 LocalDateTime creationTime,
+                 UUID createdBy
+    ) {
     }
 }
