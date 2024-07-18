@@ -5,6 +5,16 @@
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
     <changeSet id="0.24.01" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fau_space" constraintName="uq_fau_space_code"/>
+    </changeSet>
+
+    <changeSet id="0.24.02" author="Maziyar Gerami">
+        <update tableName="fau_space">
+            <column name="code" valueComputed="LOWER(REGEXP_REPLACE(CONCAT(title ,'-',id), '[\s]', '-', 'g'))"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.24.03" author="Maziyar Gerami">
         <sql>
             WITH DuplicateTitles AS (
                 SELECT
@@ -16,7 +26,7 @@
                     fau_space
             )
             UPDATE fau_space
-            SET title = CONCAT(title, '_', id)
+            SET code = CONCAT(title, '_', id)
             WHERE ctid IN (
                 SELECT ctid
                 FROM DuplicateTitles
@@ -26,13 +36,26 @@
         <addUniqueConstraint tableName="fau_space" columnNames="code, created_by" constraintName="uq_fau_space_code_createdby"/>
     </changeSet>
 
-    <changeSet id="0.24.02" author="Maziyar Gerami">
-        <dropUniqueConstraint tableName="fau_space" constraintName="uq_fau_space_code"/>
+    <changeSet id="0.24.04" author="Maziyar Gerami">
+        <sql>
+            WITH FirstTitle AS (
+                SELECT
+                    ctid,
+                    title,
+                    created_by,
+                    ROW_NUMBER() OVER (PARTITION BY created_by, LOWER(title) ORDER BY ctid) AS row_num
+                FROM
+                    fau_space
+            )
+            UPDATE fau_space
+            SET code = LOWER(title)
+            WHERE ctid IN (
+                SELECT ctid
+                FROM FirstTitle
+                WHERE row_num = 1
+            );
+        </sql>
     </changeSet>
 
-    <changeSet id="0.24.03" author="Maziyar Gerami">
-        <update tableName="fau_space">
-            <column name="code" valueComputed="LOWER(REGEXP_REPLACE(CONCAT(title ,'-',id), '[\s]', '-', 'g'))"/>
-        </update>
-    </changeSet>
+
 </databaseChangeLog>
