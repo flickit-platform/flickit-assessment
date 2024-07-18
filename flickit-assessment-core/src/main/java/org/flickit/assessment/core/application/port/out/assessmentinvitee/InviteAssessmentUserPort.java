@@ -10,7 +10,7 @@ public interface InviteAssessmentUserPort {
     record Param(UUID assessmentId,
                  String email,
                  Integer roleId,
-                 LocalDateTime creationTime,
                  LocalDateTime expirationTime,
+                 LocalDateTime creationTime,
                  UUID createdBy){}
 }
