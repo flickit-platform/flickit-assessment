@@ -15,12 +15,13 @@ import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFile
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_DSL_SIZE_MAX;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 
 @Service
 @Transactional
@@ -36,8 +37,7 @@ public class UploadKitDslService implements UploadKitDslUseCase {
     @SneakyThrows
     @Override
     public Long upload(UploadKitDslUseCase.Param param) {
-        if (param.getDslFile().getSize() > fileProperties.getDslMaxSize().toBytes())
-            throw new ValidationException(UPLOAD_FILE_DSL_SIZE_MAX);
+        validateFile(param.getDslFile());
 
         UUID currentUserId = param.getCurrentUserId();
         validateCurrentUser(param.getExpertGroupId(), currentUserId);
@@ -55,4 +55,11 @@ public class UploadKitDslService implements UploadKitDslUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
+    private void validateFile(MultipartFile dslFile) {
+        if (dslFile.getSize() >= fileProperties.getDslMaxSize().toBytes())
+            throw new ValidationException(UPLOAD_FILE_DSL_SIZE_MAX);
+
+        if (!fileProperties.getKitDslContentTypes().contains(dslFile.getContentType()))
+            throw new ValidationException(UPLOAD_FILE_FORMAT_NOT_VALID);
+    }
 }

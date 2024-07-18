@@ -55,6 +55,6 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
             return true;
 
         var userRole = loadUserRoleForAssessmentPort.load(assessmentId, currentUserId);
-        return Objects.equals(userRole, MANAGER);
+        return userRole.map(role -> role.equals(MANAGER)).orElse(false);
     }
 }

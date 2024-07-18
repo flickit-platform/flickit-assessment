@@ -14,8 +14,6 @@ import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
-
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -62,7 +60,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
             new User(createdBy.getId(), createdBy.getDisplayName()),
             viewable ? assessmentResult.getMaturityLevel() : null,
             assessmentResult.getIsCalculateValid(),
-            Objects.equals(userRole, MANAGER),
+            userRole.map(role -> role.equals(MANAGER)).orElse(false),
             viewable);
     }
 }
