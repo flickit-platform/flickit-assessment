@@ -2,8 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentuserinvitee;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.core.application.domain.SpaceUserAccess;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -11,7 +10,7 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadU
 import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.space.InviteSpaceMemberPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.SpaceUserAccessPort;
+import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
@@ -41,16 +39,17 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     private final InviteSpaceMemberPort inviteSpaceMemberPort;
     private final InviteAssessmentUserPort inviteAssessmentUserPort;
     private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
-    private final SpaceUserAccessPort spaceUserAccessPort;
+    private final CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
+    private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
-    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Override
     public void inviteUser(Param param) {
         var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
         var inviterRole = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId());
-        if (!Objects.equals(inviterRole, MANAGER))
+        boolean inviterIsManager = inviterRole.map(role -> role.equals(MANAGER)).orElse(false);
+        if (!inviterIsManager)
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var user = loadUserPort.loadByEmail(param.getEmail());
@@ -62,11 +61,10 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             inviteAssessmentUserPort.invite(toParam(param, creationTime, expirationDate));
             sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
         } else {
-            if (checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), user.getId()))
+            if (checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), user.getId()))
                 throw new ResourceAlreadyExistsException(INVITE_ASSESSMENT_USER_ROLE_DUPLICATE);
-            var userAccess = new SpaceUserAccess(assessment.getSpace().getId(), user.getId(), param.getCurrentUserId(), creationTime);
             if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId()))
-                spaceUserAccessPort.persist(userAccess);
+                createAssessmentSpaceUserAccessPort.persist(new CreateAssessmentSpaceUserAccessPort.Param(assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime));
             grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), param.getRoleId());
         }
     }
