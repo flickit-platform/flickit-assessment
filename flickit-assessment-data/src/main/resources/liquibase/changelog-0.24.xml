@@ -4,17 +4,17 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.24.01" author="Maziyar Gerami">
+    <changeSet id="0.24-01" author="Maziyar Gerami">
         <dropUniqueConstraint tableName="fau_space" constraintName="uq_fau_space_code"/>
     </changeSet>
 
-    <changeSet id="0.24.02" author="Maziyar Gerami">
+    <changeSet id="0.24-02" author="Maziyar Gerami">
         <update tableName="fau_space">
             <column name="code" valueComputed="LOWER(REGEXP_REPLACE(CONCAT(title ,'-',id), '[\s]', '-', 'g'))"/>
         </update>
     </changeSet>
 
-    <changeSet id="0.24.03" author="Maziyar Gerami">
+    <changeSet id="0.24-03" author="Maziyar Gerami">
         <sql>
             WITH DuplicateTitles AS (
                 SELECT
@@ -36,7 +36,7 @@
         <addUniqueConstraint tableName="fau_space" columnNames="code, created_by" constraintName="uq_fau_space_code_createdby"/>
     </changeSet>
 
-    <changeSet id="0.24.04" author="Maziyar Gerami">
+    <changeSet id="0.24-04" author="Maziyar Gerami">
         <sql>
             WITH FirstTitle AS (
                 SELECT
