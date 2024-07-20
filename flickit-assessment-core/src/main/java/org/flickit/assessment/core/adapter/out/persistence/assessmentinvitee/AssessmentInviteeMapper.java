@@ -4,7 +4,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.AssessmentInvitee;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.CreateAssessmentInvitationPort;
 import org.flickit.assessment.data.jpa.core.assessmentinvitee.AssessmentInviteeJpaEntity;
+
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentInviteeMapper {
@@ -16,5 +19,16 @@ public class AssessmentInviteeMapper {
             entity.getExpirationTime(),
             entity.getCreationTime(),
             entity.getCreatedBy());
+    }
+
+    public static AssessmentInviteeJpaEntity mapToJpaEntity(UUID id, CreateAssessmentInvitationPort.Param param) {
+        return new AssessmentInviteeJpaEntity(
+            id,
+            param.assessmentId(),
+            param.email(),
+            param.roleId(),
+            param.creationTime(),
+            param.expirationTime(),
+            param.createdBy());
     }
 }
