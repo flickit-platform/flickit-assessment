@@ -19,7 +19,6 @@ import java.util.UUID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ATTACHMENT_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
 
-
 @Component
 @RequiredArgsConstructor
 public class EvidenceAttachmentPersistenceJpaAdapter implements
