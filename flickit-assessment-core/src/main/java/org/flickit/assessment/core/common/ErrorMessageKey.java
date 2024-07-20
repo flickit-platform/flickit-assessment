@@ -166,4 +166,5 @@ public class ErrorMessageKey {
     public static final String GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL = "get-evidence-attachments.evidenceId.notNull";
 
     public static final String ACCEPT_ASSESSMENT_INVITATIONS_USER_ID_NOT_NULL = "accept-assessment-invitations.userId.notNull";
+    public static final String ACCEPT_ASSESSMENT_INVITATIONS_USER_ID_NOT_FOUND = "accept-assessment-invitations.userId.notFound";
 }
