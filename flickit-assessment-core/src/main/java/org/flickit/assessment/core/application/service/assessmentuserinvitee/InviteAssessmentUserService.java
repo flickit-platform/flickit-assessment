@@ -1,8 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentuserinvitee;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -24,7 +22,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.INVITE_ASSESSMENT_USER_ROLE_DUPLICATE;
 
 @Service
 @Transactional
@@ -39,7 +36,6 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     private final InviteSpaceMemberPort inviteSpaceMemberPort;
     private final InviteAssessmentUserPort inviteAssessmentUserPort;
     private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
-    private final CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
     private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
@@ -64,8 +60,6 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             var createAssessmentParam = new CreateAssessmentSpaceUserAccessPort.Param(
                 assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
 
-            if (checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), user.getId()))
-                throw new ResourceAlreadyExistsException(INVITE_ASSESSMENT_USER_ROLE_DUPLICATE);
             if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId()))
                 createAssessmentSpaceUserAccessPort.persist(createAssessmentParam);
             grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), param.getRoleId());
