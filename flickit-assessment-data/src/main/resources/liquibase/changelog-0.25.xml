@@ -122,7 +122,7 @@
                     fau_space
             )
             UPDATE fau_space
-            SET code = CONCAT(LOWER(title), '_', id)
+            SET code = CONCAT(LOWER(title), '-', id)
             WHERE ctid IN (
                 SELECT ctid
                 FROM DuplicateTitles
