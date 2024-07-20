@@ -21,7 +21,7 @@ public class AssessmentInviteePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AssessmentInvitee> loadByAssessmentId(UUID assessmentId, int size, int page) {
-        var order = AssessmentInviteeJpaEntity.Fields.CREATION_TIME;
+        var order = AssessmentInviteeJpaEntity.Fields.creationTime;
         var sort = Sort.Direction.DESC;
 
         var pageResult = repository.findByAssessmentId(assessmentId,
