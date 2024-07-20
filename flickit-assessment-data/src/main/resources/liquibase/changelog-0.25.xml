@@ -118,16 +118,13 @@
                     title,
                     created_by,
                     ROW_NUMBER() OVER (PARTITION BY title, created_by ORDER BY ctid) AS row_num
-                FROM
-                    fau_space
-            )
+                FROM fau_space)
             UPDATE fau_space
             SET code = CONCAT(LOWER(title), '-', id)
             WHERE ctid IN (
                 SELECT ctid
                 FROM DuplicateTitles
-                WHERE row_num > 1
-            );
+                WHERE row_num > 1);
         </sql>
         <addUniqueConstraint tableName="fau_space" columnNames="code, created_by" constraintName="uq_fau_space_code_createdby"/>
     </changeSet>
@@ -140,16 +137,13 @@
                     title,
                     created_by,
                     ROW_NUMBER() OVER (PARTITION BY created_by, LOWER(title) ORDER BY ctid) AS row_num
-                FROM
-                    fau_space
-            )
+                FROM fau_space)
             UPDATE fau_space
             SET code = LOWER(title)
             WHERE ctid IN (
                 SELECT ctid
                 FROM FirstTitle
-                WHERE row_num = 1
-            );
+                WHERE row_num = 1);
         </sql>
     </changeSet>
 </databaseChangeLog>
