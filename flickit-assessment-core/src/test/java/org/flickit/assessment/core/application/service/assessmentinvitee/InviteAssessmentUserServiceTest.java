@@ -1,15 +1,14 @@
 package org.flickit.assessment.core.application.service.assessmentinvitee;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase.Param;
 import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.space.InviteSpaceMemberPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
@@ -25,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +43,7 @@ class InviteAssessmentUserServiceTest {
     private LoadUserPort loadUserPort;
 
     @Mock
-    private LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     private InviteSpaceMemberPort inviteSpaceMemberPort;
@@ -72,18 +72,19 @@ class InviteAssessmentUserServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, email, roleId, currentUserId);
 
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenThrow(new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.inviteUser(param));
         assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
 
         verify(getAssessmentPort).getAssessmentById(assessmentId);
-        verifyNoInteractions(loadUserRoleForAssessmentPort, loadUserPort, inviteSpaceMemberPort,
+        verifyNoInteractions(loadUserPort, inviteSpaceMemberPort,
             inviteAssessmentUserPort, sendFlickitInviteMailPort, grantUserAssessmentRolePort, checkSpaceAccessPort);
     }
 
     @Test
-    @DisplayName("If the inviter is not a manager on this assessment, the invitation will fail.")
+    @DisplayName("If current user doesn't have required permission, the service should throw an AccessDeniedException.")
     void testInviteAssessmentUser_InviterIsNotManager_AccessDenied() {
         var assessmentId = UUID.randomUUID();
         var email = "test@test.com";
@@ -91,15 +92,12 @@ class InviteAssessmentUserServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, email, roleId, currentUserId);
 
-        when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(AssessmentMother.assessment()));
-        when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.VIEWER));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteUser(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(getAssessmentPort).getAssessmentById(assessmentId);
-        verify(loadUserRoleForAssessmentPort).load(param.getAssessmentId(), param.getCurrentUserId());
-        verifyNoInteractions(loadUserPort, inviteSpaceMemberPort,
+        verifyNoInteractions(getAssessmentPort, loadUserPort, inviteSpaceMemberPort,
             inviteAssessmentUserPort, sendFlickitInviteMailPort, grantUserAssessmentRolePort, checkSpaceAccessPort);
     }
 
@@ -115,7 +113,7 @@ class InviteAssessmentUserServiceTest {
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(email)).thenReturn(Optional.empty());
-        when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(inviteSpaceMemberPort).invite(isA(InviteSpaceMemberPort.Param.class));
         doNothing().when(inviteAssessmentUserPort).invite(isA(InviteAssessmentUserPort.Param.class));
         doNothing().when(sendFlickitInviteMailPort).inviteToFlickit(isA(String.class));
@@ -123,7 +121,7 @@ class InviteAssessmentUserServiceTest {
         assertDoesNotThrow(() -> service.inviteUser(param));
         verify(getAssessmentPort).getAssessmentById(assessmentId);
         verify(loadUserPort).loadByEmail(email);
-        verify(loadUserRoleForAssessmentPort).load(param.getAssessmentId(), param.getCurrentUserId());
+        verify(assessmentAccessChecker).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE);
         verify(inviteSpaceMemberPort).invite(any(InviteSpaceMemberPort.Param.class));
         verify(inviteAssessmentUserPort).invite(any(InviteAssessmentUserPort.Param.class));
         verify(sendFlickitInviteMailPort).inviteToFlickit(email);
@@ -142,14 +140,14 @@ class InviteAssessmentUserServiceTest {
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(email)).thenReturn(Optional.of(user));
-        when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(true);
         doNothing().when(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
 
         assertDoesNotThrow(() -> service.inviteUser(param));
         verify(getAssessmentPort).getAssessmentById(assessmentId);
         verify(loadUserPort).loadByEmail(email);
-        verify(loadUserRoleForAssessmentPort).load(param.getAssessmentId(), param.getCurrentUserId());
+        verify(assessmentAccessChecker).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE);
         verify(checkSpaceAccessPort).checkIsMember(assessment.getSpace().getId(), user.getId());
         verify(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
 
@@ -168,7 +166,7 @@ class InviteAssessmentUserServiceTest {
         var user = new User(UUID.randomUUID(), "Display Name");
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(email)).thenReturn(Optional.of(user));
-        when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(false);
         doNothing().when(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
         doNothing().when(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));
@@ -176,7 +174,7 @@ class InviteAssessmentUserServiceTest {
         assertDoesNotThrow(() -> service.inviteUser(param));
         verify(getAssessmentPort).getAssessmentById(assessmentId);
         verify(loadUserPort).loadByEmail(email);
-        verify(loadUserRoleForAssessmentPort).load(param.getAssessmentId(), param.getCurrentUserId());
+        verify(assessmentAccessChecker).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE);
         verify(checkSpaceAccessPort).checkIsMember(assessment.getSpace().getId(), user.getId());
         verify(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
         verify(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));

@@ -1,26 +1,24 @@
 package org.flickit.assessment.core.application.service.assessmentinvitee;
 
+import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase;
+import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
-import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.space.InviteSpaceMemberPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
-import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -30,9 +28,9 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final GetAssessmentPort getAssessmentPort;
     private final LoadUserPort loadUserPort;
-    private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
     private final InviteSpaceMemberPort inviteSpaceMemberPort;
     private final InviteAssessmentUserPort inviteAssessmentUserPort;
     private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
@@ -42,39 +40,43 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
 
     @Override
     public void inviteUser(Param param) {
-        var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
-        var inviterRole = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId());
-        boolean inviterIsManager = inviterRole.map(role -> role.equals(MANAGER)).orElse(false);
-        if (!inviterIsManager)
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var user = loadUserPort.loadByEmail(param.getEmail()).orElse(null);
+        var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+
+        var user = loadUserPort.loadByEmail(param.getEmail());
         var creationTime = LocalDateTime.now();
-        var expirationDate = creationTime.plusDays(EXPIRY_DURATION.toDays());
-        if (user == null) {
-            inviteSpaceMemberPort.invite(toInviteSpaceParam(assessment.getSpace().getId(), param.getEmail(),
-                param.getCurrentUserId(), creationTime, expirationDate));
-            inviteAssessmentUserPort.invite(toParam(param, creationTime, expirationDate));
+        var expirationTime = creationTime.plusDays(EXPIRY_DURATION.toDays());
+        if (user.isEmpty()) {
+            inviteSpaceMemberPort.invite(toCreateSpaceInvitationParam(assessment.getSpace().getId(), param, creationTime, expirationTime));
+            inviteAssessmentUserPort.invite(toCreateAssessmentInvitationParam(param, creationTime, expirationTime));
             sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
         } else {
-            var createAssessmentParam = new CreateAssessmentSpaceUserAccessPort.Param(
-                assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
+            var userId = user.get().getId();
 
-            if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId()))
+            if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), userId)) {
+                var createAssessmentParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                    assessment.getId(), userId, param.getCurrentUserId(), creationTime);
                 createAssessmentSpaceUserAccessPort.persist(createAssessmentParam);
-            grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), param.getRoleId());
+            }
+            grantUserAssessmentRolePort.persist(param.getAssessmentId(), userId, param.getRoleId());
         }
     }
 
-    InviteSpaceMemberPort.Param toInviteSpaceParam(long spaceId, String email, UUID createdBy, LocalDateTime creationTime, LocalDateTime expirationDate) {
-        return new InviteSpaceMemberPort.Param(spaceId, email, expirationDate, creationTime, createdBy);
+    InviteSpaceMemberPort.Param toCreateSpaceInvitationParam(long spaceId, Param param, LocalDateTime creationTime, LocalDateTime expirationTime) {
+        return new InviteSpaceMemberPort.Param(spaceId,
+            param.getEmail(),
+            expirationTime,
+            creationTime,
+            param.getCurrentUserId());
     }
 
-    InviteAssessmentUserPort.Param toParam(Param param, LocalDateTime creationTime, LocalDateTime expirationDate) {
+    InviteAssessmentUserPort.Param toCreateAssessmentInvitationParam(Param param, LocalDateTime creationTime, LocalDateTime expirationTime) {
         return new InviteAssessmentUserPort.Param(param.getAssessmentId(),
             param.getEmail(),
             param.getRoleId(),
-            expirationDate,
+            expirationTime,
             creationTime,
             param.getCurrentUserId());
     }
