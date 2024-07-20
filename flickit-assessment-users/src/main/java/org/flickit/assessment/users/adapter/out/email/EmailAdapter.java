@@ -49,8 +49,8 @@ public class EmailAdapter implements
 
     @Override
     public void inviteToFlickit(String to) {
-        String subject = MessageBundle.message(INVITE_TO_REGISTER_MAIL_SUBJECT, appSpecProperties.getName());
-        String text =  MessageBundle.message(INVITE_TO_REGISTER_MAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
+        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
+        String text =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
         log.debug("Sending invite email to [{}]", to);
         sendMail(to, subject, text);
     }

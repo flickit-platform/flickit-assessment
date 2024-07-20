@@ -17,8 +17,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.common.config.EmailConfig.EMAIL_SENDER_THREAD_EXECUTOR;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_MAIL_SUBJECT;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_MAIL_BODY;
+import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_SUBJECT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_BODY;
 
 @Slf4j
 @Component("coreEmailAdapter")
@@ -32,8 +32,8 @@ public class EmailAdapter implements
 
     @Override
     public void inviteToFlickit(String to) {
-        String subject = MessageBundle.message(INVITE_TO_REGISTER_MAIL_SUBJECT, appSpecProperties.getName());
-        String text =  MessageBundle.message(INVITE_TO_REGISTER_MAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
+        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
+        String text =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
         log.debug("Sending invite email to [{}]", to);
         sendMail(to, subject, text);
     }

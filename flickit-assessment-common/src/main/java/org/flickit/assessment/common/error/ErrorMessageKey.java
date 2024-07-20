@@ -24,6 +24,6 @@ public class ErrorMessageKey {
 
     public static final String COMMON_SPACE_ID_NOT_FOUND = "common.space.notFound";
 
-    public static final String INVITE_TO_REGISTER_MAIL_SUBJECT = "invite-space-member.mail.subject";
-    public static final String INVITE_TO_REGISTER_MAIL_BODY = "invite-space-member.mail.body";
+    public static final String INVITE_TO_REGISTER_EMAIL_SUBJECT = "invite-to-register.email.subject";
+    public static final String INVITE_TO_REGISTER_EMAIL_BODY = "invite-to-register.email.body";
 }
