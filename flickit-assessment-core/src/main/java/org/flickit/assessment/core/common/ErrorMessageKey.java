@@ -164,4 +164,9 @@ public class ErrorMessageKey {
     public static final String ADD_EVIDENCE_ATTACHMENT_DESCRIPTION_SIZE_MAX = "add-evidence-attachment.description.size.max";
 
     public static final String GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL = "get-evidence-attachments.evidenceId.notNull";
+
+    public static final String GET_ASSESSMENT_INVITEE_LIST_ASSESSMENT_ID_NOT_NULL = "get-assessment-invitee-list.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_INVITEE_LIST_SIZE_MIN = "get-assessment-invitee-list.size.min";
+    public static final String GET_ASSESSMENT_INVITEE_LIST_SIZE_MAX = "get-assessment-invitee-list.size.max";
+    public static final String GET_ASSESSMENT_INVITEE_LIST_PAGE_MIN = "get-assessment-invitee-list.page.min";
 }
