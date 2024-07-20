@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GET_ASSESSMENT_USERS;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_USERS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -44,7 +44,7 @@ class GetAssessmentUsersServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAssessmentUsersUseCase.Param(assessmentId, currentUserId, 10, 0);
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(false);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_USERS)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentUsers(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -77,7 +77,7 @@ class GetAssessmentUsersServiceTest {
                 "asc",
                 10);
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(true);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_USERS)).thenReturn(true);
         when(port.loadAssessmentUsers(portParam)).thenReturn(paginatedResponse);
 
         var response = service.getAssessmentUsers(useCaseParam);
@@ -123,7 +123,7 @@ class GetAssessmentUsersServiceTest {
                 "asc",
                 10);
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(true);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_USERS)).thenReturn(true);
         when(port.loadAssessmentUsers(portParam)).thenReturn(paginatedResponse);
         when(createFileDownloadLinkPort.createDownloadLink(expectedAssessmentUser.picturePath(), Duration.ofDays(1))).thenReturn("cdn.flickit.org/profile.jpg");
 
