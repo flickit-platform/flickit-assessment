@@ -33,7 +33,8 @@ public enum AssessmentPermission {
     GRANT_USER_ASSESSMENT_ROLE("grantUserAssessmentRole"),
     UPDATE_USER_ASSESSMENT_ROLE("updateUserAssessmentRole"),
     DELETE_USER_ASSESSMENT_ROLE("deleteUserAssessmentRole"),
-    GET_ASSESSMENT_USERS("getAssessmentUsers");
+    VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
+    VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList");
 
     private final String code;
 }
