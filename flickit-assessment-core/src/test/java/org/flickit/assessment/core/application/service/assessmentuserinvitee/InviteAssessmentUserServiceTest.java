@@ -68,8 +68,8 @@ class InviteAssessmentUserServiceTest {
     CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
 
     @Test
-    @DisplayName("If the assessment does not exist, the service should throw a not found exception.")
-    void testInviteAssessmentUser_AssessmentIsNotExist_ResourceNotFoundException() {
+    @DisplayName("If the assessment does not exist, the service should throw a notFoundException.")
+    void testInviteAssessmentUser_AssessmentDoesNotExist_ResourceNotFoundException() {
         var assessmentId = UUID.randomUUID();
         var email = "test@test.com";
         var roleId = 1;
@@ -120,7 +120,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadByEmail(email)).thenReturn(null);
+        when(loadUserPort.loadByEmail(email)).thenReturn(Optional.empty());
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         doNothing().when(inviteSpaceMemberPort).invite(isA(InviteSpaceMemberPort.Param.class));
         doNothing().when(inviteAssessmentUserPort).invite(isA(InviteAssessmentUserPort.Param.class));
@@ -147,7 +147,7 @@ class InviteAssessmentUserServiceTest {
         var user = new User(UUID.randomUUID(), "Display Name");
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadByEmail(email)).thenReturn(user);
+        when(loadUserPort.loadByEmail(email)).thenReturn(Optional.of(user));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(true);
         doNothing().when(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
@@ -173,7 +173,7 @@ class InviteAssessmentUserServiceTest {
         var param = new Param(assessmentId, email, roleId, currentUserId);
         var user = new User(UUID.randomUUID(), "Display Name");
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadByEmail(email)).thenReturn(user);
+        when(loadUserPort.loadByEmail(email)).thenReturn(Optional.of(user));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())).thenReturn(false);
         doNothing().when(grantUserAssessmentRolePort).persist(assessment.getId(), user.getId(), param.getRoleId());
