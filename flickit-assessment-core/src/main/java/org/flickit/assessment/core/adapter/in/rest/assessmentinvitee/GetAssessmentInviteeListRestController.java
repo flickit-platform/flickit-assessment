@@ -22,10 +22,10 @@ public class GetAssessmentInviteeListRestController {
     private final GetAssessmentInviteeListUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/assessments/{assessmentId}/assessment-invitees")
-    public ResponseEntity<PaginatedResponse<Result>> getAssessmentUsers(@PathVariable UUID assessmentId,
-                                                                        @RequestParam(defaultValue = "10") int size,
-                                                                        @RequestParam(defaultValue = "0") int page) {
+    @GetMapping("/assessments/{assessmentId}/invitees")
+    public ResponseEntity<PaginatedResponse<Result>> getAssessmentInvitees(@PathVariable UUID assessmentId,
+                                                                           @RequestParam(defaultValue = "10") int size,
+                                                                           @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
         var response = useCase.getInviteeList(toParam(assessmentId, currentUserId, size, page));
         return new ResponseEntity<>(response, HttpStatus.OK);

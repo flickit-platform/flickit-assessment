@@ -1055,7 +1055,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/assessment-invitees?page=0&size=10",
+					"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/invitees?page=0&size=10",
 					"host": [
 						"{{base_url}}"
 					],
@@ -1063,7 +1063,7 @@
 						"{{api_path}}",
 						"assessments",
 						"88c50ea3-9486-4186-9ed4-7ff9bc32b768",
-						"assessment-invitees"
+						"invitees"
 					],
 					"query": [
 						{
