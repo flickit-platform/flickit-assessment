@@ -9,5 +9,5 @@ public interface LoadUserPort {
 
     Optional<User> loadById(UUID createdBy);
 
-    User loadByEmail(String email);
+    Optional<User> loadByEmail(String email);
 }

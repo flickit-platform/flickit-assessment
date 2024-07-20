@@ -52,7 +52,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         if (!inviterIsManager)
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var user = loadUserPort.loadByEmail(param.getEmail());
+        var user = loadUserPort.loadById(assessment.getCreatedBy()).orElse(null);
         var creationTime = LocalDateTime.now();
         var expirationDate = creationTime.plusDays(EXPIRY_DURATION.toDays());
         if (user == null) {
