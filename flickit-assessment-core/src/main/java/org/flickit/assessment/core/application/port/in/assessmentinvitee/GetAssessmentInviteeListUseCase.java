@@ -48,11 +48,9 @@ public interface GetAssessmentInviteeListUseCase {
                   String email,
                   Role role,
                   LocalDateTime expirationTime,
-                  LocalDateTime creationTime
-    ) {
+                  LocalDateTime creationTime) {
 
-        public record Role(int id,
-                           String title) {
+        public record Role(int id, String title) {
         }
     }
 }

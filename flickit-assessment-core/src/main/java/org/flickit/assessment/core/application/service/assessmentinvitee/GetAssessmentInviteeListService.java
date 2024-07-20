@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_INVITEE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

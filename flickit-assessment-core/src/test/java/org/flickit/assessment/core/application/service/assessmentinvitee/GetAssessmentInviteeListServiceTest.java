@@ -67,9 +67,8 @@ class GetAssessmentInviteeListServiceTest {
             0,
             10,
             Sort.Direction.DESC.name().toLowerCase(),
-            AssessmentInviteeJpaEntity.Fields.CREATION_TIME,
+            AssessmentInviteeJpaEntity.Fields.creationTime,
             1);
-
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_INVITEE_LIST)).thenReturn(true);
         when(loadAssessmentInviteeListPort.loadByAssessmentId(assessmentId, param.getSize(), param.getPage()))

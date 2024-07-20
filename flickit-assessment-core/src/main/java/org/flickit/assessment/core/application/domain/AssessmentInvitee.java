@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
 @Getter
 @RequiredArgsConstructor
 public class AssessmentInvitee {
