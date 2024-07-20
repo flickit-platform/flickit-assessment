@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.application.domain.Space.generateSlugCode;
 
 @Service
 @Transactional
@@ -26,8 +27,11 @@ public class UpdateSpaceService implements UpdateSpaceUseCase {
     public void updateSpace(Param param) {
         validateCurrentUser(param.getId(), param.getCurrentUserId());
 
-        var updateParam = new UpdateSpacePort.Param(param.getId(), param.getTitle(),
-            LocalDateTime.now(), param.getCurrentUserId());
+        var updateParam = new UpdateSpacePort.Param(param.getId(),
+            param.getTitle(),
+            generateSlugCode(param.getTitle()),
+            LocalDateTime.now(),
+            param.getCurrentUserId());
         updateSpacePort.updateSpace(updateParam);
     }
 

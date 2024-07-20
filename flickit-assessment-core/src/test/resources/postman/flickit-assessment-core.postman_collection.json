@@ -1080,6 +1080,40 @@
 			"response": []
 		},
 		{
+			"name": "Assessment Invite",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"maziyar.grami@gmail.com\",\n    \"roleId\" : 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/invite",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
+						"invite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment User Permissions",
 			"request": {
 				"method": "GET",

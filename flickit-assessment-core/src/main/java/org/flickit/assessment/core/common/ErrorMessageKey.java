@@ -170,5 +170,10 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_INVITEE_LIST_SIZE_MAX = "get-assessment-invitee-list.size.max";
     public static final String GET_ASSESSMENT_INVITEE_LIST_PAGE_MIN = "get-assessment-invitee-list.page.min";
 
+    public static final String INVITE_ASSESSMENT_USER_ASSESSMENT_ID_NOT_NULL = "invite-assessment-user.assessmentId.notNull";
+    public static final String INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL = "invite-assessment-user.email.notNull";
+    public static final String INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL = "invite-assessment-user.roleId.notNull";
+    public static final String INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND = "invite-assessment-user.roleId.notFound";
+
     public static final String GET_ASSESSMENT_USER_PERMISSIONS_ASSESSMENT_ID_NOT_NULL = "get-assessment-current-user-permissions.assessmentId.notNull";
 }

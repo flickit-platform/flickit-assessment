@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.adapter.out.email;
+package org.flickit.assessment.core.adapter.out.email;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -6,8 +6,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
-import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
+import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
+
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,36 +16,19 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 import static org.flickit.assessment.common.config.EmailConfig.EMAIL_SENDER_THREAD_EXECUTOR;
-import static org.flickit.assessment.users.common.MessageKey.*;
-import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_SUBJECT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_BODY;
 
 @Slf4j
-@Component
+@Component("coreEmailAdapter")
 @RequiredArgsConstructor
 public class EmailAdapter implements
-    SendExpertGroupInviteMailPort,
     SendFlickitInviteMailPort {
 
     private final JavaMailSender mailSender;
     private final AppSpecProperties appSpecProperties;
     private final MailProperties springMailProperties;
-
-    @Override
-    public void inviteToExpertGroup(String to, long expertGroupId, UUID inviteToken) {
-        String subject = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT);
-        String text = createText(expertGroupId, inviteToken);
-        log.debug("Sending 'invite to expertGroup [{}]' email to [{}]", expertGroupId, to);
-        sendMail(to, subject, text);
-    }
-
-    private String createText(long expertGroupId, UUID inviteToken) {
-        String inviteUrl = String.join("/", appSpecProperties.getHost(), appSpecProperties.getExpertGroupInviteUrlPath(),
-            String.valueOf(expertGroupId), inviteToken.toString());
-        return MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY, inviteUrl, appSpecProperties.getName());
-    }
 
     @Override
     public void inviteToFlickit(String to) {
