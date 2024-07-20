@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.core.adapter.out.persistence.spaceinvitee.SpaceInviteeMapper.mapToJpaEntity;
 
-
 @Component("coreSpaceInviteePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class SpaceInviteePersistenceJpaAdapter implements InviteSpaceMemberPort {
@@ -17,7 +16,6 @@ public class SpaceInviteePersistenceJpaAdapter implements InviteSpaceMemberPort 
 
     @Override
     public void invite(InviteSpaceMemberPort.Param param) {
-
         var invitation = repository.findBySpaceIdAndEmail(param.spaceId(), param.email());
 
         SpaceInviteeJpaEntity entity;
