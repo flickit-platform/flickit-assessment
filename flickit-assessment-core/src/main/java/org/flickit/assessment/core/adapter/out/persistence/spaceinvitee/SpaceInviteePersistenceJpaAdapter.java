@@ -6,6 +6,9 @@ import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.springframework.stereotype.Component;
 
+import static org.flickit.assessment.core.adapter.out.persistence.spaceinvitee.SpaceInviteeMapper.mapToJpaEntity;
+
+
 @Component("coreSpaceInviteePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class SpaceInviteePersistenceJpaAdapter implements InviteSpaceMemberPort {
@@ -13,18 +16,14 @@ public class SpaceInviteePersistenceJpaAdapter implements InviteSpaceMemberPort 
     private final SpaceInviteeJpaRepository repository;
 
     @Override
-    public void invite(Param param) {
-        var entity = new SpaceInviteeJpaEntity(null,
-            param.spaceId(),
-            param.email(),
-            param.createdBy(),
-            param.creationTime(),
-            param.expirationDate());
+    public void invite(InviteSpaceMemberPort.Param param) {
 
-        if (repository.existsBySpaceIdAndEmail(param.spaceId(), param.email()))
-            repository.update(param.spaceId(), param.email(), param.creationTime(), param.expirationDate(), param.createdBy());
-        else
-            repository.save(entity);
+        var invitation = repository.findBySpaceIdAndEmail(param.spaceId(), param.email());
 
+        SpaceInviteeJpaEntity entity;
+        entity = invitation.map(SpaceInviteeJpaEntity -> mapToJpaEntity(invitation.get().getId(), param))
+            .orElseGet(() -> mapToJpaEntity(null, param));
+
+        repository.save(entity);
     }
 }
