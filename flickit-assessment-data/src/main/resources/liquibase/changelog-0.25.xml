@@ -99,4 +99,57 @@
                              columnNames="assessment_id, email"
                              constraintName="uq_fac_assessment_invitee_assessmentid_email"/>
     </changeSet>
+
+    <changeSet id="0.25-07" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fau_space" constraintName="uq_fau_space_code"/>
+    </changeSet>
+
+    <changeSet id="0.25-08" author="Maziyar Gerami">
+        <update tableName="fau_space">
+            <column name="code" valueComputed="LOWER(REGEXP_REPLACE(CONCAT(title ,'-',id), '[\s]', '-', 'g'))"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.25-09" author="Maziyar Gerami">
+        <sql>
+            WITH DuplicateTitles AS (
+                SELECT
+                    ctid,
+                    title,
+                    created_by,
+                    ROW_NUMBER() OVER (PARTITION BY title, created_by ORDER BY ctid) AS row_num
+                FROM
+                    fau_space
+            )
+            UPDATE fau_space
+            SET code = CONCAT(title, '_', id)
+            WHERE ctid IN (
+                SELECT ctid
+                FROM DuplicateTitles
+                WHERE row_num > 1
+            );
+        </sql>
+        <addUniqueConstraint tableName="fau_space" columnNames="code, created_by" constraintName="uq_fau_space_code_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.25-10" author="Maziyar Gerami">
+        <sql>
+            WITH FirstTitle AS (
+                SELECT
+                    ctid,
+                    title,
+                    created_by,
+                    ROW_NUMBER() OVER (PARTITION BY created_by, LOWER(title) ORDER BY ctid) AS row_num
+                FROM
+                    fau_space
+            )
+            UPDATE fau_space
+            SET code = LOWER(title)
+            WHERE ctid IN (
+                SELECT ctid
+                FROM FirstTitle
+                WHERE row_num = 1
+            );
+        </sql>
+    </changeSet>
 </databaseChangeLog>
