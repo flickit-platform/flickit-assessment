@@ -15,5 +15,5 @@ public class AssessmentInvitee {
     private final AssessmentUserRole role;
     private final LocalDateTime expirationTime;
     private final LocalDateTime creationTime;
-    private final UUID createdById;
+    private final UUID createdBy;
 }
