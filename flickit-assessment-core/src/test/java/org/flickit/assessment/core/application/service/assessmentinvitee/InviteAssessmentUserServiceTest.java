@@ -85,7 +85,7 @@ class InviteAssessmentUserServiceTest {
 
     @Test
     @DisplayName("If current user doesn't have required permission, the service should throw an AccessDeniedException.")
-    void testInviteAssessmentUser_InviterIsNotManager_AccessDenied() {
+    void testInviteAssessmentUser_InviterIsNotManager_AccessDeniedException() {
         var assessmentId = UUID.randomUUID();
         var email = "test@test.com";
         var roleId = 1;
@@ -102,7 +102,7 @@ class InviteAssessmentUserServiceTest {
     }
 
     @Test
-    @DisplayName("If input parameters are valid, and the user is not registered previously, the service should save the invitee record.")
+    @DisplayName("If the user is not registered, the service should create space and assessment invitations and send an invite email.")
     void testInviteAssessmentUser_ValidParametersNotRegisteredUser_SuccessfulInviteePersist() {
         var assessmentId = UUID.randomUUID();
         var email = "test@test.com";
@@ -128,8 +128,8 @@ class InviteAssessmentUserServiceTest {
     }
 
     @Test
-    @DisplayName("If input parameters are valid, and the user is registered previously and is in space, the service should save the role for assessment.")
-    void testInviteAssessmentUser_ValidParametersRegisteredUserIsInSpace_SuccessfulInviteePersist() {
+    @DisplayName("If the user is registered and already a member of the related space, the user should be granted the assessment role.")
+    void testInviteAssessmentUser_ValidParametersRegisteredUserIsInSpace_SuccessfulGrantAccess() {
         var email = "test@test.com";
         var roleId = 1;
         var currentUserId = UUID.randomUUID();
@@ -155,8 +155,8 @@ class InviteAssessmentUserServiceTest {
     }
 
     @Test
-    @DisplayName("If input parameters are valid, and the user is registered previously and is not in the space, the service should save the role for assessment.")
-    void testInviteAssessmentUser_ValidParametersRegisteredUserIsNotInSpace_SuccessfulInviteePersist() {
+    @DisplayName("If the user is registered but not a member of the related space, the user should be granted the assessment role, and access to the space should be created as well.")
+    void testInviteAssessmentUser_ValidParametersRegisteredUserIsNotInSpace_SuccessfulGrantAccess() {
         var email = "test@test.com";
         var roleId = 1;
         var currentUserId = UUID.randomUUID();
