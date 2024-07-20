@@ -1,10 +1,10 @@
-package org.flickit.assessment.core.application.service.assessmentuserinvitee;
+package org.flickit.assessment.core.application.service.assessmentinvitee;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.User;
-import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase.*;
+import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase.Param;
 import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;

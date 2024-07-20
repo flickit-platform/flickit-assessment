@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.assessmentuserinvitee;
+package org.flickit.assessment.core.application.service.assessmentinvitee;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
