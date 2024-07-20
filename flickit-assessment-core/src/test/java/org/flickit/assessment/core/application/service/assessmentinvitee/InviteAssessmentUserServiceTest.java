@@ -7,9 +7,9 @@ import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase.Param;
 import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.CreateAssessmentInvitationPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.space.InviteSpaceMemberPort;
+import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitationPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
@@ -46,10 +46,10 @@ class InviteAssessmentUserServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private InviteSpaceMemberPort inviteSpaceMemberPort;
+    private CreateSpaceInvitationPort createSpaceInvitationPort;
 
     @Mock
-    private InviteAssessmentUserPort inviteAssessmentUserPort;
+    private CreateAssessmentInvitationPort createAssessmentInvitationPort;
 
     @Mock
     private SendFlickitInviteMailPort sendFlickitInviteMailPort;
@@ -79,8 +79,8 @@ class InviteAssessmentUserServiceTest {
         assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
 
         verify(getAssessmentPort).getAssessmentById(assessmentId);
-        verifyNoInteractions(loadUserPort, inviteSpaceMemberPort,
-            inviteAssessmentUserPort, sendFlickitInviteMailPort, grantUserAssessmentRolePort, checkSpaceAccessPort);
+        verifyNoInteractions(loadUserPort, createSpaceInvitationPort,
+            createAssessmentInvitationPort, sendFlickitInviteMailPort, grantUserAssessmentRolePort, checkSpaceAccessPort);
     }
 
     @Test
@@ -97,8 +97,8 @@ class InviteAssessmentUserServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteUser(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(getAssessmentPort, loadUserPort, inviteSpaceMemberPort,
-            inviteAssessmentUserPort, sendFlickitInviteMailPort, grantUserAssessmentRolePort, checkSpaceAccessPort);
+        verifyNoInteractions(getAssessmentPort, loadUserPort, createSpaceInvitationPort,
+            createAssessmentInvitationPort, sendFlickitInviteMailPort, grantUserAssessmentRolePort, checkSpaceAccessPort);
     }
 
     @Test
@@ -114,16 +114,16 @@ class InviteAssessmentUserServiceTest {
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(email)).thenReturn(Optional.empty());
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
-        doNothing().when(inviteSpaceMemberPort).invite(isA(InviteSpaceMemberPort.Param.class));
-        doNothing().when(inviteAssessmentUserPort).invite(isA(InviteAssessmentUserPort.Param.class));
+        doNothing().when(createSpaceInvitationPort).persist(isA(CreateSpaceInvitationPort.Param.class));
+        doNothing().when(createAssessmentInvitationPort).persist(isA(CreateAssessmentInvitationPort.Param.class));
         doNothing().when(sendFlickitInviteMailPort).inviteToFlickit(isA(String.class));
 
         assertDoesNotThrow(() -> service.inviteUser(param));
         verify(getAssessmentPort).getAssessmentById(assessmentId);
         verify(loadUserPort).loadByEmail(email);
         verify(assessmentAccessChecker).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE);
-        verify(inviteSpaceMemberPort).invite(any(InviteSpaceMemberPort.Param.class));
-        verify(inviteAssessmentUserPort).invite(any(InviteAssessmentUserPort.Param.class));
+        verify(createSpaceInvitationPort).persist(any(CreateSpaceInvitationPort.Param.class));
+        verify(createAssessmentInvitationPort).persist(any(CreateAssessmentInvitationPort.Param.class));
         verify(sendFlickitInviteMailPort).inviteToFlickit(email);
     }
 

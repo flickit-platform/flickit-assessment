@@ -6,9 +6,9 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.InviteAssessmentUserUseCase;
 import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.InviteAssessmentUserPort;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.CreateAssessmentInvitationPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.space.InviteSpaceMemberPort;
+import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitationPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
@@ -31,8 +31,8 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final GetAssessmentPort getAssessmentPort;
     private final LoadUserPort loadUserPort;
-    private final InviteSpaceMemberPort inviteSpaceMemberPort;
-    private final InviteAssessmentUserPort inviteAssessmentUserPort;
+    private final CreateSpaceInvitationPort createSpaceInvitationPort;
+    private final CreateAssessmentInvitationPort createAssessmentInvitationPort;
     private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
     private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
@@ -49,8 +49,8 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         var creationTime = LocalDateTime.now();
         var expirationTime = creationTime.plusDays(EXPIRY_DURATION.toDays());
         if (user.isEmpty()) {
-            inviteSpaceMemberPort.invite(toCreateSpaceInvitationParam(assessment.getSpace().getId(), param, creationTime, expirationTime));
-            inviteAssessmentUserPort.invite(toCreateAssessmentInvitationParam(param, creationTime, expirationTime));
+            createSpaceInvitationPort.persist(toCreateSpaceInvitationParam(assessment.getSpace().getId(), param, creationTime, expirationTime));
+            createAssessmentInvitationPort.persist(toCreateAssessmentInvitationParam(param, creationTime, expirationTime));
             sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
         } else {
             var userId = user.get().getId();
@@ -64,16 +64,16 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         }
     }
 
-    InviteSpaceMemberPort.Param toCreateSpaceInvitationParam(long spaceId, Param param, LocalDateTime creationTime, LocalDateTime expirationTime) {
-        return new InviteSpaceMemberPort.Param(spaceId,
+    CreateSpaceInvitationPort.Param toCreateSpaceInvitationParam(long spaceId, Param param, LocalDateTime creationTime, LocalDateTime expirationTime) {
+        return new CreateSpaceInvitationPort.Param(spaceId,
             param.getEmail(),
             expirationTime,
             creationTime,
             param.getCurrentUserId());
     }
 
-    InviteAssessmentUserPort.Param toCreateAssessmentInvitationParam(Param param, LocalDateTime creationTime, LocalDateTime expirationTime) {
-        return new InviteAssessmentUserPort.Param(param.getAssessmentId(),
+    CreateAssessmentInvitationPort.Param toCreateAssessmentInvitationParam(Param param, LocalDateTime creationTime, LocalDateTime expirationTime) {
+        return new CreateAssessmentInvitationPort.Param(param.getAssessmentId(),
             param.getEmail(),
             param.getRoleId(),
             expirationTime,
