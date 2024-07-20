@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_INVITEE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_INVITEE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,7 +43,7 @@ class GetAssessmentInviteeListServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAssessmentInviteeListUseCase.Param(assessmentId, currentUserId, 10, 0);
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_INVITEE)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_INVITEE_LIST)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getInviteeList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -71,7 +71,7 @@ class GetAssessmentInviteeListServiceTest {
             1);
 
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_INVITEE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_INVITEE_LIST)).thenReturn(true);
         when(loadAssessmentInviteeListPort.loadByAssessmentId(assessmentId, param.getSize(), param.getPage()))
             .thenReturn(expectedPageResult);
 

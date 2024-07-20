@@ -11,7 +11,7 @@ import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAs
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_INVITEE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_INVITEE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 
@@ -25,7 +25,7 @@ public class GetAssessmentInviteeListService implements GetAssessmentInviteeList
 
     @Override
     public PaginatedResponse<Result> getInviteeList(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INVITEE))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INVITEE_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var inviteePaginatedResponse = loadAssessmentInviteeListPort.loadByAssessmentId(param.getAssessmentId(), param.getSize(), param.getPage());
