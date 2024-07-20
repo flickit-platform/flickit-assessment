@@ -117,10 +117,11 @@
                     ctid,
                     title,
                     created_by,
-                    ROW_NUMBER() OVER (PARTITION BY title, created_by ORDER BY ctid) AS row_num
+                    ROW_NUMBER() OVER (PARTITION BY LOWER(title), created_by ORDER BY ctid) AS row_num
                 FROM fau_space)
             UPDATE fau_space
-            SET code = CONCAT(LOWER(title), '-', id)
+            SET title = CONCAT(title, '-', id),
+                code = CONCAT(LOWER(title), '-', id)
             WHERE ctid IN (
                 SELECT ctid
                 FROM DuplicateTitles
@@ -136,14 +137,15 @@
                     ctid,
                     title,
                     created_by,
+                    id,
                     ROW_NUMBER() OVER (PARTITION BY created_by, LOWER(title) ORDER BY ctid) AS row_num
                 FROM fau_space)
             UPDATE fau_space
-            SET code = LOWER(title)
-            WHERE ctid IN (
-                SELECT ctid
+            SET code = CASE WHEN FirstTitle.row_num = 1 THEN LOWER(fau_space.title)
+                            ELSE LOWER(fau_space.title) || '-' || fau_space.id END
                 FROM FirstTitle
-                WHERE row_num = 1);
+            WHERE fau_space.ctid = FirstTitle.ctid;
         </sql>
     </changeSet>
+
 </databaseChangeLog>
