@@ -24,7 +24,7 @@ public class GetAssessmentInviteeListService implements GetAssessmentInviteeList
     private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
-    public PaginatedResponse<Result> getInviteeList(Param param) {
+    public PaginatedResponse<Result> getInvitees(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INVITEE_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 

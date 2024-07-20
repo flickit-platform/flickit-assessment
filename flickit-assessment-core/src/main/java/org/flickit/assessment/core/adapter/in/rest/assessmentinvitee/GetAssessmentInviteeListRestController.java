@@ -27,7 +27,7 @@ public class GetAssessmentInviteeListRestController {
                                                                            @RequestParam(defaultValue = "10") int size,
                                                                            @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
-        var response = useCase.getInviteeList(toParam(assessmentId, currentUserId, size, page));
+        var response = useCase.getInvitees(toParam(assessmentId, currentUserId, size, page));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -45,7 +45,7 @@ class GetAssessmentInviteeListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_INVITEE_LIST)).thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.getInviteeList(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getInvitees(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
@@ -75,7 +75,7 @@ class GetAssessmentInviteeListServiceTest {
         when(loadAssessmentInviteeListPort.loadByAssessmentId(assessmentId, param.getSize(), param.getPage()))
             .thenReturn(expectedPageResult);
 
-        var response = service.getInviteeList(param);
+        var response = service.getInvitees(param);
 
         assertEquals(expectedPageResult.getPage(), response.getPage());
         assertEquals(expectedPageResult.getSize(), response.getSize());
