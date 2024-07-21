@@ -1045,6 +1045,32 @@
 			"response": []
 		},
 		{
+			"name": "Delete Evidence Attachment",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/c4637764-40d7-4068-8bd0-a4d254c7a077/attachments/9daf59b6-d8ac-4553-ad67-dddaf5d6f555",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"c4637764-40d7-4068-8bd0-a4d254c7a077",
+						"attachments",
+						"9daf59b6-d8ac-4553-ad67-dddaf5d6f555"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment Invitee List",
 			"request": {
 				"method": "GET",
