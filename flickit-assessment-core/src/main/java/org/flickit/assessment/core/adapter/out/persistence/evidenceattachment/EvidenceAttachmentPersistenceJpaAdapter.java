@@ -5,14 +5,18 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.EvidenceAttachment;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.CountEvidenceAttachmentsPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.CreateEvidenceAttachmentPort;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.DeleteEvidenceAttachmentPort;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentFilePathPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentsPort;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
+import org.flickit.assessment.data.jpa.core.evidenceattachment.EvidenceAttachmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidenceattachment.EvidenceAttachmentJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ATTACHMENT_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT_FOUND;
 
 @Component
@@ -20,7 +24,9 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.EVIDENCE_ID_NOT
 public class EvidenceAttachmentPersistenceJpaAdapter implements
     CreateEvidenceAttachmentPort,
     CountEvidenceAttachmentsPort,
-    LoadEvidenceAttachmentsPort {
+    LoadEvidenceAttachmentsPort,
+    DeleteEvidenceAttachmentPort,
+    LoadEvidenceAttachmentFilePathPort {
 
     private final EvidenceAttachmentJpaRepository repository;
     private final EvidenceJpaRepository evidenceRepository;
@@ -47,5 +53,19 @@ public class EvidenceAttachmentPersistenceJpaAdapter implements
         return repository.findByEvidenceId(evidenceId).stream()
             .map(EvidenceAttachmentMapper::mapToLoadPortResult)
             .toList();
+    }
+
+    @Override
+    public void deleteEvidenceAttachment(UUID attachmentId) {
+        if (repository.findById(attachmentId).isEmpty())
+            throw new ResourceNotFoundException(EVIDENCE_ATTACHMENT_ID_NOT_FOUND);
+
+        repository.deleteById(attachmentId);
+    }
+
+    @Override
+    public String loadEvidenceAttachmentFilePath(UUID attachmentId) {
+        return repository.findById(attachmentId).map(EvidenceAttachmentJpaEntity::getFilePath)
+            .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ATTACHMENT_ID_NOT_FOUND));
     }
 }
