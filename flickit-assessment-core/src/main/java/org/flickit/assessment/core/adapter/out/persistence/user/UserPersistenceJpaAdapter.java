@@ -27,6 +27,11 @@ public class UserPersistenceJpaAdapter implements
     }
 
     @Override
+    public Optional<User> loadByEmail(String email) {
+        return repository.findByEmail(email).map(UserMapper::mapToDomainModel);
+    }
+
+    @Override
     public String loadEmail(UUID userId) {
         return repository.findEmailByUserId(userId)
             .orElseThrow(() -> new ResourceNotFoundException(USER_ID_NOT_FOUND));

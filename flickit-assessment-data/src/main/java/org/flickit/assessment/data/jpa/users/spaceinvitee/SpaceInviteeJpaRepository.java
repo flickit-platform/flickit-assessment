@@ -9,11 +9,14 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SpaceInviteeJpaRepository extends JpaRepository<SpaceInviteeJpaEntity, UUID> {
 
     boolean existsBySpaceIdAndEmail(long spaceId, String email);
+
+    Optional<SpaceInviteeJpaEntity> findBySpaceIdAndEmail(long spaceId, String email);
 
     void deleteByEmail(String email);
 
