@@ -68,7 +68,7 @@ class AcceptAssessmentInvitationsServiceTest {
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadAssessmentsUserInvitationsPort.loadInvitations(email)).thenReturn(assessmentInviteeList);
         doNothing().when(grantUserAssessmentRolePort).persistAll(any());
-        doNothing().when(deleteAssessmentUserInvitationPort).deleteAssessmentUserInvitationsByEmail(email);
+        doNothing().when(deleteAssessmentUserInvitationPort).deleteAllByEmail(email);
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
 

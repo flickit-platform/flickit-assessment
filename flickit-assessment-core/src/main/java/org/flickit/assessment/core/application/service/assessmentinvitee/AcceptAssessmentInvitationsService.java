@@ -35,7 +35,7 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
             .toList();
 
         grantUserAssessmentRolePort.persistAll(validInvitations);
-        deleteAssessmentUserInvitationPort.deleteAssessmentUserInvitationsByEmail(email);
+        deleteAssessmentUserInvitationPort.deleteAllByEmail(email);
     }
 
     private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvitee invitation, UUID userId) {
