@@ -10,7 +10,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.ACCEPT_ASSESSME
 class AcceptAssessmentInvitationsUseCaseParamTest {
 
     @Test
-    void testAcceptSpaceInvitations_userIdIsNull_ErrorMessage() {
+    void testAcceptAssessmentInvitations_userIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new AcceptAssessmentInvitationsUseCase.Param(null));
         assertThat(throwable).hasMessage("userId: " + ACCEPT_ASSESSMENT_INVITATIONS_USER_ID_NOT_NULL);

@@ -40,8 +40,8 @@ class AcceptAssessmentInvitationsServiceTest {
     private DeleteAssessmentUserInvitationPort deleteAssessmentUserInvitationPort;
 
     @Test
-    @DisplayName("The user with the specified userId should have been registered previously.")
-    void testAcceptAssessmentInvitations_userIdNotFound_NotFoundError(){
+    @DisplayName("The user with the given userId does not exist, should throw notFoundException.")
+    void testAcceptAssessmentInvitations_userIdNotFound_ThrowResourceNotFoundException(){
         var userId = UUID.randomUUID();
         var param = new AcceptAssessmentInvitationsUseCase.Param(userId);
 
@@ -56,8 +56,8 @@ class AcceptAssessmentInvitationsServiceTest {
     }
 
     @Test
-    @DisplayName("If input parameter are valid, the service should do granting user invitees, successfully")
-    void testAcceptAssessmentInvitations_validParameters_SuccessfullyGrantingUserInvitees(){
+    @DisplayName("If input parameter are valid, the service should convert invitations to access successfully")
+    void testAcceptAssessmentInvitations_validParameters_SuccessfullyAcceptInvitations(){
         var userId = UUID.randomUUID();
         var email = "test@test.com";
         var param = new AcceptAssessmentInvitationsUseCase.Param(userId);
