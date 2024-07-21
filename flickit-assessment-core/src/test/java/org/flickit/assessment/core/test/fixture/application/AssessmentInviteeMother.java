@@ -3,7 +3,6 @@ package org.flickit.assessment.core.test.fixture.application;
 import org.flickit.assessment.core.application.domain.AssessmentInvitee;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
