@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentInviteeMapper {
 
-    public static AssessmentInvitee mapToDomain(AssessmentInviteeJpaEntity entity) {
+    public static AssessmentInvitee mapToDomainModel(AssessmentInviteeJpaEntity entity) {
         return new AssessmentInvitee(entity.getId(),
             entity.getAssessmentId(),
             entity.getEmail(),

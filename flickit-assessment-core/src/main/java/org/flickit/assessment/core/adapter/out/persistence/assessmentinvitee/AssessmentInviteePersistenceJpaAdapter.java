@@ -40,7 +40,7 @@ public class AssessmentInviteePersistenceJpaAdapter implements
             PageRequest.of(page, size, sort, order));
 
         var items = pageResult.getContent().stream()
-            .map(AssessmentInviteeMapper::mapToDomain)
+            .map(AssessmentInviteeMapper::mapToDomainModel)
             .toList();
 
         return new PaginatedResponse<>(
@@ -58,7 +58,7 @@ public class AssessmentInviteePersistenceJpaAdapter implements
 
         return invitations
             .stream()
-            .map(AssessmentInviteeMapper::mapToDomain)
+            .map(AssessmentInviteeMapper::mapToDomainModel)
             .toList();
     }
 
