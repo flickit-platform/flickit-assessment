@@ -52,7 +52,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     public void persistAll(List<AssessmentUserRoleItem> assementUserRoleItemList) {
         var assessmentUserRoles = assementUserRoleItemList
             .stream()
-            .map(AssessmentUseRoleMapper::mapToJpEntity)
+            .map(AssessmentUserRoleMapper::mapToJpEntity)
             .toList();
         repository.saveAll(assessmentUserRoles);
     }
