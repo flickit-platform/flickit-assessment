@@ -35,13 +35,13 @@ class GetAssessmentUserPermissionsServiceTest {
         when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(Optional.empty());
         var param = new GetAssessmentUserPermissionsUseCase.Param(assessmentId, userId);
 
-        Map<String, Boolean> permissions = getAssessmentUserPermissionsService.getAssessmentUserPermissions(param);
+        GetAssessmentUserPermissionsUseCase.Result result = getAssessmentUserPermissionsService.getAssessmentUserPermissions(param);
         List<String> assessmentPermissions = Arrays.stream(AssessmentPermission.values())
             .map(AssessmentPermission::getCode)
             .toList();
 
-        assertNotNull(permissions);
-        permissions.forEach((k, v) -> {
+        assertNotNull(result);
+        result.permissions().forEach((k, v) -> {
             assertTrue(assessmentPermissions.contains(k));
             assertFalse(v);
         });
@@ -50,14 +50,13 @@ class GetAssessmentUserPermissionsServiceTest {
     @ParameterizedTest
     @EnumSource(AssessmentUserRole.class)
     void testGetAssessmentUserPermissions_WhenUserHasARole_ThenHasPermissionsOfThatRole(AssessmentUserRole assessmentUserRole) {
-
         UUID assessmentId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
 
         when(loadUserRoleForAssessmentPort.load(assessmentId, userId)).thenReturn(Optional.of(assessmentUserRole));
         var param = new GetAssessmentUserPermissionsUseCase.Param(assessmentId, userId);
 
-        Map<String, Boolean> userPermissions = getAssessmentUserPermissionsService.getAssessmentUserPermissions(param);
+        GetAssessmentUserPermissionsUseCase.Result result = getAssessmentUserPermissionsService.getAssessmentUserPermissions(param);
         List<String> assessmentPermissions = Arrays.stream(AssessmentPermission.values())
             .map(AssessmentPermission::getCode)
             .toList();
@@ -66,8 +65,8 @@ class GetAssessmentUserPermissionsServiceTest {
             .map(AssessmentPermission::getCode)
             .toList();
 
-        assertNotNull(userPermissions);
-        userPermissions.forEach((k, v) -> {
+        assertNotNull(result);
+        result.permissions().forEach((k, v) -> {
             assertTrue(assessmentPermissions.contains(k));
             if (rolePermissions.contains(k))
                 assertTrue(v);

@@ -20,15 +20,12 @@ public class GetAssessmentUserPermissionsService implements GetAssessmentUserPer
     private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
     @Override
-    public Map<String, Boolean> getAssessmentUserPermissions(Param param) {
-        var optionalAssessmentUserRole = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getUserId());
+    public Result getAssessmentUserPermissions(Param param) {
+        var userRole = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getUserId());
 
-        if (optionalAssessmentUserRole.isPresent()) {
-            AssessmentUserRole assessmentUserRole = optionalAssessmentUserRole.get();
-            return Arrays.stream(AssessmentPermission.values())
-                .collect(Collectors.toMap(AssessmentPermission::getCode, assessmentUserRole::hasAccess));
-        } else
-            return Arrays.stream(AssessmentPermission.values())
-                .collect(Collectors.toMap(AssessmentPermission::getCode, e -> false));
+        return userRole.map(assessmentUserRole -> new Result(Arrays.stream(AssessmentPermission.values())
+                .collect(toMap(AssessmentPermission::getCode, assessmentUserRole::hasAccess))))
+            .orElseGet(() -> new Result(Arrays.stream(AssessmentPermission.values())
+                .collect(toMap(AssessmentPermission::getCode, e -> false))));
     }
 }

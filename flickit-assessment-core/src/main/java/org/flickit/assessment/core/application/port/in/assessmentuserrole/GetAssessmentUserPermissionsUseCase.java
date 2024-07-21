@@ -13,7 +13,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 
 public interface GetAssessmentUserPermissionsUseCase {
 
-    Map<String, Boolean> getAssessmentUserPermissions(Param param);
+    Result getAssessmentUserPermissions(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -25,10 +25,13 @@ public interface GetAssessmentUserPermissionsUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID userId;
 
-        public Param(UUID assessmentId, UUID userId) {
+        public Param(@NotNull UUID assessmentId, @NotNull UUID userId) {
             this.assessmentId = assessmentId;
             this.userId = userId;
             this.validateSelf();
         }
+    }
+
+    record Result(Map<String, Boolean> permissions) {
     }
 }
