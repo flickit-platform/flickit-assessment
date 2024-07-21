@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface AssessmentUserRoleJpaRepository extends JpaRepository<AssessmentUserRoleJpaEntity, EntityId> {
 
-    Optional<AssessmentUserRoleJpaEntity> findByAssessmentIdAndUserId(UUID assessmentId, UUID currentUserId);
+    Optional<AssessmentUserRoleIdView> findByAssessmentIdAndUserId(UUID assessmentId, UUID currentUserId);
 
     boolean existsByAssessmentIdAndUserId(UUID assessmentId, UUID userId);
 

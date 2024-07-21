@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
-import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +22,7 @@ class AssessmentAccessCheckerServiceTest {
     private AssessmentAccessCheckerService service;
 
     @Mock
-    private SpaceAccessChecker spaceAccessChecker;
+    private CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
 
     @Mock
     private AssessmentPermissionChecker assessmentPermissionChecker;
@@ -33,7 +33,7 @@ class AssessmentAccessCheckerServiceTest {
         var userId = UUID.randomUUID();
         var permission = AssessmentPermission.VIEW_ASSESSMENT;
 
-        when(spaceAccessChecker.hasAccess(assessmentId, userId)).thenReturn(false);
+        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(assessmentId, userId)).thenReturn(false);
 
         boolean authorized = service.isAuthorized(assessmentId, userId, permission);
         assertFalse(authorized);
@@ -45,7 +45,7 @@ class AssessmentAccessCheckerServiceTest {
         var userId = UUID.randomUUID();
         var permission = AssessmentPermission.VIEW_ASSESSMENT;
 
-        when(spaceAccessChecker.hasAccess(assessmentId, userId)).thenReturn(true);
+        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(assessmentId, userId)).thenReturn(true);
         when(assessmentPermissionChecker.isAuthorized(assessmentId, userId, permission)).thenReturn(false);
 
         boolean authorized = service.isAuthorized(assessmentId, userId, permission);
@@ -58,7 +58,7 @@ class AssessmentAccessCheckerServiceTest {
         var userId = UUID.randomUUID();
         var permission = AssessmentPermission.VIEW_ASSESSMENT;
 
-        when(spaceAccessChecker.hasAccess(assessmentId, userId)).thenReturn(true);
+        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(assessmentId, userId)).thenReturn(true);
         when(assessmentPermissionChecker.isAuthorized(assessmentId, userId, permission)).thenReturn(true);
 
         boolean authorized = service.isAuthorized(assessmentId, userId, permission);

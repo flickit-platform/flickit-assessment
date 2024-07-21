@@ -111,8 +111,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
               SELECT 1 FROM SpaceUserAccessJpaEntity su
               WHERE a.spaceId = su.spaceId AND su.userId = :userId)
         """)
-    Optional<UUID> checkUserAccess(@Param(value = "assessmentId") UUID assessmentId,
-                                   @Param(value = "userId") UUID userId);
+    Optional<UUID> checkIsAssessmentSpaceMember(@Param(value = "assessmentId") UUID assessmentId,
+                                                @Param(value = "userId") UUID userId);
 
     @Query("""
         SELECT attr.id

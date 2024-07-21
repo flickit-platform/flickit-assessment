@@ -6,22 +6,26 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.HistoryType.PERSIST;
+import static org.flickit.assessment.core.application.domain.HistoryType.UPDATE;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE;
 
@@ -34,6 +38,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionMayNotBeApplicablePort loadQuestionMayNotBeApplicablePort;
     private final CreateAnswerPort createAnswerPort;
+    private final CreateAnswerHistoryPort createAnswerHistoryPort;
     private final LoadAnswerPort loadAnswerPort;
     private final UpdateAnswerPort updateAnswerPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
@@ -73,6 +78,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                 param.getIsNotApplicable(), param.getCurrentUserId());
             var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged;
             updateAnswerPort.update(updateParam);
+            createAnswerHistoryPort.persist(toAnswerHistory(loadedAnswer.get().getId(), param, assessmentResult.getId(),
+                answerOptionId, confidenceLevelId, UPDATE));
             invalidateAssessmentResultPort.invalidateById(assessmentResult.getId(), isCalculateValid, !isConfidenceLevelChanged);
         }
 
@@ -85,6 +92,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
             return new Result(null);
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
+        createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId, param, assessmentResultId, answerOptionId,
+            confidenceLevelId, PERSIST));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
         }
@@ -101,6 +110,30 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             param.getIsNotApplicable(),
             param.getCurrentUserId()
         );
+    }
+
+    private AnswerHistory toAnswerHistory(UUID answerId,
+                                          Param param,
+                                          UUID assessmentResultId,
+                                          Long answerOptionId,
+                                          Integer confidenceLevelId,
+                                          HistoryType historyType) {
+        return new AnswerHistory(
+            null,
+            toAnswer(answerId, param, answerOptionId, confidenceLevelId),
+            assessmentResultId,
+            param.getCurrentUserId(),
+            LocalDateTime.now(),
+            historyType
+        );
+    }
+
+    private Answer toAnswer(UUID answerId, Param param, Long answerOptionId, Integer confidenceLevelId) {
+        return new Answer(answerId,
+            new AnswerOption(answerOptionId, null, null, param.getQuestionId(), null),
+            param.getQuestionId(),
+            confidenceLevelId,
+            param.getIsNotApplicable());
     }
 
     private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Integer confidenceLevelId,
