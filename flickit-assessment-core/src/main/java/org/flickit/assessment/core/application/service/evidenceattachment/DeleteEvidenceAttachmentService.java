@@ -20,18 +20,16 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class DeleteEvidenceAttachmentService implements DeleteEvidenceAttachmentUseCase {
 
-    private final DeleteEvidenceAttachmentFilePort deleteEvidenceAttachmentFilePort;
-    private final DeleteEvidenceAttachmentPort deleteEvidenceAttachmentPort;
     private final LoadEvidencePort loadEvidencePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadEvidenceAttachmentFilePathPort loadEvidenceAttachmentFilePathPort;
+    private final DeleteEvidenceAttachmentFilePort deleteEvidenceAttachmentFilePort;
+    private final DeleteEvidenceAttachmentPort deleteEvidenceAttachmentPort;
 
     @Override
     public void deleteEvidenceAttachment(Param param) {
         Evidence evidence = loadEvidencePort.loadNotDeletedEvidence(param.getEvidenceId());
-        if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(),
-            param.getCurrentUserId(),
-            DELETE_EVIDENCE_ATTACHMENT))
+        if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), DELETE_EVIDENCE_ATTACHMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         String filePath = loadEvidenceAttachmentFilePathPort.loadEvidenceAttachmentFilePath(param.getAttachmentId());

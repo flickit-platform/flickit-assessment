@@ -65,9 +65,7 @@ public class EvidenceAttachmentPersistenceJpaAdapter implements
 
     @Override
     public String loadEvidenceAttachmentFilePath(UUID attachmentId) {
-        EvidenceAttachmentJpaEntity entity = repository.findById(attachmentId)
+        return repository.findById(attachmentId).map(EvidenceAttachmentJpaEntity::getFilePath)
             .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ATTACHMENT_ID_NOT_FOUND));
-
-        return entity.getFilePath();
     }
 }
