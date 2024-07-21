@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUser
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -59,7 +60,7 @@ class AcceptAssessmentInvitationsServiceTest {
 
     @Test
     @DisplayName("If input parameter are valid, the service should convert invitations to access successfully")
-    void testAcceptAssessmentInvitations_validParameters_SuccessfullyAcceptInvitations(){
+    void testAcceptAssessmentInvitations_validParameters_SuccessfullyAcceptInvitations() {
         var userId = UUID.randomUUID();
         var email = "test@test.com";
         var param = new AcceptAssessmentInvitationsUseCase.Param(userId);
@@ -74,8 +75,20 @@ class AcceptAssessmentInvitationsServiceTest {
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
 
+        // Capture the argument passed to persistAll
+        ArgumentCaptor<List<AssessmentUserRoleItem>> captor = ArgumentCaptor.forClass(List.class);
+        verify(grantUserAssessmentRolePort).persistAll(captor.capture());
+
+        List<AssessmentUserRoleItem> capturedList = captor.getValue();
+        var assessmentUserRoleItem = new AssessmentUserRoleItem(assessmentInvitee2.getAssessmentId(), userId, assessmentInvitee2.getRole());
+
+        // Assert that the captured list contains exactly one item ,and it is equal to the expected item
+        assertEquals(1, capturedList.size());
+        assertEquals(assessmentUserRoleItem.getAssessmentId(), capturedList.get(0).getAssessmentId());
+        assertEquals(assessmentUserRoleItem.getUserId(), capturedList.get(0).getUserId());
+        assertEquals(assessmentUserRoleItem.getRole().getId(), capturedList.get(0).getRole().getId());
+
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verify(loadAssessmentsUserInvitationsPort).loadInvitations(email);
-        verify(grantUserAssessmentRolePort).persistAll(any());
     }
 }
