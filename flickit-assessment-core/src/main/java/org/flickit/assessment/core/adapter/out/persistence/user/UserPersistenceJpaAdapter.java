@@ -19,4 +19,9 @@ public class UserPersistenceJpaAdapter implements LoadUserPort {
     public Optional<User> loadById(UUID userId) {
         return repository.findById(userId).map(UserMapper::mapToDomainModel);
     }
+
+    @Override
+    public Optional<User> loadByEmail(String email) {
+        return repository.findByEmail(email).map(UserMapper::mapToDomainModel);
+    }
 }
