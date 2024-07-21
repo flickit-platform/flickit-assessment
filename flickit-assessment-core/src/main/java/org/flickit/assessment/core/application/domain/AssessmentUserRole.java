@@ -63,7 +63,7 @@ public enum AssessmentUserRole {
     enum PermissionGroup {
 
         VIEWER_PERMISSIONS(Set.of(
-            VIEW_REPORT_ASSESSMENT,
+            VIEW_ASSESSMENT_REPORT,
             CALCULATE_ASSESSMENT,
             CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_LIST,
