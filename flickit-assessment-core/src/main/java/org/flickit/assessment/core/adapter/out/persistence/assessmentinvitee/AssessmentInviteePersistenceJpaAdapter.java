@@ -25,6 +25,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.INVITE_ASSESSME
 @RequiredArgsConstructor
 public class AssessmentInviteePersistenceJpaAdapter implements
     LoadAssessmentInviteeListPort,
+    LoadAssessmentsUserInvitationsPort,
     CreateAssessmentInvitationPort,
     DeleteAssessmentUserInvitationPort {
 
@@ -39,7 +40,7 @@ public class AssessmentInviteePersistenceJpaAdapter implements
             PageRequest.of(page, size, sort, order));
 
         var items = pageResult.getContent().stream()
-            .map(AssessmentInviteeMapper::mapToDomainModel)
+            .map(AssessmentInviteeMapper::mapToDomain)
             .toList();
 
         return new PaginatedResponse<>(

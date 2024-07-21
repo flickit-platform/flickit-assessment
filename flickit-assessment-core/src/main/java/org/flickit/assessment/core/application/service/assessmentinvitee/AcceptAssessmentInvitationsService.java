@@ -40,6 +40,6 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
 
     private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvitee invitation, UUID userId) {
 
-        return new AssessmentUserRoleItem(invitation.getAssessmentId(), userId, invitation.getRoleId());
+        return new AssessmentUserRoleItem(invitation.getAssessmentId(), userId, invitation.getRole().getId());
     }
 }

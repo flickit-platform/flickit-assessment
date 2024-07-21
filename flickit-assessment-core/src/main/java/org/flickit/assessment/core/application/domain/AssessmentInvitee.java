@@ -11,12 +11,12 @@ import java.util.UUID;
 public class AssessmentInvitee {
 
     private final UUID id;
+    private final UUID assessmentId;
     private final String email;
     private final AssessmentUserRole role;
     private final LocalDateTime expirationTime;
     private final LocalDateTime creationTime;
     private final UUID createdBy;
-    private final LocalDateTime inviteTime;
 
     public boolean isNotExpired() {
         return expirationTime.isAfter(LocalDateTime.now());

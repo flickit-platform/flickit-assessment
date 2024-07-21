@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
 import org.flickit.assessment.core.application.domain.AssessmentInvitee;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,9 +14,10 @@ public class AssessmentInviteeJpaEntityMother {
             UUID.randomUUID(),
             UUID.randomUUID(),
             email,
-            roleId,
+            AssessmentUserRole.valueOfById(roleId),
             LocalDateTime.now().plus(Duration.ofDays(7)),
-            LocalDateTime.now()
+            LocalDateTime.now(),
+            UUID.randomUUID()
         );
     }
 }
