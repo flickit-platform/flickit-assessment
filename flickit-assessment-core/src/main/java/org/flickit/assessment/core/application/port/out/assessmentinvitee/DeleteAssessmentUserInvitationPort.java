@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.application.port.out.assessmentinvitee;
 
-public interface DeleteAssessmentUserInvitation {
+public interface DeleteAssessmentUserInvitationPort {
 
     void deleteAssessmentUserInvitationsByEmail(String email);
 }

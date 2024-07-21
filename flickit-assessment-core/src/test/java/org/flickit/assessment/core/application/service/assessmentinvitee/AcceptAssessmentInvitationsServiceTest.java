@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentinvitee;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.AcceptAssessmentInvitationsUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.DeleteAssessmentUserInvitation;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.DeleteAssessmentUserInvitationPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentsUserInvitationsPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
@@ -37,7 +37,7 @@ class AcceptAssessmentInvitationsServiceTest {
     private GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Mock
-    private DeleteAssessmentUserInvitation deleteAssessmentUserInvitation;
+    private DeleteAssessmentUserInvitationPort deleteAssessmentUserInvitationPort;
 
     @Test
     @DisplayName("The user with the specified userId should have been registered previously.")
@@ -52,7 +52,7 @@ class AcceptAssessmentInvitationsServiceTest {
         assertEquals(USER_ID_NOT_FOUND, throwable.getMessage());
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verifyNoInteractions(loadAssessmentsUserInvitationsPort,
-            grantUserAssessmentRolePort, deleteAssessmentUserInvitation);
+            grantUserAssessmentRolePort, deleteAssessmentUserInvitationPort);
     }
 
     @Test
@@ -68,7 +68,7 @@ class AcceptAssessmentInvitationsServiceTest {
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
         when(loadAssessmentsUserInvitationsPort.loadInvitations(email)).thenReturn(assessmentInviteeList);
         doNothing().when(grantUserAssessmentRolePort).persistAll(any());
-        doNothing().when(deleteAssessmentUserInvitation).deleteAssessmentUserInvitationsByEmail(email);
+        doNothing().when(deleteAssessmentUserInvitationPort).deleteAssessmentUserInvitationsByEmail(email);
 
         assertDoesNotThrow(() -> service.acceptInvitations(param));
 

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.AssessmentInvitee;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.AcceptAssessmentInvitationsUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.DeleteAssessmentUserInvitation;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.DeleteAssessmentUserInvitationPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentsUserInvitationsPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
@@ -22,7 +22,7 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final LoadAssessmentsUserInvitationsPort loadAssessmentsUserInvitationsPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
-    private final DeleteAssessmentUserInvitation deleteAssessmentUserInvitation;
+    private final DeleteAssessmentUserInvitationPort deleteAssessmentUserInvitationPort;
 
     @Override
     public void acceptInvitations(Param param) {
@@ -35,7 +35,7 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
             .toList();
 
         grantUserAssessmentRolePort.persistAll(validInvitations);
-        deleteAssessmentUserInvitation.deleteAssessmentUserInvitationsByEmail(email);
+        deleteAssessmentUserInvitationPort.deleteAssessmentUserInvitationsByEmail(email);
     }
 
     private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvitee invitation, UUID userId) {
