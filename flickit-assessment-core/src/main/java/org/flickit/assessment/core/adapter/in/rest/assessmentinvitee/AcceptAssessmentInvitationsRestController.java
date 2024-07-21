@@ -18,7 +18,7 @@ public class AcceptAssessmentInvitationsRestController {
     @PutMapping("/assessments-accept-invitations")
     public ResponseEntity<Void> acceptAssessmentInvitations(@RequestBody AcceptAssessmentInvitationsRequestDto requestDto) {
         useCase.acceptInvitations(toParam(requestDto));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Param toParam(AcceptAssessmentInvitationsRequestDto requestDto) {
