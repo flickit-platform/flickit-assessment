@@ -9,6 +9,7 @@ public class ErrorMessageKey {
     public static final String EVIDENCE_ID_NOT_FOUND = "evidence-id.notFound";
     public static final String EVIDENCE_ATTACHMENT_ID_NOT_FOUND = "evidence-attachment-id.notFound";
     public static final String ASSESSMENT_ID_NOT_FOUND = "assessment-id.notFound";
+    public static final String USER_ID_NOT_FOUND = "user.id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -178,4 +179,6 @@ public class ErrorMessageKey {
 
     public static final String DELETE_EVIDENCE_ATTACHMENT_EVIDENCE_ID_NOT_NULL = "delete-evidence-attachment.evidenceId.notNull";
     public static final String DELETE_EVIDENCE_ATTACHMENT_ATTACHMENT_ID_NOT_NULL = "delete-evidence-attachment.attachmentId.notNull";
+
+    public static final String ACCEPT_ASSESSMENT_INVITATIONS_USER_ID_NOT_NULL = "accept-assessment-invitations.userId.notNull";
 }

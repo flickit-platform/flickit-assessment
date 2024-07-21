@@ -56,6 +56,7 @@ class GetAssessmentInviteeListServiceTest {
         var param = new GetAssessmentInviteeListUseCase.Param(assessmentId, currentUserId, 10, 0);
 
         var assessmentInvitee = new AssessmentInvitee(UUID.randomUUID(),
+            UUID.randomUUID(),
             "flickit@mail.com",
             AssessmentUserRole.VIEWER,
             LocalDateTime.now(),

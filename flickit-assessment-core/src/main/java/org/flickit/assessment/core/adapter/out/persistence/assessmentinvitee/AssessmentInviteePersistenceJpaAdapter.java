@@ -6,13 +6,16 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInvitee;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.CreateAssessmentInvitationPort;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.DeleteAssessmentUserInvitationPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentInviteeListPort;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentsUserInvitationsPort;
 import org.flickit.assessment.data.jpa.core.assessmentinvitee.AssessmentInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentinvitee.AssessmentInviteeJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentinvitee.AssessmentInviteeMapper.mapToJpaEntity;
@@ -22,7 +25,9 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.INVITE_ASSESSME
 @RequiredArgsConstructor
 public class AssessmentInviteePersistenceJpaAdapter implements
     LoadAssessmentInviteeListPort,
-    CreateAssessmentInvitationPort {
+    LoadAssessmentsUserInvitationsPort,
+    CreateAssessmentInvitationPort,
+    DeleteAssessmentUserInvitationPort {
 
     private final AssessmentInviteeJpaRepository repository;
 
@@ -48,6 +53,13 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<AssessmentInvitee> loadInvitations(String email) {
+        return repository.findAllByEmail(email).stream()
+            .map(AssessmentInviteeMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
     public void persist(CreateAssessmentInvitationPort.Param param) {
         if (!AssessmentUserRole.isValidId(param.roleId()))
             throw new ResourceNotFoundException(INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND);
@@ -59,5 +71,10 @@ public class AssessmentInviteePersistenceJpaAdapter implements
             .orElseGet(() -> mapToJpaEntity(null, param));
 
         repository.save(entity);
+    }
+
+    @Override
+    public void deleteAllByEmail(String email) {
+        repository.deleteByEmail(email);
     }
 }
