@@ -11,5 +11,5 @@ public class AssessmentUserRoleItem {
 
     private final UUID assessmentId;
     private final UUID userId;
-    private final Integer roleId;
+    private final AssessmentUserRole role;
 }

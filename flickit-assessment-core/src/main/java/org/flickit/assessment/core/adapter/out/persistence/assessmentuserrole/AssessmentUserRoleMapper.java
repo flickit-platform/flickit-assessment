@@ -11,6 +11,6 @@ public class AssessmentUserRoleMapper {
     static AssessmentUserRoleJpaEntity mapToJpEntity(AssessmentUserRoleItem item){
         return new AssessmentUserRoleJpaEntity(item.getAssessmentId(),
             item.getUserId(),
-            item.getRoleId());
+            item.getRole().getId());
     }
 }
