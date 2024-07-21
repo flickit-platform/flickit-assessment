@@ -50,8 +50,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
 
     @Override
     public void persistAll(List<AssessmentUserRoleItem> assementUserRoleItemList) {
-        var assessmentUserRoles = assementUserRoleItemList
-            .stream()
+        var assessmentUserRoles = assementUserRoleItemList.stream()
             .map(AssessmentUserRoleMapper::mapToJpEntity)
             .toList();
         repository.saveAll(assessmentUserRoles);

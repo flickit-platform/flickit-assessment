@@ -54,10 +54,7 @@ public class AssessmentInviteePersistenceJpaAdapter implements
 
     @Override
     public List<AssessmentInvitee> loadInvitations(String email) {
-        var invitations = repository.findAllByEmail(email);
-
-        return invitations
-            .stream()
+        return repository.findAllByEmail(email).stream()
             .map(AssessmentInviteeMapper::mapToDomainModel)
             .toList();
     }
