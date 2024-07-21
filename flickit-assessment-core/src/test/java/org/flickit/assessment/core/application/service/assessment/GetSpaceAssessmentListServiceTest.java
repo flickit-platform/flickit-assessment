@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -134,7 +134,7 @@ class GetSpaceAssessmentListServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(spaceId, currentUserId, 0, 20))
             .thenReturn(paginatedRes);
-        when(assessmentPermissionChecker.isAuthorized(assessment1.id(), currentUserId, VIEW_REPORT_ASSESSMENT))
+        when(assessmentPermissionChecker.isAuthorized(assessment1.id(), currentUserId, VIEW_ASSESSMENT_REPORT))
             .thenReturn(false);
 
         var param = new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, 20, 0);

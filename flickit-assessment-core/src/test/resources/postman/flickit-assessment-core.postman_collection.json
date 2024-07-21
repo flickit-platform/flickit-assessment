@@ -1173,6 +1173,31 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Assessment User Permissions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/33e7bb70-0ef2-4a5d-85fb-232951ccc02c/permissions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"33e7bb70-0ef2-4a5d-85fb-232951ccc02c",
+						"permissions"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
