@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.service.assessmentinvitee;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.AcceptAssessmentInvitationsUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.DeleteAssessmentUserInvitationPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentsUserInvitationsPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
-import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentInviteeJpaEntityMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.USER_ID_NOT_FOUND;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentInviteeMother.expiredAssessmentInvitee;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentInviteeMother.notExpiredAssessmentInvitee;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -61,8 +63,8 @@ class AcceptAssessmentInvitationsServiceTest {
         var userId = UUID.randomUUID();
         var email = "test@test.com";
         var param = new AcceptAssessmentInvitationsUseCase.Param(userId);
-        var assessmentInvitee1 = AssessmentInviteeJpaEntityMother.createAssessmentInvitee(email,1);
-        var assessmentInvitee2 = AssessmentInviteeJpaEntityMother.createAssessmentInvitee(email,2);
+        var assessmentInvitee1 = expiredAssessmentInvitee(email);
+        var assessmentInvitee2 = notExpiredAssessmentInvitee(email);
         var assessmentInviteeList = List.of(assessmentInvitee1, assessmentInvitee2);
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
