@@ -27,6 +27,7 @@ public enum AssessmentPermission {
     VIEW_ATTRIBUTE_EVIDENCE_LIST("viewAttributeEvidenceList"),
     ADD_EVIDENCE_ATTACHMENT("addEvidenceAttachment"),
     VIEW_EVIDENCE_ATTACHMENT("viewEvidenceAttachment"),
+    DELETE_EVIDENCE_ATTACHMENT("deleteEvidenceAttachment"),
     ANSWER_QUESTION("answerQuestion"),
     VIEW_QUESTIONNAIRE_QUESTIONS("viewQuestionnaireQuestions"),
     VIEW_ASSESSMENT_QUESTIONNAIRE_LIST("viewAssessmentQuestionnaireList"),

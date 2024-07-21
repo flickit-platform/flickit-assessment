@@ -1045,6 +1045,32 @@
 			"response": []
 		},
 		{
+			"name": "Delete Evidence Attachment",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/c4637764-40d7-4068-8bd0-a4d254c7a077/attachments/9daf59b6-d8ac-4553-ad67-dddaf5d6f555",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"c4637764-40d7-4068-8bd0-a4d254c7a077",
+						"attachments",
+						"9daf59b6-d8ac-4553-ad67-dddaf5d6f555"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Assessment Invitee List",
 			"request": {
 				"method": "GET",
@@ -1108,6 +1134,41 @@
 						"assessments",
 						"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
 						"invite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept Assessment Invitations",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments-accept-invitations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments-accept-invitations"
 					]
 				}
 			},
