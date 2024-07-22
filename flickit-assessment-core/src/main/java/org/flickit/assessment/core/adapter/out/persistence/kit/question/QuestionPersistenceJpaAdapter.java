@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
@@ -79,9 +80,8 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadByIdAndKitVersionId(Long id, Long kitVersionId) {
-        var entity = repository.findByIdAndKitVersionId(id, kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException("")); //TODO: Define
-        return QuestionMapper.mapToPortResult(entity);
+    public Optional<Result> loadByIdAndKitVersionId(Long id, Long kitVersionId) {
+        return repository.findByIdAndKitVersionId(id, kitVersionId)
+            .map(QuestionMapper::mapToPortResult);
     }
 }
