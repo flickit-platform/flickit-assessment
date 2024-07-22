@@ -7,6 +7,7 @@ import org.flickit.assessment.core.adapter.out.persistence.answeroption.AnswerOp
 import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
@@ -27,7 +28,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_Q
 public class QuestionPersistenceJpaAdapter implements
     LoadQuestionsBySubjectPort,
     LoadQuestionnaireQuestionListPort,
-    LoadQuestionMayNotBeApplicablePort {
+    LoadQuestionMayNotBeApplicablePort,
+    LoadQuestionPort {
 
     private final QuestionJpaRepository repository;
     private final AnswerOptionJpaRepository answerOptionRepository;
@@ -74,5 +76,12 @@ public class QuestionPersistenceJpaAdapter implements
         return repository.findByIdAndKitVersionId(id, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND))
             .getMayNotBeApplicable();
+    }
+
+    @Override
+    public Result loadByIdAndKitVersionId(Long id, Long kitVersionId) {
+        var entity = repository.findByIdAndKitVersionId(id, kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException("")); //TODO: Define
+        return QuestionMapper.mapToPortResult(entity);
     }
 }
