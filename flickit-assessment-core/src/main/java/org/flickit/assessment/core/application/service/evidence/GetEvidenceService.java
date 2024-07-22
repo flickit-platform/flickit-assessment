@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
@@ -38,8 +39,8 @@ public class GetEvidenceService implements GetEvidenceUseCase {
 
         var answer = loadAnswerPort.load(assessmentResult.getId() , evidencePortResult.getQuestionId()).orElseThrow();
 
-        /*if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(evidencePortResult.getAssessmentId() ,param.getCurrentUserId()))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);*/
+        if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(evidencePortResult.getAssessmentId(), param.getCurrentUserId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         return mapToResult(evidencePortResult, assessmentResult, question, questionnaire, answer);
     }
