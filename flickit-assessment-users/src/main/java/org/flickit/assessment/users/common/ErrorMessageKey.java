@@ -11,8 +11,8 @@ public class ErrorMessageKey {
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
 
+    public static final String GET_USER_BY_EMAIL_EMAIL_EMAIL_NOT_VALID = "get-user-by-email.email.notValid";
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
-    public static final String GET_USER_BY_EMAIL_EMAIL_NOT_BLANK = "get-user-by-email.email.notBlank";
 
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
