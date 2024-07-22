@@ -45,10 +45,11 @@ public class GetEvidenceService implements GetEvidenceUseCase {
     }
 
     Result mapToResult(Evidence evidence, AssessmentResult assessmentResult, LoadQuestionPort.Result question, LoadQuestionnairePort.Result questionnaire, Answer answer) {
-        var confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId());
+        var confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()).getTitle();
+        var evidenceType = (evidence.getType()!= null) ? EvidenceType.values()[evidence.getType()].getTitle() : null;
         return new Result(new Result.ResultEvidence(evidence.getId(),
             evidence.getDescription(),
-            "evidence.getType()", //TODO:
+            evidenceType,
             "//TODO: ", //TODO:
             evidence.getCreationTime(),
             evidence.getLastModificationTime()),
