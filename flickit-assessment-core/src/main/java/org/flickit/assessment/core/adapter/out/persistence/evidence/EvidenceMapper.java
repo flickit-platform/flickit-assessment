@@ -7,9 +7,7 @@ import org.flickit.assessment.core.application.domain.EvidenceType;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
-import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort.*;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
-import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithDetailsView;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -53,17 +51,5 @@ public class EvidenceMapper {
             entity.getLastModificationTime(),
             entity.isDeleted()
         );
-    }
-
-    public static Result mapJpaWithDetailsToPortResult(EvidenceWithDetailsView entity) {
-        return new Result(entity.getId(),
-            entity.getDescription(),
-            entity.getAssessmentId(),
-            new Result.EvidenceQuestionnaire(entity.getQuestionnaire().getId(), entity.getQuestionnaire().getTitle()),
-            new Result.EvidenceQuestion(entity.getQuestion().getId(), entity.getQuestion().getTitle(), entity.getQuestion().getIndex()),
-            new Result.EvidenceAnswer(new Result.EvidenceAnswerOption(entity.getAnswerOption().getId(), entity.getAnswerOption().getTitle(), entity.getAnswerOption().getIndex()),
-                entity.getAnswer().getConfidenceLevelId(),
-                entity.getAnswer().getIsNotApplicable()),
-            entity.getCreatedBy(), entity.getCreationTime(), entity.getLastModificationTime());
     }
 }
