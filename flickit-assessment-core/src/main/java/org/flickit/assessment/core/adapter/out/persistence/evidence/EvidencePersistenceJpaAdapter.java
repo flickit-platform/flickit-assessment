@@ -129,11 +129,4 @@ public class EvidencePersistenceJpaAdapter implements
             .map(EvidenceMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
     }
-
-    @Override
-    public LoadEvidencePort.Result loadEvidenceWithDetails(UUID id) {
-        return repository.findEvidenceWithDetailsById(id)
-            .map(EvidenceMapper::mapJpaWithDetailsToPortResult)
-            .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
-    }
 }
