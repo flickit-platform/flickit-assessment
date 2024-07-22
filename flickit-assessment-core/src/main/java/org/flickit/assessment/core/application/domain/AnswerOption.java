@@ -9,7 +9,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnswerOption {
 
-    private final long id;
+    private final Long id;
     private final Integer index;
     private final String title;
     private final long questionId;
