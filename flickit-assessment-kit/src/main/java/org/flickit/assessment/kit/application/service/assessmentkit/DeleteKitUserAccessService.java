@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteKitUserAccessUseCase;
@@ -18,8 +19,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_USER_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Slf4j
 @Service
@@ -34,15 +34,21 @@ public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
 
     @Override
     public void delete(Param param) {
-        validateCurrentUser(param.getKitId(), param.getCurrentUserId());
+        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+        validateCurrentUser(expertGroup, param.getCurrentUserId());
         checkAccessExistence(param);
+        checkAccessNotBelongsToExpertGroupOwner(param, expertGroup.getOwnerId());
 
         deleteKitUserAccessPort.delete(new DeleteKitUserAccessPort.Param(param.getKitId(), param.getUserId()));
         log.debug("User [{}] access to private kit [{}] is removed.", param.getCurrentUserId(), param.getCurrentUserId());
     }
 
-    private void validateCurrentUser(Long kitId, UUID currentUserId) {
-        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(kitId);
+    private void checkAccessNotBelongsToExpertGroupOwner(Param param, UUID ownerId) {
+        if (Objects.equals(param.getUserId(), ownerId))
+            throw new ValidationException(DELETE_KIT_USER_ACCESS_USER_OWNER_DELETION_NOT_ALLOWED);
+    }
+
+    private void validateCurrentUser(ExpertGroup expertGroup, UUID currentUserId) {
         if (!Objects.equals(expertGroup.getOwnerId(), currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }

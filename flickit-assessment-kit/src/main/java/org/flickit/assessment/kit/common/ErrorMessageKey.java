@@ -57,6 +57,7 @@ public class ErrorMessageKey {
     public static final String DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND = "delete-kit-user-access.kit-user.notFound";
     public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND = "delete-kit-user-access.kitId.notFound";
     public static final String DELETE_KIT_USER_ACCESS_USER_NOT_FOUND = "delete-kit-user-access.user.notFound";
+    public static final String DELETE_KIT_USER_ACCESS_USER_OWNER_DELETION_NOT_ALLOWED = "delete-kit-user-access.user.ownerDeletionNotAllowed";
 
     public static final String DELETE_KIT_KIT_ID_NOT_NULL = "delete-kit.kitId.notNull";
     public static final String DELETE_KIT_HAS_ASSESSMENT = "delete-kit.hasAssessment";
