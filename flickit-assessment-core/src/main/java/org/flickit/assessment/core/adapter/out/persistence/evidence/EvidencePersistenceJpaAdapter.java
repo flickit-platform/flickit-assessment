@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
+import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithAttachmentsCountView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
@@ -64,10 +65,11 @@ public class EvidencePersistenceJpaAdapter implements
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL);
 
-        var pageResult = repository.findByQuestionIdAndAssessmentIdAndDeletedFalseOrderByLastModificationTimeDesc(
-            questionId, assessmentId, PageRequest.of(page, size));
+        var order = EvidenceJpaEntity.Fields.lastModificationTime;
+        var sort = Sort.Direction.DESC;
+        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, PageRequest.of(page, size, sort, order));
         var userIds = pageResult.getContent().stream()
-            .map(EvidenceJpaEntity::getCreatedBy)
+            .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();
         var userIdToUserMap = userRepository.findAllById(userIds).stream()
             .collect(Collectors.toMap(UserJpaEntity::getId, Function.identity()));
@@ -78,8 +80,8 @@ public class EvidencePersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            EvidenceJpaEntity.Fields.LAST_MODIFICATION_TIME,
-            Sort.Direction.DESC.name().toLowerCase(),
+            order,
+            sort.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
     }
@@ -107,8 +109,10 @@ public class EvidencePersistenceJpaAdapter implements
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
 
+        var order = EvidenceJpaEntity.Fields.lastModificationTime;
+        var sort = Sort.Direction.DESC;
         var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
-            assessmentId, attributeId, type, PageRequest.of(page, size));
+            assessmentId, attributeId, type, PageRequest.of(page, size, sort, order));
 
         var items = pageResult.getContent().stream()
             .map(AttributeEvidenceListItem::new)
@@ -117,8 +121,8 @@ public class EvidencePersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            EvidenceJpaEntity.Fields.LAST_MODIFICATION_TIME,
-            Sort.Direction.DESC.name().toLowerCase(),
+            order,
+            sort.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
     }
