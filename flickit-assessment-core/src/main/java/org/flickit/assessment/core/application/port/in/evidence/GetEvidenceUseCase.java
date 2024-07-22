@@ -51,7 +51,12 @@ public interface GetEvidenceUseCase {
             public record QuestionQuestionnaire(Long id, String title) {
             }
 
-            public record ResultQuestionAnswer(Long id, String title) {
+            public record ResultQuestionAnswer(SelectedOption selectedOption, ResultConfidenceLevel confidenceLevel, Boolean isNotApplicable) {
+                public record SelectedOption(Long id) {
+                }
+
+                public record ResultConfidenceLevel(int id, String title) {
+                }
             }
         }
     }
