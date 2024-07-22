@@ -1,15 +1,18 @@
 package org.flickit.assessment.core.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
+import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
 @Transactional(readOnly = true)
@@ -17,28 +20,45 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class GetEvidenceService implements GetEvidenceUseCase {
 
     private final LoadEvidencePort loadEvidencePort;
-    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private final LoadAnswerPort loadAnswerPort;
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
+    //private final CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
+    private final LoadQuestionPort loadQuestionPort;
+    private final LoadQuestionnairePort loadQuestionnairePort;
 
     @Override
     public Result getEvidence(Param param) {
-        var portResult = loadEvidencePort.loadEvidenceWithDetails(param.getId());
+        var evidencePortResult = loadEvidencePort.loadNotDeletedEvidence(param.getId());
 
-        if (!checkUserAssessmentAccessPort.hasAccess(portResult.assessmentId() ,param.getCurrentUserId()))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(evidencePortResult.getAssessmentId()).orElseThrow(); //TODO
 
-        return mapToResult(portResult);
+        var question = loadQuestionPort.loadByIdAndKitVersionId(evidencePortResult.getQuestionId(), assessmentResult.getKitVersionId());
+
+        var questionnaire = loadQuestionnairePort.loadByIdAndKitVersionId(question.questionnaireId(), assessmentResult.getKitVersionId()).orElseThrow();
+
+        var answer = loadAnswerPort.load(assessmentResult.getId() , evidencePortResult.getQuestionId()).orElseThrow();
+
+        /*if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(evidencePortResult.getAssessmentId() ,param.getCurrentUserId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);*/
+
+        return mapToResult(evidencePortResult, assessmentResult, question, questionnaire, answer);
     }
 
-    Result mapToResult(LoadEvidencePort.Result portResult) {
-        var confidenceLevel = ConfidenceLevel.valueOfById(portResult.evidenceAnswer().confidenceLevel());
-        return new Result(portResult.id(),
-            portResult.description(),
-            new Result.EvidenceQuestionnaire(portResult.evidenceQuestionnaire().id(), portResult.evidenceQuestionnaire().title()),
-            new Result.EvidenceQuestion(portResult.evidenceQuestion().id(), portResult.evidenceQuestion().title(), portResult.evidenceQuestion().index()),
-            new Result.EvidenceAnswer(new Result.EvidenceAnswerOption(portResult.evidenceAnswer().evidenceAnswerOption().id(), portResult.evidenceAnswer().evidenceAnswerOption().title(), portResult.evidenceAnswer().evidenceAnswerOption().index()),
-                new Result.EvidenceConfidenceLevel(confidenceLevel.getId(), confidenceLevel.getTitle()), portResult.evidenceAnswer().isNotApplicable()),
-            portResult.createdBy(),
-            portResult.creationTime(),
-            portResult.lastModificationTime());
+    Result mapToResult(Evidence evidence, AssessmentResult assessmentResult, LoadQuestionPort.Result question, LoadQuestionnairePort.Result questionnaire, Answer answer) {
+        var confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId());
+        return new Result(new Result.ResultEvidence(evidence.getId(),
+            evidence.getDescription(),
+            "evidence.getType()", //TODO:
+            "//TODO: ", //TODO:
+            evidence.getCreationTime(),
+            evidence.getLastModificationTime()),
+            new Result.ResultQuestion(
+                question.id(),
+                question.title(),
+                question.index(),
+                null, //TODO:
+                new Result.ResultQuestion.QuestionQuestionnaire(questionnaire.id(), questionnaire.title()),
+                new Result.ResultQuestion.ResultQuestionAnswer(null, confidenceLevel.getTitle())
+            ));
     }
 }
