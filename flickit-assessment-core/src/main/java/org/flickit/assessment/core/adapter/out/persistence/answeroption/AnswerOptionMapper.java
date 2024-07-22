@@ -19,4 +19,14 @@ public class AnswerOptionMapper {
             entity.getQuestionId(),
             impacts);
     }
+
+    public static AnswerOption mapToDomainModel(AnswerOptionJpaEntity entity) {
+        return new AnswerOption(
+            entity.getId(),
+            entity.getIndex(),
+            entity.getTitle(),
+            entity.getQuestionId(),
+            null
+        );
+    }
 }
