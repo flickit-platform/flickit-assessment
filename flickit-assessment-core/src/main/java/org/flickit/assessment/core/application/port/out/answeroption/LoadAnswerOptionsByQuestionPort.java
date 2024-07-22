@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.in.rest.answeroption;
+package org.flickit.assessment.core.application.port.out.answeroption;
 
 import org.flickit.assessment.core.application.domain.AnswerOption;
 

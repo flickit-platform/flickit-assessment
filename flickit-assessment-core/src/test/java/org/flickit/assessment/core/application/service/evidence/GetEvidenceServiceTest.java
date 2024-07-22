@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.evidence;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.in.rest.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
