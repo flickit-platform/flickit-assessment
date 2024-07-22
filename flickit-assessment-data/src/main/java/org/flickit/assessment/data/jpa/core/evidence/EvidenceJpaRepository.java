@@ -23,9 +23,8 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 COUNT (a) as attachmentsCount
             FROM EvidenceJpaEntity e
             LEFT JOIN EvidenceAttachmentJpaEntity a on e.id = a.evidenceId
-            WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId and e.deleted = false
+            WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
             GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
-            ORDER BY e.lastModificationTime desc
         """)
     Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentId(@Param("questionId") Long questionId,
                                                                            @Param("assessmentId") UUID assessmentId,
