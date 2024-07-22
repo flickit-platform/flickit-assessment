@@ -24,7 +24,6 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -47,8 +46,8 @@ class GetEvidenceListServiceTest {
     @Test
     void testGetEvidenceList_ResultsFound_2ItemsReturned() {
         Long question1Id = 1L;
-        EvidenceListItem evidence1Q1 = createEvidence();
-        EvidenceListItem evidence2Q1 = createEvidence();
+        EvidenceListItem evidence1Q1 = createEvidenceWithType("Positive");
+        EvidenceListItem evidence2Q1 = createEvidenceWithType("Negative");
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
 
@@ -61,11 +60,24 @@ class GetEvidenceListServiceTest {
                 "lastModificationTime",
                 "DESC",
                 2));
+        when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn("pictureLink");
 
         PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(question1Id, assessmentId, 10, 0, currentUserId));
 
         assertEquals(2, result.getItems().size());
-        verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(),any(Duration.class));
+        assertEquals(evidence1Q1.id(), result.getItems().get(0).id());
+        assertEquals(evidence1Q1.type(), result.getItems().get(0).type());
+        assertEquals(evidence1Q1.createdBy(), result.getItems().get(0).createdBy());
+        assertEquals(evidence1Q1.description(), result.getItems().get(0).description());
+        assertEquals(evidence1Q1.lastModificationTime(), result.getItems().get(0).lastModificationTime());
+        assertEquals(evidence1Q1.attachmentsCount(), result.getItems().get(0).attachmentsCount());
+        assertEquals(evidence2Q1.id(), result.getItems().get(1).id());
+        assertEquals(evidence2Q1.type(), result.getItems().get(1).type());
+        assertEquals(evidence2Q1.createdBy(), result.getItems().get(1).createdBy());
+        assertEquals(evidence2Q1.description(), result.getItems().get(1).description());
+        assertEquals(evidence2Q1.lastModificationTime(), result.getItems().get(1).lastModificationTime());
+        assertEquals(evidence2Q1.attachmentsCount(), result.getItems().get(1).attachmentsCount());
+        verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(), any(Duration.class));
     }
 
     @Test
@@ -101,13 +113,13 @@ class GetEvidenceListServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
-    private EvidenceListItem createEvidence() {
+    private EvidenceListItem createEvidenceWithType(String type) {
         return new EvidenceListItem(
             UUID.randomUUID(),
             "desc",
-            "type",
+            type,
             LocalDateTime.now(),
-            0,
+            (int) (Math.random() * 5) + 1,
             new GetEvidenceListUseCase.User(UUID.randomUUID(), "user1", "pictureLink")
         );
     }
