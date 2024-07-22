@@ -3,6 +3,8 @@ package org.flickit.assessment.core.adapter.out.persistence.questionnaire;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
+import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairePort;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectWithQuestionnaireIdView;
 
@@ -14,7 +16,7 @@ public class QuestionnaireMapper {
     public static QuestionnaireListItem mapToListItem(QuestionnaireListItemView questionnaireView,
                                                       List<SubjectWithQuestionnaireIdView> subjectsView,
                                                       int answerCount,
-                                                      int nextQuestion){
+                                                      int nextQuestion) {
         var subjects = subjectsView.stream()
             .map(s -> new QuestionnaireListItem.Subject(s.getId(), s.getTitle()))
             .toList();
@@ -30,5 +32,9 @@ public class QuestionnaireMapper {
             progress,
             subjects
         );
+    }
+
+    public static LoadQuestionnairePort.Result mapToResult(QuestionnaireJpaEntity entity){
+        return new LoadQuestionnairePort.Result(entity.getId(), entity.getTitle());
     }
 }
