@@ -9,7 +9,8 @@ class AnswerOptionImpactTest {
 
     @Test
     void testCalculateScore() {
-        AnswerOptionImpact impact = AnswerOptionImpactMother.onLevelTwo(0.1);
+        long attributeId = 156;
+        AnswerOptionImpact impact = AnswerOptionImpactMother.onLevelTwoOfAttributeId(0.1, attributeId);
 
         double score = impact.calculateScore();
         assertEquals(0.1 * impact.getQuestionImpact().getWeight(), score);

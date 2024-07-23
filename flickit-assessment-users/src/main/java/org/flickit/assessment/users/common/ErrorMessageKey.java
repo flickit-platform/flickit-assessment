@@ -11,8 +11,8 @@ public class ErrorMessageKey {
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
 
+    public static final String GET_USER_BY_EMAIL_EMAIL_EMAIL_NOT_VALID = "get-user-by-email.email.notValid";
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
-    public static final String GET_USER_BY_EMAIL_EMAIL_NOT_BLANK = "get-user-by-email.email.notBlank";
 
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
@@ -82,6 +82,7 @@ public class ErrorMessageKey {
     public static final String CREATE_SPACE_TITLE_NOT_BLANK = "create-space.title.notBlank";
     public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
     public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
+    public static final String CREATE_SPACE_TITLE_DUPLICATE = "create-space.title.duplicate";
 
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_NULL = "delete-space-member.userId.notNull";
     public static final String DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "delete-space-member.spaceId.notNull";
@@ -111,7 +112,7 @@ public class ErrorMessageKey {
     public static final String LEAVE_SPACE_SPACE_ID_NOT_NULL = "leave-space.spaceId.notNull";
     public static final String LEAVE_SPACE_OWNER_NOT_ALLOWED = "leave-space.owner.notAllowed";
 
-    public static final String UPDATE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group.expert-group-id.notNull";
+    public static final String UPDATE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group.expertGroupId.notNull";
     public static final String UPDATE_EXPERT_GROUP_TITLE_NOT_BLANK = "update-expert-group.title.notBlank";
     public static final String UPDATE_EXPERT_GROUP_TITLE_SIZE_MIN = "update-expert-group.title.size.min";
     public static final String UPDATE_EXPERT_GROUP_TITLE_SIZE_MAX = "update-expert-group.title.size.max";

@@ -93,13 +93,15 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     @Modifying
     @Query("""
             UPDATE SpaceJpaEntity s SET
+                s.title = :title,
+                s.code = :code,
                 s.lastModificationTime = :lastModificationTime,
-                s.lastModifiedBy = :lastModifiedBy,
-                s.title = :title
+                s.lastModifiedBy = :lastModifiedBy
             WHERE s.id = :id
         """)
     void update(@Param("id") long id,
                 @Param("title") String title,
+                @Param("code") String code,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 }
