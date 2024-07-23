@@ -55,6 +55,23 @@ class UpdateUserProfilePictureServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
+    @DisplayName("The file size should be based on the predefined circumstance.")
+    void testUpdateProfile_FileSizeIsNotValid_ValidationError() {
+        var currentUserId = UUID.randomUUID();
+        MockMultipartFile picture = new MockMultipartFile("images", "image1",
+            "image/png", new byte[6 * 1024 * 1024]);
+        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
+
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.update(param));
+        assertEquals(UPLOAD_FILE_PICTURE_SIZE_MAX, throwable.getMessageKey());
+
+        verify(fileProperties, times(1)).getPictureMaxSize();
+        verifyNoInteractions(deleteFilePort, uploadUserProfilePicturePort, updateUserProfilePicturePort);
+    }
+
+    @Test
     @DisplayName("If the userId is not found, the updateProfilePictureService should return a resourceNotFound Error.")
     void testUpdateProfile_CurrentUserIdIsNotExists_NotFoundError() throws IOException {
         var currentUserId = UUID.randomUUID();
@@ -63,31 +80,13 @@ class UpdateUserProfilePictureServiceTest {
         var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
 
         when(loadUserPort.loadUser(currentUserId)).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.update(param));
         assertEquals(USER_ID_NOT_FOUND, throwable.getMessage());
 
         verify(loadUserPort).loadUser(currentUserId);
-        verifyNoInteractions(fileProperties, deleteFilePort, uploadUserProfilePicturePort, updateUserProfilePicturePort);
-    }
-
-    @Test
-    @DisplayName("The file size should be based on the predefined circumstance.")
-    void testUpdateProfile_FileSizeIsNotValid_ValidationError() {
-        var currentUserId = UUID.randomUUID();
-        MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", new byte[6 * 1024 * 1024]);
-        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
-        var user = new User(currentUserId, "email", "DisplayName", "bio", "linkedIn", null);
-
-        when(loadUserPort.loadUser(currentUserId)).thenReturn(user);
-        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
-
-        var throwable = assertThrows(ValidationException.class, () -> service.update(param));
-        assertEquals(UPLOAD_FILE_PICTURE_SIZE_MAX, throwable.getMessageKey());
-
-        verify(loadUserPort).loadUser(currentUserId);
-        verify(fileProperties, times(1)).getPictureMaxSize();
         verifyNoInteractions(deleteFilePort, uploadUserProfilePicturePort, updateUserProfilePicturePort);
     }
 
@@ -98,23 +97,20 @@ class UpdateUserProfilePictureServiceTest {
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "application/zip", new byte[4 * 1024 * 1024]);
         var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
-        var user = new User(currentUserId, "email", "DisplayName", "bio", "linkedIn", null);
 
-        when(loadUserPort.loadUser(currentUserId)).thenReturn(user);
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
         var throwable = assertThrows(ValidationException.class, () -> service.update(param));
         assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
 
-        verify(loadUserPort).loadUser(currentUserId);
         verify(fileProperties).getPictureMaxSize();
         verify(fileProperties).getPictureContentTypes();
         verifyNoInteractions(deleteFilePort, uploadUserProfilePicturePort, updateUserProfilePicturePort);
     }
 
     @Test
-    @DisplayName("The the userProfilePicture has been set previously, it should be delete firstly, then update it.")
+    @DisplayName("If the user profile picture has been set previously, the update user profile picture service should be deleted first, and then updated.")
     void testUpdateProfile_HavePicture_PictureShouldBeDeleted() {
         var currentUserId = UUID.randomUUID();
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
@@ -143,8 +139,8 @@ class UpdateUserProfilePictureServiceTest {
     }
 
     @Test
-    @DisplayName("The the userProfilePicture has not been set previously, it should not delete anything.")
-    void testUpdateProfile_DontHavePicture_ShouldNotDeleted() {
+    @DisplayName("If the user profile picture has not been set previously, the update user profile picture service should not delete anything.")
+    void testUpdateProfile_DoesNotHavePicture_ShouldNotDeleted() {
         var currentUserId = UUID.randomUUID();
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/jpeg", new byte[4 * 1024 * 1024]);
