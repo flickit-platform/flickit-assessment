@@ -11,14 +11,12 @@ import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerO
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -35,7 +33,6 @@ public class GetEvidenceService implements GetEvidenceUseCase {
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
     private final LoadQuestionPort loadQuestionPort;
-    private final LoadQuestionnairePort loadQuestionnairePort;
     private final LoadAnswerPort loadAnswerPort;
 
     @Override
@@ -48,17 +45,15 @@ public class GetEvidenceService implements GetEvidenceUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(GET_EVIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
         var kitVersionId = assessmentResult.getKitVersionId();
 
-        List<AnswerOption> answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionId(evidence.getQuestionId(), kitVersionId);
-        LoadQuestionPort.Result question = loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), kitVersionId).orElse(null);
-        LoadQuestionnairePort.Result questionnaire = loadQuestionnairePort.loadByIdAndKitVersionId(Objects.requireNonNull(question).questionnaireId(), kitVersionId).orElse(null);
+        var answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionId(evidence.getQuestionId(), kitVersionId);
+        Question question = loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), kitVersionId);
         Answer answer = loadAnswerPort.load(assessmentResult.getId(), evidence.getQuestionId()).orElse(null);
         var user = loadUserPort.loadById(evidence.getCreatedById()).orElse(null);
 
-        return mapToResult(evidence, answerOptions, question, questionnaire, answer, user);
+        return mapToResult(evidence, answerOptions, question, answer, user);
     }
 
-    Result mapToResult(Evidence evidence, List<AnswerOption> answerOptions, LoadQuestionPort.Result question,
-                       LoadQuestionnairePort.Result questionnaire, Answer answer, User user) {
+    Result mapToResult(Evidence evidence, List<AnswerOption> answerOptions, Question question, Answer answer, User user) {
         Result.ResultQuestion.ResultQuestionAnswer.ResultConfidenceLevel resultConfidenceLevel = null;
         Result.ResultQuestion.ResultQuestionAnswer.SelectedOption resultSelectedOption = null;
         Boolean isNotApplicable = null;
@@ -88,11 +83,11 @@ public class GetEvidenceService implements GetEvidenceUseCase {
                 evidence.getLastModificationTime()
             ),
             new Result.ResultQuestion(
-                question.id(),
-                question.title(),
-                question.index(),
+                question.getId(),
+                question.getTitle(),
+                question.getIndex(),
                 questionAnswerOptions,
-                new Result.ResultQuestion.QuestionQuestionnaire(questionnaire.id(), questionnaire.title()),
+                new Result.ResultQuestion.QuestionQuestionnaire(question.getQuestionnaire().getId(), question.getQuestionnaire().getTitle()),
                 new Result.ResultQuestion.ResultQuestionAnswer(
                     resultSelectedOption,
                     resultConfidenceLevel,

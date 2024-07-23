@@ -3,16 +3,19 @@ package org.flickit.assessment.core.application.service.evidence;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
+import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.core.test.fixture.application.*;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.core.test.fixture.application.EvidenceMother;
+import org.flickit.assessment.core.test.fixture.application.QuestionMother;
+import org.flickit.assessment.core.test.fixture.application.UserMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,11 +28,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ID_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetEvidenceServiceTest {
@@ -54,9 +57,6 @@ class GetEvidenceServiceTest {
 
     @Mock
     private LoadQuestionPort loadQuestionPort;
-
-    @Mock
-    private LoadQuestionnairePort loadQuestionnairePort;
 
     @Mock
     private LoadAnswerPort loadAnswerPort;
@@ -103,14 +103,13 @@ class GetEvidenceServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new Param(id, currentUserId);
         var assessmentResult = AssessmentResultMother.resultWithValidations(true, true, LocalDateTime.now(), LocalDateTime.now());
-        LoadQuestionPort.Result question = new LoadQuestionPort.Result(1L, "title", 1, 2L);
+        Question question = QuestionMother.withNoImpact();
 
         when(loadEvidencePort.loadNotDeletedEvidence(id)).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE)).thenReturn(true);
         when(loadUserPort.loadById(evidence.getCreatedById())).thenReturn(Optional.of(UserMother.createUser()));
         when(loadAssessmentResultPort.loadByAssessmentId(evidence.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(Optional.of(question));
-        when(loadQuestionnairePort.loadByIdAndKitVersionId(question.questionnaireId(), assessmentResult.getKitVersionId())).thenReturn(Optional.of(new LoadQuestionnairePort.Result(2L, "title")));
+        when(loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(question);
 
         var result = assertDoesNotThrow(() -> service.getEvidence(param));
 
@@ -123,8 +122,7 @@ class GetEvidenceServiceTest {
         verify(loadUserPort).loadById(evidence.getCreatedById());
         verify(loadAssessmentResultPort).loadByAssessmentId(evidence.getAssessmentId());
         verify(loadQuestionPort).loadByIdAndKitVersionId(evidence.getQuestionId(), assessmentResult.getKitVersionId());
-        verify(loadQuestionnairePort).loadByIdAndKitVersionId(question.questionnaireId(), assessmentResult.getKitVersionId());
-        verify(loadAnswerOptionsByQuestionPort).loadByQuestionId(question.id(), assessmentResult.getKitVersionId());
-        verify(loadAnswerPort).load(assessmentResult.getId(), question.id());
+        verify(loadAnswerOptionsByQuestionPort).loadByQuestionId(evidence.getQuestionId(), assessmentResult.getKitVersionId());
+        verify(loadAnswerPort).load(assessmentResult.getId(), evidence.getQuestionId());
     }
 }

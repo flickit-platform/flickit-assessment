@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.out.persistence.questionnaire;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.core.application.domain.Questionnaire;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
-import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectWithQuestionnaireIdView;
@@ -34,7 +34,7 @@ public class QuestionnaireMapper {
         );
     }
 
-    public static LoadQuestionnairePort.Result mapToResult(QuestionnaireJpaEntity entity){
-        return new LoadQuestionnairePort.Result(entity.getId(), entity.getTitle());
+    public static Questionnaire mapToDomainModel(QuestionnaireJpaEntity entity) {
+        return new Questionnaire(entity.getId(), entity.getTitle());
     }
 }

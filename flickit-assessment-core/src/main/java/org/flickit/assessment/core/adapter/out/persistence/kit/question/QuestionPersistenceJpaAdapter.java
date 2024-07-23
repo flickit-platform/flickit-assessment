@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
@@ -14,15 +15,15 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreQuestionPersistenceJpaAdapter")
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     private final QuestionJpaRepository repository;
     private final AnswerOptionJpaRepository answerOptionRepository;
+    private final QuestionnaireJpaRepository questionnaireRepository;
 
     @Override
     public List<Question> loadQuestionsBySubject(long subjectId, long kitVersionId) {
@@ -80,8 +82,15 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<Result> loadByIdAndKitVersionId(Long id, Long kitVersionId) {
-        return repository.findByIdAndKitVersionId(id, kitVersionId)
-            .map(QuestionMapper::mapToPortResult);
+    public Question loadByIdAndKitVersionId(Long id, Long kitVersionId) {
+        var questionEntity = repository.findByIdAndKitVersionId(id, kitVersionId);
+        if (questionEntity.isEmpty())
+            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+
+        var questionnaire = questionnaireRepository.findByIdAndKitVersionId(questionEntity.get().getQuestionnaireId(), kitVersionId)
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
+
+        return QuestionMapper.mapToDomainWithQuestionnaire(questionEntity.get(), questionnaire);
     }
 }
