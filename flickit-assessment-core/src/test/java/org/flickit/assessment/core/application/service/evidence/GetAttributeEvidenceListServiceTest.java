@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -43,14 +44,15 @@ class GetAttributeEvidenceListServiceTest {
             UUID.randomUUID(),
             10,
             0);
-        AttributeEvidenceListItem attributeEvidence = createAttributeEvidence();
+        AttributeEvidenceListItem attributeEvidence1 = createAttributeEvidence();
+        AttributeEvidenceListItem attributeEvidence2 = createAttributeEvidence();
 
         when(loadAttributeEvidencesPort.loadAttributeEvidences(param.getAssessmentId(),
             param.getAttributeId(),
             param.getPage(),
             param.getPage(),
             param.getSize()))
-            .thenReturn(new PaginatedResponse<>(List.of(attributeEvidence),
+            .thenReturn(new PaginatedResponse<>(List.of(attributeEvidence1, attributeEvidence2),
                 0,
                 1,
                 "lastModificationTime",
@@ -58,12 +60,16 @@ class GetAttributeEvidenceListServiceTest {
                 1));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_EVIDENCE_LIST)).thenReturn(true);
 
-        PaginatedResponse<AttributeEvidenceListItem> result =
-            service.getAttributeEvidenceList(param);
+        var result = service.getAttributeEvidenceList(param);
 
-        assertEquals(1, result.getItems().size());
+        assertEquals(2, result.getItems().size());
+        assertEquals(attributeEvidence1.id(), result.getItems().get(0).id());
+        assertEquals(attributeEvidence1.description(), result.getItems().get(0).description());
+        assertEquals(attributeEvidence1.attachmentsCount(), result.getItems().get(0).attachmentsCount());
+        assertEquals(attributeEvidence2.id(), result.getItems().get(1).id());
+        assertEquals(attributeEvidence2.description(), result.getItems().get(1).description());
+        assertEquals(attributeEvidence2.attachmentsCount(), result.getItems().get(1).attachmentsCount());
     }
-
 
     @Test
     void testGetAttributeEvidenceList_CurrentUserHasNotAccessToAssessment_ThrowNotFoundException() {
@@ -76,6 +82,9 @@ class GetAttributeEvidenceListServiceTest {
     }
 
     private AttributeEvidenceListItem createAttributeEvidence() {
-        return new AttributeEvidenceListItem(UUID.randomUUID(),"description",1);
+        return new AttributeEvidenceListItem(
+            UUID.randomUUID(),
+            RandomStringUtils.randomAlphanumeric(10),
+            (int) (Math.random() * 5) + 1);
     }
 }
