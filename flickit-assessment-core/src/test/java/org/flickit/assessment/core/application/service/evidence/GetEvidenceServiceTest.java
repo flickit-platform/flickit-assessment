@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.service.evidence;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ID_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -40,7 +41,7 @@ class GetEvidenceServiceTest {
     private LoadEvidencePort loadEvidencePort;
 
     @Mock
-    private CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     private LoadUserPort loadUserPort;
@@ -85,13 +86,13 @@ class GetEvidenceServiceTest {
         var param = new Param(id, currentUserId);
 
         when(loadEvidencePort.loadNotDeletedEvidence(id)).thenReturn(evidence);
-        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(evidence.getAssessmentId(), currentUserId)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getEvidence(param));
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
         verify(loadEvidencePort).loadNotDeletedEvidence(id);
-        verify(checkAssessmentSpaceMembershipPort).isAssessmentSpaceMember(evidence.getAssessmentId(), currentUserId);
+        verify(assessmentAccessChecker).isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE);
     }
 
     @Test
@@ -105,7 +106,7 @@ class GetEvidenceServiceTest {
         LoadQuestionPort.Result question = new LoadQuestionPort.Result(1L, "title", 1, 2L);
 
         when(loadEvidencePort.loadNotDeletedEvidence(id)).thenReturn(evidence);
-        when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(evidence.getAssessmentId(), currentUserId)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE)).thenReturn(true);
         when(loadUserPort.loadById(evidence.getCreatedById())).thenReturn(Optional.of(UserMother.createUser()));
         when(loadAssessmentResultPort.loadByAssessmentId(evidence.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(Optional.of(question));
@@ -118,7 +119,7 @@ class GetEvidenceServiceTest {
         assertEquals(GetEvidenceUseCase.Result.ResultQuestion.class, result.question().getClass());
 
         verify(loadEvidencePort).loadNotDeletedEvidence(id);
-        verify(checkAssessmentSpaceMembershipPort).isAssessmentSpaceMember(evidence.getAssessmentId(), currentUserId);
+        verify(assessmentAccessChecker).isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE);
         verify(loadUserPort).loadById(evidence.getCreatedById());
         verify(loadAssessmentResultPort).loadByAssessmentId(evidence.getAssessmentId());
         verify(loadQuestionPort).loadByIdAndKitVersionId(evidence.getQuestionId(), assessmentResult.getKitVersionId());
