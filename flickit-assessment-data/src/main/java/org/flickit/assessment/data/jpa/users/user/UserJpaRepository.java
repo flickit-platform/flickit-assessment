@@ -43,5 +43,5 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
             SET a.picture = :picture
             WHERE a.id = :id
         """)
-    void updatePicture(@Param("id") UUID id,@Param("picture") String picture);
+    void updatePicture(@Param("id") UUID id, @Param("picture") String picture);
 }
