@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GetEvidenceUseCaseParamTest {
 
     @Test
-    void testGetAttributeEvidenceListParam_IdIsNull_ReturnErrorMessage() {
+    void testGetEvidenceParam_IdIsNull_ReturnErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetEvidenceUseCase.Param(null, currentUserId));
@@ -21,7 +21,7 @@ class GetEvidenceUseCaseParamTest {
     }
 
     @Test
-    void testGetAttributeEvidenceListParam_CurrentUserIdIsNull_ReturnErrorMessage() {
+    void testGetEvidenceParam_CurrentUserIdIsNull_ReturnErrorMessage() {
         UUID id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetEvidenceUseCase.Param(id, null));

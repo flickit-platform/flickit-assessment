@@ -16,7 +16,7 @@ public class QuestionnaireMapper {
     public static QuestionnaireListItem mapToListItem(QuestionnaireListItemView questionnaireView,
                                                       List<SubjectWithQuestionnaireIdView> subjectsView,
                                                       int answerCount,
-                                                      int nextQuestion) {
+                                                      int nextQuestion){
         var subjects = subjectsView.stream()
             .map(s -> new QuestionnaireListItem.Subject(s.getId(), s.getTitle()))
             .toList();
