@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.domain.QuestionImpact;
-import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.core.application.domain.Questionnaire;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 
 import java.util.List;
@@ -19,7 +19,8 @@ public class QuestionMapper {
             null,
             null,
             null,
-            impacts
+            impacts,
+            null
         );
     }
 
@@ -30,14 +31,20 @@ public class QuestionMapper {
             entity.getIndex(),
             entity.getHint(),
             entity.getMayNotBeApplicable(),
-            impacts
+            impacts,
+            new Questionnaire(entity.getId(), null)
         );
     }
 
-    public static LoadQuestionPort.Result mapToPortResult(QuestionJpaEntity entity) {
-        return new LoadQuestionPort.Result(entity.getId(),
+    public static Question mapToDomainWithQuestionnaire(QuestionJpaEntity entity, Questionnaire questionnaire) {
+        return new Question(
+            entity.getId(),
             entity.getTitle(),
             entity.getIndex(),
-            entity.getQuestionnaireId());
+            entity.getHint(),
+            entity.getMayNotBeApplicable(),
+            null,
+            questionnaire
+        );
     }
 }
