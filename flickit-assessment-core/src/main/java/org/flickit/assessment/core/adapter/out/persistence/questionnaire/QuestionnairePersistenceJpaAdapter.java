@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
-import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.questionnaire.QuestionnaireMapper.mapToListItem;
@@ -30,8 +28,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class QuestionnairePersistenceJpaAdapter implements
-    LoadQuestionnairesByAssessmentIdPort,
-    LoadQuestionnairePort {
+    LoadQuestionnairesByAssessmentIdPort {
 
     private final QuestionnaireJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -73,11 +70,5 @@ public class QuestionnairePersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
-    }
-
-    @Override
-    public Optional<Result> loadByIdAndKitVersionId(Long id, Long kitVersionId) {
-        return repository.findByIdAndKitVersionId(id, kitVersionId)
-            .map(QuestionnaireMapper::mapToResult);
     }
 }
