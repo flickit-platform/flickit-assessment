@@ -14,6 +14,7 @@ public class AssessmentInviteeMapper {
 
     public static AssessmentInvitee mapToDomainModel(AssessmentInviteeJpaEntity entity) {
         return new AssessmentInvitee(entity.getId(),
+            entity.getAssessmentId(),
             entity.getEmail(),
             AssessmentUserRole.valueOfById(entity.getRoleId()),
             entity.getExpirationTime(),
@@ -27,8 +28,8 @@ public class AssessmentInviteeMapper {
             param.assessmentId(),
             param.email(),
             param.roleId(),
-            param.creationTime(),
             param.expirationTime(),
+            param.creationTime(),
             param.createdBy());
     }
 }

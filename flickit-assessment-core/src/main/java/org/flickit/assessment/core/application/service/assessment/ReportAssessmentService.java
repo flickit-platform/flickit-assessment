@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 
@@ -33,7 +33,7 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
     @Override
     public Result reportAssessment(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         validateAssessmentResultPort.validate(param.getAssessmentId());

@@ -49,8 +49,8 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         var creationTime = LocalDateTime.now();
         var expirationTime = creationTime.plusDays(EXPIRY_DURATION.toDays());
         if (user.isEmpty()) {
-            createSpaceInvitationPort.persist(toCreateSpaceInvitationParam(assessment.getSpace().getId(), param, creationTime, expirationTime));
-            createAssessmentInvitationPort.persist(toCreateAssessmentInvitationParam(param, creationTime, expirationTime));
+            createSpaceInvitationPort.persist(toCreateSpaceInvitationParam(assessment.getSpace().getId(), param, expirationTime, creationTime));
+            createAssessmentInvitationPort.persist(toCreateAssessmentInvitationParam(param, expirationTime, creationTime));
             sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
         } else {
             var userId = user.get().getId();
@@ -64,7 +64,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         }
     }
 
-    CreateSpaceInvitationPort.Param toCreateSpaceInvitationParam(long spaceId, Param param, LocalDateTime creationTime, LocalDateTime expirationTime) {
+    CreateSpaceInvitationPort.Param toCreateSpaceInvitationParam(long spaceId, Param param, LocalDateTime expirationTime, LocalDateTime creationTime) {
         return new CreateSpaceInvitationPort.Param(spaceId,
             param.getEmail(),
             expirationTime,
@@ -72,7 +72,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             param.getCurrentUserId());
     }
 
-    CreateAssessmentInvitationPort.Param toCreateAssessmentInvitationParam(Param param, LocalDateTime creationTime, LocalDateTime expirationTime) {
+    CreateAssessmentInvitationPort.Param toCreateAssessmentInvitationParam(Param param, LocalDateTime expirationTime, LocalDateTime creationTime) {
         return new CreateAssessmentInvitationPort.Param(param.getAssessmentId(),
             param.getEmail(),
             param.getRoleId(),

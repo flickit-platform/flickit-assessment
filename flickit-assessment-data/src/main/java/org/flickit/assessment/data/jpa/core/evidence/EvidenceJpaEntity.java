@@ -2,11 +2,10 @@ package org.flickit.assessment.data.jpa.core.evidence;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fac_evidence")
@@ -15,6 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class EvidenceJpaEntity {
 
@@ -50,9 +50,4 @@ public class EvidenceJpaEntity {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
-    }
 }
