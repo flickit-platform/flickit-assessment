@@ -23,7 +23,7 @@ public class UpdateUserProfilePictureRestController {
     @PutMapping("/users/picture")
     public ResponseEntity<UpdateUserProfilePictureResponseDto> updateUserProfilePicture(@RequestParam MultipartFile pictureFile) {
         UUID currentUserId = userContext.getUser().id();
-        var response = toResponseDto(useCase.updateUserProfilePicture(toParam(currentUserId, pictureFile)));
+        var response = toResponseDto(useCase.update(toParam(currentUserId, pictureFile)));
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

@@ -13,7 +13,7 @@ import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_PR
 
 public interface UpdateUserProfilePictureUseCase {
 
-    Result updateUserProfilePicture(Param param);
+    Result update(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

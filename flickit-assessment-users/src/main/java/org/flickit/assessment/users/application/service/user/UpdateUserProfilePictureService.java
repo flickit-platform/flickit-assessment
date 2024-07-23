@@ -26,7 +26,6 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     private final FileProperties fileProperties;
-
     private final LoadUserPort loadUserPort;
     private final DeleteFilePort deleteFilePort;
     private final UploadUserProfilePicturePort uploadUserProfilePicturePort;
@@ -34,17 +33,18 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
-    public Result updateUserProfilePicture(Param param) {
-        var user = loadUserPort.loadUser(param.getUserId());
+    public Result update(Param param) {
         validatePicture(param.getPicture());
+        var user = loadUserPort.loadUser(param.getUserId());
 
         if (user.getPicturePath() != null && !user.getPicturePath().isEmpty())
             deleteFilePort.deletePicture(user.getPicturePath());
 
         String filePath = uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture());
 
-        updateUserProfilePicturePort.updatePicture(param.getUserId(), filePath);
         var pictureLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
+        updateUserProfilePicturePort.updatePicture(param.getUserId(), filePath);
+
         return new Result(pictureLink);
     }
 

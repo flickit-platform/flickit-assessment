@@ -64,7 +64,7 @@ class UpdateUserProfilePictureServiceTest {
 
         when(loadUserPort.loadUser(currentUserId)).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateUserProfilePicture(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.update(param));
         assertEquals(USER_ID_NOT_FOUND, throwable.getMessage());
 
         verify(loadUserPort).loadUser(currentUserId);
@@ -83,7 +83,7 @@ class UpdateUserProfilePictureServiceTest {
         when(loadUserPort.loadUser(currentUserId)).thenReturn(user);
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
 
-        var throwable = assertThrows(ValidationException.class, () -> service.updateUserProfilePicture(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.update(param));
         assertEquals(UPLOAD_FILE_PICTURE_SIZE_MAX, throwable.getMessageKey());
 
         verify(loadUserPort).loadUser(currentUserId);
@@ -104,7 +104,7 @@ class UpdateUserProfilePictureServiceTest {
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
 
-        var throwable = assertThrows(ValidationException.class, () -> service.updateUserProfilePicture(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.update(param));
         assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
 
         verify(loadUserPort).loadUser(currentUserId);
@@ -131,7 +131,7 @@ class UpdateUserProfilePictureServiceTest {
         doNothing().when(updateUserProfilePicturePort).updatePicture(param.getUserId(), uploadedFilePath);
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("link/to/file");
 
-        assertDoesNotThrow(() -> service.updateUserProfilePicture(param));
+        assertDoesNotThrow(() -> service.update(param));
 
         verify(loadUserPort).loadUser(currentUserId);
         verify(fileProperties).getPictureMaxSize();
@@ -159,7 +159,7 @@ class UpdateUserProfilePictureServiceTest {
         doNothing().when(updateUserProfilePicturePort).updatePicture(param.getUserId(), uploadedFilePath);
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("link/to/file");
 
-        assertDoesNotThrow(() -> service.updateUserProfilePicture(param));
+        assertDoesNotThrow(() -> service.update(param));
 
         verify(loadUserPort).loadUser(currentUserId);
         verify(fileProperties).getPictureMaxSize();
