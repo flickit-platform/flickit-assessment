@@ -3,10 +3,11 @@ package org.flickit.assessment.core.application.service.evidence;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
+import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
@@ -21,6 +22,7 @@ import java.util.Objects;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,25 +43,22 @@ public class GetEvidenceService implements GetEvidenceUseCase {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getId());
         if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(evidence.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_EVIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
+        var kitVersionId = assessmentResult.getKitVersionId();
+
+        List<AnswerOption> answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionId(evidence.getQuestionId(), kitVersionId);
+        LoadQuestionPort.Result question = loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), kitVersionId).orElse(null);
+        LoadQuestionnairePort.Result questionnaire = loadQuestionnairePort.loadByIdAndKitVersionId(Objects.requireNonNull(question).questionnaireId(), kitVersionId).orElse(null);
+        Answer answer = loadAnswerPort.load(assessmentResult.getId(), evidence.getQuestionId()).orElse(null);
         var user = loadUserPort.loadById(evidence.getCreatedById()).orElse(null);
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(evidence.getAssessmentId()).orElse(null);
-
-        List<AnswerOption> answerOptions = null;
-        LoadQuestionPort.Result question = null;
-        LoadQuestionnairePort.Result questionnaire = null;
-        Answer answer = null;
-
-        if (assessmentResult != null) {
-            answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionId(evidence.getQuestionId(), assessmentResult.getKitVersionId());
-            question = loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), assessmentResult.getKitVersionId()).orElse(null);
-            questionnaire = loadQuestionnairePort.loadByIdAndKitVersionId(Objects.requireNonNull(question).questionnaireId(), assessmentResult.getKitVersionId()).orElse(null);
-            answer = loadAnswerPort.load(assessmentResult.getId(), evidence.getQuestionId()).orElse(null);
-        }
 
         return mapToResult(evidence, answerOptions, question, questionnaire, answer, user);
     }
 
-    Result mapToResult(Evidence evidence, List<AnswerOption> answerOptions, LoadQuestionPort.Result question, LoadQuestionnairePort.Result questionnaire, Answer answer, User user) {
+    Result mapToResult(Evidence evidence, List<AnswerOption> answerOptions, LoadQuestionPort.Result question,
+                       LoadQuestionnairePort.Result questionnaire, Answer answer, User user) {
         Result.ResultQuestion.ResultQuestionAnswer.ResultConfidenceLevel resultConfidenceLevel = null;
         Result.ResultQuestion.ResultQuestionAnswer.SelectedOption resultSelectedOption = null;
         Boolean isNotApplicable = null;

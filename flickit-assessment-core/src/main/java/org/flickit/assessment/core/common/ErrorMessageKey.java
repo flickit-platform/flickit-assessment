@@ -185,4 +185,5 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_USER_PERMISSIONS_ASSESSMENT_ID_NOT_NULL = "get-assessment-current-user-permissions.assessmentId.notNull";
 
     public static final String GET_EVIDENCE_ID_NOT_NULL = "get-evidence.id.notNull";
+    public static final String GET_EVIDENCE_ASSESSMENT_RESULT_NOT_FOUND = "get-evidence.assessmentResultId.notFound";
 }
