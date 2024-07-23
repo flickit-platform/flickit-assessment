@@ -81,7 +81,8 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE_ATTACHMENT,
             DELETE_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-            VIEW_QUESTIONNAIRE_QUESTIONS)),
+            VIEW_QUESTIONNAIRE_QUESTIONS,
+            VIEW_EVIDENCE)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
@@ -109,7 +110,8 @@ public enum AssessmentUserRole {
             DELETE_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_QUESTIONNAIRE_QUESTIONS,
-            ANSWER_QUESTION));
+            ANSWER_QUESTION,
+            VIEW_EVIDENCE));
 
         private final Set<AssessmentPermission> permissions;
     }

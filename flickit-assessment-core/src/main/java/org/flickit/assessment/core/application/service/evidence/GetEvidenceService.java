@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -27,7 +28,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class GetEvidenceService implements GetEvidenceUseCase {
 
     private final LoadEvidencePort loadEvidencePort;
-    private final CheckAssessmentSpaceMembershipPort checkAssessmentSpaceMembershipPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadUserPort loadUserPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
@@ -38,7 +39,7 @@ public class GetEvidenceService implements GetEvidenceUseCase {
     @Override
     public Result getEvidence(Param param) {
         var evidence = loadEvidencePort.loadNotDeletedEvidence(param.getId());
-        if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(evidence.getAssessmentId(), param.getCurrentUserId()))
+        if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         var user = loadUserPort.loadById(evidence.getCreatedById()).orElse(null);
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(evidence.getAssessmentId()).orElse(null);
