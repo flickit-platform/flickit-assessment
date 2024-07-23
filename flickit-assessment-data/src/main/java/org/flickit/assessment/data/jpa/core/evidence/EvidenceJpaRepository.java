@@ -74,10 +74,10 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                              WHERE qi.attributeId = :attributeId AND ar.assessment.id = :assessmentId)
             GROUP BY evd.description, evd.lastModificationTime, evd.id
         """)
-    Page<EvidenceDescriptionAttachmentsCountView> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(@Param(value = "assessmentId") UUID assessmentId,
-                                                                                                                        @Param(value = "attributeId") Long attributeId,
-                                                                                                                        @Param(value = "type") Integer type,
-                                                                                                                        Pageable pageable);
+    Page<MinimalEvidenceView> findAssessmentAttributeEvidencesByType(@Param(value = "assessmentId") UUID assessmentId,
+                                                                     @Param(value = "attributeId") Long attributeId,
+                                                                     @Param(value = "type") Integer type,
+                                                                     Pageable pageable);
 
     boolean existsByIdAndDeletedFalse(UUID evidenceId);
 }

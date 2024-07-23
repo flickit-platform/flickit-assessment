@@ -3,7 +3,7 @@ package org.flickit.assessment.data.jpa.core.evidence;
 import java.util.Date;
 import java.util.UUID;
 
-public interface EvidenceDescriptionAttachmentsCountView {
+public interface MinimalEvidenceView {
 
     UUID getId();
 
