@@ -59,7 +59,8 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             SELECT
                 evd.id as id,
                 evd.description as description,
-                COUNT(eva.evidenceId) as attachmentsCount
+                COUNT(eva.evidenceId) as attachmentsCount,
+                evd.lastModificationTime as lastModificationTime
             FROM QuestionJpaEntity q
             LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
             LEFT JOIN EvidenceAttachmentJpaEntity eva ON evd.id = eva.evidenceId
@@ -72,7 +73,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                              LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
                              WHERE qi.attributeId = :attributeId AND ar.assessment.id = :assessmentId)
             GROUP BY evd.description, evd.lastModificationTime, evd.id
-            ORDER BY evd.lastModificationTime DESC
         """)
     Page<EvidenceDescriptionAttachmentsCountView> findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(@Param(value = "assessmentId") UUID assessmentId,
                                                                                                                         @Param(value = "attributeId") Long attributeId,
