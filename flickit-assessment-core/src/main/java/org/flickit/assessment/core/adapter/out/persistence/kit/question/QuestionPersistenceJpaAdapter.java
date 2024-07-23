@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.question;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.persistence.answeroption.AnswerOptionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
@@ -54,7 +54,7 @@ public class QuestionPersistenceJpaAdapter implements
         var items = pageResult.getContent().stream()
             .map(q -> {
                 List<AnswerOption> answerOptions = questionIdToAnswerOptionsMap.get(q.getId()).stream()
-                    .map(e -> AnswerOptionMapper.mapToDomainModel(e, null))
+                    .map(AnswerOptionMapper::mapToDomainModelWithNoImpact)
                     .toList();
                 Question question = QuestionMapper.mapToDomainModel(q, null);
                 question.setOptions(answerOptions);
