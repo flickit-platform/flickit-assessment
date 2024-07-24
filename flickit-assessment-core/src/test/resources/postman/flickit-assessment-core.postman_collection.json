@@ -1234,7 +1234,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/d0e3bd7c-b8d6-408d-ab28-88bb1213acf3/question/12728/answer-history",
+					"raw": "{{base_url}}/{{api_path}}/assessments/d0e3bd7c-b8d6-408d-ab28-88bb1213acf3/questions/12728/answer-history",
 					"host": [
 						"{{base_url}}"
 					],
@@ -1242,7 +1242,7 @@
 						"{{api_path}}",
 						"assessments",
 						"d0e3bd7c-b8d6-408d-ab28-88bb1213acf3",
-						"question",
+						"questions",
 						"12728",
 						"answer-history"
 					]

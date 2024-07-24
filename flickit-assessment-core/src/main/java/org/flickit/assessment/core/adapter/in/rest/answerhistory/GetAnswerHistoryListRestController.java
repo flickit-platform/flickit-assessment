@@ -21,9 +21,9 @@ public class GetAnswerHistoryListRestController {
     private final GetAnswerHistoryListUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/assessments/{assessmentId}/question/{questionId}/answer-history")
+    @GetMapping("/assessments/{assessmentId}/questions/{questionId}/answer-history")
     public ResponseEntity<PaginatedResponse<AnswerHistoryListItem>> getAnswerHistoryList(
-        @PathVariable("assessmentId")UUID assessmentId,
+        @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("questionId") Long questionId,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "0") int page) {
