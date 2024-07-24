@@ -10,7 +10,6 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +34,6 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     private final AnswerJpaRepository answerRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final UserJpaRepository userRepository;
-    private final AnswerOptionJpaRepository answerOptionRepository;
 
     @Override
     public UUID persist(AnswerHistory answerHistory) {
