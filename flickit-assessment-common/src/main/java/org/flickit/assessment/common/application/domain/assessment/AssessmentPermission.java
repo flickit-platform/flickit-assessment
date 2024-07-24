@@ -29,7 +29,7 @@ public enum AssessmentPermission {
     VIEW_EVIDENCE_ATTACHMENT("viewEvidenceAttachment"),
     DELETE_EVIDENCE_ATTACHMENT("deleteEvidenceAttachment"),
     ANSWER_QUESTION("answerQuestion"),
-    VIEW_ANSWER_HISTORY_LIST("viewAnswerHisotry"),
+    VIEW_ANSWER_HISTORY_LIST("viewAnswerHistory"),
     VIEW_QUESTIONNAIRE_QUESTIONS("viewQuestionnaireQuestions"),
     VIEW_ASSESSMENT_QUESTIONNAIRE_LIST("viewAssessmentQuestionnaireList"),
     GRANT_USER_ASSESSMENT_ROLE("grantUserAssessmentRole"),
