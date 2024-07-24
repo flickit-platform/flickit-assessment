@@ -10,6 +10,6 @@ import java.util.UUID;
 public interface AnswerHistoryJpaRepository extends JpaRepository<AnswerHistoryJpaEntity, UUID> {
 
     Page<AnswerHistoryJpaEntity> findAllByAssessmentResultAndQuestionId(AssessmentResultJpaEntity assessmentResult,
-                                                                            long questionId,
-                                                                            Pageable pageable);
+                                                                        long questionId,
+                                                                        Pageable pageable);
 }
