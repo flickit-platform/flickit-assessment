@@ -16,7 +16,7 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     Optional<AnswerOptionJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 
-    List<AnswerOptionJpaEntity> findAllByIdInAndKitVersionId(Iterable<Long> allAnswerOptionIds, long kitVersionId);
+    List<AnswerOptionJpaEntity> findAllByIdInAndKitVersionId(List<Long> allAnswerOptionIds, long kitVersionId);
 
     @Modifying
     @Query("""
