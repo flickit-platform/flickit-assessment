@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.answerhistory.GetAnswerHistoryListUseCase;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
+import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,10 +28,13 @@ class GetAnswerHistoryListServiceTest {
     private GetAnswerHistoryListService getAnswerHistoryListService;
 
     @Mock
+    private AssessmentAccessChecker assessmentAccessChecker;
+
+    @Mock
     private LoadAnswerHistoryListPort loadAnswerHistoryListPort;
 
     @Mock
-    private AssessmentAccessChecker assessmentAccessChecker;
+    private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
     void testGetAnswerHistoryList_WhenCurrentUserDoesntHaveViewAnswerHistoryListPermission_ThenThrowAccessDeniedException() {
@@ -75,8 +79,10 @@ class GetAnswerHistoryListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
             .thenReturn(true);
-        when(loadAnswerHistoryListPort.loadByAssessmentIdAndQuestionId(assessmentId, questionId, page, size))
-            .thenReturn(expected);
+        when(loadAnswerHistoryListPort.load(assessmentId, questionId, page, size)).thenReturn(expected);
+
+        String picDownloadLink = "downloadLink";
+        when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn(picDownloadLink);
 
         var actual = getAnswerHistoryListService.getAnswerHistoryList(param);
         assertEquals(expected.getItems().size(), actual.getItems().size());

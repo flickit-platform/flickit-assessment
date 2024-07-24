@@ -29,7 +29,7 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             AssessmentPermission.VIEW_ANSWER_HISTORY_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var paginatedResponse = loadAnswerHistoryListPort.loadByAssessmentIdAndQuestionId(param.getAssessmentId(),
+        var paginatedResponse = loadAnswerHistoryListPort.load(param.getAssessmentId(),
             param.getQuestionId(),
             param.getPage(),
             param.getSize());
