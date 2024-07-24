@@ -13,7 +13,7 @@ public record GetEvidenceResponseDto(EvidenceDto evidence, QuestionDto question)
         UUID id,
         String description,
         String type,
-        String createdBy,
+        User createdBy,
         LocalDateTime creationTime,
         LocalDateTime lastModificationTime) {
 
@@ -22,7 +22,7 @@ public record GetEvidenceResponseDto(EvidenceDto evidence, QuestionDto question)
                 evidence.getId(),
                 evidence.getDescription(),
                 (evidence.getType() != null) ? EvidenceType.values()[evidence.getType()].getTitle() : null,
-                (user != null) ? user.getDisplayName() : null,
+                user,
                 evidence.getCreationTime(),
                 evidence.getLastModificationTime()
             );
