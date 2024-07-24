@@ -1222,6 +1222,33 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Answer History List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/d0e3bd7c-b8d6-408d-ab28-88bb1213acf3/questions/12728/answer-history",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"d0e3bd7c-b8d6-408d-ab28-88bb1213acf3",
+						"questions",
+						"12728",
+						"answer-history"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [

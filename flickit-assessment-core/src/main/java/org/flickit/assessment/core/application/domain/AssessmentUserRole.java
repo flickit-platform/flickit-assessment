@@ -86,7 +86,8 @@ public enum AssessmentUserRole {
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
-            CREATE_ADVICE)),
+            CREATE_ADVICE,
+            VIEW_ANSWER_HISTORY_LIST)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,

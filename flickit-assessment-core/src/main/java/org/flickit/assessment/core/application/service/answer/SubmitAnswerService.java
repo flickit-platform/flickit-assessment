@@ -122,7 +122,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             null,
             toAnswer(answerId, param, answerOptionId, confidenceLevelId),
             assessmentResultId,
-            param.getCurrentUserId(),
+            new FullUser(param.getCurrentUserId(), null, null, null),
             LocalDateTime.now(),
             historyType
         );
