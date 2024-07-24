@@ -329,6 +329,30 @@
 			"response": []
 		},
 		{
+			"name": "Get Evidence",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/8c61e111-a64a-430e-84a0-ae584860116f",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"8c61e111-a64a-430e-84a0-ae584860116f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Calculate",
 			"request": {
 				"method": "POST",

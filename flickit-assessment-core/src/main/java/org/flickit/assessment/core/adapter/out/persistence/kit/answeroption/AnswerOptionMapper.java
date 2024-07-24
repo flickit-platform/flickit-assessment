@@ -12,7 +12,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerOptionMapper {
 
-    public static AnswerOption mapToDomainModel(AnswerOptionJpaEntity answerOption, List<AnswerOptionImpactJpaEntity> answerOptionImpacts) {
+    public static AnswerOption mapToDomainModel(AnswerOptionJpaEntity answerOption,
+                                                List<AnswerOptionImpactJpaEntity> answerOptionImpacts) {
         var impacts = answerOptionImpacts.stream()
             .map(AnswerOptionImpactMapper::mapToDomainModel)
             .toList();
@@ -22,5 +23,13 @@ public class AnswerOptionMapper {
             answerOption.getTitle(),
             answerOption.getQuestionId(),
             impacts);
+    }
+
+    public static AnswerOption mapToDomainModelWithNoImpact(AnswerOptionJpaEntity entity) {
+        return new AnswerOption(entity.getId(),
+            entity.getIndex(),
+            entity.getTitle(),
+            entity.getQuestionId(),
+            null);
     }
 }
