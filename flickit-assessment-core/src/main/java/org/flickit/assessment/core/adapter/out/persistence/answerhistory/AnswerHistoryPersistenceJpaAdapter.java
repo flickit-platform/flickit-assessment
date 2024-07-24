@@ -62,7 +62,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             questionId,
             PageRequest.of(page, size));
         Set<UUID> userIds = pageResult.getContent().stream()
-            .map(AnswerHistoryJpaEntity::getModifiedBy)
+            .map(AnswerHistoryJpaEntity::getCreatedBy)
             .collect(Collectors.toSet());
         Map<UUID, String> userIdToDisplayName = userRepository.findAllById(userIds).stream()
             .collect(Collectors.toMap(UserJpaEntity::getId, UserJpaEntity::getDisplayName));
@@ -74,8 +74,8 @@ public class AnswerHistoryPersistenceJpaAdapter implements
                 .collect(Collectors.toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getIndex));
 
         List<AnswerHistoryListItem> items = pageResult.getContent().stream()
-            .map(e -> new AnswerHistoryListItem(e.getModifiedAt(),
-                userIdToDisplayName.get(e.getModifiedBy()),
+            .map(e -> new AnswerHistoryListItem(e.getCreationTime(),
+                userIdToDisplayName.get(e.getCreatedBy()),
                 ConfidenceLevel.valueOfById(e.getConfidenceLevelId()).getTitle(),
                 answerOptionIdToIndex.get(e.getAnswerOptionId()),
                 e.getIsNotApplicable()))
@@ -84,7 +84,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
         return new PaginatedResponse<>(items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AnswerHistoryJpaEntity.Feilds.creationTime(),
+            AnswerHistoryJpaEntity.Fields.creationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
