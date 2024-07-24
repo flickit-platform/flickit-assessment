@@ -13,7 +13,7 @@ public class AnswerHistory {
     private final UUID id;
     private final Answer answer;
     private final UUID assessmentResultId;
-    private final UUID createdBy;
+    private final FullUser createdBy;
     private final LocalDateTime creationTime;
     private final HistoryType historyType;
 }

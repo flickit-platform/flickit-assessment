@@ -19,7 +19,7 @@ public class AnswerHistoryMapper {
             answerHistory.getAnswer().getSelectedOption().getId(),
             answerHistory.getAnswer().getConfidenceLevelId(),
             answerHistory.getAnswer().getIsNotApplicable(),
-            answerHistory.getCreatedBy(),
+            answerHistory.getCreatedBy().getId(),
             answerHistory.getCreationTime(),
             answerHistory.getHistoryType().ordinal()
         );
