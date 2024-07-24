@@ -5,11 +5,14 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.in.answerhistory.GetAnswerHistoryListUseCase;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
+import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -19,8 +22,11 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase {
 
+    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
+
     private final LoadAnswerHistoryListPort loadAnswerHistoryListPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
+    private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public PaginatedResponse<AnswerHistoryListItem> getAnswerHistoryList(Param param) {
@@ -34,12 +40,11 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             param.getPage(),
             param.getSize());
 
+
         List<AnswerHistoryListItem> items = paginatedResponse.getItems().stream()
-            .map(e -> new AnswerHistoryListItem(e.submitTime(),
-                e.submitterName(),
-                e.confidenceLevel(),
-                e.answerOptionIndex(),
-                e.isNotApplicable()))
+            .map(e -> new AnswerHistoryListItem(Answer.of(e.getAnswer()),
+                e.getCreationTime(),
+                e.getCreatedBy().getPicturePath() != null ? addPictureLinkToUser(e.getCreatedBy()) : null))
             .toList();
 
         return new PaginatedResponse<>(items,
@@ -48,5 +53,11 @@ public class GetAnswerHistoryListService implements GetAnswerHistoryListUseCase 
             paginatedResponse.getSort(),
             paginatedResponse.getOrder(),
             paginatedResponse.getTotal());
+    }
+
+    private GetAnswerHistoryListUseCase.User addPictureLinkToUser(FullUser user) {
+        return new GetAnswerHistoryListUseCase.User(user.getId(),
+            user.getDisplayName(),
+            createFileDownloadLinkPort.createDownloadLink(user.getPicturePath(), EXPIRY_DURATION));
     }
 }

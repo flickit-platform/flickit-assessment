@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -50,9 +51,23 @@ public interface GetAnswerHistoryListUseCase {
     }
 
     record AnswerHistoryListItem(
-        LocalDateTime submitTime,
-        String submitterName,
-        String confidenceLevel,
-        Integer answerOptionIndex,
-        Boolean isNotApplicable) {}
+        Answer answer,
+        LocalDateTime creationTime,
+        User createdBy) {
+    }
+
+    record Answer(Option selectedOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable) {
+
+        public static Answer of(org.flickit.assessment.core.application.domain.Answer answer) {
+            return new Answer(answer.getSelectedOption() != null ? new Option(answer.getSelectedOption().getId()) : null,
+                answer.getConfidenceLevelId() != null ? ConfidenceLevel.valueOfById(answer.getConfidenceLevelId()) : ConfidenceLevel.getDefault(),
+                answer.getIsNotApplicable());
+        }
+    }
+
+    record Option(long id) {
+    }
+
+    record User(UUID id, String displayName, String pictureLink) {
+    }
 }
