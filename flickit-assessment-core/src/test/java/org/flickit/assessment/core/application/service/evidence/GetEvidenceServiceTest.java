@@ -3,8 +3,9 @@ package org.flickit.assessment.core.application.service.evidence;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.Question;
-import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
+import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
@@ -12,10 +13,10 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
+import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.EvidenceMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionMother;
-import org.flickit.assessment.core.test.fixture.application.UserMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,7 +62,7 @@ class GetEvidenceServiceTest {
     private LoadAnswerPort loadAnswerPort;
 
     @Test
-    @DisplayName("For loading an evidence, the evidence should be exist or throw notFoundException.")
+    @DisplayName("If the evidence does not exist, then throw notFoundException.")
     void testLoadEvidence_evidenceNotExist_NotFoundException() {
         var id = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
@@ -71,15 +71,14 @@ class GetEvidenceServiceTest {
         when(loadEvidencePort.loadNotDeletedEvidence(id)).thenThrow(new ResourceNotFoundException(GET_EVIDENCE_ID_NOT_NULL));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getEvidence(param));
-
         assertEquals(GET_EVIDENCE_ID_NOT_NULL, throwable.getMessage());
 
         verify(loadEvidencePort).loadNotDeletedEvidence(id);
     }
 
     @Test
-    @DisplayName("If currentUser doesn't have access to the corresponding evidence's assessment,.")
-    void testLoadEvidence_VUserDoesNotHaveAccess_Successful() {
+    @DisplayName("If currentUser doesn't have the required permission, then throw accessDeniedException.")
+    void testLoadEvidence_userDoesNotHaveAccess_AccessDeniedException() {
         var id = UUID.randomUUID();
         var evidence = EvidenceMother.simpleEvidence();
         var currentUserId = UUID.randomUUID();
@@ -89,40 +88,49 @@ class GetEvidenceServiceTest {
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getEvidence(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verify(loadEvidencePort).loadNotDeletedEvidence(id);
         verify(assessmentAccessChecker).isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE);
     }
 
     @Test
-    @DisplayName("LoadEvidenceService with a valid evidenceId should return a valid response.")
-    void testLoadEvidence_ValidEvidenceId_Successful() {
+    @DisplayName("If parameters are valid and currentUser has the required permission, then return a valid response.")
+    void testLoadEvidence_ValidInput_Successful() {
         var id = UUID.randomUUID();
         var evidence = EvidenceMother.simpleEvidence();
         var currentUserId = UUID.randomUUID();
         var param = new Param(id, currentUserId);
-        var assessmentResult = AssessmentResultMother.resultWithValidations(true, true, LocalDateTime.now(), LocalDateTime.now());
-        Question question = QuestionMother.withNoImpact();
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        Question question = QuestionMother.withOptions();
+        User user = new User(evidence.getCreatedById(), "displayName");
+        Answer answer = AnswerMother.answerWithNullNotApplicable(question.getOptions().get(0));
 
         when(loadEvidencePort.loadNotDeletedEvidence(id)).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE)).thenReturn(true);
-        when(loadUserPort.loadById(evidence.getCreatedById())).thenReturn(Optional.of(UserMother.createUser()));
+        when(loadUserPort.loadById(evidence.getCreatedById())).thenReturn(Optional.of(user));
         when(loadAssessmentResultPort.loadByAssessmentId(evidence.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(evidence.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(question.getOptions());
         when(loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(question);
+        when(loadAnswerPort.load(assessmentResult.getId(), question.getId())).thenReturn(Optional.of(answer));
 
         var result = assertDoesNotThrow(() -> service.getEvidence(param));
 
-        assertEquals(GetEvidenceUseCase.Result.class, result.getClass());
         assertEquals(evidence.getId(), result.evidence().getId());
+        assertEquals(evidence.getType(), result.evidence().getType());
+        assertEquals(evidence.getDescription(), result.evidence().getDescription());
+        assertEquals(evidence.getCreatedById(), result.user().getId());
+        assertEquals(user.getDisplayName(), result.user().getDisplayName());
+        assertEquals(evidence.getCreationTime(), result.evidence().getCreationTime());
+        assertEquals(evidence.getLastModificationTime(), result.evidence().getLastModificationTime());
         assertEquals(question.getId(), result.question().getId());
-
-        verify(loadEvidencePort).loadNotDeletedEvidence(id);
-        verify(assessmentAccessChecker).isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE);
-        verify(loadUserPort).loadById(evidence.getCreatedById());
-        verify(loadAssessmentResultPort).loadByAssessmentId(evidence.getAssessmentId());
-        verify(loadQuestionPort).loadByIdAndKitVersionId(evidence.getQuestionId(), assessmentResult.getKitVersionId());
-        verify(loadAnswerOptionsByQuestionPort).loadByQuestionId(evidence.getQuestionId(), assessmentResult.getKitVersionId());
-        verify(loadAnswerPort).load(assessmentResult.getId(), evidence.getQuestionId());
+        assertEquals(question.getTitle(), result.question().getTitle());
+        assertEquals(question.getIndex(), result.question().getIndex());
+        assertEquals(question.getOptions(), result.question().getOptions());
+        assertEquals(question.getQuestionnaire(), result.question().getQuestionnaire());
+        assertNotNull(result.answer());
+        assertEquals(answer.getSelectedOption().getId(), result.answer().selectedOption().id());
+        assertNull(result.answer().isNotApplicable());
+        assertEquals(answer.getConfidenceLevelId(), result.answer().confidenceLevel().getId());
     }
 }
