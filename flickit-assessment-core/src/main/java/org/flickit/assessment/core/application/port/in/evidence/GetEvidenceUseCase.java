@@ -4,9 +4,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.Evidence;
+import org.flickit.assessment.core.application.domain.Question;
+import org.flickit.assessment.core.application.domain.User;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -33,31 +35,12 @@ public interface GetEvidenceUseCase {
         }
     }
 
-    record Result(ResultEvidence evidence, ResultQuestion question) {
-        public record ResultEvidence(
-            UUID id,
-            String description,
-            String type,
-            String createdBy,
-            LocalDateTime creationTime,
-            LocalDateTime lastModificationTime) {
-        }
+    record Result(Evidence evidence, Question question, QuestionAnswer answer, User user) {
+    }
 
-        public record ResultQuestion(Long id, String title, int index, List<QuestionOptions> options,
-                                     QuestionQuestionnaire questionnaire, ResultQuestionAnswer answer) {
-            public record QuestionOptions(Long id, int index, String title) {
-            }
+    record Option(Long id, Integer index, String title) {
+    }
 
-            public record QuestionQuestionnaire(Long id, String title) {
-            }
-
-            public record ResultQuestionAnswer(SelectedOption selectedOption, ResultConfidenceLevel confidenceLevel, Boolean isNotApplicable) {
-                public record SelectedOption(Long id) {
-                }
-
-                public record ResultConfidenceLevel(int id, String title) {
-                }
-            }
-        }
+    record QuestionAnswer(Option selectedOption, ConfidenceLevel confidenceLevel, Boolean isNotApplicable) {
     }
 }

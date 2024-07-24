@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
@@ -15,8 +18,7 @@ import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -47,53 +49,31 @@ public class GetEvidenceService implements GetEvidenceUseCase {
 
         var answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionId(evidence.getQuestionId(), kitVersionId);
         Question question = loadQuestionPort.loadByIdAndKitVersionId(evidence.getQuestionId(), kitVersionId);
+        question.setOptions(answerOptions);
+
         Answer answer = loadAnswerPort.load(assessmentResult.getId(), evidence.getQuestionId()).orElse(null);
         var user = loadUserPort.loadById(evidence.getCreatedById()).orElse(null);
 
-        return mapToResult(evidence, answerOptions, question, answer, user);
-    }
-
-    Result mapToResult(Evidence evidence, List<AnswerOption> answerOptions, Question question, Answer answer, User user) {
-        Result.ResultQuestion.ResultQuestionAnswer.ResultConfidenceLevel resultConfidenceLevel = null;
-        Result.ResultQuestion.ResultQuestionAnswer.SelectedOption resultSelectedOption = null;
-        Boolean isNotApplicable = null;
-
+        QuestionAnswer answerDto = null;
         if (answer != null) {
-            ConfidenceLevel confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId());
-            if (confidenceLevel != null) {
-                resultConfidenceLevel = new Result.ResultQuestion.ResultQuestionAnswer.ResultConfidenceLevel(confidenceLevel.getId(), confidenceLevel.getTitle());
+            Option answerOption = null;
+            if (!Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null) {
+                answerOption = question.getOptions().stream()
+                    .filter(x -> Objects.equals(x.getId(), answer.getSelectedOption().getId()))
+                    .map(this::mapToOption)
+                    .findAny()
+                    .orElse(null);
             }
-            resultSelectedOption = new Result.ResultQuestion.ResultQuestionAnswer.SelectedOption(answer.getSelectedOption() != null ? answer.getSelectedOption().getId() : null);
-            isNotApplicable = answer.getIsNotApplicable();
+            ConfidenceLevel confidenceLevel = null;
+            if (answerOption != null || Boolean.TRUE.equals(answer.getIsNotApplicable()))
+                confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId());
+            answerDto = new QuestionAnswer(answerOption, confidenceLevel, answer.getIsNotApplicable());
         }
 
-        String evidenceType = (evidence.getType() != null) ? EvidenceType.values()[evidence.getType()].getTitle() : null;
-        List<Result.ResultQuestion.QuestionOptions> questionAnswerOptions = (answerOptions != null) ?
-            answerOptions.stream()
-                .map(e -> new Result.ResultQuestion.QuestionOptions(e.getId(), e.getIndex(), e.getTitle()))
-                .toList() : Collections.emptyList();
+        return new Result(evidence, question, answerDto, user);
+    }
 
-        return new Result(
-            new Result.ResultEvidence(
-                evidence.getId(),
-                evidence.getDescription(),
-                evidenceType,
-                (user != null) ? user.getDisplayName() : null,
-                evidence.getCreationTime(),
-                evidence.getLastModificationTime()
-            ),
-            new Result.ResultQuestion(
-                question.getId(),
-                question.getTitle(),
-                question.getIndex(),
-                questionAnswerOptions,
-                new Result.ResultQuestion.QuestionQuestionnaire(question.getQuestionnaire().getId(), question.getQuestionnaire().getTitle()),
-                new Result.ResultQuestion.ResultQuestionAnswer(
-                    resultSelectedOption,
-                    resultConfidenceLevel,
-                    isNotApplicable
-                )
-            )
-        );
+    private Option mapToOption(AnswerOption option) {
+        return new Option(option.getId(), option.getIndex(), option.getTitle());
     }
 }

@@ -114,8 +114,8 @@ class GetEvidenceServiceTest {
         var result = assertDoesNotThrow(() -> service.getEvidence(param));
 
         assertEquals(GetEvidenceUseCase.Result.class, result.getClass());
-        assertEquals(GetEvidenceUseCase.Result.ResultEvidence.class, result.evidence().getClass());
-        assertEquals(GetEvidenceUseCase.Result.ResultQuestion.class, result.question().getClass());
+        assertEquals(evidence.getId(), result.evidence().getId());
+        assertEquals(question.getId(), result.question().getId());
 
         verify(loadEvidencePort).loadNotDeletedEvidence(id);
         verify(assessmentAccessChecker).isAuthorized(evidence.getAssessmentId(), currentUserId, VIEW_EVIDENCE);
