@@ -11,9 +11,5 @@ public enum HistoryType {
 
     PERSIST,
     UPDATE,
-    DELETE;
-
-    public String getCode() {
-        return name();
-    }
+    DELETE
 }

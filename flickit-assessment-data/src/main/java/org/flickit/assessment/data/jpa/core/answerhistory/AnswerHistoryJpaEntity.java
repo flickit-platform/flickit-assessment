@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.core.answerhistory;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,14 +10,13 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static lombok.AccessLevel.PRIVATE;
-
 @Entity
 @Table(name = "fac_answer_history")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AnswerHistoryJpaEntity {
 
@@ -35,9 +35,6 @@ public class AnswerHistoryJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
-    @Column(name = "questionnaire_id", nullable = false)
-    private Long questionnaireId;
-
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
@@ -50,22 +47,12 @@ public class AnswerHistoryJpaEntity {
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 
-    @Column(name = "modified_by", nullable = false)
-    private UUID modifiedBy;
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
 
-    @Column(name = "modified_at", nullable = false)
-    private LocalDateTime modifiedAt;
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
 
     @Column(name = "type", nullable = false)
     private Integer type;
-
-    @Override
-    public String toString() {
-        return id.toString();
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String MODIFIED_AT = "modifiedAt";
-    }
 }

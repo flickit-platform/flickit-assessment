@@ -7,7 +7,11 @@ import lombok.NoArgsConstructor;
 public class ErrorMessageKey {
     public static final String ASSESSMENT_KIT_ID_NOT_FOUND = "assessment-kit-id.notFound";
     public static final String EVIDENCE_ID_NOT_FOUND = "evidence-id.notFound";
+    public static final String EVIDENCE_ATTACHMENT_ID_NOT_FOUND = "evidence-attachment-id.notFound";
     public static final String ASSESSMENT_ID_NOT_FOUND = "assessment-id.notFound";
+    public static final String USER_ID_NOT_FOUND = "user.id.notFound";
+    public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
+    public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -138,7 +142,6 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ROLE_DUPLICATE = "grant-assessment-user-role.user.role.duplicate";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
-    public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ID_NOT_MEMBER = "grant-assessment-user-role.userId.notMember";
 
     public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "update-assessment-user-role.assessmentId.notNull";
     public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "update-assessment-user-role.userId.notNull";
@@ -157,6 +160,34 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_USERS_SIZE_MIN = "get-assessment-users.size.min";
     public static final String GET_ASSESSMENT_USERS_SIZE_MAX = "get-assessment-users.size.max";
     public static final String GET_ASSESSMENT_USERS_PAGE_MIN = "get-assessment-users.page.min";
+
+    public static final String ADD_EVIDENCE_ATTACHMENT_EVIDENCE_ID_NOT_NULL = "add-evidence-attachment.evidenceId.notNull";
+    public static final String ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_NOT_NULL = "add-evidence-attachment.attachment.notNull";
+    public static final String ADD_EVIDENCE_ATTACHMENT_ATTACHMENT_COUNT_MAX = "add-evidence-attachment.attachmentsCount.max";
+    public static final String ADD_EVIDENCE_ATTACHMENT_DESCRIPTION_SIZE_MIN = "add-evidence-attachment.description.size.min";
+    public static final String ADD_EVIDENCE_ATTACHMENT_DESCRIPTION_SIZE_MAX = "add-evidence-attachment.description.size.max";
+
+    public static final String GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL = "get-evidence-attachments.evidenceId.notNull";
+
+    public static final String GET_ASSESSMENT_INVITEE_LIST_ASSESSMENT_ID_NOT_NULL = "get-assessment-invitee-list.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_INVITEE_LIST_SIZE_MIN = "get-assessment-invitee-list.size.min";
+    public static final String GET_ASSESSMENT_INVITEE_LIST_SIZE_MAX = "get-assessment-invitee-list.size.max";
+    public static final String GET_ASSESSMENT_INVITEE_LIST_PAGE_MIN = "get-assessment-invitee-list.page.min";
+
+    public static final String INVITE_ASSESSMENT_USER_ASSESSMENT_ID_NOT_NULL = "invite-assessment-user.assessmentId.notNull";
+    public static final String INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL = "invite-assessment-user.email.notNull";
+    public static final String INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL = "invite-assessment-user.roleId.notNull";
+    public static final String INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND = "invite-assessment-user.roleId.notFound";
+
+    public static final String DELETE_EVIDENCE_ATTACHMENT_EVIDENCE_ID_NOT_NULL = "delete-evidence-attachment.evidenceId.notNull";
+    public static final String DELETE_EVIDENCE_ATTACHMENT_ATTACHMENT_ID_NOT_NULL = "delete-evidence-attachment.attachmentId.notNull";
+
+    public static final String ACCEPT_ASSESSMENT_INVITATIONS_USER_ID_NOT_NULL = "accept-assessment-invitations.userId.notNull";
+
+    public static final String GET_ASSESSMENT_USER_PERMISSIONS_ASSESSMENT_ID_NOT_NULL = "get-assessment-current-user-permissions.assessmentId.notNull";
+
+    public static final String GET_EVIDENCE_ID_NOT_NULL = "get-evidence.id.notNull";
+    public static final String GET_EVIDENCE_ASSESSMENT_RESULT_NOT_FOUND = "get-evidence.assessmentResultId.notFound";
 
     public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_ID_NOT_NULL = "get-answer-history-list.assessmentId.notNull";
     public static final String GET_ANSWER_HISTORY_LIST_QUESTION_ID_NOT_NULL = "get-answer-history-list.questionId.notNull";

@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.answerhistory;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
@@ -38,23 +39,24 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final UserJpaRepository userRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
+
     @Override
-    public UUID persist(Param param) {
-        var assessmentResult = assessmentResultRepository.findById(param.assessmentResultId())
+    public UUID persist(AnswerHistory answerHistory) {
+        var assessmentResult = assessmentResultRepository.findById(answerHistory.getAssessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
-        var answer = answerRepository.findById(param.answerId())
+        var answer = answerRepository.findById(answerHistory.getAnswer().getId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
 
-        AnswerHistoryJpaEntity savedEntity = repository.save(mapCreateParamToJpaEntity(param, assessmentResult, answer));
+        AnswerHistoryJpaEntity savedEntity = repository.save(mapCreateParamToJpaEntity(answerHistory, assessmentResult, answer));
         return savedEntity.getId();
     }
 
     @Override
     public PaginatedResponse<AnswerHistoryListItem> loadByAssessmentIdAndQuestionId(UUID assessmentId,
-                                                                                                                long questionId,
-                                                                                                                int page,
-                                                                                                                int size) {
-        var assessmentResult =  assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+                                                                                    long questionId,
+                                                                                    int page,
+                                                                                    int size) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND));
         var pageResult = repository.findAllByAssessmentResultAndQuestionId(assessmentResult,
             questionId,
@@ -69,7 +71,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .collect(Collectors.toSet());
         Map<Long, Integer> answerOptionIdToIndex =
             answerOptionRepository.findAllByIdInAndKitVersionId(answerOptionIds, assessmentResult.getKitVersionId()).stream()
-            .collect(Collectors.toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getIndex));
+                .collect(Collectors.toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getIndex));
 
         List<AnswerHistoryListItem> items = pageResult.getContent().stream()
             .map(e -> new AnswerHistoryListItem(e.getModifiedAt(),
@@ -82,7 +84,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
         return new PaginatedResponse<>(items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AnswerHistoryJpaEntity.Fields.MODIFIED_AT,
+            AnswerHistoryJpaEntity.Feilds.creationTime(),
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
