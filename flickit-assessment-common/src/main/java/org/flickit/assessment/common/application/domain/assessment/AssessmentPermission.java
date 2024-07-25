@@ -35,7 +35,8 @@ public enum AssessmentPermission {
     UPDATE_USER_ASSESSMENT_ROLE("updateUserAssessmentRole"),
     DELETE_USER_ASSESSMENT_ROLE("deleteUserAssessmentRole"),
     VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
-    VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList");
+    VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
+    VIEW_ATTRIBUTE_VALUE_EXCEL("viewAttributeValueExcel");
 
     private final String code;
 }
