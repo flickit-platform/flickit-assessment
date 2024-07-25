@@ -183,4 +183,10 @@ public class ErrorMessageKey {
     public static final String ACCEPT_ASSESSMENT_INVITATIONS_USER_ID_NOT_NULL = "accept-assessment-invitations.userId.notNull";
 
     public static final String GET_ASSESSMENT_USER_PERMISSIONS_ASSESSMENT_ID_NOT_NULL = "get-assessment-current-user-permissions.assessmentId.notNull";
+
+    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ASSESSMENT_ID_NOT_NULL = "create-attribute-value-excel.assessmentId.notNull";
+    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_ID_NOT_NULL = "create-attribute-value-excel.attributeId.notNull";
+    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND = "create-attribute-value-excel.attributeValue.notFound";
+    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_NOT_FOUND = "create-attribute-value-excel.attribute.notFound";
+    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_MATURITY_LEVE_NOT_FOUND = "create-attribute-value-excel.maturityLevel.notFound";
 }
