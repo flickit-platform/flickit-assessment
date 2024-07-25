@@ -149,7 +149,7 @@ public class AttributeValue {
     private double calcConfidenceGainedScore(Map<Long, Double> questionIdToWeightMap) {
         Map<Long, Integer> questionIdToAnswerConfidenceLevelId = new HashMap<>();
         answers.forEach(e -> {
-            if (!e.getIsNotApplicable())
+            if (!Boolean.TRUE.equals(e.getIsNotApplicable()))
                 questionIdToAnswerConfidenceLevelId.put(e.getQuestionId(), e.getConfidenceLevelId());
         });
 
