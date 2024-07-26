@@ -189,6 +189,13 @@ public class ErrorMessageKey {
     public static final String GET_EVIDENCE_ID_NOT_NULL = "get-evidence.id.notNull";
     public static final String GET_EVIDENCE_ASSESSMENT_RESULT_NOT_FOUND = "get-evidence.assessmentResultId.notFound";
 
+    public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_ID_NOT_NULL = "get-answer-history-list.assessmentId.notNull";
+    public static final String GET_ANSWER_HISTORY_LIST_QUESTION_ID_NOT_NULL = "get-answer-history-list.questionId.notNull";
+    public static final String GET_ANSWER_HISTORY_LIST_SIZE_MIN = "get-answer-history-list.size.min";
+    public static final String GET_ANSWER_HISTORY_LIST_SIZE_MAX = "get-answer-history-list.size.max";
+    public static final String GET_ANSWER_HISTORY_LIST_PAGE_MIN = "get-answer-history-list.page.min";
+    public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-answer-history-list.assessmentResult.notFound";
+
     public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ASSESSMENT_ID_NOT_NULL = "create-attribute-value-excel.assessmentId.notNull";
     public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_ID_NOT_NULL = "create-attribute-value-excel.attributeId.notNull";
     public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND = "create-attribute-value-excel.attributeValue.notFound";
