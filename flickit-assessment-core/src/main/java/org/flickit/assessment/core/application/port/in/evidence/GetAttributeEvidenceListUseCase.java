@@ -54,5 +54,5 @@ public interface GetAttributeEvidenceListUseCase {
         }
     }
 
-    record AttributeEvidenceListItem(String description) {}
+    record AttributeEvidenceListItem(UUID id, String description, int attachmentsCount) {}
 }

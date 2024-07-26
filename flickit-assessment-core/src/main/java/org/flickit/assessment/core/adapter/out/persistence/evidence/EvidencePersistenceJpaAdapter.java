@@ -111,12 +111,13 @@ public class EvidencePersistenceJpaAdapter implements
 
         var order = EvidenceJpaEntity.Fields.lastModificationTime;
         var sort = Sort.Direction.DESC;
-        var pageResult = repository.findAssessmentAttributeEvidencesByTypeOrderByLastModificationTimeDesc(
+        var pageResult = repository.findAssessmentAttributeEvidencesByType(
             assessmentId, attributeId, type, PageRequest.of(page, size, sort, order));
 
         var items = pageResult.getContent().stream()
-            .map(AttributeEvidenceListItem::new)
+            .map(e -> new AttributeEvidenceListItem(e.getId(), e.getDescription(), e.getAttachmentsCount()))
             .toList();
+
         return new PaginatedResponse<>(
             items,
             pageResult.getNumber(),
