@@ -37,7 +37,8 @@ public enum AssessmentPermission {
     DELETE_USER_ASSESSMENT_ROLE("deleteUserAssessmentRole"),
     VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
     VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
-    VIEW_EVIDENCE("viewEvidence");
+    VIEW_EVIDENCE("viewEvidence"),
+    CREATE_AI_ANALYSIS("createAiAnalysis"),;
 
     private final String code;
 }
