@@ -1222,6 +1222,33 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get Attribute Excel Report",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report-excel/attributes/1104",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"8280e75b-ed71-4c82-9fac-920c52efb26c",
+						"report-excel",
+						"attributes",
+						"1104"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
