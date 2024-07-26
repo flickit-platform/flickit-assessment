@@ -35,4 +35,8 @@ public class QuestionMother {
         question.setOptions(List.of(AnswerOptionMother.optionOne(attribute.getId()), AnswerOptionMother.optionTwo(attribute.getId())));
         return question;
     }
+
+    public static Question withIdAndImpactsOnLevel23(long id, long attributeId) {
+        return new Question(id, "question" + id, null, null, Boolean.FALSE, List.of(QuestionImpactMother.onLevelTwo(1, attributeId), QuestionImpactMother.onLevelThree(1, attributeId)));
+    }
 }

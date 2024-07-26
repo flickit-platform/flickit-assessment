@@ -39,6 +39,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUT
 public class CreateAttributeValueExcelService implements CreateAttributeValueExcelUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
+    private static final String QUESTIONS_SHEET_TITLE = "Questions";
     private static final String ATTRIBUTE_SHEET_TITLE = "Attribute";
     private static final String MATURITY_LEVELS_SHEET_TITLE = "MaturityLevels";
     private static final List<String> QUESTIONS_SHEET_HEADERS = List.of("Question", "Hint", "Weight", "Score");
@@ -83,7 +84,7 @@ public class CreateAttributeValueExcelService implements CreateAttributeValueExc
     }
 
     private void createQuestionsSheet(Workbook workbook, Param param, AttributeValue attributeValue) {
-        Sheet sheet = initQuestionsSheet(workbook, attributeValue.getAttribute().getTitle());
+        Sheet sheet = initQuestionsSheet(workbook);
         List<Question> questions = attributeValue.getAttribute().getQuestions();
         List<Answer> answers = attributeValue.getAnswers();
         createQuestionRows(param.getAttributeId(), questions, answers, workbook, sheet);
@@ -100,15 +101,13 @@ public class CreateAttributeValueExcelService implements CreateAttributeValueExc
 
     private void createMaturityLevelsSheet(Workbook workbook, long kitVersionId) {
         Sheet sheet = initMaturityLevelsSheet(workbook);
-        createHeader(workbook, sheet, MATURITY_LEVELS_HEADERS);
 
         List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(kitVersionId);
-
         createMaturityLevelRows(maturityLevels, workbook, sheet);
     }
 
-    private Sheet initQuestionsSheet(Workbook workbook, String attributeTitle) {
-        Sheet sheet = workbook.createSheet(attributeTitle);
+    private Sheet initQuestionsSheet(Workbook workbook) {
+        Sheet sheet = workbook.createSheet(QUESTIONS_SHEET_TITLE);
         sheet.setColumnWidth(0, 10000);
         sheet.setColumnWidth(1, 10000);
         sheet.setColumnWidth(2, 2000);
@@ -130,6 +129,7 @@ public class CreateAttributeValueExcelService implements CreateAttributeValueExc
         sheet.setColumnWidth(0, 4000);
         sheet.setColumnWidth(1, 2000);
         sheet.setColumnWidth(2, 10000);
+        createHeader(workbook, sheet, MATURITY_LEVELS_HEADERS);
         return sheet;
     }
 
