@@ -9,11 +9,17 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
+import org.flickit.assessment.core.application.port.out.minio.DownloadFilePort;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +31,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_F
 public class MinioAdapter implements
     CreateFileDownloadLinkPort,
     UploadEvidenceAttachmentPort,
-    DeleteEvidenceAttachmentFilePort {
+    DeleteEvidenceAttachmentFilePort,
+    DownloadFilePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -110,5 +117,19 @@ public class MinioAdapter implements
             .object(objectName)
             .versionId(latestVersionId)
             .build());
+    }
+
+    @SneakyThrows
+    @Override
+    public String downloadFile(String fileLink) {
+        URL pictureUrl = new URL(fileLink);
+        ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
+
+        String uniqueFileName = UUID.randomUUID()+".xlsx";
+        FileOutputStream fileOutputStream = new FileOutputStream(uniqueFileName);
+        FileChannel fileChannel = fileOutputStream.getChannel();
+        fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+
+        return uniqueFileName;
     }
 }
