@@ -59,8 +59,8 @@ class MaturityLevelCreateKitPersisterTest {
             .maturityLevels(dslLevels)
             .build();
 
-        MaturityLevel levelOneNoId = new MaturityLevel(null, levelOne.getCode(), levelOne.getTitle(), levelOne.getIndex(), levelOne.getValue(), null);
-        MaturityLevel levelTwoNoId = new MaturityLevel(null, levelTwo.getCode(), levelTwo.getTitle(), levelTwo.getIndex(), levelTwo.getValue(), null);
+        MaturityLevel levelOneNoId = new MaturityLevel(null, levelOne.getCode(), levelOne.getTitle(), levelOne.getIndex(), levelOne.getDescription(), levelOne.getValue(), null);
+        MaturityLevel levelTwoNoId = new MaturityLevel(null, levelTwo.getCode(), levelTwo.getTitle(), levelTwo.getIndex(), levelTwo.getDescription(), levelTwo.getValue(), null);
         when(createMaturityLevelPort.persist(levelOneNoId, KIT_ID, CURRENT_USER_ID)).thenReturn(levelOne.getId());
         when(createMaturityLevelPort.persist(levelTwoNoId, KIT_ID, CURRENT_USER_ID)).thenReturn(levelTwo.getId());
 
