@@ -27,7 +27,7 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
     @SneakyThrows
     @Override
-    public String createReport(InputStream inputStream) {
+    public String createReport(InputStream inputStream, String attribute) {
 
         String fileContent = readInputStream(inputStream);
 
@@ -36,7 +36,7 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
         JsonObject message = new JsonObject();
         message.addProperty("role", openAiProperties.getRole());
-        message.addProperty("content", openAiProperties.getPrompt() + fileContent);
+        message.addProperty("content", openAiProperties.createPrompt(attribute) + fileContent);
 
         jsonBody.add("messages", new Gson().toJsonTree(Collections.singletonList(message)));
         jsonBody.addProperty("temperature", 0.7);

@@ -4,5 +4,5 @@ import java.io.InputStream;
 
 public interface CreateAssessmentAttributeAiPort {
 
-    String createReport (InputStream inputStream);
+    String createReport (InputStream inputStream, String attribute);
 }

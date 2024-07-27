@@ -2,6 +2,8 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -37,7 +39,9 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var stream = downloadFilePort.downloadFile(param.getFileLink());
-        return new Result(createAssessmentAttributeAiPort.createReport(stream));
+        Workbook workbook = new XSSFWorkbook(stream);
+        var attribute = workbook.getSheetName(0);
+        return new Result(createAssessmentAttributeAiPort.createReport(stream, attribute));
     }
 
     public String getFileExtension(String fileLink) {
