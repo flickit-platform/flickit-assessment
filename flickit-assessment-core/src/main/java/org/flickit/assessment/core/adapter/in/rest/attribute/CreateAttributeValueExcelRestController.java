@@ -19,7 +19,7 @@ public class CreateAttributeValueExcelRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report-excel/attributes/{attributeId}")
-    public ResponseEntity<CreateAttributeValueExcelResponseDto> getAttributeScoreDetail(
+    public ResponseEntity<CreateAttributeValueExcelResponseDto> createAttributeValueExcel(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId) {
         UUID currentUserId = userContext.getUser().id();
