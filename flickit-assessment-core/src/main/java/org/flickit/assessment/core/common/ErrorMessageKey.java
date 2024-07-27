@@ -198,5 +198,6 @@ public class ErrorMessageKey {
 
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL = "create-assessment-attribute-ai-report.assessmentId.notNull";
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL = "create-assessment-attribute-ai-report.fileLink.notNull";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND = "create-assessment-attribute-ai-report.file.notFound";
 
 }

@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,7 +58,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.create(param));
         assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
         verify(fileProperties).getAttributeReportFileExtension();
-        verifyNoInteractions();
+        verifyNoInteractions(assessmentAccessChecker, createAssessmentAttributeAiPort);
     }
 
     @Test
@@ -79,7 +81,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
     }
 
     @Test
-    @DisplayName("if an assessment with the specified id does not exists, it should produce an NotFound exception")
+    @DisplayName("if the parameters are valid, it should produce an NotFound exception")
     void testCreateAssessmentAttributeAiReport_ValidParameters_ReturnText() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
@@ -87,11 +89,12 @@ class CreateAssessmentAttributeAiReportServiceTest {
             "Credential=minioadmin%2F20240726%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240726T052101Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-" +
             "Signature=8dfab4d27ab012f1ef15beb58b54da353049f00b9e4a53115eb385b41fb4f4a5";
         Param param = new Param(assessmentId, pictureLink, currentUserId);
+        String fileContent = "dummy file content";
+        InputStream mockInputStream = new ByteArrayInputStream(fileContent.getBytes());
 
         when(fileProperties.getAttributeReportFileExtension()).thenReturn(List.of("xlsx"));
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS)).thenReturn(true);
-        when(downloadFilePort.downloadFile(param.getFileLink())).thenReturn(param.getFileLink());
-        when(createAssessmentAttributeAiPort.createReport(any())).thenReturn("ChatGpt result");
+        when(downloadFilePort.downloadFile(param.getFileLink())).thenReturn(mockInputStream);
 
         assertDoesNotThrow(() -> service.create(param));
         verify(fileProperties).getAttributeReportFileExtension();

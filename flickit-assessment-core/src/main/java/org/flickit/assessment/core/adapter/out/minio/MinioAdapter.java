@@ -14,17 +14,17 @@ import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND;
 
 @Component("coreMinioAdapter")
 @AllArgsConstructor
@@ -99,7 +99,7 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public void deleteEvidenceAttachmentFile(String path) {
-        String bucketName = path.replaceFirst("/.*" ,"");
+        String bucketName = path.replaceFirst("/.*", "");
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
         checkFileExistence(bucketName, objectName);
@@ -121,15 +121,22 @@ public class MinioAdapter implements
 
     @SneakyThrows
     @Override
-    public String downloadFile(String fileLink) {
+    public InputStream downloadFile(String fileLink) {
         URL pictureUrl = new URL(fileLink);
-        ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
 
-        String uniqueFileName = UUID.randomUUID()+".xlsx";
-        FileOutputStream fileOutputStream = new FileOutputStream(uniqueFileName);
-        FileChannel fileChannel = fileOutputStream.getChannel();
-        fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+        try (ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
-        return uniqueFileName;
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            while (readableByteChannel.read(buffer) > 0) {
+                buffer.flip();
+                byteArrayOutputStream.write(buffer.array(), 0, buffer.limit());
+                buffer.clear();
+            }
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+
+        } catch (IOException e) {
+            throw new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND);
+        }
     }
 }

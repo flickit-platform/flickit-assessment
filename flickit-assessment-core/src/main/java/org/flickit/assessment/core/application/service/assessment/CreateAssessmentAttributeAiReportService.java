@@ -7,12 +7,10 @@ import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentAttributeAiReportUseCase;
-import org.flickit.assessment.core.application.port.out.minio.DownloadFilePort;
 import org.flickit.assessment.core.application.port.out.aireport.CreateAssessmentAttributeAiPort;
+import org.flickit.assessment.core.application.port.out.minio.DownloadFilePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.File;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_AI_ANALYSIS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -38,11 +36,8 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (!assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        String filePath = downloadFilePort.downloadFile(param.getFileLink());
-
-        var file = new File(filePath);
-
-        return new Result(createAssessmentAttributeAiPort.createReport(file));
+        var stream = downloadFilePort.downloadFile(param.getFileLink());
+        return new Result(createAssessmentAttributeAiPort.createReport(stream));
     }
 
     public String getFileExtension(String fileLink) {

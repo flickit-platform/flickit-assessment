@@ -1,6 +1,8 @@
 package org.flickit.assessment.core.application.port.out.minio;
 
+import java.io.InputStream;
+
 public interface DownloadFilePort {
 
-    String downloadFile(String fileLink);
+    InputStream downloadFile(String fileLink);
 }

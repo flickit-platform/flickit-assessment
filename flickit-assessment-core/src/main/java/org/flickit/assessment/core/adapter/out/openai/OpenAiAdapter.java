@@ -15,9 +15,10 @@ import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.core.application.port.out.aireport.CreateAssessmentAttributeAiPort;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 @Component
@@ -28,9 +29,9 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
     @SneakyThrows
     @Override
-    public String createReport(File file) {
+    public String createReport(InputStream inputStream) {
 
-        String fileContent = new String(Files.readAllBytes(file.toPath()));
+        String fileContent = readInputStream(inputStream);
 
         JsonObject jsonBody = new JsonObject();
         jsonBody.addProperty("model", openAiProperties.getModel());
@@ -53,7 +54,7 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 if (response.getEntity() != null) {
-                    String responseString = new String(response.getEntity().getContent().readAllBytes());
+                    String responseString = new String(response.getEntity().getContent().readAllBytes(), StandardCharsets.UTF_8);
 
                     JsonObject jsonResponse = new Gson().fromJson(responseString, JsonObject.class);
                     JsonElement contentElement = jsonResponse.getAsJsonArray("choices")
@@ -66,5 +67,15 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
                 }
             }
         }
+    }
+
+    private String readInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) != -1) {
+            result.write(buffer, 0, length);
+        }
+        return result.toString(StandardCharsets.UTF_8);
     }
 }
