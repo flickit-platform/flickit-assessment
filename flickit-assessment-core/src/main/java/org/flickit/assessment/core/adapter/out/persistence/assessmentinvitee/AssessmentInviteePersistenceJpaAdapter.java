@@ -26,7 +26,8 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     LoadAssessmentsUserInvitationsPort,
     CreateAssessmentInvitationPort,
     DeleteAssessmentUserInvitationPort,
-    LoadAssessmentInviteePort {
+    LoadAssessmentInviteePort,
+    DeleteAssessmentInviteePort {
 
     private final AssessmentInviteeJpaRepository repository;
 
@@ -82,5 +83,10 @@ public class AssessmentInviteePersistenceJpaAdapter implements
         return repository.findById(id)
             .map(AssessmentInviteeMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_INVITEE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        repository.deleteById(id);
     }
 }
