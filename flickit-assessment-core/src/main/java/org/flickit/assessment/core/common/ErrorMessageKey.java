@@ -12,6 +12,7 @@ public class ErrorMessageKey {
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
     public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
+    public static final String ASSESSMENT_INVITEE_ID_NOT_FOUND = "assessment-invitee.id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";

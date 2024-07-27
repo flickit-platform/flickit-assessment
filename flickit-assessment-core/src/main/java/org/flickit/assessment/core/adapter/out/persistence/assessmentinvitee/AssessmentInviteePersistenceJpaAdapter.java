@@ -5,10 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInvitee;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.CreateAssessmentInvitationPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.DeleteAssessmentUserInvitationPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentInviteeListPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentsUserInvitationsPort;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.*;
 import org.flickit.assessment.data.jpa.core.assessmentinvitee.AssessmentInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentinvitee.AssessmentInviteeJpaRepository;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentinvitee.AssessmentInviteeMapper.mapToJpaEntity;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_INVITEE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND;
 
 @Component
@@ -27,7 +25,8 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     LoadAssessmentInviteeListPort,
     LoadAssessmentsUserInvitationsPort,
     CreateAssessmentInvitationPort,
-    DeleteAssessmentUserInvitationPort {
+    DeleteAssessmentUserInvitationPort,
+    LoadAssessmentInviteePort {
 
     private final AssessmentInviteeJpaRepository repository;
 
@@ -76,5 +75,12 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     @Override
     public void deleteAllByEmail(String email) {
         repository.deleteByEmail(email);
+    }
+
+    @Override
+    public AssessmentInvitee loadById(UUID id) {
+        return repository.findById(id)
+            .map(AssessmentInviteeMapper::mapToDomainModel)
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_INVITEE_ID_NOT_FOUND));
     }
 }
