@@ -99,7 +99,7 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public void deleteEvidenceAttachmentFile(String path) {
-        String bucketName = path.replaceFirst("/.*", "");
+        String bucketName = path.replaceFirst("/.*" ,"");
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
         checkFileExistence(bucketName, objectName);
