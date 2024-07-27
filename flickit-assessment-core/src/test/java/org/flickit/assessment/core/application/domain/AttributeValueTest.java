@@ -1,9 +1,6 @@
 package org.flickit.assessment.core.application.domain;
 
-import org.flickit.assessment.core.test.fixture.application.AnswerMother;
-import org.flickit.assessment.core.test.fixture.application.AttributeMother;
-import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
-import org.flickit.assessment.core.test.fixture.application.QuestionMother;
+import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -181,19 +178,20 @@ class AttributeValueTest {
 
     @Test
     void testCalculateConfidenceLevel_whenSomeQuestionsHaveNoAnswer() {
-        Question q1 = QuestionMother.withImpactsOnLevel23();
-        Question q2 = QuestionMother.withImpactsOnLevel23();
-        Question q3 = QuestionMother.withImpactsOnLevel34();
-        Question q4 = withImpactsOnLevel45();
-        Question q5 = withImpactsOnLevel45();
+        long attributeId = 256L;
+        Question q1 = QuestionMother.withImpactsOnLevel23(attributeId);
+        Question q2 = QuestionMother.withImpactsOnLevel23(attributeId);
+        Question q3 = QuestionMother.withImpactsOnLevel34(attributeId);
+        Question q4 = withImpactsOnLevel45(attributeId);
+        Question q5 = withImpactsOnLevel45(attributeId);
         List<Question> questions = List.of(q1, q2, q3, q4, q5); //all questions have weight = 1;
 
         List<Answer> answers = List.of(
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q1.getId()),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.SOMEWHAT_UNSURE.getId(), q2.getId()),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId(), q3.getId()));
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q1.getId(), attributeId),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.SOMEWHAT_UNSURE.getId(), q2.getId(), attributeId),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId(), q3.getId(), attributeId));
 
-        AttributeValue qav = toBeCalcWithQAAndAnswers(AttributeMother.withQuestions(questions), answers);
+        AttributeValue qav = toBeCalcWithQAAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculateConfidenceValue();
 
@@ -206,16 +204,17 @@ class AttributeValueTest {
 
     @Test
     void testCalculateConfidenceLevel_whitNoAnswerdQuestions() {
-        Question q1 = QuestionMother.withImpactsOnLevel23();
-        Question q2 = QuestionMother.withImpactsOnLevel23();
-        Question q3 = QuestionMother.withImpactsOnLevel34();
-        Question q4 = withImpactsOnLevel45();
-        Question q5 = withImpactsOnLevel45();
+        long attributeId = 256L;
+        Question q1 = QuestionMother.withImpactsOnLevel23(attributeId);
+        Question q2 = QuestionMother.withImpactsOnLevel23(attributeId);
+        Question q3 = QuestionMother.withImpactsOnLevel34(attributeId);
+        Question q4 = withImpactsOnLevel45(attributeId);
+        Question q5 = withImpactsOnLevel45(attributeId);
         List<Question> questions = List.of(q1, q2, q3, q4, q5); //all questions have weight = 1;
 
         List<Answer> answers = List.of();
 
-        AttributeValue qav = toBeCalcWithQAAndAnswers(AttributeMother.withQuestions(questions), answers);
+        AttributeValue qav = toBeCalcWithQAAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculateConfidenceValue();
 
