@@ -4,12 +4,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 
 public interface CreateAssessmentAttributeAiReportUseCase {
@@ -24,6 +24,7 @@ public interface CreateAssessmentAttributeAiReportUseCase {
         UUID id;
 
         @NotNull(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL)
+        @URL(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL)
         String fileLink;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
