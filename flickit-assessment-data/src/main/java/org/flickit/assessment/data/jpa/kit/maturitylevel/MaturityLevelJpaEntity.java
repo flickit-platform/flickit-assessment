@@ -38,6 +38,9 @@ public class MaturityLevelJpaEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
+    @Column(name = "description", nullable = false)
+    private String description;
+
     @Column(name = "value", nullable = false)
     private Integer value;
 
