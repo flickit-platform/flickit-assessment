@@ -58,7 +58,7 @@ public class AttributeValue {
             .flatMap(ml ->
                 answers.stream()
                     .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
-                    .map(answer -> answer.findImpactByMaturityLevel(ml))
+                    .map(answer -> answer.findImpactByAttributeAndMaturityLevel(this.getAttribute(), ml))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.calculateScore()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));

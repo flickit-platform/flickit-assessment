@@ -7,6 +7,6 @@ public interface UpdateSpacePort {
 
     void updateSpace(Param param);
 
-    record Param(long id, String title, LocalDateTime lastModificationTime, UUID lastModifiedBy){
+    record Param(long id, String title, String code, LocalDateTime lastModificationTime, UUID lastModifiedBy){
     }
 }

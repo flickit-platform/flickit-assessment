@@ -1,32 +1,43 @@
 package org.flickit.assessment.common.application.domain.assessment;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum AssessmentPermission {
 
-    ANSWER_QUESTION,
-    VIEW_REPORT_ASSESSMENT,
-    CALCULATE_ASSESSMENT,
-    CALCULATE_CONFIDENCE,
-    CREATE_ASSESSMENT,
-    DELETE_ASSESSMENT,
-    VIEW_ASSESSMENT_LIST,
-    VIEW_ASSESSMENT_PROGRESS,
-    VIEW_ASSESSMENT,
-    UPDATE_ASSESSMENT,
-    VIEW_ATTRIBUTE_SCORE_DETAIL,
-    ADD_EVIDENCE,
-    DELETE_EVIDENCE,
-    VIEW_ATTRIBUTE_EVIDENCE_LIST,
-    VIEW_EVIDENCE_LIST,
-    VIEW_EVIDENCE_ATTACHMENT,
-    UPDATE_EVIDENCE,
-    ADD_EVIDENCE_ATTACHMENT,
-    VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-    VIEW_QUESTIONNAIRE_QUESTIONS,
-    VIEW_SUBJECT_PROGRESS,
-    VIEW_SUBJECT_REPORT,
-    CREATE_ADVICE,
-    GRANT_USER_ASSESSMENT_ROLE,
-    UPDATE_USER_ASSESSMENT_ROLE,
-    DELETE_USER_ASSESSMENT_ROLE,
-    GET_ASSESSMENT_USERS
+    CREATE_ASSESSMENT("createAssessment"),
+    VIEW_ASSESSMENT("viewAssessment"),
+    UPDATE_ASSESSMENT("updateAssessment"),
+    DELETE_ASSESSMENT("deleteAssessment"),
+    VIEW_ASSESSMENT_LIST("viewAssessmentList"),
+    VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),
+    VIEW_ASSESSMENT_REPORT("viewAssessmentReport"),
+    CALCULATE_ASSESSMENT("calculateAssessment"),
+    CALCULATE_CONFIDENCE("calculateConfidence"),
+    VIEW_ATTRIBUTE_SCORE_DETAIL("viewAttributeScoreDetail"),
+    VIEW_SUBJECT_PROGRESS("viewSubjectProgress"),
+    VIEW_SUBJECT_REPORT("viewSubjectReport"),
+    CREATE_ADVICE("createAdvice"),
+    ADD_EVIDENCE("addEvidence"),
+    UPDATE_EVIDENCE("updateEvidence"),
+    DELETE_EVIDENCE("deleteEvidence"),
+    VIEW_EVIDENCE_LIST("viewEvidenceList"),
+    VIEW_ATTRIBUTE_EVIDENCE_LIST("viewAttributeEvidenceList"),
+    ADD_EVIDENCE_ATTACHMENT("addEvidenceAttachment"),
+    VIEW_EVIDENCE_ATTACHMENT("viewEvidenceAttachment"),
+    DELETE_EVIDENCE_ATTACHMENT("deleteEvidenceAttachment"),
+    ANSWER_QUESTION("answerQuestion"),
+    VIEW_ANSWER_HISTORY_LIST("viewAnswerHistory"),
+    VIEW_QUESTIONNAIRE_QUESTIONS("viewQuestionnaireQuestions"),
+    VIEW_ASSESSMENT_QUESTIONNAIRE_LIST("viewAssessmentQuestionnaireList"),
+    GRANT_USER_ASSESSMENT_ROLE("grantUserAssessmentRole"),
+    UPDATE_USER_ASSESSMENT_ROLE("updateUserAssessmentRole"),
+    DELETE_USER_ASSESSMENT_ROLE("deleteUserAssessmentRole"),
+    VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
+    VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
+    VIEW_EVIDENCE("viewEvidence");
+
+    private final String code;
 }

@@ -329,6 +329,30 @@
 			"response": []
 		},
 		{
+			"name": "Get Evidence",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/8c61e111-a64a-430e-84a0-ae584860116f",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"8c61e111-a64a-430e-84a0-ae584860116f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Calculate",
 			"request": {
 				"method": "POST",
@@ -1039,6 +1063,188 @@
 						"evidences",
 						"c4637764-40d7-4068-8bd0-a4d254c7a077",
 						"attachments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Evidence Attachment",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/evidences/c4637764-40d7-4068-8bd0-a4d254c7a077/attachments/9daf59b6-d8ac-4553-ad67-dddaf5d6f555",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"evidences",
+						"c4637764-40d7-4068-8bd0-a4d254c7a077",
+						"attachments",
+						"9daf59b6-d8ac-4553-ad67-dddaf5d6f555"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment Invitee List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/invitees?page=0&size=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"88c50ea3-9486-4186-9ed4-7ff9bc32b768",
+						"invitees"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Assessment Invite",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\" : \"maziyar.grami@gmail.com\",\n    \"roleId\" : 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/invite",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
+						"invite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept Assessment Invitations",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments-accept-invitations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments-accept-invitations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Assessment User Permissions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/33e7bb70-0ef2-4a5d-85fb-232951ccc02c/permissions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"33e7bb70-0ef2-4a5d-85fb-232951ccc02c",
+						"permissions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Answer History List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/d0e3bd7c-b8d6-408d-ab28-88bb1213acf3/questions/12728/answer-history",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"d0e3bd7c-b8d6-408d-ab28-88bb1213acf3",
+						"questions",
+						"12728",
+						"answer-history"
 					]
 				}
 			},
