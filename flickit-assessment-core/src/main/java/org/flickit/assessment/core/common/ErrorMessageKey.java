@@ -195,4 +195,6 @@ public class ErrorMessageKey {
     public static final String GET_ANSWER_HISTORY_LIST_SIZE_MAX = "get-answer-history-list.size.max";
     public static final String GET_ANSWER_HISTORY_LIST_PAGE_MIN = "get-answer-history-list.page.min";
     public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-answer-history-list.assessmentResult.notFound";
+
+    public static final String DELETE_ASSESSMENT_INVITEE_ID_NOT_NULL = "delete-assessment-invitee.id.notNull";
 }
