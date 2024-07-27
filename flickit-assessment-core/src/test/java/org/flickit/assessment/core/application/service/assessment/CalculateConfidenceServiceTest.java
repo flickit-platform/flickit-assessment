@@ -91,15 +91,15 @@ class CalculateConfidenceServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
         List<AttributeValue> s1AttributeValues = List.of(
-            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId())
+            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()), //6 questions with 5 answers with cl=1, attrCl=5/30
+            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()), //6 questions with 5 answers with cl=5, attrCl = 25/30
+            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()), //6 questions with 5 answers with cl=3, attrCl = 15/30
+            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId()) //6 questions with 5 answers with cl=5, attrCl = 25/30
         );
 
         List<AttributeValue> s2AttributeValues = List.of(
-            toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_SURE.getId())
+            toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()), //6 questions with 5 answers with cl=3, attrCl = 15/30
+            toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_SURE.getId()) //6 questions with 5 answers with cl=5, attrCl = 25/30
         );
 
         List<SubjectValue> subjectValues = List.of(
@@ -125,7 +125,10 @@ class CalculateConfidenceServiceTest {
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
         assertNotNull(result);
-        assertEquals(58.88888888888889, result.confidenceValue());
+        double maxPossibleSumConfidence = (100 * 2) + (100 * 2) + (100 * 3) + (100 * 3) + (100 * 4) + (100 * 1); //1500
+        double gainedSumConfidence = (((5.0 / 30.0) * 2) + ((25.0 / 30.0) * 2) + ((15.0 / 30.0) * 3) + ((25.0 / 30.0) * 3) + ((15.0 / 30.0) * 4) + ((25.0 / 30.0) * 1)) * 100;
+        double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
+        assertEquals(confidenceValue, result.confidenceValue(), 0.01);
     }
 
     @Test
@@ -133,10 +136,10 @@ class CalculateConfidenceServiceTest {
         UUID currentUserId = UUID.randomUUID();
 
         List<AttributeValue> s1AttributeValues = List.of(
-            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId())
+            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()), //6 questions with 5 answers with cl=1, attrCl=5/30,
+            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()), //6 questions with 5 answers with cl=5, attrCl = 25/30
+            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()), //6 questions with 5 answers with cl=3, attrCl = 15/30
+            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId()) //6 questions with 5 answers with cl=5, attrCl = 25/30
         );
 
         List<AttributeValue> s2AttributeValues = List.of(
@@ -149,7 +152,7 @@ class CalculateConfidenceServiceTest {
             withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
         );
 
-        var newAttributeValue = toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId());
+        var newAttributeValue = toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()); //6 questions with 5 answers with cl=3, attrCl = 15/30
         var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(), List.of(newAttributeValue.getAttribute()));
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
@@ -173,6 +176,11 @@ class CalculateConfidenceServiceTest {
 
         assertNotNull(result);
         assertNotNull(result.confidenceValue());
-        assertEquals(57.01754385964913, result.confidenceValue());
+
+        double maxPossibleSumConfidence = (100 * 2) + (100 * 2) + (100 * 3) + (100 * 3) + (100 * 4) + (100 * 1) + (100 * 4);
+        double gainedSumConfidence = (((5.0 / 30.0) * 2) + ((25.0 / 30.0) * 2) + ((15.0 / 30.0) * 3) +
+            ((25.0 / 30.0) * 3) + ((15.0 / 30.0) * 4) + ((25.0 / 30.0) * 1) + (15.0 / 30.0) * 4) * 100;
+        double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
+        assertEquals(confidenceValue, result.confidenceValue(), 0.01);
     }
 }
