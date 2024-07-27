@@ -128,6 +128,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newLevel.getCode(),
             newLevel.getTitle(),
             newLevel.getIndex(),
+            newLevel.getDescription(),
             newLevel.getValue(),
             null
         );
@@ -140,13 +141,15 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             newLevel.getCode(),
             newLevel.getTitle(),
             newLevel.getIndex(),
+            newLevel.getDescription(),
             newLevel.getValue(),
             null
         );
     }
 
     private static boolean isMaturityLevelUpdated(MaturityLevel savedLevel, MaturityLevelDslModel newLevel) {
-        return !newLevel.getTitle().equals(savedLevel.getTitle()) ||
+        return !Objects.equals(newLevel.getTitle(), savedLevel.getTitle()) ||
+            !Objects.equals(newLevel.getDescription(), savedLevel.getDescription()) ||
             newLevel.getValue() != savedLevel.getValue() ||
             newLevel.getIndex() != savedLevel.getIndex();
     }
@@ -157,6 +160,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
             savedLevel.getCode(),
             newLevel.getTitle(),
             newLevel.getIndex(),
+            newLevel.getDescription(),
             newLevel.getValue(),
             null
         );
