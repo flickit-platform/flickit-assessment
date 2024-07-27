@@ -1,25 +1,23 @@
 package org.flickit.assessment.core.adapter.out.openai;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.core.application.port.out.aireport.CreateAssessmentAttributeAiPort;
 import org.springframework.stereotype.Component;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+
 
 @Component
 @AllArgsConstructor
@@ -45,27 +43,27 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
         String json = new Gson().toJson(jsonBody);
 
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost request = new HttpPost(openAiProperties.getApiUrl());
-            request.setHeader("Content-Type", "application/json");
-            request.setHeader("Authorization", "Bearer " + openAiProperties.getApiKey());
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(new URI(openAiProperties.getApiUrl()))
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer " + openAiProperties.getApiKey())
+            .POST(HttpRequest.BodyPublishers.ofString(json))
+            .build();
 
-            request.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                if (response.getEntity() != null) {
-                    String responseString = new String(response.getEntity().getContent().readAllBytes(), StandardCharsets.UTF_8);
+        if (response.body() != null) {
+            String responseString = response.body();
 
-                    JsonObject jsonResponse = new Gson().fromJson(responseString, JsonObject.class);
-                    JsonElement contentElement = jsonResponse.getAsJsonArray("choices")
-                        .get(0).getAsJsonObject()
-                        .getAsJsonObject("message")
-                        .get("content");
-                    return contentElement.getAsString();
-                } else {
-                    throw new IOException("Response entity is null");
-                }
-            }
+            JsonObject jsonResponse = new Gson().fromJson(responseString, JsonObject.class);
+            JsonElement contentElement = jsonResponse.getAsJsonArray("choices")
+                .get(0).getAsJsonObject()
+                .getAsJsonObject("message")
+                .get("content");
+            return contentElement.getAsString();
+        } else {
+            throw new IOException("Response entity is null");
         }
     }
 
