@@ -40,6 +40,6 @@ public interface ReportAssessmentUseCase {
         Permissions assessmentPermissions) {
     }
 
-    record Permissions(boolean manageable){
+    record Permissions(boolean manageable, boolean exportable) {
     }
 }

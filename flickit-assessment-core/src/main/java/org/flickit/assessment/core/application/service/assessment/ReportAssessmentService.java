@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
@@ -45,7 +46,8 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
         var spaceOwnerId = loadSpaceOwnerPort.loadOwnerId(assessmentReport.assessment().space().id());
 
         boolean manageable = isManageable(param.getAssessmentId(), param.getCurrentUserId(), spaceOwnerId);
-        var permissions = new Permissions(manageable);
+        boolean exportable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT);
+        var permissions = new Permissions(manageable, exportable);
 
         return new Result(assessmentReport.assessment(), assessmentReport.subjects(), permissions);
     }
