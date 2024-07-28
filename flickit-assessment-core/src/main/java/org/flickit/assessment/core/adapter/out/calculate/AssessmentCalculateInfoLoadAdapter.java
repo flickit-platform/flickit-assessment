@@ -60,7 +60,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                    List<AnswerOptionJpaEntity> allAnswerOptionsEntities,
                    Map<Long, List<AnswerOptionImpactJpaEntity>> optionIdToAnswerOptionImpactsMap,
                    List<AttributeValueJpaEntity> allAttributeValueEntities,
-                   Map<Long, Map<Long, QuestionAndQuestionImpact>> impactfulQuestions) {
+                   Map<Long, Map<Long, QuestionWithImpacts>> impactfulQuestions) {
     }
 
     @Override
@@ -82,7 +82,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
-        Map<Long, Map<Long, QuestionAndQuestionImpact>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
+        Map<Long, Map<Long, QuestionWithImpacts>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
 
         // load all answers submitted with this assessmentResult
         List<AnswerJpaEntity> allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
@@ -116,8 +116,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             assessmentResultEntity.getLastConfidenceCalculationTime());
     }
 
-    private Map<Long, Map<Long, QuestionAndQuestionImpact>> mapQuestionToImpacts(List<QuestionJoinQuestionImpactView> questionJoinImpactViews) {
-        Map<Long, Map<Long, QuestionAndQuestionImpact>> impactfulQuestionsWithImpact = new HashMap<>();
+    private Map<Long, Map<Long, QuestionWithImpacts>> mapQuestionToImpacts(List<QuestionJoinQuestionImpactView> questionJoinImpactViews) {
+        Map<Long, Map<Long, QuestionWithImpacts>> impactfulQuestionsWithImpact = new HashMap<>();
 
         for (QuestionJoinQuestionImpactView view : questionJoinImpactViews) {
             QuestionJpaEntity question = view.getQuestion();
@@ -127,7 +127,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             Long questionId = question.getId();
 
             impactfulQuestionsWithImpact.computeIfAbsent(attributeId, k -> new HashMap<>())
-                .computeIfAbsent(questionId, k -> new QuestionAndQuestionImpact(question, new ArrayList<>()))
+                .computeIfAbsent(questionId, k -> new QuestionWithImpacts(question, new ArrayList<>()))
                 .add(questionImpact);
         }
         return  impactfulQuestionsWithImpact;
@@ -171,14 +171,14 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * @param impactfulQuestions map of impactful questionId to it's impacts
      * @return list of questions with at least one impact on the given attribute
      */
-    private List<Question> questionsWithImpact(Map<Long, QuestionAndQuestionImpact> impactfulQuestions) {
+    private List<Question> questionsWithImpact(Map<Long, QuestionWithImpacts> impactfulQuestions) {
         if (impactfulQuestions == null || impactfulQuestions.isEmpty())
             return List.of();
 
         return impactfulQuestions.values().stream()
             .filter(Objects::nonNull)
-            .map(questionAndQuestionImpact -> QuestionMapper.mapToDomainModel(questionAndQuestionImpact.question(),
-                questionAndQuestionImpact.impacts().stream()
+            .map(questionWithImpacts -> QuestionMapper.mapToDomainModel(questionWithImpacts.question(),
+                questionWithImpacts.impacts().stream()
                     .map(QuestionImpactMapper::mapToDomainModel)
                     .toList()))
             .toList();
@@ -263,7 +263,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         return mapToDomainModel(assessmentEntity, kit, null);
     }
 
-    private record QuestionAndQuestionImpact(QuestionJpaEntity question, List<QuestionImpactJpaEntity> impacts) {
+    private record QuestionWithImpacts(QuestionJpaEntity question, List<QuestionImpactJpaEntity> impacts) {
 
         void add(QuestionImpactJpaEntity impact) {
             impacts.add(impact);
