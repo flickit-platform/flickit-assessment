@@ -75,7 +75,7 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public Attribute load(Long attributeId, Long kitVersionId) {
-        var attribute = repository.findByIdAndKitVersionId(attributeId, 378)
+        var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_FOUND));
         return mapToDomainModel(attribute);
     }
