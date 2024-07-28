@@ -11,6 +11,7 @@ public class AttributeMapper {
     public static Attribute mapToDomainModel(AttributeJpaEntity entity) {
         return new Attribute(
             entity.getId(),
+            entity.getTitle(),
             entity.getWeight(),
             null
         );
