@@ -14,6 +14,7 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_LIST("viewAssessmentList"),
     VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),
     VIEW_ASSESSMENT_REPORT("viewAssessmentReport"),
+    EXPORT_ASSESSMENT_REPORT("exportAssessmentReport"),
     CALCULATE_ASSESSMENT("calculateAssessment"),
     CALCULATE_CONFIDENCE("calculateConfidence"),
     VIEW_ATTRIBUTE_SCORE_DETAIL("viewAttributeScoreDetail"),
@@ -37,9 +38,7 @@ public enum AssessmentPermission {
     DELETE_USER_ASSESSMENT_ROLE("deleteUserAssessmentRole"),
     VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
     VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
-    VIEW_EVIDENCE("viewEvidence"),
-    VIEW_ATTRIBUTE_VALUE_EXCEL("viewAttributeValueExcel"),
-    CREATE_AI_ANALYSIS("createAiAnalysis");
+    VIEW_EVIDENCE("viewEvidence");
 
     private final String code;
 }

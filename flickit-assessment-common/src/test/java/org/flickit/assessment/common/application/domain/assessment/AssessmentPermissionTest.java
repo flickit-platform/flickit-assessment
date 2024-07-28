@@ -45,13 +45,12 @@ class AssessmentPermissionTest {
             Map.entry(VIEW_ASSESSMENT_INVITEE_LIST, "viewAssessmentInviteeList"),
             Map.entry(VIEW_EVIDENCE, "viewEvidence"),
             Map.entry(VIEW_ANSWER_HISTORY_LIST, "viewAnswerHistory"),
-            Map.entry(VIEW_ATTRIBUTE_VALUE_EXCEL, "viewAttributeValueExcel"),
-            Map.entry(CREATE_AI_ANALYSIS, "createAiAnalysis"));
+            Map.entry(EXPORT_ASSESSMENT_REPORT, "exportAssessmentReport"));
 
         permissionCodesMap.forEach((key, value) -> assertEquals(value, key.getCode()));
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
             assertTrue(permissionCodesMap.containsValue(e.getCode()))
         );
-        assertEquals(33, AssessmentPermission.values().length);
+        assertEquals(32, AssessmentPermission.values().length);
     }
 }

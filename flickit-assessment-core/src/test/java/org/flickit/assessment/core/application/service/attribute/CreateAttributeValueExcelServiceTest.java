@@ -23,7 +23,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_VALUE_EXCEL;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,7 +63,7 @@ class CreateAttributeValueExcelServiceTest {
             15L,
             UUID.randomUUID());
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_VALUE_EXCEL))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
             .thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.createAttributeValueExcel(param), COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -91,7 +91,7 @@ class CreateAttributeValueExcelServiceTest {
             MaturityLevelMother.levelOne()
         );
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_VALUE_EXCEL))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
