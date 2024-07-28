@@ -2,8 +2,6 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -13,7 +11,6 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_USER_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class DeleteKitUserAccessUseCaseParamTest {
 
     @Test
