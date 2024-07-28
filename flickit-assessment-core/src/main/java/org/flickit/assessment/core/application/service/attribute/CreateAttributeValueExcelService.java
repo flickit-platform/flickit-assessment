@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_VALUE_EXCEL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,7 +80,7 @@ public class CreateAttributeValueExcelService implements CreateAttributeValueExc
             .flatMap(s -> s.getAttributeValues().stream())
             .filter(a -> a.getAttribute().getId() == attributeId)
             .findFirst()
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND));
     }
 
     private void createQuestionsSheet(Workbook workbook, Param param, AttributeValue attributeValue) {

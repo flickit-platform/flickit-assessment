@@ -60,14 +60,14 @@ public class AttributeValuePersistenceJpaAdapter implements
     @Override
     public AttributeValue load(UUID id) {
         AttributeValueJpaEntity attributeValueEntity = repository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_VALUE_ID_NOT_FOUND));
         Long kitVersionId = attributeValueEntity.getAssessmentResult().getKitVersionId();
 
         AttributeJpaEntity attributeEntity = attributeRepository.findByIdAndKitVersionId(attributeValueEntity.getAttributeId(), kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
 
         MaturityLevelJpaEntity maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(attributeValueEntity.getMaturityLevelId(), kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_EXCEL_MATURITY_LEVE_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
 
         return AttributeValueMapper.mapToDomainModel(attributeValueEntity, attributeEntity, maturityLevelEntity);
     }
