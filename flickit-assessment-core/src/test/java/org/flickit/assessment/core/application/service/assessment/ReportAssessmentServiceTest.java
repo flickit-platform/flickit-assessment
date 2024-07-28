@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,6 +86,7 @@ class ReportAssessmentServiceTest {
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(currentUserId);
@@ -113,6 +115,7 @@ class ReportAssessmentServiceTest {
         assertEquals(space.id(), result.assessment().space().id());
         assertEquals(space.title(), result.assessment().space().title());
         assertTrue(result.assessmentPermissions().manageable());
+        assertTrue(result.assessmentPermissions().exportable());
 
         assertEquals(assessmentReport.subjects().size(), result.subjects().size());
     }
@@ -158,12 +161,14 @@ class ReportAssessmentServiceTest {
         when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.VIEWER));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(false);
 
         ReportAssessmentUseCase.Result result = service.reportAssessment(param);
 
         assertNotNull(assessmentReport);
         assertNotNull(assessmentReport.assessment());
         assertFalse(result.assessmentPermissions().manageable());
+        assertFalse(result.assessmentPermissions().exportable());
 
         assertEquals(assessmentReport.subjects().size(), result.subjects().size());
     }
@@ -197,10 +202,11 @@ class ReportAssessmentServiceTest {
         when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
 
         ReportAssessmentUseCase.Result result = service.reportAssessment(param);
 
         assertTrue(result.assessmentPermissions().manageable());
-
+        assertTrue(result.assessmentPermissions().exportable());
     }
 }
