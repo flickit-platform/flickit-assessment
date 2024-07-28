@@ -43,7 +43,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
                 description,
                 weight,
                 currentUserId));
-        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_SUBJECT_BY_WIZARD_KIT_VERSION_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_SUBJECT_BY_WIZARD_KIT_ID_NOT_NULL);
     }
 
     @Test

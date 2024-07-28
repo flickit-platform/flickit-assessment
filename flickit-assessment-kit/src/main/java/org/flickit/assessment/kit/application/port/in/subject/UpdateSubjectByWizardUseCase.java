@@ -19,8 +19,8 @@ public interface UpdateSubjectByWizardUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_SUBJECT_BY_WIZARD_KIT_VERSION_ID_NOT_NULL)
-        Long kitVersionId;
+        @NotNull(message = UPDATE_SUBJECT_BY_WIZARD_KIT_ID_NOT_NULL)
+        Long kitId;
 
         @NotNull(message = UPDATE_SUBJECT_BY_WIZARD_SUBJECT_ID_NOT_NULL)
         Long subjectId;
@@ -40,14 +40,14 @@ public interface UpdateSubjectByWizardUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitVersionId,
+        public Param(Long kitId,
                      Long subjectId,
                      Integer index,
                      String title,
                      String description,
                      Integer weight,
                      UUID currentUserId) {
-            this.kitVersionId = kitVersionId;
+            this.kitId = kitId;
             this.subjectId = subjectId;
             this.index = index;
             this.title = title;
