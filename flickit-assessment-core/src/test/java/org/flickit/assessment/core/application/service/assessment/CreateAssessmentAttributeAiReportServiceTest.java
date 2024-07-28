@@ -5,10 +5,10 @@ import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase.*;
-import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.service.attribute.CreateAssessmentAttributeAiReportService;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_AI_ANALYSIS;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
@@ -72,7 +72,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.empty());
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.create(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAttributeAiReport(param));
         assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
         verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
         verifyNoMoreInteractions(fileProperties, assessmentAccessChecker);
@@ -91,11 +91,11 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var assessment = AssessmentMother.assessment();
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAttributeAiReport(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
-        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, CREATE_AI_ANALYSIS);
+        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, EXPORT_ASSESSMENT_REPORT);
         verifyNoInteractions(fileProperties);
     }
 
@@ -112,14 +112,14 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var assessment = AssessmentMother.assessment();
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(fileProperties.getAttributeReportFileExtension()).thenReturn(List.of("xlsx"));
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAttributeAiReport(param));
         assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
         verify(fileProperties).getAttributeReportFileExtension();
         verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
-        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS);
+        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT);
         verifyNoInteractions(loadAssessmentResultPort, createAssessmentAttributeAiPort);
     }
 
@@ -136,7 +136,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var assessment = AssessmentMother.assessment();
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(fileProperties.getAttributeReportFileExtension()).thenReturn(List.of("xlsx"));
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenThrow(new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND));
 
@@ -144,7 +144,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         assertEquals(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
-        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, CREATE_AI_ANALYSIS);
+        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, EXPORT_ASSESSMENT_REPORT);
         verifyNoInteractions(createAssessmentAttributeAiPort);
     }
 
@@ -163,7 +163,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(fileProperties.getAttributeReportFileExtension()).thenReturn(List.of("xlsx"));
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(anyLong(), anyLong())).thenReturn(attribute);
@@ -172,7 +172,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         assertDoesNotThrow(() -> service.createAttributeAiReport(param));
         verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
         verify(fileProperties).getAttributeReportFileExtension();
-        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, CREATE_AI_ANALYSIS);
+        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, EXPORT_ASSESSMENT_REPORT);
         verify(createAssessmentAttributeAiPort).createReport(any(InputStream.class), eq(attribute));
         verify(loadAttributePort).load(attribute.getId(), assessmentResult.getKitVersionId());
     }

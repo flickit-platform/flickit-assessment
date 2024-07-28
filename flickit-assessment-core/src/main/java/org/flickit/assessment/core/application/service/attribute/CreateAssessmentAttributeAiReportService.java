@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_AI_ANALYSIS;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -48,7 +48,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
-        if (!assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS))
+        if (!assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (!fileProperties.getAttributeReportFileExtension().contains(extension))
