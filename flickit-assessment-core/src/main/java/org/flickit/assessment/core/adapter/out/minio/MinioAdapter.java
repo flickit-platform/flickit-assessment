@@ -116,7 +116,7 @@ public class MinioAdapter implements
 
     @Override
     public String uploadExcel(InputStream content, String fileName) {
-        String bucketName = properties.getBucketNames().getAttributeExcelReport();
+        String bucketName = properties.getBucketNames().getReport();
         UUID uniqueDir = UUID.randomUUID();
 
         String objectName = uniqueDir + SLASH + fileName;
