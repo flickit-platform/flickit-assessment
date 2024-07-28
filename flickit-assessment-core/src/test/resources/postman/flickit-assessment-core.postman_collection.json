@@ -1253,7 +1253,7 @@
 		{
 			"name": "Get Attribute Excel Report",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
@@ -1261,7 +1261,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report-excel/attributes/1104",
+					"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/export-report/attributes/1104",
 					"host": [
 						"{{base_url}}"
 					],
@@ -1269,7 +1269,7 @@
 						"{{api_path}}",
 						"assessments",
 						"8280e75b-ed71-4c82-9fac-920c52efb26c",
-						"report-excel",
+						"export-report",
 						"attributes",
 						"1104"
 					]
