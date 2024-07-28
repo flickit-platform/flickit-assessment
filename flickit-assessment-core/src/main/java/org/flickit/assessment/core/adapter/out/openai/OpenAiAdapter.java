@@ -11,7 +11,8 @@ import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.OpenAiProperties;
-import org.flickit.assessment.core.application.port.out.aireport.CreateAssessmentAttributeAiPort;
+import org.flickit.assessment.core.application.domain.Attribute;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
 import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
     @SneakyThrows
     @Override
-    public String createReport(InputStream inputStream, String attribute) {
+    public String createReport(InputStream inputStream, Attribute attribute) {
 
         String fileContent = readInputStream(inputStream);
 
@@ -36,7 +37,7 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
         JsonObject message = new JsonObject();
         message.addProperty("role", openAiProperties.getRole());
-        message.addProperty("content", openAiProperties.createPrompt(attribute) + fileContent);
+        message.addProperty("content", openAiProperties.createPrompt(attribute.getTitle(), attribute.getDescription()) + fileContent);
 
         jsonBody.add("messages", new Gson().toJsonTree(Collections.singletonList(message)));
         jsonBody.addProperty("temperature", 0.7);

@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.assessment;
 
 import jakarta.validation.ConstraintViolationException;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -14,38 +15,52 @@ class CreateAssessmentAiReportUseCaseParamTest {
 
     @Test
     void testCreateAssessmentAttributeAiReport_AssessmentIdIsNull_ErrorMessage() {
+        var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var fileLink = "https://www.flickit.com/file/example.xlsx";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(null, fileLink, currentUserId));
-        assertThat(throwable).hasMessage("id: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL);
+            () -> new CreateAssessmentAttributeAiReportUseCase.Param(null, attributeId, fileLink, currentUserId));
+        assertThat(throwable).hasMessage("assessmentId: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL);
+    }
+
+    @Test
+    void testCreateAssessmentAttributeAiReport_AttributeIdIsNull_ErrorMessage() {
+        var assessmentId = UUID.randomUUID();
+        var currentUserId = UUID.randomUUID();
+        var fileLink = "https://www.flickit.com/file/example.xlsx";
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, null, fileLink, currentUserId));
+        assertThat(throwable).hasMessage("attributeId: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
     void testCreateAssessmentAttributeAiReport_PictureLinkIsNull_ErrorMessage() {
+        var assessmentId = UUID.randomUUID();
+        var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
-        var id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(id, null, currentUserId));
+            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, attributeId, null, currentUserId));
         assertThat(throwable).hasMessage("fileLink: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL);
     }
 
     @Test
     void testCreateAssessmentAttributeAiReport_PictureLinkIsNotUrl_ErrorMessage() {
+        var assessmentId = UUID.randomUUID();
+        var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var fileLink = "invalidLink";
-        var id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(id, fileLink, currentUserId));
+            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, attributeId, fileLink, currentUserId));
         assertThat(throwable).hasMessage("fileLink: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL);
     }
 
     @Test
     void testCreateAssessmentAttributeAiReport_CurrentUserIsNull_ErrorMessage() {
-        var id = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
+        var attributeId = 1L;
         var fileLink = "https://www.flickit.com/file/example.xlsx";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(id, fileLink, null));
+            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, attributeId, fileLink, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

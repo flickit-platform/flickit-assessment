@@ -21,7 +21,7 @@ public class AttributeValueMapper {
     }
 
     public static AttributeValue mapToDomainModel(AttributeValueJpaEntity entity, AttributeJpaEntity attributeEntity) {
-        var attribute = new Attribute(attributeEntity.getId(), attributeEntity.getWeight(), null);
+        var attribute = new Attribute(attributeEntity.getId(), null, null, attributeEntity.getWeight(), null);
         return new AttributeValue(
             entity.getId(),
             attribute,

@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.in.rest.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentAttributeAiReportUseCase;
-import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentAttributeAiReportUseCase.*;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,17 +17,18 @@ public class CreateAssessmentAttributeAiReportRestController {
     private final CreateAssessmentAttributeAiReportUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessments/{id}/ai-report")
+    @PostMapping("assessments/{assessmentId}/ai-report/attributes/{attributeId}")
     ResponseEntity<CreateAssessmentAttributeAiReportResponseDto> createAssessmentAttributeAiReportRestController(
-        @PathVariable("id") UUID id,
+        @PathVariable("assessmentId") UUID assessmentId,
+        @PathVariable("attributeId") Long attributeId,
         @RequestBody CreateAssessmentAttributeAiReportRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        var result = useCase.create(toParam(id, requestDto.fileLink(), currentUserId));
-        return new ResponseEntity<>(toResponseDto(result), HttpStatus.CREATED);
+        var result = useCase.create(toParam(assessmentId, attributeId, requestDto.fileLink(), currentUserId));
+        return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, String fileLink, UUID currentUserId) {
-        return new Param(assessmentId, fileLink, currentUserId);
+    private Param toParam(UUID assessmentId, Long attributeId, String fileLink, UUID currentUserId) {
+        return new Param(assessmentId, attributeId, fileLink, currentUserId);
     }
 
     private CreateAssessmentAttributeAiReportResponseDto toResponseDto(Result result) {

@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.assessment;
+package org.flickit.assessment.core.application.port.in.attribute;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -21,7 +21,10 @@ public interface CreateAssessmentAttributeAiReportUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL)
-        UUID id;
+        UUID assessmentId;
+
+        @NotNull(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL)
+        Long attributeId;
 
         @NotNull(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL)
         @URL(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL)
@@ -30,8 +33,9 @@ public interface CreateAssessmentAttributeAiReportUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID id, String fileLink, UUID currentUserId) {
-            this.id = id;
+        public Param(UUID assessmentId, Long attributeId, String fileLink, UUID currentUserId) {
+            this.assessmentId = assessmentId;
+            this.attributeId = attributeId;
             this.fileLink = fileLink;
             this.currentUserId = currentUserId;
             this.validateSelf();

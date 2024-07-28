@@ -155,6 +155,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
             Attribute attribute = new Attribute(
                 attributeId,
+                null,
+                null,
                 qaIdToWeightMap.get(attributeId),
                 impactfulQuestions
             );
