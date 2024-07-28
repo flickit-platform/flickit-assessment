@@ -93,7 +93,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS)).thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.create(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.createAttributeAiReport(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
         verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, CREATE_AI_ANALYSIS);
         verifyNoInteractions(fileProperties);
@@ -115,7 +115,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), CREATE_AI_ANALYSIS)).thenReturn(true);
         when(fileProperties.getAttributeReportFileExtension()).thenReturn(List.of("xlsx"));
 
-        var throwable = assertThrows(ValidationException.class, () -> service.create(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.createAttributeAiReport(param));
         assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
         verify(fileProperties).getAttributeReportFileExtension();
         verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
@@ -140,7 +140,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(fileProperties.getAttributeReportFileExtension()).thenReturn(List.of("xlsx"));
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenThrow(new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.create(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAttributeAiReport(param));
         assertEquals(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
@@ -169,7 +169,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAttributePort.load(anyLong(), anyLong())).thenReturn(attribute);
         when(createAssessmentAttributeAiPort.createReport(any(InputStream.class), eq(attribute))).thenReturn("Some String");
 
-        assertDoesNotThrow(() -> service.create(param));
+        assertDoesNotThrow(() -> service.createAttributeAiReport(param));
         verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
         verify(fileProperties).getAttributeReportFileExtension();
         verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, CREATE_AI_ANALYSIS);

@@ -18,12 +18,12 @@ public class CreateAssessmentAttributeAiReportRestController {
     private final UserContext userContext;
 
     @PostMapping("assessments/{assessmentId}/ai-report/attributes/{attributeId}")
-    ResponseEntity<CreateAssessmentAttributeAiReportResponseDto> createAssessmentAttributeAiReportRestController(
+    ResponseEntity<CreateAssessmentAttributeAiReportResponseDto> createAttributeAiReport(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId,
         @RequestBody CreateAssessmentAttributeAiReportRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        var result = useCase.create(toParam(assessmentId, attributeId, requestDto.fileLink(), currentUserId));
+        var result = useCase.createAttributeAiReport(toParam(assessmentId, attributeId, requestDto.fileLink(), currentUserId));
         return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 

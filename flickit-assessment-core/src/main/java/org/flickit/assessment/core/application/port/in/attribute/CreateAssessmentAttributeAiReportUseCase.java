@@ -14,7 +14,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface CreateAssessmentAttributeAiReportUseCase {
 
-    Result create(Param param);
+    Result createAttributeAiReport(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

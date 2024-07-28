@@ -43,7 +43,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
 
     @SneakyThrows
     @Override
-    public Result create(Param param) {
+    public Result createAttributeAiReport(Param param) {
         String extension = getFileExtension(param.getFileLink());
         var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
