@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.in.rest.assessment;
+package org.flickit.assessment.core.adapter.in.rest.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
