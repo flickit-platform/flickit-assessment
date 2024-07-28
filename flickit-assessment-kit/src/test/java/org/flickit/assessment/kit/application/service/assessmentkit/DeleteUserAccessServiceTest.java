@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_USER_OWNER_DELETION_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_USER_IS_EXPERT_GROUP_OWNER;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.flickit.assessment.kit.test.fixture.application.UserMother.userWithId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -131,7 +131,7 @@ class DeleteUserAccessServiceTest {
 
         var param = new DeleteKitUserAccessUseCase.Param(kitId, currentUserId, expertGroup.getOwnerId());
         assertThrows(ValidationException.class, () -> service.delete(param),
-            DELETE_KIT_USER_ACCESS_USER_OWNER_DELETION_NOT_ALLOWED);
+            DELETE_KIT_USER_ACCESS_USER_IS_EXPERT_GROUP_OWNER);
 
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroup(any());
         verifyNoInteractions(deleteKitUserAccessPort);

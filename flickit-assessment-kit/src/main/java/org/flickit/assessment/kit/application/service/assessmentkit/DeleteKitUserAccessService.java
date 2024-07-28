@@ -35,21 +35,16 @@ public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
     @Override
     public void delete(Param param) {
         ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
-        validateCurrentUser(expertGroup, param.getCurrentUserId());
+        validateCurrentUser(expertGroup.getOwnerId(), param.getCurrentUserId());
         checkAccessExistence(param);
-        checkAccessNotBelongsToExpertGroupOwner(param, expertGroup.getOwnerId());
+        checkAccessNotBelongsToExpertGroupOwner(expertGroup.getOwnerId(), param.getUserId());
 
         deleteKitUserAccessPort.delete(new DeleteKitUserAccessPort.Param(param.getKitId(), param.getUserId()));
         log.debug("User [{}] access to private kit [{}] is removed.", param.getCurrentUserId(), param.getCurrentUserId());
     }
 
-    private void checkAccessNotBelongsToExpertGroupOwner(Param param, UUID ownerId) {
-        if (Objects.equals(param.getUserId(), ownerId))
-            throw new ValidationException(DELETE_KIT_USER_ACCESS_USER_OWNER_DELETION_NOT_ALLOWED);
-    }
-
-    private void validateCurrentUser(ExpertGroup expertGroup, UUID currentUserId) {
-        if (!Objects.equals(expertGroup.getOwnerId(), currentUserId))
+    private void validateCurrentUser(UUID expertGroupOwnerId, UUID currentUserId) {
+        if (!Objects.equals(expertGroupOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
@@ -58,5 +53,10 @@ public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
             () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_USER_NOT_FOUND));
         if (!checkKitUserAccessPort.hasAccess(param.getKitId(), user.getId()))
             throw new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND);
+    }
+
+    private void checkAccessNotBelongsToExpertGroupOwner(UUID expertGroupOwnerId, UUID userId) {
+        if (Objects.equals(expertGroupOwnerId, userId))
+            throw new ValidationException(DELETE_KIT_USER_ACCESS_USER_IS_EXPERT_GROUP_OWNER);
     }
 }
