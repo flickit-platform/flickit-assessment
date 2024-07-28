@@ -12,15 +12,22 @@ import org.flickit.assessment.core.application.port.out.attribute.CreateAssessme
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
-import org.flickit.assessment.core.application.port.out.minio.DownloadFilePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_AI_ANALYSIS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,7 +35,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSME
 public class CreateAssessmentAttributeAiReportService implements CreateAssessmentAttributeAiReportUseCase {
 
     private final FileProperties fileProperties;
-    private final DownloadFilePort downloadFilePort;
     private final LoadAttributePort loadAttributePort;
     private final GetAssessmentPort getAssessmentPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
@@ -53,7 +59,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
 
         var attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
 
-        var stream = downloadFilePort.downloadFile(param.getFileLink());
+        var stream = downloadFile(param.getFileLink());
         return new Result(createAssessmentAttributeAiPort.createReport(stream, attribute));
     }
 
@@ -62,4 +68,25 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         int firstIndexOfQuestionMark = fileLink.indexOf('?', lastIndexOfDot);
         return fileLink.substring(lastIndexOfDot + 1, firstIndexOfQuestionMark);
     }
+
+    @SneakyThrows
+    protected InputStream downloadFile(String fileLink) {
+        URL pictureUrl = new URL(fileLink);
+
+        try (ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            while (readableByteChannel.read(buffer) > 0) {
+                buffer.flip();
+                byteArrayOutputStream.write(buffer.array(), 0, buffer.limit());
+                buffer.clear();
+            }
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+
+        } catch (IOException e) {
+            throw new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND);
+        }
+    }
+
 }

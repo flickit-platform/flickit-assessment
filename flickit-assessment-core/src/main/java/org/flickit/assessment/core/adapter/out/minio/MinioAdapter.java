@@ -9,30 +9,23 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
-import org.flickit.assessment.core.application.port.out.minio.DownloadFilePort;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND;
 
 @Component("coreMinioAdapter")
 @AllArgsConstructor
 public class MinioAdapter implements
     CreateFileDownloadLinkPort,
     UploadEvidenceAttachmentPort,
-    DeleteEvidenceAttachmentFilePort,
-    DownloadFilePort {
+    DeleteEvidenceAttachmentFilePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -117,26 +110,5 @@ public class MinioAdapter implements
             .object(objectName)
             .versionId(latestVersionId)
             .build());
-    }
-
-    @SneakyThrows
-    @Override
-    public InputStream downloadFile(String fileLink) {
-        URL pictureUrl = new URL(fileLink);
-
-        try (ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
-             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-            while (readableByteChannel.read(buffer) > 0) {
-                buffer.flip();
-                byteArrayOutputStream.write(buffer.array(), 0, buffer.limit());
-                buffer.clear();
-            }
-            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-
-        } catch (IOException e) {
-            throw new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND);
-        }
     }
 }
