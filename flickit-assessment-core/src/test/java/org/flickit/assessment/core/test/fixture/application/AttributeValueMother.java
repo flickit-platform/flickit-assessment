@@ -83,4 +83,7 @@ public class AttributeValueMother {
             answers);
     }
 
+    public static AttributeValue withAttributeAndAnswerAndLevelOne(Attribute attribute, List<Answer> answers) {
+        return new AttributeValue(UUID.randomUUID(), attribute, answers, null, MaturityLevelMother.levelOne(), null);
+    }
 }
