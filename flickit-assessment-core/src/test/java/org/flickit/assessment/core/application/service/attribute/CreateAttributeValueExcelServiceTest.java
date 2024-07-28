@@ -96,7 +96,7 @@ class CreateAttributeValueExcelServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
-        when(loadAttributeValuePort.loadById(attributeValue.getId())).thenReturn(attributeValue);
+        when(loadAttributeValuePort.load(attributeValue.getId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(MaturityLevelMother.allLevels());
 
         String filePath = "dir/filename.xlsx";

@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface LoadAttributeValuePort {
 
-    AttributeValue loadById(UUID id);
+    AttributeValue load(UUID id);
 }

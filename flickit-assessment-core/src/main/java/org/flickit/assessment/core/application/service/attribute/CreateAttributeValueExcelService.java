@@ -91,7 +91,7 @@ public class CreateAttributeValueExcelService implements CreateAttributeValueExc
     }
 
     private void createAttributeSheet(Workbook workbook, UUID attributeValueId) {
-        AttributeValue attributeValue = loadAttributeValuePort.loadById(attributeValueId);
+        AttributeValue attributeValue = loadAttributeValuePort.load(attributeValueId);
 
         Sheet sheet = initAttributeSheet(workbook);
         CellStyle style = workbook.createCellStyle();

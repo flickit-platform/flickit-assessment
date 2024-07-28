@@ -58,7 +58,7 @@ public class AttributeValuePersistenceJpaAdapter implements
     }
 
     @Override
-    public AttributeValue loadById(UUID id) {
+    public AttributeValue load(UUID id) {
         AttributeValueJpaEntity attributeValueEntity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND));
         Long kitVersionId = attributeValueEntity.getAssessmentResult().getKitVersionId();
