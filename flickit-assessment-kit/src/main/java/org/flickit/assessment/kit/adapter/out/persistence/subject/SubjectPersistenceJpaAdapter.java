@@ -8,10 +8,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
-import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
+import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,7 +25,8 @@ public class SubjectPersistenceJpaAdapter implements
     UpdateSubjectPort,
     CreateSubjectPort,
     LoadSubjectsPort,
-    LoadSubjectPort {
+    LoadSubjectPort,
+    UpdateSubjectByWizardPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
@@ -73,5 +71,19 @@ public class SubjectPersistenceJpaAdapter implements
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, kitVersionId);
         return mapToDomainModel(subjectEntity,
             attributeEntities.stream().map(AttributeMapper::mapToDomainModel).toList());
+    }
+
+    @Override
+    public void updateByWizard(UpdateSubjectByWizardPort.Param param) {
+        repository.updateByWizard(param.id(),
+            param.kitVersionId(),
+            param.code(),
+            param.title(),
+            param.index(),
+            param.description(),
+            param.weight(),
+            param.lastModificationTime(),
+            param.lastModifiedBy()
+        );
     }
 }
