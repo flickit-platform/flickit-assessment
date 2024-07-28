@@ -87,6 +87,7 @@ public class ErrorMessageKey {
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_NULL = "delete-space-member.userId.notNull";
     public static final String DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "delete-space-member.spaceId.notNull";
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND = "delete-space-member.userId.notFound";
+    public static final String DELETE_SPACE_MEMBER_USER_IS_SPACE_OWNER = "delete-space-member.userId.isSpaceOwner";
 
     public static final String GET_SPACE_SPACE_ID_NOT_NULL = "get-space.spaceId.notNull";
 

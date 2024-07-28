@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteKitUserAccessUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_USER_IS_EXPERT_GROUP_OWNER;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.flickit.assessment.kit.test.fixture.application.UserMother.userWithId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DeleteUserAccessServiceTest {
+class DeleteKitUserAccessServiceTest {
 
     @InjectMocks
     private DeleteKitUserAccessService service;
@@ -39,7 +41,7 @@ class DeleteUserAccessServiceTest {
     private LoadUserPort loadUserPort;
 
     @Test
-    void testDeleteUserAccess_ValidInputs_Delete() {
+    void testDeleteKitUserAccess_ValidInputs_Delete() {
         Long kitId = 1L;
         UUID userId = UUID.randomUUID();
         ExpertGroup expertGroup = createExpertGroup();
@@ -60,7 +62,7 @@ class DeleteUserAccessServiceTest {
     }
 
     @Test
-    void testDeleteUserAccess_InvalidCurrentUser_ThrowsException() {
+    void testDeleteKitUserAccess_InvalidCurrentUser_ThrowsException() {
         Long kitId = 1L;
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -79,7 +81,7 @@ class DeleteUserAccessServiceTest {
     }
 
     @Test
-    void testDeleteUserAccess_UserNotFound_ErrorMessage() {
+    void testDeleteKitUserAccess_UserNotFound_ErrorMessage() {
         Long kitId = 1L;
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -98,7 +100,7 @@ class DeleteUserAccessServiceTest {
     }
 
     @Test
-    void testDeleteUserAccess_UserAccessNotFound_ErrorMessage() {
+    void testDeleteKitUserAccess_UserAccessNotFound_ErrorMessage() {
         Long kitId = 1L;
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -114,6 +116,24 @@ class DeleteUserAccessServiceTest {
         verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroup(any());
         verifyNoInteractions(checkKitUserAccessPort);
         verifyNoInteractions(loadUserPort);
+        verifyNoInteractions(deleteKitUserAccessPort);
+    }
+
+    @Test
+    void testDeleteKitUserAccess_UserIsExpertGroupOwner_ErrorMessage() {
+        ExpertGroup expertGroup = createExpertGroup();
+        Long kitId = 1L;
+        UUID currentUserId = expertGroup.getOwnerId();
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
+        when(loadUserPort.loadById(currentUserId)).thenReturn(Optional.of(userWithId(currentUserId)));
+        when(checkKitUserAccessPort.hasAccess(kitId, currentUserId)).thenReturn(true);
+
+        var param = new DeleteKitUserAccessUseCase.Param(kitId, currentUserId, expertGroup.getOwnerId());
+        assertThrows(ValidationException.class, () -> service.delete(param),
+            DELETE_KIT_USER_ACCESS_USER_IS_EXPERT_GROUP_OWNER);
+
+        verify(loadKitExpertGroupPort, times(1)).loadKitExpertGroup(any());
         verifyNoInteractions(deleteKitUserAccessPort);
     }
 }

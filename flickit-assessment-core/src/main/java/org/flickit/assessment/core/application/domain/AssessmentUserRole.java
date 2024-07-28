@@ -88,6 +88,7 @@ public enum AssessmentUserRole {
             VIEW_ATTRIBUTE_SCORE_DETAIL,
             CREATE_ADVICE,
             VIEW_ANSWER_HISTORY_LIST,
+            VIEW_ATTRIBUTE_VALUE_EXCEL,
             CREATE_AI_ANALYSIS)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,

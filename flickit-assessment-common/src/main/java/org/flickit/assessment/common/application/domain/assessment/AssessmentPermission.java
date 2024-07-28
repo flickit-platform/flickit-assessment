@@ -38,7 +38,8 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
     VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
     VIEW_EVIDENCE("viewEvidence"),
-    CREATE_AI_ANALYSIS("createAiAnalysis"),;
+    VIEW_ATTRIBUTE_VALUE_EXCEL("viewAttributeValueExcel"),
+    CREATE_AI_ANALYSIS("createAiAnalysis");
 
     private final String code;
 }
