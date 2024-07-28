@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DeleteUserAccessServiceTest {
+class DeleteKitUserAccessServiceTest {
 
     @InjectMocks
     private DeleteKitUserAccessService service;
@@ -41,7 +41,7 @@ class DeleteUserAccessServiceTest {
     private LoadUserPort loadUserPort;
 
     @Test
-    void testDeleteUserAccess_ValidInputs_Delete() {
+    void testDeleteKitUserAccess_ValidInputs_Delete() {
         Long kitId = 1L;
         UUID userId = UUID.randomUUID();
         ExpertGroup expertGroup = createExpertGroup();
@@ -62,7 +62,7 @@ class DeleteUserAccessServiceTest {
     }
 
     @Test
-    void testDeleteUserAccess_InvalidCurrentUser_ThrowsException() {
+    void testDeleteKitUserAccess_InvalidCurrentUser_ThrowsException() {
         Long kitId = 1L;
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -81,7 +81,7 @@ class DeleteUserAccessServiceTest {
     }
 
     @Test
-    void testDeleteUserAccess_UserNotFound_ErrorMessage() {
+    void testDeleteKitUserAccess_UserNotFound_ErrorMessage() {
         Long kitId = 1L;
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -100,7 +100,7 @@ class DeleteUserAccessServiceTest {
     }
 
     @Test
-    void testDeleteUserAccess_UserAccessNotFound_ErrorMessage() {
+    void testDeleteKitUserAccess_UserAccessNotFound_ErrorMessage() {
         Long kitId = 1L;
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -120,7 +120,7 @@ class DeleteUserAccessServiceTest {
     }
 
     @Test
-    void testDeleteUserAccess_UserIsExpertGroupOwner_ErrorMessage() {
+    void testDeleteKitUserAccess_UserIsExpertGroupOwner_ErrorMessage() {
         ExpertGroup expertGroup = createExpertGroup();
         Long kitId = 1L;
         UUID currentUserId = expertGroup.getOwnerId();

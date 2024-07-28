@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DeleteKitUserAccessUseCaseParamTest {
 
     @Test
-    void testDeleteUserAccess_KitIdNull_ErrorMessage() {
+    void testDeleteKitUserAccess_KitIdNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -26,7 +26,7 @@ class DeleteKitUserAccessUseCaseParamTest {
     }
 
     @Test
-    void testDeleteUserAccess_UserIdIsNull_ErrorMessage() {
+    void testDeleteKitUserAccess_UserIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteKitUserAccessUseCase.Param(1L, null, currentUserId));
@@ -34,7 +34,7 @@ class DeleteKitUserAccessUseCaseParamTest {
     }
 
     @Test
-    void testDeleteUserAccess_currentUserIdNull_ErrorMessage() {
+    void testDeleteKitUserAccess_currentUserIdNull_ErrorMessage() {
         UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteKitUserAccessUseCase.Param(1L, userId, null));
