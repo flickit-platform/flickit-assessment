@@ -159,7 +159,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
             "Signature=8dfab4d27ab012f1ef15beb58b54da353049f00b9e4a53115eb385b41fb4f4a5";
         Param param = new Param(assessmentId, attributeId, pictureLink, currentUserId);
         var assessment = AssessmentMother.assessment();
-        var attribute = AttributeMother.completeAttribute(1L, null, 0);
+        var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));

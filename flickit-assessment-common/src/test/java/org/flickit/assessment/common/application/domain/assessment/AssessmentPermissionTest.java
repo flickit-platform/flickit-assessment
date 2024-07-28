@@ -46,7 +46,6 @@ class AssessmentPermissionTest {
             Map.entry(VIEW_EVIDENCE, "viewEvidence"),
             Map.entry(VIEW_ANSWER_HISTORY_LIST, "viewAnswerHistory"),
             Map.entry(VIEW_ATTRIBUTE_VALUE_EXCEL, "viewAttributeValueExcel"),
-            Map.entry(VIEW_ANSWER_HISTORY_LIST, "viewAnswerHistory"),
             Map.entry(CREATE_AI_ANALYSIS, "createAiAnalysis"));
 
         permissionCodesMap.forEach((key, value) -> assertEquals(value, key.getCode()));
