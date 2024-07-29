@@ -1,11 +1,8 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.common.application.domain.assessment.NotificationType;
-import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad;
@@ -13,15 +10,13 @@ import org.flickit.assessment.core.application.domain.notification.GrantAssessme
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad.AssignerModel;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad.RoleModel;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.notification.SendNotificationPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
-import org.flickit.assessment.core.application.port.out.notification.SendNotificationPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
-import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -65,7 +60,7 @@ class GrantUserAssessmentRoleServiceTest {
     private SendNotificationPort sendNotificationPort;
 
     @Test
-    void testGrantAssessmentUserRole_CurrentUserIsNotAuthorized_ThrowsException() {
+    void testGrantUserAssessmentRoleRole_CurrentUserIsNotAuthorized_ThrowsException() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
@@ -78,7 +73,7 @@ class GrantUserAssessmentRoleServiceTest {
     }
 
     @Test
-    void testGrantAssessmentUserRole_UserIsNotSpaceMember_AddUserToSpace() {
+    void testGrantUserAssessmentRole_UserIsNotSpaceMember_AddUserToSpace() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
@@ -104,7 +99,7 @@ class GrantUserAssessmentRoleServiceTest {
     }
 
     @Test
-    void testGrantAssessmentUserRole_ValidParam_GrantAccess() {
+    void testGrantUserAssessmentRole_ValidParam_GrantAccess() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
         var assessment = AssessmentMother.assessment();
         var current_user = new User(param.getCurrentUserId(), "current user");
