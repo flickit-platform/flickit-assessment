@@ -16,6 +16,7 @@ public class MaturityLevelJpaEntityMother {
             "code" + id,
             index++,
             "title" + id,
+            "description" + id,
             id.intValue(),
             LocalDateTime.now(),
             LocalDateTime.now(),
