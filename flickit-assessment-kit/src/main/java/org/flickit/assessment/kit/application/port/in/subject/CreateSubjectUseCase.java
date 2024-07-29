@@ -19,8 +19,8 @@ public interface CreateSubjectUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_SUBJECT_KIT_VERSION_ID_NOT_NULL)
-        Long kitVersionId;
+        @NotNull(message = CREATE_SUBJECT_KIT_ID_NOT_NULL)
+        Long kitId;
 
         @NotNull(message = CREATE_SUBJECT_INDEX_NOT_NULL)
         Integer index;
@@ -34,26 +34,21 @@ public interface CreateSubjectUseCase {
         @NotNull(message = CREATE_SUBJECT_WEIGHT_NOT_NULL)
         Integer weight;
 
-        @NotNull(message = CREATE_SUBJECT_EXPERT_GROUP_ID_NOT_NULL)
-        Long expertGroupId;
-
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitVersionId,
+        public Param(Long kitId,
                      Integer index,
                      String title,
                      String description,
                      Integer weight,
-                     Long expertGroupId,
                      UUID currentUserId) {
 
-            this.kitVersionId = kitVersionId;
+            this.kitId = kitId;
             this.index = index;
             this.title = title;
             this.description = description;
             this.weight = weight;
-            this.expertGroupId = expertGroupId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
