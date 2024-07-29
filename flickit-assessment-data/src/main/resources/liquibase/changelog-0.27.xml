@@ -24,9 +24,6 @@
             <column name="assessor_insight_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="true"/>
             </column>
-            <column name="ai_input_file_path" type="varchar(200)">
-                <constraints nullable="true"/>
-            </column>
         </createTable>
     </changeSet>
 
