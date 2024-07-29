@@ -1,10 +1,8 @@
 package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -21,13 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,31 +33,30 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CreateAssessmentAttributeAiReportServiceTest {
 
-    CreateAssessmentAttributeAiReportService service;
+    private CreateAssessmentAttributeAiReportService service;
 
     @Mock
-    GetAssessmentPort getAssessmentPort;
+    private GetAssessmentPort getAssessmentPort;
 
     @Mock
-    AssessmentAccessChecker assessmentAccessChecker;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    LoadAssessmentResultPort loadAssessmentResultPort;
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    CreateAssessmentAttributeAiPort createAssessmentAttributeAiPort;
+    private CreateAssessmentAttributeAiPort createAssessmentAttributeAiPort;
 
     @Mock
-    LoadAttributePort loadAttributePort;
+    private LoadAttributePort loadAttributePort;
 
-    final String fileLink = fileLink("xlsx");
-    final String fileLinkWithInvalidExtension = fileLink("png");
+    private final String fileLink = "http://127.0.0.1:9000/report/5e3b5d74-cc9c-4b54-b051-86e934ae9a03/temp.?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-" +
+        "Credential=minioadmin%2F20240726%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240726T052101Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-" +
+        "Signature=8dfab4d27ab012f1ef15beb58b54da353049f00b9e4a53115eb385b41fb4f4a5";
 
     @BeforeEach
     void prepare() {
-        var fileProperties = new FileProperties();
-        fileProperties.setAttributeReportFileExtension(List.of("xlsx"));
-        service = spy(new CreateAssessmentAttributeAiReportService(fileProperties, loadAttributePort, getAssessmentPort,
+        service = spy(new CreateAssessmentAttributeAiReportService(loadAttributePort, getAssessmentPort,
             assessmentAccessChecker, loadAssessmentResultPort, createAssessmentAttributeAiPort));
     }
 
@@ -95,24 +90,6 @@ class CreateAssessmentAttributeAiReportServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, EXPORT_ASSESSMENT_REPORT);
-    }
-
-    @Test
-    void testCreateAssessmentAttributeAiReport_FileExtensionIsNotAcceptable_ThrowValidationException() {
-        Long attributeId = 1L;
-        UUID currentUserId = UUID.randomUUID();
-        var assessment = AssessmentMother.assessment();
-        Param param = new Param(assessment.getId(), attributeId, fileLinkWithInvalidExtension, currentUserId);
-
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
-
-        var throwable = assertThrows(ValidationException.class, () -> service.createAttributeAiReport(param));
-        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
-
-        verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
-        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT);
-        verifyNoInteractions(loadAssessmentResultPort, createAssessmentAttributeAiPort);
     }
 
     @Test
@@ -154,12 +131,5 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var result = service.createAttributeAiReport(param);
 
         assertEquals("Report Content", result.content());
-    }
-
-    private static String fileLink(String fileExtension) {
-        return "http://127.0.0.1:9000/report/5e3b5d74-cc9c-4b54-b051-86e934ae9a03/temp." + fileExtension +
-            "?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-" +
-            "Credential=minioadmin%2F20240726%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240726T052101Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-" +
-            "Signature=8dfab4d27ab012f1ef15beb58b54da353049f00b9e4a53115eb385b41fb4f4a5";
     }
 }
