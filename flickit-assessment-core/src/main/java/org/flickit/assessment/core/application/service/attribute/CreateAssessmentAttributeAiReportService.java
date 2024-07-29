@@ -59,8 +59,9 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
 
         var attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
 
-        var stream = downloadFile(param.getFileLink());
-        return new Result(createAssessmentAttributeAiPort.createReport(stream, attribute));
+        try (var stream = downloadFile(param.getFileLink())) {
+            return new Result(createAssessmentAttributeAiPort.createReport(stream, attribute));
+        }
     }
 
     public String getFileExtension(String fileLink) {
@@ -70,7 +71,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
     }
 
     @SneakyThrows
-    protected InputStream downloadFile(String fileLink) {
+    InputStream downloadFile(String fileLink) {
         URL pictureUrl = new URL(fileLink);
 
         try (ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
@@ -88,5 +89,4 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND);
         }
     }
-
 }
