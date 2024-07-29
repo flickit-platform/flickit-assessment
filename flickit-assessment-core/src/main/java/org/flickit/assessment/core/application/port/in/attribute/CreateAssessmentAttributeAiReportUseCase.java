@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.port.in.attribute;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -26,7 +27,7 @@ public interface CreateAssessmentAttributeAiReportUseCase {
         @NotNull(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @NotNull(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL)
+        @NotEmpty(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL)
         @URL(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL)
         String fileLink;
 
