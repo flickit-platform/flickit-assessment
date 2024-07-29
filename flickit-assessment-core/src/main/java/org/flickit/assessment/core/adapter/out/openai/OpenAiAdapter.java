@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 
-
 @Component
 @AllArgsConstructor
 public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
@@ -29,6 +28,8 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
     @SneakyThrows
     @Override
     public String createReport(InputStream inputStream, Attribute attribute) {
+        if (!openAiProperties.isEnabled())
+            return String.format("[%s] insight is unavailable: AI is Disabled!", attribute.getTitle());
 
         String fileContent = readInputStream(inputStream);
 

@@ -14,6 +14,8 @@ import org.springframework.validation.annotation.Validated;
 @RequiredArgsConstructor
 public class OpenAiProperties {
 
+    private boolean enabled;
+
     @NotNull
     private String apiUrl;
 
