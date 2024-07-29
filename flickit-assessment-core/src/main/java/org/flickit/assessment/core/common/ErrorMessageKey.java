@@ -202,4 +202,11 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ASSESSMENT_ID_NOT_NULL = "create-attribute-value-excel.assessmentId.notNull";
     public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_ID_NOT_NULL = "create-attribute-value-excel.attributeId.notNull";
     public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND = "create-attribute-value-excel.attributeValue.notFound";
+
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL = "create-assessment-attribute-ai-report.assessmentId.notNull";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL = "create-assessment-attribute-ai.report.attributeId.notNull";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL = "create-assessment-attribute-ai-report.fileLink.notNull";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND = "create-assessment-attribute-ai-report.file.notFound";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL = "create-assessment-attribute-ai-report.fileLink.notUrl";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-attribute-ai-report.assessmentResult.notFound";
 }

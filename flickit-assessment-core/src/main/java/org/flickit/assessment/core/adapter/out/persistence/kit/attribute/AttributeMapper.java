@@ -12,6 +12,7 @@ public class AttributeMapper {
         return new Attribute(
             entity.getId(),
             entity.getTitle(),
+            entity.getDescription(),
             entity.getWeight(),
             null
         );

@@ -41,6 +41,8 @@
 		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
 		<poi.version>5.3.0</poi.version>
 		<commons-compress.version>1.25.0</commons-compress.version>
+        <gson.version>2.11.0</gson.version>
+        <httpclient5.version>5.3.1</httpclient5.version>
 
 		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -194,7 +196,18 @@
 			<artifactId>commons-compress</artifactId>
 			<version>${commons-compress.version}</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
+        </dependency>
+
+    </dependencies>
 
 	<build>
 		<plugins>
