@@ -126,6 +126,13 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String CREATE_ATTRIBUTE_KIT_ID_NOT_NULL = "create-attribute.kitId.notNull";
+    public static final String CREATE_ATTRIBUTE_INDEX_NOT_NULL = "create-attribute.index.notNull";
+    public static final String CREATE_ATTRIBUTE_TITLE_NOT_BLANK = "create-attribute.title.notBlank";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK = "create-attribute.description.notBlank";
+    public static final String CREATE_ATTRIBUTE_WEIGHT_NOT_NULL = "create-attribute.weight.notNull";
+    public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "create-attribute.subjectId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
