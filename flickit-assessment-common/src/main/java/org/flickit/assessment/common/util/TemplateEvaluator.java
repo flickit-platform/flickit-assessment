@@ -9,11 +9,9 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TemplateEvaluator {
 
