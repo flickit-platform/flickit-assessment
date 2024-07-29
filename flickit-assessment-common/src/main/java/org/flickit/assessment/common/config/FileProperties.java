@@ -56,10 +56,5 @@ public class FileProperties {
         "application/vnd.oasis.opendocument.spreadsheet"
     );
 
-    @NotNull
-    private List<String> attributeReportFileExtension = Arrays.asList(
-        "xlsx"
-    );
-
     private List<String> kitDslContentTypes = Arrays.asList("application/zip", "application/x-zip", "application/x-zip-compressed");
 }
