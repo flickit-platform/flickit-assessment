@@ -41,6 +41,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
             SELECT
                 q.id as id,
                 q.title as title,
+                q.description as description,
                 q.index as index,
                 COUNT(DISTINCT question.id) as questionCount
             FROM QuestionnaireJpaEntity q

@@ -33,19 +33,10 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     @Override
     public Result createExpertGroup(Param param) {
         String pictureFilePath = null;
-        if (param.getPicture() != null) {
-            log.warn("MultipartFile: {}", param.getPicture());
-            log.warn("Supported Content Types: {}", fileProperties.getPictureContentTypes());
-            log.warn("Content Type: {}", param.getPicture().getContentType());
-        }
-
-        validatePicture(param.getPicture());
-
-        if (param.getPicture() != null && param.getPicture().getSize() > fileProperties.getPictureMaxSize().toBytes())
-            throw new ValidationException(UPLOAD_FILE_PICTURE_SIZE_MAX);
-
-        if (param.getPicture() != null && !param.getPicture().isEmpty())
+        if (param.getPicture() != null && !param.getPicture().isEmpty()) {
+            validatePicture(param.getPicture());
             pictureFilePath = uploadExpertGroupPicturePort.uploadPicture(param.getPicture());
+        }
 
         long expertGroupId = createExpertGroupPort.persist(toCreateExpertGroupParam(param, pictureFilePath));
         createOwnerAccessToGroup(expertGroupId, param.getCurrentUserId());
@@ -54,15 +45,12 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
     }
 
     private void validatePicture(MultipartFile picture) {
-        if (picture == null || picture.isEmpty()) return;
-
         if (picture.getSize() >= fileProperties.getPictureMaxSize().toBytes())
             throw new ValidationException(UPLOAD_FILE_PICTURE_SIZE_MAX);
 
         if (!fileProperties.getPictureContentTypes().contains(picture.getContentType()))
             throw new ValidationException(UPLOAD_FILE_FORMAT_NOT_VALID);
     }
-
 
     private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param, String pictureFilePath) {
         return new CreateExpertGroupPort.Param(

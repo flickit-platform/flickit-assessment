@@ -2,8 +2,6 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -13,11 +11,10 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_KIT_USER_ACCESS_USER_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class DeleteKitUserAccessUseCaseParamTest {
 
     @Test
-    void testDeleteUserAccess_KitIdNull_ErrorMessage() {
+    void testDeleteKitUserAccess_KitIdNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -26,7 +23,7 @@ class DeleteKitUserAccessUseCaseParamTest {
     }
 
     @Test
-    void testDeleteUserAccess_UserIdIsNull_ErrorMessage() {
+    void testDeleteKitUserAccess_UserIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteKitUserAccessUseCase.Param(1L, null, currentUserId));
@@ -34,7 +31,7 @@ class DeleteKitUserAccessUseCaseParamTest {
     }
 
     @Test
-    void testDeleteUserAccess_currentUserIdNull_ErrorMessage() {
+    void testDeleteKitUserAccess_currentUserIdNull_ErrorMessage() {
         UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteKitUserAccessUseCase.Param(1L, userId, null));

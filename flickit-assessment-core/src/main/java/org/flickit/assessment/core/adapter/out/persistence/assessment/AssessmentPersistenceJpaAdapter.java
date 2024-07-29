@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
@@ -44,8 +44,7 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentProgressPort,
     GetAssessmentPort,
     DeleteAssessmentPort,
-    CheckUserAssessmentAccessPort,
-    SpaceAccessChecker {
+    CheckAssessmentSpaceMembershipPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -224,7 +223,7 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean hasAccess(UUID assessmentId, UUID userId) {
-        return repository.checkUserAccess(assessmentId, userId).isPresent();
+    public boolean isAssessmentSpaceMember(UUID assessmentId, UUID userId) {
+        return repository.checkIsAssessmentSpaceMember(assessmentId, userId).isPresent();
     }
 }

@@ -12,6 +12,7 @@ public class QuestionImpactMapper {
         return new QuestionImpact(
             entity.getId(),
             entity.getWeight(),
+            entity.getAttributeId(),
             entity.getMaturityLevelId());
     }
 }

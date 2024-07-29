@@ -10,37 +10,14 @@ public class AttributeMother {
     private static long id = 134L;
 
     public static Attribute simpleAttribute() {
-        return new Attribute(id++, 1, null);
+        return new Attribute(id++, "attribute", "description", 1, null);
     }
 
-    public static Attribute withQuestions(List<Question> questions) {
-        return new Attribute(id++, 1, questions);
+    public static Attribute withIdAndQuestions(long id, List<Question> questions) {
+        return new Attribute(id, "attribute", "description", 1, questions);
     }
 
-    public static Attribute withQuestionsAndWeight(List<Question> questions, int weight) {
-        return new Attribute(id++, weight, questions);
+    public static Attribute withIdQuestionsAndWeight(long id, List<Question> questions, int weight) {
+        return new Attribute(id,"attribute", "description", weight, questions);
     }
-
-    public static Attribute withQuestionsOnLevel23(int weight) {
-        List<Question> questions = List.of(
-            QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel23(),
-            QuestionMother.withImpactsOnLevel23());
-
-        return new Attribute(id++, weight, questions);
-    }
-
-    public static Attribute withQuestionsOnLevel24(int weight) {
-        List<Question> questions = List.of(
-            QuestionMother.withImpactsOnLevel24(),
-            QuestionMother.withImpactsOnLevel24(),
-            QuestionMother.withImpactsOnLevel24(),
-            QuestionMother.withImpactsOnLevel24(),
-            QuestionMother.withImpactsOnLevel24());
-
-        return new Attribute(id++, weight, questions);
-    }
-
 }

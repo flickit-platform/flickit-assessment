@@ -70,7 +70,7 @@ class GetAssessmentServiceTest {
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(AssessmentUserRole.MANAGER);
+        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));
@@ -112,7 +112,7 @@ class GetAssessmentServiceTest {
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadById(assessment.getCreatedBy())).thenReturn(Optional.of(assessmentCreator));
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(AssessmentUserRole.ASSESSOR);
+        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.ASSESSOR));
         when(assessmentPermissionChecker.isAuthorized(eq(assessmentId), eq(currentUserId), any())).thenReturn(true);
 
         Result result = service.getAssessment(new Param(assessmentId, currentUserId));

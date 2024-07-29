@@ -58,7 +58,7 @@ public class AttributeValue {
             .flatMap(ml ->
                 answers.stream()
                     .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
-                    .map(answer -> answer.findImpactByMaturityLevel(ml))
+                    .map(answer -> answer.findImpactByAttributeAndMaturityLevel(this.getAttribute(), ml))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.calculateScore()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
@@ -106,7 +106,7 @@ public class AttributeValue {
     }
 
     public void calculateConfidenceValue() {
-        var questionIdToWeightMap = findAnsweredQuestions();
+        var questionIdToWeightMap = computeQuestionsWeight();
         if (questionIdToWeightMap == null || questionIdToWeightMap.isEmpty()) {
             this.confidenceValue = null;
             return;
@@ -116,15 +116,15 @@ public class AttributeValue {
         this.confidenceValue = (gainedScore / totalScore) * 100;
     }
 
-    private Map<Long, Double> findAnsweredQuestions() {
+    private Map<Long, Double> computeQuestionsWeight() {
         if (answers == null || attribute.getQuestions() == null) {
             return Collections.emptyMap();
         }
-        List<Answer> validAnswers = answers.stream()
-            .filter(x -> (Boolean.TRUE.equals(x.getIsNotApplicable()) || x.getSelectedOption() != null))
+        List<Answer> notApplicableAnswers = answers.stream()
+            .filter(x -> Boolean.TRUE.equals(x.getIsNotApplicable()))
             .toList();
         return attribute.getQuestions().stream()
-            .filter(q -> validAnswers.stream().anyMatch(a -> a.getQuestionId().equals(q.getId())))
+            .filter(q -> notApplicableAnswers.stream().noneMatch(a -> a.getQuestionId().equals(q.getId())))
             .collect(Collectors.toMap(Question::getId, AttributeValue::calculateQuestionWeight));
     }
 
@@ -147,9 +147,21 @@ public class AttributeValue {
     }
 
     private double calcConfidenceGainedScore(Map<Long, Double> questionIdToWeightMap) {
-        return answers.stream()
-            .filter(answer ->  Boolean.TRUE.equals(answer.getIsNotApplicable()) || answer.getSelectedOption() != null)
-            .mapToDouble(answer -> questionIdToWeightMap.get(answer.getQuestionId()) * answer.getConfidenceLevelId())
+        Map<Long, Integer> questionIdToAnswerConfidenceLevelId = new HashMap<>();
+        answers.forEach(e -> {
+            if (!Boolean.TRUE.equals(e.getIsNotApplicable()))
+                questionIdToAnswerConfidenceLevelId.put(e.getQuestionId(), e.getConfidenceLevelId());
+        });
+
+        return questionIdToWeightMap.keySet().stream()
+            .mapToDouble(questionId -> {
+                Double questionWeight = questionIdToWeightMap.get(questionId);
+                Integer confidenceLevelId = questionIdToAnswerConfidenceLevelId.get(questionId);
+                if (confidenceLevelId == null)
+                    return 0;
+                else
+                    return questionWeight * confidenceLevelId;
+            })
             .sum();
     }
 
