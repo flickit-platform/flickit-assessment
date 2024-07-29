@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.Collections;
 
 @Component
@@ -45,11 +46,15 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
         String json = new Gson().toJson(jsonBody);
 
-        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(30))
+            .build();
+
         HttpRequest request = HttpRequest.newBuilder()
             .uri(new URI(openAiProperties.getApiUrl()))
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer " + openAiProperties.getApiKey())
+            .timeout(Duration.ofSeconds(30))
             .POST(HttpRequest.BodyPublishers.ofString(json))
             .build();
 
