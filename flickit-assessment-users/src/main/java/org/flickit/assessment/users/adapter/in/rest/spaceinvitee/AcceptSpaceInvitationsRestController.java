@@ -2,6 +2,7 @@ package org.flickit.assessment.users.adapter.in.rest.spaceinvitee;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase;
+import org.flickit.assessment.users.application.port.in.spaceuseraccess.AcceptSpaceInvitationsUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,7 +21,7 @@ public class AcceptSpaceInvitationsRestController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private AcceptSpaceInvitationsUseCase.Param toParam(AcceptSpaceInvitationsRequestDto requestDto) {
-        return new AcceptSpaceInvitationsUseCase.Param(requestDto.userId());
+    private Param toParam(AcceptSpaceInvitationsRequestDto requestDto) {
+        return new Param(requestDto.userId());
     }
 }

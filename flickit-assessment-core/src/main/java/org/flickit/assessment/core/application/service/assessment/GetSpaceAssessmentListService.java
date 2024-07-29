@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_ASSESSMENT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -42,7 +42,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
 
         List<SpaceAssessmentListItem> items = assessmentListItemPaginatedResponse.getItems().stream()
             .map(e -> {
-                boolean viewable = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_REPORT_ASSESSMENT);
+                boolean viewable = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT);
                 return new SpaceAssessmentListItem(e.id(),
                     e.title(),
                     e.kit(),
