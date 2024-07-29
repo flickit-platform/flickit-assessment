@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.27-01" author="Maziyar Gerami">
+        <createTable tableName="fac_attribute_insight">
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ai_insight" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessor_insight" type="varchar(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ai_creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessor_insight_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ai_input_file_path" type="varchar(200)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.27-02" author="Maziyar Gerami">
+        <addPrimaryKey tableName="fac_attribute_insight" columnNames="assessment_result_id, attribute_id"
+                       constraintName="fac_fac_attribute_insight"/>
+    </changeSet>
+</databaseChangeLog>
