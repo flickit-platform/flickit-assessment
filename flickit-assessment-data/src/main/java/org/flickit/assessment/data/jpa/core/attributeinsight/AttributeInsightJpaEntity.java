@@ -34,8 +34,8 @@ public class AttributeInsightJpaEntity extends AbstractEntity<AttributeInsightJp
     @Column(name = "assessor_insight")
     private String assessorInsight;
 
-    @Column(name = "ai_creation_time", nullable = false)
-    private LocalDateTime aiCreationTime;
+    @Column(name = "ai_insight_time", nullable = false)
+    private LocalDateTime aiInsightTime;
 
     @Column(name = "assessor_insight_time")
     private LocalDateTime assessorInsightTime;
