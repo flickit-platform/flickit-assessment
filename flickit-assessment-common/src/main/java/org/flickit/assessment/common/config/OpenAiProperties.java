@@ -17,8 +17,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OpenAiProperties {
 
-    private final TemplateEvaluator evaluator;
-
     private boolean enabled;
 
     @NotNull
@@ -41,6 +39,6 @@ public class OpenAiProperties {
         "Use polite and considerate language, avoiding any derogatory terms, and do not mention the scores of individual questions.";
 
     public String createPrompt(String title, String description) {
-        return evaluator.evaluate(prompt, Map.of("title", title, "description", description));
+        return TemplateEvaluator.evaluate(prompt, Map.of("title", title, "description", description));
     }
 }

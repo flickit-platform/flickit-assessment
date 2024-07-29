@@ -1,5 +1,7 @@
 package org.flickit.assessment.common.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -12,12 +14,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TemplateEvaluator {
 
-    private final ExpressionParser parser = new SpelExpressionParser();
-    private final TemplateParserContext templateContext = new TemplateParserContext("{{", "}}");
+    private static final ExpressionParser parser = new SpelExpressionParser();
+    private static final TemplateParserContext templateContext = new TemplateParserContext("{{", "}}");
 
-    public String evaluate(String template, Map<String, Object> variables) {
+    public static String evaluate(String template, Map<String, Object> variables) {
         EvaluationContext context = new StandardEvaluationContext(variables);
         context.getPropertyAccessors().add(new MapAccessor());
         Expression exp = parser.parseExpression(template, templateContext);
