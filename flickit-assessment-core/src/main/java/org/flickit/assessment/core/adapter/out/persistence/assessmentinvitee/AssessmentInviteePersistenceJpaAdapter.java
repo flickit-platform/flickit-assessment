@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentinvitee.AssessmentInviteeMapper.mapToJpaEntity;
+import static org.flickit.assessment.core.common.ErrorMessageKey.INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_INVITATION_ID_NOT_FOUND;
 
 @Component
@@ -61,7 +62,7 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     @Override
     public void persist(CreateAssessmentInvitationPort.Param param) {
         if (!AssessmentUserRole.isValidId(param.roleId()))
-            throw new ResourceNotFoundException(ASSESSMENT_INVITATION_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND);
 
         var invitation = repository.findByAssessmentIdAndEmail(param.assessmentId(), param.email());
 
