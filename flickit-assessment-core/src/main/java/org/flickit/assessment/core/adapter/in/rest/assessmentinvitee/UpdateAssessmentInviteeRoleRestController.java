@@ -19,14 +19,14 @@ public class UpdateAssessmentInviteeRoleRestController {
 
     @PutMapping("/assessments/invitees/{id}")
     public ResponseEntity<Void> inviteSpaceMember(@PathVariable("id") UUID inviteId,
-                                                  @RequestBody EditAssessmentInviteeRoleRequestDto request) {
+                                                  @RequestBody UpdateAssessmentInviteeRoleRequestDto request) {
         var currentUserId = userContext.getUser().id();
         useCase.editRole(toParam(inviteId, request, currentUserId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    Param toParam(UUID inviteId, EditAssessmentInviteeRoleRequestDto requestDto, UUID currentUserId) {
+    Param toParam(UUID inviteId, UpdateAssessmentInviteeRoleRequestDto requestDto, UUID currentUserId) {
         return new Param(inviteId, requestDto.roleId(), currentUserId);
     }
 }
