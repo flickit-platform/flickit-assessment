@@ -157,12 +157,13 @@ public class CreateAttributeValueExcelService implements CreateAttributeValueExc
             .filter(a -> Boolean.TRUE.equals(a.getIsNotApplicable()) || a.getSelectedOption() != null)
             .collect(Collectors.toMap(Answer::getQuestionId, Function.identity()));
 
-
-        for (int i = 0; i < questions.size(); i++) {
-            Row row = sheet.createRow(i + 1);
-            Question question = questions.get(i);
+        int rowNumber = 1;
+        for (Question question : questions) {
             Answer answer = questionIdToAnswerMap.get(question.getId());
+            if (answer != null && answer.getIsNotApplicable())
+                continue;
 
+            Row row = sheet.createRow(rowNumber++);
             createQuestionRow(attributeId, style, row, question, answer);
         }
     }
@@ -176,7 +177,7 @@ public class CreateAttributeValueExcelService implements CreateAttributeValueExc
         cell.setCellValue(question.getHint());
         cell.setCellStyle(style);
 
-        Integer weight = question.getImpacts().stream()
+        int weight = question.getImpacts().stream()
             .filter(qi -> qi.getAttributeId() == attributeId)
             .findFirst() // This isn't perfectly accurate. Use weighted weighting for a more accurate result.
             .map(QuestionImpact::getWeight)
