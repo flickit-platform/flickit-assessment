@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Entity
 @IdClass(AttributeInsightJpaEntity.EntityId.class)
-@Table(name = "fac_assessment_user_role")
+@Table(name = "fac_attribute_insight")
 @Getter
 @Setter
 @NoArgsConstructor
