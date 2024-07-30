@@ -210,7 +210,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL = "create-assessment-attribute-ai-report.fileLink.notUrl";
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-attribute-ai-report.assessmentResult.notFound";
 
-    public static final String EDIT_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_NULL = "edit-assessment-invitee-role.inviteId.notNull";
-    public static final String EDIT_ASSESSMENT_INVITEE_ROLE_ROLE_ID_NOT_NULL = "edit-assessment-invitee-role.roleId.notNull";
-    public static final String EDIT_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_FOUND = "edit-assessment-invitee-role.inviteId.notFound";
+    public static final String UPDATE_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_NULL = "update-assessment-invitee-role.inviteId.notNull";
+    public static final String UPDATE_ASSESSMENT_INVITEE_ROLE_ROLE_ID_NOT_NULL = "update-assessment-invitee-role.roleId.notNull";
+    public static final String UPDATE_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_FOUND = "update-assessment-invitee-role.inviteId.notFound";
 }

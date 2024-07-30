@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentinvitee;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.assessmentinvitee.EditAssessmentInviteeRoleUseCase.Param;
+import org.flickit.assessment.core.application.port.in.assessmentinvitee.UpdateAssessmentInviteeRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentInvitationPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvitee.UpdateAssessmentInviteeRolePort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentInviteeMother;
@@ -19,15 +19,15 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.EDIT_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class EditAssessmentInviteeRoleServiceTest {
+class UpdateAssessmentInviteeRoleServiceTest {
 
     @InjectMocks
-    EditAssessmentInviteeRoleService service;
+    UpdateAssessmentInviteeRoleService service;
 
     @Mock
     LoadAssessmentInvitationPort loadAssessmentInvitationPort;
@@ -50,7 +50,7 @@ class EditAssessmentInviteeRoleServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.editRole(param));
 
-        assertEquals(EDIT_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_FOUND, throwable.getMessage(), "The invitation should exist");
+        assertEquals(UPDATE_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_FOUND, throwable.getMessage(), "The invitation should exist");
 
         verify(loadAssessmentInvitationPort).load(param.getInviteId());
         verifyNoInteractions(assessmentAccessChecker, updateAssessmentInviteeRolePort);

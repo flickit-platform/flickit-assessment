@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.in.rest.assessmentinvitee;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.assessmentinvitee.EditAssessmentInviteeRoleUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentinvitee.EditAssessmentInviteeRoleUseCase.Param;
+import org.flickit.assessment.core.application.port.in.assessmentinvitee.UpdateAssessmentInviteeRoleUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentinvitee.UpdateAssessmentInviteeRoleUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,10 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class EditAssessmentInviteeRoleRestController {
+public class UpdateAssessmentInviteeRoleRestController {
 
     private final UserContext userContext;
-    private final EditAssessmentInviteeRoleUseCase useCase;
+    private final UpdateAssessmentInviteeRoleUseCase useCase;
 
     @PutMapping("/assessments/invitees/{id}")
     public ResponseEntity<Void> inviteSpaceMember(@PathVariable("id") UUID inviteId,
