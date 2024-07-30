@@ -6,10 +6,7 @@ import org.flickit.assessment.core.application.port.in.assessmentinvitee.EditAss
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.EditAssessmentInviteeRoleUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -20,7 +17,7 @@ public class EditAssessmentInviteeRoleRestController {
     private final UserContext userContext;
     private final EditAssessmentInviteeRoleUseCase useCase;
 
-    @PostMapping("/assessments/invitees/{id}")
+    @PutMapping("/assessments/invitees/{id}")
     public ResponseEntity<Void> inviteSpaceMember(@PathVariable("id") UUID inviteId,
                                                   @RequestBody EditAssessmentInviteeRoleRequestDto request) {
         var currentUserId = userContext.getUser().id();
