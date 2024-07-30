@@ -212,4 +212,5 @@ public class ErrorMessageKey {
 
     public static final String EDIT_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_NULL = "edit-assessment-invitee-role.inviteId.notNull";
     public static final String EDIT_ASSESSMENT_INVITEE_ROLE_ROLE_ID_NOT_NULL = "edit-assessment-invitee-role.roleId.notNull";
+    public static final String EDIT_ASSESSMENT_INVITEE_ROLE_INVITE_ID_NOT_FOUND = "edit-assessment-invitee-role.inviteId.notFound";
 }
