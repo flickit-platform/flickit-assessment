@@ -111,6 +111,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),
             assessmentKitEntity.getSummary(),
+            assessmentKitEntity.getAbout(),
             maturityLevels.size(),
             maturityLevels,
             expertGroup);

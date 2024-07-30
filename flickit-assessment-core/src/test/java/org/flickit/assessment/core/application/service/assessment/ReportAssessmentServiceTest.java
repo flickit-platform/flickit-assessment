@@ -64,7 +64,7 @@ class ReportAssessmentServiceTest {
         List<MaturityLevel> maturityLevels = List.of(softwareLevel, teamLevel);
 
         var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1", "picture/link");
-        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", 3, maturityLevels, expertGroup);
+        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", "about kit", 3, maturityLevels, expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
         LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
@@ -108,6 +108,7 @@ class ReportAssessmentServiceTest {
         assertEquals(assessmentReport.assessment().assessmentKit().id(), result.assessment().assessmentKit().id());
         assertEquals(assessmentReport.assessment().assessmentKit().title(), result.assessment().assessmentKit().title());
         assertEquals(assessmentReport.assessment().assessmentKit().summary(), result.assessment().assessmentKit().summary());
+        assertEquals(assessmentReport.assessment().assessmentKit().about(), result.assessment().assessmentKit().about());
         assertEquals(assessmentReport.assessment().assessmentKit().maturityLevelCount(), result.assessment().assessmentKit().maturityLevelCount());
         assertEquals(assessmentReport.assessment().assessmentKit().maturityLevels(), result.assessment().assessmentKit().maturityLevels());
         assertEquals(assessmentReport.assessment().assessmentKit().expertGroup().id(), result.assessment().assessmentKit().expertGroup().id());
