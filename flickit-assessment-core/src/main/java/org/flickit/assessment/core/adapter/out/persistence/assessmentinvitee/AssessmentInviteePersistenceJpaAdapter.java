@@ -5,10 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInvitee;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.CreateAssessmentInvitationPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.DeleteAssessmentUserInvitationPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentInviteeListPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentsUserInvitationsPort;
+import org.flickit.assessment.core.application.port.out.assessmentinvitee.*;
 import org.flickit.assessment.data.jpa.core.assessmentinvitee.AssessmentInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentinvitee.AssessmentInviteeJpaRepository;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentinvitee.AssessmentInviteeMapper.mapToJpaEntity;
@@ -27,7 +25,9 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     LoadAssessmentInviteeListPort,
     LoadAssessmentsUserInvitationsPort,
     CreateAssessmentInvitationPort,
-    DeleteAssessmentUserInvitationPort {
+    DeleteAssessmentUserInvitationPort,
+    LoadAssessmentInvitationPort,
+    UpdateAssessmentInviteeRolePort {
 
     private final AssessmentInviteeJpaRepository repository;
 
@@ -76,5 +76,15 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     @Override
     public void deleteAllByEmail(String email) {
         repository.deleteByEmail(email);
+    }
+
+    @Override
+    public Optional<AssessmentInvitee> load(UUID inviteeId) {
+        return repository.findById(inviteeId).map(AssessmentInviteeMapper::mapToDomainModel);
+    }
+
+    @Override
+    public void updateRole(UUID id, Integer roleId) {
+        repository.updateRoleById(id , roleId);
     }
 }
