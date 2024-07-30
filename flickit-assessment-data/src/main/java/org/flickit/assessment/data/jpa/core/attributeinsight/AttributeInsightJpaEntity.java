@@ -40,6 +40,9 @@ public class AttributeInsightJpaEntity extends AbstractEntity<AttributeInsightJp
     @Column(name = "assessor_insight_time")
     private LocalDateTime assessorInsightTime;
 
+    @Column(name = "ai_input_path")
+    private String aiInputPath;
+
     @Override
     public EntityId getId() {
         return new AttributeInsightJpaEntity.EntityId(assessmentResultId, attributeId);
