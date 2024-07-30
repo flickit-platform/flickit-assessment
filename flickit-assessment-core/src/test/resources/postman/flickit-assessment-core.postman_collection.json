@@ -1312,6 +1312,40 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Assessment Invitee Role",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roleId\": \"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/invitees/{{inviteId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"invitees",
+						"{{inviteId}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
