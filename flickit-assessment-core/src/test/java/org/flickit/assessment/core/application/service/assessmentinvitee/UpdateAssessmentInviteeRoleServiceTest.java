@@ -81,10 +81,10 @@ class UpdateAssessmentInviteeRoleServiceTest {
     @DisplayName("Edit Assessment Invitee Role Service - Valid Parameters - Should Update Successfully")
     void testEditAssessmentInviteeRoleService_validParameters_ShouldUpdate() {
         var inviteId = UUID.randomUUID();
-        var roleId = 1;
         var currentUserId = UUID.randomUUID();
-        var param = new Param(inviteId, roleId, currentUserId);
         var assessmentInvitee = AssessmentInviteeMother.notExpiredAssessmentInvitee("test@flickit.org");
+        var roleId = assessmentInvitee.getRole().getId()+1;
+        var param = new Param(inviteId, roleId, currentUserId);
 
         when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(Optional.of(assessmentInvitee));
         when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
@@ -95,5 +95,24 @@ class UpdateAssessmentInviteeRoleServiceTest {
         verify(loadAssessmentInvitationPort).load(param.getInviteId());
         verify(assessmentAccessChecker).isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE);
         verify(updateAssessmentInviteeRolePort).updateRole(param.getInviteId(), param.getRoleId());
+    }
+
+    @Test
+    @DisplayName("Edit Assessment Invitee Role Service - Same RoleId - Should Not Update")
+    void testEditAssessmentInviteeRoleService_SameRoleId_ShouldUpdate() {
+        var inviteId = UUID.randomUUID();
+        var currentUserId = UUID.randomUUID();
+        var assessmentInvitee = AssessmentInviteeMother.notExpiredAssessmentInvitee("test@flickit.org");
+        var roleId = assessmentInvitee.getRole().getId();
+        var param = new Param(inviteId, roleId, currentUserId);
+
+        when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(Optional.of(assessmentInvitee));
+        when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
+
+        assertDoesNotThrow(() -> service.editRole(param), "Should update successfully without any exceptions");
+
+        verify(loadAssessmentInvitationPort).load(param.getInviteId());
+        verify(assessmentAccessChecker).isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE);
+        verifyNoInteractions(updateAssessmentInviteeRolePort);
     }
 }
