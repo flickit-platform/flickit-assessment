@@ -13,11 +13,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentinvitee.AssessmentInviteeMapper.mapToJpaEntity;
-import static org.flickit.assessment.core.common.ErrorMessageKey.INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_INVITATION_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -62,7 +61,7 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     @Override
     public void persist(CreateAssessmentInvitationPort.Param param) {
         if (!AssessmentUserRole.isValidId(param.roleId()))
-            throw new ResourceNotFoundException(INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(ASSESSMENT_INVITATION_ID_NOT_FOUND);
 
         var invitation = repository.findByAssessmentIdAndEmail(param.assessmentId(), param.email());
 
@@ -79,8 +78,10 @@ public class AssessmentInviteePersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<AssessmentInvitee> load(UUID inviteeId) {
-        return repository.findById(inviteeId).map(AssessmentInviteeMapper::mapToDomainModel);
+    public AssessmentInvitee loadById(UUID id) {
+        return repository.findById(id)
+            .map(AssessmentInviteeMapper::mapToDomainModel)
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_INVITATION_ID_NOT_FOUND));
     }
 
     @Override
