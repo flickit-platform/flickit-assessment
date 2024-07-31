@@ -3,24 +3,20 @@ package org.flickit.assessment.core.application.service.attribute;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueExcelUseCase;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueExcelUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
-import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
-import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Duration;
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
@@ -43,13 +39,7 @@ class CreateAttributeValueExcelServiceTest {
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
-    private LoadCalculateInfoPort loadCalculateInfoPort;
-
-    @Mock
-    private LoadAttributeValuePort loadAttributeValuePort;
-
-    @Mock
-    private LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private GenerateAttributeValueReportFilePort generateAttributeValueReportFilePort;
 
     @Mock
     private UploadAttributeScoreExcelPort uploadAttributeScoreExcelPort;
@@ -69,9 +59,7 @@ class CreateAttributeValueExcelServiceTest {
         assertThrows(AccessDeniedException.class, () -> service.createAttributeValueExcel(param), COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(validateAssessmentResultPort,
-            loadCalculateInfoPort,
-            loadAttributeValuePort,
-            loadMaturityLevelsPort,
+            generateAttributeValueReportFilePort,
             uploadAttributeScoreExcelPort,
             createFileDownloadLinkPort);
     }
@@ -81,27 +69,18 @@ class CreateAttributeValueExcelServiceTest {
         Param param = new Param(UUID.randomUUID(),
             15L,
             UUID.randomUUID());
-        Answer answer = AnswerMother.fullScoreOnLevels23(param.getAttributeId());
-        Question question = QuestionMother.withIdAndImpactsOnLevel23(answer.getQuestionId(), param.getAttributeId());
-        Attribute attribute = AttributeMother.withIdAndQuestions(param.getAttributeId(), List.of(question));
-        AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
-
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(
-            List.of(SubjectValueMother.withQAValues(List.of(attributeValue))),
-            MaturityLevelMother.levelOne()
-        );
+        InputStream inputStream = ByteArrayInputStream.nullInputStream();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
-        when(loadCalculateInfoPort.load(param.getAssessmentId())).thenReturn(assessmentResult);
-        when(loadAttributeValuePort.load(attributeValue.getId())).thenReturn(attributeValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(MaturityLevelMother.allLevels());
+        when(generateAttributeValueReportFilePort.generateReport(param.getAssessmentId(), param.getAttributeId()))
+            .thenReturn(inputStream);
 
         String filePath = "dir/filename.xlsx";
         String downloadLink = "https://dir/filename.xlsx";
-        when(uploadAttributeScoreExcelPort.uploadExcel(any(InputStream.class), eq(attribute.getTitle()))).thenReturn(filePath);
+        when(uploadAttributeScoreExcelPort.uploadExcel(any(InputStream.class), any(String.class))).thenReturn(filePath);
         when(createFileDownloadLinkPort.createDownloadLink(eq(filePath), any(Duration.class))).thenReturn(downloadLink);
 
         CreateAttributeValueExcelUseCase.Result serviceResult = service.createAttributeValueExcel(param);
