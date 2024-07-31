@@ -31,7 +31,7 @@ public interface AddSpaceMemberUseCase {
 
         public Param(Long spaceId, String email, UUID currentUserId) {
             this.spaceId = spaceId;
-            this.email = email;
+            this.email = email != null ? email.strip().toLowerCase() : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
