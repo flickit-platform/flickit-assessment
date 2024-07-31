@@ -45,25 +45,6 @@ class CreateUserUseCaseParamTest {
     }
 
     @Test
-    void testCreateUserParam_DisplayNameGreaterThanMaxSize_ErrorMessage() {
-        UUID id = UUID.randomUUID();
-        String displayName = RandomStringUtils.randomAlphanumeric(51);
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateUserUseCase.Param(id, "admin@flickit.com", displayName));
-        assertThat(throwable).hasMessage("displayName: " + CREATE_USER_DISPLAY_NAME_SIZE_MAX);
-    }
-
-    @Test
-    void testCreateUserParam_Email_SuccessfulStripAndIgnoreCase() {
-        UUID id = UUID.randomUUID();
-        String email1 = "test@test.com";
-        String email2 = " Test@test.com    ";
-        var param1 =  new CreateUserUseCase.Param(id, email1, "abc");
-        var param2 = new CreateUserUseCase.Param(id, email2, "def");
-        assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
-    }
-
-    @Test
     void testCreateUserParam_EmailIsBlank_ErrorMessage() {
         UUID id = UUID.randomUUID();
         String email = " ";
@@ -78,5 +59,24 @@ class CreateUserUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateUserUseCase.Param(id, null, "abc"));
         assertThat(throwable).hasMessage("email: " + CREATE_USER_EMAIL_NOT_NULL);
+    }
+
+    @Test
+    void testCreateUserParam_Email_SuccessfulStripAndIgnoreCase() {
+        UUID id = UUID.randomUUID();
+        String email1 = "test@test.com";
+        String email2 = " Test@test.com    ";
+        var param1 =  new CreateUserUseCase.Param(id, email1, "abc");
+        var param2 = new CreateUserUseCase.Param(id, email2, "def");
+        assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
+    }
+
+    @Test
+    void testCreateUserParam_DisplayNameGreaterThanMaxSize_ErrorMessage() {
+        UUID id = UUID.randomUUID();
+        String displayName = RandomStringUtils.randomAlphanumeric(51);
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateUserUseCase.Param(id, "admin@flickit.com", displayName));
+        assertThat(throwable).hasMessage("displayName: " + CREATE_USER_DISPLAY_NAME_SIZE_MAX);
     }
 }

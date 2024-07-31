@@ -35,26 +35,6 @@ class AddSpaceMemberUseCaseParamTest {
     }
 
     @Test
-    void testAddSpaceMember_currentUserIdIsNull_ErrorMessage() {
-        long spaceId = 0L;
-        String email = "admin@asta.com";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new AddSpaceMemberUseCase.Param(spaceId, email, null));
-        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
-    }
-
-    @Test
-    void testAddSpaceMember_Email_SuccessfulStripAndIgnoreCase() {
-        long spaceId = 0L;
-        String email1 = "test@test.com";
-        String email2 = " Test@test.com    ";
-        UUID currentUserId = UUID.randomUUID();
-        var param1 = new AddSpaceMemberUseCase.Param(spaceId, email1, currentUserId);
-        var param2 = new AddSpaceMemberUseCase.Param(spaceId, email2, currentUserId);
-        assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
-    }
-
-    @Test
     void testAddSpaceMember_EmailIsNotValid_ErrorMessage() {
         long spaceId = 0L;
         String email = "test.com";
@@ -72,5 +52,25 @@ class AddSpaceMemberUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new AddSpaceMemberUseCase.Param(spaceId, email, currentUserId));
         assertThat(throwable).hasMessage("email: " + ADD_SPACE_MEMBER_EMAIL_NOT_NULL);
+    }
+
+    @Test
+    void testAddSpaceMember_Email_SuccessfulStripAndIgnoreCase() {
+        long spaceId = 0L;
+        String email1 = "test@test.com";
+        String email2 = " Test@test.com    ";
+        UUID currentUserId = UUID.randomUUID();
+        var param1 = new AddSpaceMemberUseCase.Param(spaceId, email1, currentUserId);
+        var param2 = new AddSpaceMemberUseCase.Param(spaceId, email2, currentUserId);
+        assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
+    }
+
+    @Test
+    void testAddSpaceMember_currentUserIdIsNull_ErrorMessage() {
+        long spaceId = 0L;
+        String email = "admin@asta.com";
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new AddSpaceMemberUseCase.Param(spaceId, email, null));
+        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
