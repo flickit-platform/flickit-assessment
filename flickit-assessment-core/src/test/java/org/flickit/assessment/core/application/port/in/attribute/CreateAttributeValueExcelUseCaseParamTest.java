@@ -2,8 +2,6 @@ package org.flickit.assessment.core.application.port.in.attribute;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -13,7 +11,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUT
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class CreateAttributeValueExcelUseCaseParamTest {
 
     @Test
