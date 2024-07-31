@@ -8,7 +8,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class InviteAssessmentUserUseCaseParamTest {
 
@@ -51,5 +51,18 @@ class InviteAssessmentUserUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new InviteAssessmentUserUseCase.Param(assessmentId, email, roleId, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    @Test
+    void testInviteAssessmentUserParam_Email_SuccessfulStripAndIgnoreCase() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        String email1 = "test@test.com";
+        String email2 = " Test@test.com    ";
+        int roleId = 1;
+
+        var param1 =  new InviteAssessmentUserUseCase.Param(assessmentId, email1, roleId, currentUserId);
+        var param2 = new InviteAssessmentUserUseCase.Param(assessmentId, email2, roleId, currentUserId);
+        assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
     }
 }
