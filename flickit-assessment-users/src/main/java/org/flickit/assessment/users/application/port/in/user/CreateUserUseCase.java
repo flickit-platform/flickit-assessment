@@ -33,7 +33,7 @@ public interface CreateUserUseCase {
 
         public Param(UUID userId, String email, String displayName) {
             this.userId = userId;
-            this.email = email;
+            this.email = email != null ? email.strip().toLowerCase() : null;
             this.displayName = displayName;
             validateSelf();
         }

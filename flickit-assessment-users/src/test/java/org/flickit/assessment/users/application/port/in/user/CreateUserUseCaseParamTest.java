@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateUserUseCaseParamTest {
@@ -50,5 +51,16 @@ class CreateUserUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateUserUseCase.Param(id, "admin@flickit.com", displayName));
         assertThat(throwable).hasMessage("displayName: " + CREATE_USER_DISPLAY_NAME_SIZE_MAX);
+    }
+
+    @Test
+    void testCreateUserParam_Email_SuccessfulStripAndIgnoreCase() {
+        UUID id = UUID.randomUUID();
+        String email1 = "test@test.com";
+        String email2 = " Test@test.com    ";
+
+        var param1 =  new CreateUserUseCase.Param(id, email1, "abc");
+        var param2 = new CreateUserUseCase.Param(id, email2, "def");
+        assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
     }
 }
