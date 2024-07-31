@@ -20,7 +20,7 @@ public interface GetUserByEmailUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_USER_BY_EMAIL_EMAIL_NOT_NULL)
-        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = GET_USER_BY_EMAIL_EMAIL_EMAIL_NOT_VALID)
+        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = EMAIL_NOT_VALID)
         String email;
 
         public Param(String email) {

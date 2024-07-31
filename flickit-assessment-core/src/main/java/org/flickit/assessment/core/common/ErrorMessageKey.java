@@ -15,6 +15,7 @@ public class ErrorMessageKey {
     public static final String ATTRIBUTE_VALUE_ID_NOT_FOUND = "attribute-value.id.notFound";
     public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
+    public static final String EMAIL_NOT_VALID = "email.notValid";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";

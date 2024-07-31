@@ -2,15 +2,15 @@ package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_EMAIL_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface AddSpaceMemberUseCase {
 
@@ -24,6 +24,7 @@ public interface AddSpaceMemberUseCase {
         Long spaceId;
 
         @NotBlank(message = ADD_SPACE_MEMBER_EMAIL_NOT_NULL)
+        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = EMAIL_NOT_VALID)
         String email;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

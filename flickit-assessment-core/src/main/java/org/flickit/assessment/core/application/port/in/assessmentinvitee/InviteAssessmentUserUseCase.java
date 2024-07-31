@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.assessmentinvitee;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -22,6 +23,7 @@ public interface InviteAssessmentUserUseCase {
         UUID assessmentId;
 
         @NotNull(message = INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL)
+        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = EMAIL_NOT_VALID)
         String email;
 
         @NotNull(message = INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL)

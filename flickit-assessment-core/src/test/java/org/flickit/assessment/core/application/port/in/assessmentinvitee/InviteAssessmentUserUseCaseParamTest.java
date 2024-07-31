@@ -46,10 +46,8 @@ class InviteAssessmentUserUseCaseParamTest {
     void testInviteAssessmentUserParam_currentUserIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         String email = "test@test.com";
-        int roleId = 1;
-
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new InviteAssessmentUserUseCase.Param(assessmentId, email, roleId, null));
+            () -> new InviteAssessmentUserUseCase.Param(assessmentId, email, 1, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
@@ -59,10 +57,17 @@ class InviteAssessmentUserUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
         String email1 = "test@test.com";
         String email2 = " Test@test.com    ";
-        int roleId = 1;
-
-        var param1 =  new InviteAssessmentUserUseCase.Param(assessmentId, email1, roleId, currentUserId);
-        var param2 = new InviteAssessmentUserUseCase.Param(assessmentId, email2, roleId, currentUserId);
+        var param1 =  new InviteAssessmentUserUseCase.Param(assessmentId, email1, 1, currentUserId);
+        var param2 = new InviteAssessmentUserUseCase.Param(assessmentId, email2, 1, currentUserId);
         assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
+    }
+
+    @Test
+    void testInviteAssessmentUserParam_IncorrectEmailPattern_ErrorMessage() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        String email = "test.com";
+        var throwable = assertThrows(ConstraintViolationException.class, () -> new InviteAssessmentUserUseCase.Param(assessmentId, email, 1, currentUserId));
+        assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
     }
 }

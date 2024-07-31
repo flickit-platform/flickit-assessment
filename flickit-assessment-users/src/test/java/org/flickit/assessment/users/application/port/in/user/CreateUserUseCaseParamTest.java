@@ -25,7 +25,7 @@ class CreateUserUseCaseParamTest {
         UUID id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateUserUseCase.Param(id, "admin@flickit", "Flickit Admin"));
-        assertThat(throwable).hasMessage("email: " + CREATE_USER_EMAIL_NOT_VALID);
+        assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
     }
 
     @Test
@@ -58,9 +58,17 @@ class CreateUserUseCaseParamTest {
         UUID id = UUID.randomUUID();
         String email1 = "test@test.com";
         String email2 = " Test@test.com    ";
-
         var param1 =  new CreateUserUseCase.Param(id, email1, "abc");
         var param2 = new CreateUserUseCase.Param(id, email2, "def");
         assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
+    }
+
+    @Test
+    void testCreateUserParam_EmailIsNotValid_ErrorMessage() {
+        UUID id = UUID.randomUUID();
+        String email = "test.com";
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateUserUseCase.Param(id, email, "abc"));
+        assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
     }
 }
