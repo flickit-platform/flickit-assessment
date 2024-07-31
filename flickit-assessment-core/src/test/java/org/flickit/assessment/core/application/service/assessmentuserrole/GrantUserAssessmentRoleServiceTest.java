@@ -75,6 +75,13 @@ class GrantUserAssessmentRoleServiceTest {
     @Test
     void testGrantUserAssessmentRole_UserIsNotSpaceMember_AddUserToSpace() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
+        var assessment = AssessmentMother.assessment();
+        var current_user = new User(param.getCurrentUserId(), "current user");
+        var notificationData = new GrantAssessmentUserRolePayLoad(
+            new AssessmentModel(assessment.getTitle()),
+            new AssignerModel(current_user.getDisplayName()),
+            new RoleModel(AssessmentUserRole.COMMENTER.getTitle())
+        );
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
@@ -82,6 +89,11 @@ class GrantUserAssessmentRoleServiceTest {
         when(checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(param.getAssessmentId(), param.getUserId())).thenReturn(false);
 
         doNothing().when(createSpaceUserAccessPort).persist(any());
+
+        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
+        when(loadUserPort.loadById(param.getCurrentUserId())).thenReturn(Optional.of(current_user));
+        doNothing().when(sendNotificationPort)
+            .sendNotification(param.getUserId(), NotificationType.GRANT_USER_ASSESSMENT_ROLE, notificationData);
 
         service.grantAssessmentUserRole(param);
 
@@ -96,6 +108,8 @@ class GrantUserAssessmentRoleServiceTest {
 
         verify(grantUserAssessmentRolePort, times(1))
             .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+        verify(sendNotificationPort, times(1))
+            .sendNotification(param.getUserId(), NotificationType.GRANT_USER_ASSESSMENT_ROLE, notificationData);
     }
 
     @Test
