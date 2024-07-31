@@ -3,8 +3,8 @@ package org.flickit.assessment.core.application.service.attribute;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueExcelUseCase;
-import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueExcelUseCase.Param;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase.Param;
 import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
@@ -26,11 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateAttributeValueExcelServiceTest {
-
+class CreateAttributeValueReportFileServiceTest {
 
     @InjectMocks
-    private CreateAttributeValueExcelService service;
+    private CreateAttributeValueReportFileService service;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -48,7 +47,7 @@ class CreateAttributeValueExcelServiceTest {
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Test
-    void testCreateAttributeValueExcel_UserHasNotAccess_ThrowsAccessDenied() {
+    void testCreateAttributeValueReportFile_UserHasNotAccess_ThrowsAccessDenied() {
         Param param = new Param(UUID.randomUUID(),
             15L,
             UUID.randomUUID());
@@ -56,7 +55,7 @@ class CreateAttributeValueExcelServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
             .thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.createAttributeValueExcel(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertThrows(AccessDeniedException.class, () -> service.createAttributeValueReportFile(param), COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(validateAssessmentResultPort,
             generateAttributeValueReportFilePort,
@@ -65,7 +64,7 @@ class CreateAttributeValueExcelServiceTest {
     }
 
     @Test
-    void testCreateAttributeValueExcel_ValidParam_uploadExcelAndCreateDownloadLink() {
+    void testCreateAttributeValueReportFile_ValidParam_uploadExcelAndCreateDownloadLink() {
         Param param = new Param(UUID.randomUUID(),
             15L,
             UUID.randomUUID());
@@ -83,7 +82,7 @@ class CreateAttributeValueExcelServiceTest {
         when(uploadAttributeScoreExcelPort.uploadExcel(any(InputStream.class), any(String.class))).thenReturn(filePath);
         when(createFileDownloadLinkPort.createDownloadLink(eq(filePath), any(Duration.class))).thenReturn(downloadLink);
 
-        CreateAttributeValueExcelUseCase.Result serviceResult = service.createAttributeValueExcel(param);
+        CreateAttributeValueReportFileUseCase.Result serviceResult = service.createAttributeValueReportFile(param);
 
         assertEquals(downloadLink, serviceResult.downloadLink());
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());

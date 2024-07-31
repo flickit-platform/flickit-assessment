@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueExcelUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase;
 import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
@@ -20,7 +20,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class CreateAttributeValueExcelService implements CreateAttributeValueExcelUseCase {
+public class CreateAttributeValueReportFileService implements CreateAttributeValueReportFileUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
     private static final String REPORT_FILE_NAME = "Attribute-report";
@@ -32,7 +32,7 @@ public class CreateAttributeValueExcelService implements CreateAttributeValueExc
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
-    public Result createAttributeValueExcel(Param param) {
+    public Result createAttributeValueReportFile(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         validateAssessmentResultPort.validate(param.getAssessmentId());
