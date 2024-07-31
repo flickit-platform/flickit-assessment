@@ -45,10 +45,11 @@ public class GenerateAttributeValueReportFileAdapter implements GenerateAttribut
     public InputStream generateReport(UUID assessmentId, Long attributeId) {
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(assessmentId);
         AttributeValue attributeValue = findAttributeValueByAttributeId(attributeId, assessmentResult);
+        AttributeValue attributeValueDetail = loadAttributeValuePort.load(attributeValue.getId());
 
         Workbook workbook = new XSSFWorkbook();
         createQuestionsSheet(workbook, attributeId, attributeValue);
-        createAttributeSheet(workbook, attributeValue.getId());
+        createAttributeSheet(workbook, attributeValueDetail);
         createMaturityLevelsSheet(workbook, assessmentResult.getKitVersionId());
         return convertWorkbookToInputStream(workbook);
     }
@@ -68,9 +69,7 @@ public class GenerateAttributeValueReportFileAdapter implements GenerateAttribut
         createQuestionRows(attributeId, questions, answers, workbook, sheet);
     }
 
-    private void createAttributeSheet(Workbook workbook, UUID attributeValueId) {
-        AttributeValue attributeValue = loadAttributeValuePort.load(attributeValueId);
-
+    private void createAttributeSheet(Workbook workbook, AttributeValue attributeValue) {
         Sheet sheet = initAttributeSheet(workbook);
         CellStyle style = workbook.createCellStyle();
         style.setWrapText(true);
