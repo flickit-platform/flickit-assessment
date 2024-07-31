@@ -76,10 +76,10 @@ class GrantUserAssessmentRoleServiceTest {
     void testGrantUserAssessmentRole_UserIsNotSpaceMember_AddUserToSpace() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
         var assessment = AssessmentMother.assessment();
-        var current_user = new User(param.getCurrentUserId(), "current user");
+        var currentUser = new User(param.getCurrentUserId(), "current user");
         var notificationData = new GrantAssessmentUserRolePayLoad(
             new AssessmentModel(assessment.getTitle()),
-            new AssignerModel(current_user.getDisplayName()),
+            new AssignerModel(currentUser.getDisplayName()),
             new RoleModel(AssessmentUserRole.COMMENTER.getTitle())
         );
 
@@ -91,7 +91,7 @@ class GrantUserAssessmentRoleServiceTest {
         doNothing().when(createSpaceUserAccessPort).persist(any());
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadById(param.getCurrentUserId())).thenReturn(Optional.of(current_user));
+        when(loadUserPort.loadById(param.getCurrentUserId())).thenReturn(Optional.of(currentUser));
         doNothing().when(sendNotificationPort)
             .sendNotification(param.getUserId(), NotificationType.GRANT_USER_ASSESSMENT_ROLE, notificationData);
 
@@ -116,10 +116,10 @@ class GrantUserAssessmentRoleServiceTest {
     void testGrantUserAssessmentRole_ValidParam_GrantAccess() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
         var assessment = AssessmentMother.assessment();
-        var current_user = new User(param.getCurrentUserId(), "current user");
+        var currentUser = new User(param.getCurrentUserId(), "current user");
         var notificationData = new GrantAssessmentUserRolePayLoad(
             new AssessmentModel(assessment.getTitle()),
-            new AssignerModel(current_user.getDisplayName()),
+            new AssignerModel(currentUser.getDisplayName()),
             new RoleModel(AssessmentUserRole.COMMENTER.getTitle())
         );
 
@@ -132,7 +132,7 @@ class GrantUserAssessmentRoleServiceTest {
             .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadById(param.getCurrentUserId())).thenReturn(Optional.of(current_user));
+        when(loadUserPort.loadById(param.getCurrentUserId())).thenReturn(Optional.of(currentUser));
         doNothing().when(sendNotificationPort)
             .sendNotification(param.getUserId(), NotificationType.GRANT_USER_ASSESSMENT_ROLE, notificationData);
 
