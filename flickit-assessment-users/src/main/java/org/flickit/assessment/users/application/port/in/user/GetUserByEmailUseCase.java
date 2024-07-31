@@ -24,7 +24,7 @@ public interface GetUserByEmailUseCase {
         String email;
 
         public Param(String email) {
-            this.email = email != null ? email.strip().toLowerCase() : null;
+            this.email = (email == null || email.isBlank()) ? null : email.strip().toLowerCase();
             validateSelf();
         }
     }

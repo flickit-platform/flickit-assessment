@@ -64,11 +64,19 @@ class CreateUserUseCaseParamTest {
     }
 
     @Test
-    void testCreateUserParam_EmailIsNotValid_ErrorMessage() {
+    void testCreateUserParam_EmailIsBlank_ErrorMessage() {
         UUID id = UUID.randomUUID();
-        String email = "test.com";
+        String email = " ";
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateUserUseCase.Param(id, email, "abc"));
-        assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
+        assertThat(throwable).hasMessage("email: " + CREATE_USER_EMAIL_NOT_NULL);
+    }
+
+    @Test
+    void testCreateUserParam_EmailIsNull_ErrorMessage() {
+        UUID id = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateUserUseCase.Param(id, null, "abc"));
+        assertThat(throwable).hasMessage("email: " + CREATE_USER_EMAIL_NOT_NULL);
     }
 }

@@ -62,4 +62,14 @@ class InviteSpaceMemberUseCaseParamTest {
             () -> new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId));
         assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
     }
+
+    @Test
+    void testAddSpaceMember_emailIsBlank_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
+        long spaceId = 0L;
+        var email = "   ";
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId));
+        assertThat(throwable).hasMessage("email: " + INVITE_SPACE_MEMBER_EMAIL_NOT_NULL);
+    }
 }

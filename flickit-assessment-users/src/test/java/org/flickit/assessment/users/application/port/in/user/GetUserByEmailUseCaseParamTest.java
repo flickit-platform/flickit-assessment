@@ -13,9 +13,10 @@ class GetUserByEmailUseCaseParamTest {
 
     @Test
     void testGetUserByEmailParam_emailIsBlank_ErrorMessage() {
+        var email = " ";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetUserByEmailUseCase.Param("  "));
-        assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
+            () -> new GetUserByEmailUseCase.Param(email));
+        assertThat(throwable).hasMessage("email: " + GET_USER_BY_EMAIL_EMAIL_NOT_NULL);
     }
 
     @Test
