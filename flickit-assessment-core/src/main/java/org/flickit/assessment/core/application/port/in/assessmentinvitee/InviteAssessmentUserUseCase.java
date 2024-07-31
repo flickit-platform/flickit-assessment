@@ -34,7 +34,7 @@ public interface InviteAssessmentUserUseCase {
 
         public Param(UUID assessmentId, String email, Integer roleId, UUID currentUserId) {
             this.assessmentId = assessmentId;
-            this.email = email != null ? email.strip().toLowerCase() : null;
+            this.email = (email == null || email.isBlank()) ? null : email.strip().toLowerCase();
             this.roleId = roleId;
             this.currentUserId = currentUserId;
             this.validateSelf();

@@ -33,6 +33,16 @@ class InviteAssessmentUserUseCaseParamTest {
     }
 
     @Test
+    void testInviteAssessmentUserParam_emailIsBlank_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID assessmentId = UUID.randomUUID();
+        var email = "  ";
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new InviteAssessmentUserUseCase.Param(assessmentId, email, 1, currentUserId));
+        assertThat(throwable).hasMessage("email: " + INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL);
+    }
+
+    @Test
     void testInviteAssessmentUserParam_roleIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
@@ -67,7 +77,8 @@ class InviteAssessmentUserUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         String email = "test.com";
-        var throwable = assertThrows(ConstraintViolationException.class, () -> new InviteAssessmentUserUseCase.Param(assessmentId, email, 1, currentUserId));
+        var throwable = assertThrows(ConstraintViolationException.class, () ->
+            new InviteAssessmentUserUseCase.Param(assessmentId, email, 1, currentUserId));
         assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
     }
 }
