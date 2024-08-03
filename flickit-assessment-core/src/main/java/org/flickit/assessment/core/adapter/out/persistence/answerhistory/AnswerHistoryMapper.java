@@ -21,7 +21,9 @@ public class AnswerHistoryMapper {
             answer,
             assessmentResult,
             answerHistory.getAnswer().getQuestionId(),
-            answerHistory.getAnswer().getSelectedOption().getId(),
+            answerHistory.getAnswer().getSelectedOption() != null ?
+                answerHistory.getAnswer().getSelectedOption().getId() :
+                null,
             answerHistory.getAnswer().getConfidenceLevelId(),
             answerHistory.getAnswer().getIsNotApplicable(),
             answerHistory.getCreatedBy().getId(),
@@ -40,16 +42,18 @@ public class AnswerHistoryMapper {
             HistoryType.values()[entity.getType()]);
     }
 
-    private static Answer mapToAnswer(AnswerHistoryJpaEntity answerHistoryEntity) {
+    private static Answer mapToAnswer(AnswerHistoryJpaEntity entity) {
         return new Answer(
-            answerHistoryEntity.getAnswer().getId(),
-            new AnswerOption(answerHistoryEntity.getAnswerOptionId(),
+            entity.getAnswer().getId(),
+            entity.getAnswerOptionId() != null ?
+                new AnswerOption(entity.getAnswerOptionId(),
+                    null,
+                    null,
+                    entity.getQuestionId(),
+                    null) :
                 null,
-                null,
-                answerHistoryEntity.getQuestionId(),
-                null),
-            answerHistoryEntity.getQuestionId(),
-            answerHistoryEntity.getConfidenceLevelId(),
-            answerHistoryEntity.getIsNotApplicable());
+            entity.getQuestionId(),
+            entity.getConfidenceLevelId(),
+            entity.getIsNotApplicable());
     }
 }
