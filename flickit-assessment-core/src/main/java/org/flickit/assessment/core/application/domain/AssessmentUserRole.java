@@ -87,7 +87,8 @@ public enum AssessmentUserRole {
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
             CREATE_ADVICE,
-            VIEW_ANSWER_HISTORY_LIST)),
+            VIEW_ANSWER_HISTORY_LIST,
+            EXPORT_ASSESSMENT_REPORT)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,

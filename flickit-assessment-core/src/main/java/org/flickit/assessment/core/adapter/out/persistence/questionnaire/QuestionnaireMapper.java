@@ -25,6 +25,7 @@ public class QuestionnaireMapper {
         return new QuestionnaireListItem(
             questionnaireView.getId(),
             questionnaireView.getTitle(),
+            questionnaireView.getDescription(),
             questionnaireView.getIndex(),
             questionnaireView.getQuestionCount(),
             answerCount,
