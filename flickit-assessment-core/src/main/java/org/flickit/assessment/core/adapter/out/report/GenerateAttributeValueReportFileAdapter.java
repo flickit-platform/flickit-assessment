@@ -102,6 +102,8 @@ public class GenerateAttributeValueReportFileAdapter implements GenerateAttribut
         var attribute = attributeValue.getAttribute();
         var questions = attribute.getQuestions();
         var answers = attributeValue.getAnswers();
+        if (questions == null || questions.isEmpty())
+            return;
         CellStyle style = workbook.createCellStyle();
         style.setWrapText(true);
 
