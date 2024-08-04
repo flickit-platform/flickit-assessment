@@ -18,7 +18,6 @@ import java.util.UUID;
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentinvite.AssessmentInviteMapper.mapToJpaEntity;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_INVITE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.INVITE_ASSESSMENT_USER_ROLE_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_INVITATION_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor

@@ -1,12 +1,12 @@
-package org.flickit.assessment.core.application.service.assessmentinvitee;
+package org.flickit.assessment.core.application.service.assessmentinvite;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessmentinvitee.UpdateAssessmentInviteeRoleUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.LoadAssessmentInvitationPort;
-import org.flickit.assessment.core.application.port.out.assessmentinvitee.UpdateAssessmentInviteeRolePort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentInviteeMother;
+import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentInvitePort;
+import org.flickit.assessment.core.application.port.out.assessmentinvite.UpdateAssessmentInviteeRolePort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentInviteMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_INVITATION_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_INVITE_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +29,7 @@ class UpdateAssessmentInviteeRoleServiceTest {
     UpdateAssessmentInviteeRoleService service;
 
     @Mock
-    LoadAssessmentInvitationPort loadAssessmentInvitationPort;
+    LoadAssessmentInvitePort loadAssessmentInvitationPort;
 
     @Mock
     AssessmentAccessChecker assessmentAccessChecker;
@@ -45,13 +45,13 @@ class UpdateAssessmentInviteeRoleServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new Param(inviteId, inviteRoleId, currentUserId);
 
-        when(loadAssessmentInvitationPort.loadById(inviteId)).thenThrow(new ResourceNotFoundException(ASSESSMENT_INVITATION_ID_NOT_FOUND));
+        when(loadAssessmentInvitationPort.load(inviteId)).thenThrow(new ResourceNotFoundException(ASSESSMENT_INVITE_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.editRole(param));
 
-        assertEquals(ASSESSMENT_INVITATION_ID_NOT_FOUND, throwable.getMessage(), "The invitation should exist");
+        assertEquals(ASSESSMENT_INVITE_ID_NOT_FOUND, throwable.getMessage(), "The invitation should exist");
 
-        verify(loadAssessmentInvitationPort).loadById(param.getInviteId());
+        verify(loadAssessmentInvitationPort).load(param.getInviteId());
         verifyNoInteractions(assessmentAccessChecker, updateAssessmentInviteeRolePort);
     }
 
@@ -62,16 +62,16 @@ class UpdateAssessmentInviteeRoleServiceTest {
         var roleId = 1;
         var currentUserId = UUID.randomUUID();
         var param = new Param(inviteId, roleId, currentUserId);
-        var assessmentInvitee = AssessmentInviteeMother.notExpiredAssessmentInvitee("test@flickit.org");
+        var assessmentInvitee = AssessmentInviteMother.notExpiredAssessmentInvite("test@flickit.org");
 
-        when(loadAssessmentInvitationPort.loadById(inviteId)).thenReturn(assessmentInvitee);
+        when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(assessmentInvitee);
         when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.editRole(param));
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage(), "User is not allowed to edit assessment invitee");
 
-        verify(loadAssessmentInvitationPort).loadById(param.getInviteId());
+        verify(loadAssessmentInvitationPort).load(param.getInviteId());
         verify(assessmentAccessChecker).isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE);
         verifyNoInteractions(updateAssessmentInviteeRolePort);
     }
@@ -81,17 +81,17 @@ class UpdateAssessmentInviteeRoleServiceTest {
     void testEditAssessmentInviteeRoleService_validParameters_ShouldUpdate() {
         var inviteId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
-        var assessmentInvitee = AssessmentInviteeMother.notExpiredAssessmentInvitee("test@flickit.org");
+        var assessmentInvitee = AssessmentInviteMother.notExpiredAssessmentInvite("test@flickit.org");
         var roleId = assessmentInvitee.getRole().getId()+1;
         var param = new Param(inviteId, roleId, currentUserId);
 
-        when(loadAssessmentInvitationPort.loadById(inviteId)).thenReturn(assessmentInvitee);
+        when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(assessmentInvitee);
         when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(updateAssessmentInviteeRolePort).updateRole(inviteId, roleId);
 
         assertDoesNotThrow(() -> service.editRole(param), "Should update successfully without any exceptions");
 
-        verify(loadAssessmentInvitationPort).loadById(param.getInviteId());
+        verify(loadAssessmentInvitationPort).load(param.getInviteId());
         verify(assessmentAccessChecker).isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE);
         verify(updateAssessmentInviteeRolePort).updateRole(param.getInviteId(), param.getRoleId());
     }
@@ -101,16 +101,16 @@ class UpdateAssessmentInviteeRoleServiceTest {
     void testEditAssessmentInviteeRoleService_SameRoleId_ShouldUpdate() {
         var inviteId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
-        var assessmentInvitee = AssessmentInviteeMother.notExpiredAssessmentInvitee("test@flickit.org");
+        var assessmentInvitee = AssessmentInviteMother.notExpiredAssessmentInvite("test@flickit.org");
         var roleId = assessmentInvitee.getRole().getId();
         var param = new Param(inviteId, roleId, currentUserId);
 
-        when(loadAssessmentInvitationPort.loadById(inviteId)).thenReturn(assessmentInvitee);
+        when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(assessmentInvitee);
         when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
 
         assertDoesNotThrow(() -> service.editRole(param), "Should update successfully without any exceptions");
 
-        verify(loadAssessmentInvitationPort).loadById(param.getInviteId());
+        verify(loadAssessmentInvitationPort).load(param.getInviteId());
         verify(assessmentAccessChecker).isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE);
         verifyNoInteractions(updateAssessmentInviteeRolePort);
     }
