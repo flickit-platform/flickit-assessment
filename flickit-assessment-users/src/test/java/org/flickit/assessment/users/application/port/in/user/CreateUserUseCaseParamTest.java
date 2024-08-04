@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.common.error.ErrorMessageKey.EMAIL_FORMAT_NOT_VALID;
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,7 +26,7 @@ class CreateUserUseCaseParamTest {
         UUID id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateUserUseCase.Param(id, "admin@flickit", "Flickit Admin"));
-        assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
+        assertThat(throwable).hasMessage("email: " + EMAIL_FORMAT_NOT_VALID);
     }
 
     @Test

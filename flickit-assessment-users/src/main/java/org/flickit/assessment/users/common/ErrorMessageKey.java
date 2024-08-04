@@ -10,7 +10,6 @@ public class ErrorMessageKey {
     public static final String USER_BY_EMAIL_NOT_FOUND = "user-by-email.notFound";
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
-    public static final String EMAIL_NOT_VALID = "email.notValid";
 
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
 

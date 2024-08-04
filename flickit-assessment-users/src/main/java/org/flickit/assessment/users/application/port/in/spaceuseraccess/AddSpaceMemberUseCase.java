@@ -10,7 +10,9 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.EMAIL_FORMAT_NOT_VALID;
+import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_EMAIL_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL;
 
 public interface AddSpaceMemberUseCase {
 
@@ -24,7 +26,7 @@ public interface AddSpaceMemberUseCase {
         Long spaceId;
 
         @NotBlank(message = ADD_SPACE_MEMBER_EMAIL_NOT_NULL)
-        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = EMAIL_NOT_VALID)
+        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = EMAIL_FORMAT_NOT_VALID)
         String email;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

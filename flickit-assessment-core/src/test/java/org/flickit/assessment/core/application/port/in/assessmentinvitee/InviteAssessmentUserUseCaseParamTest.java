@@ -7,8 +7,10 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.EMAIL_FORMAT_NOT_VALID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InviteAssessmentUserUseCaseParamTest {
 
@@ -79,6 +81,6 @@ class InviteAssessmentUserUseCaseParamTest {
         String email = "test.com";
         var throwable = assertThrows(ConstraintViolationException.class, () ->
             new InviteAssessmentUserUseCase.Param(assessmentId, email, 1, currentUserId));
-        assertThat(throwable).hasMessage("email: " + EMAIL_NOT_VALID);
+        assertThat(throwable).hasMessage("email: " + EMAIL_FORMAT_NOT_VALID);
     }
 }
