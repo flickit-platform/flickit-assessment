@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface LoadAssessmentInvitePort {
 
-    AssessmentInvite loadById(UUID id);
+    AssessmentInvite load(UUID id);
 }

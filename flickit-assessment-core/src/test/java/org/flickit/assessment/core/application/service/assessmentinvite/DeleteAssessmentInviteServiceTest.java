@@ -43,7 +43,7 @@ class DeleteAssessmentInviteServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new DeleteAssessmentInviteUseCase.Param(id, currentUserId);
 
-        when(loadAssessmentInvitePort.loadById(id)).thenReturn(assessmentInvite);
+        when(loadAssessmentInvitePort.load(id)).thenReturn(assessmentInvite);
         when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), currentUserId, DELETE_ASSESSMENT_INVITE)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class, () -> service.deleteInvite(param), COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -57,12 +57,12 @@ class DeleteAssessmentInviteServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new DeleteAssessmentInviteUseCase.Param(id, currentUserId);
 
-        when(loadAssessmentInvitePort.loadById(id)).thenReturn(assessmentInvite);
+        when(loadAssessmentInvitePort.load(id)).thenReturn(assessmentInvite);
         when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), currentUserId, DELETE_ASSESSMENT_INVITE)).thenReturn(true);
-        doNothing().when(deleteAssessmentInvitePort).deleteById(id);
+        doNothing().when(deleteAssessmentInvitePort).delete(id);
 
         service.deleteInvite(param);
 
-        verify(deleteAssessmentInvitePort, times(1)).deleteById(id);
+        verify(deleteAssessmentInvitePort, times(1)).delete(id);
     }
 }

@@ -79,14 +79,14 @@ public class AssessmentInvitePersistenceJpaAdapter implements
     }
 
     @Override
-    public AssessmentInvite loadById(UUID id) {
+    public AssessmentInvite load(UUID id) {
         return repository.findById(id)
             .map(AssessmentInviteMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_INVITE_ID_NOT_FOUND));
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void delete(UUID id) {
         repository.deleteById(id);
     }
 }

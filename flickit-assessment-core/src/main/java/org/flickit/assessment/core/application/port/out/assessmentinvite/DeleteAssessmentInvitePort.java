@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface DeleteAssessmentInvitePort {
 
-    void deleteById(UUID id);
+    void delete(UUID id);
 }

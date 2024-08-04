@@ -24,10 +24,10 @@ public class DeleteAssessmentInviteService implements DeleteAssessmentInviteUseC
 
     @Override
     public void deleteInvite(Param param) {
-        AssessmentInvite assessmentInvite = loadAssessmentInvitePort.loadById(param.getId());
+        AssessmentInvite assessmentInvite = loadAssessmentInvitePort.load(param.getId());
         if (!assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), param.getCurrentUserId(), DELETE_ASSESSMENT_INVITE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        deleteAssessmentInvitePort.deleteById(param.getId());
+        deleteAssessmentInvitePort.delete(param.getId());
     }
 }
