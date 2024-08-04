@@ -209,4 +209,5 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND = "create-assessment-attribute-ai-report.file.notFound";
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL = "create-assessment-attribute-ai-report.fileLink.notUrl";
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-attribute-ai-report.assessmentResult.notFound";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_AI_DISABLE = "create-assessment-attribute-ai-report.ai.disable";
 }
