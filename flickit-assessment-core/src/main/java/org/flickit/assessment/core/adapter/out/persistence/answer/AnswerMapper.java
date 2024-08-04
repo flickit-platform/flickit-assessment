@@ -37,4 +37,14 @@ public class AnswerMapper {
             answer.getIsNotApplicable()
         );
     }
+
+    public static Answer mapToDomainModel(AnswerJpaEntity answer, AnswerOption answerOption) {
+        return new Answer(
+            answer.getId(),
+            answerOption,
+            answer.getQuestionId(),
+            answer.getConfidenceLevelId(),
+            answer.getIsNotApplicable()
+        );
+    }
 }

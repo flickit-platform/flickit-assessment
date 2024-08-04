@@ -14,7 +14,7 @@ import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
