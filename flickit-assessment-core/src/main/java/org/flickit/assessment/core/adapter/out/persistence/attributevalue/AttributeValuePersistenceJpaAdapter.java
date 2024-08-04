@@ -100,6 +100,22 @@ public class AttributeValuePersistenceJpaAdapter implements
         return AttributeValueMapper.mapToDomainModel(attributeValueEntity, attribute, answers, maturityLevel);
     }
 
+    private List<Question> loadQuestionsByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId) {
+        var questionWithImpactViews = questionRepository.findByAttributeIdAndKitVersionId(attributeId, kitVersionId);
+
+        var questionToImpactsMap = questionWithImpactViews.stream()
+            .collect(groupingBy(AttributeImpactfulQuestionsView::getQuestion));
+
+        return questionToImpactsMap.entrySet().stream()
+            .map(e -> {
+                var questionImpacts = e.getValue().stream()
+                    .map(v -> QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact()))
+                    .toList();
+                return QuestionMapper.mapToDomainModel(e.getKey(), questionImpacts);
+            })
+            .toList();
+    }
+
     private List<Answer> loadAnswersByAssessmentResultIdAndQuestionIdIn(AssessmentResultJpaEntity assessmentResult, List<Long> questionIds) {
         var kitVersionId = assessmentResult.getKitVersionId();
         var answerEntities = answerRepository.findByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds);
@@ -127,22 +143,6 @@ public class AttributeValuePersistenceJpaAdapter implements
                     answerOption = AnswerOptionMapper.mapToDomainModel(answerOptionEntity, answerOptionImpacts);
                 }
                 return AnswerMapper.mapToDomainModel(answerEntity, answerOption);
-            })
-            .toList();
-    }
-
-    private List<Question> loadQuestionsByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId) {
-        var questionWithImpactViews = questionRepository.findByAttributeIdAndKitVersionId(attributeId, kitVersionId);
-
-        var questionToImpactsMap = questionWithImpactViews.stream()
-            .collect(groupingBy(AttributeImpactfulQuestionsView::getQuestion));
-
-        return questionToImpactsMap.entrySet().stream()
-            .map(e -> {
-                var questionImpacts = e.getValue().stream()
-                    .map(v -> QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact()))
-                    .toList();
-                return QuestionMapper.mapToDomainModel(e.getKey(), questionImpacts);
             })
             .toList();
     }
