@@ -8,7 +8,9 @@ import org.flickit.assessment.core.application.port.out.assessment.GetAssessment
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,10 +49,16 @@ class CreateAssessmentAttributeAiReportServiceTest {
     private CreateAssessmentAttributeAiPort createAssessmentAttributeAiPort;
 
     @Mock
+    private UpdateAttributeInsightPort updateAttributeInsightPort;
+
+    @Mock
     private LoadAttributePort loadAttributePort;
 
     @Mock
     private LoadAttributeInsightPort loadAttributeInsightPort;
+
+    @Mock
+    private CreateAttributeInsightPort createAttributeInsightPort;
 
     private final String fileLink = "http://127.0.0.1:9000/report/5e3b5d74-cc9c-4b54-b051-86e934ae9a03/temp.?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-" +
         "Credential=minioadmin%2F20240726%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240726T052101Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-" +
@@ -59,7 +67,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
     @BeforeEach
     void prepare() {
         service = spy(new CreateAssessmentAttributeAiReportService(loadAttributePort, getAssessmentPort,
-            assessmentAccessChecker, loadAssessmentResultPort, loadAttributeInsightPort, createAssessmentAttributeAiPort));
+            assessmentAccessChecker, loadAssessmentResultPort, loadAttributeInsightPort, createAttributeInsightPort, updateAttributeInsightPort, createAssessmentAttributeAiPort));
     }
 
     @Test
@@ -80,7 +88,8 @@ class CreateAssessmentAttributeAiReportServiceTest {
             loadAttributePort,
             loadAssessmentResultPort,
             loadAttributeInsightPort,
-            createAssessmentAttributeAiPort);
+            createAssessmentAttributeAiPort,
+            updateAttributeInsightPort);
     }
 
     @Test
@@ -102,7 +111,8 @@ class CreateAssessmentAttributeAiReportServiceTest {
         verifyNoInteractions(loadAttributePort,
             loadAssessmentResultPort,
             loadAttributeInsightPort,
-            createAssessmentAttributeAiPort);
+            createAssessmentAttributeAiPort,
+            updateAttributeInsightPort);
     }
 
     @Test
@@ -123,32 +133,34 @@ class CreateAssessmentAttributeAiReportServiceTest {
         verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
         verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, EXPORT_ASSESSMENT_REPORT);
         verifyNoInteractions(loadAttributeInsightPort,
-            createAssessmentAttributeAiPort);
+            createAssessmentAttributeAiPort,
+            updateAttributeInsightPort);
     }
 
     @Test
     @DisplayName("Create Assessment Attribute AI Report - Valid Parameters, AI Insight Does Not Exist - Return Text")
     void testCreateAssessmentAttributeAiReport_ValidParametersAiInsightDoesNotExists_ReturnText() {
         UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
-        Param param = new Param(assessmentId, attribute.getId(), fileLink, currentUserId);
+        Param param = new Param(assessment.getId(), attribute.getId(), fileLink, currentUserId);
         InputStream downloadFileResult = new ByteArrayInputStream("File Content".getBytes());
+        var aiReport = "Report Content";
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId()))
-            .thenReturn(Optional.empty());
-        when(createAssessmentAttributeAiPort.createReport(downloadFileResult, attribute)).thenReturn("Report Content");
+        when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
+        when(createAssessmentAttributeAiPort.createReport(downloadFileResult, attribute)).thenReturn(aiReport);
+        doNothing().when(createAttributeInsightPort).persist(any());
         doReturn(downloadFileResult).when(service).downloadFile(param.getFileLink());
 
         var result = service.createAttributeAiReport(param);
 
         assertEquals("Report Content", result.content());
+        verifyNoInteractions(updateAttributeInsightPort);
     }
 
     @Test
@@ -172,7 +184,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var result = assertDoesNotThrow(() -> service.createAttributeAiReport(param));
 
         assertEquals(result.content(), attributeInsight.getAiInsight());
-        verifyNoInteractions(createAssessmentAttributeAiPort);
+        verifyNoInteractions(createAssessmentAttributeAiPort, updateAttributeInsightPort);
     }
 
     @Test
@@ -194,10 +206,12 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
         doReturn(downloadFileResult).when(service).downloadFile(param.getFileLink());
         when(createAssessmentAttributeAiPort.createReport(downloadFileResult, attribute)).thenReturn(attributeInsight.getAiInsight());
+        doNothing().when(updateAttributeInsightPort).update(any());
 
         var result = assertDoesNotThrow(() -> service.createAttributeAiReport(param));
 
         assertEquals(attributeInsight.getAiInsight(), result.content());
         verify(createAssessmentAttributeAiPort).createReport(downloadFileResult, attribute);
+        verifyNoInteractions(createAttributeInsightPort);
     }
 }

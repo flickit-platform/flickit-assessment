@@ -11,7 +11,9 @@ import org.flickit.assessment.core.application.port.out.assessment.GetAssessment
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,8 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
@@ -30,7 +34,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class CreateAssessmentAttributeAiReportService implements CreateAssessmentAttributeAiReportUseCase {
 
@@ -39,6 +43,8 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
+    private final CreateAttributeInsightPort createAttributeInsightPort;
+    private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final CreateAssessmentAttributeAiPort createAssessmentAttributeAiPort;
 
     @SneakyThrows
@@ -58,7 +64,9 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attribute.getId());
         if (attributeInsight.isEmpty()) {
             try (var stream = downloadFile(param.getFileLink())) {
-                return new Result(createAssessmentAttributeAiPort.createReport(stream, attribute));
+                var aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
+                createAttributeInsightPort.persist(toAttributeInsightCreateParam(assessmentResult.getId(), attribute.getId(), aiInsight, LocalDateTime.now(), param.getFileLink()));
+                return new Result(aiInsight);
             }
         }
 
@@ -68,7 +76,9 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
                 return new Result(attributeInsight.get().getAiInsight());
 
             try (var stream = downloadFile(param.getFileLink())) {
-                return new Result(createAssessmentAttributeAiPort.createReport(stream, attribute));
+                var newAiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
+                updateAttributeInsightPort.update(toAttributeInsightUpdateParam(assessmentResult.getId(), attribute.getId(), newAiInsight, attributeInsight.get().getAssessorInsight(), LocalDateTime.now(), attributeInsight.get().getAssessorInsightTime(), param.getFileLink()));
+                return new Result(newAiInsight);
             }
         }
 
@@ -93,5 +103,27 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         } catch (IOException e) {
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND);
         }
+    }
+
+    private CreateAttributeInsightPort.Param toAttributeInsightCreateParam(UUID assessmentResultId, long attributeId, String aiInsight,
+                                                                           LocalDateTime aiInsightTime, String fileLink) {
+        return new CreateAttributeInsightPort.Param(assessmentResultId,
+            attributeId,
+            aiInsight,
+            null,
+            aiInsightTime,
+            null,
+            fileLink);
+    }
+
+    private UpdateAttributeInsightPort.Param toAttributeInsightUpdateParam(UUID assessmentResultId, long attributeId, String newAiInsight,
+                                                                           String assessorInsight, LocalDateTime aiInsightTime, LocalDateTime assessorInsightTime, String fileLink) {
+        return new UpdateAttributeInsightPort.Param(assessmentResultId,
+            attributeId,
+            newAiInsight,
+            assessorInsight,
+            aiInsightTime,
+            assessorInsightTime,
+            fileLink);
     }
 }
