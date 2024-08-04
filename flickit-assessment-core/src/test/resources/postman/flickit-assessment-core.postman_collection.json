@@ -1314,7 +1314,7 @@
 			"response": []
 		},
 		{
-			"name": "Delete Assessment Invitee",
+			"name": "Delete Assessment Invite",
 			"request": {
 				"method": "DELETE",
 				"header": [

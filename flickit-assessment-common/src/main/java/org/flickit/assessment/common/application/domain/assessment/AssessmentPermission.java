@@ -39,7 +39,7 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
     VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
     VIEW_EVIDENCE("viewEvidence"),
-    DELETE_ASSESSMENT_INVITEE("deleteAssessmentInvitee");
+    DELETE_ASSESSMENT_INVITE("deleteAssessmentInvite");
 
     private final String code;
 }
