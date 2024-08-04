@@ -15,7 +15,7 @@ env:
   SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/assessment-core
   SPRING_DATASOURCE_USERNAME: rootuser
   SPRING_DATASOURCE_PASSWORD: changeme
-  SONAR_PROJECT_KEY: flickit-assessment-core
+  SONAR_PROJECT_KEY: Flickit-Platform-Dev_flickit-assessment
   REGISTRY: ghcr.io
   IMAGE_NAME: flickit-platform-dev/flickit-assessment
   JIB_OPT: -Djib.httpTimeout=240000 -Dmaven.test.skip=true
@@ -87,7 +87,6 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
   sonar:
-    if: false
     needs: [test]
     runs-on: ubuntu-latest
 
@@ -141,7 +140,7 @@ jobs:
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
 
   build-and-push-latest-image:
-    needs: [test]
+    needs: [sonar]
     name: deploy latest image
     runs-on: ubuntu-latest
     if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
@@ -199,7 +198,7 @@ jobs:
           DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
 
   tag-and-release:
-    needs: [test]
+    needs: [sonar]
     name: tag and release
     runs-on: ubuntu-latest
     if: ${{ ((github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases-'))) ||
