@@ -20,7 +20,7 @@ class GetUserByEmailUseCaseParamTest {
     }
 
     @Test
-    void testGetUserByEmailParam_EmailIsInvalid_ErrorMessage() {
+    void testGetUserByEmailParam_emailIsNotValid_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetUserByEmailUseCase.Param("admin@flickit"));
         assertThat(throwable).hasMessage("email: " + COMMON_EMAIL_FORMAT_NOT_VALID);
@@ -34,19 +34,11 @@ class GetUserByEmailUseCaseParamTest {
     }
 
     @Test
-    void testGetUserByEmailParam_Email_SuccessfulStripAndIgnoreCase() {
+    void testGetUserByEmailParam_email_SuccessfulStripAndIgnoreCase() {
         String email1 = "test@test.com";
         String email2 = " Test@test.com    ";
-        var param1 =  new GetUserByEmailUseCase.Param(email1);
-        var param2 = new GetUserByEmailUseCase.Param( email2);
+        var param1 = new GetUserByEmailUseCase.Param(email1);
+        var param2 = new GetUserByEmailUseCase.Param(email2);
         assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
-    }
-
-    @Test
-    void testGetUserByEmailParam_emailIsNotValid_ErrorMessage() {
-        String email = "test.com";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetUserByEmailUseCase.Param(email));
-        assertThat(throwable).hasMessage("email: " + COMMON_EMAIL_FORMAT_NOT_VALID);
     }
 }

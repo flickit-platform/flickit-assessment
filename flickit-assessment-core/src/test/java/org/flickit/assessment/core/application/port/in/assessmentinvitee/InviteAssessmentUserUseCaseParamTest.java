@@ -64,18 +64,18 @@ class InviteAssessmentUserUseCaseParamTest {
     }
 
     @Test
-    void testInviteAssessmentUserParam_Email_SuccessfulStripAndIgnoreCase() {
+    void testInviteAssessmentUserParam_email_SuccessfulStripAndIgnoreCase() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         String email1 = "test@test.com";
         String email2 = " Test@test.com    ";
-        var param1 =  new InviteAssessmentUserUseCase.Param(assessmentId, email1, 1, currentUserId);
+        var param1 = new InviteAssessmentUserUseCase.Param(assessmentId, email1, 1, currentUserId);
         var param2 = new InviteAssessmentUserUseCase.Param(assessmentId, email2, 1, currentUserId);
         assertEquals(param1.getEmail(), param2.getEmail(), "The input email should be stripped, and the case should be ignored.");
     }
 
     @Test
-    void testInviteAssessmentUserParam_IncorrectEmailPattern_ErrorMessage() {
+    void testInviteAssessmentUserParam_emailFormatIsNotValid_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         String email = "test.com";

@@ -34,7 +34,7 @@ class InviteSpaceMemberUseCaseParamTest {
     }
 
     @Test
-    void testAddSpaceMember_EmailIsNotValid_ErrorMessage() {
+    void testAddSpaceMember_emailIsNotValid_ErrorMessage() {
         long spaceId = 0L;
         String email = "asta.com";
         UUID currentUserId = UUID.randomUUID();
@@ -54,7 +54,7 @@ class InviteSpaceMemberUseCaseParamTest {
     }
 
     @Test
-    void testAddSpaceMember_Email_SuccessfulStripAndIgnoreCase() {
+    void testAddSpaceMember_email_SuccessfulStripAndIgnoreCase() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         String email1 = "test@test.com";
