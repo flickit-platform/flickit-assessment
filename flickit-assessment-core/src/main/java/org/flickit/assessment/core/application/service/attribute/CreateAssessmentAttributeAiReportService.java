@@ -65,7 +65,8 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (attributeInsight.isEmpty()) {
             try (var stream = downloadFile(param.getFileLink())) {
                 var aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
-                createAttributeInsightPort.persist(toAttributeInsightCreateParam(assessmentResult.getId(), attribute.getId(), aiInsight, LocalDateTime.now(), param.getFileLink()));
+                createAttributeInsightPort.persist(toAttributeInsightCreateParam(assessmentResult.getId(), attribute.getId(),
+                    attribute.getTitle(), aiInsight, LocalDateTime.now(), param.getFileLink()));
                 return new Result(aiInsight);
             }
         }
@@ -77,7 +78,8 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
 
             try (var stream = downloadFile(param.getFileLink())) {
                 var newAiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
-                updateAttributeInsightPort.update(toAttributeInsightUpdateParam(assessmentResult.getId(), attribute.getId(), newAiInsight, attributeInsight.get().getAssessorInsight(), LocalDateTime.now(), attributeInsight.get().getAssessorInsightTime(), param.getFileLink()));
+                updateAttributeInsightPort.update(toAttributeInsightUpdateParam(assessmentResult.getId(), attribute.getId(), attribute.getTitle(),
+                    newAiInsight, attributeInsight.get().getAssessorInsight(), LocalDateTime.now(), attributeInsight.get().getAssessorInsightTime(), param.getFileLink()));
                 return new Result(newAiInsight);
             }
         }
@@ -105,10 +107,11 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         }
     }
 
-    private CreateAttributeInsightPort.Param toAttributeInsightCreateParam(UUID assessmentResultId, long attributeId, String aiInsight,
+    private CreateAttributeInsightPort.Param toAttributeInsightCreateParam(UUID assessmentResultId, long attributeId, String attributeTitle, String aiInsight,
                                                                            LocalDateTime aiInsightTime, String fileLink) {
         return new CreateAttributeInsightPort.Param(assessmentResultId,
             attributeId,
+            attributeTitle,
             aiInsight,
             null,
             aiInsightTime,
@@ -116,10 +119,11 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
             fileLink);
     }
 
-    private UpdateAttributeInsightPort.Param toAttributeInsightUpdateParam(UUID assessmentResultId, long attributeId, String newAiInsight,
+    private UpdateAttributeInsightPort.Param toAttributeInsightUpdateParam(UUID assessmentResultId, long attributeId, String attributeTitle, String newAiInsight,
                                                                            String assessorInsight, LocalDateTime aiInsightTime, LocalDateTime assessorInsightTime, String fileLink) {
         return new UpdateAttributeInsightPort.Param(assessmentResultId,
             attributeId,
+            attributeTitle,
             newAiInsight,
             assessorInsight,
             aiInsightTime,

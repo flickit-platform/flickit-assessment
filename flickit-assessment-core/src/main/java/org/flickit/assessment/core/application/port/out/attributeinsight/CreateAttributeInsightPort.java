@@ -9,6 +9,7 @@ public interface CreateAttributeInsightPort {
 
     record Param(UUID assessmentResultId,
                  Long attributeId,
+                 String attributeTitle,
                  String aiInsight,
                  String assessorInsight,
                  LocalDateTime aiInsightTime,
