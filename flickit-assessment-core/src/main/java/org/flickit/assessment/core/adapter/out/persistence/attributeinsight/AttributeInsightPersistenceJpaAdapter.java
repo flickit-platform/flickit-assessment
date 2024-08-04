@@ -27,18 +27,18 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(CreateAttributeInsightPort.Param param) {
-        repository.save(AttributeInsightMapper.mapCreateParamToJpaEntity(param));
+    public void persist(AttributeInsight attributeInsight) {
+        repository.save(AttributeInsightMapper.mapToJpaEntity(attributeInsight));
     }
 
     @Override
-    public void update(UpdateAttributeInsightPort.Param param) {
-        repository.update(param.assessmentResultId(),
-            param.attributeId(),
-            param.aiInsight(),
-            param.assessorInsight(),
-            param.aiInsightTime(),
-            param.assessorInsightTime(),
-            param.aiInputPath());
+    public void update(AttributeInsight attributeInsight) {
+        repository.update(attributeInsight.getAttributeResultId(),
+            attributeInsight.getAttributeId(),
+            attributeInsight.getAiInsight(),
+            attributeInsight.getAssessorInsight(),
+            attributeInsight.getAiInsightTime(),
+            attributeInsight.getAssessorInsightTime(),
+            attributeInsight.getAiInputPath());
     }
 }

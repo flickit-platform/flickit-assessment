@@ -1,18 +1,8 @@
 package org.flickit.assessment.core.application.port.out.attributeinsight;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
+import org.flickit.assessment.core.application.domain.AttributeInsight;
 
 public interface CreateAttributeInsightPort {
 
-    void persist(Param param);
-
-    record Param(UUID assessmentResultId,
-                 Long attributeId,
-                 String aiInsight,
-                 String assessorInsight,
-                 LocalDateTime aiInsightTime,
-                 LocalDateTime assessorInsightTime,
-                 String aiInputPath) {
-    }
+    void persist(AttributeInsight attributeInsight);
 }
