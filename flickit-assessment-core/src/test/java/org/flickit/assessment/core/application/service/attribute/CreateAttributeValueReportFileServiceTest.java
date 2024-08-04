@@ -5,15 +5,18 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.AttributeValueMother;
+import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,6 +55,9 @@ class CreateAttributeValueReportFileServiceTest {
     private LoadAttributeValuePort loadAttributeValuePort;
 
     @Mock
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
+
+    @Mock
     private GenerateAttributeValueReportFilePort generateAttributeValueReportFilePort;
 
     @Mock
@@ -71,6 +78,7 @@ class CreateAttributeValueReportFileServiceTest {
         assertThrows(AccessDeniedException.class, () -> service.createAttributeValueReportFile(param), COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(validateAssessmentResultPort,
+            loadMaturityLevelsPort,
             generateAttributeValueReportFilePort,
             uploadAttributeScoreExcelPort,
             createFileDownloadLinkPort);
@@ -83,6 +91,7 @@ class CreateAttributeValueReportFileServiceTest {
             UUID.randomUUID());
         AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
+        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         InputStream inputStream = ByteArrayInputStream.nullInputStream();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
@@ -91,8 +100,9 @@ class CreateAttributeValueReportFileServiceTest {
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
 
-        when(generateAttributeValueReportFilePort.generateReport(param.getAssessmentId(), attributeValue))
+        when(generateAttributeValueReportFilePort.generateReport(attributeValue, maturityLevels))
             .thenReturn(inputStream);
 
         String filePath = "dir/filename.xlsx";

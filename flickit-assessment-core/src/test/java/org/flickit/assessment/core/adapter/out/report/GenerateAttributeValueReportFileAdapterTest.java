@@ -6,27 +6,17 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentResultJpaEntityMother;
-import org.flickit.assessment.core.test.fixture.adapter.jpa.MaturityLevelJpaEntityMother;
 import org.flickit.assessment.core.test.fixture.application.*;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GenerateAttributeValueReportFileAdapterTest {
@@ -34,31 +24,17 @@ class GenerateAttributeValueReportFileAdapterTest {
     @InjectMocks
     private GenerateAttributeValueReportFileAdapter adapter;
 
-    @Mock
-    private AssessmentResultJpaRepository assessmentResultRepository;
-
-    @Mock
-    private MaturityLevelJpaRepository maturityLevelRepository;
-
     @Test
     void testGenerateAttributeValueReportFile_ValidParam_CreateFile() {
         var attributeId = 1563L;
-        var assessmentId = UUID.randomUUID();
 
         Answer answer = AnswerMother.fullScoreOnLevels23(attributeId);
         Question question = QuestionMother.withIdAndImpactsOnLevel23(answer.getQuestionId(), attributeId);
         Attribute attribute = AttributeMother.withIdAndQuestions(attributeId, List.of(question));
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        AssessmentResultJpaEntity assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(156L, Boolean.TRUE, Boolean.TRUE);
-        List<MaturityLevelJpaEntity> maturityLevelEntities = maturityLevels.stream()
-            .map(x -> MaturityLevelJpaEntityMother.mapToJpaEntity(x, assessmentResultEntity.getKitVersionId()))
-            .toList();
 
-        when(assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)).thenReturn(Optional.of(assessmentResultEntity));
-        when(maturityLevelRepository.findAllByKitVersionIdOrderByIndex(assessmentResultEntity.getKitVersionId())).thenReturn(maturityLevelEntities);
-
-        InputStream inputStream = adapter.generateReport(assessmentId, attributeValue);
+        InputStream inputStream = adapter.generateReport(attributeValue, maturityLevels);
 
         assertNotNull(inputStream);
     }
@@ -67,22 +43,14 @@ class GenerateAttributeValueReportFileAdapterTest {
     @Test
     void testGenerateAttributeValueReportFile_ValidParam_FileStructureShouldNotBeChanged() {
         var attributeId = 1563L;
-        var assessmentId = UUID.randomUUID();
 
         Answer answer = AnswerMother.fullScoreOnLevels23(attributeId);
         Question question = QuestionMother.withIdAndImpactsOnLevel23(answer.getQuestionId(), attributeId);
         Attribute attribute = AttributeMother.withIdAndQuestions(attributeId, List.of(question));
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        AssessmentResultJpaEntity assessmentResultEntity = AssessmentResultJpaEntityMother.validSimpleAssessmentResultEntity(156L, Boolean.TRUE, Boolean.TRUE);
-        List<MaturityLevelJpaEntity> maturityLevelEntities = maturityLevels.stream()
-            .map(x -> MaturityLevelJpaEntityMother.mapToJpaEntity(x, assessmentResultEntity.getKitVersionId()))
-            .toList();
 
-        when(assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)).thenReturn(Optional.of(assessmentResultEntity));
-        when(maturityLevelRepository.findAllByKitVersionIdOrderByIndex(assessmentResultEntity.getKitVersionId())).thenReturn(maturityLevelEntities);
-
-        InputStream inputStream = adapter.generateReport(assessmentId, attributeValue);
+        InputStream inputStream = adapter.generateReport(attributeValue, maturityLevels);
 
         assertNotNull(inputStream);
         Workbook workbook = WorkbookFactory.create(inputStream);

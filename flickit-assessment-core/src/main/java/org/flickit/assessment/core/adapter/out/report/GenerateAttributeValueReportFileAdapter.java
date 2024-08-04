@@ -5,12 +5,8 @@ import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
-import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -18,11 +14,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -35,18 +28,9 @@ public class GenerateAttributeValueReportFileAdapter implements GenerateAttribut
     private static final List<String> ATTRIBUTE_SHEET_HEADERS = List.of("Attribute Title", "Attribute Maturity Level");
     private static final List<String> MATURITY_LEVELS_HEADERS = List.of("Title", "Index", "Description");
 
-    private final AssessmentResultJpaRepository assessmentResultRepository;
-    private final MaturityLevelJpaRepository maturityLevelRepository;
-
     @SneakyThrows
     @Override
-    public InputStream generateReport(UUID assessmentId, AttributeValue attributeValue) {
-        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(assessmentResult.getKitVersionId()).stream()
-            .map(x -> MaturityLevelMapper.mapToDomainModel(x, null))
-            .toList();
-
+    public InputStream generateReport(AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
         Workbook workbook = new XSSFWorkbook();
         createQuestionsSheet(attributeValue, workbook);
         createAttributeSheet(attributeValue, workbook);

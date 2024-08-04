@@ -7,10 +7,12 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.List;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -35,6 +38,7 @@ public class CreateAttributeValueReportFileService implements CreateAttributeVal
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeValuePort loadAttributeValuePort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final GenerateAttributeValueReportFilePort generateAttributeValueReportFilePort;
     private final UploadAttributeScoreExcelPort uploadAttributeScoreExcelPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -48,7 +52,8 @@ public class CreateAttributeValueReportFileService implements CreateAttributeVal
         AssessmentResult assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
         AttributeValue attributeValue = loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId());
-        InputStream inputStream = generateAttributeValueReportFilePort.generateReport(param.getAssessmentId(), attributeValue);
+        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
+        InputStream inputStream = generateAttributeValueReportFilePort.generateReport(attributeValue, maturityLevels);
 
         String filePath = uploadAttributeScoreExcelPort.uploadExcel(inputStream, REPORT_FILE_NAME);
         String downloadLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
