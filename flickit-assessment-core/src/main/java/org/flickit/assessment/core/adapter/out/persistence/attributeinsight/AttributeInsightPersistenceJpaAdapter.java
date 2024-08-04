@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
@@ -19,7 +18,6 @@ public class AttributeInsightPersistenceJpaAdapter implements
     CreateAttributeInsightPort,
     UpdateAttributeInsightPort {
 
-    private final OpenAiProperties openAiProperties;
     private final AttributeInsightJpaRepository repository;
 
     @Override
