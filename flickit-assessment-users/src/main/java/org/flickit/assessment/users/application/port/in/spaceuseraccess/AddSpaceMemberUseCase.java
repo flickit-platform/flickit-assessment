@@ -25,7 +25,7 @@ public interface AddSpaceMemberUseCase {
         @NotNull(message = ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL)
         Long spaceId;
 
-        @NotBlank(message = ADD_SPACE_MEMBER_EMAIL_NOT_NULL)
+        @NotNull(message = ADD_SPACE_MEMBER_EMAIL_NOT_NULL)
         @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = COMMON_EMAIL_FORMAT_NOT_VALID)
         String email;
 
