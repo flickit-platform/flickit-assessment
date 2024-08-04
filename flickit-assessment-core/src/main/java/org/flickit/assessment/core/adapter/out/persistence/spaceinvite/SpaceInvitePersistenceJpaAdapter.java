@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.spaceinvitee;
+package org.flickit.assessment.core.adapter.out.persistence.spaceinvite;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
@@ -6,11 +6,11 @@ import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaRepository;
 import org.springframework.stereotype.Component;
 
-import static org.flickit.assessment.core.adapter.out.persistence.spaceinvitee.SpaceInviteeMapper.mapToJpaEntity;
+import static org.flickit.assessment.core.adapter.out.persistence.spaceinvite.SpaceInviteMapper.mapToJpaEntity;
 
-@Component("coreSpaceInviteePersistenceJpaAdapter")
+@Component("coreSpaceInvitePersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class SpaceInviteePersistenceJpaAdapter implements CreateSpaceInvitePort {
+public class SpaceInvitePersistenceJpaAdapter implements CreateSpaceInvitePort {
 
     private final SpaceInviteeJpaRepository repository;
 
@@ -19,7 +19,7 @@ public class SpaceInviteePersistenceJpaAdapter implements CreateSpaceInvitePort 
         var invitation = repository.findBySpaceIdAndEmail(param.spaceId(), param.email());
 
         SpaceInviteeJpaEntity entity;
-        entity = invitation.map(SpaceInviteeJpaEntity -> mapToJpaEntity(invitation.get().getId(), param))
+        entity = invitation.map(e -> mapToJpaEntity(invitation.get().getId(), param))
             .orElseGet(() -> mapToJpaEntity(null, param));
 
         repository.save(entity);

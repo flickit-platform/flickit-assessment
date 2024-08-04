@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.spaceinvitee;
+package org.flickit.assessment.core.adapter.out.persistence.spaceinvite;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import org.flickit.assessment.data.jpa.users.spaceinvitee.SpaceInviteeJpaEntity;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SpaceInviteeMapper {
+public class SpaceInviteMapper {
 
     public static SpaceInviteeJpaEntity mapToJpaEntity(UUID id, CreateSpaceInvitePort.Param param) {
         return new SpaceInviteeJpaEntity(id,
