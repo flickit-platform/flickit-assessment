@@ -44,7 +44,7 @@
         <gson.version>2.11.0</gson.version>
         <httpclient5.version>5.3.1</httpclient5.version>
 
-		<sonar.organization>flickit-platform</sonar.organization>
+		<sonar.organization>flickit-platform-dev</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
