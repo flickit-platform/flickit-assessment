@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.DELETE_ASSESSMENT_INVITE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -35,9 +36,8 @@ class DeleteAssessmentInviteServiceTest {
     @Mock
     private LoadAssessmentInvitePort loadAssessmentInvitePort;
 
-
     @Test
-    void testDeleteAssessmentInvite_WhenDoesNotHaveRequiredPermission_ThenThrowException() {
+    void testDeleteAssessmentInvite_WhenUserDoesNotHaveRequiredPermission_ThenThrowException() {
         AssessmentInvite assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
         UUID id = assessmentInvite.getId();
         UUID currentUserId = UUID.randomUUID();
@@ -46,13 +46,15 @@ class DeleteAssessmentInviteServiceTest {
         when(loadAssessmentInvitePort.load(id)).thenReturn(assessmentInvite);
         when(assessmentAccessChecker.isAuthorized(assessmentInvite.getAssessmentId(), currentUserId, DELETE_ASSESSMENT_INVITE)).thenReturn(false);
 
-        assertThrows(AccessDeniedException.class, () -> service.deleteInvite(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteInvite(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(deleteAssessmentInvitePort);
     }
 
     @Test
     void testDeleteAssessmentInvite_WhenValidInput_ThenDelete() {
-        AssessmentInvite assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
+        var assessmentInvite = AssessmentInviteMother.notExpiredAssessmentInvite("user@mail.com");
         UUID id = assessmentInvite.getId();
         UUID currentUserId = UUID.randomUUID();
         var param = new DeleteAssessmentInviteUseCase.Param(id, currentUserId);
