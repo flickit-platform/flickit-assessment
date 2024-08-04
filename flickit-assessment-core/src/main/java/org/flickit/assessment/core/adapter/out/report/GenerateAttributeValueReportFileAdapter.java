@@ -142,7 +142,7 @@ public class GenerateAttributeValueReportFileAdapter implements GenerateAttribut
         cell.setCellStyle(style);
 
         double score = 0;
-        if (answer != null) {
+        if (answer != null && answer.getSelectedOption() != null && answer.getSelectedOption().getImpacts() != null) {
             score = answer.getSelectedOption().getImpacts().stream()
                 .filter(ai -> ai.getQuestionImpact().getAttributeId() == attributeId)
                 .findFirst()
