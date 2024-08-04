@@ -9,7 +9,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.common.error.ErrorMessageKey.EMAIL_FORMAT_NOT_VALID;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_EMAIL_FORMAT_NOT_VALID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface InviteAssessmentUserUseCase {
@@ -24,7 +24,7 @@ public interface InviteAssessmentUserUseCase {
         UUID assessmentId;
 
         @NotNull(message = INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL)
-        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = EMAIL_FORMAT_NOT_VALID)
+        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = COMMON_EMAIL_FORMAT_NOT_VALID)
         String email;
 
         @NotNull(message = INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL)

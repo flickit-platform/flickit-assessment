@@ -19,7 +19,7 @@ public class ErrorMessageKey {
     public static final String UPLOAD_FILE_SIZE_MAX = "upload-file.size.max";
     public static final String UPLOAD_FILE_FORMAT_NOT_VALID = "upload-file.format.notValid";
 
-    public static final String EMAIL_FORMAT_NOT_VALID = "common.email.format.notValid";
+    public static final String COMMON_EMAIL_FORMAT_NOT_VALID = "common.email.format.notValid";
 
     public static final String FILE_STORAGE_FILE_NOT_FOUND = "file-storage.file.notFound";
 

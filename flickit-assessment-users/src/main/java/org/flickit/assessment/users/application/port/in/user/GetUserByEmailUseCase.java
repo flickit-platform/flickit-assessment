@@ -9,7 +9,7 @@ import org.flickit.assessment.users.application.domain.User;
 
 import java.time.LocalDateTime;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.EMAIL_FORMAT_NOT_VALID;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_EMAIL_FORMAT_NOT_VALID;
 import static org.flickit.assessment.users.common.ErrorMessageKey.GET_USER_BY_EMAIL_EMAIL_NOT_NULL;
 
 public interface GetUserByEmailUseCase {
@@ -21,7 +21,7 @@ public interface GetUserByEmailUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_USER_BY_EMAIL_EMAIL_NOT_NULL)
-        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = EMAIL_FORMAT_NOT_VALID)
+        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = COMMON_EMAIL_FORMAT_NOT_VALID)
         String email;
 
         public Param(String email) {
