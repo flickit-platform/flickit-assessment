@@ -1,6 +1,5 @@
 package org.flickit.assessment.users.application.port.in.spaceuseraccess;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.EqualsAndHashCode;
