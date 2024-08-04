@@ -9,6 +9,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_EMAIL_FORMAT_NOT_VALID;
 import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface CreateUserUseCase {
@@ -23,7 +24,7 @@ public interface CreateUserUseCase {
         UUID userId;
 
         @NotNull(message = CREATE_USER_EMAIL_NOT_NULL)
-        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = CREATE_USER_EMAIL_NOT_VALID)
+        @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = COMMON_EMAIL_FORMAT_NOT_VALID)
         String email;
 
         @NotNull(message = CREATE_USER_DISPLAY_NAME_NOT_NULL)
@@ -33,7 +34,7 @@ public interface CreateUserUseCase {
 
         public Param(UUID userId, String email, String displayName) {
             this.userId = userId;
-            this.email = email;
+            this.email = (email == null || email.isBlank()) ? null : email.strip().toLowerCase();
             this.displayName = displayName;
             validateSelf();
         }

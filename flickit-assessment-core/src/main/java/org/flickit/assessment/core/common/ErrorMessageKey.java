@@ -12,7 +12,6 @@ public class ErrorMessageKey {
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
     public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
-    public static final String ATTRIBUTE_VALUE_ID_NOT_FOUND = "attribute-value.id.notFound";
     public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
     public static final String ASSESSMENT_INVITEE_ID_NOT_FOUND = "assessment-invitee.id.notFound";
@@ -200,9 +199,8 @@ public class ErrorMessageKey {
     public static final String GET_ANSWER_HISTORY_LIST_PAGE_MIN = "get-answer-history-list.page.min";
     public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-answer-history-list.assessmentResult.notFound";
 
-    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ASSESSMENT_ID_NOT_NULL = "create-attribute-value-excel.assessmentId.notNull";
-    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_ID_NOT_NULL = "create-attribute-value-excel.attributeId.notNull";
-    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND = "create-attribute-value-excel.attributeValue.notFound";
+    public static final String CREATE_ATTRIBUTE_VALUE_REPORT_FILE_ASSESSMENT_ID_NOT_NULL = "create-attribute-value-report-file.assessmentId.notNull";
+    public static final String CREATE_ATTRIBUTE_VALUE_REPORT_FILE_ATTRIBUTE_ID_NOT_NULL = "create-attribute-value-report-file.attributeId.notNull";
 
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL = "create-assessment-attribute-ai-report.assessmentId.notNull";
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL = "create-assessment-attribute-ai.report.attributeId.notNull";
