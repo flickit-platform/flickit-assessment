@@ -1336,6 +1336,39 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Assessment Invite",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roleId\": \"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-invites/{{inviteId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-invites",
+						"{{inviteId}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
