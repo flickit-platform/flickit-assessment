@@ -21,6 +21,10 @@ import java.util.List;
 @AllArgsConstructor
 public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
 
+    private static final String CHOICES_FIELD = "choices";
+    private static final String MESSAGE_FIELD = "message";
+    private static final String CONTENT_FIELD = "content";
+
     private final OpenAiProperties openAiProperties;
     private final RestTemplate openAiRestTemplate;
 
@@ -45,14 +49,7 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
             JsonNode.class
         );
 
-        JsonNode responseBody = responseEntity.getBody();
-        if (responseBody != null && responseBody.has("choices")) {
-            JsonNode choices = responseBody.get("choices");
-            if (choices.isArray() && !choices.isEmpty())
-                return choices.get(0).get("message").get("content").asText();
-            throw new IOException("Invalid response format: 'choices' array is empty or not an array");
-        } else
-            throw new IOException("Invalid response format: 'choices' field is missing");
+        return extractContentFromResponse(responseEntity.getBody());
     }
 
     private String readInputStream(InputStream inputStream) throws IOException {
@@ -63,6 +60,23 @@ public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
             result.write(buffer, 0, length);
         }
         return result.toString(StandardCharsets.UTF_8);
+    }
+
+    private String extractContentFromResponse(JsonNode responseBody) throws IOException {
+        if (responseBody != null && responseBody.has(CHOICES_FIELD)) {
+            JsonNode choices = responseBody.get(CHOICES_FIELD);
+            if (choices.isArray() && !choices.isEmpty()) {
+                JsonNode messageNode = choices.get(0).get(MESSAGE_FIELD);
+                if (messageNode != null && messageNode.has(CONTENT_FIELD)) {
+                    return messageNode.get(CONTENT_FIELD).asText();
+                } else {
+                    throw new IOException("Invalid response format: 'message' or 'content' field is missing");
+                }
+            }
+            throw new IOException("Invalid response format: 'choices' array is empty or not an array");
+        } else {
+            throw new IOException("Invalid response format: 'choices' field is missing");
+        }
     }
 
     private record OpenAiRequest(String model, List<Message> messages, double temperature) {
