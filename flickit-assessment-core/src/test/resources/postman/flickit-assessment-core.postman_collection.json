@@ -1338,7 +1338,7 @@
 			"response": []
 		},
 		{
-			"name": "Update Assessment Invitee Role",
+			"name": "Update Assessment Invite",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -1357,14 +1357,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/invitees/{{inviteId}}",
+					"raw": "{{base_url}}/{{api_path}}/assessment-invites/{{inviteId}}",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"{{api_path}}",
-						"assessments",
-						"invitees",
+						"assessment-invites",
 						"{{inviteId}}"
 					]
 				}

@@ -17,16 +17,16 @@ public class UpdateAssessmentInviteeRoleRestController {
     private final UserContext userContext;
     private final UpdateAssessmentInviteeRoleUseCase useCase;
 
-    @PutMapping("/assessments/invitees/{id}")
-    public ResponseEntity<Void> inviteSpaceMember(@PathVariable("id") UUID inviteId,
-                                                  @RequestBody UpdateAssessmentInviteeRoleRequestDto request) {
+    @PutMapping("/assessment-invites/{id}")
+    public ResponseEntity<Void> updateInvite(@PathVariable("id") UUID inviteId,
+                                             @RequestBody UpdateAssessmentInviteRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         useCase.editRole(toParam(inviteId, request, currentUserId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    Param toParam(UUID inviteId, UpdateAssessmentInviteeRoleRequestDto requestDto, UUID currentUserId) {
+    Param toParam(UUID inviteId, UpdateAssessmentInviteRequestDto requestDto, UUID currentUserId) {
         return new Param(inviteId, requestDto.roleId(), currentUserId);
     }
 }
