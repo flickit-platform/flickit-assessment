@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.in.spaceuseraccess;
+package org.flickit.assessment.core.application.port.in.assessmentinvite;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -10,30 +10,33 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_EMAIL_FORMAT_NOT_VALID;
-import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_EMAIL_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
-public interface AddSpaceMemberUseCase {
+public interface InviteAssessmentUserUseCase {
 
-    void addMember(Param param);
+    void inviteUser(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<Param>{
+    class Param extends SelfValidating<Param> {
 
-        @NotNull(message = ADD_SPACE_MEMBER_SPACE_ID_NOT_NULL)
-        Long spaceId;
+        @NotNull(message = INVITE_ASSESSMENT_USER_ASSESSMENT_ID_NOT_NULL)
+        UUID assessmentId;
 
-        @NotNull(message = ADD_SPACE_MEMBER_EMAIL_NOT_NULL)
+        @NotNull(message = INVITE_ASSESSMENT_USER_EMAIL_NOT_NULL)
         @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = COMMON_EMAIL_FORMAT_NOT_VALID)
         String email;
+
+        @NotNull(message = INVITE_ASSESSMENT_USER_ROLE_ID_NOT_NULL)
+        Integer roleId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long spaceId, String email, UUID currentUserId) {
-            this.spaceId = spaceId;
+        public Param(UUID assessmentId, String email, Integer roleId, UUID currentUserId) {
+            this.assessmentId = assessmentId;
             this.email = (email == null || email.isBlank()) ? null : email.strip().toLowerCase();
+            this.roleId = roleId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
