@@ -71,6 +71,22 @@ class UpdateAssessmentInviteServiceTest {
     }
 
     @Test
+    void testUpdateAssessmentInviteService_whenRoleIdIsInvalid_ThrowValidationException() {
+        var inviteId = UUID.randomUUID();
+        var currentUserId = UUID.randomUUID();
+        var param = new Param(inviteId, 5, currentUserId);
+        var assessmentInvitee = notExpiredAssessmentInvite("test@flickit.org");
+
+        when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(assessmentInvitee);
+        when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.updateInvite(param));
+        assertEquals(UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND, throwable.getMessageKey());
+
+        verifyNoInteractions(updateAssessmentInvitePort);
+    }
+
+    @Test
     void testUpdateAssessmentInviteService_validParameters_SuccessUpdate() {
         var inviteId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();

@@ -31,7 +31,9 @@ public class UpdateAssessmentInviteService implements UpdateAssessmentInviteUseC
         if (!assessmentAccessChecker.isAuthorized(invitation.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (invitation.getRole().getId() != param.getRoleId())
-            updateAssessmentInviteeRolePort.updateRole(param.getInviteId(), param.getRoleId());
+        if (!AssessmentUserRole.isValidId(param.getRoleId()))
+            throw new ValidationException(UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND);
+
+        updateAssessmentInvitePort.updateRole(param.getInviteId(), param.getRoleId());
     }
 }
