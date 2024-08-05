@@ -92,7 +92,7 @@ public class AssessmentInvitePersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateRole(UUID id, Integer roleId) {
-        repository.updateRoleById(id , roleId);
+    public void updateRole(UUID id, int roleId) {
+        repository.updateRoleById(id, roleId);
     }
 }

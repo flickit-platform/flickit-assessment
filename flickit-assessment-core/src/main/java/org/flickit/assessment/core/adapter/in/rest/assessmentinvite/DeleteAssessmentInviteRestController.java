@@ -20,7 +20,7 @@ public class DeleteAssessmentInviteRestController {
     private final UserContext userContext;
 
     @DeleteMapping("/assessment-invites/{id}")
-    public ResponseEntity<Void> deleteAssessmentInvite(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteAssessmentInvite(@PathVariable("id") UUID id) {
         UUID currentUserId = userContext.getUser().id();
         useCase.deleteInvite(toParam(id, currentUserId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
