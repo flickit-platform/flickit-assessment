@@ -34,7 +34,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.core.common.MessageKey.AI_IS_DISABLED;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
 
 @Service
 @Transactional
@@ -71,7 +71,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attribute.getId());
         if (attributeInsight.isEmpty()) {
             if (!openAiProperties.isEnabled())
-                return new Result(MessageBundle.message(AI_IS_DISABLED, attribute.getTitle()));
+                return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
             try (var stream = downloadFile(param.getFileLink())) {
                 var aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
                 createAttributeInsightPort.persist(new AttributeInsight(assessmentResult.getId(), attribute.getId(),
