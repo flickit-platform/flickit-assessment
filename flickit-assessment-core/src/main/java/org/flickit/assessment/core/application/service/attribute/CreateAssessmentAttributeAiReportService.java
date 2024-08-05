@@ -87,8 +87,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
             if (!openAiProperties.isEnabled())
                 return new Result(attributeInsight.get().getAiInsight());
             var newAiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
-            updateAttributeInsightPort.update(new AttributeInsight(assessmentResult.getId(), attribute.getId(), newAiInsight,
-                attributeInsight.get().getAssessorInsight(), LocalDateTime.now(), attributeInsight.get().getAssessorInsightTime(), param.getFileLink()));
+            updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), newAiInsight));
             return new Result(newAiInsight);
         }
     }

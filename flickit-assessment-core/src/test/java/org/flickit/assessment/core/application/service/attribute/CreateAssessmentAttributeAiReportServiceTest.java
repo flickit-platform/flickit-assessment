@@ -14,7 +14,10 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeP
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
-import org.flickit.assessment.core.test.fixture.application.*;
+import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.core.test.fixture.application.AttributeInsightMother;
+import org.flickit.assessment.core.test.fixture.application.AttributeMother;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -262,7 +265,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
         doReturn(downloadFileResult).when(service).readInputFile(param.getFileLink());
         when(createAssessmentAttributeAiPort.createReport(downloadFileResult, attribute)).thenReturn(attributeInsight.getAiInsight());
-        doNothing().when(updateAttributeInsightPort).update(any());
+        doNothing().when(updateAttributeInsightPort).updateAiInsight(any());
 
         var result = assertDoesNotThrow(() -> service.createAttributeAiReport(param));
 

@@ -32,13 +32,11 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(AttributeInsight attributeInsight) {
-        repository.update(attributeInsight.getAttributeResultId(),
+    public void updateAiInsight(AttributeInsight attributeInsight) {
+        repository.updateAiInsight(
+            attributeInsight.getAttributeResultId(),
             attributeInsight.getAttributeId(),
             attributeInsight.getAiInsight(),
-            attributeInsight.getAssessorInsight(),
-            attributeInsight.getAiInsightTime(),
-            attributeInsight.getAssessorInsightTime(),
-            attributeInsight.getAiInputPath());
+            attributeInsight.getAiInsightTime());
     }
 }
