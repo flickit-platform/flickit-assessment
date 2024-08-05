@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
@@ -19,7 +20,6 @@ import org.flickit.assessment.core.test.fixture.application.AssessmentResultMoth
 import org.flickit.assessment.core.test.fixture.application.AttributeInsightMother;
 import org.flickit.assessment.core.test.fixture.application.AttributeMother;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -36,7 +36,9 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.simpleAttributeAiInsightMinInsightTime;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +48,9 @@ class CreateAssessmentAttributeAiReportServiceTest {
 
     @Mock
     private OpenAiProperties openAiProperties;
+
+    @Mock
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
     private GetAssessmentPort getAssessmentPort;
@@ -77,24 +82,21 @@ class CreateAssessmentAttributeAiReportServiceTest {
 
     @BeforeEach
     void prepare() {
-        service = spy(new CreateAssessmentAttributeAiReportService(openAiProperties, loadAttributePort, getAssessmentPort,
-            assessmentAccessChecker, loadAssessmentResultPort, loadAttributeInsightPort, createAttributeInsightPort, updateAttributeInsightPort, createAssessmentAttributeAiPort));
+        service = spy(new CreateAssessmentAttributeAiReportService(getAssessmentPort, assessmentAccessChecker, loadAssessmentResultPort,
+            validateAssessmentResultPort, loadAttributePort, openAiProperties, loadAttributeInsightPort, createAttributeInsightPort,
+            updateAttributeInsightPort, createAssessmentAttributeAiPort));
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - Assessment Not Found - Throw ResourceNotFoundException")
     void testCreateAssessmentAttributeAiReport_AssessmentNotFound_ThrowResourceNotFoundException() {
         UUID assessmentId = UUID.randomUUID();
-        Long attributeId = 1L;
-        UUID currentUserId = UUID.randomUUID();
-        Param param = new Param(assessmentId, attributeId, fileLink, currentUserId);
+        Param param = new Param(assessmentId, 123L, fileLink, UUID.randomUUID());
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAttributeAiReport(param));
         assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
 
-        verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
         verifyNoInteractions(assessmentAccessChecker,
             loadAttributePort,
             loadAssessmentResultPort,
@@ -104,12 +106,10 @@ class CreateAssessmentAttributeAiReportServiceTest {
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - User Lacks Required Permission - Throw AccessDeniedException")
     void testCreateAssessmentAttributeAiReport_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
-        Long attributeId = 1L;
         UUID currentUserId = UUID.randomUUID();
         var assessment = AssessmentMother.assessment();
-        Param param = new Param(assessment.getId(), attributeId, fileLink, currentUserId);
+        Param param = new Param(assessment.getId(), 123L, fileLink, currentUserId);
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(false);
@@ -117,8 +117,6 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAttributeAiReport(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
-        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, EXPORT_ASSESSMENT_REPORT);
         verifyNoInteractions(loadAttributePort,
             loadAssessmentResultPort,
             loadAttributeInsightPort,
@@ -127,30 +125,26 @@ class CreateAssessmentAttributeAiReportServiceTest {
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - Assessment Result Not Found - Throw ResourceNotFoundException")
     void testCreateAssessmentAttributeAiReport_AssessmentResultNotFound_ThrowResourceNotFoundException() {
-        Long attributeId = 1L;
         UUID currentUserId = UUID.randomUUID();
         var assessment = AssessmentMother.assessment();
-        Param param = new Param(assessment.getId(), attributeId, fileLink, currentUserId);
+        Param param = new Param(assessment.getId(), 123L, fileLink, currentUserId);
 
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenThrow(new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND));
+        when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId()))
+            .thenThrow(new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAttributeAiReport(param));
         assertEquals(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
-        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, EXPORT_ASSESSMENT_REPORT);
         verifyNoInteractions(loadAttributeInsightPort,
             createAssessmentAttributeAiPort,
             updateAttributeInsightPort);
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - IsCalculatedValid = FALSE - Throw CalculateNotValidException")
-    void testCreateAssessmentAttributeAiReport_IsCalculatedFalse_ThrowCalculateNotValidException() {
+    void testCreateAssessmentAttributeAiReport_CalculatedResultIsNotValid_ThrowCalculateNotValidException() {
         Long attributeId = 1L;
         UUID currentUserId = UUID.randomUUID();
         var assessmentResult = AssessmentResultMother.invalidResultWithSubjectValues(null);
@@ -161,20 +155,18 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
+        doThrow(new CalculateNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID)).when(validateAssessmentResultPort).validate(assessment.getId());
 
         var throwable = assertThrows(CalculateNotValidException.class, () -> service.createAttributeAiReport(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
-        verify(getAssessmentPort).getAssessmentById(param.getAssessmentId());
-        verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, EXPORT_ASSESSMENT_REPORT);
         verifyNoInteractions(loadAttributeInsightPort,
             createAssessmentAttributeAiPort,
             updateAttributeInsightPort);
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - Valid Parameters, AI Insight Does Not Exist, AI Is Enabled - Return Text")
-    void testCreateAssessmentAttributeAiReport_ValidParametersAiInsightDoesNotExistsAiEnabled_ReturnText() {
+    void testCreateAssessmentAttributeAiReport_AiInsightDoesNotExistAndAiEnabled_GenerateAndPersistAiInsight() {
         UUID currentUserId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
@@ -186,6 +178,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(openAiProperties.isEnabled()).thenReturn(true);
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(assessment.getId());
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
@@ -194,14 +187,13 @@ class CreateAssessmentAttributeAiReportServiceTest {
         doReturn(downloadFileResult).when(service).readInputFile(param.getFileLink());
 
         var result = service.createAttributeAiReport(param);
-
         assertEquals("Report Content", result.content());
+
         verifyNoInteractions(updateAttributeInsightPort);
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - IsCalculatedValid = TRUE, AI Insight Does Not Exist, AI Is Disabled - Return Text")
-    void testCreateAssessmentAttributeAiReport_ValidParametersAiInsightDoesNotExistsAiDisabled_ReturnText() {
+    void testCreateAssessmentAttributeAiReport_AiInsightDoesNotExistAndAiDisabled_ReturnConstantMessage() {
         UUID currentUserId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
@@ -216,14 +208,13 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
 
         var result = service.createAttributeAiReport(param);
-
         assertEquals(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()), result.content());
+
         verifyNoInteractions(updateAttributeInsightPort, createAssessmentAttributeAiPort, createAttributeInsightPort);
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - IsCalculatedValid = TRUE, No Insight Needed - Return Text")
-    void testCreateAssessmentAttributeAiReport_IsCalculatedValidExistsNoInsightNeeded_ReturnText() {
+    void testCreateAssessmentAttributeAiReport_AiInsightExistsAndInsightTimeIsAfterCalculationTime_ReturnExistedInsight() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
@@ -239,22 +230,21 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId()))
             .thenReturn(Optional.of(attributeInsight));
 
-        var result = assertDoesNotThrow(() -> service.createAttributeAiReport(param));
-
+        var result = service.createAttributeAiReport(param);
         assertEquals(result.content(), attributeInsight.getAiInsight());
+
         verifyNoInteractions(createAssessmentAttributeAiPort, updateAttributeInsightPort);
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - IsCalculatedValid = TRUE, Insight Needed, AI Is Enabled - Call AI and return Text")
-    void testCreateAssessmentAttributeAiReport_IsCalculatedValidExistsInsightNeeded_ReturnText() {
+    void testCreateAssessmentAttributeAiReport_AiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiEnabled_RegenerateAndUpdateInsight() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
         Param param = new Param(assessmentId, attribute.getId(), fileLink, currentUserId);
-        var attributeInsight = AttributeInsightMother.simpleAttributeAiInsightMinInsightTime();
+        var attributeInsight = simpleAttributeAiInsightMinInsightTime();
         InputStream downloadFileResult = new ByteArrayInputStream("File Content".getBytes());
 
         when(openAiProperties.isEnabled()).thenReturn(true);
@@ -267,24 +257,21 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(createAssessmentAttributeAiPort.createReport(downloadFileResult, attribute)).thenReturn(attributeInsight.getAiInsight());
         doNothing().when(updateAttributeInsightPort).updateAiInsight(any());
 
-        var result = assertDoesNotThrow(() -> service.createAttributeAiReport(param));
-
+        var result = service.createAttributeAiReport(param);
         assertEquals(attributeInsight.getAiInsight(), result.content());
-        verify(createAssessmentAttributeAiPort).createReport(downloadFileResult, attribute);
+
         verifyNoInteractions(createAttributeInsightPort);
     }
 
     @Test
-    @DisplayName("Create Assessment Attribute AI Report - IsCalculatedValid = TRUE, Insight Needed, AI is disabled - Return Saved Text")
-    void testCreateAssessmentAttributeAiReport_IsCalculatedValidInsightNeededAiDisabled_ReturnText() {
+    void testCreateAssessmentAttributeAiReport_AiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiDisabled_ReturnConstantMessage() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
         Param param = new Param(assessmentId, attribute.getId(), fileLink, currentUserId);
-        var attributeInsight = AttributeInsightMother.simpleAttributeAiInsightMinInsightTime();
-        InputStream downloadFileResult = new ByteArrayInputStream("File Content".getBytes());
+        var attributeInsight = simpleAttributeAiInsightMinInsightTime();
 
         when(openAiProperties.isEnabled()).thenReturn(false);
         when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
@@ -292,11 +279,10 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        doReturn(downloadFileResult).when(service).readInputFile(param.getFileLink());
 
-        var result = assertDoesNotThrow(() -> service.createAttributeAiReport(param));
+        var result = service.createAttributeAiReport(param);
+        assertEquals(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()), result.content());
 
-        assertEquals(attributeInsight.getAiInsight(), result.content());
         verifyNoInteractions(createAssessmentAttributeAiPort, createAttributeInsightPort, updateAttributeInsightPort);
     }
 }
