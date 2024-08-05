@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_USER_ASSESSMENT_ROLE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_INVITE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND;
@@ -60,13 +60,11 @@ class UpdateAssessmentInviteServiceTest {
         var assessmentInvitee = notExpiredAssessmentInvite("test@flickit.org");
 
         when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(assessmentInvitee);
-        when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, UPDATE_USER_ASSESSMENT_ROLE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateInvite(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(loadAssessmentInvitationPort).load(param.getInviteId());
-        verify(assessmentAccessChecker).isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE);
         verifyNoInteractions(updateAssessmentInvitePort);
     }
 
@@ -78,7 +76,7 @@ class UpdateAssessmentInviteServiceTest {
         var assessmentInvitee = notExpiredAssessmentInvite("test@flickit.org");
 
         when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(assessmentInvitee);
-        when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, UPDATE_USER_ASSESSMENT_ROLE)).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateInvite(param));
         assertEquals(UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND, throwable.getMessageKey());
@@ -95,13 +93,9 @@ class UpdateAssessmentInviteServiceTest {
         var param = new Param(inviteId, roleId, currentUserId);
 
         when(loadAssessmentInvitationPort.load(inviteId)).thenReturn(assessmentInvitee);
-        when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, UPDATE_USER_ASSESSMENT_ROLE)).thenReturn(true);
         doNothing().when(updateAssessmentInvitePort).updateRole(inviteId, roleId);
 
         assertDoesNotThrow(() -> service.updateInvite(param), "Should update successfully without any exceptions");
-
-        verify(loadAssessmentInvitationPort).load(param.getInviteId());
-        verify(assessmentAccessChecker).isAuthorized(assessmentInvitee.getAssessmentId(), currentUserId, GRANT_USER_ASSESSMENT_ROLE);
-        verify(updateAssessmentInvitePort).updateRole(param.getInviteId(), param.getRoleId());
     }
 }
