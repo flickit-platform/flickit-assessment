@@ -95,9 +95,9 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
 
     @SneakyThrows
     InputStream readInputFile(String fileLink) {
-        URL pictureUrl = new URL(fileLink);
+        URL fileUrl = new URL(fileLink);
 
-        try (ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
+        try (ReadableByteChannel readableByteChannel = Channels.newChannel(fileUrl.openStream());
              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
             ByteBuffer buffer = ByteBuffer.allocate(1024);
