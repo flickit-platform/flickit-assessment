@@ -28,7 +28,7 @@ public class AssessmentInvitePersistenceJpaAdapter implements
     DeleteAssessmentUserInvitationPort,
     LoadAssessmentInvitePort,
     DeleteAssessmentInvitePort,
-    UpdateAssessmentInviteeRolePort {
+    UpdateAssessmentInvitePort {
 
     private final AssessmentInviteeJpaRepository repository;
 
