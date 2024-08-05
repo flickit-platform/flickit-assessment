@@ -2,14 +2,23 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
+import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.Attribute;
+import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +30,28 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class CreateAssessmentAttributeAiReportService implements CreateAssessmentAttributeAiReportUseCase {
 
-    private final LoadAttributePort loadAttributePort;
     private final GetAssessmentPort getAssessmentPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
+    private final LoadAttributePort loadAttributePort;
+    private final OpenAiProperties openAiProperties;
+    private final LoadAttributeInsightPort loadAttributeInsightPort;
+    private final CreateAttributeInsightPort createAttributeInsightPort;
+    private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final CreateAssessmentAttributeAiPort createAssessmentAttributeAiPort;
 
     @SneakyThrows
@@ -49,18 +66,47 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessment.getId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
+        validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        try (var stream = downloadFile(param.getFileLink())) {
-            return new Result(createAssessmentAttributeAiPort.createReport(stream, attribute));
+        var attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
+        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attribute.getId());
+
+        return attributeInsight.map(insight -> handleExistingInsight(insight, assessmentResult, attribute, param.getFileLink()))
+            .orElseGet(() -> handleNewInsight(attribute, assessmentResult, param.getFileLink()));
+    }
+
+    @SneakyThrows
+    private Result handleExistingInsight(AttributeInsight attributeInsight, AssessmentResult assessmentResult, Attribute attribute, String fileLink) {
+        if (assessmentResult.getLastCalculationTime().isBefore(attributeInsight.getAiInsightTime()))
+            return new Result(attributeInsight.getAiInsight());
+
+        if (!openAiProperties.isEnabled())
+            return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
+
+        try (var stream = readInputFile(fileLink)) {
+            String aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
+            updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight));
+            return new Result(aiInsight);
         }
     }
 
     @SneakyThrows
-    InputStream downloadFile(String fileLink) {
-        URL pictureUrl = new URL(fileLink);
+    private Result handleNewInsight(Attribute attribute, AssessmentResult assessmentResult, String fileLink) {
+        if (!openAiProperties.isEnabled())
+            return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
 
-        try (ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
+        try (var stream = readInputFile(fileLink)) {
+            String aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
+            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight));
+            return new Result(aiInsight);
+        }
+    }
+
+    @SneakyThrows
+    InputStream readInputFile(String fileLink) {
+        URL fileUrl = new URL(fileLink);
+
+        try (ReadableByteChannel readableByteChannel = Channels.newChannel(fileUrl.openStream());
              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
             ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -74,5 +120,15 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         } catch (IOException e) {
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND);
         }
+    }
+
+    private static AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String aiInsight) {
+        return new AttributeInsight(assessmentResultId,
+            attributeId,
+            aiInsight,
+            null,
+            LocalDateTime.now(),
+            null,
+            null);
     }
 }
