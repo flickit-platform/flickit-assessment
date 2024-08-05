@@ -74,8 +74,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
                 return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
             try (var stream = downloadFile(param.getFileLink())) {
                 var aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
-                createAttributeInsightPort.persist(new AttributeInsight(assessmentResult.getId(), attribute.getId(),
-                    aiInsight, null, LocalDateTime.now(), null, param.getFileLink()));
+                createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight));
                 return new Result(aiInsight);
             }
         }
@@ -111,5 +110,15 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         } catch (IOException e) {
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND);
         }
+    }
+
+    private static AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String aiInsight) {
+        return new AttributeInsight(assessmentResultId,
+            attributeId,
+            aiInsight,
+            null,
+            LocalDateTime.now(),
+            null,
+            null);
     }
 }
