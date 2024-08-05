@@ -188,7 +188,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
         when(createAssessmentAttributeAiPort.createReport(downloadFileResult, attribute)).thenReturn(aiReport);
         doNothing().when(createAttributeInsightPort).persist(any());
-        doReturn(downloadFileResult).when(service).downloadFile(param.getFileLink());
+        doReturn(downloadFileResult).when(service).readInputFile(param.getFileLink());
 
         var result = service.createAttributeAiReport(param);
 
@@ -260,7 +260,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        doReturn(downloadFileResult).when(service).downloadFile(param.getFileLink());
+        doReturn(downloadFileResult).when(service).readInputFile(param.getFileLink());
         when(createAssessmentAttributeAiPort.createReport(downloadFileResult, attribute)).thenReturn(attributeInsight.getAiInsight());
         doNothing().when(updateAttributeInsightPort).update(any());
 
@@ -289,7 +289,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        doReturn(downloadFileResult).when(service).downloadFile(param.getFileLink());
+        doReturn(downloadFileResult).when(service).readInputFile(param.getFileLink());
 
         var result = assertDoesNotThrow(() -> service.createAttributeAiReport(param));
 

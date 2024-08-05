@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
@@ -72,7 +73,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (attributeInsight.isEmpty()) {
             if (!openAiProperties.isEnabled())
                 return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
-            try (var stream = downloadFile(param.getFileLink())) {
+            try (var stream = readInputFile(param.getFileLink())) {
                 var aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
                 createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight));
                 return new Result(aiInsight);
@@ -82,7 +83,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (assessmentResult.getLastCalculationTime().isBefore(attributeInsight.get().getAiInsightTime()))
             return new Result(attributeInsight.get().getAiInsight());
 
-        try (var stream = downloadFile(param.getFileLink())) {
+        try (var stream = readInputFile(param.getFileLink())) {
             if (!openAiProperties.isEnabled())
                 return new Result(attributeInsight.get().getAiInsight());
             var newAiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
@@ -93,7 +94,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
     }
 
     @SneakyThrows
-    InputStream downloadFile(String fileLink) {
+    InputStream readInputFile(String fileLink) {
         URL pictureUrl = new URL(fileLink);
 
         try (ReadableByteChannel readableByteChannel = Channels.newChannel(pictureUrl.openStream());
