@@ -211,4 +211,8 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_AI_DISABLE = "create-assessment-attribute-ai-report.ai.disable";
 
     public static final String DELETE_ASSESSMENT_INVITE_ID_NOT_NULL = "delete-assessment-invite.id.notNull";
+
+    public static final String UPDATE_ASSESSMENT_INVITE_ID_NOT_NULL = "update-assessment-invite.inviteId.notNull";
+    public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_NULL = "update-assessment-invite.roleId.notNull";
+    public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND = "update-assessment-invite.roleId.notFound";
 }
