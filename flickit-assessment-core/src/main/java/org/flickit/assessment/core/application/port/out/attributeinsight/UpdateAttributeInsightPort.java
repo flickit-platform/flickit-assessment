@@ -4,5 +4,5 @@ import org.flickit.assessment.core.application.domain.AttributeInsight;
 
 public interface UpdateAttributeInsightPort {
 
-    void update(AttributeInsight attributeInsight);
+    void updateAiInsight(AttributeInsight attributeInsight);
 }
