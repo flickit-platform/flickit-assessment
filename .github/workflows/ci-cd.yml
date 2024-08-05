@@ -203,7 +203,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ ((github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases-'))) ||
       github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) &&
-      !contains( needs.test.outputs.project_version , 'SNAPSHOT') }}
+      !contains( needs.sonar.outputs.project_version , 'SNAPSHOT') }}
 
     permissions:
       contents: write
@@ -211,8 +211,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ncipollo/release-action@v1
         with:
-          tag: v${{ needs.test.outputs.project_version }}
-          name: Release ${{ needs.test.outputs.project_version }}
+          tag: v${{ needs.sonar.outputs.project_version }}
+          name: Release ${{ needs.sonar.outputs.project_version }}
           makeLatest: true
 
   build-and-push-image:
