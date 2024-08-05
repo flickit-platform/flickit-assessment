@@ -17,16 +17,10 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeP
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
-import org.flickit.assessment.core.test.fixture.application.AttributeInsightMother;
-import org.flickit.assessment.core.test.fixture.application.AttributeMother;
-import org.junit.jupiter.api.BeforeEach;
 import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.test.fixture.application.*;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -284,7 +278,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateReport(attributeValue, maturityLevels))
             .thenReturn(inputStream);
-        doNothing().when(updateAttributeInsightPort).update(any());
+        doNothing().when(updateAttributeInsightPort).updateAiInsight(any());
 
         var result = service.createAttributeAiReport(param);
         assertEquals(attributeInsight.getAiInsight(), result.content());
