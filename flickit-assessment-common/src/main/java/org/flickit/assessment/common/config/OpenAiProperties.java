@@ -32,6 +32,9 @@ public class OpenAiProperties {
     private String model;
 
     @NotNull
+    private float temperature;
+
+    @NotNull
     private String prompt = "As a software quality assessor, I have evaluated the {{title}} maturity of a system. " +
         "We define {{title}} as {{description}} The uploaded Excel file contains multiple-choice questions used to assess {{title}}. " +
         "The Excel columns include the question, a hint, the weight of the question in calculating the overall score," +
