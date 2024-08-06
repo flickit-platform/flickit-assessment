@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
 import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,13 +22,13 @@ import java.util.Collections;
 
 @Component
 @AllArgsConstructor
-public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
+public class OpenAiAdapterInsight implements CreateAttributeAiInsightPort {
 
     private final OpenAiProperties openAiProperties;
 
     @SneakyThrows
     @Override
-    public String createReport(InputStream inputStream, Attribute attribute) {
+    public String generateInsight(InputStream inputStream, Attribute attribute) {
         String fileContent = readInputStream(inputStream);
 
         JsonObject jsonBody = new JsonObject();

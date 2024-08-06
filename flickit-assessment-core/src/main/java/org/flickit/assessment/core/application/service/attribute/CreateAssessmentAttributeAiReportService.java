@@ -12,12 +12,12 @@ import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.springframework.stereotype.Service;
@@ -39,18 +39,18 @@ import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE
 public class CreateAssessmentAttributeAiReportService implements CreateAssessmentAttributeAiReportUseCase {
 
     private final GetAssessmentPort getAssessmentPort;
-    private final LoadAttributeValuePort loadAttributeValuePort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
+    private final LoadAttributeValuePort loadAttributeValuePort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAttributePort loadAttributePort;
-    private final OpenAiProperties openAiProperties;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
+    private final OpenAiProperties openAiProperties;
     private final CreateAttributeInsightPort createAttributeInsightPort;
+    private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
-    private final CreateAssessmentAttributeAiPort createAssessmentAttributeAiPort;
-    private final GenerateAttributeValueReportFilePort generateAttributeValueReportFilePort;
+    private final CreateAttributeAiInsightPort createAttributeAiInsightPort;
 
     @SneakyThrows
     @Override
@@ -85,8 +85,8 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (!openAiProperties.isEnabled())
             return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
 
-        try (var stream = generateAttributeValueReportFilePort.generateReport(attributeValue, maturityLevels)) {
-            String aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
+        try (var stream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)) {
+            String aiInsight = createAttributeAiInsightPort.generateInsight(stream, attribute);
             updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight));
             return new Result(aiInsight);
         }
@@ -98,8 +98,8 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (!openAiProperties.isEnabled())
             return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
 
-        try (var stream = generateAttributeValueReportFilePort.generateReport(attributeValue, maturityLevels)) {
-            String aiInsight = createAssessmentAttributeAiPort.createReport(stream, attribute);
+        try (var stream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)) {
+            String aiInsight = createAttributeAiInsightPort.generateInsight(stream, attribute);
             createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight));
             return new Result(aiInsight);
         }

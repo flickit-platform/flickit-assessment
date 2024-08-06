@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -58,7 +58,7 @@ class CreateAttributeValueReportFileServiceTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
-    private GenerateAttributeValueReportFilePort generateAttributeValueReportFilePort;
+    private CreateAttributeScoresFilePort createAttributeScoresFilePort;
 
     @Mock
     private UploadAttributeScoreExcelPort uploadAttributeScoreExcelPort;
@@ -79,7 +79,7 @@ class CreateAttributeValueReportFileServiceTest {
 
         verifyNoInteractions(validateAssessmentResultPort,
             loadMaturityLevelsPort,
-            generateAttributeValueReportFilePort,
+            createAttributeScoresFilePort,
             uploadAttributeScoreExcelPort,
             createFileDownloadLinkPort);
     }
@@ -102,7 +102,7 @@ class CreateAttributeValueReportFileServiceTest {
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
 
-        when(generateAttributeValueReportFilePort.generateReport(attributeValue, maturityLevels))
+        when(createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels))
             .thenReturn(inputStream);
 
         String filePath = "dir/filename.xlsx";

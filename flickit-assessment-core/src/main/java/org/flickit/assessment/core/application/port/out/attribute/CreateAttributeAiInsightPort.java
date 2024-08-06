@@ -4,7 +4,7 @@ import org.flickit.assessment.core.application.domain.Attribute;
 
 import java.io.InputStream;
 
-public interface CreateAssessmentAttributeAiPort {
+public interface CreateAttributeAiInsightPort {
 
-    String createReport (InputStream inputStream, Attribute attribute);
+    String generateInsight(InputStream inputStream, Attribute attribute);
 }
