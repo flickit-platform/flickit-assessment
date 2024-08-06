@@ -46,6 +46,7 @@ public class FileProperties {
         "image/bmp",
         "text/plain",
         "application/pdf",
+        "application/zip",
         "application/x-zip",
         "application/x-zip-compressed",
         "application/x-rar-compressed",
