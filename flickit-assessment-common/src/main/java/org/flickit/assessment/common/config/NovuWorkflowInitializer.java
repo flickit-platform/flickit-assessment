@@ -19,8 +19,7 @@ import java.util.stream.Collectors;
 @Configuration
 @ConditionalOnProperty(
     name = "app.novu.init-workflows",
-    havingValue = "true",
-    matchIfMissing = true)
+    havingValue = "true")
 public class NovuWorkflowInitializer {
 
     @SneakyThrows
