@@ -43,6 +43,9 @@ public class NotificationAspect {
         log.debug("{} received.", cmd);
         var provider = contentProviders.get(cmd.getClass());
         Optional<NotificationContent> content = provider.create(cmd);
-        content.ifPresent(x -> sendNotificationPort.send(cmd.targetUserId(), x));
+        content.ifPresent(x -> {
+            log.debug("Send {}", x);
+            sendNotificationPort.send(cmd.targetUserId(), x);
+        });
     }
 }
