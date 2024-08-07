@@ -2,8 +2,8 @@ package org.flickit.assessment.users.adapter.in.rest.user;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.application.port.in.user.UpdateUserProfilePictureUseCase;
-import org.flickit.assessment.users.application.port.in.user.UpdateUserProfilePictureUseCase.*;
+import org.flickit.assessment.users.application.port.in.user.UpdateUserPictureUseCase;
+import org.flickit.assessment.users.application.port.in.user.UpdateUserPictureUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,13 +15,13 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class UpdateUserProfilePictureRestController {
+public class UpdateUserPictureRestController {
 
-    private final UpdateUserProfilePictureUseCase useCase;
+    private final UpdateUserPictureUseCase useCase;
     private final UserContext userContext;
 
     @PutMapping("/users/picture")
-    public ResponseEntity<UpdateUserProfilePictureResponseDto> updateUserProfilePicture(@RequestParam MultipartFile pictureFile) {
+    public ResponseEntity<UpdateUserPictureResponseDto> updateUserProfilePicture(@RequestParam MultipartFile pictureFile) {
         UUID currentUserId = userContext.getUser().id();
         var response = toResponseDto(useCase.update(toParam(currentUserId, pictureFile)));
 
@@ -32,7 +32,7 @@ public class UpdateUserProfilePictureRestController {
         return new Param(userId, pictureFile);
     }
 
-    private UpdateUserProfilePictureResponseDto toResponseDto(Result result) {
-        return new UpdateUserProfilePictureResponseDto(result.pictureLink());
+    private UpdateUserPictureResponseDto toResponseDto(Result result) {
+        return new UpdateUserPictureResponseDto(result.pictureLink());
     }
 }

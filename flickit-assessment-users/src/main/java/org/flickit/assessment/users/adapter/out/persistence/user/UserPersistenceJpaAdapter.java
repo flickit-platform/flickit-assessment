@@ -21,7 +21,7 @@ public class UserPersistenceJpaAdapter implements
     LoadUserPort,
     CreateUserPort,
     UpdateUserPort,
-    UpdateUserProfilePicturePort {
+    UpdateUserPicturePort {
 
     private final UserJpaRepository repository;
 

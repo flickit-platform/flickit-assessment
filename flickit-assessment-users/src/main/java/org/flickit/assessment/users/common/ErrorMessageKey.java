@@ -147,5 +147,5 @@ public class ErrorMessageKey {
     public static final String CREATE_USER_DISPLAY_NAME_SIZE_MIN = "create-user.displayName.size.min";
     public static final String CREATE_USER_DISPLAY_NAME_SIZE_MAX = "create-user.displayName.size.max";
 
-    public static final String UPDATE_USER_PROFILE_PICTURE_PICTURE_NOT_NULL = "update-user-profile-picture.picture.notNull";
+    public static final String UPDATE_USER_PICTURE_NOT_NULL = "update-user-picture.picture.notNull";
 }

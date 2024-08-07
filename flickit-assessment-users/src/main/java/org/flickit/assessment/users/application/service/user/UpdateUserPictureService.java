@@ -4,11 +4,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.users.application.port.in.user.UpdateUserProfilePictureUseCase;
+import org.flickit.assessment.users.application.port.in.user.UpdateUserPictureUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.users.application.port.out.user.UpdateUserProfilePicturePort;
+import org.flickit.assessment.users.application.port.out.user.UpdateUserPicturePort;
 import org.flickit.assessment.users.application.port.out.user.UploadUserProfilePicturePort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +21,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PI
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateUserProfilePictureService implements UpdateUserProfilePictureUseCase {
+public class UpdateUserPictureService implements UpdateUserPictureUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
@@ -29,7 +29,7 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
     private final LoadUserPort loadUserPort;
     private final DeleteFilePort deleteFilePort;
     private final UploadUserProfilePicturePort uploadUserProfilePicturePort;
-    private final UpdateUserProfilePicturePort updateUserProfilePicturePort;
+    private final UpdateUserPicturePort updateUserPicturePort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
@@ -43,7 +43,7 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
         String filePath = uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture());
 
         var pictureLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
-        updateUserProfilePicturePort.updatePicture(param.getUserId(), filePath);
+        updateUserPicturePort.updatePicture(param.getUserId(), filePath);
 
         return new Result(pictureLink);
     }
