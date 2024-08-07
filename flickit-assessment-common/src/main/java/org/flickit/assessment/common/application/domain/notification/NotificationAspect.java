@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.common.config.NotificationAspectConfig.NOTIFICATION_SENDER_THREAD_EXECUTOR;
+import static org.flickit.assessment.common.config.NotificationSenderConfig.NOTIFICATION_SENDER_THREAD_EXECUTOR;
 
 @Slf4j
 @Aspect

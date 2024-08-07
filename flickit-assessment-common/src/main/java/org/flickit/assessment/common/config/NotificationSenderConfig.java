@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAspectJAutoProxy
-public class NotificationAspectConfig {
+public class NotificationSenderConfig {
 
     public static final String NOTIFICATION_SENDER_THREAD_EXECUTOR = "notificationSenderThreadPoolTaskExecutor";
 
