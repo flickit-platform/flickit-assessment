@@ -36,7 +36,7 @@ public class NovuWorkflowInitializer {
             .toList();
 
         List<String> workflowCodes = Arrays.stream(NotificationType.values())
-            .map(NotificationType::name)
+            .map(NotificationType::getCode)
             .collect(Collectors.toList());
         workflowCodes.removeAll(workflowNames);
 

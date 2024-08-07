@@ -18,7 +18,7 @@ public class GrantAssessmentUserRoleNovuRequestConverter
     @Override
     public TriggerEventRequest convert(UUID targetUserId, GrantAssessmentUserRoleNotificationContent content) {
         var triggerEvent = new TriggerEventRequest();
-        triggerEvent.setName(GRANT_USER_ASSESSMENT_ROLE.name());
+        triggerEvent.setName(GRANT_USER_ASSESSMENT_ROLE.getCode());
         triggerEvent.setTo(createSubscriberRequest(targetUserId));
         triggerEvent.setPayload(Map.of("data", content));
         return triggerEvent;
