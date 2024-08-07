@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 
 @Configuration
 @ConditionalOnProperty(
-    name = "app.novu.init-workflows",
+    name = "app.notif-sender.novu.init-workflows",
     havingValue = "true")
 public class NovuWorkflowInitializer {
 
     @SneakyThrows
-    public NovuWorkflowInitializer(Novu novu, NovuClientProperties properties) {
-        String flickitWorkflowGroupId = createWorkflowGroup(novu, properties.getWorkflowGroupName());
+    public NovuWorkflowInitializer(Novu novu, NotificationSenderProperties properties) {
+        String flickitWorkflowGroupId = createWorkflowGroup(novu, properties.getNovu().getWorkflowGroupName());
         createWorkflows(novu, flickitWorkflowGroupId);
     }
 
