@@ -21,6 +21,7 @@ public record AssessmentReportItem(UUID id,
         Long id,
         String title,
         String summary,
+        String about,
         Integer maturityLevelCount,
         List<MaturityLevel> maturityLevels,
         ExpertGroup expertGroup) {

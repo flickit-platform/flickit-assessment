@@ -1312,6 +1312,63 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Delete Assessment Invite",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-invites/ff1b2ae3-92b7-437d-b321-539753b71608",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-invites",
+						"ff1b2ae3-92b7-437d-b321-539753b71608"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Assessment Invite",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roleId\": \"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-invites/{{inviteId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-invites",
+						"{{inviteId}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
