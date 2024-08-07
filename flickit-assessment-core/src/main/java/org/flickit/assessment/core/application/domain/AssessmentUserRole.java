@@ -81,11 +81,14 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE_ATTACHMENT,
             DELETE_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-            VIEW_QUESTIONNAIRE_QUESTIONS)),
+            VIEW_QUESTIONNAIRE_QUESTIONS,
+            VIEW_EVIDENCE)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
-            CREATE_ADVICE)),
+            CREATE_ADVICE,
+            VIEW_ANSWER_HISTORY_LIST,
+            EXPORT_ASSESSMENT_REPORT)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -94,7 +97,8 @@ public enum AssessmentUserRole {
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
             VIEW_ASSESSMENT_USER_LIST,
-            VIEW_ASSESSMENT_INVITEE_LIST)),
+            VIEW_ASSESSMENT_INVITEE_LIST,
+            DELETE_ASSESSMENT_INVITE)),
         ASSOCIATE_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
@@ -109,7 +113,8 @@ public enum AssessmentUserRole {
             DELETE_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_QUESTIONNAIRE_QUESTIONS,
-            ANSWER_QUESTION));
+            ANSWER_QUESTION,
+            VIEW_EVIDENCE));
 
         private final Set<AssessmentPermission> permissions;
     }

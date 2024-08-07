@@ -5,6 +5,7 @@ import java.util.List;
 public record QuestionnaireListItem(
     long id,
     String title,
+    String description,
     int index,
     int questionCount,
     int answerCount,

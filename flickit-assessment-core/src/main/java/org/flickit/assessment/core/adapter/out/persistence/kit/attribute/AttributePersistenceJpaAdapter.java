@@ -2,8 +2,10 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.QuestionScore;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Questionnaire;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -17,11 +19,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreAttributePersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class AttributePersistenceJpaAdapter implements LoadAttributeScoreDetailPort {
+public class AttributePersistenceJpaAdapter implements
+    LoadAttributeScoreDetailPort,
+    LoadAttributePort {
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -65,5 +70,12 @@ public class AttributePersistenceJpaAdapter implements LoadAttributeScoreDetailP
         if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
             return 0.0;
         return optionImpact.getValue();
+    }
+
+    @Override
+    public Attribute load(Long attributeId, Long kitVersionId) {
+        var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
+        return mapToDomainModel(attribute);
     }
 }

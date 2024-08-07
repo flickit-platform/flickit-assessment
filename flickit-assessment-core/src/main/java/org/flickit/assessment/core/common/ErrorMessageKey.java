@@ -10,6 +10,11 @@ public class ErrorMessageKey {
     public static final String EVIDENCE_ATTACHMENT_ID_NOT_FOUND = "evidence-attachment-id.notFound";
     public static final String ASSESSMENT_ID_NOT_FOUND = "assessment-id.notFound";
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
+    public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
+    public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
+    public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
+    public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
+    public static final String ASSESSMENT_INVITE_ID_NOT_FOUND = "assessment-invite.id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -183,4 +188,29 @@ public class ErrorMessageKey {
     public static final String ACCEPT_ASSESSMENT_INVITATIONS_USER_ID_NOT_NULL = "accept-assessment-invitations.userId.notNull";
 
     public static final String GET_ASSESSMENT_USER_PERMISSIONS_ASSESSMENT_ID_NOT_NULL = "get-assessment-current-user-permissions.assessmentId.notNull";
+
+    public static final String GET_EVIDENCE_ID_NOT_NULL = "get-evidence.id.notNull";
+    public static final String GET_EVIDENCE_ASSESSMENT_RESULT_NOT_FOUND = "get-evidence.assessmentResultId.notFound";
+
+    public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_ID_NOT_NULL = "get-answer-history-list.assessmentId.notNull";
+    public static final String GET_ANSWER_HISTORY_LIST_QUESTION_ID_NOT_NULL = "get-answer-history-list.questionId.notNull";
+    public static final String GET_ANSWER_HISTORY_LIST_SIZE_MIN = "get-answer-history-list.size.min";
+    public static final String GET_ANSWER_HISTORY_LIST_SIZE_MAX = "get-answer-history-list.size.max";
+    public static final String GET_ANSWER_HISTORY_LIST_PAGE_MIN = "get-answer-history-list.page.min";
+    public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-answer-history-list.assessmentResult.notFound";
+
+    public static final String CREATE_ATTRIBUTE_VALUE_REPORT_FILE_ASSESSMENT_ID_NOT_NULL = "create-attribute-value-report-file.assessmentId.notNull";
+    public static final String CREATE_ATTRIBUTE_VALUE_REPORT_FILE_ATTRIBUTE_ID_NOT_NULL = "create-attribute-value-report-file.attributeId.notNull";
+
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL = "create-assessment-attribute-ai-report.assessmentId.notNull";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL = "create-assessment-attribute-ai.report.attributeId.notNull";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL = "create-assessment-attribute-ai-report.fileLink.notNull";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL = "create-assessment-attribute-ai-report.fileLink.notUrl";
+    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-attribute-ai-report.assessmentResult.notFound";
+
+    public static final String DELETE_ASSESSMENT_INVITE_ID_NOT_NULL = "delete-assessment-invite.id.notNull";
+
+    public static final String UPDATE_ASSESSMENT_INVITE_ID_NOT_NULL = "update-assessment-invite.inviteId.notNull";
+    public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_NULL = "update-assessment-invite.roleId.notNull";
+    public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND = "update-assessment-invite.roleId.notFound";
 }

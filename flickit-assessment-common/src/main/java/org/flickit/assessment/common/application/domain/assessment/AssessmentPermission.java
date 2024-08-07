@@ -14,6 +14,7 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_LIST("viewAssessmentList"),
     VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),
     VIEW_ASSESSMENT_REPORT("viewAssessmentReport"),
+    EXPORT_ASSESSMENT_REPORT("exportAssessmentReport"),
     CALCULATE_ASSESSMENT("calculateAssessment"),
     CALCULATE_CONFIDENCE("calculateConfidence"),
     VIEW_ATTRIBUTE_SCORE_DETAIL("viewAttributeScoreDetail"),
@@ -29,13 +30,16 @@ public enum AssessmentPermission {
     VIEW_EVIDENCE_ATTACHMENT("viewEvidenceAttachment"),
     DELETE_EVIDENCE_ATTACHMENT("deleteEvidenceAttachment"),
     ANSWER_QUESTION("answerQuestion"),
+    VIEW_ANSWER_HISTORY_LIST("viewAnswerHistory"),
     VIEW_QUESTIONNAIRE_QUESTIONS("viewQuestionnaireQuestions"),
     VIEW_ASSESSMENT_QUESTIONNAIRE_LIST("viewAssessmentQuestionnaireList"),
     GRANT_USER_ASSESSMENT_ROLE("grantUserAssessmentRole"),
     UPDATE_USER_ASSESSMENT_ROLE("updateUserAssessmentRole"),
     DELETE_USER_ASSESSMENT_ROLE("deleteUserAssessmentRole"),
     VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
-    VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList");
+    VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
+    VIEW_EVIDENCE("viewEvidence"),
+    DELETE_ASSESSMENT_INVITE("deleteAssessmentInvite");
 
     private final String code;
 }

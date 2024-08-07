@@ -6,6 +6,8 @@ public interface QuestionnaireListItemView {
 
     String getTitle();
 
+    String getDescription();
+
     int getIndex();
 
     int getQuestionCount();

@@ -29,6 +29,8 @@ public class RestControllerNamingConventionArchUnitTest {
             .resideInAPackage(ADAPTER_IN_REST)
             .and()
             .areRecords()
+            .and()
+            .areNotNestedClasses()
             .should()
             .haveNameMatching("(.*)(" + RESPONSE_DTO_SUFFIX + "|" + REQUEST_DTO_SUFFIX + ")");
 

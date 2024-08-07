@@ -166,7 +166,7 @@ class MaturityLevelUpdateKitPersisterTest {
         verify(updateMaturityLevelPort).update(updateCaptor.capture(), any(), uuidCaptor.capture());
 
         var updatedMaturityLevel = new MaturityLevel(
-            levelTwo().getId(), levelTwo().getCode(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getValue(), levelTwo().getCompetences()
+            levelTwo().getId(), levelTwo().getCode(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getDescription(), dslLevel.getValue(), levelTwo().getCompetences()
         );
         assertEquals(updatedMaturityLevel.getId(), updateCaptor.getValue().get(0).getId());
         assertEquals(updatedMaturityLevel.getTitle(), updateCaptor.getValue().get(0).getTitle());

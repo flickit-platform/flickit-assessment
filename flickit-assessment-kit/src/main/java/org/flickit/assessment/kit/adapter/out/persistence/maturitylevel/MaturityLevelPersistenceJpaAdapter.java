@@ -55,6 +55,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             x.setIndex(newLevel.getIndex());
             x.setTitle(newLevel.getTitle());
             x.setValue(newLevel.getValue());
+            x.setDescription(newLevel.getDescription());
             x.setLastModificationTime(LocalDateTime.now());
             x.setLastModifiedBy(lastModifiedBy);
         });
