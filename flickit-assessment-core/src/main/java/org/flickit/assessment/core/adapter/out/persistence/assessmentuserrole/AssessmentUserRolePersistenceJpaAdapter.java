@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
@@ -43,6 +44,10 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     public void persist(UUID assessmentId, UUID userId, Integer roleId) {
         if (!AssessmentUserRole.isValidId(roleId))
             throw new ResourceNotFoundException(GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND);
+
+        var assessmentUserRole = repository.findByAssessmentIdAndUserId(assessmentId, userId);
+        if(assessmentUserRole.isPresent())
+            throw new ResourceAlreadyExistsException(GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS);
 
         var entity = new AssessmentUserRoleJpaEntity(assessmentId, userId, roleId);
         repository.save(entity);
