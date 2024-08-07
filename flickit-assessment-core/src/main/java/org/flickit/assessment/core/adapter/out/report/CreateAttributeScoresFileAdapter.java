@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class GenerateAttributeValueReportFileAdapter implements GenerateAttributeValueReportFilePort {
+public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFilePort {
 
     private static final String QUESTIONS_SHEET_TITLE = "Questions";
     private static final String ATTRIBUTE_SHEET_TITLE = "Attribute";
@@ -30,7 +30,7 @@ public class GenerateAttributeValueReportFileAdapter implements GenerateAttribut
 
     @SneakyThrows
     @Override
-    public InputStream generateReport(AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
+    public InputStream generateFile(AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
         Workbook workbook = new XSSFWorkbook();
         createQuestionsSheet(attributeValue, workbook);
         createAttributeSheet(attributeValue, workbook);

@@ -10,7 +10,7 @@ import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeValueReportFileUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.attributevalue.GenerateAttributeValueReportFilePort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -39,7 +39,7 @@ public class CreateAttributeValueReportFileService implements CreateAttributeVal
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeValuePort loadAttributeValuePort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final GenerateAttributeValueReportFilePort generateAttributeValueReportFilePort;
+    private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
     private final UploadAttributeScoreExcelPort uploadAttributeScoreExcelPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
@@ -53,7 +53,7 @@ public class CreateAttributeValueReportFileService implements CreateAttributeVal
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
         AttributeValue attributeValue = loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId());
         List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
-        InputStream inputStream = generateAttributeValueReportFilePort.generateReport(attributeValue, maturityLevels);
+        InputStream inputStream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
 
         String filePath = uploadAttributeScoreExcelPort.uploadExcel(inputStream, REPORT_FILE_NAME);
         String downloadLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class GenerateAttributeValueReportFileAdapterTest {
 
     @InjectMocks
-    private GenerateAttributeValueReportFileAdapter adapter;
+    private CreateAttributeScoresFileAdapter adapter;
 
     @Test
     void testGenerateAttributeValueReportFile_ValidParam_CreateFile() {
@@ -34,7 +34,7 @@ class GenerateAttributeValueReportFileAdapterTest {
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
-        InputStream inputStream = adapter.generateReport(attributeValue, maturityLevels);
+        InputStream inputStream = adapter.generateFile(attributeValue, maturityLevels);
 
         assertNotNull(inputStream);
     }
@@ -50,7 +50,7 @@ class GenerateAttributeValueReportFileAdapterTest {
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
-        InputStream inputStream = adapter.generateReport(attributeValue, maturityLevels);
+        InputStream inputStream = adapter.generateFile(attributeValue, maturityLevels);
 
         assertNotNull(inputStream);
         Workbook workbook = WorkbookFactory.create(inputStream);
