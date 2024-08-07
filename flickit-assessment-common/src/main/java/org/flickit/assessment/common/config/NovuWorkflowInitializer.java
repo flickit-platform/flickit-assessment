@@ -8,7 +8,7 @@ import co.novu.api.workflows.responses.WorkflowResponse;
 import co.novu.common.base.Novu;
 import co.novu.common.rest.NovuNetworkException;
 import lombok.SneakyThrows;
-import org.flickit.assessment.common.application.domain.assessment.NotificationType;
+import org.flickit.assessment.common.adapter.out.novu.NotificationType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,7 +36,7 @@ public class NovuWorkflowInitializer {
             .toList();
 
         List<String> workflowCodes = Arrays.stream(NotificationType.values())
-            .map(NotificationType::getCode)
+            .map(NotificationType::name)
             .collect(Collectors.toList());
         workflowCodes.removeAll(workflowNames);
 

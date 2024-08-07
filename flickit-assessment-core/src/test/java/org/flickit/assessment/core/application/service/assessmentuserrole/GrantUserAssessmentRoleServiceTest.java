@@ -1,22 +1,13 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.NotificationType;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.domain.User;
-import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad;
-import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad.AssessmentModel;
-import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad.AssignerModel;
-import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRolePayLoad.RoleModel;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
-import org.flickit.assessment.core.application.port.out.notification.SendNotificationPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
-import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
+import org.flickit.assessment.core.application.service.assessmentuserrole.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -24,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
@@ -50,15 +40,6 @@ class GrantUserAssessmentRoleServiceTest {
     @Mock
     private CreateAssessmentSpaceUserAccessPort createSpaceUserAccessPort;
 
-    @Mock
-    private GetAssessmentPort getAssessmentPort;
-
-    @Mock
-    private LoadUserPort loadUserPort;
-
-    @Mock
-    private SendNotificationPort sendNotificationPort;
-
     @Test
     void testGrantUserAssessmentRoleRole_CurrentUserIsNotAuthorized_ThrowsException() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
@@ -69,19 +50,16 @@ class GrantUserAssessmentRoleServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAssessmentUserRole(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(checkAssessmentSpaceMembershipPort, grantUserAssessmentRolePort, getAssessmentPort, loadUserPort, sendNotificationPort);
+        verifyNoInteractions(checkAssessmentSpaceMembershipPort, grantUserAssessmentRolePort);
     }
 
     @Test
     void testGrantUserAssessmentRole_UserIsNotSpaceMember_AddUserToSpace() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
-        var assessment = AssessmentMother.assessment();
-        var currentUser = new User(param.getCurrentUserId(), "current user");
-        var notificationData = new GrantAssessmentUserRolePayLoad(
-            new AssessmentModel(assessment.getTitle()),
-            new AssignerModel(currentUser.getDisplayName()),
-            new RoleModel(AssessmentUserRole.COMMENTER.getTitle())
-        );
+        var notificationData = new GrantAssessmentUserRoleNotificationCmd(param.getUserId(),
+            param.getAssessmentId(),
+            param.getCurrentUserId(),
+            AssessmentUserRole.valueOfById(param.getRoleId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
@@ -90,12 +68,12 @@ class GrantUserAssessmentRoleServiceTest {
 
         doNothing().when(createSpaceUserAccessPort).persist(any());
 
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadById(param.getCurrentUserId())).thenReturn(Optional.of(currentUser));
-        doNothing().when(sendNotificationPort)
-            .sendNotification(param.getUserId(), NotificationType.GRANT_USER_ASSESSMENT_ROLE, notificationData);
+        var result = service.grantAssessmentUserRole(param);
 
-        service.grantAssessmentUserRole(param);
+        GrantAssessmentUserRoleNotificationCmd cmd = (GrantAssessmentUserRoleNotificationCmd) result.notificationCmd();
+        assertEquals(notificationData.targetUserId(), cmd.targetUserId());
+        assertEquals(notificationData.assignerUserId(), cmd.assignerUserId());
+        assertEquals(notificationData.assessmentId(), cmd.assessmentId());
 
         ArgumentCaptor<CreateAssessmentSpaceUserAccessPort.Param> createSpaceUserAccessPortParam =
             ArgumentCaptor.forClass(CreateAssessmentSpaceUserAccessPort.Param.class);
@@ -108,20 +86,15 @@ class GrantUserAssessmentRoleServiceTest {
 
         verify(grantUserAssessmentRolePort, times(1))
             .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
-        verify(sendNotificationPort, times(1))
-            .sendNotification(param.getUserId(), NotificationType.GRANT_USER_ASSESSMENT_ROLE, notificationData);
     }
 
     @Test
     void testGrantUserAssessmentRole_ValidParam_GrantAccess() {
         Param param = new Param(UUID.randomUUID(), UUID.randomUUID(), 1, UUID.randomUUID());
-        var assessment = AssessmentMother.assessment();
-        var currentUser = new User(param.getCurrentUserId(), "current user");
-        var notificationData = new GrantAssessmentUserRolePayLoad(
-            new AssessmentModel(assessment.getTitle()),
-            new AssignerModel(currentUser.getDisplayName()),
-            new RoleModel(AssessmentUserRole.COMMENTER.getTitle())
-        );
+        var notificationData = new GrantAssessmentUserRoleNotificationCmd(param.getUserId(),
+            param.getAssessmentId(),
+            param.getCurrentUserId(),
+            AssessmentUserRole.valueOfById(param.getRoleId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             .thenReturn(true);
@@ -131,16 +104,14 @@ class GrantUserAssessmentRoleServiceTest {
         doNothing().when(grantUserAssessmentRolePort)
             .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
 
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadById(param.getCurrentUserId())).thenReturn(Optional.of(currentUser));
-        doNothing().when(sendNotificationPort)
-            .sendNotification(param.getUserId(), NotificationType.GRANT_USER_ASSESSMENT_ROLE, notificationData);
+        var result = service.grantAssessmentUserRole(param);
 
-        service.grantAssessmentUserRole(param);
+        GrantAssessmentUserRoleNotificationCmd cmd = (GrantAssessmentUserRoleNotificationCmd) result.notificationCmd();
+        assertEquals(notificationData.targetUserId(), cmd.targetUserId());
+        assertEquals(notificationData.assignerUserId(), cmd.assignerUserId());
+        assertEquals(notificationData.assessmentId(), cmd.assessmentId());
 
         verify(grantUserAssessmentRolePort, times(1))
             .persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
-        verify(sendNotificationPort, times(1))
-            .sendNotification(param.getUserId(), NotificationType.GRANT_USER_ASSESSMENT_ROLE, notificationData);
     }
 }
