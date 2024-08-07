@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ import static org.flickit.assessment.common.config.NotificationSenderConfig.NOTI
 @Slf4j
 @Aspect
 @Component
+@ConditionalOnProperty(name = "app.notif-sender.enabled", havingValue = "true")
 public class NotificationAspect {
 
     private final SendNotificationPort sendNotificationPort;
