@@ -29,7 +29,7 @@ public class OpenAiProperties {
 
     private String model = "gpt-4o-mini";
 
-    private float temperature = 0.7F;
+    private float temperature = 0.5F;
 
     private String prompt = "As a software quality assessor, I have evaluated the {{title}} maturity of a system. " +
         "We define {{title}} as {{description}} The uploaded Excel file contains multiple-choice questions used to assess {{title}}. " +
