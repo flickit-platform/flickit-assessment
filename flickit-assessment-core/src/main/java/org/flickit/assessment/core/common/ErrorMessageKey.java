@@ -214,4 +214,8 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_INVITE_ID_NOT_NULL = "update-assessment-invite.inviteId.notNull";
     public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_NULL = "update-assessment-invite.roleId.notNull";
     public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND = "update-assessment-invite.roleId.notFound";
+
+    public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "update-assessment-attribute.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "update-assessment-attribute.attributeId.notNull";
+    public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_CONTENT_NOT_NULL = "update-assessment-attribute.content.notNull";
 }
