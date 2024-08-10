@@ -64,7 +64,7 @@ public interface GetPublishedKitUseCase {
     record MinimalQuestionnaire(Long id, String title, String description) {
     }
 
-    record MinimalMaturityLevel(Long id, String title, Integer value, Integer index) {
+    record MinimalMaturityLevel(Long id, String title, String description, Integer value, Integer index) {
     }
 
     record MinimalKitTag(Long id, String title) {
