@@ -32,7 +32,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_N
 public class CreateAttributeValueReportFileService implements CreateAttributeValueReportFileUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
-    private static final String REPORT_FILE_NAME = "Attribute-report";
+    private static final String REPORT_FILE_NAME = "attribute-report.xlsx";
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
