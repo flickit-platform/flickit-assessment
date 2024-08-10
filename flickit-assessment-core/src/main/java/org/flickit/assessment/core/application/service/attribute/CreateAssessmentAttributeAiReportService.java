@@ -20,7 +20,7 @@ import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAtt
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +52,7 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
     private final OpenAiProperties openAiProperties;
     private final CreateAttributeInsightPort createAttributeInsightPort;
     private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
-    private final UploadAttributeScoreExcelPort uploadAttributeScoreExcelPort;
+    private final UploadAttributeScoresFilePort uploadAttributeScoreExcelPort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final CreateAttributeAiInsightPort createAttributeAiInsightPort;
 

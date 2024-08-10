@@ -14,7 +14,7 @@ import org.flickit.assessment.core.application.port.out.attribute.CreateAttribut
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +40,7 @@ public class CreateAttributeValueReportFileService implements CreateAttributeVal
     private final LoadAttributeValuePort loadAttributeValuePort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
-    private final UploadAttributeScoreExcelPort uploadAttributeScoreExcelPort;
+    private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
@@ -56,7 +56,7 @@ public class CreateAttributeValueReportFileService implements CreateAttributeVal
         InputStream inputStream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
 
         String fileName = attributeValue.getAttribute().getTitle() + REPORT_FILE_EXTENSION;
-        String filePath = uploadAttributeScoreExcelPort.uploadExcel(inputStream, fileName);
+        String filePath = uploadAttributeScoresFilePort.uploadExcel(inputStream, fileName);
         String downloadLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
         return new Result(downloadLink);
     }

@@ -20,7 +20,7 @@ import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAtt
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -91,7 +91,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
     CreateAttributeScoresFilePort generateAttributeValueReportFilePort;
 
     @Mock
-    private UploadAttributeScoreExcelPort uploadAttributeScoreExcelPort;
+    private UploadAttributeScoresFilePort uploadAttributeScoreExcelPort;
 
     private final String fileLink = "http://127.0.0.1:9000/report/5e3b5d74-cc9c-4b54-b051-86e934ae9a03/temp.?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-" +
         "Credential=minioadmin%2F20240726%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240726T052101Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-" +
