@@ -17,6 +17,7 @@ public class MaturityLevel {
     private final String description;
     private final int index;
     private final int value;
+    private final String description;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final List<LevelCompetence> levelCompetences;

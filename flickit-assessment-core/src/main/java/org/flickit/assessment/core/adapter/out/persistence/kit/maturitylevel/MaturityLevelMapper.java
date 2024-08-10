@@ -18,6 +18,7 @@ public class MaturityLevelMapper {
             entity.getDescription(),
             entity.getIndex(),
             entity.getValue(),
+            entity.getDescription(),
             competences
         );
     }

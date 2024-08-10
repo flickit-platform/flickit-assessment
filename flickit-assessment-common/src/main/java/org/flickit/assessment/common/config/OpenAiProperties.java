@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OpenAiProperties {
 
-    private boolean enabled;
+    private boolean enabled = false;
 
     @NotNull
     private String apiUrl;
@@ -25,18 +25,14 @@ public class OpenAiProperties {
     @NotNull
     private String apiKey;
 
-    @NotNull
-    private String role;
+    private String role = "system";
 
-    @NotNull
-    private String model;
+    private String model = "gpt-4o-mini";
 
-    @NotNull
-    private float temperature;
+    private float temperature = 0.7F;
 
-    private boolean saveAiInputFileEnabled;
+    private boolean saveAiInputFileEnabled = false;
 
-    @NotNull
     private String prompt = "As a software quality assessor, I have evaluated the {{title}} maturity of a system. " +
         "We define {{title}} as {{description}} The uploaded Excel file contains multiple-choice questions used to assess {{title}}. " +
         "The Excel columns include the question, a hint, the weight of the question in calculating the overall score," +

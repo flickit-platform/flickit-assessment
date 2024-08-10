@@ -10,10 +10,10 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class GrantAssessmentUserRoleUseCaseParamTest {
+class GrantUserAssessmentRoleUseCaseParamTest {
 
     @Test
-    void testGrantAssessmentUserRoleParam_assessmentIdIsNull_ErrorMessage() {
+    void testGrantUserAssessmentRoleParam_assessmentIdIsNull_ErrorMessage() {
         UUID userId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -22,7 +22,7 @@ class GrantAssessmentUserRoleUseCaseParamTest {
     }
 
     @Test
-    void testGrantAssessmentUserRoleParam_userIdIsNull_ErrorMessage() {
+    void testGrantUserAssessmentRoleParam_userIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -31,7 +31,7 @@ class GrantAssessmentUserRoleUseCaseParamTest {
     }
 
     @Test
-    void testGrantAssessmentUserRoleParam_roleIdIsNull_ErrorMessage() {
+    void testGrantUserAssessmentRoleParam_roleIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
@@ -41,7 +41,7 @@ class GrantAssessmentUserRoleUseCaseParamTest {
     }
 
     @Test
-    void testGrantAssessmentUserRoleParam_currentUserIdIsNull_ErrorMessage() {
+    void testGrantUserAssessmentRoleParam_currentUserIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
