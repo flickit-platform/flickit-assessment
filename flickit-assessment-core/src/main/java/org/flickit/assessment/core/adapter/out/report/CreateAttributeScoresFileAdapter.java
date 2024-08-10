@@ -184,6 +184,10 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         cell = row.createCell(1);
         cell.setCellValue(maturityLevel.getIndex());
         cell.setCellStyle(style);
+
+        cell = row.createCell(2);
+        cell.setCellValue(maturityLevel.getDescription());
+        cell.setCellStyle(style);
     }
 
     public ByteArrayInputStream convertWorkbookToInputStream(Workbook workbook) throws IOException {

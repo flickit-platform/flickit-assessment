@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
-class GenerateAttributeValueReportFileAdapterTest {
+class CreateAttributeScoresFileAdapterTest {
 
     @InjectMocks
     private CreateAttributeScoresFileAdapter adapter;
 
     @Test
-    void testGenerateAttributeValueReportFile_ValidParam_CreateFile() {
+    void testCreateAttributeScoresFileAdapter_ValidParam_CreateFile() {
         var attributeId = 1563L;
 
         Answer answer = AnswerMother.fullScoreOnLevels23(attributeId);
@@ -41,7 +41,7 @@ class GenerateAttributeValueReportFileAdapterTest {
 
     @SneakyThrows
     @Test
-    void testGenerateAttributeValueReportFile_ValidParam_FileStructureShouldNotBeChanged() {
+    void testCreateAttributeScoresFileAdapter_ValidParam_FileStructureShouldNotBeChanged() {
         var attributeId = 1563L;
 
         Answer answer = AnswerMother.fullScoreOnLevels23(attributeId);
@@ -51,8 +51,6 @@ class GenerateAttributeValueReportFileAdapterTest {
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
         InputStream inputStream = adapter.generateFile(attributeValue, maturityLevels);
-
-        assertNotNull(inputStream);
         Workbook workbook = WorkbookFactory.create(inputStream);
 
         assertEquals(3, workbook.getNumberOfSheets());
@@ -97,5 +95,6 @@ class GenerateAttributeValueReportFileAdapterTest {
         Row maturityLevelsFirstRow = maturityLevelsSheet.getRow(1);
         assertEquals(maturityLevels.get(0).getTitle(), maturityLevelsFirstRow.getCell(0).getStringCellValue());
         assertEquals(maturityLevels.get(0).getIndex(), maturityLevelsFirstRow.getCell(1).getNumericCellValue());
+        assertEquals(maturityLevels.get(0).getDescription(), maturityLevelsFirstRow.getCell(2).getStringCellValue());
     }
 }

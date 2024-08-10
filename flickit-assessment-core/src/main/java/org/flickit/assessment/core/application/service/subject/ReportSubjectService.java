@@ -40,7 +40,7 @@ public class ReportSubjectService implements ReportSubjectUseCase {
         var subjectReport = loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId());
 
         List<MaturityLevel> maturityLevels = subjectReport.maturityLevels().stream()
-            .map(e -> new MaturityLevel(e.getId(), e.getTitle(), e.getIndex(), e.getValue(), null))
+            .map(e -> new MaturityLevel(e.getId(), e.getTitle(), e.getDescription(), e.getIndex(), e.getValue(), null))
             .toList();
         var midLevelMaturity = middleLevel(maturityLevels);
         List<SubjectAttributeReportItem> attributes = subjectReport.attributes();
