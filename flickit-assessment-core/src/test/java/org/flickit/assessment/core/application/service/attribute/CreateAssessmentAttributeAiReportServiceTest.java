@@ -91,7 +91,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
     CreateAttributeScoresFilePort generateAttributeValueReportFilePort;
 
     @Mock
-    private UploadAttributeScoresFilePort uploadAttributeScoreExcelPort;
+    private UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
 
     private final String fileLink = "http://127.0.0.1:9000/report/5e3b5d74-cc9c-4b54-b051-86e934ae9a03/temp.?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-" +
         "Credential=minioadmin%2F20240726%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240726T052101Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-" +
@@ -114,7 +114,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
             createAttributeAiInsightPort,
             updateAttributeInsightPort,
             generateAttributeValueReportFilePort,
-            uploadAttributeScoreExcelPort);
+            uploadAttributeScoresFilePort);
     }
 
     @Test
@@ -137,7 +137,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
             loadAttributeValuePort,
             loadMaturityLevelsPort,
             generateAttributeValueReportFilePort,
-            uploadAttributeScoreExcelPort);
+            uploadAttributeScoresFilePort);
     }
 
     @Test
@@ -158,7 +158,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
             createAttributeAiInsightPort,
             updateAttributeInsightPort,
             generateAttributeValueReportFilePort,
-            uploadAttributeScoreExcelPort);
+            uploadAttributeScoresFilePort);
     }
 
     @Test
@@ -182,7 +182,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
             createAttributeAiInsightPort,
             updateAttributeInsightPort,
             generateAttributeValueReportFilePort,
-            uploadAttributeScoreExcelPort);
+            uploadAttributeScoresFilePort);
     }
 
     @Test
@@ -211,7 +211,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels))
             .thenReturn(inputStream);
         when(openAiProperties.isSaveAiInputFileEnabled()).thenReturn(true);
-        when(uploadAttributeScoreExcelPort.uploadExcel(eq(inputStream), any())).thenReturn(fileReportPath);
+        when(uploadAttributeScoresFilePort.uploadExcel(eq(inputStream), any())).thenReturn(fileReportPath);
         doNothing().when(createAttributeInsightPort).persist(any());
 
         var result = service.createAttributeAiReport(param);
@@ -250,7 +250,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var result = service.createAttributeAiReport(param);
         assertEquals("Report Content", result.content());
 
-        verifyNoInteractions(updateAttributeInsightPort, uploadAttributeScoreExcelPort);
+        verifyNoInteractions(updateAttributeInsightPort, uploadAttributeScoresFilePort);
     }
 
     @Test
@@ -279,7 +279,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
             createAttributeAiInsightPort,
             createAttributeInsightPort,
             generateAttributeValueReportFilePort,
-            uploadAttributeScoreExcelPort);
+            uploadAttributeScoresFilePort);
     }
 
     @Test
@@ -305,17 +305,15 @@ class CreateAssessmentAttributeAiReportServiceTest {
         verifyNoInteractions(createAttributeAiInsightPort,
             updateAttributeInsightPort,
             generateAttributeValueReportFilePort,
-            uploadAttributeScoreExcelPort);
+            uploadAttributeScoresFilePort);
     }
 
     @Test
     void testCreateAssessmentAttributeAiReport_AiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiEnabled_RegenerateAndUpdateInsight() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
-        Param param = new Param(assessmentId, attribute.getId(), fileLink, currentUserId);
+        Param param = new Param(assessment.getId(), attribute.getId(), fileLink, UUID.randomUUID());
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
         InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
         var fileReportPath = "path/to/file";
@@ -334,7 +332,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels))
             .thenReturn(inputStream);
         when(openAiProperties.isSaveAiInputFileEnabled()).thenReturn(true);
-        when(uploadAttributeScoreExcelPort.uploadExcel(eq(inputStream), any())).thenReturn(fileReportPath);
+        when(uploadAttributeScoresFilePort.uploadExcel(eq(inputStream), any())).thenReturn(fileReportPath);
         doNothing().when(updateAttributeInsightPort).updateAiInsight(any());
 
         var result = service.createAttributeAiReport(param);
@@ -345,12 +343,10 @@ class CreateAssessmentAttributeAiReportServiceTest {
 
     @Test
     void testCreateAssessmentAttributeAiReport_AiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiEnabledSaveFilesDisabled_RegenerateAndNotSaveFileAndUpdateInsight() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
-        Param param = new Param(assessmentId, attribute.getId(), fileLink, currentUserId);
+        Param param = new Param(assessment.getId(), attribute.getId(), fileLink, UUID.randomUUID());
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
         InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
@@ -373,7 +369,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var result = service.createAttributeAiReport(param);
         assertEquals(attributeInsight.getAiInsight(), result.content());
 
-        verifyNoInteractions(createAttributeInsightPort, uploadAttributeScoreExcelPort);
+        verifyNoInteractions(createAttributeInsightPort, uploadAttributeScoresFilePort);
     }
 
     @Test
@@ -400,6 +396,6 @@ class CreateAssessmentAttributeAiReportServiceTest {
             createAttributeInsightPort,
             updateAttributeInsightPort,
             generateAttributeValueReportFilePort,
-            uploadAttributeScoreExcelPort);
+            uploadAttributeScoresFilePort);
     }
 }
