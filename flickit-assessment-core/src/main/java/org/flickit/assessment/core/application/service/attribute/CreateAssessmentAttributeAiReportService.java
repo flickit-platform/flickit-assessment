@@ -39,7 +39,7 @@ import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE
 @RequiredArgsConstructor
 public class CreateAssessmentAttributeAiReportService implements CreateAssessmentAttributeAiReportUseCase {
 
-    private static final String AI_INPUT_FILE_NAME = "attribute-report.xlsx";
+    private static final String AI_INPUT_FILE_EXTENSION = ".xlsx";
 
     private final GetAssessmentPort getAssessmentPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
@@ -92,7 +92,8 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         try (var stream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)) {
             String aiInputPath = null;
             if (openAiProperties.isSaveAiInputFileEnabled()) {
-                aiInputPath = uploadAttributeScoreExcelPort.uploadExcel(stream, AI_INPUT_FILE_NAME);
+                var fileName = attribute.getTitle() + AI_INPUT_FILE_EXTENSION;
+                aiInputPath = uploadAttributeScoreExcelPort.uploadExcel(stream, fileName);
             }
             String aiInsight = createAttributeAiInsightPort.generateInsight(stream, attribute);
             updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
@@ -109,7 +110,8 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         try (var stream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)) {
             String aiInputPath = null;
             if (openAiProperties.isSaveAiInputFileEnabled()) {
-                aiInputPath = uploadAttributeScoreExcelPort.uploadExcel(stream, AI_INPUT_FILE_NAME);
+                var fileName = attribute.getTitle() + AI_INPUT_FILE_EXTENSION;
+                aiInputPath = uploadAttributeScoreExcelPort.uploadExcel(stream, fileName);
             }
             String aiInsight = createAttributeAiInsightPort.generateInsight(stream, attribute);
             createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
