@@ -31,6 +31,6 @@ public class UpdateAssessmentAttributeRestController {
     }
 
     private Param toParam(UUID assessmentId, Long attributeId, UpdateAssessmentAttributeRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, attributeId, requestDto.content() , currentUserId);
+        return new Param(assessmentId, attributeId, requestDto.assessorInsight() , currentUserId);
     }
 }

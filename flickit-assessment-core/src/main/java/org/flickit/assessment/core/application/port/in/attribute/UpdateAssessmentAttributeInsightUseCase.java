@@ -26,15 +26,15 @@ public interface UpdateAssessmentAttributeInsightUseCase {
         Long attributeId;
 
         @NotNull(message = UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_CONTENT_NOT_NULL)
-        String content;
+        String assessorInsight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID assessmentId, Long attributeId, String content, UUID currentUserId) {
+        public Param(UUID assessmentId, Long attributeId, String assessorInsight, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
-            this.content = content;
+            this.assessorInsight = assessorInsight;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
