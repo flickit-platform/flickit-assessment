@@ -229,7 +229,6 @@ class CreateAssessmentAttributeAiReportServiceTest {
         Param param = new Param(assessment.getId(), attribute.getId(), fileLink, currentUserId);
         InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
-        var fileReportPath = "path/to/file";
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         var aiReport = "Report Content";
 
