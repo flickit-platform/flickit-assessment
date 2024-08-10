@@ -93,10 +93,6 @@ class CreateAssessmentAttributeAiReportServiceTest {
     @Mock
     private UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
 
-    private final String fileLink = "http://127.0.0.1:9000/report/5e3b5d74-cc9c-4b54-b051-86e934ae9a03/temp.?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-" +
-        "Credential=minioadmin%2F20240726%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240726T052101Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-" +
-        "Signature=8dfab4d27ab012f1ef15beb58b54da353049f00b9e4a53115eb385b41fb4f4a5";
-
     @Test
     void testCreateAssessmentAttributeAiReport_AssessmentNotFound_ThrowResourceNotFoundException() {
         UUID assessmentId = UUID.randomUUID();
@@ -226,7 +222,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
-        Param param = new Param(assessment.getId(), attribute.getId(), fileLink, currentUserId);
+        Param param = new Param(assessment.getId(), attribute.getId(), currentUserId);
         InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
@@ -346,7 +342,7 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
-        Param param = new Param(assessment.getId(), attribute.getId(), fileLink, UUID.randomUUID());
+        Param param = new Param(assessment.getId(), attribute.getId(), UUID.randomUUID());
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
         InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
