@@ -39,6 +39,6 @@ public interface GetEvidenceAttachmentsUseCase {
         String link,
         String description,
         User createdBy,
-        LocalDateTime creationTime
-    ) {}
+        LocalDateTime creationTime) {
+    }
 }

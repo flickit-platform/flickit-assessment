@@ -15,7 +15,6 @@ public interface LoadEvidenceAttachmentsPort {
         String filePath,
         String description,
         User createdBy,
-        LocalDateTime creationTime
-    ){
+        LocalDateTime creationTime){
     }
 }
