@@ -17,9 +17,8 @@ class CreateAssessmentAiReportUseCaseParamTest {
     void testCreateAssessmentAttributeAiReport_AssessmentIdIsNull_ErrorMessage() {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
-        var fileLink = "https://www.flickit.com/file/example.xlsx";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(null, attributeId, fileLink, currentUserId));
+            () -> new CreateAssessmentAttributeAiReportUseCase.Param(null, attributeId, currentUserId));
         assertThat(throwable).hasMessage("assessmentId: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL);
     }
 
@@ -27,40 +26,17 @@ class CreateAssessmentAiReportUseCaseParamTest {
     void testCreateAssessmentAttributeAiReport_AttributeIdIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
-        var fileLink = "https://www.flickit.com/file/example.xlsx";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, null, fileLink, currentUserId));
+            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, null, currentUserId));
         assertThat(throwable).hasMessage("attributeId: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL);
-    }
-
-    @Test
-    void testCreateAssessmentAttributeAiReport_PictureLinkIsNull_ErrorMessage() {
-        var assessmentId = UUID.randomUUID();
-        var attributeId = 1L;
-        var currentUserId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, attributeId, null, currentUserId));
-        assertThat(throwable).hasMessage("fileLink: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL);
-    }
-
-    @Test
-    void testCreateAssessmentAttributeAiReport_PictureLinkIsNotUrl_ErrorMessage() {
-        var assessmentId = UUID.randomUUID();
-        var attributeId = 1L;
-        var currentUserId = UUID.randomUUID();
-        var fileLink = "invalidLink";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, attributeId, fileLink, currentUserId));
-        assertThat(throwable).hasMessage("fileLink: " + CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL);
     }
 
     @Test
     void testCreateAssessmentAttributeAiReport_CurrentUserIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var attributeId = 1L;
-        var fileLink = "https://www.flickit.com/file/example.xlsx";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, attributeId, fileLink, null));
+            () -> new CreateAssessmentAttributeAiReportUseCase.Param(assessmentId, attributeId, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
