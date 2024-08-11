@@ -10,7 +10,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AttributeInsight {
 
-    private final UUID attributeResultId;
+    private final UUID assessmentResultId;
     private final Long attributeId;
     private final String aiInsight;
     private final String assessorInsight;
