@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,9 +33,11 @@ class CreateAttributeScoresFileAdapterTest {
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
-        InputStream inputStream = adapter.generateFile(attributeValue, maturityLevels);
+        var result = adapter.generateFile(attributeValue, maturityLevels);
 
-        assertNotNull(inputStream);
+        assertNotNull(result);
+        assertNotNull(result.stream());
+        assertNotNull(result.text());
     }
 
     @SneakyThrows
@@ -50,8 +51,8 @@ class CreateAttributeScoresFileAdapterTest {
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
-        InputStream inputStream = adapter.generateFile(attributeValue, maturityLevels);
-        Workbook workbook = WorkbookFactory.create(inputStream);
+        var result = adapter.generateFile(attributeValue, maturityLevels);
+        Workbook workbook = WorkbookFactory.create(result.stream());
 
         assertEquals(3, workbook.getNumberOfSheets());
 

@@ -13,10 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
@@ -32,14 +29,12 @@ public class OpenAiAdapter implements CreateAttributeAiInsightPort {
 
     @SneakyThrows
     @Override
-    public String generateInsight(InputStream inputStream, Attribute attribute) {
-        String fileContent = readInputStream(inputStream);
-
+    public String generateInsight(String fileText, Attribute attribute) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(openAiProperties.getApiKey());
 
-        var content = openAiProperties.createPrompt(attribute.getTitle(), attribute.getDescription()) + fileContent;
+        var content = openAiProperties.createPrompt(attribute.getTitle(), attribute.getDescription()) + fileText;
         var message = List.of(new OpenAiRequest.Message(openAiProperties.getRole(), content));
         var request = new OpenAiRequest(openAiProperties.getModel(), message, openAiProperties.getTemperature());
         HttpEntity<OpenAiRequest> requestEntity = new HttpEntity<>(request, headers);
@@ -50,18 +45,7 @@ public class OpenAiAdapter implements CreateAttributeAiInsightPort {
             requestEntity,
             JsonNode.class
         );
-
         return extractContentFromResponse(responseEntity.getBody());
-    }
-
-    private String readInputStream(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
-        }
-        return result.toString(StandardCharsets.UTF_8);
     }
 
     private String extractContentFromResponse(JsonNode responseBody) throws IOException {
