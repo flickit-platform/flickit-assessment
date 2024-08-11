@@ -30,12 +30,13 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
 
     @SneakyThrows
     @Override
-    public InputStream generateFile(AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
+    public Result generateFile(AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
         Workbook workbook = new XSSFWorkbook();
         createQuestionsSheet(attributeValue, workbook);
         createAttributeSheet(attributeValue, workbook);
         createMaturityLevelsSheet(maturityLevels, workbook);
-        return convertWorkbookToInputStream(workbook);
+        var stream = convertWorkbookToInputStream(workbook);
+        return new Result(stream, convertToText(stream));
     }
 
     private void createQuestionsSheet(AttributeValue attributeValue, Workbook workbook) {
@@ -195,5 +196,54 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         workbook.write(outputStream);
         workbook.close();
         return new ByteArrayInputStream(outputStream.toByteArray());
+    }
+
+    public String convertToText(InputStream inputStream) throws IOException {
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        StringBuilder textBuilder = new StringBuilder();
+
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            textBuilder.append("Sheet: ").append(sheet.getSheetName()).append("\n");
+
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    String cellValue = getCellValue(cell);
+                    textBuilder.append(cellValue).append("\t");
+                }
+                textBuilder.append("\n");
+            }
+            textBuilder.append("\n");
+        }
+
+        workbook.close();
+        return textBuilder.toString();
+    }
+
+    private String getCellValue(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
+        switch (cell.getCellType()) {
+            case STRING -> {
+                return cell.getStringCellValue();
+            }
+            case NUMERIC -> {
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            }
+            case BOOLEAN -> {
+                return String.valueOf(cell.getBooleanCellValue());
+            }
+            case FORMULA -> {
+                return cell.getCellFormula();
+            }
+            default -> {
+                return "";
+            }
+        }
     }
 }

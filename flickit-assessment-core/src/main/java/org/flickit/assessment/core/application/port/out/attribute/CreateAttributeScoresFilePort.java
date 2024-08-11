@@ -8,5 +8,8 @@ import java.util.List;
 
 public interface CreateAttributeScoresFilePort {
 
-    InputStream generateFile(AttributeValue attributeValue, List<MaturityLevel> maturityLevels);
+    Result generateFile(AttributeValue attributeValue, List<MaturityLevel> maturityLevels);
+
+    record Result(InputStream stream, String text) {
+    }
 }
