@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
@@ -30,7 +29,6 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
-    private final ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Override
     public void updateAttributeInsight(Param param) {
@@ -39,8 +37,6 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
-
-        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())
             .orElseThrow(()-> new ResourceNotFoundException(UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));

@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.attribute.UpdateAttributeInsightUseCase;
@@ -24,7 +23,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateAttributeInsightServiceTest {
@@ -40,9 +40,6 @@ class UpdateAttributeInsightServiceTest {
 
     @Mock
     private LoadAssessmentResultPort assessmentResultPort;
-
-    @Mock
-    private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
     private UpdateAttributeInsightPort updateAttributeInsightPort;
@@ -61,7 +58,6 @@ class UpdateAttributeInsightServiceTest {
 
         verifyNoInteractions(loadAttributeInsightPort ,
             assessmentResultPort,
-            validateAssessmentResultPort,
             updateAttributeInsightPort);
     }
 
@@ -79,7 +75,6 @@ class UpdateAttributeInsightServiceTest {
         assertEquals(UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(loadAttributeInsightPort,
-            validateAssessmentResultPort,
             updateAttributeInsightPort);
     }
 
@@ -93,7 +88,6 @@ class UpdateAttributeInsightServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAttributeInsight(param));
@@ -113,7 +107,6 @@ class UpdateAttributeInsightServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.of(attributeInsight));
 
         assertDoesNotThrow(() -> service.updateAttributeInsight(param));
