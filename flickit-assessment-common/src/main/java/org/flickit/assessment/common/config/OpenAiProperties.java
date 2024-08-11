@@ -29,7 +29,7 @@ public class OpenAiProperties {
 
     private String model = "gpt-4o-mini";
 
-    private float temperature = 0.7F;
+    private float temperature = 0.5F;
 
     private boolean saveAiInputFileEnabled = false;
 
