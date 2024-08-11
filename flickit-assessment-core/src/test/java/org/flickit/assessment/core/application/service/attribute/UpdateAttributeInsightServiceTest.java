@@ -45,7 +45,7 @@ class UpdateAttributeInsightServiceTest {
     private UpdateAttributeInsightPort updateAttributeInsightPort;
 
     @Test
-    void updateAssessmentAttributeInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
+    void updateAttributeInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
         var currentUserId = UUID.randomUUID();
         var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), 1L, "content", currentUserId);
 
@@ -58,7 +58,7 @@ class UpdateAttributeInsightServiceTest {
     }
 
     @Test
-    void updateAssessmentAttributeInsight_AssessmentResultDoesNotExist_ThrowResourceNotFoundException() {
+    void updateAttributeInsight_AssessmentResultDoesNotExist_ThrowResourceNotFoundException() {
         var content = "content";
         var currentUserId = UUID.randomUUID();
         var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), 123L, content, currentUserId);
@@ -73,7 +73,7 @@ class UpdateAttributeInsightServiceTest {
     }
 
     @Test
-    void updateAssessmentAttributeInsight_AttributeInsightDoesNotExist_ThrowResourceNotFoundException() {
+    void updateAttributeInsight_AttributeInsightDoesNotExist_ThrowResourceNotFoundException() {
         var attributeId = 1L;
         var content = "content";
         var currentUserId = UUID.randomUUID();
@@ -91,7 +91,7 @@ class UpdateAttributeInsightServiceTest {
     }
 
     @Test
-    void updateAssessmentAttributeInsight_validParameters_SuccessfulUpdate() {
+    void updateAttributeInsight_validParameters_SuccessfulUpdate() {
         var attributeId = 1L;
         var content = "content";
         var currentUserId = UUID.randomUUID();
