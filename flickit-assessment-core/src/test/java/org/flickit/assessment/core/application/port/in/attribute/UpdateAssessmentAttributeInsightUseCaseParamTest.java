@@ -33,13 +33,13 @@ class UpdateAssessmentAttributeInsightUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAssessmentAttributeInsight_contentIsNull_ErrorMessage() {
+    void testUpdateAssessmentAttributeInsight_assessorInsightIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var assessmentId = UUID.randomUUID();
         var attributeId = 0L;
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateAssessmentAttributeInsightUseCase.Param(assessmentId, attributeId, null, currentUserId));
-        assertThat(throwable).hasMessage("content: " + UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL);
+        assertThat(throwable).hasMessage("assessorInsight: " + UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL);
     }
 
     @Test
