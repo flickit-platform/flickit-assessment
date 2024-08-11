@@ -29,7 +29,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -188,7 +187,8 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
         Param param = new Param(assessment.getId(), attribute.getId(), currentUserId);
-        InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
+        String fileContent = "file content";
+        var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
         var fileReportPath = "path/to/file";
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
@@ -201,13 +201,13 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
-        when(createAttributeAiInsightPort.generateInsight(inputStream, attribute)).thenReturn(aiReport);
+        when(createAttributeAiInsightPort.generateInsight(file.text(), attribute)).thenReturn(aiReport);
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels))
-            .thenReturn(inputStream);
+            .thenReturn(file);
         when(openAiProperties.isSaveAiInputFileEnabled()).thenReturn(true);
-        when(uploadAttributeScoresFilePort.uploadExcel(eq(inputStream), any())).thenReturn(fileReportPath);
+        when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
         doNothing().when(createAttributeInsightPort).persist(any());
 
         var result = service.createAttributeAiReport(param);
@@ -223,7 +223,8 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var assessment = assessmentResult.getAssessment();
         Param param = new Param(assessment.getId(), attribute.getId(), currentUserId);
-        InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
+        String fileContent = "file content";
+        var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         var aiReport = "Report Content";
@@ -235,11 +236,11 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
-        when(createAttributeAiInsightPort.generateInsight(inputStream, attribute)).thenReturn(aiReport);
+        when(createAttributeAiInsightPort.generateInsight(file.text(), attribute)).thenReturn(aiReport);
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels))
-            .thenReturn(inputStream);
+            .thenReturn(file);
         when(openAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
         doNothing().when(createAttributeInsightPort).persist(any());
 
@@ -311,7 +312,8 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var assessment = assessmentResult.getAssessment();
         Param param = new Param(assessment.getId(), attribute.getId(), UUID.randomUUID());
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
-        InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
+        String fileContent = "file content";
+        var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
         var fileReportPath = "path/to/file";
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
@@ -322,13 +324,13 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        when(createAttributeAiInsightPort.generateInsight(inputStream, attribute)).thenReturn(attributeInsight.getAiInsight());
+        when(createAttributeAiInsightPort.generateInsight(file.text(), attribute)).thenReturn(attributeInsight.getAiInsight());
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels))
-            .thenReturn(inputStream);
+            .thenReturn(file);
         when(openAiProperties.isSaveAiInputFileEnabled()).thenReturn(true);
-        when(uploadAttributeScoresFilePort.uploadExcel(eq(inputStream), any())).thenReturn(fileReportPath);
+        when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
         doNothing().when(updateAttributeInsightPort).updateAiInsight(any());
 
         var result = service.createAttributeAiReport(param);
@@ -344,7 +346,8 @@ class CreateAssessmentAttributeAiReportServiceTest {
         var assessment = assessmentResult.getAssessment();
         Param param = new Param(assessment.getId(), attribute.getId(), UUID.randomUUID());
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
-        InputStream inputStream = new ByteArrayInputStream("File Content".getBytes());
+        String fileContent = "file content";
+        var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
         AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
@@ -354,11 +357,11 @@ class CreateAssessmentAttributeAiReportServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        when(createAttributeAiInsightPort.generateInsight(inputStream, attribute)).thenReturn(attributeInsight.getAiInsight());
+        when(createAttributeAiInsightPort.generateInsight(file.text(), attribute)).thenReturn(attributeInsight.getAiInsight());
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels))
-            .thenReturn(inputStream);
+            .thenReturn(file);
         when(openAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
         doNothing().when(updateAttributeInsightPort).updateAiInsight(any());
 

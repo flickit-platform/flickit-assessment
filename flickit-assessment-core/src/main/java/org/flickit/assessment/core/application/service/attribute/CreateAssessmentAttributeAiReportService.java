@@ -91,12 +91,11 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (!openAiProperties.isEnabled())
             return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
 
-        try (var stream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)) {
-            String aiInputPath = uploadInputFile(attribute, stream);
-            String aiInsight = createAttributeAiInsightPort.generateInsight(stream, attribute);
-            updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
-            return new Result(aiInsight);
-        }
+        var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
+        String aiInputPath = uploadInputFile(attribute, file.stream());
+        String aiInsight = createAttributeAiInsightPort.generateInsight(file.text(), attribute);
+        updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
+        return new Result(aiInsight);
     }
 
     @SneakyThrows
@@ -105,12 +104,11 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (!openAiProperties.isEnabled())
             return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
 
-        try (var stream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)) {
-            String aiInputPath = uploadInputFile(attribute, stream);
-            String aiInsight = createAttributeAiInsightPort.generateInsight(stream, attribute);
-            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
-            return new Result(aiInsight);
-        }
+        var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
+        String aiInputPath = uploadInputFile(attribute, file.stream());
+        String aiInsight = createAttributeAiInsightPort.generateInsight(file.text(), attribute);
+        createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
+        return new Result(aiInsight);
     }
 
     @Nullable
