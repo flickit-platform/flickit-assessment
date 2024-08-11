@@ -15,22 +15,22 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class UpdateAssessmentAttributeRestController {
+public class UpdateAssessmentAttributeInsightRestController {
 
     private final UpdateAssessmentAttributeInsightUseCase useCase;
     private final UserContext userContext;
 
     @PutMapping("assessments/{assessmentId}/ai-report/attributes/{attributeId}")
-    ResponseEntity<Void> updateAssessmentAttribute(
+    ResponseEntity<Void> updateAssessmentAttributeInsight(
         @PathVariable UUID assessmentId,
         @PathVariable Long attributeId,
-        @RequestBody UpdateAssessmentAttributeRequestDto requestDto) {
+        @RequestBody UpdateAssessmentAttributeInsightRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         useCase.updateAttributeInsight(toParam(assessmentId, attributeId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, Long attributeId, UpdateAssessmentAttributeRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(UUID assessmentId, Long attributeId, UpdateAssessmentAttributeInsightRequestDto requestDto, UUID currentUserId) {
         return new Param(assessmentId, attributeId, requestDto.assessorInsight() , currentUserId);
     }
 }
