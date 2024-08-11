@@ -25,7 +25,7 @@ public class OpenAiProperties {
     @NotNull
     private String apiKey;
 
-    private String role = "system";
+    private String role = "assistant";
 
     private String model = "gpt-4o-mini";
 
