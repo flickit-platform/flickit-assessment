@@ -1335,7 +1335,7 @@
 			"response": []
 		},
 		{
-			"name": "UPDATE Assessment Attribute Report",
+			"name": "Update Attribute Insight",
 			"request": {
 				"method": "PUT",
 				"header": [

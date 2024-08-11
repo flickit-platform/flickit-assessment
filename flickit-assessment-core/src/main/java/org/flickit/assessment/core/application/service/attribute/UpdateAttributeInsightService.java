@@ -42,12 +42,12 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessment.getId())
-            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         validateAssessmentResultPort.validate(assessment.getId());
 
         var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())
-            .orElseThrow(()-> new ResourceNotFoundException(UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));
+            .orElseThrow(()-> new ResourceNotFoundException(UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));
 
         updateAttributeInsightPort.updateAssessorInsight(toAttributeInsight(
             assessmentResult.getId(),

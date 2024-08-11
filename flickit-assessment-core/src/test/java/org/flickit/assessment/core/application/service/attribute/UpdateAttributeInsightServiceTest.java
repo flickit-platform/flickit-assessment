@@ -113,7 +113,7 @@ class UpdateAttributeInsightServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, ()-> service.updateAttributeInsight(param));
 
-        assertEquals(UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+        assertEquals(UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verify(getAssessmentPort).getAssessmentById(assessmentId);
         verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT);
@@ -141,7 +141,7 @@ class UpdateAttributeInsightServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, ()-> service.updateAttributeInsight(param));
 
-        assertEquals(UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND, throwable.getMessage());
+        assertEquals(UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND, throwable.getMessage());
 
         verify(getAssessmentPort).getAssessmentById(assessmentId);
         verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT);
