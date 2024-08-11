@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.port.in.attribute.UpdateAttribute
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +30,8 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
+    private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
-    private final UpdateAttributeAssessorInsightPort updateAttributeAssessorInsightPort;
 
     @Override
     public void updateAttributeInsight(Param param) {
@@ -48,7 +49,7 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
         var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())
             .orElseThrow(()-> new ResourceNotFoundException(UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));
 
-        updateAttributeAssessorInsightPort.updateAssessorInsight(toAttributeInsight(
+        updateAttributeInsightPort.updateAssessorInsight(toAttributeInsight(
             assessmentResult.getId(),
             attributeInsight.getAttributeId(),
             param.getAssessorInsight()));

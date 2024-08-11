@@ -16,8 +16,7 @@ import java.util.UUID;
 public class AttributeInsightPersistenceJpaAdapter implements
     LoadAttributeInsightPort,
     CreateAttributeInsightPort,
-    UpdateAttributeInsightPort,
-    UpdateAttributeAssessorInsightPort {
+    UpdateAttributeInsightPort {
 
     private final AttributeInsightJpaRepository repository;
 

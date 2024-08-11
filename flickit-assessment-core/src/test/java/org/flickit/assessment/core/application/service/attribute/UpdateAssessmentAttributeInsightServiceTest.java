@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.port.in.attribute.UpdateAttribute
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.AttributeInsightMother;
@@ -48,7 +49,7 @@ class UpdateAttributeInsightServiceTest {
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
-    private UpdateAttributeAssessorInsightPort updateAttributeAssessorInsightPort;
+    private UpdateAttributeInsightPort updateAttributeInsightPort;
 
     @Test
     void updateAssessmentAttributeInsight_assessmentIdNotFound_resourceNotFoundError() {
@@ -69,7 +70,7 @@ class UpdateAttributeInsightServiceTest {
             assessmentResultPort,
             validateAssessmentResultPort,
             assessmentAccessChecker,
-            updateAttributeAssessorInsightPort);
+            updateAttributeInsightPort);
 
     }
 
@@ -94,7 +95,7 @@ class UpdateAttributeInsightServiceTest {
         verifyNoInteractions(loadAttributeInsightPort ,
             assessmentResultPort,
             validateAssessmentResultPort,
-            updateAttributeAssessorInsightPort);
+            updateAttributeInsightPort);
     }
 
     @Test
@@ -119,7 +120,7 @@ class UpdateAttributeInsightServiceTest {
         verify(assessmentResultPort).loadByAssessmentId(assessment.getId());
         verifyNoInteractions(loadAttributeInsightPort,
             validateAssessmentResultPort,
-            updateAttributeAssessorInsightPort);
+            updateAttributeInsightPort);
     }
 
     @Test
@@ -145,7 +146,7 @@ class UpdateAttributeInsightServiceTest {
         verify(getAssessmentPort).getAssessmentById(assessmentId);
         verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT);
         verify(assessmentResultPort).loadByAssessmentId(assessment.getId());
-        verifyNoInteractions(updateAttributeAssessorInsightPort);
+        verifyNoInteractions(updateAttributeInsightPort);
     }
 
     @Test
@@ -170,6 +171,6 @@ class UpdateAttributeInsightServiceTest {
         verify(getAssessmentPort).getAssessmentById(assessmentId);
         verify(assessmentAccessChecker).isAuthorized(assessment.getId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT);
         verify(assessmentResultPort).loadByAssessmentId(assessment.getId());
-        verify(updateAttributeAssessorInsightPort).updateAssessorInsight(any());
+        verify(updateAttributeInsightPort).updateAssessorInsight(any());
     }
 }
