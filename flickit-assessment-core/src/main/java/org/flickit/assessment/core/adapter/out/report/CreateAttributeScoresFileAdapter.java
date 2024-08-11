@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -36,7 +35,8 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         createAttributeSheet(attributeValue, workbook);
         createMaturityLevelsSheet(maturityLevels, workbook);
         var stream = convertWorkbookToInputStream(workbook);
-        return new Result(stream, convertToText(stream));
+        var text = convertWorkbookToText(workbook);
+        return new Result(stream, text);
     }
 
     private void createQuestionsSheet(AttributeValue attributeValue, Workbook workbook) {
@@ -198,8 +198,7 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
-    public String convertToText(InputStream inputStream) throws IOException {
-        Workbook workbook = new XSSFWorkbook(inputStream);
+    public String convertWorkbookToText(Workbook workbook) throws IOException {
         StringBuilder textBuilder = new StringBuilder();
 
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
