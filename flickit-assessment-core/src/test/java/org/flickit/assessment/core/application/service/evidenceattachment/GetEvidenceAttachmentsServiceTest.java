@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,8 +69,9 @@ class GetEvidenceAttachmentsServiceTest {
         var currentUserId = UUID.randomUUID();
         var evidence = EvidenceMother.simpleEvidenceWithId(evidenceId);
         var param = new Param(evidenceId, currentUserId);
-        var attachment1 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), "path/to/file", "des", createUser());
-        var attachment2 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), "path/to/file", "des", createUser());
+        LocalDateTime creationTime = LocalDateTime.now();
+        var attachment1 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), "path/to/file", "des", createUser(), creationTime);
+        var attachment2 = new LoadEvidenceAttachmentsPort.Result(UUID.randomUUID(), "path/to/file", "des", createUser(), creationTime);
         var attachments = List.of(attachment1, attachment2);
 
         when(loadEvidencePort.loadNotDeletedEvidence(evidenceId)).thenReturn(evidence);
@@ -85,11 +87,13 @@ class GetEvidenceAttachmentsServiceTest {
         assertEquals(attachment1.createdBy().getId(), result.get(0).createdBy().getId());
         assertEquals(attachment1.createdBy().getDisplayName(), result.get(0).createdBy().getDisplayName());
         assertEquals("link", result.get(0).link());
+        assertEquals(creationTime, result.get(0).creationTime());
         assertEquals(attachment2.id(), result.get(1).id());
         assertEquals(attachment2.description(), result.get(1).description());
         assertEquals(attachment2.createdBy().getId(), result.get(1).createdBy().getId());
         assertEquals(attachment2.createdBy().getDisplayName(), result.get(1).createdBy().getDisplayName());
         assertEquals("link", result.get(1).link());
+        assertEquals(creationTime, result.get(1).creationTime());
 
         verify(loadEvidencePort).loadNotDeletedEvidence(evidenceId);
         verify(assessmentAccessChecker).isAuthorized(eq(evidence.getAssessmentId()), eq(currentUserId), any());
