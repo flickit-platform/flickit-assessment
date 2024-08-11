@@ -6,11 +6,10 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
-import org.flickit.assessment.core.application.port.in.attribute.UpdateAssessmentAttributeInsightUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.UpdateAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeAssessorInsightPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateAssessmentAttributeInsightService implements UpdateAssessmentAttributeInsightUseCase {
+public class UpdateAttributeInsightService implements UpdateAttributeInsightUseCase {
 
     private final GetAssessmentPort getAssessmentPort;
     private final AssessmentAccessChecker assessmentAccessChecker;

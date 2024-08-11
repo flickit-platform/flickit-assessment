@@ -11,7 +11,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 
-public interface UpdateAssessmentAttributeInsightUseCase {
+public interface UpdateAttributeInsightUseCase {
 
     void updateAttributeInsight(Param param);
 
@@ -19,13 +19,13 @@ public interface UpdateAssessmentAttributeInsightUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @NotNull(message = UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL)
         String assessorInsight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

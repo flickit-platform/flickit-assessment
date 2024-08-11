@@ -5,11 +5,10 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.attribute.UpdateAssessmentAttributeInsightUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.UpdateAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeAssessorInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.AttributeInsightMother;
@@ -28,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateAssessmentAttributeInsightServiceTest {
+class UpdateAttributeInsightServiceTest {
 
     @InjectMocks
-    private UpdateAssessmentAttributeInsightService service;
+    private UpdateAttributeInsightService service;
 
     @Mock
     private GetAssessmentPort getAssessmentPort;
@@ -57,7 +56,7 @@ class UpdateAssessmentAttributeInsightServiceTest {
         var attributeId = 1L;
         var content = "content";
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateAssessmentAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
+        var param = new UpdateAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.empty());
 
@@ -80,7 +79,7 @@ class UpdateAssessmentAttributeInsightServiceTest {
         var attributeId = 1L;
         var content = "content";
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateAssessmentAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
+        var param = new UpdateAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
         var assessment = AssessmentMother.assessment();
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
@@ -104,7 +103,7 @@ class UpdateAssessmentAttributeInsightServiceTest {
         var attributeId = 1L;
         var content = "content";
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateAssessmentAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
+        var param = new UpdateAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
         var assessment = AssessmentMother.assessment();
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
@@ -129,7 +128,7 @@ class UpdateAssessmentAttributeInsightServiceTest {
         var attributeId = 1L;
         var content = "content";
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateAssessmentAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
+        var param = new UpdateAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
         var assessment = AssessmentMother.assessment();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
@@ -155,7 +154,7 @@ class UpdateAssessmentAttributeInsightServiceTest {
         var attributeId = 1L;
         var content = "content";
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateAssessmentAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
+        var param = new UpdateAttributeInsightUseCase.Param(assessmentId, attributeId, content, currentUserId);
         var assessment = AssessmentMother.assessment();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var attributeInsight = AttributeInsightMother.simpleAttributeAiInsight();
