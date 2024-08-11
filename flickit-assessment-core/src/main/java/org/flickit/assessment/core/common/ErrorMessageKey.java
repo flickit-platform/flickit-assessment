@@ -215,5 +215,4 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL = "update-assessment-attribute-insight.assessorInsight.notNull";
     public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "update-assessment-attribute-insight.assessmentResult.notFound";
     public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND = "update-assessment-attribute-insight.attributeInsight.notFound";
-
 }
