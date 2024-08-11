@@ -34,6 +34,7 @@ public class NotificationSenderConfig {
     Novu novu(NotificationSenderProperties properties) {
         NovuConfig novuConfig = new NovuConfig(properties.getNovu().getApiKey());
         novuConfig.setBaseUrl(properties.getNovu().getBaseUrl());
+        novuConfig.setEuBaseUrl(properties.getNovu().getEuBaseUrl());
         return new Novu(novuConfig);
     }
 }

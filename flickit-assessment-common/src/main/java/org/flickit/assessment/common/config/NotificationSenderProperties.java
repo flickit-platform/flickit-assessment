@@ -30,5 +30,7 @@ public class NotificationSenderProperties {
 
         @NotBlank
         private String workflowGroupName;
+
+        private String euBaseUrl;
     }
 }
