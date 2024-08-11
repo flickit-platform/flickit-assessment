@@ -44,7 +44,7 @@ public class UpdateAssessmentAttributeInsightService implements UpdateAssessment
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessment.getId())
             .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        validateAssessmentResultPort.validate(param.getAssessmentId());
+        validateAssessmentResultPort.validate(assessment.getId());
 
         var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())
             .orElseThrow(()-> new ResourceNotFoundException(UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));
