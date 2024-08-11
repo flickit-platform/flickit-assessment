@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.attribute.UpdateAttributeInsightUseCase;
@@ -19,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND;
@@ -45,48 +45,42 @@ class UpdateAttributeInsightServiceTest {
     private UpdateAttributeInsightPort updateAttributeInsightPort;
 
     @Test
-    void updateAssessmentAttributeInsight_NotEnoughPermission_AccessDeniedExceptionError() {
-        var attributeId = 1L;
-        var content = "content";
+    void updateAssessmentAttributeInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, content, currentUserId);
+        var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), 1L, "content", currentUserId);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, EXPORT_ASSESSMENT_REPORT)).thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, ()-> service.updateAttributeInsight(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAttributeInsight(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAttributeInsightPort ,
-            assessmentResultPort,
-            updateAttributeInsightPort);
+        verifyNoInteractions(loadAttributeInsightPort, assessmentResultPort, updateAttributeInsightPort);
     }
 
     @Test
-    void updateAssessmentAttributeInsight_AssessmentResultNotExist_ResourceNotFoundError() {
-        var attributeId = 1L;
+    void updateAssessmentAttributeInsight_AssessmentResultDoesNotExist_ThrowResourceNotFoundException() {
         var content = "content";
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, content, currentUserId);
+        var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), 123L, content, currentUserId);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAttributeInsight(param));
         assertEquals(UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(loadAttributeInsightPort,
-            updateAttributeInsightPort);
+        verifyNoInteractions(loadAttributeInsightPort, updateAttributeInsightPort);
     }
 
     @Test
-    void updateAssessmentAttributeInsight_AttributeInsightNotExist_ResourceNotFoundError() {
+    void updateAssessmentAttributeInsight_AttributeInsightDoesNotExist_ThrowResourceNotFoundException() {
         var attributeId = 1L;
         var content = "content";
         var currentUserId = UUID.randomUUID();
         var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, content, currentUserId);
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
 
@@ -105,7 +99,7 @@ class UpdateAttributeInsightServiceTest {
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         var attributeInsight = AttributeInsightMother.simpleAttributeAiInsight();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, AssessmentPermission.EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.of(attributeInsight));
 

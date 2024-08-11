@@ -43,7 +43,7 @@ class UpdateAttributeInsightUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAttributeInsight_CurrentUserIsNull_ErrorMessage() {
+    void testUpdateAttributeInsight_currentUserIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var attributeId = 1L;
         var content = "Some content";
