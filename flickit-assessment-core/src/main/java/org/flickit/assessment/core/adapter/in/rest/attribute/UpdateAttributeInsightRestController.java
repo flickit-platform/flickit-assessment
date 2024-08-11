@@ -21,7 +21,7 @@ public class UpdateAttributeInsightRestController {
     private final UserContext userContext;
 
     @PutMapping("assessments/{assessmentId}/ai-report/attributes/{attributeId}")
-    ResponseEntity<Void> updateAssessmentAttributeInsight(
+    ResponseEntity<Void> updateAttributeInsight(
         @PathVariable UUID assessmentId,
         @PathVariable Long attributeId,
         @RequestBody UpdateAttributeInsightRequestDto requestDto) {
