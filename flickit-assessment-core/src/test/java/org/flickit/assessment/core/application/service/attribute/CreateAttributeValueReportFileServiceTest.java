@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.attribute.CreateAttribut
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.AttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
@@ -61,7 +61,7 @@ class CreateAttributeValueReportFileServiceTest {
     private CreateAttributeScoresFilePort createAttributeScoresFilePort;
 
     @Mock
-    private UploadAttributeScoreExcelPort uploadAttributeScoreExcelPort;
+    private UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -80,7 +80,7 @@ class CreateAttributeValueReportFileServiceTest {
         verifyNoInteractions(validateAssessmentResultPort,
             loadMaturityLevelsPort,
             createAttributeScoresFilePort,
-            uploadAttributeScoreExcelPort,
+            uploadAttributeScoresFilePort,
             createFileDownloadLinkPort);
     }
 
@@ -107,7 +107,7 @@ class CreateAttributeValueReportFileServiceTest {
 
         String filePath = "dir/filename.xlsx";
         String downloadLink = "https://dir/filename.xlsx";
-        when(uploadAttributeScoreExcelPort.uploadExcel(any(InputStream.class), any(String.class))).thenReturn(filePath);
+        when(uploadAttributeScoresFilePort.uploadExcel(any(InputStream.class), any(String.class))).thenReturn(filePath);
         when(createFileDownloadLinkPort.createDownloadLink(eq(filePath), any(Duration.class))).thenReturn(downloadLink);
 
         CreateAttributeValueReportFileUseCase.Result serviceResult = service.createAttributeValueReportFile(param);
