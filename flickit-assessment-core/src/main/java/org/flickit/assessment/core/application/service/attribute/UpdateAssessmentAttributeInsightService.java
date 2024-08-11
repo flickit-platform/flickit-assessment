@@ -1,6 +1,8 @@
 package org.flickit.assessment.core.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.port.in.attribute.UpdateAssessmentAttributeInsightUseCase;
@@ -14,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Service
 @Transactional
@@ -24,6 +26,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NO
 public class UpdateAssessmentAttributeInsightService implements UpdateAssessmentAttributeInsightUseCase {
 
     private final GetAssessmentPort getAssessmentPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
     private final UpdateAttributeAssessorInsightPort updateAttributeAssessorInsightPort;
@@ -32,8 +35,13 @@ public class UpdateAssessmentAttributeInsightService implements UpdateAssessment
     public void updateAttributeInsight(Param param) {
         var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+
+        if (!assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessment.getId())
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
+
         var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())
             .orElseThrow(()-> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
 
@@ -52,6 +60,4 @@ public class UpdateAssessmentAttributeInsightService implements UpdateAssessment
             LocalDateTime.now(),
             null);
     }
-
-
 }

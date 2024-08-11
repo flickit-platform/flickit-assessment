@@ -25,7 +25,7 @@ public interface UpdateAssessmentAttributeInsightUseCase {
         @NotNull(message = UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @NotNull(message = UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_CONTENT_NOT_NULL)
+        @NotNull(message = UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL)
         String assessorInsight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

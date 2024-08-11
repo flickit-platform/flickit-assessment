@@ -212,5 +212,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "update-assessment-attribute.assessmentId.notNull";
     public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "update-assessment-attribute.attributeId.notNull";
-    public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_CONTENT_NOT_NULL = "update-assessment-attribute.content.notNull";
+    public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL = "update-assessment-attribute.assessorInsight.notNull";
+    public static final String UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "update-assessment-attribute.assessmentResult.notFound";
+
 }

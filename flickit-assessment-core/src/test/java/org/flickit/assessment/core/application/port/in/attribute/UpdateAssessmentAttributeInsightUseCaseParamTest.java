@@ -39,7 +39,7 @@ class UpdateAssessmentAttributeInsightUseCaseParamTest {
         var attributeId = 0L;
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateAssessmentAttributeInsightUseCase.Param(assessmentId, attributeId, null, currentUserId));
-        assertThat(throwable).hasMessage("content: " + UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_CONTENT_NOT_NULL);
+        assertThat(throwable).hasMessage("content: " + UPDATE_ASSESSMENT_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL);
     }
 
     @Test
