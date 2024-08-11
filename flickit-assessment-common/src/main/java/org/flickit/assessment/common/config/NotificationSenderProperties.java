@@ -26,6 +26,9 @@ public class NotificationSenderProperties {
         private String apiKey;
 
         @NotBlank
+        private String baseUrl;
+
+        @NotBlank
         private String workflowGroupName;
     }
 }

@@ -1,6 +1,7 @@
 package org.flickit.assessment.common.config;
 
 import co.novu.common.base.Novu;
+import co.novu.common.base.NovuConfig;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,8 @@ public class NotificationSenderConfig {
 
     @Bean
     Novu novu(NotificationSenderProperties properties) {
-        return new Novu(properties.getNovu().getApiKey());
+        NovuConfig novuConfig = new NovuConfig(properties.getNovu().getApiKey());
+        novuConfig.setBaseUrl(properties.getNovu().getBaseUrl());
+        return new Novu(novuConfig);
     }
 }
