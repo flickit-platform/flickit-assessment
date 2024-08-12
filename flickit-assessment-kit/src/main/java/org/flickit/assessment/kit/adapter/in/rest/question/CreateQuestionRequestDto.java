@@ -5,6 +5,4 @@ public record CreateQuestionRequestDto(
     String title,
     String hint,
     Boolean mayNotBeApplicable,
-    Boolean advisable,
-    Long questionnaireId
-) {}
+    Boolean advisable) {}

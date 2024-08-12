@@ -24,18 +24,21 @@ public class CreateQuestionRestController {
                                                                     @PathVariable("questionnaireId") Long questionnaireId,
                                                                     @RequestBody CreateQuestionRequestDto dto) {
         UUID currentUserId = userContext.getUser().id();
-        long questionId = useCase.createQuestion(toParam(kitId, dto, currentUserId));
+        long questionId = useCase.createQuestion(toParam(kitId, questionnaireId, currentUserId, dto));
         return new ResponseEntity<>(new CreateQuestionResponseDto(questionId), HttpStatus.CREATED);
     }
 
-    private static CreateQuestionUseCase.Param toParam(Long kitId, CreateQuestionRequestDto dto, UUID currentUserId) {
+    private static CreateQuestionUseCase.Param toParam(Long kitId,
+                                                       Long questionnaireId,
+                                                       UUID currentUserId,
+                                                       CreateQuestionRequestDto dto) {
         return new CreateQuestionUseCase.Param(kitId,
             dto.index(),
             dto.title(),
             dto.hint(),
             dto.mayNotBeApplicable(),
             dto.advisable(),
-            dto.questionnaireId(),
+            questionnaireId,
             currentUserId);
     }
 }
