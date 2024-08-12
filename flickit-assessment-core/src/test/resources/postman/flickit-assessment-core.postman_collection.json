@@ -1333,6 +1333,42 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update Attribute Insight",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"assessorInsight\" : \"Assessor Insight\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/0b711637-89c8-473b-bf20-b4f78af9f5f8/ai-report/attributes/1961",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"0b711637-89c8-473b-bf20-b4f78af9f5f8",
+						"ai-report",
+						"attributes",
+						"1961"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
