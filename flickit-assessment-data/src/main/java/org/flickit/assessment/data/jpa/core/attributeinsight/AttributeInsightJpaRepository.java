@@ -18,7 +18,9 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
             UPDATE AttributeInsightJpaEntity a
             SET a.aiInsight = :aiInsight,
                 a.aiInsightTime = :aiInsightTime,
-                a.aiInputPath = :aiInputPath
+                a.aiInputPath = :aiInputPath,
+                a.assessorInsight = null,
+                a.assessorInsightTime = null
             WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
         """)
     void updateAiInsight(@Param("assessmentResultId") UUID assessmentResultId,

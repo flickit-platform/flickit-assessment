@@ -37,12 +37,9 @@ public interface GetAttributeInsightUseCase {
         }
     }
 
-    record Result(AiInsight aiInsight, AssessorInsight assessorInsight, boolean editable) {
+    record Result(Insight aiInsight, Insight assessorInsight, boolean editable) {
 
-        public record AiInsight(String insight, LocalDateTime creationTime) {
-        }
-
-        public record AssessorInsight(String insight, LocalDateTime creationTime, boolean isValid) {
+        public record Insight(String insight, LocalDateTime creationTime, boolean isValid) {
         }
     }
 }
