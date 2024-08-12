@@ -48,7 +48,7 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
         }
         assessorInsight = new Result.AssessorInsight(insight.getAssessorInsight(),
             insight.getAssessorInsightTime(),
-            assessmentResult.getLastCalculationTime().isBefore(insight.getAiInsightTime()));
+            assessmentResult.getLastCalculationTime().isBefore(insight.getAssessorInsightTime()));
         return new Result(null, assessorInsight, editable);
     }
 }
