@@ -5,24 +5,25 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL;
 
+public interface GetAttributeInsightUseCase {
 
-public interface CreateAssessmentAttributeAiReportUseCase {
-
-    Result createAttributeAiReport(Param param);
+    Result getInsight(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = GET_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL)
+        @NotNull(message = GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -36,6 +37,12 @@ public interface CreateAssessmentAttributeAiReportUseCase {
         }
     }
 
-    record Result(String content) {
+    record Result(AiInsight aiInsight, AssessorInsight assessorInsight, boolean editable) {
+
+        public record AiInsight(String insight, LocalDateTime creationTime) {
+        }
+
+        public record AssessorInsight(String insight, LocalDateTime creationTime, boolean isValid) {
+        }
     }
 }
