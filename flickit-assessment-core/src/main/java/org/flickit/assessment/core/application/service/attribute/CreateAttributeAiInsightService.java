@@ -9,7 +9,7 @@ import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeAiInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
@@ -31,13 +31,13 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateAssessmentAttributeAiReportService implements CreateAssessmentAttributeAiReportUseCase {
+public class CreateAttributeAiInsightService implements CreateAttributeAiInsightUseCase {
 
     private static final String AI_INPUT_FILE_EXTENSION = ".xlsx";
 
@@ -57,12 +57,12 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
 
     @SneakyThrows
     @Override
-    public Result createAttributeAiReport(Param param) {
+    public Result createAiInsight(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
