@@ -25,4 +25,11 @@ public class Question {
     private final Long questionnaireId;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
+
+    public static String generateSlugCode(String title) {
+        return title
+            .toLowerCase()
+            .strip()
+            .replaceAll("\\s+", "-");
+    }
 }
