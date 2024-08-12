@@ -12,9 +12,9 @@ public class ErrorMessageKey {
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
     public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
-    public static final String ATTRIBUTE_VALUE_ID_NOT_FOUND = "attribute-value.id.notFound";
     public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
+    public static final String ASSESSMENT_INVITE_ID_NOT_FOUND = "assessment-invite.id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -145,6 +145,7 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_USER_ROLE_DUPLICATE = "grant-assessment-user-role.user.role.duplicate";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS = "grant-assessment-user-role.duplicateUserAccess";
 
     public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "update-assessment-user-role.assessmentId.notNull";
     public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "update-assessment-user-role.userId.notNull";
@@ -199,14 +200,19 @@ public class ErrorMessageKey {
     public static final String GET_ANSWER_HISTORY_LIST_PAGE_MIN = "get-answer-history-list.page.min";
     public static final String GET_ANSWER_HISTORY_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-answer-history-list.assessmentResult.notFound";
 
-    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ASSESSMENT_ID_NOT_NULL = "create-attribute-value-excel.assessmentId.notNull";
-    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_ID_NOT_NULL = "create-attribute-value-excel.attributeId.notNull";
-    public static final String CREATE_ATTRIBUTE_VALUE_EXCEL_ATTRIBUTE_VALUE_NOT_FOUND = "create-attribute-value-excel.attributeValue.notFound";
-
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_ID_NOT_NULL = "create-assessment-attribute-ai-report.assessmentId.notNull";
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ATTRIBUTE_ID_NOT_NULL = "create-assessment-attribute-ai.report.attributeId.notNull";
-    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_NULL = "create-assessment-attribute-ai-report.fileLink.notNull";
-    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_NOT_FOUND = "create-assessment-attribute-ai-report.file.notFound";
-    public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_FILE_LINK_NOT_URL = "create-assessment-attribute-ai-report.fileLink.notUrl";
     public static final String CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-attribute-ai-report.assessmentResult.notFound";
+
+    public static final String DELETE_ASSESSMENT_INVITE_ID_NOT_NULL = "delete-assessment-invite.id.notNull";
+
+    public static final String UPDATE_ASSESSMENT_INVITE_ID_NOT_NULL = "update-assessment-invite.inviteId.notNull";
+    public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_NULL = "update-assessment-invite.roleId.notNull";
+    public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND = "update-assessment-invite.roleId.notFound";
+
+    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "update-attribute-insight.assessmentId.notNull";
+    public static final String UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "update-attribute-insight.attributeId.notNull";
+    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL = "update-attribute-insight.assessorInsight.notNull";
+    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "update-attribute-insight.assessmentResult.notFound";
+    public static final String UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND = "update-attribute-insight.attributeInsight.notFound";
 }

@@ -1,86 +1,72 @@
 package org.flickit.assessment.core.adapter.out.openai;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.port.out.attribute.CreateAssessmentAttributeAiPort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import java.io.ByteArrayOutputStream;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.util.Collections;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class OpenAiAdapter implements CreateAssessmentAttributeAiPort {
+public class OpenAiAdapter implements CreateAttributeAiInsightPort {
+
+    private static final String CHOICES_FIELD = "choices";
+    private static final String MESSAGE_FIELD = "message";
+    private static final String CONTENT_FIELD = "content";
 
     private final OpenAiProperties openAiProperties;
+    private final RestTemplate openAiRestTemplate;
 
     @SneakyThrows
     @Override
-    public String createReport(InputStream inputStream, Attribute attribute) {
-        if (!openAiProperties.isEnabled())
-            return String.format("[%s] insight is unavailable: AI is Disabled!", attribute.getTitle());
+    public String generateInsight(String fileText, Attribute attribute) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(openAiProperties.getApiKey());
 
-        String fileContent = readInputStream(inputStream);
+        var content = openAiProperties.createPrompt(attribute.getTitle(), attribute.getDescription()) + fileText;
+        var message = List.of(new OpenAiRequest.Message(openAiProperties.getRole(), content));
+        var request = new OpenAiRequest(openAiProperties.getModel(), message, openAiProperties.getTemperature());
+        HttpEntity<OpenAiRequest> requestEntity = new HttpEntity<>(request, headers);
 
-        JsonObject jsonBody = new JsonObject();
-        jsonBody.addProperty("model", openAiProperties.getModel());
+        var responseEntity = openAiRestTemplate.exchange(
+            openAiProperties.getApiUrl(),
+            HttpMethod.POST,
+            requestEntity,
+            JsonNode.class
+        );
+        return extractContentFromResponse(responseEntity.getBody());
+    }
 
-        JsonObject message = new JsonObject();
-        message.addProperty("role", openAiProperties.getRole());
-        message.addProperty("content", openAiProperties.createPrompt(attribute.getTitle(), attribute.getDescription()) + fileContent);
-
-        jsonBody.add("messages", new Gson().toJsonTree(Collections.singletonList(message)));
-        jsonBody.addProperty("temperature", 0.7);
-
-        String json = new Gson().toJson(jsonBody);
-
-        HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(30))
-            .build();
-
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(new URI(openAiProperties.getApiUrl()))
-            .header("Content-Type", "application/json")
-            .header("Authorization", "Bearer " + openAiProperties.getApiKey())
-            .timeout(Duration.ofSeconds(30))
-            .POST(HttpRequest.BodyPublishers.ofString(json))
-            .build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.body() != null) {
-            String responseString = response.body();
-
-            JsonObject jsonResponse = new Gson().fromJson(responseString, JsonObject.class);
-            JsonElement contentElement = jsonResponse.getAsJsonArray("choices")
-                .get(0).getAsJsonObject()
-                .getAsJsonObject("message")
-                .get("content");
-            return contentElement.getAsString();
+    private String extractContentFromResponse(JsonNode responseBody) throws IOException {
+        if (responseBody != null && responseBody.has(CHOICES_FIELD)) {
+            JsonNode choices = responseBody.get(CHOICES_FIELD);
+            if (choices.isArray() && !choices.isEmpty()) {
+                JsonNode messageNode = choices.get(0).get(MESSAGE_FIELD);
+                if (messageNode != null && messageNode.has(CONTENT_FIELD)) {
+                    return messageNode.get(CONTENT_FIELD).asText();
+                } else {
+                    throw new IOException("Invalid response format: 'message' or 'content' field is missing");
+                }
+            }
+            throw new IOException("Invalid response format: 'choices' array is empty or not an array");
         } else {
-            throw new IOException("Response entity is null");
+            throw new IOException("Invalid response format: 'choices' field is missing");
         }
     }
 
-    private String readInputStream(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = inputStream.read(buffer)) != -1) {
-            result.write(buffer, 0, length);
+    private record OpenAiRequest(String model, List<Message> messages, double temperature) {
+        private record Message(String role, String content) {
         }
-        return result.toString(StandardCharsets.UTF_8);
     }
 }

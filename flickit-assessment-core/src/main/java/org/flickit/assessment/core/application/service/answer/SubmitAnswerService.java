@@ -129,8 +129,11 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private Answer toAnswer(UUID answerId, Param param, Long answerOptionId, Integer confidenceLevelId) {
-        return new Answer(answerId,
-            new AnswerOption(answerOptionId, null, null, param.getQuestionId(), null),
+        return new Answer(
+            answerId,
+            answerOptionId != null ?
+                new AnswerOption(answerOptionId, null, null, param.getQuestionId(), null) :
+                null,
             param.getQuestionId(),
             confidenceLevelId,
             param.getIsNotApplicable());

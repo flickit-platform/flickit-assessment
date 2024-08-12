@@ -1251,33 +1251,6 @@
 			"response": []
 		},
 		{
-			"name": "Get Attribute Excel Report",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/export-report/attributes/1104",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"8280e75b-ed71-4c82-9fac-920c52efb26c",
-						"export-report",
-						"attributes",
-						"1104"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Create Assessment Attribute AI Report",
 			"request": {
 				"method": "POST",
@@ -1287,15 +1260,6 @@
 						"value": "{{authorization_header}}"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"fileLink\" : \"http://127.0.0.1:9000/avatar/5e3b5d74-cc9c-4b54-b051-86e934ae9a03/pic.xlsx?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20240726%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240726T052101Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8dfab4d27ab012f1ef15beb58b54da353049f00b9e4a53115eb385b41fb4f4a5\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/ai-report/attributes/1523",
 					"host": [
@@ -1308,6 +1272,99 @@
 						"ai-report",
 						"attributes",
 						"1523"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Assessment Invite",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-invites/ff1b2ae3-92b7-437d-b321-539753b71608",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-invites",
+						"ff1b2ae3-92b7-437d-b321-539753b71608"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Assessment Invite",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roleId\": \"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-invites/{{inviteId}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-invites",
+						"{{inviteId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Attribute Insight",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"assessorInsight\" : \"Assessor Insight\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/0b711637-89c8-473b-bf20-b4f78af9f5f8/ai-report/attributes/1961",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"0b711637-89c8-473b-bf20-b4f78af9f5f8",
+						"ai-report",
+						"attributes",
+						"1961"
 					]
 				}
 			},
