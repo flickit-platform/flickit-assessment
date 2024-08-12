@@ -165,7 +165,7 @@ class GetAttributeInsightServiceTest {
     }
 
     @Test
-    void testGetAttributeInsight_AssessorInsightIsNull_ReturnAiInsight() {
+    void testGetAttributeInsight_AssessorInsightIsNull_AiInsightIsNotValid_ReturnAiInsight() {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
@@ -174,7 +174,7 @@ class GetAttributeInsightServiceTest {
             attributeId,
             "ai insight ",
             null,
-            LocalDateTime.now(),
+            LocalDateTime.now().minusDays(1),
             null,
             "input path");
 
@@ -188,6 +188,36 @@ class GetAttributeInsightServiceTest {
         assertNotNull(result.aiInsight());
         assertEquals(attributeInsight.getAiInsight(), result.aiInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.aiInsight().creationTime());
+        assertFalse(result.aiInsight().isValid());
+        assertNull(result.assessorInsight());
+        assertTrue(result.editable());
+    }
+
+    @Test
+    void testGetAttributeInsight_AssessorInsightIsNull_AiInsightIsValid_ReturnAiInsight() {
+        var attributeId = 1L;
+        var currentUserId = UUID.randomUUID();
+        var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
+        var assessmentResult = validResultWithJustAnId();
+        var attributeInsight = new AttributeInsight(assessmentResult.getId(),
+            attributeId,
+            "ai insight ",
+            null,
+            LocalDateTime.now().plusDays(1),
+            null,
+            "input path");
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
+        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.of(attributeInsight));
+
+        var result = service.getInsight(param);
+        assertNotNull(result);
+        assertNotNull(result.aiInsight());
+        assertEquals(attributeInsight.getAiInsight(), result.aiInsight().insight());
+        assertEquals(attributeInsight.getAiInsightTime(), result.aiInsight().creationTime());
+        assertTrue(result.aiInsight().isValid());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
     }
