@@ -15,6 +15,7 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_PROGRESS("viewAssessmentProgress"),
     VIEW_ASSESSMENT_REPORT("viewAssessmentReport"),
     EXPORT_ASSESSMENT_REPORT("exportAssessmentReport"),
+    CREATE_ATTRIBUTE_INSIGHT("createAttributeInsight"),
     CALCULATE_ASSESSMENT("calculateAssessment"),
     CALCULATE_CONFIDENCE("calculateConfidence"),
     VIEW_ATTRIBUTE_SCORE_DETAIL("viewAttributeScoreDetail"),
