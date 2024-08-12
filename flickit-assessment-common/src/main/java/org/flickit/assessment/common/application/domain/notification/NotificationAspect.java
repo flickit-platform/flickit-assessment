@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.config.NotificationSenderConfig.NOTIFICATION_SENDER_THREAD_EXECUTOR;
@@ -21,14 +20,14 @@ import static org.flickit.assessment.common.config.NotificationSenderConfig.NOTI
 @ConditionalOnProperty(name = "app.notif-sender.enabled", havingValue = "true")
 public class NotificationAspect {
 
-    private final SendNotificationPort sendNotificationPort;
-    private final Map<Class<?>, NotificationContentProvider> contentProviders;
+    private final SendNotificationPort sender;
+    private final Map<Class<?>, NotificationCreator> creators;
 
-    public NotificationAspect(SendNotificationPort sendNotificationPort,
-                              List<NotificationContentProvider<?, ?>> contentProviders) {
-        this.sendNotificationPort = sendNotificationPort;
-        this.contentProviders = contentProviders.stream()
-            .collect(toMap(NotificationContentProvider::cmdClass, x -> x));
+    public NotificationAspect(SendNotificationPort sender,
+                              List<NotificationCreator<?>> creators) {
+        this.sender = sender;
+        this.creators = creators.stream()
+            .collect(toMap(NotificationCreator::cmdClass, x -> x));
     }
 
     @Pointcut("@annotation(SendNotification)")
@@ -43,11 +42,13 @@ public class NotificationAspect {
 
         NotificationCmd cmd = hasCmd.notificationCmd();
         log.debug("{} received.", cmd);
-        var provider = contentProviders.get(cmd.getClass());
-        Optional<NotificationContent> content = provider.create(cmd);
-        content.ifPresent(x -> {
+
+        var creator = creators.get(cmd.getClass());
+        List<NotificationEnvelope> envelopes = creator.create(cmd);
+
+        envelopes.forEach(x -> {
             log.debug("Send {}", x);
-            sendNotificationPort.send(cmd.targetUserId(), x);
+            sender.send(x);
         });
     }
 }

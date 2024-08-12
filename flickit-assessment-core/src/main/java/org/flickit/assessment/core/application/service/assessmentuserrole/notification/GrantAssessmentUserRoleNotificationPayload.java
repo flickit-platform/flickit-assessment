@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.service.assessmentuserrole.notification;
 
-import org.flickit.assessment.common.application.domain.notification.NotificationContent;
+import org.flickit.assessment.common.application.domain.notification.NotificationPayload;
 
 import java.util.UUID;
 
-public record GrantAssessmentUserRoleNotificationContent(AssessmentModel assessment,
+public record GrantAssessmentUserRoleNotificationPayload(AssessmentModel assessment,
                                                          UserModel assigner,
-                                                         RoleModel role) implements NotificationContent {
+                                                         RoleModel role) implements NotificationPayload {
 
     public record AssessmentModel(UUID id, String title) {
     }
