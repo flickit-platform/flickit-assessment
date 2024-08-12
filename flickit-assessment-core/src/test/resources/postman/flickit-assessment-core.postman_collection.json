@@ -1251,33 +1251,6 @@
 			"response": []
 		},
 		{
-			"name": "Create Assessment Attribute AI Report",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/ai-report/attributes/1523",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
-						"ai-report",
-						"attributes",
-						"1523"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Delete Assessment Invite",
 			"request": {
 				"method": "DELETE",
@@ -1335,6 +1308,33 @@
 			"response": []
 		},
 		{
+			"name": "Create Attribute AI Insight",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/ai-report/attributes/1523",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
+						"ai-report",
+						"attributes",
+						"1523"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Update Attribute Insight",
 			"request": {
 				"method": "PUT",
@@ -1365,6 +1365,34 @@
 						"ai-report",
 						"attributes",
 						"1961"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Attribute Insight",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/ai-report/attributes/1104",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessments",
+						"53028c27-83f5-4c10-9105-56e2a4f58a09",
+						"ai-report",
+						"attributes",
+						"1104"
 					]
 				}
 			},
