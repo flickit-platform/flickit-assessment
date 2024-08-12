@@ -10,11 +10,10 @@ import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAtt
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ATTRIBUTE_INSIGHT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND;
 
 @Service
 @Transactional
@@ -27,26 +26,29 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
 
     @Override
     public Result getInsight(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_SUBJECT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));
+        boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT);
+        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId());
 
-        boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT);
+        if (attributeInsight.isEmpty())
+            return new Result(null, null, editable);
+
+        var insight = attributeInsight.get();
 
         Result.AiInsight aiInsight;
         Result.AssessorInsight assessorInsight;
-        if (attributeInsight.getAssessorInsight() == null) {
-            aiInsight = new Result.AiInsight(attributeInsight.getAiInsight(), attributeInsight.getAiInsightTime());
+        if (insight.getAssessorInsight() == null) {
+            aiInsight = new Result.AiInsight(insight.getAiInsight(), insight.getAiInsightTime());
             return new Result(aiInsight, null, editable);
         }
-        assessorInsight = new Result.AssessorInsight(attributeInsight.getAssessorInsight(),
-            attributeInsight.getAssessorInsightTime(),
-            assessmentResult.getLastCalculationTime().isBefore(attributeInsight.getAiInsightTime()));
+        assessorInsight = new Result.AssessorInsight(insight.getAssessorInsight(),
+            insight.getAssessorInsightTime(),
+            assessmentResult.getLastCalculationTime().isBefore(insight.getAiInsightTime()));
         return new Result(null, assessorInsight, editable);
     }
 }
