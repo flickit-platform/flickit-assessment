@@ -126,6 +126,14 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String CREATE_QUESTION_KIT_ID_NOT_NULL = "create-question.kitId.notNull";
+    public static final String CREATE_QUESTION_INDEX_NOT_NULL = "create-question.index.notNull";
+    public static final String CREATE_QUESTION_TITLE_NOT_BLANK = "create-question.title.notBlank";
+    public static final String CREATE_QUESTION_HINT_NOT_BLANK = "create-question.hint.notBlank";
+    public static final String CREATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "create-question.mayNotBeApplicable.notNull";
+    public static final String CREATE_QUESTION_ADVISABLE_NOT_NULL = "create-question.advisable.notNull";
+    public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
