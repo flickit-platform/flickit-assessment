@@ -26,10 +26,7 @@ public class Question {
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
 
-    public static String generateSlugCode(String title) {
-        return title
-            .toLowerCase()
-            .strip()
-            .replaceAll("\\s+", "-");
+    public static String generateCode(int index) {
+        return "m" + index;
     }
 }

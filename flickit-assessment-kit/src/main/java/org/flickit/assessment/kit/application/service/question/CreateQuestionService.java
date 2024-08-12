@@ -35,7 +35,7 @@ public class CreateQuestionService implements CreateQuestionUseCase {
     }
 
     private static CreateQuestionPort.Param toParam(Param param, AssessmentKit kit) {
-        return new CreateQuestionPort.Param(Question.generateSlugCode(param.getTitle()),
+        return new CreateQuestionPort.Param(Question.generateCode(param.getIndex()),
             param.getTitle(),
             param.getIndex(),
             param.getHint(),
