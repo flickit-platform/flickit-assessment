@@ -24,7 +24,7 @@ public class CreateQuestionnaireRestController {
                                                                               @RequestBody CreateQuestionnaireRequestDto dto) {
         UUID currentUserId = userContext.getUser().id();
         long questionnaireId = useCase.createQuestionnaire(toParam(kitId, currentUserId, dto));
-        return new ResponseEntity<>(new CreateQuestionnaireResponseDto(questionnaireId), HttpStatus.OK);
+        return new ResponseEntity<>(new CreateQuestionnaireResponseDto(questionnaireId), HttpStatus.CREATED);
     }
 
     private CreateQuestionnaireUseCase.Param toParam(Long kitId, UUID currentUserId, CreateQuestionnaireRequestDto dto) {
