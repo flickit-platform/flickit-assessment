@@ -12,20 +12,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
-class GenerateAttributeValueReportFileAdapterTest {
+class CreateAttributeScoresFileAdapterTest {
 
     @InjectMocks
     private CreateAttributeScoresFileAdapter adapter;
 
     @Test
-    void testGenerateAttributeValueReportFile_ValidParam_CreateFile() {
+    void testCreateAttributeScoresFileAdapter_ValidParam_CreateFile() {
         var attributeId = 1563L;
 
         Answer answer = AnswerMother.fullScoreOnLevels23(attributeId);
@@ -34,14 +33,16 @@ class GenerateAttributeValueReportFileAdapterTest {
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
-        InputStream inputStream = adapter.generateFile(attributeValue, maturityLevels);
+        var result = adapter.generateFile(attributeValue, maturityLevels);
 
-        assertNotNull(inputStream);
+        assertNotNull(result);
+        assertNotNull(result.stream());
+        assertNotNull(result.text());
     }
 
     @SneakyThrows
     @Test
-    void testGenerateAttributeValueReportFile_ValidParam_FileStructureShouldNotBeChanged() {
+    void testCreateAttributeScoresFileAdapter_ValidParam_FileStructureShouldNotBeChanged() {
         var attributeId = 1563L;
 
         Answer answer = AnswerMother.fullScoreOnLevels23(attributeId);
@@ -50,10 +51,8 @@ class GenerateAttributeValueReportFileAdapterTest {
         AttributeValue attributeValue = AttributeValueMother.withAttributeAndAnswerAndLevelOne(attribute, List.of(answer));
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
-        InputStream inputStream = adapter.generateFile(attributeValue, maturityLevels);
-
-        assertNotNull(inputStream);
-        Workbook workbook = WorkbookFactory.create(inputStream);
+        var result = adapter.generateFile(attributeValue, maturityLevels);
+        Workbook workbook = WorkbookFactory.create(result.stream());
 
         assertEquals(3, workbook.getNumberOfSheets());
 
@@ -97,5 +96,6 @@ class GenerateAttributeValueReportFileAdapterTest {
         Row maturityLevelsFirstRow = maturityLevelsSheet.getRow(1);
         assertEquals(maturityLevels.get(0).getTitle(), maturityLevelsFirstRow.getCell(0).getStringCellValue());
         assertEquals(maturityLevels.get(0).getIndex(), maturityLevelsFirstRow.getCell(1).getNumericCellValue());
+        assertEquals(maturityLevels.get(0).getDescription(), maturityLevelsFirstRow.getCell(2).getStringCellValue());
     }
 }

@@ -9,36 +9,38 @@ import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.application.port.in.attribute.CreateAssessmentAttributeAiReportUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeAiInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ATTRIBUTE_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateAssessmentAttributeAiReportService implements CreateAssessmentAttributeAiReportUseCase {
+public class CreateAttributeAiInsightService implements CreateAttributeAiInsightUseCase {
 
-    private final GetAssessmentPort getAssessmentPort;
+    private static final String AI_INPUT_FILE_EXTENSION = ".xlsx";
+
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
@@ -49,20 +51,18 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
     private final OpenAiProperties openAiProperties;
     private final CreateAttributeInsightPort createAttributeInsightPort;
     private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
+    private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final CreateAttributeAiInsightPort createAttributeAiInsightPort;
 
     @SneakyThrows
     @Override
-    public Result createAttributeAiReport(Param param) {
-        var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
-
-        if (!assessmentAccessChecker.isAuthorized(assessment.getId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT))
+    public Result createAiInsight(Param param) {
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessment.getId())
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_ATTRIBUTE_AI_REPORT_ASSESSMENT_RESULT_NOT_FOUND));
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
@@ -85,11 +85,11 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (!openAiProperties.isEnabled())
             return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
 
-        try (var stream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)) {
-            String aiInsight = createAttributeAiInsightPort.generateInsight(stream, attribute);
-            updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight));
-            return new Result(aiInsight);
-        }
+        var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
+        String aiInputPath = uploadInputFile(attribute, file.stream());
+        String aiInsight = createAttributeAiInsightPort.generateInsight(file.text(), attribute);
+        updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
+        return new Result(aiInsight);
     }
 
     @SneakyThrows
@@ -98,20 +98,30 @@ public class CreateAssessmentAttributeAiReportService implements CreateAssessmen
         if (!openAiProperties.isEnabled())
             return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
 
-        try (var stream = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)) {
-            String aiInsight = createAttributeAiInsightPort.generateInsight(stream, attribute);
-            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight));
-            return new Result(aiInsight);
-        }
+        var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
+        String aiInputPath = uploadInputFile(attribute, file.stream());
+        String aiInsight = createAttributeAiInsightPort.generateInsight(file.text(), attribute);
+        createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
+        return new Result(aiInsight);
     }
 
-    private static AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String aiInsight) {
+    @Nullable
+    private String uploadInputFile(Attribute attribute, InputStream stream) {
+        String aiInputPath = null;
+        if (openAiProperties.isSaveAiInputFileEnabled()) {
+            var fileName = attribute.getTitle() + AI_INPUT_FILE_EXTENSION;
+            aiInputPath = uploadAttributeScoresFilePort.uploadExcel(stream, fileName);
+        }
+        return aiInputPath;
+    }
+
+    private AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String aiInsight, String aiInputPath) {
         return new AttributeInsight(assessmentResultId,
             attributeId,
             aiInsight,
             null,
             LocalDateTime.now(),
             null,
-            null);
+            aiInputPath);
     }
 }
