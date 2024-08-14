@@ -126,6 +126,12 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String CREATE_MATURITY_LEVEL_KIT_ID_NOT_NULL = "create-maturity-level.kitId.notNull";
+    public static final String CREATE_MATURITY_LEVEL_INDEX_NOT_NULL = "create-maturity-level.index.notNull";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_NOT_BLANK = "create-maturity-level.title.notBlank";
+    public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_NOT_BLANK = "create-maturity-level.description.notBlank";
+    public static final String CREATE_MATURITY_LEVEL_VALUE_NOT_NULL = "create-maturity-level.value.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
