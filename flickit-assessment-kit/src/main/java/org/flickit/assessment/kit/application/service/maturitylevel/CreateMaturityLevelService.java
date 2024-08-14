@@ -33,7 +33,7 @@ public class CreateMaturityLevelService implements CreateMaturityLevelUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         MaturityLevel maturityLevel = new MaturityLevel(null,
-            "",
+            MaturityLevel.generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),
