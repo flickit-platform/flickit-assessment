@@ -13,16 +13,22 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
 
     List<SubjectValueJpaEntity> findByAssessmentResultId(UUID resultId);
 
-    Optional<SubjectValueJpaEntity> findBySubjectRefNumAndAssessmentResult_Id(UUID subjectRefNum, UUID assessmentResultId);
+    Optional<SubjectValueJpaEntity> findBySubjectIdAndAssessmentResult_Id(Long subjectId, UUID assessmentResultId);
 
     @Modifying
-    @Query("update SubjectValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")
+    @Query("""
+            UPDATE SubjectValueJpaEntity a SET a.maturityLevelId = :maturityLevelId
+            WHERE a.id = :id
+        """)
     void updateMaturityLevelById(@Param(value = "id") UUID id,
                                  @Param(value = "maturityLevelId") Long maturityLevelId);
 
     @Modifying
-    @Query("update SubjectValueJpaEntity a set a.confidenceValue = :confidenceValue where a.id = :id")
-    void updateConfidenceValuelById(@Param(value = "id") UUID id,
-                                    @Param(value = "confidenceValue") Double confidenceValue);
+    @Query("""
+            UPDATE SubjectValueJpaEntity a SET a.confidenceValue = :confidenceValue
+            WHERE a.id = :id
+        """)
+    void updateConfidenceValueById(@Param(value = "id") UUID id,
+                                   @Param(value = "confidenceValue") Double confidenceValue);
 
 }

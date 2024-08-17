@@ -18,15 +18,18 @@ import static org.flickit.assessment.core.application.domain.AssessmentUserRole.
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AssessmentUserRole {
 
-    VIEWER("Viewer", VIEWER_PERMISSIONS),
-    COMMENTER("Commenter", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
-    ASSESSOR("Assessor", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
-    MANAGER("Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS);
+    VIEWER(1, "Viewer", VIEWER_PERMISSIONS),
+    COMMENTER(2, "Commenter", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS),
+    ASSESSOR(4, "Assessor", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS),
+    MANAGER(5, "Manager", VIEWER_PERMISSIONS, COMMENTER_PERMISSIONS, ASSESSOR_PERMISSIONS, MANAGER_PERMISSIONS),
+    ASSOCIATE(3, "Associate", ASSOCIATE_PERMISSIONS);
 
+    private final int index;
     private final String title;
     private final Set<AssessmentPermission> permissions;
 
-    AssessmentUserRole(String title, PermissionGroup... permissionsGroups) {
+    AssessmentUserRole(int index, String title, PermissionGroup... permissionsGroups) {
+        this.index = index;
         this.title = title;
         this.permissions = Arrays.stream(permissionsGroups)
             .flatMap(x -> x.getPermissions().stream())
@@ -60,28 +63,33 @@ public enum AssessmentUserRole {
     enum PermissionGroup {
 
         VIEWER_PERMISSIONS(Set.of(
-            VIEW_REPORT_ASSESSMENT,
+            VIEW_ASSESSMENT_REPORT,
             CALCULATE_ASSESSMENT,
             CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
             VIEW_ASSESSMENT,
             VIEW_SUBJECT_PROGRESS,
-            VIEW_SUBJECT_REPORT)),
+            VIEW_SUBJECT_REPORT,
+            VIEW_EVIDENCE_ATTACHMENT)),
         COMMENTER_PERMISSIONS(Set.of(
-            VIEW_ANSWER,
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
             VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
+            ADD_EVIDENCE_ATTACHMENT,
+            DELETE_EVIDENCE_ATTACHMENT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
-            VIEW_QUESTIONNAIRES_PROGRESS,
-            VIEW_QUESTIONNAIRE_QUESTIONS)),
+            VIEW_QUESTIONNAIRE_QUESTIONS,
+            VIEW_EVIDENCE)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
-            CREATE_ADVICE)),
+            CREATE_ADVICE,
+            VIEW_ANSWER_HISTORY_LIST,
+            EXPORT_ASSESSMENT_REPORT,
+            CREATE_ATTRIBUTE_INSIGHT)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -89,7 +97,25 @@ public enum AssessmentUserRole {
             GRANT_USER_ASSESSMENT_ROLE,
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
-            GET_ASSESSMENT_USERS));
+            VIEW_ASSESSMENT_USER_LIST,
+            VIEW_ASSESSMENT_INVITEE_LIST,
+            DELETE_ASSESSMENT_INVITE)),
+        ASSOCIATE_PERMISSIONS(Set.of(
+            VIEW_ASSESSMENT_LIST,
+            VIEW_ASSESSMENT_PROGRESS,
+            VIEW_ASSESSMENT,
+            VIEW_SUBJECT_PROGRESS,
+            ADD_EVIDENCE,
+            DELETE_EVIDENCE,
+            VIEW_EVIDENCE_LIST,
+            UPDATE_EVIDENCE,
+            VIEW_EVIDENCE_ATTACHMENT,
+            ADD_EVIDENCE_ATTACHMENT,
+            DELETE_EVIDENCE_ATTACHMENT,
+            VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
+            VIEW_QUESTIONNAIRE_QUESTIONS,
+            ANSWER_QUESTION,
+            VIEW_EVIDENCE));
 
         private final Set<AssessmentPermission> permissions;
     }

@@ -120,4 +120,12 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
                 @Param("website") String website,
                 @Param("lastModificationTime") LocalDateTime localDateTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Modifying
+    @Query("""
+            UPDATE ExpertGroupJpaEntity e
+            SET e.picture = :picture
+            WHERE e.id = :id
+        """)
+    void updatePicture(@Param("id") long expertGroupId, @Param("picture") String picture);
 }

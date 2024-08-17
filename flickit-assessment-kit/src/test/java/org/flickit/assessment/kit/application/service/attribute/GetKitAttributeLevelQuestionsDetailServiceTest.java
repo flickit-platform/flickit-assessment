@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
@@ -42,6 +43,9 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
     @Mock
     private LoadAttributeLevelQuestionsPort loadAttributeLevelQuestionsPort;
 
+    @Mock
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+
     @Test
     void testGetKitAttributeLevelQuestionsDetail_CurrentUserIsNotMemberOfKitExpertGroup_ThrowsException() {
         GetKitAttributeLevelQuestionsDetailUseCase.Param param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
@@ -63,6 +67,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
     void testGetKitAttributeLevelQuestionsDetail_AttributeWithGivenAttributeIdAndKitIdDoesNotExist_ThrowsException() {
         long kitId = 123L;
         long attributeId = 223L;
+        long kitVersionId = 345L;
         long maturityLevel = 333L;
         UUID currentUserId = UUID.randomUUID();
 
@@ -70,8 +75,9 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
-        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitId, attributeId, maturityLevel))
+        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, attributeId, maturityLevel))
             .thenThrow(new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
             kitId,
@@ -86,6 +92,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
     @Test
     void testGetKitAttributeLevelQuestionsDetail_MaturityLevelWithGivenMaturityLevelIdAndKitIdDoesNotExist_ThrowsException() {
         long kitId = 123L;
+        long kitVersionId = 345L;
         long attributeId = 223L;
         long maturityLevel = 333L;
         UUID currentUserId = UUID.randomUUID();
@@ -94,8 +101,9 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), currentUserId)).thenReturn(true);
-        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitId, attributeId, maturityLevel))
+        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, attributeId, maturityLevel))
             .thenThrow(new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var param = new GetKitAttributeLevelQuestionsDetailUseCase.Param(
             kitId,
@@ -109,6 +117,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
     @Test
     void testGetKitAttributeLevelQuestionsDetail_ValidInput_ValidResult() {
         long kitId = 123L;
+        long kitVersionId = 223L;
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var attr1 = AttributeMother.attributeWithTitle("attr1");
         var attr2 = AttributeMother.attributeWithTitle("attr2");
@@ -142,8 +151,10 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         var portResult = List.of(new LoadAttributeLevelQuestionsPort.Result(question1, QuestionnaireMother.questionnaireWithTitle("title")),
             new LoadAttributeLevelQuestionsPort.Result(question2, QuestionnaireMother.questionnaireWithTitle("title")));
 
-        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitId, attr1.getId(), maturityLevel2.getId()))
+        when(loadAttributeLevelQuestionsPort.loadAttributeLevelQuestions(kitVersionId, attr1.getId(), maturityLevel2.getId()))
             .thenReturn(portResult);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
+
 
         var result = service.getKitAttributeLevelQuestionsDetail(param);
 

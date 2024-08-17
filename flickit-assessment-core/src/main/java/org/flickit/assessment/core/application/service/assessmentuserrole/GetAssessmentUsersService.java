@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.List;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GET_ASSESSMENT_USERS;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_USER_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -29,7 +29,7 @@ public class GetAssessmentUsersService implements GetAssessmentUsersUseCase {
 
     @Override
     public PaginatedResponse<AssessmentUser> getAssessmentUsers(Param param) {
-        if (!assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GET_ASSESSMENT_USERS))
+        if (!assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_USER_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentUserPaginatedResponse = loadAssessmentUsersPort.loadAssessmentUsers(toParam(param));
@@ -44,7 +44,8 @@ public class GetAssessmentUsersService implements GetAssessmentUsersUseCase {
                     e.email(),
                     e.displayName(),
                     pictureLink,
-                    role);
+                    role,
+                    e.editable());
             }).toList();
 
         return new PaginatedResponse<>(items,

@@ -40,6 +40,7 @@ public class SpacePersistenceJpaAdapter implements
         List<LoadSpaceListPort.Result> items = pageResult.getContent().stream()
             .map(entity -> new LoadSpaceListPort.Result(
                 mapToDomain(entity.getSpace()),
+                entity.getOwnerName(),
                 entity.getMembersCount(),
                 entity.getAssessmentsCount()))
             .toList();
@@ -96,6 +97,6 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public void updateSpace(Param param) {
-        repository.update(param.id(), param.title(), param.lastModificationTime(), param.lastModifiedBy());
+        repository.update(param.id(), param.title(), param.code(), param.lastModificationTime(), param.lastModifiedBy());
     }
 }

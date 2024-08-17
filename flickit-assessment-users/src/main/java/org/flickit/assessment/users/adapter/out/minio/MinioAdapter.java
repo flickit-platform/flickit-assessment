@@ -1,18 +1,16 @@
 package org.flickit.assessment.users.adapter.out.minio;
 
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.StatObjectArgs;
+import io.minio.*;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.apache.commons.compress.utils.FileNameUtils;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,14 +19,14 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.PIC_FILE_NAME;
 
 @Component("usersMinioAdapter")
 @AllArgsConstructor
 public class MinioAdapter implements
     UploadExpertGroupPicturePort,
-    CreateFileDownloadLinkPort {
+    CreateFileDownloadLinkPort,
+    DeleteFilePort {
 
     public static final String SLASH = "/";
     public static final String DOT = ".";
@@ -55,11 +53,9 @@ public class MinioAdapter implements
         String bucketName = properties.getBucketNames().getAvatar();
         UUID uniqueDir = UUID.randomUUID();
 
-        String extension = "";
-        if (pictureFile.getOriginalFilename() != null)
-            extension = pictureFile.getOriginalFilename().substring(pictureFile.getOriginalFilename().indexOf(DOT));
+        String extension = FileNameUtils.getExtension(pictureFile.getOriginalFilename());
 
-        String objectName = uniqueDir + PIC_FILE_NAME + extension;
+        String objectName = uniqueDir + PIC_FILE_NAME + DOT + extension;
         writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
         return bucketName + SLASH + objectName;
     }
@@ -67,17 +63,14 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public String createDownloadLink(String filePath, Duration expiryDuration) {
-        if(filePath == null || filePath.isBlank())
+        if (filePath == null || filePath.isBlank())
             return null;
 
         String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
         String objectName = filePath.substring(filePath.indexOf(SLASH) + 1);
 
-        try {
-            checkFileExistence(bucketName, objectName);
-        } catch (ResourceNotFoundException e) {
+        if (!checkFileExistence(bucketName, objectName))
             return null;
-        }
 
         String downloadUrl = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
             .bucket(bucketName)
@@ -90,14 +83,39 @@ public class MinioAdapter implements
     }
 
     @SneakyThrows
-    private void checkFileExistence(String bucketName, String objectName) {
+    private boolean checkFileExistence(String bucketName, String objectName) {
         try {
             minioClient.statObject(StatObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
                 .build());
         } catch (ErrorResponseException e) {
-            throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
+            return false;
         }
+        return true;
+    }
+
+    @SneakyThrows
+    @Override
+    public void deletePicture(String path) {
+        String bucketName = path.replaceFirst("/.*" ,"");
+        String objectName = path.replaceFirst("^" + bucketName + "/", "");
+
+        if (!checkFileExistence(bucketName, objectName))
+            return;
+
+        String latestVersionId = minioClient.listObjects(
+            ListObjectsArgs.builder()
+                .bucket(bucketName)
+                .prefix(objectName)
+                .includeVersions(true)
+                .build()
+        ).iterator().next().get().versionId();
+
+        minioClient.removeObject(RemoveObjectArgs.builder()
+            .bucket(bucketName)
+            .object(objectName)
+            .versionId(latestVersionId)
+            .build());
     }
 }

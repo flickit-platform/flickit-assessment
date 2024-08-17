@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface AssessmentUserRoleJpaRepository extends JpaRepository<AssessmentUserRoleJpaEntity, EntityId> {
 
-    Optional<AssessmentUserRoleJpaEntity> findByAssessmentIdAndUserId(UUID assessmentId, UUID currentUserId);
+    Optional<AssessmentUserRoleIdView> findByAssessmentIdAndUserId(UUID assessmentId, UUID currentUserId);
 
     boolean existsByAssessmentIdAndUserId(UUID assessmentId, UUID userId);
 
@@ -33,9 +33,14 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 u.email AS email,
                 u.displayName AS displayName,
                 u.picture AS picturePath,
-                a.roleId AS roleId
+                a.roleId as roleId,
+                CASE
+                    WHEN sp.ownerId = u.id THEN false ELSE true
+                END as editable
             FROM UserJpaEntity u
             JOIN AssessmentUserRoleJpaEntity a ON u.id = a.userId
+            JOIN AssessmentJpaEntity assessment ON assessment.id = a.assessmentId
+            JOIN SpaceJpaEntity sp ON assessment.spaceId = sp.id
             WHERE a.assessmentId = :assessmentId
             AND EXISTS (
                   SELECT 1 FROM SpaceUserAccessJpaEntity sua
@@ -43,8 +48,7 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                   WHERE fa.id = :assessmentId AND sua.userId  = a.userId
                 )
         """)
-    Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId,
-                                                 Pageable pageable);
+    Page<AssessmentUserView> findAssessmentUsers(@Param("assessmentId") UUID assessmentId, Pageable pageable);
 
     @Modifying
     @Query("""

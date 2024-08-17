@@ -56,10 +56,12 @@ public interface GetEvidenceListUseCase {
                             String description,
                             String type,
                             LocalDateTime lastModificationTime,
+                            Integer attachmentsCount,
                             User createdBy) {
     }
 
     record User(UUID id,
-                String displayName) {
+                String displayName,
+                String pictureLink) {
     }
 }

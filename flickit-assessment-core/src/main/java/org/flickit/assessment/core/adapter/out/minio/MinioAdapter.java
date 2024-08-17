@@ -1,25 +1,33 @@
 package org.flickit.assessment.core.adapter.out.minio;
 
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.StatObjectArgs;
+import io.minio.*;
 import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 
 @Component("coreMinioAdapter")
 @AllArgsConstructor
-public class MinioAdapter implements CreateFileDownloadLinkPort {
+public class MinioAdapter implements
+    CreateFileDownloadLinkPort,
+    UploadEvidenceAttachmentPort,
+    DeleteEvidenceAttachmentFilePort,
+    UploadAttributeScoresFilePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -60,5 +68,59 @@ public class MinioAdapter implements CreateFileDownloadLinkPort {
         } catch (ErrorResponseException e) {
             throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public String uploadAttachment(MultipartFile pictureFile) {
+        String bucketName = properties.getBucketNames().getAttachment();
+        UUID uniqueDir = UUID.randomUUID();
+
+        String objectName = uniqueDir + SLASH + pictureFile.getOriginalFilename();
+        writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
+        return bucketName + SLASH + objectName;
+    }
+
+    @SneakyThrows
+    private void writeFile(String bucketName, String fileObjectName, InputStream fileInputStream, String contentType) {
+        minioClient.putObject(PutObjectArgs.builder()
+            .bucket(bucketName)
+            .object(fileObjectName)
+            .contentType(contentType)
+            .stream(fileInputStream, fileInputStream.available(), -1)
+            .build());
+    }
+
+    @SneakyThrows
+    @Override
+    public void deleteEvidenceAttachmentFile(String path) {
+        String bucketName = path.replaceFirst("/.*" ,"");
+        String objectName = path.replaceFirst("^" + bucketName + "/", "");
+
+        checkFileExistence(bucketName, objectName);
+
+        String latestVersionId = minioClient.listObjects(
+            ListObjectsArgs.builder()
+                .bucket(bucketName)
+                .prefix(objectName)
+                .includeVersions(true)
+                .build()
+        ).iterator().next().get().versionId();
+
+        minioClient.removeObject(RemoveObjectArgs.builder()
+            .bucket(bucketName)
+            .object(objectName)
+            .versionId(latestVersionId)
+            .build());
+    }
+
+    @Override
+    public String uploadExcel(InputStream content, String fileName) {
+        String bucketName = properties.getBucketNames().getReport();
+        UUID uniqueDir = UUID.randomUUID();
+
+        String objectName = uniqueDir + SLASH + fileName;
+        writeFile(bucketName, objectName, content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return bucketName + SLASH + objectName;
     }
 }

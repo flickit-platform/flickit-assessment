@@ -31,9 +31,6 @@ public class SubjectValueJpaEntity {
     @Column(name = "subject_id", nullable = false)
     private Long subjectId;
 
-    @Column(name = "subject_ref_num", nullable = false)
-    private UUID subjectRefNum;
-
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;
 

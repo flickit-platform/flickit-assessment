@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.subject;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.subject.GetKitSubjectDetailUseCase.Param;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
@@ -38,6 +39,9 @@ class GetKitSubjectDetailServiceTest {
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+
+    @Mock
     private LoadSubjectPort loadSubjectPort;
 
     @Mock
@@ -48,13 +52,15 @@ class GetKitSubjectDetailServiceTest {
         var param = new Param(2000L, 2L, UUID.randomUUID());
         var expertGroup = createExpertGroup();
         var questionsCount = 14;
+        var kitVersionId = 1L;
         var attribute = AttributeMother.attributeWithTitle("attribute");
         var subject = SubjectMother.subjectWithAttributes("subject", List.of(attribute));
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadSubjectPort.load(param.getKitId(), param.getSubjectId())).thenReturn(subject);
-        when(countSubjectQuestionsPort.countBySubjectId(param.getSubjectId())).thenReturn(questionsCount);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadSubjectPort.load(param.getSubjectId(), kitVersionId)).thenReturn(subject);
+        when(countSubjectQuestionsPort.countBySubjectId(param.getSubjectId(), kitVersionId)).thenReturn(questionsCount);
 
         var result = service.getKitSubjectDetail(param);
 

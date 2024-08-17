@@ -18,7 +18,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GET_ASSESSMENT_USERS;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_USER_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -44,7 +44,7 @@ class GetAssessmentUsersServiceTest {
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAssessmentUsersUseCase.Param(assessmentId, currentUserId, 10, 0);
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(false);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_USER_LIST)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentUsers(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -66,7 +66,8 @@ class GetAssessmentUsersServiceTest {
             "admin@flickit.org",
             "Flickit Admin",
             picturePath,
-            manager);
+            manager,
+            true);
 
         PaginatedResponse<LoadAssessmentUsersPort.AssessmentUser> paginatedResponse =
             new PaginatedResponse<>(List.of(expectedAssessmentUser),
@@ -76,7 +77,7 @@ class GetAssessmentUsersServiceTest {
                 "asc",
                 10);
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(true);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_USER_LIST)).thenReturn(true);
         when(port.loadAssessmentUsers(portParam)).thenReturn(paginatedResponse);
 
         var response = service.getAssessmentUsers(useCaseParam);
@@ -91,6 +92,7 @@ class GetAssessmentUsersServiceTest {
         assertNull(actualAssessmentUser.pictureLink());
         assertEquals(expectedAssessmentUser.role().id(), actualAssessmentUser.role().id());
         assertEquals(expectedAssessmentUser.role().title(), actualAssessmentUser.role().title());
+        assertEquals(expectedAssessmentUser.editable(), actualAssessmentUser.editable());
     }
 
     @Test
@@ -110,7 +112,8 @@ class GetAssessmentUsersServiceTest {
                 "admin@flickit.org",
                 "Flickit Admin",
                 "path/to/picture",
-                manager);
+                manager,
+                true);
 
         PaginatedResponse<LoadAssessmentUsersPort.AssessmentUser> paginatedResponse =
             new PaginatedResponse<>(List.of(expectedAssessmentUser),
@@ -120,7 +123,7 @@ class GetAssessmentUsersServiceTest {
                 "asc",
                 10);
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, GET_ASSESSMENT_USERS)).thenReturn(true);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_USER_LIST)).thenReturn(true);
         when(port.loadAssessmentUsers(portParam)).thenReturn(paginatedResponse);
         when(createFileDownloadLinkPort.createDownloadLink(expectedAssessmentUser.picturePath(), Duration.ofDays(1))).thenReturn("cdn.flickit.org/profile.jpg");
 
@@ -137,5 +140,6 @@ class GetAssessmentUsersServiceTest {
         assertEquals("cdn.flickit.org/profile.jpg", actualAssessmentUser.pictureLink());
         assertEquals(expectedAssessmentUser.role().id(), actualAssessmentUser.role().id());
         assertEquals(expectedAssessmentUser.role().title(), actualAssessmentUser.role().title());
+        assertEquals(expectedAssessmentUser.editable(), actualAssessmentUser.editable());
     }
 }

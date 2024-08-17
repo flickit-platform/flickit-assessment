@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.questionimpact;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpactJpaEntity, Long> {
 
-    List<QuestionImpactJpaEntity> findAllByQuestionId(Long questionId);
+    List<QuestionImpactJpaEntity> findAllByQuestionIdAndKitVersionId(long questionId, long kitVersionId);
 
     @Modifying
     @Query("""
@@ -27,4 +28,8 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
+    @Override
+    @Modifying
+    @Query("DELETE FROM QuestionImpactJpaEntity qi where qi.id = :id")
+    void deleteById(@NotNull Long id);
 }

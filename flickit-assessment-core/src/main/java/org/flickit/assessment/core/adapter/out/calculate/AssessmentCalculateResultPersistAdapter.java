@@ -55,7 +55,7 @@ public class AssessmentCalculateResultPersistAdapter implements
             assessmentResult.getLastConfidenceCalculationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
-        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceValuelById(s.getId(), s.getConfidenceValue()));
+        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceValueById(s.getId(), s.getConfidenceValue()));
 
         subjectValues.stream()
             .flatMap(x -> x.getAttributeValues().stream())

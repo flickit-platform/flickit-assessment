@@ -46,11 +46,11 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
             List<LevelCompetenceJpaEntity> levelCompetenceEntities =
                 levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);
             for (LevelCompetenceJpaEntity levelCompetenceEntity : levelCompetenceEntities) {
-                Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevel().getId();
+                Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevelId();
                 var assessmentResultJpaEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
                     .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
                 AttributeValueJpaEntity attributeValueEntity =
-                    attributeValueRepository.findByAttributeIdAndAssessmentResult_Id(attributeId, assessmentResultJpaEntity.getId());
+                    attributeValueRepository.findByAttributeIdAndAssessmentResultId(attributeId, assessmentResultJpaEntity.getId());
 
                 Double gainedScorePercentage = attributeMaturityScoreRepository
                     .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), effectiveLevelId)

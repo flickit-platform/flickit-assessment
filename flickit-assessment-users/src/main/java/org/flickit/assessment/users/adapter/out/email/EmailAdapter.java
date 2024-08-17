@@ -20,6 +20,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.config.EmailConfig.EMAIL_SENDER_THREAD_EXECUTOR;
 import static org.flickit.assessment.users.common.MessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 
 @Slf4j
 @Component
@@ -43,13 +44,13 @@ public class EmailAdapter implements
     private String createText(long expertGroupId, UUID inviteToken) {
         String inviteUrl = String.join("/", appSpecProperties.getHost(), appSpecProperties.getExpertGroupInviteUrlPath(),
             String.valueOf(expertGroupId), inviteToken.toString());
-        return MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY, inviteUrl);
+        return MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY, inviteUrl, appSpecProperties.getName());
     }
 
     @Override
     public void inviteToFlickit(String to) {
-        String subject = MessageBundle.message(INVITE_SPACE_MEMBER_MAIL_SUBJECT);
-        String text =  MessageBundle.message(INVITE_SPACE_MEMBER_MAIL_BODY, appSpecProperties.getHost());
+        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
+        String text =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
         log.debug("Sending invite email to [{}]", to);
         sendMail(to, subject, text);
     }

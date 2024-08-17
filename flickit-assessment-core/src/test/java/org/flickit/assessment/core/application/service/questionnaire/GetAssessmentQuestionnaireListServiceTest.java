@@ -54,6 +54,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         QuestionnaireListItem questionnaire = new QuestionnaireListItem(
             0,
             "questionnaire",
+            "description about questionnaire",
             1,
             1,
             0,

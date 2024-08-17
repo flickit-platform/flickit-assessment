@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.test.fixture.adapter.jpa;
 
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 
 import java.time.LocalDateTime;
@@ -21,7 +20,6 @@ public class AssessmentJpaEntityMother {
             "assessment-code" + assessmentCounter,
             "assessment-title" + assessmentCounter,
             kitId++,
-            AssessmentColor.getDefault().getId(),
             1L,
             LocalDateTime.now(),
             LocalDateTime.now(),

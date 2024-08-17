@@ -29,6 +29,7 @@ public class MaturityLevelDslModelMother {
         return MaturityLevelDslModel.builder()
             .code(level.getCode())
             .title(level.getTitle())
+            .description(level.getDescription())
             .index(level.getIndex())
             .value(level.getValue())
             .competencesCodeToValueMap(competenceListToMap(level.getCompetences()));

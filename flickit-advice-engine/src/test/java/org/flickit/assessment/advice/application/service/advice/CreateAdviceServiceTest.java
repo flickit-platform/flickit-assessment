@@ -9,6 +9,7 @@ import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
 import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
@@ -67,6 +68,9 @@ class CreateAdviceServiceTest {
     private SolverManager<Plan, UUID> solverManager;
 
     @Mock
+    private LoadAssessmentKitVersionIdPort loadAssessmentKitVersionIdPort;
+
+    @Mock
     private LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
     @Test
@@ -87,7 +91,8 @@ class CreateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
         );
     }
 
@@ -109,6 +114,13 @@ class CreateAdviceServiceTest {
             .thenReturn(Set.of(1L));
 
         assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
+
+        Mockito.verifyNoInteractions(
+            loadInfoPort,
+            solverManager,
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
+        );
     }
 
     @Test
@@ -131,6 +143,13 @@ class CreateAdviceServiceTest {
             .thenReturn(Set.of(2L));
 
         assertThrows(ResourceNotFoundException.class, () -> service.createAdvice(param), CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
+
+        Mockito.verifyNoInteractions(
+            loadInfoPort,
+            solverManager,
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
+        );
     }
 
     @Test
@@ -149,7 +168,8 @@ class CreateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
         );
     }
 
@@ -174,7 +194,8 @@ class CreateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
         );
     }
 
@@ -200,7 +221,8 @@ class CreateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
         );
     }
 
@@ -233,7 +255,8 @@ class CreateAdviceServiceTest {
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
-            loadCreatedAdviceDetailsPort
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
         );
     }
 
@@ -285,7 +308,8 @@ class CreateAdviceServiceTest {
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
-            loadCreatedAdviceDetailsPort
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
         );
     }
 
@@ -337,7 +361,8 @@ class CreateAdviceServiceTest {
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
-            loadCreatedAdviceDetailsPort
+            loadCreatedAdviceDetailsPort,
+            loadAssessmentKitVersionIdPort
         );
     }
 
@@ -367,7 +392,8 @@ class CreateAdviceServiceTest {
         verify(assessmentAccessChecker, times(1)).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
-        verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any());
+        verify(loadAssessmentKitVersionIdPort, times(1)).loadKitVersionIdById(any());
+        verify(loadCreatedAdviceDetailsPort, times(1)).loadAdviceDetails(any(), any());
     }
 
     private void mockPorts(CreateAdviceUseCase.Param param) throws InterruptedException, ExecutionException {
@@ -430,7 +456,11 @@ class CreateAdviceServiceTest {
             new AdviceOption(4, "caption4")
         );
         var questionsPortResult2 = new Result(adviceQuestion2, optionListItems2, List.of(attribute), questionnaire);
-        when(loadCreatedAdviceDetailsPort.loadAdviceDetails(List.of(question1.getId(), question2.getId())))
+
+        var kitVersionId = 1568L;
+        when(loadAssessmentKitVersionIdPort.loadKitVersionIdById(param.getAssessmentId())).thenReturn(kitVersionId);
+
+        when(loadCreatedAdviceDetailsPort.loadAdviceDetails(List.of(question1.getId(), question2.getId()), kitVersionId))
             .thenReturn(List.of(questionsPortResult1, questionsPortResult2));
     }
 }

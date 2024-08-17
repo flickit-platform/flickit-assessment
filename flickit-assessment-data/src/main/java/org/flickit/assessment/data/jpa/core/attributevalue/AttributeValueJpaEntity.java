@@ -28,8 +28,8 @@ public class AttributeValueJpaEntity {
     @JoinColumn(name = "assessment_result_id", referencedColumnName = "id", nullable = false)
     private AssessmentResultJpaEntity assessmentResult;
 
-    @Column(name = "attribute_ref_num", nullable = false)
-    private UUID attributeRefNum;
+    @Column(name = "attribute_id", nullable = false)
+    private Long attributeId;
 
     @Column(name = "maturity_level_id")
     private Long maturityLevelId;

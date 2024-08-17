@@ -6,6 +6,7 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.Space;
 import org.flickit.assessment.core.application.domain.User;
 
@@ -45,7 +46,10 @@ public interface GetAssessmentUseCase {
                   AssessmentKit kit,
                   LocalDateTime creationTime,
                   LocalDateTime lastModificationTime,
-                  User createdBy) {
-
+                  User createdBy,
+                  MaturityLevel maturityLevel,
+                  boolean isCalculateValid,
+                  boolean manageable,
+                  boolean viewable) {
     }
 }

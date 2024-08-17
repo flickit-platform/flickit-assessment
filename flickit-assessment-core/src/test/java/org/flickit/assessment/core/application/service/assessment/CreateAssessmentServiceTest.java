@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
@@ -15,6 +14,7 @@ import org.flickit.assessment.core.application.port.out.assessmentkit.LoadAssess
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
@@ -66,6 +66,9 @@ class CreateAssessmentServiceTest {
     private CheckKitAccessPort checkKitAccessPort;
 
     @Mock
+    private LoadSpaceOwnerPort loadSpaceOwnerPort;
+
+    @Mock
     private GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Test
@@ -75,16 +78,18 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
         UUID expectedId = UUID.randomUUID();
+        UUID spaceOwnerId = UUID.randomUUID();
+
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
+        when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(spaceOwnerId);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
         assertEquals(expectedId, result.id());
@@ -95,19 +100,64 @@ class CreateAssessmentServiceTest {
         assertEquals("title-example", createPortParam.getValue().code());
         assertEquals(param.getTitle(), createPortParam.getValue().title());
         assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
-        assertEquals(param.getColorId(), createPortParam.getValue().colorId());
         assertNotNull(createPortParam.getValue().creationTime());
 
         ArgumentCaptor<UUID> grantPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<UUID> grantPortUserId = ArgumentCaptor.forClass(UUID.class);
         ArgumentCaptor<Integer> grantPortRoleId = ArgumentCaptor.forClass(Integer.class);
-        verify(grantUserAssessmentRolePort).persist(grantPortAssessmentId.capture(),
+        verify(grantUserAssessmentRolePort, times(2)).persist(grantPortAssessmentId.capture(),
             grantPortUserId.capture(),
             grantPortRoleId.capture());
 
-        assertEquals(expectedId, grantPortAssessmentId.getValue());
-        assertEquals(param.getCurrentUserId(), grantPortUserId.getValue());
-        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getValue());
+        assertEquals(expectedId, grantPortAssessmentId.getAllValues().get(0));
+        assertEquals(spaceOwnerId, grantPortUserId.getAllValues().get(0));
+        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().get(0));
+
+        assertEquals(expectedId, grantPortAssessmentId.getAllValues().get(1));
+        assertEquals(param.getCurrentUserId(), grantPortUserId.getAllValues().get(1));
+        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().get(1));
+    }
+
+    @Test
+    void testCreateAssessment_CurrentUserIsSpaceOwner_PersistOneAssessmentUserRole() {
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param(
+            1L,
+            "title example",
+            1L,
+            currentUserId
+        );
+        UUID expectedId = UUID.randomUUID();
+
+
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
+        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
+        when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
+        List<Subject> expectedResponse = List.of();
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
+        when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(currentUserId);
+
+        CreateAssessmentUseCase.Result result = service.createAssessment(param);
+        assertEquals(expectedId, result.id());
+
+        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
+        verify(createAssessmentPort).persist(createPortParam.capture());
+
+        assertEquals("title-example", createPortParam.getValue().code());
+        assertEquals(param.getTitle(), createPortParam.getValue().title());
+        assertEquals(param.getKitId(), createPortParam.getValue().assessmentKitId());
+        assertNotNull(createPortParam.getValue().creationTime());
+
+        ArgumentCaptor<UUID> grantPortAssessmentId = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<UUID> grantPortUserId = ArgumentCaptor.forClass(UUID.class);
+        ArgumentCaptor<Integer> grantPortRoleId = ArgumentCaptor.forClass(Integer.class);
+        verify(grantUserAssessmentRolePort, times(1)).persist(grantPortAssessmentId.capture(),
+            grantPortUserId.capture(),
+            grantPortRoleId.capture());
+
+        assertEquals(expectedId, grantPortAssessmentId.getAllValues().get(0));
+        assertEquals(currentUserId, grantPortUserId.getAllValues().get(0));
+        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().get(0));
     }
 
     @Test
@@ -117,7 +167,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             createdBy
         );
         UUID assessmentId = UUID.randomUUID();
@@ -129,6 +178,7 @@ class CreateAssessmentServiceTest {
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
+        when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(UUID.randomUUID());
 
         service.createAssessment(param);
 
@@ -149,7 +199,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             assessmentKitId,
-            1,
             createdBy
         );
 
@@ -169,11 +218,12 @@ class CreateAssessmentServiceTest {
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
+        when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(UUID.randomUUID());
 
         service.createAssessment(param);
 
         verify(createSubjectValuePort, times(1)).persistAll(anyList(), any());
-        verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
+        verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
     }
 
     @Test
@@ -185,7 +235,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             assessmentKitId,
-            1,
             currentUserId
         );
         Attribute qa1 = AttributeMother.simpleAttribute();
@@ -204,36 +253,13 @@ class CreateAssessmentServiceTest {
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
+        when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(UUID.randomUUID());
 
         service.createAssessment(param);
 
-        verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
+        verify(loadSpaceOwnerPort, times(1)).loadOwnerId(any());
+        verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
         verify(createAttributeValuePort, times(1)).persistAll(anyList(), any());
-    }
-
-    @Test
-    void testCreateAssessment_InvalidColor_UseDefaultColor() {
-        UUID currentUserId = UUID.randomUUID();
-        Param param = new Param(
-            1L,
-            "title example",
-            1L,
-            7,
-            currentUserId
-        );
-        List<Subject> expectedResponse = List.of();
-
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
-        when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
-
-        service.createAssessment(param);
-
-        ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
-        verify(createAssessmentPort).persist(createPortParam.capture());
-
-        assertEquals(AssessmentColor.getDefault().getId(), createPortParam.getValue().colorId());
-        verify(grantUserAssessmentRolePort, times(1)).persist(any(), any(UUID.class), anyInt());
     }
 
     @Test
@@ -243,7 +269,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
 
@@ -260,7 +285,6 @@ class CreateAssessmentServiceTest {
             1L,
             "title example",
             1L,
-            1,
             currentUserId
         );
 
@@ -268,6 +292,6 @@ class CreateAssessmentServiceTest {
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
-        assertEquals(CREATE_ASSESSMENT_KIT_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(CREATE_ASSESSMENT_KIT_NOT_ALLOWED, throwable.getMessageKey());
     }
 }

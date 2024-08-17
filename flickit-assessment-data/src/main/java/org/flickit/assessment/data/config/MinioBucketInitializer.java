@@ -19,6 +19,8 @@ public class MinioBucketInitializer {
     public MinioBucketInitializer(MinioClient minioClient, MinioConfigProperties properties) {
         createMinioBucket(minioClient, properties.getBucketNames().getDsl());
         createMinioBucket(minioClient, properties.getBucketNames().getAvatar());
+        createMinioBucket(minioClient, properties.getBucketNames().getAttachment());
+        createMinioBucket(minioClient, properties.getBucketNames().getReport());
     }
 
     @SneakyThrows

@@ -35,4 +35,297 @@
                                  referencedTableName="fac_assessment_result"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="0.21-06" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_answer_option_impact"
+                                  constraintName="fak_answeroptionimpact_answeroption"/>
+    </changeSet>
+
+    <changeSet id="0.21-07" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_answer_option"/>
+    </changeSet>
+
+    <changeSet id="0.21-08" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_answer_option"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_answer_option"/>
+    </changeSet>
+
+    <changeSet id="0.21-09" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_answer_option_impact">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_answer_option.kit_version_id FROM fak_answer_option WHERE fak_answer_option.id = option_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.21-10" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_answer_option_impact"
+                                 baseColumnNames="option_id, kit_version_id"
+                                 constraintName="fk_fak_answeroptionimpact_answeroption"
+                                 referencedTableName="fak_answer_option"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-11" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_question_impact"
+                                  constraintName="fk_fak_questionimpact_attribute"/>
+    </changeSet>
+
+    <changeSet id="0.21-12" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_attribute"/>
+    </changeSet>
+
+    <changeSet id="0.21-13" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_attribute"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_attribute"/>
+    </changeSet>
+
+    <changeSet id="0.21-14" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_question_impact">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_attribute.kit_version_id FROM fak_attribute WHERE fak_attribute.id = attribute_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.21-15" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="attribute_id, kit_version_id"
+                                 constraintName="fk_fak_questionimpact_attribute"
+                                 referencedTableName="fak_attribute"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-16" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_level_competence"
+                                  constraintName="fk_fak_levelcompetence_maturitylevel_affectedlevelid"/>
+    </changeSet>
+
+    <changeSet id="0.21-17" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_level_competence"
+                                  constraintName="fk_fak_levelcompetence_maturitylevel_effectivelevelid"/>
+    </changeSet>
+
+    <changeSet id="0.21-18" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_question_impact"
+                                  constraintName="fk_fak_questionimpact_maturitylevel"/>
+    </changeSet>
+
+    <changeSet id="0.21-19" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.21-20" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_maturity_level"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_maturity_level"/>
+    </changeSet>
+
+    <changeSet id="0.21-21" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_level_competence">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_maturity_level.kit_version_id FROM fak_maturity_level WHERE fak_maturity_level.id = affected_level_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.21-22" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_level_competence"
+                                 baseColumnNames="affected_level_id, kit_version_id"
+                                 constraintName="fk_fak_levelcompetence_maturitylevel_affectedlevelid"
+                                 referencedTableName="fak_maturity_level"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-23" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_level_competence"
+                                 baseColumnNames="effective_level_id, kit_version_id"
+                                 constraintName="fk_fak_levelcompetence_maturitylevel_effectivelevelid"
+                                 referencedTableName="fak_maturity_level"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-24" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="maturity_level_id, kit_version_id"
+                                 constraintName="fk_fak_questionimpact_maturitylevel"
+                                 referencedTableName="fak_maturity_level"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-25" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_question_impact"
+                                  constraintName="fk_fak_questionimpact_question"/>
+    </changeSet>
+
+    <changeSet id="0.21-26" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_answer_option"
+                                  constraintName="fk_fak_answeroption_question"/>
+    </changeSet>
+
+    <changeSet id="0.21-27" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_question"/>
+    </changeSet>
+
+    <changeSet id="0.21-28" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_question"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_question"/>
+    </changeSet>
+
+    <changeSet id="0.21-29" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_question_impact"
+                                 baseColumnNames="question_id, kit_version_id"
+                                 constraintName="fk_fak_questionimpact_question"
+                                 referencedTableName="fak_question"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-30" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_answer_option"
+                                 baseColumnNames="question_id, kit_version_id"
+                                 constraintName="fk_fak_answeroption_question"
+                                 referencedTableName="fak_question"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-31" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_subject_questionnaire">
+            <column name="kit_version_id" type="bigint"
+                    valueComputed="fak_questionnaire.kit_version_id FROM fak_questionnaire WHERE fak_questionnaire.id = questionnaire_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.21-32" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_question"
+                                  constraintName="fk_fak_question_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.21-33" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_subject_questionnaire"
+                                  constraintName="fk_fak_subjectquestionnaire_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.21-34" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.21-35" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_questionnaire"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_questionnaire"/>
+    </changeSet>
+
+    <changeSet id="0.21-36" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_question"
+                                 baseColumnNames="questionnaire_id, kit_version_id"
+                                 constraintName="fk_fak_question_questionnaire"
+                                 referencedTableName="fak_questionnaire"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-37" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_subject_questionnaire"
+                                 baseColumnNames="questionnaire_id, kit_version_id"
+                                 constraintName="fk_fak_subjectquestionnaire_questionnaire"
+                                 referencedTableName="fak_questionnaire"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-38" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_attribute"
+                                  constraintName="fk_fak_attribute_subject"/>
+    </changeSet>
+
+    <changeSet id="0.21-39" author="Mahdi Rezazadeh">
+        <dropForeignKeyConstraint baseTableName="fak_subject_questionnaire"
+                                  constraintName="fk_fak_subjectquestionnaire_subject"/>
+    </changeSet>
+
+    <changeSet id="0.21-40" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_subject"/>
+    </changeSet>
+
+    <changeSet id="0.21-41" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_subject"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_subject"/>
+    </changeSet>
+
+    <changeSet id="0.21-42" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_attribute"
+                                 baseColumnNames="subject_id, kit_version_id"
+                                 constraintName="fk_fak_attribute_subject"
+                                 referencedTableName="fak_subject"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-43" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_subject_questionnaire"
+                                 baseColumnNames="subject_id, kit_version_id"
+                                 constraintName="fk_fak_subjectquestionnaire_subject"
+                                 referencedTableName="fak_subject"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.21-44" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint tableName="fak_subject_questionnaire"
+                              constraintName="uq_fak_subjectquestionnaire_subjectid_questionnaireid"/>
+    </changeSet>
+
+    <changeSet id="0.21-45" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_subject_questionnaire"
+                             columnNames="subject_id, questionnaire_id, kit_version_id"
+                             constraintName="uq_fak_subjectquestionnaire_subjectid_questionnaireid"/>
+    </changeSet>
+
+    <changeSet id="0.21-46" author="Ali Sedaghat">
+        <renameColumn tableName="fac_attribute_value" oldColumnName="quality_attribute_id" newColumnName="attribute_id"/>
+    </changeSet>
+
+    <changeSet id="0.21-47" author="Ali Sedaghat">
+        <update tableName="fac_attribute_value">
+            <column name="attribute_id" valueComputed="fak_attribute.id FROM fak_attribute WHERE fak_attribute.ref_num = attribute_ref_num"/>
+        </update>
+    </changeSet>
 </databaseChangeLog>

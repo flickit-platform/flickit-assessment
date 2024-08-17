@@ -1,12 +1,10 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
-import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.assessment.SpaceAccessChecker;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.port.out.assessment.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -23,7 +21,6 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -34,10 +31,9 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
+import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity.Fields.ASSESSMENT_KIT_ID;
-import static org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity.Fields.SPACE_ID;
-import static org.springframework.data.jpa.domain.Specification.where;
 
 @Component
 @RequiredArgsConstructor
@@ -48,9 +44,7 @@ public class AssessmentPersistenceJpaAdapter implements
     GetAssessmentProgressPort,
     GetAssessmentPort,
     DeleteAssessmentPort,
-    CountAssessmentsPort,
-    CheckUserAssessmentAccessPort,
-    SpaceAccessChecker {
+    CheckAssessmentSpaceMembershipPort {
 
     private final AssessmentJpaRepository repository;
     private final AssessmentResultJpaRepository resultRepository;
@@ -67,8 +61,8 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadUserAssessments(Long kitId, UUID userId, int page, int size) {
-        var pageResult = repository.findByUserId(kitId, userId, PageRequest.of(page, size));
+    public PaginatedResponse<AssessmentListItem> loadComparableAssessments(Long kitId, UUID userId, int page, int size) {
+        var pageResult = repository.findComparableAssessments(kitId, userId, ASSOCIATE.getId(), PageRequest.of(page, size));
 
         List<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentKit().getKitVersionId())
@@ -77,13 +71,13 @@ public class AssessmentPersistenceJpaAdapter implements
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
             .collect(Collectors.groupingBy(MaturityLevelJpaEntity::getKitVersionId));
 
-        List<Long> assessmentMaturityLevelIds = pageResult.getContent().stream()
-            .map(e -> e.getAssessmentResult().getMaturityLevelId())
-            .toList();
+        var assessmentMaturityLevelIds = pageResult.getContent().stream()
+            .map(e -> new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentKit().getKitVersionId()))
+            .collect(Collectors.toSet());
 
-        Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevel =
+        var maturityLevelIdToMaturityLevel =
             maturityLevelRepository.findAllById(assessmentMaturityLevelIds).stream()
-                .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+                .collect(Collectors.toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
 
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
@@ -94,7 +88,8 @@ public class AssessmentPersistenceJpaAdapter implements
                 AssessmentListItem.Space space = new AssessmentListItem.Space(spaceEntity.getId(), spaceEntity.getTitle());
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
-                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(e.getAssessmentResult().getMaturityLevelId());
+                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel
+                        .get(new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
                     maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
                         maturityLevelEntity.getTitle(),
                         maturityLevelEntity.getValue(),
@@ -105,11 +100,12 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessment().getTitle(),
                     kit,
                     space,
-                    AssessmentColor.valueOfById(e.getAssessment().getColorId()),
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
-                    e.getAssessmentResult().getIsConfidenceValid());
+                    e.getAssessmentResult().getIsConfidenceValid(),
+                    null,
+                    true);
             }).toList();
 
         return new PaginatedResponse<>(
@@ -123,9 +119,9 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId, int page, int size) {
-        var pageResult = repository.findBySpaceId(spaceId, PageRequest.of(page, size,
-            Sort.Direction.DESC, AssessmentResultJpaEntity.Fields.LAST_MODIFICATION_TIME));
+    public PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId, UUID userId, int page, int size) {
+        var pageResult = repository.findBySpaceId(spaceId, MANAGER.getId(), userId,
+            PageRequest.of(page, size, Sort.Direction.DESC, AssessmentResultJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
         List<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentResult().getKitVersionId())
@@ -162,11 +158,12 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessment().getTitle(),
                     kit,
                     space,
-                    AssessmentColor.valueOfById(e.getAssessment().getColorId()),
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
                     e.getAssessmentResult().getIsCalculateValid(),
-                    e.getAssessmentResult().getIsConfidenceValid());
+                    e.getAssessmentResult().getIsConfidenceValid(),
+                    e.getManageable(),
+                    true);
             }).toList();
 
 
@@ -189,7 +186,6 @@ public class AssessmentPersistenceJpaAdapter implements
             param.id(),
             param.title(),
             param.code(),
-            param.colorId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
         return new UpdateAssessmentPort.Result(param.id());
@@ -208,6 +204,8 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public Optional<Assessment> getAssessmentById(UUID assessmentId) {
         Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalse(assessmentId);
+        if (entity.isEmpty())
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
         return entity.map(AssessmentMapper::mapToDomainModel);
     }
 
@@ -220,47 +218,12 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
-    public CountAssessmentsPort.Result count(CountAssessmentsPort.Param param) {
-        Integer totalCount = null;
-        Integer deletedCount = null;
-        Integer notDeletedCount = null;
-
-        Specification<AssessmentJpaEntity> baseCondition = (r, cq, cb) -> {
-            Predicate p = cb.and();
-            if (param.kitId() != null)
-                p = cb.and(cb.equal(r.get(ASSESSMENT_KIT_ID), param.kitId()), p);
-            if (param.spaceId() != null)
-                p = cb.and(cb.equal(r.get(SPACE_ID), param.spaceId()), p);
-            return p;
-        };
-
-        if (param.deleted()) {
-            deletedCount = (int) repository.count(where(baseCondition).and(deletedCondition(true)));
-        }
-        if (param.notDeleted()) {
-            notDeletedCount = (int) repository.count(where(baseCondition).and(deletedCondition(false)));
-        }
-        if (param.total()) {
-            if (param.deleted() && param.notDeleted())
-                totalCount = deletedCount + notDeletedCount;
-            else
-                totalCount = (int) repository.count(where(baseCondition));
-        }
-
-        return new CountAssessmentsPort.Result(totalCount, deletedCount, notDeletedCount);
-    }
-
-    private static Specification<AssessmentJpaEntity> deletedCondition(boolean deleted) {
-        return (r, cq, cb) -> cb.equal(r.get("deleted"), deleted);
-    }
-
-    @Override
     public void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime) {
         repository.updateLastModificationTime(id, lastModificationTime);
     }
 
     @Override
-    public boolean hasAccess(UUID assessmentId, UUID userId) {
-        return repository.checkUserAccess(assessmentId, userId).isPresent();
+    public boolean isAssessmentSpaceMember(UUID assessmentId, UUID userId) {
+        return repository.checkIsAssessmentSpaceMember(assessmentId, userId).isPresent();
     }
 }

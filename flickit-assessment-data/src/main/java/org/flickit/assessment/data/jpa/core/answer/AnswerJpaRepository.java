@@ -1,7 +1,5 @@
 package org.flickit.assessment.data.jpa.core.answer;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,11 +29,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     int getCountByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
-    @Query("SELECT a.questionnaireId as questionnaireId, COUNT(a.questionnaireId) as answerCount FROM AnswerJpaEntity a " +
-        "where a.assessmentResult.id=:assessmentResultId AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true) " +
-        "GROUP BY a.questionnaireId")
-    List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(UUID assessmentResultId);
-
     @Modifying
     @Query("UPDATE AnswerJpaEntity a SET " +
         "a.answerOptionId = :answerOptionId, " +
@@ -55,14 +48,4 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(
         @Param(value = "assessmentResultId") UUID assessmentResultId,
         @Param(value = "questionnaireIds") List<Long> questionnaireIds);
-
-    @Query("""
-            SELECT a
-            FROM QuestionJpaEntity q
-            JOIN AnswerJpaEntity a
-                ON q.refNum = a.questionRefNum AND a.assessmentResult.id = :assessmentResultId
-            WHERE q.questionnaireId = :questionnaireId
-            ORDER BY q.index
-        """)
-    Page<AnswerJpaEntity> findByAssessmentResultIdAndQuestionnaireIdOrderByQuestionIndexAsc(UUID assessmentResultId, Long questionnaireId, Pageable pageable);
 }

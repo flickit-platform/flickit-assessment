@@ -62,7 +62,7 @@ class GetSubjectProgressServiceTest {
             List.of(subjectValue), MaturityLevelMother.levelTwo());
 
         when(assessmentAccessChecker.isAuthorized(result.getAssessment().getId(), currentUserId, VIEW_SUBJECT_PROGRESS)).thenReturn(true);
-        when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId())).
+        when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId(), result.getKitVersionId())).
             thenReturn(questions);
         when(loadSubjectPort.loadByIdAndKitVersionId(subjectValue.getSubject().getId(), result.getKitVersionId())).
             thenReturn(Optional.of(subjectValue.getSubject()));

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface LoadAssessmentListPort {
 
-    PaginatedResponse<AssessmentListItem> loadUserAssessments(Long kitId, UUID userId, int page, int size);
+    PaginatedResponse<AssessmentListItem> loadComparableAssessments(Long kitId, UUID userId, int page, int size);
 
-    PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId, int page, int size);
+    PaginatedResponse<AssessmentListItem> loadSpaceAssessments(Long spaceId, UUID userId, int page, int size);
 }
