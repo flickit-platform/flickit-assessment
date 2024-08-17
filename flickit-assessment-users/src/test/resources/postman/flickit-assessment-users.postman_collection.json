@@ -1015,6 +1015,30 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get User Subscriber Hash",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/users/subscriber-hash",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"users",
+						"subscriber-hash"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
