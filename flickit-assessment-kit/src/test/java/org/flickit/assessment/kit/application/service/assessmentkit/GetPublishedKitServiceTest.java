@@ -147,16 +147,16 @@ class GetPublishedKitServiceTest {
         assertEquals(counts.questionnairesCount(), result.questionnairesCount());
 
         assertEquals(1, result.subjects().size());
-        assertEquals(subject.getId(), result.subjects().get(0).id());
+        assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         assertEquals(1, result.questionnaires().size());
-        assertEquals(questionnaire.getId(), result.questionnaires().get(0).id());
+        assertEquals(questionnaire.getId(), result.questionnaires().getFirst().id());
 
         assertEquals(1, result.maturityLevels().size());
-        assertEquals(maturityLevel.getId(), result.maturityLevels().get(0).id());
+        assertEquals(maturityLevel.getId(), result.maturityLevels().getFirst().id());
 
         assertEquals(1, result.tags().size());
-        assertEquals(tag.getId(), result.tags().get(0).id());
+        assertEquals(tag.getId(), result.tags().getFirst().id());
     }
 
     @Test
@@ -198,16 +198,16 @@ class GetPublishedKitServiceTest {
         assertEquals(counts.questionnairesCount(), result.questionnairesCount());
 
         assertEquals(1, result.subjects().size());
-        assertEquals(subject.getId(), result.subjects().get(0).id());
+        assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         assertEquals(1, result.questionnaires().size());
-        assertEquals(questionnaire.getId(), result.questionnaires().get(0).id());
+        assertEquals(questionnaire.getId(), result.questionnaires().getFirst().id());
 
         assertEquals(1, result.maturityLevels().size());
-        assertEquals(maturityLevel.getId(), result.maturityLevels().get(0).id());
+        assertEquals(maturityLevel.getId(), result.maturityLevels().getFirst().id());
 
         assertEquals(1, result.tags().size());
-        assertEquals(tag.getId(), result.tags().get(0).id());
+        assertEquals(tag.getId(), result.tags().getFirst().id());
 
         verifyNoInteractions(checkKitUserAccessPort);
     }

@@ -49,7 +49,7 @@ class GetExpertGroupKitListServiceTest {
 
         var serviceResult = service.getExpertGroupKitList(param);
 
-        assertEquals(expectedKit.getId(), serviceResult.getItems().get(0).id());
+        assertEquals(expectedKit.getId(), serviceResult.getItems().getFirst().id());
         assertEquals(expectedPage.getPage(), serviceResult.getPage());
         assertEquals(expectedPage.getSize(), serviceResult.getSize());
         assertEquals(expectedPage.getSort(), serviceResult.getSort());
@@ -76,7 +76,7 @@ class GetExpertGroupKitListServiceTest {
 
         var serviceResult = service.getExpertGroupKitList(param);
 
-        assertEquals(expectedKit.getId(), serviceResult.getItems().get(0).id());
+        assertEquals(expectedKit.getId(), serviceResult.getItems().getFirst().id());
         assertEquals(expectedPage.getPage(), serviceResult.getPage());
         assertEquals(expectedPage.getSize(), serviceResult.getSize());
         assertEquals(expectedPage.getSort(), serviceResult.getSort());

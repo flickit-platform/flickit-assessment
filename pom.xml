@@ -29,7 +29,7 @@
 	<properties>
 		<revision>0.28.0-SNAPSHOT</revision>
 
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 		<spring-boot.version>3.2.8</spring-boot.version>
 
 		<sentry.version>7.3.0</sentry.version>

@@ -73,9 +73,9 @@ class GetAttributeScoreDetailServiceTest {
         assertEquals(5, result.questionsCount());
         assertEquals(2, result.questionnaires().size());
         //order of QuestionScore items should be equal to order of port items
-        assertEquals(questionWithFullScore, result.questionnaires().get(0).questionScores().get(0));
-        assertEquals(questionWithHalfScore, result.questionnaires().get(0).questionScores().get(1));
-        assertEquals(questionWithoutScore, result.questionnaires().get(1).questionScores().get(0));
+        assertEquals(questionWithFullScore, result.questionnaires().getFirst().questionScores().getFirst());
+        assertEquals(questionWithHalfScore, result.questionnaires().getFirst().questionScores().get(1));
+        assertEquals(questionWithoutScore, result.questionnaires().get(1).questionScores().getFirst());
         assertEquals(questionWithoutAnswer, result.questionnaires().get(1).questionScores().get(1));
         assertEquals(questionMarkedAsNotApplicable, result.questionnaires().get(1).questionScores().get(2));
     }
