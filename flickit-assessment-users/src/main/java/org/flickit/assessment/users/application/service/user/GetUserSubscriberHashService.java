@@ -18,23 +18,23 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @RequiredArgsConstructor
 public class GetUserSubscriberHashService implements GetUserSubscriberHashUseCase {
 
-    private static final String HMAC_SHA_256 = "HmacSHA256";
+    private static final String HMAC_SHA256 = "HmacSHA256";
 
     private final NotificationSenderProperties notificationSenderProperties;
 
     @SneakyThrows
     @Override
     public Result getUserSubscriberHash(Param param) {
-        String key = notificationSenderProperties.getNovu().getApiKey();
-        String subscriberHash = encode(key, param.getCurrentUserId().toString());
+        var key = notificationSenderProperties.getNovu().getApiKey();
+        var subscriberHash = encode(key, param.getCurrentUserId().toString());
         return new Result(subscriberHash);
     }
 
     private String encode(String key, String subscriberId) throws NoSuchAlgorithmException, InvalidKeyException {
-        Mac encryptor = Mac.getInstance(HMAC_SHA_256);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(UTF_8), HMAC_SHA_256);
-        encryptor.init(secretKeySpec);
-        encryptor.update(subscriberId.getBytes());
-        return Hex.encodeHexString(encryptor.doFinal());
+        var hmacEncryptor = Mac.getInstance(HMAC_SHA256);
+        var secretKeySpec = new SecretKeySpec(key.getBytes(UTF_8), HMAC_SHA256);
+        hmacEncryptor.init(secretKeySpec);
+        hmacEncryptor.update(subscriberId.getBytes());
+        return Hex.encodeHexString(hmacEncryptor.doFinal());
     }
 }
