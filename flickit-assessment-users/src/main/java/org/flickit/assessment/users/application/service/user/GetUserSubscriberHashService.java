@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -22,7 +20,6 @@ public class GetUserSubscriberHashService implements GetUserSubscriberHashUseCas
 
     private final NotificationSenderProperties notificationSenderProperties;
 
-    @SneakyThrows
     @Override
     public Result getUserSubscriberHash(Param param) {
         var key = notificationSenderProperties.getNovu().getApiKey();
@@ -30,7 +27,8 @@ public class GetUserSubscriberHashService implements GetUserSubscriberHashUseCas
         return new Result(subscriberHash);
     }
 
-    private String encode(String key, String subscriberId) throws NoSuchAlgorithmException, InvalidKeyException {
+    @SneakyThrows
+    private String encode(String key, String subscriberId) {
         var hmacEncryptor = Mac.getInstance(HMAC_SHA256);
         var secretKeySpec = new SecretKeySpec(key.getBytes(UTF_8), HMAC_SHA256);
         hmacEncryptor.init(secretKeySpec);
