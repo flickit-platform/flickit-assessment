@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

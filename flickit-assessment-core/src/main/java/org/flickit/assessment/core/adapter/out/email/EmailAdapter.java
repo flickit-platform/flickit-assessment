@@ -54,6 +54,6 @@ public class EmailAdapter implements
     }
 
     private String getFrom() {
-        return String.format("%s <%s>", appSpecProperties.getEmail().getFromDisplayName(), springMailProperties.getUsername());
+        return "%s <%s>".formatted(appSpecProperties.getEmail().getFromDisplayName(), springMailProperties.getUsername());
     }
 }

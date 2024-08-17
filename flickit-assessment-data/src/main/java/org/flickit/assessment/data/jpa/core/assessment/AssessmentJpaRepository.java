@@ -77,10 +77,12 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 
     @Modifying
-    @Query("UPDATE AssessmentJpaEntity a SET " +
-        "a.deletionTime = :deletionTime, " +
-        "a.deleted = true " +
-        "WHERE a.id = :id")
+    @Query("""
+        UPDATE AssessmentJpaEntity a SET
+        a.deletionTime = :deletionTime,
+        a.deleted = true
+        WHERE a.id = :id
+        """)
     void delete(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
@@ -98,9 +100,11 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Modifying
-    @Query("UPDATE AssessmentJpaEntity a SET " +
-        "a.lastModificationTime = :lastModificationTime " +
-        "WHERE a.id = :id")
+    @Query("""
+        UPDATE AssessmentJpaEntity a SET
+        a.lastModificationTime = :lastModificationTime
+        WHERE a.id = :id
+        """)
     void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
 
     @Query("""

@@ -10,6 +10,9 @@
     </parent>
 
     <artifactId>flickit-assessment-core</artifactId>
+  <properties>
+    <maven.compiler.release>17</maven.compiler.release>
+  </properties>
 
     <dependencies>
         <dependency>
