@@ -10,7 +10,7 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAss
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.flickit.assessment.core.application.service.assessmentinvite.notification.AcceptAssessmentInvitationNotificationCmd;
-import org.flickit.assessment.core.application.service.assessmentuserrole.notification.GrantAssessmentUserRoleNotificationCmd;
+import org.flickit.assessment.core.application.service.assessmentinvite.notification.AcceptAssessmentInvitationNotificationCmd.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,20 +43,23 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
         if (!invitations.isEmpty())
             deleteAssessmentUserInvitationPort.deleteAllByEmail(email);
 
-        return new Result(new AcceptAssessmentInvitationNotificationCmd(validInvitations.get(0).getCreatedBy(),
-            validInvitations.get(0).getAssessmentId(),
-            validInvitations.get(0).getUserId(),
-            validInvitations.get(0).getRole()));
+        var assessmentTargetUserRole = validInvitations.stream()
+            .map(this::mapToCmd)
+            .toList();
+
+        return new Result(new AcceptAssessmentInvitationNotificationCmd(assessmentTargetUserRole));
     }
 
     private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvite invitation, UUID userId) {
         return new AssessmentUserRoleItem(invitation.getAssessmentId(), userId, invitation.getRole(), invitation.getCreatedBy());
     }
 
-    private Result mapToResult(AssessmentUserRoleItem assessmentUserRoleItem) {
-        return new Result(new AcceptAssessmentInvitationNotificationCmd(assessmentUserRoleItem.getUserId(),
-            assessmentUserRoleItem.getAssessmentId(),
-            assessmentUserRoleItem.getUserId(),
-            assessmentUserRoleItem.getRole()));
+    private NotificationCmdItem mapToCmd(AssessmentUserRoleItem validInvitation) {
+        return new NotificationCmdItem(
+            validInvitation.getCreatedBy(),
+            validInvitation.getAssessmentId(),
+            validInvitation.getUserId(),
+            validInvitation.getRole()
+        );
     }
 }
