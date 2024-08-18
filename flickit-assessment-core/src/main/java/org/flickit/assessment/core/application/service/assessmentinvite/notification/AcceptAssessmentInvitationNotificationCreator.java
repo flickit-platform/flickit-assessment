@@ -27,7 +27,7 @@ public class AcceptAssessmentInvitationNotificationCreator
 
     @Override
     public List<NotificationEnvelope> create(AcceptAssessmentInvitationNotificationCmd cmd) {
-        return cmd.assessmentTargetUserRoles().stream()
+        return cmd.notificationCmdItems().stream()
             .map(this::createOr)
             .toList();
     }

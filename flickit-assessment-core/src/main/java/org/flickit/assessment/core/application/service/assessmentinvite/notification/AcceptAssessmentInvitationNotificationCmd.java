@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record AcceptAssessmentInvitationNotificationCmd(
-    List<NotificationCmdItem> assessmentTargetUserRoles) implements NotificationCmd {
+    List<NotificationCmdItem> notificationCmdItems) implements NotificationCmd {
     public record NotificationCmdItem(UUID targetUserId,
                                       UUID assessmentId,
                                       UUID inviteeId,
