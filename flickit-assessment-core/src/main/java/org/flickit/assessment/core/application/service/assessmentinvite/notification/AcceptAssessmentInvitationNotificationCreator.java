@@ -27,18 +27,23 @@ public class AcceptAssessmentInvitationNotificationCreator
 
     @Override
     public List<NotificationEnvelope> create(AcceptAssessmentInvitationNotificationCmd cmd) {
+        return cmd.assessmentTargetUserRoles().stream()
+            .map(this::createOr)
+            .toList();
+    }
+
+    public NotificationEnvelope createOr(AcceptAssessmentInvitationNotificationCmd.NotificationCmdItem cmd) {
         Optional<Assessment> assessment = getAssessmentPort.getAssessmentById(cmd.assessmentId());
-        Optional<User> user = loadUserPort.loadById(cmd.inviteeUserId());
+        Optional<User> user = loadUserPort.loadById(cmd.inviteeId());
         if (assessment.isEmpty() || user.isEmpty()) {
             log.warn("assessment or user not found");
-            return List.of();
+            return null;
         }
-        return List.of(
-            new NotificationEnvelope(cmd.targetUserId(), new AcceptAssessmentInvitationNotificationPayload(
-                new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
-                new InviteeModel(user.get().getId(), user.get().getDisplayName()),
-                new RoleModel(cmd.assessmentUserRole().getTitle())
-            )));
+
+        return new NotificationEnvelope(cmd.targetUserId(), new AcceptAssessmentInvitationNotificationPayload(
+            new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
+            new InviteeModel(user.get().getId(), user.get().getDisplayName()),
+            new RoleModel(cmd.assessmentUserRole().getTitle())));
     }
 
     @Override
