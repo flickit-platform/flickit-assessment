@@ -2,6 +2,8 @@ package org.flickit.assessment.kit.application.port.in.subject;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -25,7 +27,9 @@ public interface CreateSubjectUseCase {
         @NotNull(message = CREATE_SUBJECT_INDEX_NOT_NULL)
         Integer index;
 
-        @NotBlank(message = CREATE_SUBJECT_TITLE_NOT_BLANK)
+        @NotNull(message = CREATE_SUBJECT_TITLE_NOT_NULL)
+        @Size(min = 3, message = CREATE_SUBJECT_TITLE_SIZE_MIN)
+        @Size(max = 100, message = CREATE_SUBJECT_TITLE_SIZE_MAX)
         String title;
 
         @NotBlank(message = CREATE_SUBJECT_DESCRIPTION_NOT_BLANK)
@@ -36,6 +40,7 @@ public interface CreateSubjectUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long kitId,
                      Integer index,
                      String title,
