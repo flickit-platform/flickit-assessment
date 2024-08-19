@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
+import org.flickit.assessment.common.application.domain.notification.NotificationCmd;
 
 import java.util.UUID;
 
@@ -12,7 +14,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GrantUserAssessmentRoleUseCase {
 
-    void grantAssessmentUserRole(Param param);
+    Result grantAssessmentUserRole(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -37,5 +39,9 @@ public interface GrantUserAssessmentRoleUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+    }
+
+    record Result(NotificationCmd notificationCmd) implements HasNotificationCmd {
+
     }
 }

@@ -88,7 +88,8 @@ public enum AssessmentUserRole {
             VIEW_ATTRIBUTE_SCORE_DETAIL,
             CREATE_ADVICE,
             VIEW_ANSWER_HISTORY_LIST,
-            EXPORT_ASSESSMENT_REPORT)),
+            EXPORT_ASSESSMENT_REPORT,
+            CREATE_ATTRIBUTE_INSIGHT)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -97,7 +98,8 @@ public enum AssessmentUserRole {
             UPDATE_USER_ASSESSMENT_ROLE,
             DELETE_USER_ASSESSMENT_ROLE,
             VIEW_ASSESSMENT_USER_LIST,
-            VIEW_ASSESSMENT_INVITEE_LIST)),
+            VIEW_ASSESSMENT_INVITEE_LIST,
+            DELETE_ASSESSMENT_INVITE)),
         ASSOCIATE_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,

@@ -5,10 +5,10 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidenceattachment.GetEvidenceAttachmentsUseCase;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
+import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentsPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentsPort;
 
 import java.time.Duration;
 import java.util.List;
@@ -46,6 +46,7 @@ public class GetEvidenceAttachmentsService implements GetEvidenceAttachmentsUseC
             attachment.id(),
             createFileDownloadLinkPort.createDownloadLink(attachment.filePath(), EXPIRY_DURATION),
             attachment.description(),
-            attachment.createdBy());
+            attachment.createdBy(),
+            attachment.creationTime());
     }
 }

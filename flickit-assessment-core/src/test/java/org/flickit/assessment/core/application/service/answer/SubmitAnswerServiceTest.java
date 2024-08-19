@@ -114,6 +114,7 @@ class SubmitAnswerServiceTest {
         assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
+        assertNotNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption());
         assertEquals(answerOptionId, saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
@@ -174,7 +175,7 @@ class SubmitAnswerServiceTest {
         assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
-        assertNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
+        assertNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
         assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
@@ -215,6 +216,7 @@ class SubmitAnswerServiceTest {
         assertEquals(existAnswer.getId(), saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
+        assertNotNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption());
         assertEquals(newAnswerOptionId, saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());

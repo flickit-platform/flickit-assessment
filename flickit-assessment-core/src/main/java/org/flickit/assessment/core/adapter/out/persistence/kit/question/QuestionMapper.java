@@ -32,7 +32,7 @@ public class QuestionMapper {
             entity.getHint(),
             entity.getMayNotBeApplicable(),
             impacts,
-            new Questionnaire(entity.getId(), null)
+            new Questionnaire(entity.getQuestionnaireId(), null)
         );
     }
 

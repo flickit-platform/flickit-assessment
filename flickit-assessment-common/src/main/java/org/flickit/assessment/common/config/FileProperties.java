@@ -46,19 +46,22 @@ public class FileProperties {
         "image/bmp",
         "text/plain",
         "application/pdf",
+        "application/zip",
         "application/x-zip",
         "application/x-zip-compressed",
         "application/x-rar-compressed",
+        "application/x-7z-compressed",
+        "application/gzip",
+        "application/x-gzip",
+        "application/vnd.rar",
         "application/tar",
+        "application/msword",
+        "application/vnd.ms-excel",
+        "application/rtf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/vnd.oasis.opendocument.text",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "application/vnd.oasis.opendocument.spreadsheet"
-    );
-
-    @NotNull
-    private List<String> attributeReportFileExtension = Arrays.asList(
-        "xlsx"
     );
 
     private List<String> kitDslContentTypes = Arrays.asList("application/zip", "application/x-zip", "application/x-zip-compressed");

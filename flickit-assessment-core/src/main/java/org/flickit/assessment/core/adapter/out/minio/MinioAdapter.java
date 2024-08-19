@@ -9,12 +9,12 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
-import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoreExcelPort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +27,7 @@ public class MinioAdapter implements
     CreateFileDownloadLinkPort,
     UploadEvidenceAttachmentPort,
     DeleteEvidenceAttachmentFilePort,
-    UploadAttributeScoreExcelPort {
+    UploadAttributeScoresFilePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
