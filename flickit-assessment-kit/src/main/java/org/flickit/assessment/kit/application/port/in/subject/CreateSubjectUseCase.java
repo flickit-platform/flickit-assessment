@@ -31,8 +31,7 @@ public interface CreateSubjectUseCase {
         @NotBlank(message = CREATE_SUBJECT_DESCRIPTION_NOT_BLANK)
         String description;
 
-        @NotNull(message = CREATE_SUBJECT_WEIGHT_NOT_NULL)
-        Integer weight;
+        int weight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
@@ -41,7 +40,7 @@ public interface CreateSubjectUseCase {
                      Integer index,
                      String title,
                      String description,
-                     Integer weight,
+                     int weight,
                      UUID currentUserId) {
 
             this.kitId = kitId;

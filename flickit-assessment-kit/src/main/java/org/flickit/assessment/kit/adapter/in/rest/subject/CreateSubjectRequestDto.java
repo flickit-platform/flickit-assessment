@@ -4,5 +4,10 @@ public record CreateSubjectRequestDto(
     Integer index,
     String title,
     String description,
-    Integer weight,
-    Long expertGroupId) {}
+    Integer weight) {
+
+    public CreateSubjectRequestDto {
+        if (weight == null)
+            weight = 1;
+    }
+}
