@@ -20,8 +20,8 @@ class GetAssessmentUserRolesServiceTest {
 
         assertEquals(roleValues.size(), roles.size());
 
-        assertEquals(roleValues.get(0).getId(), roles.get(0).id());
-        assertEquals(roleValues.get(0).getTitle(), roles.get(0).title());
+        assertEquals(roleValues.getFirst().getId(), roles.getFirst().id());
+        assertEquals(roleValues.getFirst().getTitle(), roles.getFirst().title());
         assertEquals(roleValues.get(1).getId(), roles.get(1).id());
         assertEquals(roleValues.get(1).getTitle(), roles.get(1).title());
         assertEquals(roleValues.get(2).getId(), roles.get(2).id());

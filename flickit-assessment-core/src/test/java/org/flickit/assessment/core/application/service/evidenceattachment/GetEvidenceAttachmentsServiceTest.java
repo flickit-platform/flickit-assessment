@@ -82,12 +82,12 @@ class GetEvidenceAttachmentsServiceTest {
         var result = service.getEvidenceAttachments(param);
 
         assertEquals(2, result.size());
-        assertEquals(attachment1.id(), result.get(0).id());
-        assertEquals(attachment1.description(), result.get(0).description());
-        assertEquals(attachment1.createdBy().getId(), result.get(0).createdBy().getId());
-        assertEquals(attachment1.createdBy().getDisplayName(), result.get(0).createdBy().getDisplayName());
-        assertEquals("link", result.get(0).link());
-        assertEquals(creationTime, result.get(0).creationTime());
+        assertEquals(attachment1.id(), result.getFirst().id());
+        assertEquals(attachment1.description(), result.getFirst().description());
+        assertEquals(attachment1.createdBy().getId(), result.getFirst().createdBy().getId());
+        assertEquals(attachment1.createdBy().getDisplayName(), result.getFirst().createdBy().getDisplayName());
+        assertEquals("link", result.getFirst().link());
+        assertEquals(creationTime, result.getFirst().creationTime());
         assertEquals(attachment2.id(), result.get(1).id());
         assertEquals(attachment2.description(), result.get(1).description());
         assertEquals(attachment2.createdBy().getId(), result.get(1).createdBy().getId());

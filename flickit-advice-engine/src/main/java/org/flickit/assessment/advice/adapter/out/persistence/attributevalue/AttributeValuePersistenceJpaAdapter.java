@@ -26,7 +26,7 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
 
     @Override
     public List<Result> loadAttributeCurrentAndTargetLevelIndex(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
-        var maturityLevels = maturityLevelRepository.findAllInKitVersionWithOneId(attributeLevelTargets.get(0).getMaturityLevelId());
+        var maturityLevels = maturityLevelRepository.findAllInKitVersionWithOneId(attributeLevelTargets.getFirst().getMaturityLevelId());
         var maturityLevelsIdMap = maturityLevels.stream()
             .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 

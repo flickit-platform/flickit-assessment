@@ -85,7 +85,7 @@ class GetAssessmentUsersServiceTest {
         assertNotNull(response);
         assertFalse(response.getItems().isEmpty());
         assertEquals(1, response.getItems().size());
-        GetAssessmentUsersUseCase.AssessmentUser actualAssessmentUser = response.getItems().get(0);
+        GetAssessmentUsersUseCase.AssessmentUser actualAssessmentUser = response.getItems().getFirst();
         assertEquals(expectedAssessmentUser.id(), actualAssessmentUser.id());
         assertEquals(expectedAssessmentUser.email(), actualAssessmentUser.email());
         assertEquals(expectedAssessmentUser.displayName(), actualAssessmentUser.displayName());
@@ -132,7 +132,7 @@ class GetAssessmentUsersServiceTest {
         assertNotNull(response);
         assertFalse(response.getItems().isEmpty());
         assertEquals(1, response.getItems().size());
-        GetAssessmentUsersUseCase.AssessmentUser actualAssessmentUser = response.getItems().get(0);
+        GetAssessmentUsersUseCase.AssessmentUser actualAssessmentUser = response.getItems().getFirst();
         assertEquals(expectedAssessmentUser.id(), actualAssessmentUser.id());
         assertEquals(expectedAssessmentUser.email(), actualAssessmentUser.email());
         assertEquals(expectedAssessmentUser.displayName(), actualAssessmentUser.displayName());

@@ -84,7 +84,7 @@ class GetAssessmentInviteeListServiceTest {
         assertEquals(expectedPageResult.getTotal(), response.getTotal());
         assertEquals(1, response.getItems().size());
 
-        var item = response.getItems().get(0);
+        var item = response.getItems().getFirst();
         assertEquals(assessmentInvitee.getId(), item.id());
         assertEquals(assessmentInvitee.getEmail(), item.email());
         assertEquals(assessmentInvitee.getRole().getId(), item.role().id());

@@ -80,11 +80,11 @@ class GetAnswerHistoryListServiceTest {
         var result = getAnswerHistoryListService.getAnswerHistoryList(param);
 
         assertEquals(expected.getItems().size(), result.getItems().size());
-        assertNull(result.getItems().get(0).answer().selectedOption());
-        assertEquals(history2.getAnswer().getConfidenceLevelId(), result.getItems().get(0).answer().confidenceLevel().getId());
-        assertEquals(history2.getCreatedBy().getId(), result.getItems().get(0).createdBy().id());
-        assertEquals(history2.getCreatedBy().getDisplayName(), result.getItems().get(0).createdBy().displayName());
-        assertEquals(picDownloadLink, result.getItems().get(0).createdBy().pictureLink());
+        assertNull(result.getItems().getFirst().answer().selectedOption());
+        assertEquals(history2.getAnswer().getConfidenceLevelId(), result.getItems().getFirst().answer().confidenceLevel().getId());
+        assertEquals(history2.getCreatedBy().getId(), result.getItems().getFirst().createdBy().id());
+        assertEquals(history2.getCreatedBy().getDisplayName(), result.getItems().getFirst().createdBy().displayName());
+        assertEquals(picDownloadLink, result.getItems().getFirst().createdBy().pictureLink());
 
         assertNotNull(result.getItems().get(1).answer().selectedOption());
         assertEquals(history1.getAnswer().getSelectedOption().getId(), result.getItems().get(1).answer().selectedOption().id());
