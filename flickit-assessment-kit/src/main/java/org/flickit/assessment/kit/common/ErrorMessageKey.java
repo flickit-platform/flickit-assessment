@@ -126,6 +126,18 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_NOT_NULL = "create-assessment-kit.title.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_SIZE_MIN = "create-assessment-kit.title.min";
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_SIZE_MAX = "create-assessment-kit.title.max";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_NOT_NULL = "create-assessment-kit.summary.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_SIZE_MIN = "create-assessment-kit.summary.size.min";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_SIZE_MAX = "create-assessment-kit.summary.size.max";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_NOT_NULL = "create-assessment-kit.about.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MIN = "create-assessment-kit.about.size.min";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MAX = "create-assessment-kit.about.size.max";
+    public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return String.format("entities.%s.single.first", fieldName);
     }
