@@ -5,6 +5,7 @@ import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.Space;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 public class AssessmentMother {
@@ -35,7 +36,8 @@ public class AssessmentMother {
             new AssessmentListItem.Kit(kitId, "kitTitle"+kitId, 2),
             new AssessmentListItem.Space(spaceId, "spaceTitle"),
             LocalDateTime.now(),
-            new AssessmentListItem.MaturityLevel(counter, "levelTitle"+counter, 1, 2),
+            new AssessmentListItem.MaturityLevel(counter, "levelTitle" + counter, 1, 2),
+            new Random().nextDouble() * 100,
             Boolean.TRUE,
             Boolean.TRUE,
             Boolean.FALSE,

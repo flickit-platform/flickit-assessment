@@ -48,6 +48,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                     e.kit(),
                     e.lastModificationTime(),
                     viewable ? e.maturityLevel() : null,
+                    e.confidenceValue(),
                     e.isCalculateValid(),
                     e.isConfidenceValid(),
                     e.manageable(),
