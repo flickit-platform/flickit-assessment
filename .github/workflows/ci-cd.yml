@@ -15,7 +15,7 @@ env:
   SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/assessment-core
   SPRING_DATASOURCE_USERNAME: rootuser
   SPRING_DATASOURCE_PASSWORD: changeme
-  SONAR_PROJECT_KEY: dev-flickit-assessment
+  SONAR_PROJECT_KEY: flickit-assessment-core
   REGISTRY: ghcr.io
   IMAGE_NAME: flickit-platform/flickit-assessment
   JIB_OPT: -Djib.httpTimeout=240000 -Dmaven.test.skip=true
