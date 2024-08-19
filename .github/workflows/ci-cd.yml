@@ -17,7 +17,7 @@ env:
   SPRING_DATASOURCE_PASSWORD: changeme
   SONAR_PROJECT_KEY: dev-flickit-assessment
   REGISTRY: ghcr.io
-  IMAGE_NAME: flickit-platform-dev/flickit-assessment
+  IMAGE_NAME: flickit-platform/flickit-assessment
   JIB_OPT: -Djib.httpTimeout=240000 -Dmaven.test.skip=true
   JIB_CMD: clean install jib:build
 
@@ -149,7 +149,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: flickit-platform-dev
+          username: flickit-platform
           password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Set up JDK 17
@@ -226,7 +226,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: flickit-platform-dev
+          username: flickit-platform
           password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Set up JDK 17
