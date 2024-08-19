@@ -42,7 +42,7 @@
 		<poi.version>5.3.0</poi.version>
 		<novu.version>1.6.0</novu.version>
 
-		<sonar.organization>flickit-platform-dev</sonar.organization>
+		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
@@ -211,7 +211,7 @@
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 						<labels>
 							<org.opencontainers.image.source>
-								https://github.com/flickit-platform-dev/flickit-assessment
+								https://github.com/flickit-platform/flickit-assessment
 							</org.opencontainers.image.source>
 						</labels>
 					</container>
