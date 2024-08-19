@@ -7,7 +7,6 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 class CreateSubjectServiceTest {
 
     @InjectMocks
-    private CreateSubjectService createSubjectService;
+    private CreateSubjectService service;
 
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -35,56 +35,45 @@ class CreateSubjectServiceTest {
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
-    private int index;
-    private String title;
-    private String description;
-    private int weight;
-    private UUID currentUserId;
-    private UUID ownerId;
-    private AssessmentKit kit;
-
-    @BeforeEach
-    void setUp() {
-        index = 2;
-        title = "team";
-        description = "about team";
-        weight = 3;
-        currentUserId = UUID.randomUUID();
-        ownerId = UUID.randomUUID();
-        kit = AssessmentKitMother.simpleKit();
-    }
+    private final UUID ownerId = UUID.randomUUID();
+    private final AssessmentKit kit = AssessmentKitMother.simpleKit();
 
     @Test
     void testCreateSubject_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
-        CreateSubjectUseCase.Param param = new CreateSubjectUseCase.Param(kit.getId(),
-            index,
-            title,
-            description,
-            weight,
-            currentUserId);
+        CreateSubjectUseCase.Param param = createParam(CreateSubjectUseCase.Param.ParamBuilder::build);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
 
-        assertThrows(AccessDeniedException.class, () -> createSubjectService.createSubject(param));
+        assertThrows(AccessDeniedException.class, () -> service.createSubject(param));
     }
 
     @Test
     void testCreateSubject_WhenCurrentUserIsOwner_ShouldCreateSubject() {
-        long subscriberId = 1;
-        currentUserId = ownerId;
-        CreateSubjectUseCase.Param param = new CreateSubjectUseCase.Param(kit.getId(),
-            index,
-            title,
-            description,
-            weight,
-            currentUserId);
+        long subjectId = 1;
+        CreateSubjectUseCase.Param param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
-        when(createSubjectPort.persist(any(CreateSubjectPort.Param.class))).thenReturn(subscriberId);
+        when(createSubjectPort.persist(any(CreateSubjectPort.Param.class))).thenReturn(subjectId);
 
-        long actualSubject = createSubjectService.createSubject(param);
-        assertEquals(subscriberId, actualSubject);
+        long actualSubject = service.createSubject(param);
+        assertEquals(subjectId, actualSubject);
+    }
+
+    private CreateSubjectUseCase.Param createParam(Consumer<CreateSubjectUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private CreateSubjectUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateSubjectUseCase.Param.builder()
+            .kitId(kit.getId())
+            .index(3)
+            .title("Team")
+            .description("team description")
+            .weight(2)
+            .currentUserId(UUID.randomUUID());
     }
 }
