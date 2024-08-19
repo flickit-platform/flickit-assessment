@@ -216,7 +216,7 @@
 						</labels>
 					</container>
 					<from>
-						<image>ghcr.io/flickit-platform-dev/jdk:17.0.7</image>
+						<image>ghcr.io/flickit-platform/flickit-base-image-jdk:21.0.4</image>
 					</from>
 				</configuration>
 			</plugin>
