@@ -21,20 +21,20 @@ public class CreateSubjectRestController {
 
     @PostMapping("assessment-kits/{kitId}/subjects")
     public ResponseEntity<CreateSubjectResponseDto> createSubject(@PathVariable("kitId") Long kitId,
-                                                                  @RequestBody CreateSubjectRequestDto createSubjectRequestDto) {
+                                                                  @RequestBody CreateSubjectRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        long subjectId = useCase.createSubject(toParam(kitId, currentUserId, createSubjectRequestDto));
+        long subjectId = useCase.createSubject(toParam(kitId, currentUserId, requestDto));
         return new ResponseEntity<>(new CreateSubjectResponseDto(subjectId), HttpStatus.CREATED);
     }
 
     private CreateSubjectUseCase.Param toParam(Long kitId,
                                                UUID currentUserId,
-                                               CreateSubjectRequestDto createSubjectRequestDto) {
+                                               CreateSubjectRequestDto requestDto) {
         return new CreateSubjectUseCase.Param(kitId,
-            createSubjectRequestDto.index(),
-            createSubjectRequestDto.title(),
-            createSubjectRequestDto.description(),
-            createSubjectRequestDto.weight(),
+            requestDto.index(),
+            requestDto.title(),
+            requestDto.description(),
+            requestDto.weight(),
             currentUserId);
     }
 }
