@@ -44,7 +44,7 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
             deleteAssessmentUserInvitationPort.deleteAllByEmail(email);
 
         var assessmentTargetUserRole = validInvitations.stream()
-            .map(this::mapToCmd)
+            .map(this::mapToNotificationCmdItem)
             .toList();
 
         return new Result(new AcceptAssessmentInvitationNotificationCmd(assessmentTargetUserRole));
@@ -54,7 +54,7 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
         return new AssessmentUserRoleItem(invitation.getAssessmentId(), userId, invitation.getRole(), invitation.getCreatedBy());
     }
 
-    private NotificationCmdItem mapToCmd(AssessmentUserRoleItem validInvitation) {
+    private NotificationCmdItem mapToNotificationCmdItem(AssessmentUserRoleItem validInvitation) {
         return new NotificationCmdItem(
             validInvitation.getCreatedBy(),
             validInvitation.getAssessmentId(),

@@ -28,11 +28,11 @@ public class AcceptAssessmentInvitationNotificationCreator
     @Override
     public List<NotificationEnvelope> create(AcceptAssessmentInvitationNotificationCmd cmd) {
         return cmd.notificationCmdItems().stream()
-            .map(this::createOr)
+            .map(this::creator)
             .toList();
     }
 
-    public NotificationEnvelope createOr(AcceptAssessmentInvitationNotificationCmd.NotificationCmdItem cmd) {
+    public NotificationEnvelope creator(AcceptAssessmentInvitationNotificationCmd.NotificationCmdItem cmd) {
         Optional<Assessment> assessment = getAssessmentPort.getAssessmentById(cmd.assessmentId());
         Optional<User> user = loadUserPort.loadById(cmd.inviteeId());
         if (assessment.isEmpty() || user.isEmpty()) {
@@ -47,7 +47,7 @@ public class AcceptAssessmentInvitationNotificationCreator
     }
 
     @Override
-    public Class cmdClass() {
+    public Class<AcceptAssessmentInvitationNotificationCmd> cmdClass() {
         return AcceptAssessmentInvitationNotificationCmd.class;
     }
 }
