@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.create;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateKitTagRelationPort;
@@ -84,6 +85,7 @@ class CreateKitByDslServiceTest {
             Boolean.FALSE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
+            KitVersionStatus.ACTIVE,
             currentUserId);
         when(createAssessmentKitPort.persist(kitCreateParam)).thenReturn(new CreateAssessmentKitPort.Result(KIT_ID, KIT_VERSION_ID));
 

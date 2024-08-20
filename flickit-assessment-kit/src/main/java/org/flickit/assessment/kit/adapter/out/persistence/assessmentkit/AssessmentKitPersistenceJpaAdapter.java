@@ -19,7 +19,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.kitversion.KitVersionM
 import org.flickit.assessment.kit.adapter.out.persistence.users.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
@@ -115,7 +114,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     public CreateAssessmentKitPort.Result persist(CreateAssessmentKitPort.Param param) {
         AssessmentKitJpaEntity kitEntity = AssessmentKitMapper.toJpaEntity(param, null);
         Long kitId = repository.save(kitEntity).getId();
-        KitVersionJpaEntity kitVersionEntity = KitVersionMapper.toJpaEntity(kitEntity, KitVersionStatus.ACTIVE);
+        KitVersionJpaEntity kitVersionEntity = KitVersionMapper.toJpaEntity(kitEntity, param.kitVersionStatus());
         Long savedKitVersionId = kitVersionRepository.save(kitVersionEntity).getId();
         repository.updateKitVersionId(kitId, savedKitVersionId);
         return new CreateAssessmentKitPort.Result(kitId, savedKitVersionId);
