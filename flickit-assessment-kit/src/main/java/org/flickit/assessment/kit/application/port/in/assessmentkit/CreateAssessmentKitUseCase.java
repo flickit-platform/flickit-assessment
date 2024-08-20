@@ -45,9 +45,9 @@ public interface CreateAssessmentKitUseCase {
         UUID currentUserId;
 
         public Param(String title, String summary, String about, Boolean isPrivate, Long expertGroupId, UUID currentUserId) {
-            this.title = title != null ? title.trim() : null;
-            this.summary = summary != null ? summary.trim() : null;
-            this.about = about != null ? about.trim() : null;
+            this.title = title != null ? title.strip() : null;
+            this.summary = summary != null ? summary.strip() : null;
+            this.about = about != null ? about.strip() : null;
             this.isPrivate = isPrivate;
             this.expertGroupId = expertGroupId;
             this.currentUserId = currentUserId;
