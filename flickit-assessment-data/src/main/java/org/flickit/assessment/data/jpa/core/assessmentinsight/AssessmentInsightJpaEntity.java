@@ -19,8 +19,8 @@ public class AssessmentInsightJpaEntity {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue
-    @UuidGenerator(style = UuidGenerator.Style.TIME)
-    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
     @Column(name = "assessment_result_id", nullable = false)
