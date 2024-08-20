@@ -20,10 +20,10 @@ public class CreateAssessmentKitRestController {
     private final UserContext userContext;
 
     @PostMapping("assessment-kits")
-    ResponseEntity<Result> createAssessmentKit(@RequestBody CreateAssessmentKitRequestDto requestDto) {
+    ResponseEntity<CreateAssessmentKitResponseDto> createAssessmentKit(@RequestBody CreateAssessmentKitRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         var result = useCase.createAssessmentKit(toParam(requestDto, currentUserId));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
     }
 
     private Param toParam(CreateAssessmentKitRequestDto requestDto, UUID currentUserId) {
@@ -33,5 +33,9 @@ public class CreateAssessmentKitRestController {
             requestDto.isPrivate(),
             requestDto.expertGroupId(),
             currentUserId);
+    }
+
+    private CreateAssessmentKitResponseDto toResponseDto(Result result) {
+        return new CreateAssessmentKitResponseDto(result.kitId());
     }
 }
