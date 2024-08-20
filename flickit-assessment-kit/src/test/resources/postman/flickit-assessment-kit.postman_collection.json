@@ -712,6 +712,39 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Create Assessment kit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{authorization_header}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\":\"sample title\",\n    \"summary\":\"sample summary\",\n    \"about\":\"sample about\",\n    \"isPrivate\": false,\n    \"expertGroupId\":1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/{{api_path}}/assessment-kits",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{api_path}}",
+						"assessment-kits"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
