@@ -50,34 +50,4 @@
         <modifyDataType tableName="fac_attribute_insight" columnName="ai_insight" newDataType="varchar(1000)"/>
         <modifyDataType tableName="fac_attribute_insight" columnName="assessor_insight" newDataType="varchar(1000)"/>
     </changeSet>
-
-    <changeSet id="0.27-05" author="Ali Sedaghat">
-        <createTable tableName="fac_assessment_insight">
-            <column name="id" type="uuid">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment_insight"/>
-            </column>
-            <column name="assessment_result_id" type="UUID">
-                <constraints nullable="false"/>
-            </column>
-            <column name="insight" type="varchar(500)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="insight_time" type="${datetime_with_time_zone_type}">
-                <constraints nullable="false"/>
-            </column>
-            <column name="insight_by" type="uuid">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="0.27-06" author="Ali Sedaghat">
-        <addForeignKeyConstraint baseTableName="fac_assessment_insight" baseColumnNames="assessment_result_id"
-                                 constraintName="fk_fac_assessmentinsight_assessmentresult"
-                                 referencedTableName="fac_assessment_result"
-                                 referencedColumnNames="id"
-                                 deferrable="true"
-                                 initiallyDeferred="true"
-                                 onDelete="CASCADE"/>
-    </changeSet>
 </databaseChangeLog>
