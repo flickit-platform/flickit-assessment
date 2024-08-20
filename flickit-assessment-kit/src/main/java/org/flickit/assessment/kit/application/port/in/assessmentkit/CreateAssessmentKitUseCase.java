@@ -56,6 +56,6 @@ public interface CreateAssessmentKitUseCase {
         }
     }
 
-    record Result(long assessmentKitId) {
+    record Result(long kitId) {
     }
 }
