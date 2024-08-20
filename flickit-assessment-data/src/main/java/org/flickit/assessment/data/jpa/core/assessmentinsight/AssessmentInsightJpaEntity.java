@@ -27,15 +27,9 @@ public class AssessmentInsightJpaEntity {
     @Column(name = "insight", nullable = false)
     private String insight;
 
-    @Column(name = "creation_time", nullable = false)
-    private LocalDateTime creationTime;
+    @Column(name = "insight_time", nullable = false)
+    private LocalDateTime insightTime;
 
-    @Column(name = "last_modification_time", nullable = false)
-    private LocalDateTime lastModificationTime;
-
-    @Column(name = "created_by", nullable = false)
-    private UUID createdBy;
-
-    @Column(name = "last_modified_by", nullable = false)
-    private UUID lastModifiedBy;
+    @Column(name = "insight_by", nullable = false)
+    private UUID insightBy;
 }

@@ -62,16 +62,10 @@
             <column name="insight" type="varchar(500)">
                 <constraints nullable="false"/>
             </column>
-            <column name="creation_time" type="${datetime_with_time_zone_type}">
+            <column name="insight_time" type="${datetime_with_time_zone_type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_by" type="uuid">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_modified_by" type="uuid">
+            <column name="insight_by" type="uuid">
                 <constraints nullable="false"/>
             </column>
         </createTable>
