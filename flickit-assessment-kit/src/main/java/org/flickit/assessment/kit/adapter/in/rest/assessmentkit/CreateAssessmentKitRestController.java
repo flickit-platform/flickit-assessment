@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssess
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -19,8 +19,8 @@ public class CreateAssessmentKitRestController {
     private final CreateAssessmentKitUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("assessment-kit")
-    ResponseEntity<Result> createAssessmentKit(@RequestParam CreateAssessmentKitRequestDto requestDto) {
+    @PostMapping("assessment-kits")
+    ResponseEntity<Result> createAssessmentKit(@RequestBody CreateAssessmentKitRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         var result = useCase.createAssessmentKit(toParam(requestDto, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.OK);
