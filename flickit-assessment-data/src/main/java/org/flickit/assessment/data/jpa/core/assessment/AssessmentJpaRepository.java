@@ -78,10 +78,10 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     @Modifying
     @Query("""
-        UPDATE AssessmentJpaEntity a SET
-        a.deletionTime = :deletionTime,
-        a.deleted = true
-        WHERE a.id = :id
+            UPDATE AssessmentJpaEntity a SET
+                a.deletionTime = :deletionTime,
+                a.deleted = true
+            WHERE a.id = :id
         """)
     void delete(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 
