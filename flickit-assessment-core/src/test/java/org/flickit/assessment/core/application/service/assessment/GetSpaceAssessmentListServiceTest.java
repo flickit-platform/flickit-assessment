@@ -142,8 +142,8 @@ class GetSpaceAssessmentListServiceTest {
 
         List<GetSpaceAssessmentListUseCase.SpaceAssessmentListItem> items = assessments.getItems();
         assertEquals(1, items.size());
-        assertNull(items.get(0).maturityLevel());
-        assertFalse(items.get(0).viewable());
+        assertNull(items.getFirst().maturityLevel());
+        assertFalse(items.getFirst().viewable());
     }
 
     @Test

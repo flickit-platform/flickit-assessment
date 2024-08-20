@@ -65,12 +65,12 @@ class GetEvidenceListServiceTest {
         PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(question1Id, assessmentId, 10, 0, currentUserId));
 
         assertEquals(2, result.getItems().size());
-        assertEquals(evidence1Q1.id(), result.getItems().get(0).id());
-        assertEquals(evidence1Q1.type(), result.getItems().get(0).type());
-        assertEquals(evidence1Q1.createdBy(), result.getItems().get(0).createdBy());
-        assertEquals(evidence1Q1.description(), result.getItems().get(0).description());
-        assertEquals(evidence1Q1.lastModificationTime(), result.getItems().get(0).lastModificationTime());
-        assertEquals(evidence1Q1.attachmentsCount(), result.getItems().get(0).attachmentsCount());
+        assertEquals(evidence1Q1.id(), result.getItems().getFirst().id());
+        assertEquals(evidence1Q1.type(), result.getItems().getFirst().type());
+        assertEquals(evidence1Q1.createdBy(), result.getItems().getFirst().createdBy());
+        assertEquals(evidence1Q1.description(), result.getItems().getFirst().description());
+        assertEquals(evidence1Q1.lastModificationTime(), result.getItems().getFirst().lastModificationTime());
+        assertEquals(evidence1Q1.attachmentsCount(), result.getItems().getFirst().attachmentsCount());
         assertEquals(evidence2Q1.id(), result.getItems().get(1).id());
         assertEquals(evidence2Q1.type(), result.getItems().get(1).type());
         assertEquals(evidence2Q1.createdBy(), result.getItems().get(1).createdBy());

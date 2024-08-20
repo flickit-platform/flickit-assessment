@@ -10,6 +10,9 @@
     </parent>
 
     <artifactId>flickit-assessment-kit</artifactId>
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
 
     <dependencies>
         <dependency>

@@ -168,10 +168,10 @@ class MaturityLevelUpdateKitPersisterTest {
         var updatedMaturityLevel = new MaturityLevel(
             levelTwo().getId(), levelTwo().getCode(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getDescription(), dslLevel.getValue(), levelTwo().getCompetences()
         );
-        assertEquals(updatedMaturityLevel.getId(), updateCaptor.getValue().get(0).getId());
-        assertEquals(updatedMaturityLevel.getTitle(), updateCaptor.getValue().get(0).getTitle());
-        assertEquals(updatedMaturityLevel.getIndex(), updateCaptor.getValue().get(0).getIndex());
-        assertEquals(updatedMaturityLevel.getValue(), updateCaptor.getValue().get(0).getValue());
+        assertEquals(updatedMaturityLevel.getId(), updateCaptor.getValue().getFirst().getId());
+        assertEquals(updatedMaturityLevel.getTitle(), updateCaptor.getValue().getFirst().getTitle());
+        assertEquals(updatedMaturityLevel.getIndex(), updateCaptor.getValue().getFirst().getIndex());
+        assertEquals(updatedMaturityLevel.getValue(), updateCaptor.getValue().getFirst().getValue());
 
         assertFalse(result.isMajorUpdate());
         Map<String, Long> codeToIdMap = ctx.get(KEY_MATURITY_LEVELS);

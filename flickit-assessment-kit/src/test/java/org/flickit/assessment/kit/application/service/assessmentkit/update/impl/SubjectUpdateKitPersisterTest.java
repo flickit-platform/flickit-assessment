@@ -64,7 +64,7 @@ class SubjectUpdateKitPersisterTest {
         verify(updateSubjectPort, times(2)).update(param.capture());
 
         List<UpdateSubjectPort.Param> paramList = param.getAllValues();
-        UpdateSubjectPort.Param softwareSubject = paramList.get(0);
+        UpdateSubjectPort.Param softwareSubject = paramList.getFirst();
         UpdateSubjectPort.Param teamSubject = paramList.get(1);
 
         assertEquals(subjectOne.getId(), softwareSubject.id());

@@ -10,5 +10,8 @@
     </parent>
 
     <artifactId>flickit-assessment-data</artifactId>
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
 
 </project>
