@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CreateAssessmentKitUseCaseParamTest {
 
-    private static final boolean IS_PRIVATE = Boolean.FALSE;
-    private static final Long EXPERT_GROUP_ID = 1L;
     private static final String TITLE = "Title";
     private static final String SUMMARY = "Summary";
     private static final String ABOUT = "About";
+    private static final boolean IS_PRIVATE = Boolean.FALSE;
+    private static final Long EXPERT_GROUP_ID = 1L;
     private static final UUID CURRENT_USER_ID = UUID.randomUUID();
 
     @Test
@@ -33,7 +33,6 @@ class CreateAssessmentKitUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateAssessmentKitUseCase.Param(title, SUMMARY, ABOUT, IS_PRIVATE, EXPERT_GROUP_ID, CURRENT_USER_ID));
         assertThat(throwable).hasMessage("title: " + CREATE_ASSESSMENT_KIT_TITLE_SIZE_MIN);
-
     }
 
     @Test
