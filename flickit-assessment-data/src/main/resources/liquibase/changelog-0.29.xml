@@ -12,7 +12,7 @@
             <column name="assessment_result_id" type="UUID">
                 <constraints nullable="false"/>
             </column>
-            <column name="insight" type="varchar(500)">
+            <column name="insight" type="varchar(1000)">
                 <constraints nullable="false"/>
             </column>
             <column name="insight_time" type="${datetime_with_time_zone_type}">
