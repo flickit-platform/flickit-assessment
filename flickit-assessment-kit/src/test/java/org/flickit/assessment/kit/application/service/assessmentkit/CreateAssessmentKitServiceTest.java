@@ -62,5 +62,4 @@ class CreateAssessmentKitServiceTest {
         verify(checkExpertGroupAccessPort).checkIsMember(expertGroupId, currentUserId);
         verify(createAssessmentKitPort).persist(any());
     }
-
 }
