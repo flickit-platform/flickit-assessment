@@ -43,8 +43,7 @@ public interface CreateAssessmentKitUseCase {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
-
-
+        
         public Param(String title, String summary, String about, Boolean isPrivate, Long expertGroupId, UUID currentUserId) {
             this.title = title != null ? title.trim() : null;
             this.summary = summary != null ? summary.trim() : null;
