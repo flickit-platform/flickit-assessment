@@ -83,10 +83,11 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
     @Modifying
     @Query("""
             UPDATE SpaceJpaEntity e
-            SET e.deleted = true
+            SET e.deleted = true,
+                e.deletionTime = :deletionTime
             WHERE e.id = :spaceId
         """)
-    void delete(@Param("spaceId") long spaceId);
+    void delete(@Param("spaceId") long spaceId, @Param("deletionTime") long deletionTime);
 
     boolean existsByIdAndDeletedFalse(long id);
 
