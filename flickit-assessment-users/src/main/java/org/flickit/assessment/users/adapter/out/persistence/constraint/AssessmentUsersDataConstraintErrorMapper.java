@@ -14,7 +14,7 @@ public class AssessmentUsersDataConstraintErrorMapper implements DataConstraintE
 
     Map<String, String> constraintToErrorMsg = Map.ofEntries(
         entry("uq_fau_expert_group_code_deletion_time", CREATE_EXPERT_GROUP_TITLE_DUPLICATE),
-        entry("uq_fau_space_code_createdby", CREATE_SPACE_TITLE_DUPLICATE)
+        entry("uq_fau_space_code_createdby_deletion_time", CREATE_SPACE_TITLE_DUPLICATE)
     );
 
     @Override

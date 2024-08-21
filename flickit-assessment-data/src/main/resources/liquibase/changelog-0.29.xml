@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.29-01" author="Ali Sedaghat">
+        <createTable tableName="fac_assessment_insight">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment_insight"/>
+            </column>
+            <column name="assessment_result_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.29-02" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fac_assessment_insight" baseColumnNames="assessment_result_id"
+                                 constraintName="fk_fac_assessmentinsight_assessmentresult"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.29-03" author="Mahdi Rezazadeh">
+        <createTable tableName="fac_subject_insight">
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subject_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.29-04" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fac_subject_insight" columnNames="assessment_result_id, subject_id"
+                       constraintName="pk_fac_subject_insight"/>
+    </changeSet>
+
+    <changeSet id="0.29-05" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_subject_insight"
+                                 baseColumnNames="assessment_result_id"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_subjectinsight_assessmentresult"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>
