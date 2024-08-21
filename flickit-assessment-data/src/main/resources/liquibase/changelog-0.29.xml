@@ -34,4 +34,40 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
+    <changeSet id="0.29-03" author="Mahdi Rezazadeh">
+        <createTable tableName="fac_subject_insight">
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subject_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="insight_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.29-04" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fac_subject_insight" columnNames="assessment_result_id, subject_id"
+                       constraintName="pk_fac_subject_insight"/>
+    </changeSet>
+
+    <changeSet id="0.29-05" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fac_subject_insight"
+                                 baseColumnNames="assessment_result_id"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_subjectinsight_assessmentresult"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
 </databaseChangeLog>
