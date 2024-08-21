@@ -1,8 +1,7 @@
 package org.flickit.assessment.core.application.port.in.assessmentinsight;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -24,8 +23,8 @@ public interface CreateAssessmentInsightUseCase {
         UUID assessmentId;
 
         @NotNull(message = CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_NULL)
-        @Min(value = 3, message = CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MIN)
-        @Max(value = 1000, message = CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MAX)
+        @Size(min = 3, message = CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MIN)
+        @Size(max = 1000, message = CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MAX)
         String insight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
