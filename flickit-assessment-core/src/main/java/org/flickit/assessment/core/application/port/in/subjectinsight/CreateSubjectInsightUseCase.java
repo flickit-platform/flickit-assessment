@@ -15,7 +15,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface CreateSubjectInsightUseCase {
 
-    Result createSubjectInsight(Param param);
+    void createSubjectInsight(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -41,8 +41,5 @@ public interface CreateSubjectInsightUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-    }
-
-    record Result(UUID id) {
     }
 }
