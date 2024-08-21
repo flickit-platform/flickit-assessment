@@ -54,8 +54,8 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
         return new CreateSubjectInsightPort.Param(assessmentResultId,
             subjectId,
             insight,
-            currentUserId,
-            LocalDateTime.now());
+            LocalDateTime.now(),
+            currentUserId);
     }
 
     private UpdateSubjectInsightPort.Param toUpdateParam(UUID assessmentResultId,
@@ -65,7 +65,7 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
         return new UpdateSubjectInsightPort.Param(assessmentResultId,
             subjectId,
             insight,
-            currentUserId,
-            LocalDateTime.now());
+            LocalDateTime.now(),
+            currentUserId);
     }
 }

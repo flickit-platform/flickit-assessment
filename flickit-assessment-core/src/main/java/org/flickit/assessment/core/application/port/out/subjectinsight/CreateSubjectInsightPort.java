@@ -7,6 +7,10 @@ public interface CreateSubjectInsightPort {
 
     void persist(Param param);
 
-    record Param(UUID assessmentResultId, Long subjectId, String insight, UUID insightBy, LocalDateTime insightTime) {
+    record Param(UUID assessmentResultId,
+                 Long subjectId,
+                 String insight,
+                 LocalDateTime insightTime,
+                 UUID insightBy) {
     }
 }
