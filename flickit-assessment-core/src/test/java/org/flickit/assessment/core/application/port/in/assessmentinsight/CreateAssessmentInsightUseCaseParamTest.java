@@ -59,4 +59,12 @@ class CreateAssessmentInsightUseCaseParamTest {
             () -> new CreateAssessmentInsightUseCase.Param(assessmentId, insight, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
+
+    @Test
+    void testCreateAssessmentInsightParam_validParams_Successful() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        String insight = RandomStringUtils.random(20);
+        assertDoesNotThrow(() -> new CreateAssessmentInsightUseCase.Param(assessmentId, insight, currentUserId));
+    }
 }
