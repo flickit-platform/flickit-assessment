@@ -30,14 +30,19 @@ class CreateSubjectInsightServiceTest {
 
     @InjectMocks
     private CreateSubjectInsightService service;
+
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
+
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
+
     @Mock
     private CheckSubjectInsightExistPort checkSubjectInsightExistPort;
+
     @Mock
     private CreateSubjectInsightPort createSubjectInsightPort;
+
     @Mock
     private UpdateSubjectInsightPort updateSubjectInsightPort;
 
