@@ -46,7 +46,7 @@ public class CreateAssessmentInsightService implements CreateAssessmentInsightUs
             return new Result(createAssessmentInsightPort.persist
                 (toAssessmentInsight(null, assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId())));
 
-        updateAssessmentInsightPort.updateinsight
+        updateAssessmentInsightPort.updateInsight
             (toAssessmentInsight(assessmentInsight.get().getId(), assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
         return new Result(assessmentInsight.get().getId());
     }

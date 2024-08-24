@@ -41,7 +41,7 @@ public class AssessmentInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateinsight(AssessmentInsight assessmentInsight) {
+    public void updateInsight(AssessmentInsight assessmentInsight) {
         if (!repository.existsById(assessmentInsight.getId()))
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_FOUND);
 
