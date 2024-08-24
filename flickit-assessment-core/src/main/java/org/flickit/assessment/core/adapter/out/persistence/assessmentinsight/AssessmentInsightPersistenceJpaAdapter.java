@@ -27,7 +27,7 @@ public class AssessmentInsightPersistenceJpaAdapter implements
     private final AssessmentInsightJpaRepository repository;
 
     @Override
-    public UUID createInsight(AssessmentInsight assessmentInsight) {
+    public UUID persist(AssessmentInsight assessmentInsight) {
         if (repository.existsByAssessmentResultId(assessmentInsight.getAssessmentResultId()))
             throw new ResourceAlreadyExistsException(CREATE_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE);
 

@@ -43,12 +43,11 @@ public class CreateAssessmentInsightService implements CreateAssessmentInsightUs
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.get().getId());
 
         if (assessmentInsight.isEmpty())
-            return new Result(createAssessmentInsightPort.createInsight
+            return new Result(createAssessmentInsightPort.persist
                 (toAssessmentInsight(null, assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId())));
 
         updateAssessmentInsightPort.updateinsight
             (toAssessmentInsight(assessmentInsight.get().getId(), assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
-
         return new Result(assessmentInsight.get().getId());
     }
 

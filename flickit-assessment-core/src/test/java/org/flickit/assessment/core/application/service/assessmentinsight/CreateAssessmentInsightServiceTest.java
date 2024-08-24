@@ -89,7 +89,7 @@ class CreateAssessmentInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
-        when(createAssessmentInsightPort.createInsight(any(AssessmentInsight.class))).thenReturn(assessmentInsightId);
+        when(createAssessmentInsightPort.persist(any(AssessmentInsight.class))).thenReturn(assessmentInsightId);
 
         var result = assertDoesNotThrow(() -> service.createAssessmentInsight(param));
 

@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface CreateAssessmentInsightPort {
 
-    UUID createInsight(AssessmentInsight assessmentInsight);
+    UUID persist(AssessmentInsight assessmentInsight);
 }
