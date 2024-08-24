@@ -11,12 +11,8 @@ import java.util.UUID;
 public class AssessmentInsight {
 
     private final UUID id;
-
     private final UUID assessmentResultId;
-
     private final String insight;
-
     private final LocalDateTime insightTime;
-
     private final UUID insightBy;
 }
