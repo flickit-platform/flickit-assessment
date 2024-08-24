@@ -1,6 +1,6 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
-import org.flickit.assessment.common.application.port.SendEmailPort;
+import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;

@@ -4,7 +4,7 @@ import co.novu.api.events.requests.TriggerEventRequest;
 import co.novu.common.base.Novu;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
-import org.flickit.assessment.common.application.domain.notification.SendNotificationPort;
+import org.flickit.assessment.common.application.port.out.SendNotificationPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

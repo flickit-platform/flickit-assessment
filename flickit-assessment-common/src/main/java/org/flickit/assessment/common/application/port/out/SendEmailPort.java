@@ -1,4 +1,4 @@
-package org.flickit.assessment.common.application.port;
+package org.flickit.assessment.common.application.port.out;
 
 public interface SendEmailPort {
 
