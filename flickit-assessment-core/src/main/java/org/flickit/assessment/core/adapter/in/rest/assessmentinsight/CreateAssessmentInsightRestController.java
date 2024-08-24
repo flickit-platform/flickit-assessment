@@ -26,14 +26,14 @@ public class CreateAssessmentInsightRestController {
         var currentUserId = userContext.getUser().id();
         var result = useCase.createAssessmentInsight(toParam(assessmentId, requestDto, currentUserId));
 
-        return new ResponseEntity<>(toResponseDto(result), HttpStatus.CREATED);
+        return new ResponseEntity<>(toResponse(result), HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, CreateAssessmentInsightRequestDto requestDto, UUID currentUserId) {
         return new Param(assessmentId, requestDto.insight(), currentUserId);
     }
 
-    private CreateAssessmentInsightResponseDto toResponseDto(Result result) {
+    private CreateAssessmentInsightResponseDto toResponse(Result result) {
         return new CreateAssessmentInsightResponseDto(result.id());
     }
 }
