@@ -21,8 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -72,7 +72,7 @@ class CreateAssessmentInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAssessmentInsight(param));
-        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+        assertEquals(CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT);
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);

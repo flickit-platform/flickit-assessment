@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_INSIGHT;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional
@@ -38,7 +38,7 @@ public class CreateAssessmentInsightService implements CreateAssessmentInsightUs
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId());
         if (assessmentResult.isEmpty())
-            throw new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND);
+            throw new ResourceNotFoundException(CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND);
 
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.get().getId());
 
