@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetAssessmentInsightService implements GetAssessmentInsightUseCase {
 
     @Override
-    public Result getAssessmentInsight(String assessmentInsightId) {
+    public Result getAssessmentInsight(Param param) {
         return null;
     }
 }

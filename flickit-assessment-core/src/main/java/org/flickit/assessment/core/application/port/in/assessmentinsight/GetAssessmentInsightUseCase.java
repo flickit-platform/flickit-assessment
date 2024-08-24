@@ -13,7 +13,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.LOAD_ASSESSMENT
 
 public interface GetAssessmentInsightUseCase {
 
-    Result getAssessmentInsight(String assessmentInsightId);
+    Result getAssessmentInsight(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -33,8 +33,10 @@ public interface GetAssessmentInsightUseCase {
     }
 
     record Result(DefaultInsight defaultInsight, AssessorInsight assessorInsight, boolean editable) {
+
         public record DefaultInsight(String insight) {
         }
+
         public record AssessorInsight(String insight, LocalDateTime creationTime, boolean isValid) {
         }
     }
