@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessmentinsight;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.CreateAssessmentInsightPort;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentinsight.AssessmentInsightMapper.toJpaEntity;
 
@@ -28,9 +26,6 @@ public class AssessmentInsightPersistenceJpaAdapter implements
 
     @Override
     public UUID persist(AssessmentInsight assessmentInsight) {
-        if (repository.existsByAssessmentResultId(assessmentInsight.getAssessmentResultId()))
-            throw new ResourceAlreadyExistsException(CREATE_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE);
-
         return repository.save(toJpaEntity(assessmentInsight)).getId();
     }
 
