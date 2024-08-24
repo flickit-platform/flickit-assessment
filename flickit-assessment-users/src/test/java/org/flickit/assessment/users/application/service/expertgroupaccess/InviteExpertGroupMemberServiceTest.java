@@ -1,5 +1,7 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
+import org.flickit.assessment.common.application.port.SendEmailPort;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -8,7 +10,6 @@ import org.flickit.assessment.users.application.port.in.expertgroupaccess.Invite
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMemberStatusPort;
-import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +38,9 @@ class InviteExpertGroupMemberServiceTest {
     @Mock
     private InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
     @Mock
-    private SendExpertGroupInviteMailPort sendExpertGroupInviteMailPort;
+    private AppSpecProperties appSpecProperties;
+    @Mock
+    private SendEmailPort sendEmailPort;
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     @Mock
@@ -55,13 +58,16 @@ class InviteExpertGroupMemberServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
         when(loadExpertGroupMemberPort.getMemberStatus(expertGroupId, userId)).thenReturn(Optional.empty());
         doNothing().when(inviteExpertGroupMemberPort).invite(isA(InviteExpertGroupMemberPort.Param.class));
-        doNothing().when(sendExpertGroupInviteMailPort).inviteToExpertGroup(anyString(), anyLong(), any(UUID.class));
+        doNothing().when(sendEmailPort).send(anyString(), anyString(), anyString());
 
         service.inviteMember(param);
 
         verify(loadUserEmailByUserIdPort).loadEmail(any(UUID.class));
         verify(loadExpertGroupOwnerPort).loadOwnerId(any(Long.class));
         verify(inviteExpertGroupMemberPort).invite(any());
+        verify(appSpecProperties).getName();
+        verify(appSpecProperties).getHost();
+        verify(appSpecProperties).getExpertGroupInviteUrlPath();
     }
 
     @Test

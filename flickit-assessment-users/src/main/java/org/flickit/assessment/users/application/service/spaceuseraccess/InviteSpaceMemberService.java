@@ -1,11 +1,14 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.port.SendEmailPort;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.InviteSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
@@ -18,9 +21,10 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,7 +36,8 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
     private final LoadUserPort loadUserPort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
     private final InviteSpaceMemberPort inviteSpaceMemberPort;
-    private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
+    private final AppSpecProperties appSpecProperties;
+    private final SendEmailPort sendEmailPort;
 
     @Override
     public void inviteMember(Param param) {
@@ -55,12 +60,19 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
             var expirationDate = creationTime.plusDays(EXPIRY_DURATION.toDays());
             inviteSpaceMemberPort.invite(toParam(param.getSpaceId(), param.getEmail(), currentUserId, creationTime, expirationDate));
 
-            sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
+            sendInviteEmail(param.getEmail());
         }
     }
 
     private InviteSpaceMemberPort.Param toParam(Long spaceId, String email, UUID createdBy,
                                                 LocalDateTime creationTime, LocalDateTime expirationDate) {
         return new InviteSpaceMemberPort.Param(spaceId, email, createdBy, creationTime, expirationDate);
+    }
+
+    private void sendInviteEmail(String sendTo) {
+        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
+        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
+        log.debug("Sending invite email to [{}]", sendTo);
+        sendEmailPort.send(sendTo, subject, body);
     }
 }

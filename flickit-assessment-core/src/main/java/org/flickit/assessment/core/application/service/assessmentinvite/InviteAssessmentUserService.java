@@ -1,10 +1,13 @@
 package org.flickit.assessment.core.application.service.assessmentinvite;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.SendEmailPort;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessmentinvite.InviteAssessmentUserUseCase;
-import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateAssessmentInvitePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
@@ -19,8 +22,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_USER_ASSESSMENT_ROLE;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -33,7 +37,8 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     private final LoadUserPort loadUserPort;
     private final CreateSpaceInvitePort createSpaceInvitePort;
     private final CreateAssessmentInvitePort createAssessmentInvitePort;
-    private final SendFlickitInviteMailPort sendFlickitInviteMailPort;
+    private final AppSpecProperties appSpecProperties;
+    private final SendEmailPort sendEmailPort;
     private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
@@ -51,7 +56,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         if (user.isEmpty()) {
             createSpaceInvitePort.persist(toCreateSpaceInviteParam(assessment.getSpace().getId(), param, expirationTime, creationTime));
             createAssessmentInvitePort.persist(toCreateAssessmentInviteParam(param, expirationTime, creationTime));
-            sendFlickitInviteMailPort.inviteToFlickit(param.getEmail());
+            sendInviteEmail(param.getEmail());
         } else {
             var userId = user.get().getId();
 
@@ -79,5 +84,12 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
             expirationTime,
             creationTime,
             param.getCurrentUserId());
+    }
+
+    private void sendInviteEmail(String sendTo) {
+        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
+        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
+        log.debug("Sending invite email to [{}]", sendTo);
+        sendEmailPort.send(sendTo, subject, body);
     }
 }
