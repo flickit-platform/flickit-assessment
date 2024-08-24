@@ -13,8 +13,6 @@ import java.util.UUID;
 @Repository
 public interface AssessmentInsightJpaRepository extends JpaRepository<AssessmentInsightJpaEntity, UUID> {
 
-    boolean existsByAssessmentResultId(UUID assessmentResultId);
-
     Optional<AssessmentInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     @Modifying
@@ -25,5 +23,8 @@ public interface AssessmentInsightJpaRepository extends JpaRepository<Assessment
                 a.insightBy = :insightBy
             WHERE a.id = :id
         """)
-    void update(@Param("id") UUID id, @Param("insight") String insight, @Param("insightTime") LocalDateTime insightTime, @Param("insightBy") UUID insightBy);
+    void update(@Param("id") UUID id,
+                @Param("insight") String insight,
+                @Param("insightTime") LocalDateTime insightTime,
+                @Param("insightBy") UUID insightBy);
 }
