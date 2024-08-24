@@ -97,7 +97,7 @@ class CreateAssessmentInsightServiceTest {
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
         verify(loadAssessmentInsightPort).loadByAssessmentResultId(assessmentResult.getId());
 
-        assertEquals(assessmentInsightId, result);
+        assertEquals(assessmentInsightId, result.id());
     }
 
     @Test
@@ -119,6 +119,6 @@ class CreateAssessmentInsightServiceTest {
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
         verify(updateAssessmentInsightPort).updateinsight(isA(AssessmentInsight.class));
 
-        assertEquals(assessmentInsight.getId(), result);
+        assertEquals(assessmentInsight.getId(), result.id());
     }
 }
