@@ -4,8 +4,14 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentInsight;
 import org.flickit.assessment.core.application.port.in.assessmentinsight.CreateAssessmentInsightUseCase.*;
+import org.flickit.assessment.core.application.port.out.assessmentinsight.CreateAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.assessmentinsight.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,8 +24,8 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateAssessmentInsightServiceTest {
@@ -32,6 +38,15 @@ class CreateAssessmentInsightServiceTest {
 
     @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
+
+    @Mock
+    LoadAssessmentInsightPort loadAssessmentInsightPort;
+
+    @Mock
+    private CreateAssessmentInsightPort createAssessmentInsightPort;
+
+    @Mock
+    private UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
     @Test
     void testCreateAssessmentInsight_UserWithoutAccess_ShouldThrowAccessDeniedException() {
@@ -61,5 +76,49 @@ class CreateAssessmentInsightServiceTest {
 
         verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT);
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
+    }
+
+    @Test
+    void testCreateAssessmentInsight_NoAssessmentInsightFound_ShouldCreateAssessmentInsight() {
+        var assessmentId = UUID.randomUUID();
+        var currentUserId = UUID.randomUUID();
+        var param = new Param(assessmentId, "assessment insight", currentUserId);
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentInsightId = UUID.randomUUID();
+
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
+        when(createAssessmentInsightPort.createInsight(any(AssessmentInsight.class))).thenReturn(assessmentInsightId);
+
+        var result = assertDoesNotThrow(() -> service.createAssessmentInsight(param));
+
+        verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT);
+        verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
+        verify(loadAssessmentInsightPort).loadByAssessmentResultId(assessmentResult.getId());
+
+        assertEquals(assessmentInsightId, result);
+    }
+
+    @Test
+    void testCreateAssessmentInsight_AssessmentInsightFound_ShouldUpdateAssessmentInsight() {
+        var assessmentId = UUID.randomUUID();
+        var currentUserId = UUID.randomUUID();
+        var param = new Param(assessmentId, "assessment insight", currentUserId);
+        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentInsight = AssessmentInsightMother.createWithAssessmentResultId(assessmentResult.getId());
+
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
+        doNothing().when(updateAssessmentInsightPort).updateinsight(any(AssessmentInsight.class));
+
+        var result = assertDoesNotThrow(() -> service.createAssessmentInsight(param));
+
+        verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT);
+        verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
+        verify(updateAssessmentInsightPort).updateinsight(isA(AssessmentInsight.class));
+
+        assertEquals(assessmentInsight.getId(), result);
     }
 }

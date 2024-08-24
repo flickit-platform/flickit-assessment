@@ -27,11 +27,11 @@ public class AssessmentInsightPersistenceJpaAdapter implements
     private final AssessmentInsightJpaRepository repository;
 
     @Override
-    public void createInsight(CreateAssessmentInsightPort.Param param) {
-        if (repository.existsByAssessmentResultId(param.assessmentResultId()))
+    public UUID createInsight(AssessmentInsight assessmentInsight) {
+        if (repository.existsByAssessmentResultId(assessmentInsight.getAssessmentResultId()))
             throw new ResourceAlreadyExistsException(CREATE_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE);
 
-        repository.save(toJpaEntity(param));
+        return repository.save(toJpaEntity(assessmentInsight)).getId();
     }
 
     @Override
