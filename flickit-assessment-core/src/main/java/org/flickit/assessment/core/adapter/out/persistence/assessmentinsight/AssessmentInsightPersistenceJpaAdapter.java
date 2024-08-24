@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_INSIGHT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentinsight.AssessmentInsightMapper.toJpaEntity;
 
 @Component
@@ -43,7 +43,7 @@ public class AssessmentInsightPersistenceJpaAdapter implements
     @Override
     public void updateinsight(AssessmentInsight assessmentInsight) {
         if (!repository.existsById(assessmentInsight.getId()))
-            throw new ResourceNotFoundException(COMMON_ASSESSMENT_INSIGHT_NOT_FOUND);
+            throw new ResourceNotFoundException(CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_FOUND);
 
         repository.update(assessmentInsight.getId(),
             assessmentInsight.getInsight(),

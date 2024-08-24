@@ -28,6 +28,4 @@ public class ErrorMessageKey {
 
     public static final String INVITE_TO_REGISTER_EMAIL_SUBJECT = "invite-to-register.email.subject";
     public static final String INVITE_TO_REGISTER_EMAIL_BODY = "invite-to-register.email.body";
-
-    public static final String COMMON_ASSESSMENT_INSIGHT_NOT_FOUND = "common.assessment.insight.notFound";
 }
