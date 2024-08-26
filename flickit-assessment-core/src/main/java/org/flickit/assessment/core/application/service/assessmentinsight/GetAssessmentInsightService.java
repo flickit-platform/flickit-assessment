@@ -42,8 +42,7 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         var hasCreatePermission = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT);
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.get().getId());
         return assessmentInsight.map(insight -> toResult(null, assessmentResult.get(), insight, hasCreatePermission))
-            .orElse(toResult(createText(assessmentResult.get(), getAssessmentProgressPort.getProgress(param.getAssessmentId()).questionsCount()),
-                null, null, hasCreatePermission));
+            .orElseGet(() -> toResult(createDefaultInsight(assessmentResult.get()), null, null, hasCreatePermission));
     }
 
     private Result toResult(String defaultInsight, AssessmentResult assessmentResult, AssessmentInsight assessmentInsight, boolean hasCreatePermission) {
@@ -54,10 +53,14 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
             hasCreatePermission);
     }
 
-    private String createText(AssessmentResult assessmentResult, Integer questionsCount) {
+    private String createDefaultInsight(AssessmentResult assessmentResult) {
+        var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
+        int questionsCount = progress.questionsCount();
+        int answersCount = progress.answersCount();
+        String answersStatusText = questionsCount == answersCount ? "all " + questionsCount : answersCount + " out of " + questionsCount;
         return MessageBundle.message(LOAD_ASSESSMENT_INSIGHT_DEFAULT_INSIGHT_TEXT,
             assessmentResult.getMaturityLevel().getTitle(),
-            questionsCount + (questionsCount == 1 ? " question" : " questions"),
+            answersStatusText + (questionsCount == 1 ? " question" : " questions"),
             assessmentResult.getConfidenceValue());
     }
 }

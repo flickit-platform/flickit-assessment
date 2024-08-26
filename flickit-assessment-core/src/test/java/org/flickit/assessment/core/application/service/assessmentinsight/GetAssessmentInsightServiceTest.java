@@ -3,10 +3,10 @@ package org.flickit.assessment.core.application.service.assessmentinsight;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,8 +21,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentInsightServiceTest {
@@ -38,6 +37,9 @@ class GetAssessmentInsightServiceTest {
 
     @Mock
     private LoadAssessmentInsightPort loadAssessmentInsightPort;
+
+    @Mock
+    private GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Test
     void testGetAssessmentInsight_UserWithoutAccess_ShouldReturnAccessDenied() {
@@ -93,23 +95,52 @@ class GetAssessmentInsightServiceTest {
     }
 
     @Test
-    void testGetAssessmentInsight_AssessmentInsightNotFound_ShouldReturnDefaultInsight() {
+    void testGetAssessmentInsight_AssessmentInsightNotFoundAllQuestionAnswered_ShouldReturnDefaultInsight() {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, currentUserId);
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, MaturityLevelMother.levelFive());
+        var getAssessmentPortResult = new GetAssessmentProgressPort.Result(assessmentId, 10, 10);
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
+        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(getAssessmentPortResult);
 
         var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
         assertNull(result.assessorInsight());
         assertNotNull(result.defaultInsight().insight());
+        assertTrue(result.defaultInsight().insight().contains("all 10 questions"));
 
         verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT);
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
         verify(loadAssessmentInsightPort).loadByAssessmentResultId(assessmentResult.getId());
+        verify(getAssessmentProgressPort).getProgress(assessmentResult.getAssessment().getId());
+    }
+
+    @Test
+    void testGetAssessmentInsight_AssessmentInsightNotFoundPartialQuestionsAnswered_ShouldReturnDefaultInsight() {
+        var assessmentId = UUID.randomUUID();
+        var currentUserId = UUID.randomUUID();
+        var param = new Param(assessmentId, currentUserId);
+        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, MaturityLevelMother.levelFive());
+        var getAssessmentPortResult = new GetAssessmentProgressPort.Result(assessmentId, 8, 10);
+
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
+        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(getAssessmentPortResult);
+
+        var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
+        assertNull(result.assessorInsight());
+        assertNotNull(result.defaultInsight().insight());
+        System.out.println(result.defaultInsight().insight());
+        assertTrue(result.defaultInsight().insight().contains("8 out of 10"));
+
+        verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT);
+        verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
+        verify(loadAssessmentInsightPort).loadByAssessmentResultId(assessmentResult.getId());
+        verify(getAssessmentProgressPort).getProgress(assessmentResult.getAssessment().getId());
     }
 
 }
