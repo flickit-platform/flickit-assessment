@@ -33,15 +33,22 @@ class CreateSubjectInsightUseCaseParamTest {
     }
 
     @Test
-    void CreateSubjectInsight_InsightIsBlank_ErrorMessage() {
+    void CreateSubjectInsight_InsightIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
-        var insight = "";
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateSubjectInsightUseCase.Param(assessmentId, 123L, insight, currentUserId));
-        assertThat(throwable).hasMessage("insight: " + CREATE_SUBJECT_INSIGHT_INSIGHT_NOT_BLANK);
+            () -> new CreateSubjectInsightUseCase.Param(assessmentId, 123L, null, currentUserId));
+        assertThat(throwable).hasMessage("insight: " + CREATE_SUBJECT_INSIGHT_INSIGHT_NOT_NULL);
     }
 
+    @Test
+    void CreateSubjectInsight_InsightSizeIsLessThanMin_ErrorMessage() {
+        var assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateSubjectInsightUseCase.Param(assessmentId, 123L, " ab ", currentUserId));
+        assertThat(throwable).hasMessage("insight: " + CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MIN);
+    }
 
     @Test
     void CreateSubjectInsight_InsightSizeIsGreaterThanMax_ErrorMessage() {
