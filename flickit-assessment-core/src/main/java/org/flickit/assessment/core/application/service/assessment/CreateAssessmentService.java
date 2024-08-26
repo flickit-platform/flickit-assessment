@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
@@ -17,6 +18,7 @@ import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
+import org.flickit.assessment.core.application.service.assessment.notification.CreateAssessmentNotificationCmd;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +53,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
 
     @Override
+    @SendNotification
     public Result createAssessment(Param param) {
         if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -63,7 +66,11 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         grantAssessmentAccesses(param, id);
 
-        return new Result(id);
+        return new Result(new CreateAssessmentNotificationCmd(id,
+            param.getCurrentUserId(),
+            param.getTitle(),
+            param.getKitId(),
+            param.getSpaceId()));
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {

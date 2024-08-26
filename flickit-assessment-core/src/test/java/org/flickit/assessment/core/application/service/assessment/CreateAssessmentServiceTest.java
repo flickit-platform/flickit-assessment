@@ -18,6 +18,7 @@ import org.flickit.assessment.core.application.port.out.space.LoadSpaceOwnerPort
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
+import org.flickit.assessment.core.application.service.assessment.notification.CreateAssessmentNotificationCmd;
 import org.flickit.assessment.core.test.fixture.application.AttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,7 +93,8 @@ class CreateAssessmentServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(spaceOwnerId);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
-        assertEquals(expectedId, result.id());
+        CreateAssessmentNotificationCmd cmd = (CreateAssessmentNotificationCmd)result.notificationCmd();
+        assertEquals(expectedId, cmd.assessmentId());
 
         ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
         verify(createAssessmentPort).persist(createPortParam.capture());
@@ -138,7 +140,8 @@ class CreateAssessmentServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(currentUserId);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
-        assertEquals(expectedId, result.id());
+        CreateAssessmentNotificationCmd cmd = (CreateAssessmentNotificationCmd)result.notificationCmd();
+        assertEquals(expectedId, cmd.assessmentId());
 
         ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
         verify(createAssessmentPort).persist(createPortParam.capture());

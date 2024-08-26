@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
+import org.flickit.assessment.common.application.domain.notification.NotificationCmd;
 
 import java.util.UUID;
 
@@ -43,6 +45,5 @@ public interface CreateAssessmentUseCase {
         }
     }
 
-    record Result(UUID id){
-    }
+    record Result(NotificationCmd notificationCmd) implements HasNotificationCmd {}
 }

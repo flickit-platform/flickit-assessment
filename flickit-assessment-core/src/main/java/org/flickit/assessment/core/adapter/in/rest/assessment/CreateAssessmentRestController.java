@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase.Param;
+import org.flickit.assessment.core.application.service.assessment.notification.CreateAssessmentNotificationCmd;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +37,7 @@ public class CreateAssessmentRestController {
     }
 
     private CreateAssessmentResponseDto toResponseDto(CreateAssessmentUseCase.Result result) {
-        return new CreateAssessmentResponseDto(result.id());
+        CreateAssessmentNotificationCmd cmd = (CreateAssessmentNotificationCmd)result.notificationCmd();
+        return new CreateAssessmentResponseDto(cmd.assessmentId());
     }
 }
