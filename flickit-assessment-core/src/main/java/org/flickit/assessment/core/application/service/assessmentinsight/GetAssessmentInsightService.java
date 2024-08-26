@@ -46,7 +46,7 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
     }
 
     private Result toResult(String defaultInsight, AssessmentResult assessmentResult, AssessmentInsight assessmentInsight, boolean hasCreatePermission) {
-        return new Result(new Result.DefaultInsight(defaultInsight),
+        return new Result(defaultInsight != null ? new Result.DefaultInsight(defaultInsight) : null,
             assessmentInsight != null ? new Result.AssessorInsight(assessmentInsight.getInsight(),
                 assessmentInsight.getInsightTime(),
                 assessmentResult.getIsCalculateValid()) : null,
