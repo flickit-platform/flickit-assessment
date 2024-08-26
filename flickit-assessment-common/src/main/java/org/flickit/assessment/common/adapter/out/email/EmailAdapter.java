@@ -1,13 +1,12 @@
-package org.flickit.assessment.core.adapter.out.email;
+package org.flickit.assessment.common.adapter.out.email;
+
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.core.application.port.mail.SendFlickitInviteMailPort;
-
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,38 +16,28 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.common.config.EmailConfig.EMAIL_SENDER_THREAD_EXECUTOR;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_SUBJECT;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_BODY;
 
 @Slf4j
-@Component("coreEmailAdapter")
+@Component
 @RequiredArgsConstructor
-public class EmailAdapter implements
-    SendFlickitInviteMailPort {
+public class EmailAdapter implements SendEmailPort {
 
     private final JavaMailSender mailSender;
     private final AppSpecProperties appSpecProperties;
     private final MailProperties springMailProperties;
 
     @Override
-    public void inviteToFlickit(String to) {
-        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
-        String text =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
-        log.debug("Sending invite email to [{}]", to);
-        sendMail(to, subject, text);
-    }
-
     @SneakyThrows
     @Async(EMAIL_SENDER_THREAD_EXECUTOR)
     @Retryable(retryFor = Exception.class, maxAttempts = 5, backoff = @Backoff(delay = 10000))
-    private void sendMail(String to, String subject, String text){
+    public void send(String sendTo, String subject, String body) {
         MimeMessage message = mailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setTo(to);
+        helper.setTo(sendTo);
         helper.setFrom(getFrom());
         helper.setSubject(subject);
-        helper.setText(text, true);
+        helper.setText(body, true);
 
         mailSender.send(message);
     }
