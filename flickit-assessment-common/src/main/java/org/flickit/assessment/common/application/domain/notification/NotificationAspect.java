@@ -3,7 +3,6 @@ package org.flickit.assessment.common.application.domain.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -30,12 +29,8 @@ public class NotificationAspect {
             .collect(toMap(NotificationCreator::cmdClass, x -> x));
     }
 
-    @Pointcut("@annotation(SendNotification)")
-    public void annotatedBySendNotification() {
-    }
-
     @Async(NOTIFICATION_SENDER_THREAD_EXECUTOR)
-    @AfterReturning(pointcut = "annotatedBySendNotification()", returning = "result")
+    @AfterReturning(value = "@annotation(SendNotification)", returning = "result")
     public void sendNotificationAfter(Object result) {
         if (!(result instanceof HasNotificationCmd hasCmd))
             return;
