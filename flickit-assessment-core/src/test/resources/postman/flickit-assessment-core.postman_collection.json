@@ -81,279 +81,6 @@
 			"name": "Assessment",
 			"item": [
 				{
-					"name": "Get Space Assessment List",
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {}
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"disabled": true
-							},
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/space-assessments?spaceId=8&page=0&size=10",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"space-assessments"
-							],
-							"query": [
-								{
-									"key": "spaceId",
-									"value": "8"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Assessment",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"spaceId\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Assessment",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"The title2\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"ff1b2ae3-92b7-437d-b321-539753b71608"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Assessment List",
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {}
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"disabled": true
-							},
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments?kitId=393&page=0&size=10",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments"
-							],
-							"query": [
-								{
-									"key": "kitId",
-									"value": "393"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Comparable Assessment List",
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {}
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"disabled": true
-							},
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/comparable-assessments?kitId=393&page=0&size=10",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"comparable-assessments"
-							],
-							"query": [
-								{
-									"key": "kitId",
-									"value": "393"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Assessment",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"3bfa613e-4e50-46a4-96aa-a061f104224e"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Assessment",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"ff1b2ae3-92b7-437d-b321-539753b71608"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Assessment Users",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"88c50ea3-9486-4186-9ed4-7ff9bc32b768",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Calculate Confidence",
 					"request": {
 						"method": "POST",
@@ -422,9 +149,41 @@
 					"response": []
 				},
 				{
-					"name": "Report Assessment",
+					"name": "Create Assessment",
 					"request": {
-						"method": "GET",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"The title\",\n    \"assessmentKitId\": 1,\n    \"spaceId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Assessment",
+					"request": {
+						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
@@ -432,15 +191,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/report",
+							"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
-								"report"
+								"ff1b2ae3-92b7-437d-b321-539753b71608"
 							]
 						}
 					},
@@ -478,6 +236,178 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Assessment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"3bfa613e-4e50-46a4-96aa-a061f104224e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Comparable Assessment List",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/comparable-assessments?kitId=393&page=0&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"comparable-assessments"
+							],
+							"query": [
+								{
+									"key": "kitId",
+									"value": "393"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Space Assessment List",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/space-assessments?spaceId=8&page=0&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"space-assessments"
+							],
+							"query": [
+								{
+									"key": "spaceId",
+									"value": "8"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Report Assessment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/report",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+								"report"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Assessment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"The title2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/ff1b2ae3-92b7-437d-b321-539753b71608",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"ff1b2ae3-92b7-437d-b321-539753b71608"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -504,6 +434,43 @@
 							}
 						},
 						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/insights",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
+								"insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assessment Insight",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
 							"raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/insight",
 							"host": [
 								"{{base_url}}"
@@ -513,70 +480,6 @@
 								"assessments",
 								"e4f4a1cc-f80f-4b30-aaea-27f642a3965b",
 								"insight"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Attribute Insight",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"assessorInsight\" : \"Assessor Insight\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/0b711637-89c8-473b-bf20-b4f78af9f5f8/ai-report/attributes/1961",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"0b711637-89c8-473b-bf20-b4f78af9f5f8",
-								"ai-report",
-								"attributes",
-								"1961"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Attribute Insight",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/ai-report/attributes/1104",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"53028c27-83f5-4c10-9105-56e2a4f58a09",
-								"ai-report",
-								"attributes",
-								"1104"
 							]
 						}
 					},
@@ -754,40 +657,6 @@
 			"name": "AssessmentUserRole",
 			"item": [
 				{
-					"name": "Grant Assessment User Role",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"userId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"roleId\": \"1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/assessment-user-roles",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"625e6194-b710-4ed4-90e5-d6372ee3cb96",
-								"assessment-user-roles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Update Assessment User Role",
 					"request": {
 						"method": "PUT",
@@ -858,24 +727,6 @@
 					"response": []
 				},
 				{
-					"name": "Get Assessment User Roles",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-user-roles",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-user-roles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get Assessment User Permissions",
 					"request": {
 						"method": "GET",
@@ -895,6 +746,83 @@
 								"assessments",
 								"33e7bb70-0ef2-4a5d-85fb-232951ccc02c",
 								"permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Grant Assessment User Role",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"roleId\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/assessment-user-roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"625e6194-b710-4ed4-90e5-d6372ee3cb96",
+								"assessment-user-roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assessment Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"88c50ea3-9486-4186-9ed4-7ff9bc32b768",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assessment User Roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-user-roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-user-roles"
 							]
 						}
 					},
@@ -966,6 +894,167 @@
 					"response": []
 				},
 				{
+					"name": "Get Attribute Insight",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/ai-report/attributes/1104",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"ai-report",
+								"attributes",
+								"1104"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Attribute Insight",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"assessorInsight\" : \"Assessor Insight\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/0b711637-89c8-473b-bf20-b4f78af9f5f8/ai-report/attributes/1961",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"0b711637-89c8-473b-bf20-b4f78af9f5f8",
+								"ai-report",
+								"attributes",
+								"1961"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ConfidenceLevel",
+			"item": [
+				{
+					"name": "Get Confidence Level List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/confidence-levels",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"confidence-levels"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Evidence",
+			"item": [
+				{
+					"name": "Add Evidence",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"description1\",\n    \"assessmentId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"questionId\": 9110,\n    \"type\": \"POSITIVE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/evidences",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"evidences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Evidence",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/evidences/9f9cd530-73a0-4adc-863a-4b455c9488e1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"evidences",
+								"9f9cd530-73a0-4adc-863a-4b455c9488e1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Attribute Evidence List",
 					"request": {
 						"method": "GET",
@@ -1005,40 +1094,7 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "ConfidenceLevel",
-			"item": [
-				{
-					"name": "Get Confidence Level List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/confidence-levels",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"confidence-levels"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Evidence",
-			"item": [
+				},
 				{
 					"name": "Get Evidence List",
 					"protocolProfileBehavior": {
@@ -1089,64 +1145,6 @@
 					"response": []
 				},
 				{
-					"name": "Get Evidence Types",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/evidence-types",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"evidence-types"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add Evidence",
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {}
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"disabled": true
-							},
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"description\": \"description1\",\n    \"assessmentId\": \"136960fa-4040-4f3b-ac34-a71a67d29941\",\n    \"questionId\": 9110,\n    \"type\": \"POSITIVE\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/evidences",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"evidences"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get Evidence",
 					"request": {
 						"method": "GET",
@@ -1165,6 +1163,24 @@
 								"{{api_path}}",
 								"evidences",
 								"8c61e111-a64a-430e-84a0-ae584860116f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Evidence Types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/evidence-types",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"evidence-types"
 							]
 						}
 					},
@@ -1202,9 +1218,14 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "EvidenceAttachment",
+			"item": [
 				{
-					"name": "Delete Evidence",
+					"name": "Delete Evidence Attachment",
 					"request": {
 						"method": "DELETE",
 						"header": [
@@ -1214,24 +1235,21 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/evidences/9f9cd530-73a0-4adc-863a-4b455c9488e1",
+							"raw": "{{base_url}}/{{api_path}}/evidences/c4637764-40d7-4068-8bd0-a4d254c7a077/attachments/9daf59b6-d8ac-4553-ad67-dddaf5d6f555",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"evidences",
-								"9f9cd530-73a0-4adc-863a-4b455c9488e1"
+								"c4637764-40d7-4068-8bd0-a4d254c7a077",
+								"attachments",
+								"9daf59b6-d8ac-4553-ad67-dddaf5d6f555"
 							]
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "EvidenceAttachment",
-			"item": [
+				},
 				{
 					"name": "Add Evidence Attachment",
 					"request": {
@@ -1314,11 +1332,16 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Questionnaire",
+			"item": [
 				{
-					"name": "Delete Evidence Attachment",
+					"name": "Get Assessment Questionnaire List",
 					"request": {
-						"method": "DELETE",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
@@ -1326,26 +1349,20 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/evidences/c4637764-40d7-4068-8bd0-a4d254c7a077/attachments/9daf59b6-d8ac-4553-ad67-dddaf5d6f555",
+							"raw": "{{base_url}}/{{api_path}}/assessments/481dcdbe-0c36-4bcd-b6f3-b9b1068263ac/questionnaires",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-								"evidences",
-								"c4637764-40d7-4068-8bd0-a4d254c7a077",
-								"attachments",
-								"9daf59b6-d8ac-4553-ad67-dddaf5d6f555"
+								"assessments",
+								"481dcdbe-0c36-4bcd-b6f3-b9b1068263ac",
+								"questionnaires"
 							]
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Questionnaire",
-			"item": [
+				},
 				{
 					"name": "Get Assessment Questionnaire Question List",
 					"protocolProfileBehavior": {
@@ -1389,74 +1406,12 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Get Assessment Questionnaire List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/481dcdbe-0c36-4bcd-b6f3-b9b1068263ac/questionnaires",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"481dcdbe-0c36-4bcd-b6f3-b9b1068263ac",
-								"questionnaires"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
 		{
 			"name": "Subject",
 			"item": [
-				{
-					"name": "Load Assessment Insight",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/insight",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"e4f4a1cc-f80f-4b30-aaea-27f642a3965b",
-								"insight"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "Report Subject",
 					"protocolProfileBehavior": {
@@ -1493,7 +1448,7 @@
 					"response": []
 				},
 				{
-					"name": "Subject Progress",
+					"name": "Get Subject Progress",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
