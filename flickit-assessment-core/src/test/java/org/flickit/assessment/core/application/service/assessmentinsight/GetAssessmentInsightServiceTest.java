@@ -87,7 +87,7 @@ class GetAssessmentInsightServiceTest {
 
         var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
         assertNotNull(result.assessorInsight());
-        assertNull(result.defaultInsight().insight());
+        assertNull(result.defaultInsight());
 
         verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT);
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
