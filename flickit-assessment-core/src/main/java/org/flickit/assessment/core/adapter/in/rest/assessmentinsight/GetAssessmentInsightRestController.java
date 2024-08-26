@@ -19,8 +19,8 @@ public class GetAssessmentInsightRestController {
     private final GetAssessmentInsightUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("assessments/{assessment_id}/insights")
-    ResponseEntity<GetAssessmentInsightResponseDto> getAssessmentInsights(@PathVariable("assessment_id") UUID assessmentId) {
+    @GetMapping("assessments/{assessmentId}/insights")
+    ResponseEntity<GetAssessmentInsightResponseDto> getAssessmentInsights(@PathVariable("assessmentId") UUID assessmentId) {
         var result = useCase.getAssessmentInsight(toParam(assessmentId, userContext.getUser().id()));
         return new ResponseEntity<>(toResponse(result), HttpStatus.OK);
     }
