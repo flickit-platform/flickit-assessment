@@ -32,9 +32,9 @@ public class GetAssessmentInsightRestController {
     private GetAssessmentInsightResponseDto toResponse(Result result) {
         return new GetAssessmentInsightResponseDto(
             new GetAssessmentInsightResponseDto.DefaultInsight(result.defaultInsight().insight()),
-            new GetAssessmentInsightResponseDto.AssessorInsight(result.assessorInsight().insight(),
+            (result.assessorInsight() != null) ? new GetAssessmentInsightResponseDto.AssessorInsight(result.assessorInsight().insight(),
                 result.assessorInsight().creationTime(),
-                result.assessorInsight().isValid()),
+                result.assessorInsight().isValid()) : null,
             result.editable()
         );
     }
