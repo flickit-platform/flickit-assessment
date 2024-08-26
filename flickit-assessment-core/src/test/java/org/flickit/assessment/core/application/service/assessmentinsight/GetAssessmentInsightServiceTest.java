@@ -141,5 +141,4 @@ class GetAssessmentInsightServiceTest {
         verify(loadAssessmentInsightPort).loadByAssessmentResultId(assessmentResult.getId());
         verify(getAssessmentProgressPort).getProgress(assessmentResult.getAssessment().getId());
     }
-
 }
