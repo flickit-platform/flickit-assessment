@@ -49,7 +49,7 @@ class CreateAssessmentInsightServiceTest {
     private UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
     @Test
-    void testCreateAssessmentInsight_UserWithoutAccess_ShouldThrowAccessDeniedException() {
+    void testCreateAssessmentInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, "assessment insight", currentUserId);
@@ -63,7 +63,7 @@ class CreateAssessmentInsightServiceTest {
     }
 
     @Test
-    void testCreateAssessmentInsight_NoAssessmentResult_ShouldThrowResourceNotFoundException() {
+    void testCreateAssessmentInsight_NoAssessmentResult_ThrowResourceNotFoundException() {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, "assessment insight", currentUserId);
@@ -79,7 +79,7 @@ class CreateAssessmentInsightServiceTest {
     }
 
     @Test
-    void testCreateAssessmentInsight_NoAssessmentInsightFound_ShouldCreateAssessmentInsight() {
+    void testCreateAssessmentInsight_NoAssessmentInsightFound_CreateAssessmentInsight() {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, "assessment insight", currentUserId);
@@ -101,7 +101,7 @@ class CreateAssessmentInsightServiceTest {
     }
 
     @Test
-    void testCreateAssessmentInsight_AssessmentInsightFound_ShouldUpdateAssessmentInsight() {
+    void testCreateAssessmentInsight_AssessmentInsightFound_UpdateAssessmentInsight() {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, "assessment insight", currentUserId);
