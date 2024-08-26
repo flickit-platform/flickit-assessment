@@ -57,11 +57,9 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
         int questionsCount = progress.questionsCount();
         int answersCount = progress.answersCount();
-        var confidenceValue = assessmentResult.getConfidenceValue();
-        String answersStatusText = questionsCount == answersCount ? "all " + questionsCount : answersCount + " out of " + questionsCount;
-        return MessageBundle.message(LOAD_ASSESSMENT_INSIGHT_DEFAULT_INSIGHT_TEXT,
-            assessmentResult.getMaturityLevel().getTitle(),
-            answersStatusText + (questionsCount == 1 ? " question" : " questions"),
-            confidenceValue != null ? confidenceValue.intValue() : null);
+        Integer confidenceValue = assessmentResult.getConfidenceValue() !=null ? assessmentResult.getConfidenceValue().intValue() : null;
+        String questionText = (questionsCount == 1 ? " question" : " questions");
+        String answersStatusText = questionsCount == answersCount ? "all " + questionsCount + questionText: answersCount + " out of " + questionsCount + questionText;
+        return MessageBundle.message(LOAD_ASSESSMENT_INSIGHT_DEFAULT_INSIGHT_TEXT, assessmentResult.getMaturityLevel().getTitle(), answersStatusText, confidenceValue);
     }
 }
