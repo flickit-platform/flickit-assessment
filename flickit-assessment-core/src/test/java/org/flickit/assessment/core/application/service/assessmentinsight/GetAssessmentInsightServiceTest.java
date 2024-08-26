@@ -134,7 +134,6 @@ class GetAssessmentInsightServiceTest {
         var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
         assertNull(result.assessorInsight());
         assertNotNull(result.defaultInsight().insight());
-        System.out.println(result.defaultInsight().insight());
         assertTrue(result.defaultInsight().insight().contains("8 out of 10"));
 
         verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT);
