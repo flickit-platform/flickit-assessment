@@ -114,4 +114,9 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
+    <changeSet id="0.29-08" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fac_assessment_insight" columnNames="assessment_result_id"
+                             constraintName="uq_fac_assessment_insight_assessmentresultid"/>
+    </changeSet>
+
 </databaseChangeLog>
