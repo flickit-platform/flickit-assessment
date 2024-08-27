@@ -67,7 +67,7 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
         int questionsCount = progress.questionsCount();
         int answersCount = progress.answersCount();
-        Integer confidenceValue = assessmentResult.getConfidenceValue() != null ? assessmentResult.getConfidenceValue().intValue() : null;
+        int confidenceValue = assessmentResult.getConfidenceValue() != null ? assessmentResult.getConfidenceValue().intValue() : 0;
         String maturityLevelTitle = assessmentResult.getMaturityLevel().getTitle();
 
         return (questionsCount == answersCount)
