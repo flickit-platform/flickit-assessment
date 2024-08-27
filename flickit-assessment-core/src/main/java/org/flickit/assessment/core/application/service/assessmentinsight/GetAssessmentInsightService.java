@@ -19,7 +19,8 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.MessageKey.LOAD_ASSESSMENT_INSIGHT_DEFAULT_INSIGHT;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 
 @Service
 @Transactional(readOnly = true)
@@ -61,8 +62,9 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         int questionsCount = progress.questionsCount();
         int answersCount = progress.answersCount();
         Integer confidenceValue = assessmentResult.getConfidenceValue() !=null ? assessmentResult.getConfidenceValue().intValue() : null;
-        String questionText = (questionsCount == 1 ? " question" : " questions");
-        String answersStatusText = questionsCount == answersCount ? "all " + questionsCount + questionText: answersCount + " out of " + questionsCount + questionText;
-        return MessageBundle.message(LOAD_ASSESSMENT_INSIGHT_DEFAULT_INSIGHT, assessmentResult.getMaturityLevel().getTitle(), answersStatusText, confidenceValue);
+
+        return (questionsCount == answersCount)
+            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED, assessmentResult.getMaturityLevel().getTitle(), questionsCount, confidenceValue)
+            : MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE, assessmentResult.getMaturityLevel().getTitle(), answersCount, questionsCount, confidenceValue);
     }
 }
