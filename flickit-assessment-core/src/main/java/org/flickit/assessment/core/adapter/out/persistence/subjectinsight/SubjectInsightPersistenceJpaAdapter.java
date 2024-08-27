@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.adapter.out.persistence.subjectinsight;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
@@ -37,7 +38,7 @@ public class SubjectInsightPersistenceJpaAdapter implements
     private final AttributeJpaRepository attributeRepository;
 
     @Override
-    public Optional<SubjectInsight> load(UUID assessmentResultId, long subjectId) {
+    public Optional<SubjectInsight> load(UUID assessmentResultId, Long subjectId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
                 .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         return repository.findByAssessmentResultIdAndSubjectId(assessmentResultId, subjectId)
@@ -63,13 +64,6 @@ public class SubjectInsightPersistenceJpaAdapter implements
 
     @Override
     public String loadDefaultInsight(UUID assessmentResultId, long subjectId) {
-        var insightTemplate = "One key aspect of this assessment is evaluating the maturity level of the %s, which refers to %s. " +
-                "With %d%% confidence, the overall maturity level of the Team has been estimated at %d out of %d, indicating " +
-                "that it is %s. The status is determined using a weighted average algorithm applied to the scores " +
-                "of various subject attributes. %d attributes of the %s have been evaluated in this assessment. For each " +
-                "attribute, both the maturity level and the confidence level have been documented. The chart below " +
-                "illustrates the maturity levels of these attributes.";
-
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
                 .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         var subject = subjectRepository.findByIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId())
@@ -81,7 +75,7 @@ public class SubjectInsightPersistenceJpaAdapter implements
         var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(assessmentResult.getKitVersionId());
         var attributes = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId());
 
-        return String.format(insightTemplate,
+        return MessageBundle.message(GET_SUBJECT_INSIGHT_SUBJECT_INSIGHT_DEFAULT_TEMPLATE,
                 subject.getTitle(),
                 subject.getDescription(),
                 subjectValue.getConfidenceValue(),
