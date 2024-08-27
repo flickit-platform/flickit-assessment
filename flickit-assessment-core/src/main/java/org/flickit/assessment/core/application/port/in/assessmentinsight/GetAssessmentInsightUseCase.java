@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
 
 public interface GetAssessmentInsightUseCase {
 
@@ -19,7 +19,7 @@ public interface GetAssessmentInsightUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

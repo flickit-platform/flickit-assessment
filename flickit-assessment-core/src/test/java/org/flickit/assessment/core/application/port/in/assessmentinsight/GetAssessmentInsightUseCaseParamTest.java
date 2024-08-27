@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GetAssessmentInsightUseCaseParamTest {
@@ -17,7 +17,7 @@ class GetAssessmentInsightUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentInsightUseCase.Param(null, currentUserId));
-        assertThat(throwable).hasMessage("assessmentId: " + LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test

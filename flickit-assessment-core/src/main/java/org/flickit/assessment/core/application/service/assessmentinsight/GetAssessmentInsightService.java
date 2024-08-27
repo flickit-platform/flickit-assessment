@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 
@@ -40,7 +40,7 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId());
         if (assessmentResult.isEmpty())
-            throw new ResourceNotFoundException(LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND);
+            throw new ResourceNotFoundException(GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND);
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var hasCreatePermission = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT);
