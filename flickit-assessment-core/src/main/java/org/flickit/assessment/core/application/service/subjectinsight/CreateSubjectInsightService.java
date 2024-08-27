@@ -43,10 +43,17 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         Optional<SubjectInsight> subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
-        if (subjectInsight.isEmpty()) {
-            createSubjectInsightPort.persist(new SubjectInsight(assessmentResult.getId(), param.getSubjectId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
-        } else {
-            updateSubjectInsightPort.update(new SubjectInsight(assessmentResult.getId(), param.getSubjectId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
-        }
+
+        var insight = toSubjectInsight(param, assessmentResult);
+
+        if (subjectInsight.isPresent())
+            updateSubjectInsightPort.update(insight);
+        else
+            createSubjectInsightPort.persist(insight);
+    }
+
+    @NotNull
+    private static SubjectInsight toSubjectInsight(Param param, AssessmentResult assessmentResult) {
+        return new SubjectInsight(assessmentResult.getId(), param.getSubjectId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId());
     }
 }
