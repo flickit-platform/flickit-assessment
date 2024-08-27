@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -39,12 +40,13 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+        var assessmentResultId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .map(AssessmentResult::getId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        Optional<SubjectInsight> subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
+        Optional<SubjectInsight> subjectInsight = loadSubjectInsightPort.load(assessmentResultId, param.getSubjectId());
 
-        var insight = toSubjectInsight(param, assessmentResult);
+        var insight = toSubjectInsight(assessmentResultId, param);
 
         if (subjectInsight.isPresent())
             updateSubjectInsightPort.update(insight);
@@ -53,7 +55,7 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
     }
 
     @NotNull
-    private static SubjectInsight toSubjectInsight(Param param, AssessmentResult assessmentResult) {
-        return new SubjectInsight(assessmentResult.getId(), param.getSubjectId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId());
+    private static SubjectInsight toSubjectInsight(UUID assessmentResultId, Param param) {
+        return new SubjectInsight(assessmentResultId, param.getSubjectId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId());
     }
 }

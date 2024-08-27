@@ -13,7 +13,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface CreateAssessmentInsightUseCase {
 
-    Result createAssessmentInsight(Param param);
+    void createAssessmentInsight(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -36,8 +36,5 @@ public interface CreateAssessmentInsightUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-    }
-
-    record Result(UUID id){
     }
 }
