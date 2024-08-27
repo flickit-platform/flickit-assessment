@@ -235,4 +235,7 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MAX = "create-subject-insight.insight.size.max";
     public static final String CREATE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-subject-insight.assessmentResult.notFound";
     public static final String CREATE_SUBJECT_INSIGHT_SUBJECT_INSIGHT_NOT_FOUND = "create-subject-insight.subjectInsight.notFound";
+
+    public static final String GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-assessment-insight.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-insight.assessmentResult.notFound";
 }
