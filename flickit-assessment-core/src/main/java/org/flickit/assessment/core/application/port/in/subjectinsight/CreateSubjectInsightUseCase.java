@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.core.application.port.in.subject.ReportSubjectUseCase;
 
 import java.util.UUID;
 
@@ -19,7 +18,7 @@ public interface CreateSubjectInsightUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<ReportSubjectUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = CREATE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
