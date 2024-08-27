@@ -21,19 +21,15 @@ public class GetSubjectInsightRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/insights/subjects/{subjectId}")
-    public ResponseEntity<GetSubjectInsightResponseDto> getSubjectInsight(
+    public ResponseEntity<Result> getSubjectInsight(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("subjectId") Long subjectId) {
         UUID currentUserId = userContext.getUser().id();
-        var response = toResponse(useCase.getSubjectInsight(toParam(assessmentId, subjectId, currentUserId)));
+        var response = useCase.getSubjectInsight(toParam(assessmentId, subjectId, currentUserId));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private Param toParam(UUID assessmentId, Long subjectId, UUID currentUserId) {
         return new Param(assessmentId, subjectId, currentUserId);
-    }
-
-    private GetSubjectInsightResponseDto toResponse(Result result) {
-        return new GetSubjectInsightResponseDto(result.defaultInsight(), result.assessorInsight(), result.editable());
     }
 }
