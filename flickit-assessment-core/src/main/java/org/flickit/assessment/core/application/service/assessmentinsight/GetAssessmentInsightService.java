@@ -43,28 +43,35 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
             throw new ResourceNotFoundException(GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND);
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var hasCreatePermission = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT);
+        boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT);
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.get().getId());
-        return assessmentInsight.map(insight -> toResult(null, assessmentResult.get(), insight, hasCreatePermission))
-            .orElseGet(() -> toResult(createDefaultInsight(assessmentResult.get()), null, null, hasCreatePermission));
+        return assessmentInsight.map(insight -> getAssessorInsight(assessmentResult.get(), insight, editable))
+            .orElseGet(() -> getDefaultInsight(assessmentResult.get(), editable));
     }
 
-    private Result toResult(String defaultInsight, AssessmentResult assessmentResult, AssessmentInsight assessmentInsight, boolean hasCreatePermission) {
-        return new Result(defaultInsight != null ? new Result.DefaultInsight(defaultInsight) : null,
-            assessmentInsight != null ? new Result.AssessorInsight(assessmentInsight.getInsight(),
+    private Result getAssessorInsight(AssessmentResult assessmentResult, AssessmentInsight assessmentInsight, boolean editable) {
+        return new Result(null,
+            new Result.AssessorInsight(assessmentInsight.getInsight(),
                 assessmentInsight.getInsightTime(),
-                assessmentResult.getIsCalculateValid()) : null,
-            hasCreatePermission);
+                assessmentResult.getLastCalculationTime().isBefore(assessmentInsight.getInsightTime())),
+            editable);
+    }
+
+    private Result getDefaultInsight(AssessmentResult assessmentResult, boolean editable) {
+        return new Result(new Result.DefaultInsight(createDefaultInsight(assessmentResult)),
+            null,
+            editable);
     }
 
     private String createDefaultInsight(AssessmentResult assessmentResult) {
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
         int questionsCount = progress.questionsCount();
         int answersCount = progress.answersCount();
-        Integer confidenceValue = assessmentResult.getConfidenceValue() !=null ? assessmentResult.getConfidenceValue().intValue() : null;
+        Integer confidenceValue = assessmentResult.getConfidenceValue() != null ? assessmentResult.getConfidenceValue().intValue() : null;
+        String maturityLevelTitle = assessmentResult.getMaturityLevel().getTitle();
 
         return (questionsCount == answersCount)
-            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED, assessmentResult.getMaturityLevel().getTitle(), questionsCount, confidenceValue)
-            : MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE, assessmentResult.getMaturityLevel().getTitle(), answersCount, questionsCount, confidenceValue);
+            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED, maturityLevelTitle, questionsCount, confidenceValue)
+            : MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE, maturityLevelTitle, answersCount, questionsCount, confidenceValue);
     }
 }
