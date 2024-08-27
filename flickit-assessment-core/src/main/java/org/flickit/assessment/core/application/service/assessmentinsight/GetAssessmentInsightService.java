@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentinsight;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
@@ -29,6 +30,7 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Override
     public Result getAssessmentInsight(Param param) {
@@ -38,6 +40,7 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId());
         if (assessmentResult.isEmpty())
             throw new ResourceNotFoundException(LOAD_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND);
+        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var hasCreatePermission = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT);
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.get().getId());
