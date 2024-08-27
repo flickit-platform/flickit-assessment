@@ -23,7 +23,7 @@ public class AssessmentInsightJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "assessment_result_id", nullable = false)
+    @Column(name = "assessment_result_id", nullable = false, unique = true)
     private UUID assessmentResultId;
 
     @Column(name = "insight", nullable = false)
