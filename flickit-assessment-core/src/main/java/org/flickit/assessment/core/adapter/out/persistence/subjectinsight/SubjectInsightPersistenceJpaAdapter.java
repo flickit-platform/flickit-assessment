@@ -80,7 +80,7 @@ public class SubjectInsightPersistenceJpaAdapter implements
                 subject.getDescription(),
                 subjectValue.getConfidenceValue(),
                 subject.getTitle(),
-                maturityLevel.getValue(),
+                maturityLevel.getIndex(),
                 maturityLevels.size(),
                 maturityLevel.getTitle(),
                 attributes.size(),
