@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface LoadSubjectDefaultInsightPort {
 
-    String loadDefaultInsightByAssessmentResultIdAndSubjectId(UUID assessmentResultId, long subjectId);
+    String loadDefaultInsight(UUID assessmentResultId, long subjectId);
 }
