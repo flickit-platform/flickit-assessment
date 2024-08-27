@@ -32,7 +32,7 @@ public class CreateAssessmentInsightService implements CreateAssessmentInsightUs
     private final UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
     @Override
-    public Result createAssessmentInsight(Param param) {
+    public void createAssessmentInsight(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -43,12 +43,11 @@ public class CreateAssessmentInsightService implements CreateAssessmentInsightUs
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.get().getId());
 
         if (assessmentInsight.isEmpty())
-            return new Result(createAssessmentInsightPort.persist
-                (toAssessmentInsight(null, assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId())));
-
-        updateAssessmentInsightPort.updateInsight
-            (toAssessmentInsight(assessmentInsight.get().getId(), assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
-        return new Result(assessmentInsight.get().getId());
+            createAssessmentInsightPort.persist
+                (toAssessmentInsight(null, assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
+        else
+            updateAssessmentInsightPort.updateInsight
+                (toAssessmentInsight(assessmentInsight.get().getId(), assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
     }
 
     AssessmentInsight toAssessmentInsight(UUID insightId, UUID assessmentResultId, String insight, LocalDateTime insightTime, UUID insightBy) {
