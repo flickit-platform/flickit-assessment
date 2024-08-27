@@ -5,8 +5,8 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.subjectinsight.CreateSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.subjectinsight.CheckSubjectInsightExistPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
+import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,8 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +39,7 @@ class CreateSubjectInsightServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    private CheckSubjectInsightExistPort checkSubjectInsightExistPort;
+    private LoadSubjectInsightPort loadSubjectInsightPort;
 
     @Mock
     private CreateSubjectInsightPort createSubjectInsightPort;
@@ -59,7 +60,7 @@ class CreateSubjectInsightServiceTest {
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        when(checkSubjectInsightExistPort.exists(assessmentResult.getId(), param.getSubjectId()))
+        when(loadSubjectInsightPort.loadByAssessmentResultIdAndSubjectId(assessmentResult.getId(), param.getSubjectId()))
             .thenReturn(false);
 
         doNothing().when(createSubjectInsightPort).persist(any());
@@ -89,7 +90,7 @@ class CreateSubjectInsightServiceTest {
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        when(checkSubjectInsightExistPort.exists(assessmentResult.getId(), param.getSubjectId()))
+        when(loadSubjectInsightPort.loadByAssessmentResultIdAndSubjectId(assessmentResult.getId(), param.getSubjectId()))
             .thenReturn(true);
 
         doNothing().when(updateSubjectInsightPort).update(any());
