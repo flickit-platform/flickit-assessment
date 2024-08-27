@@ -3,8 +3,10 @@ package org.flickit.assessment.core.adapter.out.persistence.subjectinsight;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
+import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectDefaultInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
+import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
@@ -23,6 +25,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class SubjectInsightPersistenceJpaAdapter implements
         LoadSubjectInsightPort,
+        CreateSubjectInsightPort,
+        UpdateSubjectInsightPort,
         LoadSubjectDefaultInsightPort {
 
     private final SubjectInsightJpaRepository repository;
@@ -41,6 +45,20 @@ public class SubjectInsightPersistenceJpaAdapter implements
                     boolean isValid = x.getInsightTime().isAfter(assessmentResult.getLastCalculationTime());
                     return SubjectInsightMapper.mapToDomainModel(x, isValid);
                 });
+    }
+
+    @Override
+    public void persist(SubjectInsight subjectInsight) {
+        repository.save(SubjectInsightMapper.mapToJpaEntity(subjectInsight));
+    }
+
+    @Override
+    public void update(SubjectInsight subjectInsight) {
+        repository.updateByAssessmentResultIdAndSubjectId(subjectInsight.getAssessmentResultId(),
+                subjectInsight.getSubjectId(),
+                subjectInsight.getInsight(),
+                subjectInsight.getInsightTime(),
+                subjectInsight.getInsightBy());
     }
 
     @Override

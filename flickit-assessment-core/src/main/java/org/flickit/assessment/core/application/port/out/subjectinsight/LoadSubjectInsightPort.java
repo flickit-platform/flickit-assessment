@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadSubjectInsightPort {
 
-    Optional<SubjectInsight> load(UUID assessmentResultId, long subjectId);
+    Optional<SubjectInsight> load(UUID assessmentResultId, Long subjectId);
 }
