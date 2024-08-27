@@ -42,7 +42,7 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
         if (subjectInsight.isPresent()) {
             SubjectInsight assessorInsight = subjectInsight.get();
             return new Result(null,
-                    new AssessorInsight(assessorInsight.getInsight(), assessorInsight.getInsightTime(), assessorInsight.isValid()),
+                    new AssessorInsight(assessorInsight.getInsight(), assessorInsight.getInsightTime(), assessorInsight.getIsValid()),
                     isAuthorizedForEdit);
         }
 
