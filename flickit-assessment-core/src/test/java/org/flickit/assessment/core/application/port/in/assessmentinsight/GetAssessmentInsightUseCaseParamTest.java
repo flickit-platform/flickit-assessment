@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GetAssessmentInsightUseCaseParamTest {
 
     @Test
-    void testLoadAssessmentInsightParam_AssessmentIdIsNull_ErrorMessage() {
+    void testGetAssessmentInsightParam_AssessmentIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentInsightUseCase.Param(null, currentUserId));
@@ -21,7 +21,7 @@ class GetAssessmentInsightUseCaseParamTest {
     }
 
     @Test
-    void testLoadAssessmentInsightParam_CurrentUserIdIsNull_ErrorMessage() {
+    void testGetAssessmentInsightParam_CurrentUserIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAssessmentInsightUseCase.Param(assessmentId, null));
@@ -29,7 +29,7 @@ class GetAssessmentInsightUseCaseParamTest {
     }
 
     @Test
-    void testLoadAssessmentInsightParam_ValidParameters_Successful() {
+    void testGetAssessmentInsightParam_ValidParameters_Successful() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         assertDoesNotThrow(() -> new GetAssessmentInsightUseCase.Param(assessmentId, currentUserId));
