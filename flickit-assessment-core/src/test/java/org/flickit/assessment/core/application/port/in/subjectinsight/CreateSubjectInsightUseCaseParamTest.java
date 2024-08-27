@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateSubjectInsightUseCaseParamTest {
 
     @Test
-    void testCreateSubjectInsight_AssessmentIdIsNull_ErrorMessage() {
+    void testCreateSubjectInsightParam_AssessmentIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var insight = "insight";
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -23,7 +23,7 @@ class CreateSubjectInsightUseCaseParamTest {
     }
 
     @Test
-    void testCreateSubjectInsight_SubjectIdIsNull_ErrorMessage() {
+    void testCreateSubjectInsightParam_SubjectIdIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var insight = "insight";
         UUID currentUserId = UUID.randomUUID();
@@ -33,7 +33,7 @@ class CreateSubjectInsightUseCaseParamTest {
     }
 
     @Test
-    void testCreateSubjectInsight_InsightIsNull_ErrorMessage() {
+    void testCreateSubjectInsightParam_InsightIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
@@ -51,7 +51,7 @@ class CreateSubjectInsightUseCaseParamTest {
     }
 
     @Test
-    void testCreateSubjectInsight_InsightSizeIsGreaterThanMax_ErrorMessage() {
+    void testCreateSubjectInsightParam_InsightSizeIsGreaterThanMax_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var insight = RandomStringUtils.randomAlphabetic(1001);
         UUID currentUserId = UUID.randomUUID();
@@ -61,7 +61,7 @@ class CreateSubjectInsightUseCaseParamTest {
     }
 
     @Test
-    void testCreateSubjectInsight_CurrentUserIdIsNull_ErrorMessage() {
+    void testCreateSubjectInsightParam_CurrentUserIdIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var insight = "insight";
         var throwable = assertThrows(ConstraintViolationException.class,
