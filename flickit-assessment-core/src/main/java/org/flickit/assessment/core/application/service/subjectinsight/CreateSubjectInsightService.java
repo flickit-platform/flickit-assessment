@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.CreateSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +42,7 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        Optional<SubjectInsight> subjectInsight = loadSubjectInsightPort.loadByAssessmentResultIdAndSubjectId(assessmentResult.getId(), param.getSubjectId());
+        Optional<SubjectInsight> subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
         if (subjectInsight.isEmpty()) {
             createSubjectInsightPort.persist(new SubjectInsight(assessmentResult.getId(), param.getSubjectId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
         } else {

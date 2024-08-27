@@ -21,7 +21,7 @@ public class SubjectInsightPersistenceJpaAdapter implements
     private final SubjectInsightJpaRepository repository;
 
     @Override
-    public Optional<SubjectInsight> loadByAssessmentResultIdAndSubjectId(UUID assessmentResultId, Long subjectId) {
+    public Optional<SubjectInsight> load(UUID assessmentResultId, Long subjectId) {
         return repository.findByAssessmentResultIdAndSubjectId(assessmentResultId, subjectId)
             .map(SubjectInsightMapper::mapToDomainModel);
     }

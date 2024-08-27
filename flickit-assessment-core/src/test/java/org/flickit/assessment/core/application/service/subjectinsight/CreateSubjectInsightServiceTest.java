@@ -61,7 +61,7 @@ class CreateSubjectInsightServiceTest {
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        when(loadSubjectInsightPort.loadByAssessmentResultIdAndSubjectId(assessmentResult.getId(), param.getSubjectId()))
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
             .thenReturn(Optional.empty());
 
         doNothing().when(createSubjectInsightPort).persist(any());
@@ -96,7 +96,7 @@ class CreateSubjectInsightServiceTest {
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        when(loadSubjectInsightPort.loadByAssessmentResultIdAndSubjectId(assessmentResult.getId(), param.getSubjectId()))
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
             .thenReturn(Optional.of(subjectInsight));
 
         doNothing().when(updateSubjectInsightPort).update(any());
