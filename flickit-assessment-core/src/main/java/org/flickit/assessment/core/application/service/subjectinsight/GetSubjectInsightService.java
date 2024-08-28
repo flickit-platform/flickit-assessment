@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -38,25 +39,34 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        validateAssessmentResultPort.validate(param.getAssessmentId());
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        validateAssessmentResultPort.validate(param.getAssessmentId());
+
         var editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT);
 
         var subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
 
-        if (subjectInsight.isPresent()) {
-            SubjectInsight assessorInsight = subjectInsight.get();
-            return new Result(null,
-                    new AssessorInsight(assessorInsight.getInsight(), assessorInsight.getInsightTime(), assessorInsight.getIsValid()),
-                    editable);
-        }
+        return subjectInsight.map(insight -> getAssessorInsight(assessmentResult, insight, editable))
+            .orElseGet(() -> getDefaultInsight(param.getAssessmentId(), param.getSubjectId(), editable));
 
-        var defaultInsight = getDefaultInsight(param.getAssessmentId(), param.getSubjectId());
-        return new Result(defaultInsight, null, editable);
     }
 
-    String getDefaultInsight(UUID assessmentId, long subjectId) {
+    private Result getAssessorInsight(AssessmentResult assessmentResult, SubjectInsight subjectInsight, boolean editable) {
+        return new Result(null,
+            new Result.AssessorInsight(subjectInsight.getInsight(),
+                subjectInsight.getInsightTime(),
+                assessmentResult.getLastCalculationTime().isBefore(subjectInsight.getInsightTime())),
+            editable);
+    }
+
+    private Result getDefaultInsight(UUID assessmentId, long subjectId, boolean editable) {
+        return new Result(new Result.DefaultInsight(createDefaultInsight(assessmentId, subjectId)),
+            null,
+            editable);
+    }
+
+    String createDefaultInsight(UUID assessmentId, long subjectId) {
         var subjectReport = loadSubjectReportInfoPort.load(assessmentId, subjectId);
         var subject = subjectReport.subject();
 

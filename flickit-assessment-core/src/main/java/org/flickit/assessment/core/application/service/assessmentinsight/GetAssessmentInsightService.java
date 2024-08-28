@@ -38,15 +38,14 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId());
-        if (assessmentResult.isEmpty())
-            throw new ResourceNotFoundException(GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND);
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT);
-        var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.get().getId());
-        return assessmentInsight.map(insight -> getAssessorInsight(assessmentResult.get(), insight, editable))
-            .orElseGet(() -> getDefaultInsight(assessmentResult.get(), editable));
+        var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
+        return assessmentInsight.map(insight -> getAssessorInsight(assessmentResult, insight, editable))
+            .orElseGet(() -> getDefaultInsight(assessmentResult, editable));
     }
 
     private Result getAssessorInsight(AssessmentResult assessmentResult, AssessmentInsight assessmentInsight, boolean editable) {
