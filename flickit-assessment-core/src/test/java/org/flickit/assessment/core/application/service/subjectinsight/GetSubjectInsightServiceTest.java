@@ -68,7 +68,7 @@ class GetSubjectInsightServiceTest {
         assertNull(result.defaultInsight());
         assertEquals(subjectInsight.getInsight(), result.assessorInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
-        assertEquals(subjectInsight.getIsValid(), result.assessorInsight().isValid());
+        assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
 
         verifyNoInteractions(loadSubjectReportInfoPort);
@@ -94,7 +94,7 @@ class GetSubjectInsightServiceTest {
         GetSubjectInsightUseCase.Result result = service.getSubjectInsight(param);
 
         assertNull(result.assessorInsight());
-        assertEquals(subjectInsight, result.defaultInsight());
+        assertEquals(subjectInsight, result.defaultInsight().insight());
         assertFalse(result.editable());
     }
 
