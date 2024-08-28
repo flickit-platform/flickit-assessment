@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessmentinsight.CreateAssessmentInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.CreateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
@@ -32,26 +33,23 @@ public class CreateAssessmentInsightService implements CreateAssessmentInsightUs
     private final UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
     @Override
-    public Result createAssessmentInsight(Param param) {
+    public void createAssessmentInsight(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId());
-        if (assessmentResult.isEmpty())
-            throw new ResourceNotFoundException(CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND);
+        var assessmentResultId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .map(AssessmentResult::getId)
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.get().getId());
+        var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResultId);
 
-        if (assessmentInsight.isEmpty())
-            return new Result(createAssessmentInsightPort.persist
-                (toAssessmentInsight(null, assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId())));
-
-        updateAssessmentInsightPort.updateInsight
-            (toAssessmentInsight(assessmentInsight.get().getId(), assessmentResult.get().getId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId()));
-        return new Result(assessmentInsight.get().getId());
+        if (assessmentInsight.isPresent())
+            updateAssessmentInsightPort.updateInsight(toAssessmentInsight(assessmentInsight.get().getId(), assessmentResultId, param));
+        else
+            createAssessmentInsightPort.persist(toAssessmentInsight(null, assessmentResultId, param));
     }
 
-    AssessmentInsight toAssessmentInsight(UUID insightId, UUID assessmentResultId, String insight, LocalDateTime insightTime, UUID insightBy) {
-        return new AssessmentInsight(insightId, assessmentResultId, insight, insightTime, insightBy);
+    AssessmentInsight toAssessmentInsight(UUID insightId, UUID assessmentResultId, Param param) {
+        return new AssessmentInsight(insightId, assessmentResultId, param.getInsight(), LocalDateTime.now(), param.getCurrentUserId());
     }
 }
