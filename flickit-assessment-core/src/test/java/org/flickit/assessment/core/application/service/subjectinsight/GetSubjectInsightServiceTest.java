@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectDefaultInsightPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
@@ -45,7 +45,7 @@ class GetSubjectInsightServiceTest {
     private LoadSubjectInsightPort loadSubjectInsightPort;
 
     @Mock
-    private LoadSubjectDefaultInsightPort loadSubjectDefaultInsightPort;
+    private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
 
     @Test
     void testGetSubjectInsight_subjectInsightExist_returnResult() {
@@ -71,7 +71,7 @@ class GetSubjectInsightServiceTest {
         assertEquals(subjectInsight.getIsValid(), result.assessorInsight().isValid());
         assertTrue(result.editable());
 
-        verifyNoInteractions(loadSubjectDefaultInsightPort);
+        verifyNoInteractions(loadSubjectReportInfoPort);
     }
 
     @Test
@@ -89,7 +89,7 @@ class GetSubjectInsightServiceTest {
                 .thenReturn(Optional.empty());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
                 .thenReturn(editable);
-        when(loadSubjectDefaultInsightPort.loadDefaultInsight(assessmentResult.getId(), param.getSubjectId())).thenReturn(subjectInsight);
+        when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId())).thenReturn(any());
 
         GetSubjectInsightUseCase.Result result = service.getSubjectInsight(param);
 
@@ -108,7 +108,7 @@ class GetSubjectInsightServiceTest {
         AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getSubjectInsight(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
-        verifyNoInteractions(loadSubjectDefaultInsightPort,
+        verifyNoInteractions(loadSubjectReportInfoPort,
                 validateAssessmentResultPort,
                 loadAssessmentResultPort,
                 loadSubjectInsightPort);
