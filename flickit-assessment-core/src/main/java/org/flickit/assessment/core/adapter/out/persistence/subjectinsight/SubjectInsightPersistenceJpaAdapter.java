@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
 
 @Component
 @RequiredArgsConstructor
@@ -75,15 +76,15 @@ public class SubjectInsightPersistenceJpaAdapter implements
         var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(assessmentResult.getKitVersionId());
         var attributes = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId());
 
-        return MessageBundle.message(GET_SUBJECT_INSIGHT_SUBJECT_INSIGHT_DEFAULT_TEMPLATE,
-                subject.getTitle(),
-                subject.getDescription(),
-                subjectValue.getConfidenceValue(),
-                subject.getTitle(),
-                maturityLevel.getIndex(),
-                maturityLevels.size(),
-                maturityLevel.getTitle(),
-                attributes.size(),
-                subject.getTitle());
+        return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
+            subject.getTitle(),
+            subject.getDescription(),
+            subjectValue.getConfidenceValue(),
+            subject.getTitle(),
+            maturityLevel.getIndex(),
+            maturityLevels.size(),
+            maturityLevel.getTitle(),
+            attributes.size(),
+            subject.getTitle());
     }
 }
