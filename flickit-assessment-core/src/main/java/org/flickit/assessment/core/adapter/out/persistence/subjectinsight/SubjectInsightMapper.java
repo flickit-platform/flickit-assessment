@@ -10,18 +10,17 @@ public class SubjectInsightMapper {
 
     public static SubjectInsightJpaEntity mapToJpaEntity(SubjectInsight subjectInsight) {
         return new SubjectInsightJpaEntity(subjectInsight.getAssessmentResultId(),
-                subjectInsight.getSubjectId(),
-                subjectInsight.getInsight(),
-                subjectInsight.getInsightTime(),
-                subjectInsight.getInsightBy());
+            subjectInsight.getSubjectId(),
+            subjectInsight.getInsight(),
+            subjectInsight.getInsightTime(),
+            subjectInsight.getInsightBy());
     }
 
-    public static SubjectInsight mapToDomainModel(SubjectInsightJpaEntity entity, boolean isValid) {
+    public static SubjectInsight mapToDomainModel(SubjectInsightJpaEntity entity) {
         return new SubjectInsight(entity.getAssessmentResultId(),
-                entity.getSubjectId(),
-                entity.getInsight(),
-                entity.getInsightTime(),
-                entity.getInsightBy(),
-                isValid);
+            entity.getSubjectId(),
+            entity.getInsight(),
+            entity.getInsightTime(),
+            entity.getInsightBy());
     }
 }
