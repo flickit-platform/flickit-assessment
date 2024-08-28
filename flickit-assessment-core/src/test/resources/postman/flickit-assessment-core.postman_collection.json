@@ -1522,6 +1522,33 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Subject Insight",
+					"request": {
+						"method": "Get",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/insights/subjects/15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+								"insights",
+								"subjects",
+								"15"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

@@ -48,7 +48,6 @@ class CreateSubjectInsightServiceTest {
     @Mock
     private UpdateSubjectInsightPort updateSubjectInsightPort;
 
-
     @Test
     void testCreateSubjectInsight_ValidParam_Persists() {
         CreateSubjectInsightUseCase.Param param = new CreateSubjectInsightUseCase.Param(UUID.randomUUID(),
