@@ -47,6 +47,8 @@ public class ToggleKitLikeService implements ToggleKitLikeUseCase {
             kit.getId(),
             param.getCurrentUserId(),
             likesCount,
-            liked));
+            liked),
+            likesCount,
+            liked);
     }
 }

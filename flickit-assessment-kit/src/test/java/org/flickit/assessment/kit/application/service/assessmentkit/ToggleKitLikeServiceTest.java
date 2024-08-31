@@ -111,9 +111,8 @@ class ToggleKitLikeServiceTest {
         when(countKitLikePort.countByKitId(param.getKitId())).thenReturn(0);
 
         ToggleKitLikeUseCase.Result result = service.toggleKitLike(param);
-        ToggleKitLikeNotificationCmd notificationCmd = (ToggleKitLikeNotificationCmd) result.notificationCmd();
-        assertEquals(0, notificationCmd.likesCount());
-        assertFalse(notificationCmd.liked());
+        assertEquals(0, result.count());
+        assertFalse(result.liked());
 
         verifyNoInteractions(createKitLikePort);
     }

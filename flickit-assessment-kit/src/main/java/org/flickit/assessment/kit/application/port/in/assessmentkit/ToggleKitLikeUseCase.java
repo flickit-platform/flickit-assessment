@@ -33,6 +33,6 @@ public interface ToggleKitLikeUseCase {
         }
     }
 
-    record Result(NotificationCmd notificationCmd) implements HasNotificationCmd {
+    record Result(NotificationCmd notificationCmd, int count, boolean liked) implements HasNotificationCmd {
     }
 }
