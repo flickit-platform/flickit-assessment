@@ -37,7 +37,6 @@ public class CreateAssessmentRestController {
     }
 
     private CreateAssessmentResponseDto toResponseDto(CreateAssessmentUseCase.Result result) {
-        CreateAssessmentNotificationCmd cmd = (CreateAssessmentNotificationCmd)result.notificationCmd();
-        return new CreateAssessmentResponseDto(cmd.assessmentId());
+        return new CreateAssessmentResponseDto(result.id());
     }
 }

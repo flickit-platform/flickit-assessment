@@ -45,5 +45,5 @@ public interface CreateAssessmentUseCase {
         }
     }
 
-    record Result(NotificationCmd notificationCmd) implements HasNotificationCmd {}
+    record Result(UUID id, NotificationCmd notificationCmd) implements HasNotificationCmd {}
 }
