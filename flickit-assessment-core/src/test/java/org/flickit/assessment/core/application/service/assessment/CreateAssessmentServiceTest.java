@@ -93,8 +93,7 @@ class CreateAssessmentServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(spaceOwnerId);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
-        CreateAssessmentNotificationCmd cmd = (CreateAssessmentNotificationCmd)result.notificationCmd();
-        assertEquals(expectedId, cmd.assessmentId());
+        assertEquals(expectedId, result.id());
 
         ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
         verify(createAssessmentPort).persist(createPortParam.capture());
@@ -140,8 +139,7 @@ class CreateAssessmentServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(currentUserId);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
-        CreateAssessmentNotificationCmd cmd = (CreateAssessmentNotificationCmd)result.notificationCmd();
-        assertEquals(expectedId, cmd.assessmentId());
+        assertEquals(expectedId, result.id());
 
         ArgumentCaptor<CreateAssessmentPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentPort.Param.class);
         verify(createAssessmentPort).persist(createPortParam.capture());
