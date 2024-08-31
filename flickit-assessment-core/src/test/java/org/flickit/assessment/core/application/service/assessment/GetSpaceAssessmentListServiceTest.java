@@ -116,7 +116,7 @@ class GetSpaceAssessmentListServiceTest {
     }
 
     @Test
-    void testGetSpaceAssessmentList_WhenUserDoesntHaveViewReportAssessmentPermission_ThenItemsMaturityLevelIsNull() {
+    void testGetSpaceAssessmentList_WhenUserDoesntHaveViewReportAssessmentPermission_ThenItemsMaturityLevelAndConfidenceValueAreNull() {
         Long spaceId = 123L;
         var assessment1 = AssessmentMother.assessmentListItem(spaceId, AssessmentKitMother.kit().getId());
 
@@ -143,6 +143,7 @@ class GetSpaceAssessmentListServiceTest {
         List<GetSpaceAssessmentListUseCase.SpaceAssessmentListItem> items = assessments.getItems();
         assertEquals(1, items.size());
         assertNull(items.getFirst().maturityLevel());
+        assertNull(items.getFirst().confidenceValue());
         assertFalse(items.getFirst().viewable());
     }
 
