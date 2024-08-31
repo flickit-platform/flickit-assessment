@@ -5,10 +5,10 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import java.util.UUID;
 
 public record CreateAssessmentNotificationPayload(
-        AssessmentModel assessmentModel,
-        UserModel assessmentCreator,
-        KitModel kitModel,
-        SpaceModel spaceModel) implements NotificationPayload {
+        AssessmentModel assessment,
+        UserModel user,
+        KitModel kit,
+        SpaceModel space) implements NotificationPayload {
 
     public record AssessmentModel(UUID id, String title) {}
 
