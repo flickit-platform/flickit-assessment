@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.answer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -12,9 +13,11 @@ import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
+import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
+import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationCmd;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,8 +46,10 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final UpdateAnswerPort updateAnswerPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
+    private final GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Override
+    @SendNotification
     public Result submitAnswer(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ANSWER_QUESTION))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -63,9 +68,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
         confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
 
-        if (loadedAnswer.isEmpty()) {
-            return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
-        }
+        if (loadedAnswer.isEmpty())
+            return saveAnswer(param, assessmentResult, answerOptionId, confidenceLevelId);
 
         var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null : loadedAnswer.get().getSelectedOption().getId();
 
@@ -85,19 +89,24 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswer.get().getId());
 
-        return new Result(loadedAnswer.get().getId());
+        return new Result(loadedAnswer.get().getId(), null);
     }
 
-    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
+    private Result saveAnswer(Param param, AssessmentResult assessmentResult, Long answerOptionId, Integer confidenceLevelId) {
+        var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
+        var assessmentResultId = assessmentResult.getId();
+        SubmitAnswerNotificationCmd notificationCmd = (progress.questionsCount() == progress.answersCount())
+            ? new SubmitAnswerNotificationCmd(assessmentResult.getAssessment().getCreatedBy(), assessmentResult.getId(), param.getCurrentUserId())
+            : null;
         if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
-            return new Result(null);
+            return new Result(null, null);
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
         createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId, param, assessmentResultId, answerOptionId,
             confidenceLevelId, PERSIST));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
         }
-        return new Result(savedAnswerId);
+        return new Result(savedAnswerId, notificationCmd);
     }
 
     private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
