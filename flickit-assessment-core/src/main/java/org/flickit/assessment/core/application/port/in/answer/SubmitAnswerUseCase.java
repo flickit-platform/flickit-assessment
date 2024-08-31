@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
 import org.flickit.assessment.common.application.domain.notification.NotificationCmd;
 
 import java.util.UUID;
@@ -49,6 +50,21 @@ public interface SubmitAnswerUseCase {
         }
     }
 
-    record Result(UUID id, NotificationCmd notificationCmd) {
+    interface Result {
+        UUID getId();
+    }
+
+    record ResultWithNotification(UUID id, NotificationCmd notificationCmd) implements Result, HasNotificationCmd {
+        @Override
+        public UUID getId() {
+            return id;
+        }
+    }
+
+    record SimpleResult(UUID id) implements Result {
+        @Override
+        public UUID getId() {
+            return id;
+        }
     }
 }
