@@ -239,4 +239,6 @@ public class ErrorMessageKey {
 
     public static final String GET_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-subject-insight.assessmentId.notNull";
     public static final String GET_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "get-subject-insight.subjectId.notNull";
+
+    public static final String CREATE_ASSESSMENT_ANALYSIS_ASSESSMENT_ID_NOT_NULL = "create-assessment-analysis.assessmentId.notNull";
 }
