@@ -7,48 +7,53 @@
 	},
 	"item": [
 		{
-			"name": "Create Advice",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "default",
-						"disabled": true
+			"name": "Advice",
+			"item": [
+				{
+					"name": "Create Advice",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
 					},
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"attributeLevelTargets\": [\n        {\n            \"attributeId\": \"1599\",\n            \"maturityLevelId\": \"1873\"\n        },\n        {\n            \"attributeId\": \"1600\",\n            \"maturityLevelId\": \"1873\"\n        }\n    ]\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attributeLevelTargets\": [\n        {\n            \"attributeId\": \"1599\",\n            \"maturityLevelId\": \"1873\"\n        },\n        {\n            \"attributeId\": \"1600\",\n            \"maturityLevelId\": \"1873\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/b064f522-da94-4047-9c19-50c3e43d0a3d/advice",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"b064f522-da94-4047-9c19-50c3e43d0a3d",
+								"advice"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/assessments/b064f522-da94-4047-9c19-50c3e43d0a3d/advice",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"assessments",
-						"b064f522-da94-4047-9c19-50c3e43d0a3d",
-						"advice"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	],
 	"variable": [

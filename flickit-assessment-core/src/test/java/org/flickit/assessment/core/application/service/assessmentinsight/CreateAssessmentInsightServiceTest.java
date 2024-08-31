@@ -91,13 +91,12 @@ class CreateAssessmentInsightServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(createAssessmentInsightPort.persist(any(AssessmentInsight.class))).thenReturn(assessmentInsightId);
 
-        var result = assertDoesNotThrow(() -> service.createAssessmentInsight(param));
+        assertDoesNotThrow(() -> service.createAssessmentInsight(param));
 
         verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT);
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
         verify(loadAssessmentInsightPort).loadByAssessmentResultId(assessmentResult.getId());
 
-        assertEquals(assessmentInsightId, result.id());
     }
 
     @Test
@@ -113,12 +112,10 @@ class CreateAssessmentInsightServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         doNothing().when(updateAssessmentInsightPort).updateInsight(any(AssessmentInsight.class));
 
-        var result = assertDoesNotThrow(() -> service.createAssessmentInsight(param));
+        assertDoesNotThrow(() -> service.createAssessmentInsight(param));
 
         verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT);
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
         verify(updateAssessmentInsightPort).updateInsight(isA(AssessmentInsight.class));
-
-        assertEquals(assessmentInsight.getId(), result.id());
     }
 }

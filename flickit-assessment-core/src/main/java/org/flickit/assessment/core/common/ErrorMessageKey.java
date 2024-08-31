@@ -219,7 +219,6 @@ public class ErrorMessageKey {
     public static final String GET_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-attribute-insight.assessmentId.notNull";
     public static final String GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "get-attribute-insight.attributeId.notNull";
     public static final String GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "get-attribute-insight.assessmentResult.notFound";
-    public static final String GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND = "get-attribute-insight.attributeInsight.notFound";
 
     public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-assessment-insight.assessmentId.notNull";
     public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_NULL = "create-assessment-insight.insight.notNull";
@@ -227,4 +226,17 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MAX = "create-assessment-insight.insight.size.max";
     public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-insight.assessmentResult.notFound";
     public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_FOUND = "create-assessment-insight.insight.notFound";
+
+    public static final String CREATE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-subject-insight.assessmentId.notNull";
+    public static final String CREATE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "create-subject-insight.subjectId.notNull";
+    public static final String CREATE_SUBJECT_INSIGHT_INSIGHT_NOT_NULL = "create-subject-insight.insight.notNull";
+    public static final String CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MIN = "create-subject-insight.insight.size.min";
+    public static final String CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MAX = "create-subject-insight.insight.size.max";
+    public static final String CREATE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-subject-insight.assessmentResult.notFound";
+
+    public static final String GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-assessment-insight.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-insight.assessmentResult.notFound";
+
+    public static final String GET_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-subject-insight.assessmentId.notNull";
+    public static final String GET_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "get-subject-insight.subjectId.notNull";
 }
