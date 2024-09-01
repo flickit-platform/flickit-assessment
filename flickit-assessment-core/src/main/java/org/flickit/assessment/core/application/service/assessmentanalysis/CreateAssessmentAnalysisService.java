@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateAssessmentAnalysis implements CreateAssessmentAnalysisUseCase {
+public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysisUseCase {
 
     @Override
     public Result createAiAnalysis(Param param) {
