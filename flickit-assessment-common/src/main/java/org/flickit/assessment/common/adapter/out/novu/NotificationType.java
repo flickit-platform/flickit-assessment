@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum NotificationType {
 
     GRANT_USER_ASSESSMENT_ROLE,
-    SUBMIT_ANSWER;
+    COMPLETE_ASSESSMENT;
 
     final String code;
 
