@@ -37,11 +37,10 @@ public class SubmitAnswerNotificationCreator implements
             return List.of();
         }
 
-        return (progress.answersCount() == progress.questionsCount())
+        return (progress.answersCount() == progress.questionsCount()) && (!cmd.assessorId().equals(cmd.targetUserId()))
             ? List.of(new NotificationEnvelope(cmd.targetUserId(), new SubmitAnswerNotificationPayload(
-            new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
-            new UserModel(user.get().getId(), user.get().getDisplayName()))))
-
+                new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
+                new UserModel(user.get().getId(), user.get().getDisplayName()))))
             : Collections.emptyList();
     }
 
