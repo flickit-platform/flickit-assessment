@@ -10,7 +10,6 @@ import org.flickit.assessment.core.application.service.assessment.notification.C
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.List;
 
 @Slf4j
