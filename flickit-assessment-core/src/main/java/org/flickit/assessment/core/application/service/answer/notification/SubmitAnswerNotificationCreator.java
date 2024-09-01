@@ -11,6 +11,7 @@ import org.flickit.assessment.core.application.service.answer.notification.Submi
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -25,6 +26,8 @@ public class SubmitAnswerNotificationCreator implements
 
     @Override
     public List<NotificationEnvelope> create(SubmitAnswerNotificationCmd cmd) {
+        if (cmd.assessmentId() == null) return Collections.emptyList();
+
         var assessment = getAssessmentPort.getAssessmentById(cmd.assessmentId());
         var user = loadUserPort.loadById(cmd.assessorId());
 

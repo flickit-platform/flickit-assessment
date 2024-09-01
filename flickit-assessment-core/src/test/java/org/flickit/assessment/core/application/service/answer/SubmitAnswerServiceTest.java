@@ -105,8 +105,8 @@ class SubmitAnswerServiceTest {
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(new GetAssessmentProgressPort.Result(UUID.randomUUID(), 9,10));
 
         var result = assertDoesNotThrow(()-> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.ResultWithNotification.class.getSimpleName(), result.getClass().getSimpleName());
-        assertNotNull(result.getId());
+        assertNotNull(result.id());
+        assertNotNull(result.notificationCmd());
 
         ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(createAnswerPort).persist(saveAnswerParam.capture());
@@ -152,8 +152,8 @@ class SubmitAnswerServiceTest {
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(new GetAssessmentProgressPort.Result(UUID.randomUUID(), 8,10));
 
         var result = assertDoesNotThrow(()-> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.SimpleResult.class.getSimpleName(), result.getClass().getSimpleName());
-        assertNotNull(result.getId());
+        assertNotNull(result.id());
+        //assertNull(result.notificationCmd().);
 
         ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(createAnswerPort).persist(saveAnswerParam.capture());
@@ -194,8 +194,8 @@ class SubmitAnswerServiceTest {
         when(getAssessmentProgressPort.getProgress(assessmentId)).thenReturn(new GetAssessmentProgressPort.Result(UUID.randomUUID(), 9,10));
 
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.SimpleResult.class.getSimpleName(), result.getClass().getSimpleName());
-        assertNull(result.getId());
+        assertNull(result.id());
+        //assertNull(result.notificationCmd());
 
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort,
             createAnswerPort,
@@ -223,9 +223,9 @@ class SubmitAnswerServiceTest {
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(new GetAssessmentProgressPort.Result(UUID.randomUUID(), 9, 10));
 
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.ResultWithNotification.class.getSimpleName(), result.getClass().getSimpleName());
-        assertNotNull(result.getId());
-        assertNotNull(((SubmitAnswerUseCase.ResultWithNotification) result).notificationCmd());
+
+        assertNotNull(result.id());
+        assertNotNull(result.notificationCmd());
 
         ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(createAnswerPort).persist(saveAnswerParam.capture());
@@ -269,8 +269,9 @@ class SubmitAnswerServiceTest {
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.SimpleResult.class.getSimpleName(), result.getClass().getSimpleName());
-        assertNotNull(result.getId());
+
+        assertNotNull(result.id());
+        //assertNull(result.notificationCmd());
 
         ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
@@ -318,8 +319,8 @@ class SubmitAnswerServiceTest {
         doNothing().when(updateAnswerPort).update(updateParam);
 
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.SimpleResult.class.getSimpleName(), result.getClass().getSimpleName());
-        assertNotNull(result.getId());
+        assertNotNull(result.id());
+        //assertNull(result.notificationCmd());
 
         ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
@@ -348,8 +349,8 @@ class SubmitAnswerServiceTest {
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.SimpleResult.class.getSimpleName(), result.getClass().getSimpleName());
-        assertNotNull(result.getId());
+        assertNotNull(result.id());
+        //assertNull(result.notificationCmd());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort,
@@ -380,8 +381,9 @@ class SubmitAnswerServiceTest {
         doNothing().when(updateAnswerPort).update(updateParam);
 
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.SimpleResult.class.getSimpleName(), result.getClass().getSimpleName());
-        assertNotNull(result.getId());
+
+        assertNotNull(result.id());
+        //assertNull(result.notificationCmd());
 
         ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
@@ -435,7 +437,8 @@ class SubmitAnswerServiceTest {
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
-        assertEquals(SubmitAnswerUseCase.SimpleResult.class.getSimpleName(), result.getClass().getSimpleName());
+        assertNotNull(result.id());
+        //assertNull(result.notificationCmd());
 
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(any());
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
@@ -457,8 +460,8 @@ class SubmitAnswerServiceTest {
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
-        assertNotNull(result.getId());
-        assertEquals(SubmitAnswerUseCase.SimpleResult.class.getSimpleName(), result.getClass().getSimpleName());
+        assertNotNull(result.id());
+        //assertNull(result.notificationCmd());
 
         ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());

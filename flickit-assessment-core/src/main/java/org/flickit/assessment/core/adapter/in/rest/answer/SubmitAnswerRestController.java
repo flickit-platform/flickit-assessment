@@ -41,6 +41,6 @@ public class SubmitAnswerRestController {
     }
 
     private SubmitAnswerResponseDto toResponseDto(SubmitAnswerUseCase.Result result) {
-        return new SubmitAnswerResponseDto(result.getId());
+        return new SubmitAnswerResponseDto(result.id());
     }
 }

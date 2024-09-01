@@ -50,24 +50,6 @@ public interface SubmitAnswerUseCase {
         }
     }
 
-    interface Result {
-
-        UUID getId();
-    }
-
-    record ResultWithNotification(UUID id, NotificationCmd notificationCmd) implements Result, HasNotificationCmd {
-
-        @Override
-        public UUID getId() {
-            return id;
-        }
-    }
-
-    record SimpleResult(UUID id) implements Result {
-
-        @Override
-        public UUID getId() {
-            return id;
-        }
+    record Result(UUID id, NotificationCmd notificationCmd) implements HasNotificationCmd {
     }
 }
