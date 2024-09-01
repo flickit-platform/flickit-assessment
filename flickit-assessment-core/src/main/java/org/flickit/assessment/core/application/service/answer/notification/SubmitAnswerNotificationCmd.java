@@ -4,7 +4,5 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 
 import java.util.UUID;
 
-public record SubmitAnswerNotificationCmd(UUID targetUserId,
-                                          UUID assessmentId,
-                                          UUID assessorId) implements NotificationCmd {
+public record SubmitAnswerNotificationCmd(UUID assessmentId, UUID assessorId) implements NotificationCmd {
 }

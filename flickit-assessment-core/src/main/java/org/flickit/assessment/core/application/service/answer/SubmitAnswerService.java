@@ -67,14 +67,13 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
 
         if (loadedAnswer.isEmpty())
-            return saveAnswer(param, assessmentResult, answerOptionId, confidenceLevelId);
+            return saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
 
         var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null : loadedAnswer.get().getSelectedOption().getId();
 
         var isNotApplicableChanged = !Objects.equals(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable());
         var isAnswerOptionChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(answerOptionId, loadedAnswerOptionId);
         var isConfidenceLevelChanged = !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
-        var notificationCmd = new SubmitAnswerNotificationCmd(assessmentResult.getAssessment().getCreatedBy(), param.getAssessmentId(), param.getCurrentUserId());
 
         if (isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged) {
             var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId,
@@ -88,14 +87,13 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswer.get().getId());
 
+        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId());
         return new Result(loadedAnswer.get().getId(), notificationCmd);
     }
 
-    private Result saveAnswer(Param param, AssessmentResult assessmentResult, Long answerOptionId, Integer confidenceLevelId) {
-        var notificationCmd = new SubmitAnswerNotificationCmd(assessmentResult.getAssessment().getCreatedBy(), param.getAssessmentId(), param.getCurrentUserId());
-        var assessmentResultId = assessmentResult.getId();
+    private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
         if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable())) {
-            return new Result(null, new SubmitAnswerNotificationCmd(null, null, null));
+            return new Result(null, new SubmitAnswerNotificationCmd(null, null));
         }
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
         createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId, param, assessmentResultId, answerOptionId,
@@ -103,6 +101,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
         }
+        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId());
         return new Result(savedAnswerId, notificationCmd);
     }
 
