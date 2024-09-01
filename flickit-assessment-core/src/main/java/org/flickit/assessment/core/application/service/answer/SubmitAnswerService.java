@@ -13,7 +13,6 @@ import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
@@ -46,7 +45,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final UpdateAnswerPort updateAnswerPort;
     private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Override
     @SendNotification
@@ -76,6 +74,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var isNotApplicableChanged = !Objects.equals(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable());
         var isAnswerOptionChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(answerOptionId, loadedAnswerOptionId);
         var isConfidenceLevelChanged = !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
+        var notificationCmd = new SubmitAnswerNotificationCmd(assessmentResult.getAssessment().getCreatedBy(), param.getAssessmentId(), param.getCurrentUserId());
 
         if (isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged) {
             var updateParam = toUpdateAnswerParam(loadedAnswer.get().getId(), answerOptionId, confidenceLevelId,
@@ -89,11 +88,11 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswer.get().getId());
 
-        return new Result(loadedAnswer.get().getId(), new SubmitAnswerNotificationCmd(null, null, null));
+        return new Result(loadedAnswer.get().getId(), notificationCmd);
     }
 
     private Result saveAnswer(Param param, AssessmentResult assessmentResult, Long answerOptionId, Integer confidenceLevelId) {
-        var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
+        var notificationCmd = new SubmitAnswerNotificationCmd(assessmentResult.getAssessment().getCreatedBy(), param.getAssessmentId(), param.getCurrentUserId());
         var assessmentResultId = assessmentResult.getId();
         if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable())) {
             return new Result(null, new SubmitAnswerNotificationCmd(null, null, null));
@@ -104,10 +103,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
         }
-        SubmitAnswerNotificationCmd notificationCmd = (progress.questionsCount() == progress.answersCount() + 1)
-            ? new SubmitAnswerNotificationCmd(assessmentResult.getAssessment().getCreatedBy(), param.getAssessmentId(), param.getCurrentUserId())
-            : null;
-        return Objects.equals(notificationCmd, null) ? new Result(savedAnswerId, new SubmitAnswerNotificationCmd(null, null, null)) : new Result(savedAnswerId, notificationCmd);
+        return new Result(savedAnswerId, notificationCmd);
     }
 
     private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
