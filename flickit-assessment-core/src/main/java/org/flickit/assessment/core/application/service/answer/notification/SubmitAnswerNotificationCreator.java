@@ -6,6 +6,8 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
+import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationPayload.AssessmentModel;
+import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationPayload.UserModel;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +35,8 @@ public class SubmitAnswerNotificationCreator implements
 
         return List.of(
             new NotificationEnvelope(cmd.targetUserId(), new SubmitAnswerNotificationPayload(
-                new SubmitAnswerNotificationPayload.AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
-                new SubmitAnswerNotificationPayload.UserModel(user.get().getId(), user.get().getDisplayName())
+                new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
+                new UserModel(user.get().getId(), user.get().getDisplayName())
             ))
         );
     }
