@@ -10,11 +10,15 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.adapter.out.novu.NotificationType.SUBMIT_ANSWER;
+
 @Component
 public class SubmitAnswerNovuRequestConvertor implements NovuRequestConverter {
+
     @Override
     public TriggerEventRequest convert(NotificationEnvelope envelope) {
         var triggerEvent = new TriggerEventRequest();
+        triggerEvent.setName(SUBMIT_ANSWER.getCode());
         triggerEvent.setTo(createSubscriberRequest(envelope.targetUserId()));
         triggerEvent.setPayload(Map.of("data", envelope.payload()));
         return triggerEvent;

@@ -89,24 +89,25 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswer.get().getId());
 
-        return new Result(loadedAnswer.get().getId(), null);
+        return new SimpleResult(loadedAnswer.get().getId());
     }
 
     private Result saveAnswer(Param param, AssessmentResult assessmentResult, Long answerOptionId, Integer confidenceLevelId) {
         var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
         var assessmentResultId = assessmentResult.getId();
-        SubmitAnswerNotificationCmd notificationCmd = (progress.questionsCount() == progress.answersCount())
-            ? new SubmitAnswerNotificationCmd(assessmentResult.getAssessment().getCreatedBy(), assessmentResult.getId(), param.getCurrentUserId())
-            : null;
-        if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
-            return new Result(null, null);
+        if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable())) {
+            return new SimpleResult(null);
+        }
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
         createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId, param, assessmentResultId, answerOptionId,
             confidenceLevelId, PERSIST));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
         }
-        return new Result(savedAnswerId, notificationCmd);
+        SubmitAnswerNotificationCmd notificationCmd = (progress.questionsCount() == progress.answersCount()+1)
+            ? new SubmitAnswerNotificationCmd(assessmentResult.getAssessment().getCreatedBy(), param.getAssessmentId(), param.getCurrentUserId())
+            : null;
+        return Objects.equals(notificationCmd, null) ? new SimpleResult(savedAnswerId) : new ResultWithNotification(savedAnswerId, notificationCmd);
     }
 
     private CreateAnswerPort.Param toCreateParam(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
