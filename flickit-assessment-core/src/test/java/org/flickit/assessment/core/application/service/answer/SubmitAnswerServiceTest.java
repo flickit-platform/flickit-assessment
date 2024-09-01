@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnsw
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
+import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationCmd;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
@@ -122,6 +123,10 @@ class SubmitAnswerServiceTest {
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
         assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
 
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
+
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.FALSE);
@@ -142,6 +147,10 @@ class SubmitAnswerServiceTest {
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
         assertNull(result.id());
         assertNotNull(result.notificationCmd());
+
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
 
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort,
             createAnswerPort,
@@ -191,6 +200,10 @@ class SubmitAnswerServiceTest {
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
         assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
 
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
+
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
         verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class), eq(Boolean.FALSE), eq(Boolean.FALSE));
@@ -236,6 +249,10 @@ class SubmitAnswerServiceTest {
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
         assertEquals(HistoryType.UPDATE, saveAnswerHistoryParam.getValue().getHistoryType());
 
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
+
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
@@ -275,6 +292,10 @@ class SubmitAnswerServiceTest {
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
         assertEquals(currentUserId, updateAnswerParam.getValue().currentUserId());
 
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
+
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(any(UUID.class), eq(Boolean.FALSE), eq(Boolean.TRUE));
@@ -296,6 +317,10 @@ class SubmitAnswerServiceTest {
         var result = assertDoesNotThrow(() -> service.submitAnswer(param));
         assertNotNull(result.id());
         assertNotNull(result.notificationCmd());
+
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort,
@@ -336,6 +361,10 @@ class SubmitAnswerServiceTest {
         assertEquals(ConfidenceLevel.getDefault().getId(), updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(newIsNotApplicable, updateAnswerParam.getValue().isNotApplicable());
         assertEquals(currentUserId, updateAnswerParam.getValue().currentUserId());
+
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
@@ -384,6 +413,10 @@ class SubmitAnswerServiceTest {
         assertNotNull(result.id());
         assertNotNull(result.notificationCmd());
 
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
+
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(any());
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verifyNoInteractions(createAnswerPort, updateAnswerPort, createAnswerHistoryPort, invalidateAssessmentResultPort);
@@ -413,6 +446,10 @@ class SubmitAnswerServiceTest {
         assertEquals(answerOption.getId(), updateAnswerParam.getValue().answerOptionId());
         assertEquals(newConfidenceLevelId, updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
+
+        var cmd = (SubmitAnswerNotificationCmd) result.notificationCmd();
+        assertNotNull(cmd.assessmentId());
+        assertNotNull(cmd.assessorId());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));

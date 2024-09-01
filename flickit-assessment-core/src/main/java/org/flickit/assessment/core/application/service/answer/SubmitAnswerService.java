@@ -92,8 +92,9 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private Result saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId) {
+        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId());
         if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable())) {
-            return new Result(null, new SubmitAnswerNotificationCmd(null, null));
+            return new Result(null, notificationCmd);
         }
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
         createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId, param, assessmentResultId, answerOptionId,
@@ -101,7 +102,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
         }
-        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId());
         return new Result(savedAnswerId, notificationCmd);
     }
 
