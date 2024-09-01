@@ -66,11 +66,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         grantAssessmentAccesses(param, id);
 
-        return new Result(id, new CreateAssessmentNotificationCmd(id,
-            param.getCurrentUserId(),
-            param.getTitle(),
-            param.getKitId(),
-            param.getSpaceId()));
+        return new Result(id, new CreateAssessmentNotificationCmd(param.getKitId()));
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {
