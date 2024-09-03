@@ -16,7 +16,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SubmitAnswerRestController {
 
-
     private final SubmitAnswerUseCase useCase;
     private final UserContext userContext;
 
@@ -24,7 +23,8 @@ public class SubmitAnswerRestController {
     public ResponseEntity<SubmitAnswerResponseDto> submitAnswer(@PathVariable("assessmentId") UUID assessmentId,
                                                                 @RequestBody SubmitAnswerRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        SubmitAnswerResponseDto responseDto = toResponseDto(useCase.submitAnswer(toParam(assessmentId, requestDto, currentUserId)));
+        var result = useCase.submitAnswer(toParam(assessmentId, requestDto, currentUserId));
+        var responseDto = new SubmitAnswerResponseDto(result.id());
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
@@ -38,9 +38,5 @@ public class SubmitAnswerRestController {
             requestDto.isNotApplicable(),
             currentUserId
         );
-    }
-
-    private SubmitAnswerResponseDto toResponseDto(SubmitAnswerUseCase.Result result) {
-        return new SubmitAnswerResponseDto(result.id());
     }
 }
