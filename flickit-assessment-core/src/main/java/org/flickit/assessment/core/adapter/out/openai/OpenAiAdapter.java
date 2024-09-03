@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.core.application.domain.Attribute;
+import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +19,9 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class OpenAiAdapter implements CreateAttributeAiInsightPort {
+public class OpenAiAdapter implements
+    CreateAttributeAiInsightPort,
+    CreateAssessmentAiAnalysisPort {
 
     private static final String CHOICES_FIELD = "choices";
     private static final String MESSAGE_FIELD = "message";
@@ -63,6 +66,11 @@ public class OpenAiAdapter implements CreateAttributeAiInsightPort {
         } else {
             throw new IOException("Invalid response format: 'choices' field is missing");
         }
+    }
+
+    @Override
+    public String generateAssessmentAnalysis(String fileContent) {
+        return "";
     }
 
     private record OpenAiRequest(String model, List<Message> messages, double temperature) {
