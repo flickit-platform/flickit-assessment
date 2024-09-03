@@ -71,7 +71,8 @@ public enum AssessmentUserRole {
             VIEW_ASSESSMENT,
             VIEW_SUBJECT_PROGRESS,
             VIEW_SUBJECT_REPORT,
-            VIEW_EVIDENCE_ATTACHMENT)),
+            VIEW_EVIDENCE_ATTACHMENT,
+            EXPORT_ASSESSMENT_REPORT)),
         COMMENTER_PERMISSIONS(Set.of(
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
@@ -88,7 +89,6 @@ public enum AssessmentUserRole {
             VIEW_ATTRIBUTE_SCORE_DETAIL,
             CREATE_ADVICE,
             VIEW_ANSWER_HISTORY_LIST,
-            EXPORT_ASSESSMENT_REPORT,
             CREATE_ATTRIBUTE_INSIGHT,
             CREATE_ASSESSMENT_INSIGHT,
             CREATE_SUBJECT_INSIGHT)),
