@@ -13,21 +13,19 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class AssessmentAnalysisPersistenceJpaAdapter implements
-    LoadAssessmentAnalysisPort,
-    CreateAssessmentAnalysisPort {
+    CreateAssessmentAnalysisPort,
+    LoadAssessmentAnalysisPort {
 
     private final AssessmentAnalysisJpaRepository repository;
 
     @Override
-    public UUID persist(AssessmentAnalysis assessmentAnalysis) {
-        var unsavedEntity = AssessmentAnalysisMapper.toJpaEntity(assessmentAnalysis);
-        var savedEntity = repository.save(unsavedEntity);
-        return savedEntity.getId();
+    public void create(AssessmentAnalysis assessmentAnalysis) {
+        repository.update(assessmentAnalysis.getId(), assessmentAnalysis.getAiAnalysis(), assessmentAnalysis.getAiAnalysisTime());
     }
 
     @Override
-    public Optional<AssessmentAnalysis> loadById(UUID assessmentAnalysisId) {
-        var result = repository.findById(assessmentAnalysisId);
-        return result.map(AssessmentAnalysisMapper::toDomain);
+    public Optional<AssessmentAnalysis> loadAssessmentAnalysis(UUID assessmentResultId, int type) {
+        return repository.findByAssessmentResultIdAndType(assessmentResultId, type)
+            .map(AssessmentAnalysisMapper::toDomain);
     }
 }
