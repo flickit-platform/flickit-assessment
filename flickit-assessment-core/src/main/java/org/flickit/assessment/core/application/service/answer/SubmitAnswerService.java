@@ -8,6 +8,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.notification.SubmitAnswerNotificationCmd;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
@@ -16,7 +17,6 @@ import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnsw
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
-import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationCmd;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

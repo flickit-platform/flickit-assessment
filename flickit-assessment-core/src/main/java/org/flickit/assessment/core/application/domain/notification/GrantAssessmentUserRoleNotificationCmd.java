@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.assessmentuserrole.notification;
+package org.flickit.assessment.core.application.domain.notification;
 
 import org.flickit.assessment.common.application.domain.notification.NotificationCmd;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;

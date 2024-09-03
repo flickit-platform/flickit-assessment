@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.notification.NotificationCreator;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.core.application.domain.Assessment;
+import org.flickit.assessment.core.application.domain.notification.SubmitAnswerNotificationCmd;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;

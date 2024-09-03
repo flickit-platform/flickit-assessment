@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
-import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationCmd;
+import org.flickit.assessment.core.application.domain.notification.SubmitAnswerNotificationCmd;
 
 import java.util.UUID;
 

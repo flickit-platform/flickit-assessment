@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.assessment.notification;
+package org.flickit.assessment.core.application.domain.notification;
 
 import org.flickit.assessment.common.application.domain.notification.NotificationCmd;
 
