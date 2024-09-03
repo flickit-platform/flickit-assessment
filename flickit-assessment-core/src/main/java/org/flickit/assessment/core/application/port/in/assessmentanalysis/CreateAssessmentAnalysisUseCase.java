@@ -13,7 +13,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSME
 
 public interface CreateAssessmentAnalysisUseCase {
 
-    Result createAiAnalysis(Param param);
+    void createAiAnalysis(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

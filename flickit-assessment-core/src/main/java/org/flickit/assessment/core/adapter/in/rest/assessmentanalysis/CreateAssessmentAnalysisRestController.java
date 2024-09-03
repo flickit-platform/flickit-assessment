@@ -23,8 +23,8 @@ public class CreateAssessmentAnalysisRestController {
     @PostMapping("/assessments/{assessmentId}/analysis")
     public ResponseEntity<Result> createAssessmentAiAnalysis(@PathVariable("assessmentId") UUID assessmentId, @RequestParam("type") Integer type) {
         var currentUserId = userContext.getUser().id();
-        var result = createAssessmentAnalysisUseCase.createAiAnalysis(toParam(assessmentId, type, currentUserId));
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        createAssessmentAnalysisUseCase.createAiAnalysis(toParam(assessmentId, type, currentUserId));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, Integer type, UUID currentUserId) {
