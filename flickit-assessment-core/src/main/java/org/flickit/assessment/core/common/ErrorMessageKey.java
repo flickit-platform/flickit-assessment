@@ -240,5 +240,7 @@ public class ErrorMessageKey {
     public static final String GET_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-subject-insight.assessmentId.notNull";
     public static final String GET_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "get-subject-insight.subjectId.notNull";
 
-    public static final String CREATE_ASSESSMENT_ANALYSIS_ASSESSMENT_ID_NOT_NULL = "create-assessment-analysis.assessmentId.notNull";
+    public static final String CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ID_NOT_NULL = "create-assessment-ai-analysis.assessmentId.notNull";
+    public static final String CREATE_ASSESSMENT_AI_ANALYSIS_TYPE_NOT_NULL = "create-assessment-ai-analysis.type.notNull";
+    public static final String CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-ai-analysis.assessmentResult.notFound";
 }

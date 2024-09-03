@@ -15,7 +15,7 @@ public class AssessmentAnalysis {
 
     private final UUID assessmentResultId;
 
-    private final int type;
+    private final Integer type;
 
     private final String aiAnalysis;
 

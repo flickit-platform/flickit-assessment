@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -20,13 +21,13 @@ public class CreateAssessmentAnalysisRestController {
     private final UserContext userContext;
 
     @PostMapping("/assessments/{assessmentId}/analysis")
-    public ResponseEntity<Result> createAssessmentAiAnalysis(@PathVariable("assessmentId") UUID assessmentId) {
+    public ResponseEntity<Result> createAssessmentAiAnalysis(@PathVariable("assessmentId") UUID assessmentId, @RequestParam("type") Integer type) {
         var currentUserId = userContext.getUser().id();
-        var result = createAssessmentAnalysisUseCase.createAiAnalysis(toParam(assessmentId, currentUserId));
+        var result = createAssessmentAnalysisUseCase.createAiAnalysis(toParam(assessmentId, type, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, UUID currentUserId) {
-        return new Param(assessmentId, currentUserId);
+    private Param toParam(UUID assessmentId, Integer type, UUID currentUserId) {
+        return new Param(assessmentId, type, currentUserId);
     }
 }
