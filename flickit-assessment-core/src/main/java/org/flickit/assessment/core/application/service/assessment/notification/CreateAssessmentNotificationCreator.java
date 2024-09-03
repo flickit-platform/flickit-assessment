@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.notification.NotificationCreator;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitInfoPort;
 import org.flickit.assessment.core.application.service.assessment.notification.CreateAssessmentNotificationPayload.KitModel;
 import org.springframework.stereotype.Component;
