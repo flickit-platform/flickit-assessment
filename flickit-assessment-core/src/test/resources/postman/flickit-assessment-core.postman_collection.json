@@ -471,7 +471,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/insights",
+                          "raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/insight",
 							"host": [
 								"{{base_url}}"
 							],
@@ -479,7 +479,7 @@
 								"{{api_path}}",
 								"assessments",
 								"e4f4a1cc-f80f-4b30-aaea-27f642a3965b",
-								"insights"
+                              "insight"
 							]
 						}
 					},
@@ -1522,29 +1522,49 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Get Subject Insight",
+                }
+            ]
+        },
+      {
+        "name": "AssessmentAiAnalysis",
+        "item": [
+          {
+            "name": "Create Assessment Ai Analysis",
 					"request": {
-						"method": "Get",
+                      "method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{authorization_header}}"
+                              "value": "{{authorization_header}}",
+                              "type": "text"
 							}
 						],
+                      "body": {
+                        "mode": "raw",
+                        "raw": "{\n    \"type\": 1\n}",
+                        "options": {
+                          "raw": {
+                            "language": "json"
+                          }
+                        }
+                      },
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/insights/subjects/15",
+                          "raw": "{{base_url}}/{{api_path}}/assessments/9461d811-938b-40fe-8b9b-b1fcc8c32217/analysis",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
-								"insights",
-								"subjects",
-								"15"
+                              "9461d811-938b-40fe-8b9b-b1fcc8c32217",
+                              "analysis"
+                            ],
+                          "query": [
+                            {
+                              "key": "type",
+                              "value": "1",
+                              "disabled": true
+                            }
 							]
 						}
 					},
