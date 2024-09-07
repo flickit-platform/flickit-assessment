@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_NOTIFICATION_TITLE;
+import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE;
 
 @Slf4j
 @Component
@@ -39,14 +39,12 @@ public class GrantAssessmentUserRoleNotificationCreator
             log.warn("assessment or user not found");
             return List.of();
         }
-        return List.of(
-            new NotificationEnvelope(cmd.targetUserId(),
-                new GrantAssessmentUserRoleNotificationPayload(
-                    new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
-                    new UserModel(user.get().getId(), user.get().getDisplayName()),
-                    new RoleModel(cmd.role().getTitle())),
-                MessageBundle.message(GRANT_ASSESSMENT_USER_ROLE_NOTIFICATION_TITLE))
-        );
+        var title = MessageBundle.message(NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE);
+        var payload = new GrantAssessmentUserRoleNotificationPayload(
+            new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
+            new UserModel(user.get().getId(), user.get().getDisplayName()),
+            new RoleModel(cmd.role().getTitle()));
+        return List.of(new NotificationEnvelope(cmd.targetUserId(), title, payload));
     }
 
     @Override

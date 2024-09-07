@@ -3,6 +3,6 @@ package org.flickit.assessment.common.application.domain.notification;
 import java.util.UUID;
 
 public record NotificationEnvelope(UUID targetUserId,
-                                   NotificationPayload payload,
-                                   String notificationTitle) {
+                                   String title,
+                                   NotificationPayload payload) {
 }

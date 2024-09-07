@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_NOTIFICATION_TITLE;
+import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TITLE_CREATE_ASSESSMENT;
 
 @Slf4j
 @Component
@@ -27,10 +27,11 @@ public class CreateAssessmentNotificationCreator implements NotificationCreator<
     @Override
     public List<NotificationEnvelope> create(CreateAssessmentNotificationCmd cmd) {
         try {
+            var title = MessageBundle.message(NOTIFICATION_TITLE_CREATE_ASSESSMENT);
             var kitInfo = loadKitInfoPort.loadKitInfo(cmd.kitId());
             KitModel kitModel = new KitModel(cmd.kitId(), kitInfo.title());
-            CreateAssessmentNotificationPayload payload = new CreateAssessmentNotificationPayload(kitModel);
-            return List.of(new NotificationEnvelope(kitInfo.createdBy(), payload, MessageBundle.message(CREATE_ASSESSMENT_NOTIFICATION_TITLE)));
+            var payload = new CreateAssessmentNotificationPayload(kitModel);
+            return List.of(new NotificationEnvelope(kitInfo.createdBy(), title, payload));
         } catch (ResourceNotFoundException e) {
             log.warn("kit not found");
             return List.of();

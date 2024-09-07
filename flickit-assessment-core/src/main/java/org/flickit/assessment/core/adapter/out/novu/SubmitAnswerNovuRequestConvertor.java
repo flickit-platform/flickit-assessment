@@ -20,7 +20,7 @@ public class SubmitAnswerNovuRequestConvertor implements NovuRequestConverter {
         var triggerEvent = new TriggerEventRequest();
         triggerEvent.setName(COMPLETE_ASSESSMENT.getCode());
         triggerEvent.setTo(createSubscriberRequest(envelope.targetUserId()));
-        triggerEvent.setPayload(Map.of("data", envelope.payload(), "title", envelope.notificationTitle()));
+        triggerEvent.setPayload(Map.of("data", envelope.payload(), "title", envelope.title()));
         return triggerEvent;
     }
 
