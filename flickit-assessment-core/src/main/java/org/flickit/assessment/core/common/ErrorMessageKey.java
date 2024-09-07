@@ -239,4 +239,10 @@ public class ErrorMessageKey {
 
     public static final String GET_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-subject-insight.assessmentId.notNull";
     public static final String GET_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "get-subject-insight.subjectId.notNull";
+
+    public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-assessment-analysis-insight.analysisId.notNull";
+    public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_NOT_BLANK = "get-assessment-analysis-insight.type.notBlank";
+    public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_INVALID = "get-assessment-analysis-insight.type.invalid";
+    public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-analysis-insight.assessmentResult.notFound";
+    public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_ANALYSIS_NOT_FOUND = "get-assessment-analysis-insight.assessmentAnalysis.notFound";
 }
