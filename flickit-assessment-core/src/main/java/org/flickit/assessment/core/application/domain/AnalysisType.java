@@ -1,11 +1,15 @@
 package org.flickit.assessment.core.application.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
 import java.util.stream.Stream;
 
 @Getter
+@RequiredArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AnalysisType {
 
     CODE_QUALITY;
