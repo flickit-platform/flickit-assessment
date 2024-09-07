@@ -42,7 +42,8 @@ public enum AssessmentPermission {
     VIEW_EVIDENCE("viewEvidence"),
     DELETE_ASSESSMENT_INVITE("deleteAssessmentInvite"),
     CREATE_ASSESSMENT_INSIGHT("createAssessmentInsight"),
-    CREATE_SUBJECT_INSIGHT("createSubjectInsight");
+    CREATE_SUBJECT_INSIGHT("createSubjectInsight"),
+    ADD_ASSESSMENT_ANALYSIS_INPUT_FILE("addAssessmentAnalysisInputFile");
 
     private final String code;
 }
