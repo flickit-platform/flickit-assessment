@@ -12,7 +12,7 @@ import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadA
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisInputPathPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
+import org.flickit.assessment.core.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAssessmentAnalysisInputFilePort;
 import org.flickit.assessment.core.common.ErrorMessageKey;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class AddAssessmentAnalysisInputFileService implements AddAssessmentAnaly
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
     private final UploadAssessmentAnalysisInputFilePort uploadAssessmentAnalysisInputFilePort;
-    private final DeleteEvidenceAttachmentFilePort deleteFilePort;
+    private final DeleteFilePort deleteFilePort;
     private final CreateAssessmentAnalysisPort createAssessmentAnalysisPort;
     private final UpdateAssessmentAnalysisInputPathPort updateAssessmentAnalysisInputPathPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -59,7 +59,7 @@ public class AddAssessmentAnalysisInputFileService implements AddAssessmentAnaly
             createAssessmentAnalysisPort.persist(toCreateParam(assessmentResult.getId(), analysisType, inputPath));
         } else {
             String oldInputPath = assessmentAnalysis.get().getInputPath();
-            deleteFilePort.deleteEvidenceAttachmentFile(oldInputPath);
+            deleteFilePort.deleteFile(oldInputPath);
             updateAssessmentAnalysisInputPathPort.update(assessmentAnalysis.get().getId(), inputPath);
         }
 

@@ -8,7 +8,7 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
-import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
+import org.flickit.assessment.core.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAssessmentAnalysisInputFilePort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.flickit.assessment.data.config.MinioConfigProperties;
@@ -27,7 +27,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_F
 public class MinioAdapter implements
     CreateFileDownloadLinkPort,
     UploadEvidenceAttachmentPort,
-    DeleteEvidenceAttachmentFilePort,
+    DeleteFilePort,
     UploadAttributeScoresFilePort,
     UploadAssessmentAnalysisInputFilePort {
 
@@ -95,7 +95,7 @@ public class MinioAdapter implements
 
     @SneakyThrows
     @Override
-    public void deleteEvidenceAttachmentFile(String path) {
+    public void deleteFile(String path) {
         String bucketName = path.replaceFirst("/.*", "");
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
