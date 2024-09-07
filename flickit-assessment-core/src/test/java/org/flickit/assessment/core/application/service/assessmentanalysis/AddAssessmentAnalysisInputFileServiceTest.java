@@ -102,7 +102,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
         AddAssessmentAnalysisInputFileUseCase.Param param = new AddAssessmentAnalysisInputFileUseCase.Param(
             UUID.randomUUID(),
             inputFile,
-            1,
+            0,
             UUID.randomUUID()
         );
 
