@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.assessment.notification;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.notification.NotificationCreator;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_NOTIFICATION_TITLE;
 
 @Slf4j
 @Component
@@ -27,7 +30,7 @@ public class CreateAssessmentNotificationCreator implements NotificationCreator<
             var kitInfo = loadKitInfoPort.loadKitInfo(cmd.kitId());
             KitModel kitModel = new KitModel(cmd.kitId(), kitInfo.title());
             CreateAssessmentNotificationPayload payload = new CreateAssessmentNotificationPayload(kitModel);
-            return List.of(new NotificationEnvelope(kitInfo.createdBy(), payload));
+            return List.of(new NotificationEnvelope(kitInfo.createdBy(), payload, MessageBundle.message(CREATE_ASSESSMENT_NOTIFICATION_TITLE)));
         } catch (ResourceNotFoundException e) {
             log.warn("kit not found");
             return List.of();

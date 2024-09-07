@@ -23,6 +23,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
     public static final String CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID = "create-assessment.duplicate.titleAndSpaceId";
     public static final String CREATE_ASSESSMENT_KIT_NOT_ALLOWED = "create-assessment.kit.notAllowed";
+    public static final String CREATE_ASSESSMENT_NOTIFICATION_TITLE = "create-assessment.notification-title";
 
     public static final String CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND = "create-assessmentresult.assessmentId.notFound";
 
@@ -90,6 +91,7 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_ID_NOT_NULL = "get-assessment-progress.assessment.id.notNull";
     public static final String GET_ASSESSMENT_PROGRESS_ASSESSMENT_NOT_FOUND = "get-assessment-progress.assessment.notFound";
+    public static final String GET_ASSESSMENT_PROGRESS_NOTIFICATION_TITLE = "get-assessment-progress.notification-title";
 
     public static final String REPORT_SUBJECT_ASSESSMENT_ID_NOT_NULL = "report-subject.assessment.id.notNull";
     public static final String REPORT_SUBJECT_ID_NOT_NULL = "report-subject.subject.id.notNull";
@@ -146,6 +148,7 @@ public class ErrorMessageKey {
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_NULL = "grant-assessment-user-role.roleId.notNull";
     public static final String GRANT_ASSESSMENT_USER_ROLE_ROLE_ID_NOT_FOUND = "grant-assessment-user-role.roleId.notFound";
     public static final String GRANT_ASSESSMENT_USER_ROLE_DUPLICATE_USER_ACCESS = "grant-assessment-user-role.duplicateUserAccess";
+    public static final String GRANT_ASSESSMENT_USER_ROLE_NOTIFICATION_TITLE = "grant-assessment-user-role.notification-title";
 
     public static final String UPDATE_ASSESSMENT_USER_ROLE_ASSESSMENT_ID_NOT_NULL = "update-assessment-user-role.assessmentId.notNull";
     public static final String UPDATE_ASSESSMENT_USER_ROLE_USER_ID_NOT_NULL = "update-assessment-user-role.userId.notNull";

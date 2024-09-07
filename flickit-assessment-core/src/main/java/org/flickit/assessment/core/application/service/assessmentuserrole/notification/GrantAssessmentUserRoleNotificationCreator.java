@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentuserrole.notif
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.notification.NotificationCreator;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.core.application.domain.Assessment;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ASSESSMENT_USER_ROLE_NOTIFICATION_TITLE;
 
 @Slf4j
 @Component
@@ -37,11 +40,12 @@ public class GrantAssessmentUserRoleNotificationCreator
             return List.of();
         }
         return List.of(
-            new NotificationEnvelope(cmd.targetUserId(), new GrantAssessmentUserRoleNotificationPayload(
-                new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
-                new UserModel(user.get().getId(), user.get().getDisplayName()),
-                new RoleModel(cmd.role().getTitle())
-            ))
+            new NotificationEnvelope(cmd.targetUserId(),
+                new GrantAssessmentUserRoleNotificationPayload(
+                    new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
+                    new UserModel(user.get().getId(), user.get().getDisplayName()),
+                    new RoleModel(cmd.role().getTitle())),
+                MessageBundle.message(GRANT_ASSESSMENT_USER_ROLE_NOTIFICATION_TITLE))
         );
     }
 
