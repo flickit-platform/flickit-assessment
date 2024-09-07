@@ -20,7 +20,7 @@ public class GrantAssessmentUserRoleNovuRequestConverter implements NovuRequestC
         var triggerEvent = new TriggerEventRequest();
         triggerEvent.setName(GRANT_USER_ASSESSMENT_ROLE.getCode());
         triggerEvent.setTo(createSubscriberRequest(envelope.targetUserId()));
-        triggerEvent.setPayload(Map.of("data", envelope.payload()));
+        triggerEvent.setPayload(Map.of("data", envelope.payload(), "title", envelope.title()));
         return triggerEvent;
     }
 
