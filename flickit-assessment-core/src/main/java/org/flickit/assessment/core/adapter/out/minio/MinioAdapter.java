@@ -9,6 +9,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.UploadEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAssessmentAnalysisInputFilePort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,8 @@ public class MinioAdapter implements
     CreateFileDownloadLinkPort,
     UploadEvidenceAttachmentPort,
     DeleteEvidenceAttachmentFilePort,
-    UploadAttributeScoresFilePort {
+    UploadAttributeScoresFilePort,
+    UploadAssessmentAnalysisInputFilePort {
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -94,7 +96,7 @@ public class MinioAdapter implements
     @SneakyThrows
     @Override
     public void deleteEvidenceAttachmentFile(String path) {
-        String bucketName = path.replaceFirst("/.*" ,"");
+        String bucketName = path.replaceFirst("/.*", "");
         String objectName = path.replaceFirst("^" + bucketName + "/", "");
 
         checkFileExistence(bucketName, objectName);
@@ -121,6 +123,17 @@ public class MinioAdapter implements
 
         String objectName = uniqueDir + SLASH + fileName;
         writeFile(bucketName, objectName, content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return bucketName + SLASH + objectName;
+    }
+
+    @SneakyThrows
+    @Override
+    public String uploadAssessmentAnalysisInputFile(MultipartFile inputFile) {
+        String bucketName = properties.getBucketNames().getReport();
+        UUID uniqueDir = UUID.randomUUID();
+
+        String objectName = uniqueDir + SLASH + inputFile.getOriginalFilename();
+        writeFile(bucketName, objectName, inputFile.getInputStream(), inputFile.getContentType());
         return bucketName + SLASH + objectName;
     }
 }
