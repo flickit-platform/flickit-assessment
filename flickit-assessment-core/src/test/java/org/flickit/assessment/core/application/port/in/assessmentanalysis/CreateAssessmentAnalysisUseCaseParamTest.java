@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_TYPE_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateAssessmentAiAnalysisUseCaseParamTest {
 
@@ -26,7 +26,7 @@ class CreateAssessmentAiAnalysisUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAnalysisUseCase.Param(assessmentId, 1, currentUserId));
+            () -> new CreateAssessmentAnalysisUseCase.Param(assessmentId, null, currentUserId));
         assertThat(throwable).hasMessage("type: " + CREATE_ASSESSMENT_AI_ANALYSIS_TYPE_NOT_NULL);
     }
 
