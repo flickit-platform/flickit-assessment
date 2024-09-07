@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.User;
+import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.application.service.assessmentuserrole.notification.GrantAssessmentUserRoleNotificationPayload.AssessmentModel;
