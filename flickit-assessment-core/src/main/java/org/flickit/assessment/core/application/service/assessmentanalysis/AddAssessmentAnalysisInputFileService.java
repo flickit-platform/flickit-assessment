@@ -14,7 +14,6 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAssessmentAnalysisInputFilePort;
-import org.flickit.assessment.core.common.ErrorMessageKey;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +22,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ANALYSIS_TYPE_ID_NOT_VALID;
 
 @Service
 @Transactional
@@ -33,10 +33,10 @@ public class AddAssessmentAnalysisInputFileService implements AddAssessmentAnaly
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
     private final UploadAssessmentAnalysisInputFilePort uploadAssessmentAnalysisInputFilePort;
-    private final DeleteFilePort deleteFilePort;
+    private final LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
     private final CreateAssessmentAnalysisPort createAssessmentAnalysisPort;
+    private final DeleteFilePort deleteFilePort;
     private final UpdateAssessmentAnalysisInputPathPort updateAssessmentAnalysisInputPathPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
@@ -46,7 +46,7 @@ public class AddAssessmentAnalysisInputFileService implements AddAssessmentAnaly
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (!AnalysisType.isValidId(param.getAnalysisType()))
-            throw new ResourceNotFoundException(ErrorMessageKey.ANALYSIS_TYPE_ID_NOT_VALID);
+            throw new ResourceNotFoundException(ANALYSIS_TYPE_ID_NOT_VALID);
 
         var analysisType = AnalysisType.valueOfById(param.getAnalysisType());
 
