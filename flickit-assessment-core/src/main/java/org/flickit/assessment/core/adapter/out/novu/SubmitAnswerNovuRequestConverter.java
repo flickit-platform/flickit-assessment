@@ -13,7 +13,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.adapter.out.novu.NotificationType.COMPLETE_ASSESSMENT;
 
 @Component
-public class SubmitAnswerNovuRequestConvertor implements NovuRequestConverter {
+public class SubmitAnswerNovuRequestConverter implements NovuRequestConverter {
 
     @Override
     public TriggerEventRequest convert(NotificationEnvelope envelope) {
