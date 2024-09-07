@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
-import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.CreateAssessmentAnalysisPort;
@@ -21,8 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional
@@ -31,7 +31,7 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
 
     private final AssessmentPermissionChecker assessmentPermissionChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final ValidateAssessmentResult validateAssessmentResult;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
     private final ReadAssessmentAnalysisFilePort readAssessmentAnalysisFilePort;
     private final CreateAssessmentAnalysisPort createAssessmentAnalysisPort;
@@ -47,7 +47,7 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
         if (assessmentResult.isEmpty())
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND);
 
-        validateAssessmentResult.validate(param.getAssessmentId());
+        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentAnalysis = loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.get().getId(), param.getType());
         if (assessmentAnalysis.isEmpty())

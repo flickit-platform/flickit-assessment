@@ -1,10 +1,10 @@
 package org.flickit.assessment.core.application.service.assessmentanalysis;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
-import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.CreateAssessmentAnalysisPort;
@@ -24,10 +24,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_AI_ANALYSIS;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +43,7 @@ class CreateAssessmentAnalysisServiceTest {
     LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    ValidateAssessmentResult validateAssessmentResult;
+    ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
     LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
@@ -97,7 +97,7 @@ class CreateAssessmentAnalysisServiceTest {
 
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_AI_ANALYSIS)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.getId(), param.getType())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAiAnalysis(param));
@@ -119,7 +119,7 @@ class CreateAssessmentAnalysisServiceTest {
 
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_AI_ANALYSIS)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.getId(), param.getType())).thenReturn(Optional.of(assessmentAnalysis));
         when(createAssessmentAiAnalysisPort.generateAssessmentAnalysis(anyString())).thenReturn(aiAnalysis);
         doNothing().when(createAssessmentAnalysisPort).create(any(AssessmentAnalysis.class));
