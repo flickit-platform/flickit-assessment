@@ -23,7 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_AI_ANALYSIS;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_ANALYSIS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND;
@@ -64,7 +64,7 @@ class CreateAssessmentAnalysisServiceTest {
         var type = 1;
         var param = new CreateAssessmentAnalysisUseCase.Param(assessmentId, type, currentUserId);
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_AI_ANALYSIS)).thenReturn(false);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_ANALYSIS)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAiAnalysis(param));
 
@@ -78,7 +78,7 @@ class CreateAssessmentAnalysisServiceTest {
         var type = 1;
         var param = new CreateAssessmentAnalysisUseCase.Param(assessmentId, type, currentUserId);
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_AI_ANALYSIS)).thenReturn(true);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_ANALYSIS)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAiAnalysis(param));
@@ -95,7 +95,7 @@ class CreateAssessmentAnalysisServiceTest {
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_AI_ANALYSIS)).thenReturn(true);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_ANALYSIS)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.getId(), param.getType())).thenReturn(Optional.empty());
@@ -117,7 +117,7 @@ class CreateAssessmentAnalysisServiceTest {
         var aiAnalysis = "Some Ai Analysis";
 
 
-        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_AI_ANALYSIS)).thenReturn(true);
+        when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_ANALYSIS)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.getId(), param.getType())).thenReturn(Optional.of(assessmentAnalysis));
