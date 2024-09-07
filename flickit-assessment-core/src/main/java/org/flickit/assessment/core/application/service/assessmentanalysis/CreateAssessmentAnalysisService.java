@@ -17,10 +17,8 @@ import org.flickit.assessment.core.application.port.out.minio.ReadAssessmentAnal
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.UUID;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND;
@@ -55,18 +53,12 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
         if (assessmentAnalysis.isEmpty())
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND);
 
-        String fileContent;
         var stream = readAssessmentAnalysisFilePort.readFileContent(assessmentAnalysis.get().getInputPath());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        while ((fileContent = reader.readLine()) != null) {
-            //System.out.println(fileContent);
-        }
+        String fileContent = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
 
         String aiAnalysis = createAssessmentAiAnalysisPort.generateAssessmentAnalysis(fileContent);
 
-        createAssessmentAnalysisPort.create(
-            toAssessmentAnalysis(assessmentAnalysis.get(), aiAnalysis));
-
+        createAssessmentAnalysisPort.create(toAssessmentAnalysis(assessmentAnalysis.get(), aiAnalysis));
     }
 
     private AssessmentAnalysis toAssessmentAnalysis(AssessmentAnalysis assessmentAnalysis, String aiAnalysis) {

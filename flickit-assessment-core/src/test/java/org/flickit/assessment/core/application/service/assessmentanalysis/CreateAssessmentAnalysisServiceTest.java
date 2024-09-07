@@ -3,12 +3,14 @@ package org.flickit.assessment.core.application.service.assessmentanalysis;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.CreateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.minio.ReadAssessmentAnalysisFilePort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentAnalysisMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.ByteArrayInputStream;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,8 +28,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSME
 import static org.junit.jupiter.api.Assertions.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateAssessmentAnalysisServiceTest {
@@ -51,6 +53,9 @@ class CreateAssessmentAnalysisServiceTest {
 
     @Mock
     CreateAssessmentAnalysisPort createAssessmentAnalysisPort;
+
+    @Mock
+    ReadAssessmentAnalysisFilePort readAssessmentAnalysisFilePort;
 
     @Test
     void testCreateAssessmentAnalysis_CurrentUserDoesNotHavePermission_ShouldReturnAccessDeniedException() {
@@ -116,10 +121,10 @@ class CreateAssessmentAnalysisServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.getId(), param.getType())).thenReturn(Optional.of(assessmentAnalysis));
-        when(createAssessmentAiAnalysisPort.generateAssessmentAnalysis(assessmentAnalysis.getInputPath())).thenReturn(aiAnalysis);
-        doNothing().when(createAssessmentAnalysisPort).create(assessmentAnalysis);
+        when(createAssessmentAiAnalysisPort.generateAssessmentAnalysis(anyString())).thenReturn(aiAnalysis);
+        doNothing().when(createAssessmentAnalysisPort).create(any(AssessmentAnalysis.class));
+        when(readAssessmentAnalysisFilePort.readFileContent(assessmentAnalysis.getInputPath())).thenReturn(new ByteArrayInputStream(aiAnalysis.getBytes()));
 
         assertDoesNotThrow(() -> service.createAiAnalysis(param));
     }
-
 }
