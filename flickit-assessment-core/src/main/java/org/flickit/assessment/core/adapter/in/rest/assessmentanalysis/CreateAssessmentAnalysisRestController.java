@@ -6,10 +6,7 @@ import org.flickit.assessment.core.application.port.in.assessmentanalysis.Create
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -21,13 +18,14 @@ public class CreateAssessmentAnalysisRestController {
     private final UserContext userContext;
 
     @PostMapping("/assessments/{assessmentId}/analysis")
-    public ResponseEntity<Result> createAssessmentAiAnalysis(@PathVariable("assessmentId") UUID assessmentId, @RequestParam("type") Integer type) {
+    public ResponseEntity<Result> createAssessmentAiAnalysis(@PathVariable("assessmentId") UUID assessmentId,
+                                                             @RequestBody CreateAssessmentAnalysisRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        createAssessmentAnalysisUseCase.createAiAnalysis(toParam(assessmentId, type, currentUserId));
+        createAssessmentAnalysisUseCase.createAiAnalysis(toParam(assessmentId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private Param toParam(UUID assessmentId, Integer type, UUID currentUserId) {
-        return new Param(assessmentId, type, currentUserId);
+    private Param toParam(UUID assessmentId, CreateAssessmentAnalysisRequestDto requestDto, UUID currentUserId) {
+        return new Param(assessmentId, requestDto.type(), currentUserId);
     }
 }
