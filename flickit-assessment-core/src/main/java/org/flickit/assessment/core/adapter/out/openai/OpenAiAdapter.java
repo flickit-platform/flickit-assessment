@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.OpenAiProperties;
+import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
@@ -69,7 +70,7 @@ public class OpenAiAdapter implements
     }
 
     @Override
-    public String generateAssessmentAnalysis(String fileContent) {
+    public String generateAssessmentAnalysis(String fileContent, AnalysisType analysisType) {
         return "";
     }
 
