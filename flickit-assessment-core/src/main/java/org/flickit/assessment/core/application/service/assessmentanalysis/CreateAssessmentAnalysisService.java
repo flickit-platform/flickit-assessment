@@ -7,6 +7,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
@@ -21,8 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Service
 @Transactional
@@ -43,6 +43,9 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
         if (!assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ASSESSMENT_ANALYSIS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+        if (!AnalysisType.isValidId(param.getType()))
+            throw new ResourceNotFoundException(ANALYSIS_TYPE_ID_NOT_VALID);
+
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId());
         if (assessmentResult.isEmpty())
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND);
@@ -56,7 +59,8 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
         var stream = readAssessmentAnalysisFilePort.readFileContent(assessmentAnalysis.get().getInputPath());
         String fileContent = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
 
-        String aiAnalysis = createAssessmentAiAnalysisPort.generateAssessmentAnalysis(fileContent);
+        var analysisType = AnalysisType.valueOfById(param.getType());
+        String aiAnalysis = createAssessmentAiAnalysisPort.generateAssessmentAnalysis(fileContent, analysisType);
 
         createAssessmentAnalysisPort.create(toAssessmentAnalysis(assessmentAnalysis.get(), aiAnalysis));
     }

@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
@@ -116,12 +117,11 @@ class CreateAssessmentAnalysisServiceTest {
             assessmentResult.getAssessment().getId(), param.getType());
         var aiAnalysis = "Some Ai Analysis";
 
-
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_ANALYSIS)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.getId(), param.getType())).thenReturn(Optional.of(assessmentAnalysis));
-        when(createAssessmentAiAnalysisPort.generateAssessmentAnalysis(anyString())).thenReturn(aiAnalysis);
+        when(createAssessmentAiAnalysisPort.generateAssessmentAnalysis(anyString(), eq(AnalysisType.CODE_QUALITY))).thenReturn(aiAnalysis);
         doNothing().when(createAssessmentAnalysisPort).create(any(AssessmentAnalysis.class));
         when(readAssessmentAnalysisFilePort.readFileContent(assessmentAnalysis.getInputPath())).thenReturn(new ByteArrayInputStream(aiAnalysis.getBytes()));
 
