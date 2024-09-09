@@ -4,21 +4,21 @@ import co.novu.api.common.SubscriberRequest;
 import co.novu.api.events.requests.TriggerEventRequest;
 import org.flickit.assessment.common.adapter.out.novu.NovuRequestConverter;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
-import org.flickit.assessment.core.application.service.assessmentuserrole.notification.GrantAssessmentUserRoleNotificationPayload;
+import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationPayload;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.adapter.out.novu.NotificationType.GRANT_USER_ASSESSMENT_ROLE;
+import static org.flickit.assessment.common.adapter.out.novu.NotificationType.COMPLETE_ASSESSMENT;
 
 @Component
-public class GrantAssessmentUserRoleNovuRequestConverter implements NovuRequestConverter {
+public class SubmitAnswerNovuRequestConverter implements NovuRequestConverter {
 
     @Override
     public TriggerEventRequest convert(NotificationEnvelope envelope) {
         var triggerEvent = new TriggerEventRequest();
-        triggerEvent.setName(GRANT_USER_ASSESSMENT_ROLE.getCode());
+        triggerEvent.setName(COMPLETE_ASSESSMENT.getCode());
         triggerEvent.setTo(createSubscriberRequest(envelope.targetUserId()));
         triggerEvent.setPayload(Map.of("data", envelope.payload(), "title", envelope.title()));
         return triggerEvent;
@@ -31,7 +31,7 @@ public class GrantAssessmentUserRoleNovuRequestConverter implements NovuRequestC
     }
 
     @Override
-    public Class<GrantAssessmentUserRoleNotificationPayload> payloadClass() {
-        return GrantAssessmentUserRoleNotificationPayload.class;
+    public Class<SubmitAnswerNotificationPayload> payloadClass() {
+        return SubmitAnswerNotificationPayload.class;
     }
 }
