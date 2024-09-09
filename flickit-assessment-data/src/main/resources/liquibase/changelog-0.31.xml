@@ -9,4 +9,11 @@
                              constraintName="uq_fac_assessment_insight_assessmentresultid"/>
     </changeSet>
 
+    <changeSet id="0.31-02" author="Ali Sedaghat">
+        <addColumn tableName="fac_assessment">
+            <column name="short_title" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
