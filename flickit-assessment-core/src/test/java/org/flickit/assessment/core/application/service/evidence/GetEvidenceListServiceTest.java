@@ -1,6 +1,8 @@
 package org.flickit.assessment.core.application.service.evidence;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE_LIST;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,6 +44,9 @@ class GetEvidenceListServiceTest {
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
+
+    @Mock
+    private AssessmentPermissionChecker assessmentPermissionChecker;
 
     @Test
     void testGetEvidenceList_ResultsFound_2ItemsReturned() {
@@ -78,6 +83,9 @@ class GetEvidenceListServiceTest {
         assertEquals(evidence2Q1.lastModificationTime(), result.getItems().get(1).lastModificationTime());
         assertEquals(evidence2Q1.attachmentsCount(), result.getItems().get(1).attachmentsCount());
         verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(), any(Duration.class));
+        verify(assessmentPermissionChecker, times(2)).isAuthorized(assessmentId, currentUserId, DELETE_EVIDENCE);
+        verify(assessmentPermissionChecker, times(2)).isAuthorized(assessmentId, currentUserId, UPDATE_EVIDENCE);
+        verify(assessmentPermissionChecker, times(4)).isAuthorized(any(UUID.class), any(UUID.class), any(AssessmentPermission.class));
     }
 
     @Test
@@ -120,7 +128,9 @@ class GetEvidenceListServiceTest {
             type,
             LocalDateTime.now(),
             (int) (Math.random() * 5) + 1,
-            new GetEvidenceListUseCase.User(UUID.randomUUID(), "user1", "pictureLink")
+            new GetEvidenceListUseCase.User(UUID.randomUUID(), "user1", "pictureLink"),
+            true,
+            true
         );
     }
 }

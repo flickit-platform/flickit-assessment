@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.List;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE_LIST;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -26,6 +27,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
     private final LoadEvidencesPort loadEvidencesPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private final AssessmentPermissionChecker assessmentPermissionChecker;
 
     @Override
     public PaginatedResponse<EvidenceListItem> getEvidenceList(GetEvidenceListUseCase.Param param) {
@@ -40,7 +42,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
 
         return new PaginatedResponse<>(
-            addPictureLink(portResult.getItems()),
+            enrichEvidenceItems(portResult.getItems(), param),
             param.getPage(),
             param.getSize(),
             portResult.getSort(),
@@ -49,14 +51,16 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
     }
 
-    private List<EvidenceListItem> addPictureLink(List<EvidenceListItem> items) {
+    private List<EvidenceListItem> enrichEvidenceItems(List<EvidenceListItem> items, Param param) {
         return items.stream().map(e -> new EvidenceListItem(
             e.id(),
             e.description(),
             e.type(),
             e.lastModificationTime(),
             e.attachmentsCount(),
-            addPictureLinkToUser(e.createdBy())
+            addPictureLinkToUser(e.createdBy()),
+            assessmentPermissionChecker.isAuthorized(param.getAssessmentId() , param.getCurrentUserId(), UPDATE_EVIDENCE),
+            assessmentPermissionChecker.isAuthorized(param.getAssessmentId() , param.getCurrentUserId(), DELETE_EVIDENCE)
         )).toList();
     }
 
