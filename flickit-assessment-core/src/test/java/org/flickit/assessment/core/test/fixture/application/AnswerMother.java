@@ -108,4 +108,25 @@ public class AnswerMother {
             Boolean.FALSE);
     }
 
+    public static Answer fullScoreOnLevel3AndAnotherAttributeLevel4(long attributeId, long anotherAttributeId) {
+        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelThreeOfAttributeId(1, attributeId),
+            AnswerOptionImpactMother.onLevelFourOfAttributeId(1, anotherAttributeId)));
+        return new Answer(UUID.randomUUID(),
+            selectedOption,
+            selectedOption.getQuestionId(),
+            ConfidenceLevel.COMPLETELY_SURE.getId(),
+            Boolean.FALSE);
+    }
+
+    public static Answer noScoreOnLevel3AndFullScoreOnAnotherAttributeLevel4(long attributeId, long anotherAttributeId) {
+        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelThreeOfAttributeId(0, attributeId),
+            AnswerOptionImpactMother.onLevelFourOfAttributeId(1, anotherAttributeId)));
+        return new Answer(UUID.randomUUID(),
+            selectedOption,
+            selectedOption.getQuestionId(),
+            ConfidenceLevel.COMPLETELY_SURE.getId(),
+            Boolean.FALSE);
+    }
 }
