@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.evidence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
@@ -13,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -27,7 +27,6 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
     private final LoadEvidencesPort loadEvidencesPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
-    private final AssessmentPermissionChecker assessmentPermissionChecker;
 
     @Override
     public PaginatedResponse<EvidenceListItem> getEvidenceList(GetEvidenceListUseCase.Param param) {
@@ -59,8 +58,8 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
             e.lastModificationTime(),
             e.attachmentsCount(),
             addPictureLinkToUser(e.createdBy()),
-            assessmentPermissionChecker.isAuthorized(param.getAssessmentId() , param.getCurrentUserId(), UPDATE_EVIDENCE),
-            assessmentPermissionChecker.isAuthorized(param.getAssessmentId() , param.getCurrentUserId(), DELETE_EVIDENCE)
+            Objects.equals(e.createdBy().id(), param.getCurrentUserId()),
+            Objects.equals(e.createdBy().id(), param.getCurrentUserId())
         )).toList();
     }
 

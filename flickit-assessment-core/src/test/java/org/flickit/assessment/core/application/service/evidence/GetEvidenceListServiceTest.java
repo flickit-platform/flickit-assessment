@@ -1,8 +1,6 @@
 package org.flickit.assessment.core.application.service.evidence;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
@@ -24,8 +22,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -45,16 +42,13 @@ class GetEvidenceListServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-    @Mock
-    private AssessmentPermissionChecker assessmentPermissionChecker;
-
     @Test
     void testGetEvidenceList_ResultsFound_2ItemsReturned() {
         Long question1Id = 1L;
-        EvidenceListItem evidence1Q1 = createEvidenceWithType("Positive");
-        EvidenceListItem evidence2Q1 = createEvidenceWithType("Negative");
-        UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
+        EvidenceListItem evidence1Q1 = createEvidenceWithType("Positive", currentUserId);
+        EvidenceListItem evidence2Q1 = createEvidenceWithType("Negative", UUID.randomUUID());
+        UUID assessmentId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_EVIDENCE_LIST)).thenReturn(true);
         when(loadEvidencesPort.loadNotDeletedEvidences(question1Id, assessmentId, 0, 10))
@@ -76,16 +70,17 @@ class GetEvidenceListServiceTest {
         assertEquals(evidence1Q1.description(), result.getItems().getFirst().description());
         assertEquals(evidence1Q1.lastModificationTime(), result.getItems().getFirst().lastModificationTime());
         assertEquals(evidence1Q1.attachmentsCount(), result.getItems().getFirst().attachmentsCount());
+        assertTrue(result.getItems().get(0).editable());
+        assertTrue(result.getItems().get(0).deletable());
         assertEquals(evidence2Q1.id(), result.getItems().get(1).id());
         assertEquals(evidence2Q1.type(), result.getItems().get(1).type());
         assertEquals(evidence2Q1.createdBy(), result.getItems().get(1).createdBy());
         assertEquals(evidence2Q1.description(), result.getItems().get(1).description());
         assertEquals(evidence2Q1.lastModificationTime(), result.getItems().get(1).lastModificationTime());
         assertEquals(evidence2Q1.attachmentsCount(), result.getItems().get(1).attachmentsCount());
+        assertFalse(result.getItems().get(1).editable());
+        assertFalse(result.getItems().get(1).deletable());
         verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(), any(Duration.class));
-        verify(assessmentPermissionChecker, times(2)).isAuthorized(assessmentId, currentUserId, DELETE_EVIDENCE);
-        verify(assessmentPermissionChecker, times(2)).isAuthorized(assessmentId, currentUserId, UPDATE_EVIDENCE);
-        verify(assessmentPermissionChecker, times(4)).isAuthorized(any(UUID.class), any(UUID.class), any(AssessmentPermission.class));
     }
 
     @Test
@@ -121,16 +116,16 @@ class GetEvidenceListServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
-    private EvidenceListItem createEvidenceWithType(String type) {
+    private EvidenceListItem createEvidenceWithType(String type, UUID createdBy) {
         return new EvidenceListItem(
             UUID.randomUUID(),
             "desc",
             type,
             LocalDateTime.now(),
             (int) (Math.random() * 5) + 1,
-            new GetEvidenceListUseCase.User(UUID.randomUUID(), "user1", "pictureLink"),
-            true,
-            true
+            new GetEvidenceListUseCase.User(createdBy, "user1", "pictureLink"),
+            null,
+            null
         );
     }
 }
