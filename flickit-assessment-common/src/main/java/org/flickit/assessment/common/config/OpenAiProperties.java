@@ -18,12 +18,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OpenAiProperties {
 
-    private boolean enabled = true;
-
     @NestedConfigurationProperty
     private DefaultChatOptions chatOptions;
-
-    private boolean saveAiInputFileEnabled = false;
 
     private String role = "system";
 
