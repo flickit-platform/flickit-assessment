@@ -226,6 +226,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MAX = "create-assessment-insight.insight.size.max";
     public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-insight.assessmentResult.notFound";
     public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_FOUND = "create-assessment-insight.insight.notFound";
+    public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_DUPLICATE = "create-assessment-insight.assessmentResult.duplicate";
 
     public static final String CREATE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-subject-insight.assessmentId.notNull";
     public static final String CREATE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "create-subject-insight.subjectId.notNull";
