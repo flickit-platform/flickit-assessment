@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
