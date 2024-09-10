@@ -21,8 +21,6 @@ public class OpenAiProperties {
     @NestedConfigurationProperty
     private DefaultChatOptions chatOptions;
 
-    private String role = "system";
-
     private String attributeAiInsightPrompt = """
         As a software quality assessor, I have evaluated the {title} maturity of a system.
         We define {title} as {description} The uploaded Excel file contains multiple-choice questions used to assess {title}.
