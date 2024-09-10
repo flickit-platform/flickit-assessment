@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -40,7 +41,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
 
         return new PaginatedResponse<>(
-            addPictureLink(portResult.getItems()),
+            enrichEvidenceItems(portResult.getItems(), param),
             param.getPage(),
             param.getSize(),
             portResult.getSort(),
@@ -49,14 +50,16 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
     }
 
-    private List<EvidenceListItem> addPictureLink(List<EvidenceListItem> items) {
+    private List<EvidenceListItem> enrichEvidenceItems(List<EvidenceListItem> items, Param param) {
         return items.stream().map(e -> new EvidenceListItem(
             e.id(),
             e.description(),
             e.type(),
             e.lastModificationTime(),
             e.attachmentsCount(),
-            addPictureLinkToUser(e.createdBy())
+            addPictureLinkToUser(e.createdBy()),
+            Objects.equals(e.createdBy().id(), param.getCurrentUserId()),
+            Objects.equals(e.createdBy().id(), param.getCurrentUserId())
         )).toList();
     }
 
