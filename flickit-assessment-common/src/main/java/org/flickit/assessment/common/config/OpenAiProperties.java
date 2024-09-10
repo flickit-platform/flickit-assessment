@@ -18,6 +18,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class OpenAiProperties {
 
+    private boolean enabled;
+
     @NestedConfigurationProperty
     private DefaultChatOptions chatOptions;
 
