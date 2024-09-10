@@ -9,4 +9,25 @@
                              constraintName="uq_fac_assessment_insight_assessmentresultid"/>
     </changeSet>
 
+    <changeSet id="0.31-02" author="Maziyar Gerami">
+        <createTable tableName="faa_advice_narration">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_faa_advice_narration"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints unique="true" uniqueConstraintName="uq_faa_advice_narration_assessmentresultid" nullable="false" />
+            </column>
+            <column name="ai_narration" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assessor_narration" type="varchar(1000)"/>
+            <column name="ai_narration_time" type="${datetime_with_time_zone_type}">
+                    <constraints nullable="false"/>
+            </column>
+            <column name="assessor_narration_time" type="${datetime_with_time_zone_type}"/>
+            <column name="created_by" type="UUID"/>
+
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
