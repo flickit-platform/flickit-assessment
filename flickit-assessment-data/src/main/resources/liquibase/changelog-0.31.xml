@@ -26,7 +26,6 @@
             </column>
             <column name="assessor_narration_time" type="${datetime_with_time_zone_type}"/>
             <column name="created_by" type="UUID"/>
-
         </createTable>
     </changeSet>
 

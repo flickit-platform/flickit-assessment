@@ -40,5 +40,4 @@ public class AdviceNarrationJpaEntity {
 
     @Column(name = "created_by")
     private UUID createdBy;
-
 }
