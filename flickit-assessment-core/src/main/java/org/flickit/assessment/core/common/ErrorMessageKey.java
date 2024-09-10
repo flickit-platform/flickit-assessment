@@ -204,6 +204,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-attribute-ai-insight.assessmentId.notNull";
     public static final String CREATE_ATTRIBUTE_AI_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "create-attribute-ai-insight.attributeId.notNull";
     public static final String CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-attribute-ai-insight.assessmentResult.notFound";
+    public static final String CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED = "create-attribute-ai-insight.all-questions.notAnswered";
 
     public static final String DELETE_ASSESSMENT_INVITE_ID_NOT_NULL = "delete-assessment-invite.id.notNull";
 
@@ -227,6 +228,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MAX = "create-assessment-insight.insight.size.max";
     public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-insight.assessmentResult.notFound";
     public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_FOUND = "create-assessment-insight.insight.notFound";
+    public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_DUPLICATE = "create-assessment-insight.assessmentResult.duplicate";
 
     public static final String CREATE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-subject-insight.assessmentId.notNull";
     public static final String CREATE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "create-subject-insight.subjectId.notNull";
@@ -240,6 +242,10 @@ public class ErrorMessageKey {
 
     public static final String GET_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-subject-insight.assessmentId.notNull";
     public static final String GET_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "get-subject-insight.subjectId.notNull";
+
+    public static final String NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE = "notification-title.grant-assessment-user-role";
+    public static final String NOTIFICATION_TITLE_CREATE_ASSESSMENT = "notification-title.create-assessment";
+    public static final String NOTIFICATION_TITLE_COMPLETE_ASSESSMENT = "notification-title.completed-assessment";
 
     public static final String CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ID_NOT_NULL = "create-assessment-ai-analysis.assessmentId.notNull";
     public static final String CREATE_ASSESSMENT_AI_ANALYSIS_TYPE_NOT_NULL = "create-assessment-ai-analysis.type.notNull";

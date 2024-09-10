@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.answer.notification;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.notification.NotificationCreator;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.core.application.domain.Assessment;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TITLE_COMPLETE_ASSESSMENT;
 
 @Slf4j
 @Component
@@ -42,10 +45,9 @@ public class SubmitAnswerNotificationCreator implements
         var progress = getAssessmentProgressPort.getProgress(cmd.assessmentId());
 
         if (isFinished(progress) && !isFinishedByCreator(cmd, assessment.get())) {
-            return List.of(new NotificationEnvelope(
-                assessment.get().getCreatedBy(),
-                new SubmitAnswerNotificationPayload(new AssessmentModel(assessment.get()), new UserModel(user.get()))
-            ));
+            var title = MessageBundle.message(NOTIFICATION_TITLE_COMPLETE_ASSESSMENT);
+            var payload = new SubmitAnswerNotificationPayload(new AssessmentModel(assessment.get()), new UserModel(user.get()));
+            return List.of(new NotificationEnvelope(assessment.get().getCreatedBy(), title, payload));
         }
         return List.of();
     }

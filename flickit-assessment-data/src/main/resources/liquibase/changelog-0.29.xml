@@ -113,5 +113,4 @@
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
     </changeSet>
-
 </databaseChangeLog>
