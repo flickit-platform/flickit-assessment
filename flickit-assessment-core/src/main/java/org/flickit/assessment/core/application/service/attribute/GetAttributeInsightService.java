@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.config.OpenAiProperties;
+import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
@@ -29,7 +29,7 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
     private final LoadAttributePort loadAttributePort;
-    private final OpenAiProperties openAiProperties;
+    private final AppAiProperties appAiProperties;
 
     @Override
     public Result getInsight(Param param) {
@@ -44,7 +44,7 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
         Attribute attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
 
         if (attributeInsight.isEmpty()) {
-            if (!openAiProperties.isEnabled()) {
+            if (!appAiProperties.isEnabled()) {
                 var aiInsight = new Result.Insight(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED,
                     attribute.getTitle()), null, false);
                 return new Result(aiInsight, null, false);
