@@ -1,7 +1,6 @@
-package org.flickit.assessment.advice.application.port.in.advice;
+package org.flickit.assessment.advice.application.port.in.advicenarration;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceNarrationUseCase;
 import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.junit.jupiter.api.Test;
