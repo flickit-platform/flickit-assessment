@@ -1,8 +1,8 @@
-package org.flickit.assessment.data.jpa.core.advicenarration;
+package org.flickit.assessment.data.jpa.advice.advicenarration;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,7 +19,7 @@ public class AdviceNarrationJpaEntity {
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
