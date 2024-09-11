@@ -1,12 +1,17 @@
 package org.flickit.assessment.core.application.service.attribute;
 
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
+import org.flickit.assessment.core.test.fixture.application.AttributeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +26,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithJustAnId;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -40,6 +46,12 @@ class GetAttributeInsightServiceTest {
 
     @Mock
     private LoadAssessmentResultPort assessmentResultPort;
+
+    @Mock
+    private LoadAttributePort loadAttributePort;
+
+    @Mock
+    private AppAiProperties appAiProperties;
 
     @Test
     void testGetAttributeInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
@@ -69,6 +81,31 @@ class GetAttributeInsightServiceTest {
     }
 
     @Test
+    void testGetAttributeInsight_AttributeInsightDoesNotExistAndOpenAiIsNotEnable_UserNotAllowedToCreateInsight() {
+        var attributeId = 1L;
+        var currentUserId = UUID.randomUUID();
+        var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
+        var assessmentResult = validResultWithJustAnId();
+        Attribute attribute = AttributeMother.simpleAttribute();
+
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
+        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
+        when(appAiProperties.isEnabled()).thenReturn(false);
+
+        when(loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
+
+        var result = assertDoesNotThrow(() -> service.getInsight(param));
+        assertNotNull(result);
+        assertNotNull(result.aiInsight());
+        assertEquals(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()), result.aiInsight().insight());
+        assertNull(result.assessorInsight());
+        assertFalse(result.editable());
+    }
+
+    @Test
     void testGetAttributeInsight_AttributeInsightDoesNotExist_UserHasCreateInsightPermission() {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
@@ -79,6 +116,7 @@ class GetAttributeInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
+        when(appAiProperties.isEnabled()).thenReturn(true);
 
         var result = assertDoesNotThrow(() -> service.getInsight(param));
         assertNotNull(result);
@@ -98,6 +136,7 @@ class GetAttributeInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(false);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
+        when(appAiProperties.isEnabled()).thenReturn(true);
 
         var result = assertDoesNotThrow(() -> service.getInsight(param));
         assertNotNull(result);
