@@ -19,8 +19,18 @@ class UpdateAssessmentUseCaseParamTest {
         String title = "title";
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(null, title, currentUserId));
+            () -> new UpdateAssessmentUseCase.Param(null, title, "shortTitle", currentUserId));
         assertThat(throwable).hasMessage("id: " + UPDATE_ASSESSMENT_ID_NOT_NULL);
+    }
+
+    @Test
+    void testUpdateAssessmentParam_ShortTitleSizeIsGreaterThanMax_ErrorMessage() {
+        UUID id = UUID.randomUUID();
+        var shortTitle = randomAlphabetic(21);
+        UUID currentUserId = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new UpdateAssessmentUseCase.Param(id, "title", shortTitle, currentUserId));
+        assertThat(throwable).hasMessage("shortTitle: " + UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX);
     }
 
     @Test
@@ -28,7 +38,7 @@ class UpdateAssessmentUseCaseParamTest {
         UUID id = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, "    ", currentUserId));
+            () -> new UpdateAssessmentUseCase.Param(id, "    ", "shortTitle", currentUserId));
         assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_NOT_BLANK);
     }
 
@@ -37,7 +47,7 @@ class UpdateAssessmentUseCaseParamTest {
         UUID id = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, "ab", currentUserId));
+            () -> new UpdateAssessmentUseCase.Param(id, "ab", "shortTitle", currentUserId));
         assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MIN);
     }
 
@@ -46,7 +56,7 @@ class UpdateAssessmentUseCaseParamTest {
         UUID id = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         assertDoesNotThrow(
-            () -> new UpdateAssessmentUseCase.Param(id, "abc", currentUserId));
+            () -> new UpdateAssessmentUseCase.Param(id, "abc", "shortTitle", currentUserId));
     }
 
     @Test
@@ -55,7 +65,7 @@ class UpdateAssessmentUseCaseParamTest {
         var title = randomAlphabetic(101);
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, title, currentUserId));
+            () -> new UpdateAssessmentUseCase.Param(id, title, "shortTitle", currentUserId));
         assertThat(throwable).hasMessage("title: " + UPDATE_ASSESSMENT_TITLE_SIZE_MAX);
     }
 
@@ -65,7 +75,7 @@ class UpdateAssessmentUseCaseParamTest {
         var title = randomAlphabetic(100);
         UUID currentUserId = UUID.randomUUID();
         assertDoesNotThrow(
-            () -> new UpdateAssessmentUseCase.Param(id, title, currentUserId));
+            () -> new UpdateAssessmentUseCase.Param(id, title, "shortTitle", currentUserId));
     }
 
     @Test
@@ -73,7 +83,7 @@ class UpdateAssessmentUseCaseParamTest {
         UUID id = UUID.randomUUID();
         String title = "title";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateAssessmentUseCase.Param(id, title, null));
+            () -> new UpdateAssessmentUseCase.Param(id, title, "shortTitle", null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
