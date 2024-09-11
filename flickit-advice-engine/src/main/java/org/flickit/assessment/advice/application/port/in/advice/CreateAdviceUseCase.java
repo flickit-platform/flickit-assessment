@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.port.in;
+package org.flickit.assessment.advice.application.port.in.advice;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
