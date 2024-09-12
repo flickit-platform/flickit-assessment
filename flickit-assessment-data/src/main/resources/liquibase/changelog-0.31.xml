@@ -29,4 +29,12 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="0.31-03" author="Ali Sedaghat">
+        <addColumn tableName="fac_assessment">
+            <column name="short_title" type="varchar(20)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
