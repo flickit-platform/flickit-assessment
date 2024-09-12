@@ -16,4 +16,5 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND =  "create-advice.assessmentLevelRelation.notFound";
 
     public static final String GET_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "get-advice-narration.assessmentId.notNull";
+    public static final String GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "get-advice-narration.assessmentResult.notFound";
 }
