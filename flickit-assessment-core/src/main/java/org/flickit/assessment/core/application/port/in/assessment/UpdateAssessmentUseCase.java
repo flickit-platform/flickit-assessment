@@ -32,6 +32,7 @@ public interface UpdateAssessmentUseCase {
         @Size(max = 100, message = UPDATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
+        @Size(min = 3, message = UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN)
         @Size(max = 20, message = UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX)
         String shortTitle;
 

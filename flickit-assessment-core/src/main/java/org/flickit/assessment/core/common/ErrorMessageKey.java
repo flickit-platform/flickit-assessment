@@ -19,6 +19,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MAX = "create-assessment.title.size.max";
+    public static final String CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN = "create-assessment.shortTitle.size.min";
     public static final String CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX = "create-assessment.shortTitle.size.max";
     public static final String CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL = "create-assessment.assessmentKitId.notNull";
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
@@ -63,6 +64,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_TITLE_NOT_BLANK = "update-assessment.title.notBlank";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MIN = "update-assessment.title.min";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MAX = "update-assessment.title.max";
+    public static final String UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN = "update-assessment.shortTitle.size.min";
     public static final String UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX = "update-assessment.shortTitle.size.max";
 
     public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";

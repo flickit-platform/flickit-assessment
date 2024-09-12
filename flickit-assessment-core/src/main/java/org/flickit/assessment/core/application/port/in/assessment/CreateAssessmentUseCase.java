@@ -1,6 +1,8 @@
 package org.flickit.assessment.core.application.port.in.assessment;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -25,6 +27,7 @@ public interface CreateAssessmentUseCase {
         @Size(max = 100, message = CREATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
+        @Size(min = 3, message = CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN)
         @Size(max = 20, message = CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX)
         String shortTitle;
 

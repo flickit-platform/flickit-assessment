@@ -40,6 +40,14 @@ class CreateAssessmentUseCaseParamTest {
     }
 
     @Test
+    void tesCreateAssessmentUseCaseParam_ShortTitleIsLessThanMin_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateAssessmentUseCase.Param(0L, "title", "ab", 1L, currentUserId));
+        assertThat(throwable).hasMessage("shortTitle: " + CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN);
+    }
+
+    @Test
     void tesCreateAssessmentUseCaseParam_ShortTitleIsGreaterThanMax_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var shortTitle = RandomStringUtils.random(21, true, true);

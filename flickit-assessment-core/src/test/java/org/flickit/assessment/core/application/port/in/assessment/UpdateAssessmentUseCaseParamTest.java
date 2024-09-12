@@ -24,6 +24,15 @@ class UpdateAssessmentUseCaseParamTest {
     }
 
     @Test
+    void testUpdateAssessmentParam_ShortTitleSizeIsLessThanMin_ErrorMessage() {
+        UUID id = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new UpdateAssessmentUseCase.Param(id, "title", "ab", currentUserId));
+        assertThat(throwable).hasMessage("shortTitle: " + UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN);
+    }
+
+    @Test
     void testUpdateAssessmentParam_ShortTitleSizeIsGreaterThanMax_ErrorMessage() {
         UUID id = UUID.randomUUID();
         var shortTitle = randomAlphabetic(21);
