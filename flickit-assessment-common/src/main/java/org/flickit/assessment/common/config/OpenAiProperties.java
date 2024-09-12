@@ -30,8 +30,18 @@ public class OpenAiProperties {
         Here is the uploaded Excel file: {excelFile}.
         """;
 
+    private String adviceAiNarrationPrompt = """
+        As a software quality assessor, I have evaluated the maturity of a system.
+        """;
+
     public Prompt createAttributeAiInsightPrompt(String title, String description, String excelFile) {
         var promptTemplate = new PromptTemplate(attributeAiInsightPrompt, Map.of("title", title, "description", description, "excelFile", excelFile));
+        return new Prompt(promptTemplate.createMessage(), chatOptions);
+    }
+
+
+    public Prompt createAdviceAiNarration(String adviceListItems, String attributeLevelTargets) {
+        var promptTemplate = new PromptTemplate(attributeAiInsightPrompt, Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
 }
