@@ -14,4 +14,6 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION = "create-advice.finding-best-solution.execution";
     public static final String CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND =  "create-advice.assessmentAttributeRelation.notFound";
     public static final String CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND =  "create-advice.assessmentLevelRelation.notFound";
+
+    public static final String GET_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "get-advice-narration.assessmentId.notNull";
 }
