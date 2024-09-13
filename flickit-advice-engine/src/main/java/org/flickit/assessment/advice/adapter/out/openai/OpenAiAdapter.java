@@ -17,11 +17,12 @@ public class OpenAiAdapter implements CreateAdviceAiNarrationPort {
     @Override
     public String createAdviceAiNarration(String adviceListItems, String attributeLevelTargets) {
         var prompt = openAiProperties.createAdviceAiNarration(adviceListItems, attributeLevelTargets);
-        return chatModel
+        String result = chatModel
             .call(prompt)
             .getResult()
             .getOutput()
             .getContent();
+        return "<p>" + result + "</p>";
     }
 }
 
