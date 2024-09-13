@@ -32,6 +32,9 @@ public class OpenAiProperties {
 
     private String adviceAiNarrationPrompt = """
         As a software quality assessor, I have evaluated the maturity of a system.
+        less than 1000 chars.
+        Here is the uploaded adviceListItems: {adviceListItems}.
+        Here is the uploaded attributeLevelTargets: {attributeLevelTargets}.
         """;
 
     public Prompt createAttributeAiInsightPrompt(String title, String description, String excelFile) {
@@ -41,7 +44,7 @@ public class OpenAiProperties {
 
 
     public Prompt createAdviceAiNarration(String adviceListItems, String attributeLevelTargets) {
-        var promptTemplate = new PromptTemplate(attributeAiInsightPrompt, Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
+        var promptTemplate = new PromptTemplate(adviceAiNarrationPrompt, Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
 }
