@@ -7,7 +7,7 @@ import org.flickit.assessment.common.config.OpenAiProperties;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("coreOpenAiAdapter")
 @RequiredArgsConstructor
 public class OpenAiAdapter implements CreateAdviceAiNarrationPort {
 
