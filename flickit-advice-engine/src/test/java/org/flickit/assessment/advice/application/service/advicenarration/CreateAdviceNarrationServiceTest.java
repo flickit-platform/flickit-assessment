@@ -36,21 +36,27 @@ class CreateAdviceNarrationServiceTest {
 
     @InjectMocks
     CreateAdviceNarrationService createAdviceNarrationService;
+
     @Mock
     AssessmentAccessChecker assessmentAccessChecker;
+
     @Mock
     LoadAssessmentResultPort loadAssessmentResultPort;
+
     @Mock
     CreateAdviceAiNarrationPort createAdviceAiNarrationPort;
+
     @Mock
     LoadAdviceNarrationPort loadAdviceNarrationPort;
+
     @Mock
     CreateAdviceNarrationPort createAdviceNarrationPort;
+
     @Mock
     UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
     @Test
-    void testCreateAdviceNarration_UserHasNotAccess_ShouldReturnAccessDenied() {
+    void testCreateAdviceNarration_UserHasNoAccess_ShouldReturnAccessDenied() {
         var assessmentId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
@@ -63,7 +69,7 @@ class CreateAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAdviceNarration_AssessmentResultNotExist_ShouldReturnResourceNotFound() {
+    void testCreateAdviceNarration_AdviceNarrationDoesNotExist_ShouldUpdateWithNewAdviceNarration() {
         var assessmentId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
@@ -97,7 +103,7 @@ class CreateAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAdviceNarration_AdviceNarrationExist_ShouldUpdateAdviceNarration() {
+    void testCreateAdviceNarration_AdviceNarrationExists_ShouldUpdateAdviceNarration() {
         var assessmentId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
