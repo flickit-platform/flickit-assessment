@@ -41,8 +41,7 @@ public class OpenAiProperties {
         var promptTemplate = new PromptTemplate(attributeAiInsightPrompt, Map.of("title", title, "description", description, "excelFile", excelFile));
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
-
-
+    
     public Prompt createAdviceAiNarration(String adviceListItems, String attributeLevelTargets) {
         var promptTemplate = new PromptTemplate(adviceAiNarrationPrompt, Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
         return new Prompt(promptTemplate.createMessage(), chatOptions);
