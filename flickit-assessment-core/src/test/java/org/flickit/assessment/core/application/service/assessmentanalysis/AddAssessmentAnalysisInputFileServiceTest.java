@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static io.jsonwebtoken.lang.Classes.getResourceAsStream;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ADD_ASSESSMENT_ANALYSIS_INPUT_FILE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ADD_ON;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ANALYSIS_TYPE_ID_NOT_VALID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,7 +80,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
             UUID.randomUUID()
         );
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ADD_ASSESSMENT_ANALYSIS_INPUT_FILE)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADD_ON)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.addAssessmentAnalysisInputFile(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -106,7 +106,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
             UUID.randomUUID()
         );
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ADD_ASSESSMENT_ANALYSIS_INPUT_FILE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADD_ON)).thenReturn(true);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.addAssessmentAnalysisInputFile(param));
         assertEquals(ANALYSIS_TYPE_ID_NOT_VALID, throwable.getMessage());
@@ -135,7 +135,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
         var inputPath = "path/to/input";
         String inputFileLink = "https://file/link";
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ADD_ASSESSMENT_ANALYSIS_INPUT_FILE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADD_ON)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentAnalysisPort.load(assessmentResult.getId(), param.getAnalysisType())).thenReturn(Optional.empty());
         when(uploadAssessmentAnalysisInputFilePort.uploadAssessmentAnalysisInputFile(inputFile)).thenReturn(inputPath);
@@ -172,7 +172,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
         var inputPath = "path/to/input";
         String inputFileLink = "https://file/link";
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ADD_ASSESSMENT_ANALYSIS_INPUT_FILE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADD_ON)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(uploadAssessmentAnalysisInputFilePort.uploadAssessmentAnalysisInputFile(inputFile)).thenReturn(inputPath);
 

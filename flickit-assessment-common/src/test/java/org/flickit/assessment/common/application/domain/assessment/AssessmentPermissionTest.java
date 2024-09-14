@@ -50,7 +50,7 @@ class AssessmentPermissionTest {
             Map.entry(DELETE_ASSESSMENT_INVITE, "deleteAssessmentInvite"),
             Map.entry(CREATE_ASSESSMENT_INSIGHT, "createAssessmentInsight"),
             Map.entry(CREATE_SUBJECT_INSIGHT, "createSubjectInsight"),
-            Map.entry(ADD_ASSESSMENT_ANALYSIS_INPUT_FILE, "addAssessmentAnalysisInputFile"));
+            Map.entry(MANAGE_ADD_ON, "manageAddOn"));
 
         permissionCodesMap.forEach((key, value) -> assertEquals(value, key.getCode()));
         Arrays.stream(AssessmentPermission.values()).forEach(e ->

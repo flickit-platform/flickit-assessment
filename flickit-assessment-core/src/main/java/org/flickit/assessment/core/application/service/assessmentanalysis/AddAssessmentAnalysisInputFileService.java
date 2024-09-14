@@ -42,7 +42,7 @@ public class AddAssessmentAnalysisInputFileService implements AddAssessmentAnaly
 
     @Override
     public Result addAssessmentAnalysisInputFile(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.ADD_ASSESSMENT_ANALYSIS_INPUT_FILE))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_ADD_ON))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (!AnalysisType.isValidId(param.getAnalysisType()))
