@@ -9,6 +9,7 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.Create
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class CreateAdviceNarrationService implements CreateAdviceNarrationUseCas
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final CreateAdviceAiNarrationPort createAdviceNarrationAiPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
@@ -40,6 +42,8 @@ public class CreateAdviceNarrationService implements CreateAdviceNarrationUseCas
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
+
+        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
 

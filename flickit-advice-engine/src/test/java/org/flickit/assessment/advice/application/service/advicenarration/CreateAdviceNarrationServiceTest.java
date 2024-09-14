@@ -12,6 +12,7 @@ import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMoth
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,9 @@ class CreateAdviceNarrationServiceTest {
     LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
+    ValidateAssessmentResultPort validateAssessmentResultPort;
+
+    @Mock
     CreateAdviceAiNarrationPort createAdviceAiNarrationPort;
 
     @Mock
@@ -69,7 +73,7 @@ class CreateAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAdviceNarration_AdviceNarrationDoesNotExist_ShouldUpdateWithNewAdviceNarration() {
+    void testCreateAdviceNarration_AssessmentResultDoesNotNotExist_ShouldReturnResourceNoFount() {
         var assessmentId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
@@ -94,11 +98,13 @@ class CreateAdviceNarrationServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(createAdviceAiNarrationPort.createAdviceAiNarration(adviceListItems.toString(), attributeLevelTargets.toString())).thenReturn(aiNarration);
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
         assertDoesNotThrow(() -> createAdviceNarrationService.createAdviceNarration(param));
 
+        verify(loadAssessmentResultPort).loadByAssessmentId(param.getAssessmentId());
         verifyNoInteractions(updateAdviceNarrationPort);
     }
 
@@ -115,11 +121,13 @@ class CreateAdviceNarrationServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(createAdviceAiNarrationPort.createAdviceAiNarration(adviceListItems.toString(), attributeLevelTargets.toString())).thenReturn(aiNarration);
         doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(AdviceNarration.class));
         assertDoesNotThrow(() -> createAdviceNarrationService.createAdviceNarration(param));
 
+        verify(loadAssessmentResultPort).loadByAssessmentId(param.getAssessmentId());
         verifyNoInteractions(createAdviceNarrationPort);
     }
 }
