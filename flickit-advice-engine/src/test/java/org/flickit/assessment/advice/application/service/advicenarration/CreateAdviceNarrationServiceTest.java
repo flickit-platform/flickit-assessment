@@ -73,7 +73,7 @@ class CreateAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAdviceNarration_AssessmentResultDoesNotNotExist_ShouldReturnResourceNoFount() {
+    void testCreateAdviceNarration_AssessmentResultDoesNotNotExist_ShouldReturnResourceNoFound() {
         var assessmentId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());

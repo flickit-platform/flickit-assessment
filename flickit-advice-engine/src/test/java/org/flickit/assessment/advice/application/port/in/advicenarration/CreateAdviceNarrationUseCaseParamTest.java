@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreateAdviceNarrationUseCaseParamTest {
 
     @Test
-    void TestCreateAdviceNarration_assessmentIdIsNull_ErrorMessage() {
+    void testCreateAdviceNarrationParam_assessmentIdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
@@ -28,7 +28,7 @@ class CreateAdviceNarrationUseCaseParamTest {
     }
 
     @Test
-    void testCreateAdviceNarration_adviceListItemsIsNull_ErrorMessage() {
+    void testCreateAdviceNarrationParam_adviceListItemsIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
@@ -38,7 +38,7 @@ class CreateAdviceNarrationUseCaseParamTest {
     }
 
     @Test
-    void testCreateAdviceNarration_attributeLevelTargetsIsNull_ErrorMessage() {
+    void testCreateAdviceNarrationParam_attributeLevelTargetsIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
@@ -48,7 +48,7 @@ class CreateAdviceNarrationUseCaseParamTest {
     }
 
     @Test
-    void testCreateAdviceNarration_currentUserIdIsNull_ErrorMessage() {
+    void testCreateAdviceNarrationParam_currentUserIdIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
