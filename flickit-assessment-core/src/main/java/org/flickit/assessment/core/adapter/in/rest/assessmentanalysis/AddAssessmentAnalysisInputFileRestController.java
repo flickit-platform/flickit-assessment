@@ -25,10 +25,8 @@ public class AddAssessmentAnalysisInputFileRestController {
     public ResponseEntity<Result> addAssessmentAnalysisInputFile(
         @PathVariable UUID assessmentId,
         @ModelAttribute AddAssessmentAnalysisInputFileRequestDto requestDto) {
-
         UUID currentUserId = userContext.getUser().id();
-        Result result =
-            useCase.addAssessmentAnalysisInputFile(toParam(assessmentId, currentUserId, requestDto));
+        Result result = useCase.addAssessmentAnalysisInputFile(toParam(assessmentId, currentUserId, requestDto));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
