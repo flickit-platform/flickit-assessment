@@ -4,5 +4,5 @@ import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
 
 public interface CreateAssessmentAnalysisPort {
 
-    void create(AssessmentAnalysis assessmentAnalysis);
+    void persist(AssessmentAnalysis assessmentAnalysis);
 }

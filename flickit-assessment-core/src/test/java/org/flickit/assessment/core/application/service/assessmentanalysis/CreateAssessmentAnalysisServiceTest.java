@@ -122,7 +122,7 @@ class CreateAssessmentAnalysisServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.getId(), param.getType())).thenReturn(Optional.of(assessmentAnalysis));
         when(createAssessmentAiAnalysisPort.generateAssessmentAnalysis(anyString(), eq(AnalysisType.CODE_QUALITY))).thenReturn(aiAnalysis);
-        doNothing().when(createAssessmentAnalysisPort).create(any(AssessmentAnalysis.class));
+        doNothing().when(createAssessmentAnalysisPort).persist(any(AssessmentAnalysis.class));
         when(readAssessmentAnalysisFilePort.readFileContent(assessmentAnalysis.getInputPath())).thenReturn(new ByteArrayInputStream(aiAnalysis.getBytes()));
 
         assertDoesNotThrow(() -> service.createAiAnalysis(param));

@@ -19,7 +19,7 @@ public class AssessmentAnalysisPersistenceJpaAdapter implements
     private final AssessmentAnalysisJpaRepository repository;
 
     @Override
-    public void create(AssessmentAnalysis assessmentAnalysis) {
+    public void persist(AssessmentAnalysis assessmentAnalysis) {
         repository.update(assessmentAnalysis.getId(), assessmentAnalysis.getAiAnalysis(), assessmentAnalysis.getAiAnalysisTime());
     }
 

@@ -3,7 +3,9 @@ package org.flickit.assessment.core.adapter.out.openai;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.OpenAiProperties;
+import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.domain.Attribute;
+import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Component;
@@ -26,7 +28,7 @@ public class OpenAiAdapter implements
             .getResult()
             .getOutput()
             .getContent();
-        }
+    }
 
     @Override
     public String generateAssessmentAnalysis(String fileContent, AnalysisType analysisType) {

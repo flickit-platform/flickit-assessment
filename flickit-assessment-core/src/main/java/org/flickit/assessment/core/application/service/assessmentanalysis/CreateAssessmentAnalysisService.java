@@ -34,8 +34,8 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
     private final ReadAssessmentAnalysisFilePort readAssessmentAnalysisFilePort;
-    private final CreateAssessmentAnalysisPort createAssessmentAnalysisPort;
     private final CreateAssessmentAiAnalysisPort createAssessmentAiAnalysisPort;
+    private final CreateAssessmentAnalysisPort createAssessmentAnalysisPort;
 
     @SneakyThrows
     @Override
@@ -62,7 +62,7 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
         var analysisType = AnalysisType.valueOfById(param.getType());
         String aiAnalysis = createAssessmentAiAnalysisPort.generateAssessmentAnalysis(fileContent, analysisType);
 
-        createAssessmentAnalysisPort.create(toAssessmentAnalysis(assessmentAnalysis.get(), aiAnalysis));
+        createAssessmentAnalysisPort.persist(toAssessmentAnalysis(assessmentAnalysis.get(), aiAnalysis));
     }
 
     private AssessmentAnalysis toAssessmentAnalysis(AssessmentAnalysis assessmentAnalysis, String aiAnalysis) {
