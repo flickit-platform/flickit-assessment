@@ -77,6 +77,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             currentUserId
         );
@@ -124,6 +125,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             currentUserId
         );
@@ -166,6 +168,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             createdBy
         );
@@ -198,6 +201,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             assessmentKitId,
             createdBy
         );
@@ -234,6 +238,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             assessmentKitId,
             currentUserId
         );
@@ -268,6 +273,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             currentUserId
         );
@@ -284,6 +290,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             currentUserId
         );

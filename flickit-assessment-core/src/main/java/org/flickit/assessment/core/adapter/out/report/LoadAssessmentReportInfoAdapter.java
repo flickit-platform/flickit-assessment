@@ -86,6 +86,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
         AssessmentReportItem assessmentReportItem = new AssessmentReportItem(assessmentId,
             assessment.getTitle(),
+            assessment.getShortTitle(),
             buildAssessmentKitItem(expertGroupEntity, assessmentKitEntity, idToMaturityLevel.values().stream().toList()),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),

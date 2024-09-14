@@ -18,6 +18,7 @@ public class AssessmentMother {
             UUID.randomUUID(),
             "my-assessment-" + counter,
             "My Assessment " + counter,
+            "Short title" + counter,
             AssessmentKitMother.kit(),
             new Space(123L, "title"),
             LocalDateTime.now(),

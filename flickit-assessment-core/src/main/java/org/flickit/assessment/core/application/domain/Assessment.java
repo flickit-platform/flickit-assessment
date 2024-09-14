@@ -13,6 +13,7 @@ public class Assessment {
     private final UUID id;
     private final String code;
     private final String title;
+    private final String shortTitle;
     private final AssessmentKit assessmentKit;
     private final Space space;
     private final LocalDateTime creationTime;
