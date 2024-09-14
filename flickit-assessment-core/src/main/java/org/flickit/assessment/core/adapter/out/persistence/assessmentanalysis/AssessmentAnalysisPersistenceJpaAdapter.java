@@ -34,7 +34,7 @@ public class AssessmentAnalysisPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(UUID id, String inputPath) {
+    public void updateInputPath(UUID id, String inputPath) {
         repository.updateInputPath(id, inputPath);
     }
 }

@@ -60,7 +60,7 @@ public class AddAssessmentAnalysisInputFileService implements AddAssessmentAnaly
         } else {
             String oldInputPath = assessmentAnalysis.get().getInputPath();
             deleteFilePort.deleteFile(oldInputPath);
-            updateAssessmentAnalysisInputPathPort.update(assessmentAnalysis.get().getId(), inputPath);
+            updateAssessmentAnalysisInputPathPort.updateInputPath(assessmentAnalysis.get().getId(), inputPath);
         }
 
         var downloadLink = createFileDownloadLinkPort.createDownloadLink(inputPath, EXPIRY_DURATION);

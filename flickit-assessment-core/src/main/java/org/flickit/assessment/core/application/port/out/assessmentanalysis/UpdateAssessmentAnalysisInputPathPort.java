@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface UpdateAssessmentAnalysisInputPathPort {
 
-    void update(UUID id, String inputPath);
+    void updateInputPath(UUID id, String inputPath);
 }

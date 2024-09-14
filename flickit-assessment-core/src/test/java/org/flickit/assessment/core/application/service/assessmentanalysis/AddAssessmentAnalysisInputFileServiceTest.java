@@ -177,7 +177,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
         when(uploadAssessmentAnalysisInputFilePort.uploadAssessmentAnalysisInputFile(inputFile)).thenReturn(inputPath);
 
         when(loadAssessmentAnalysisPort.load(assessmentResult.getId(), param.getAnalysisType())).thenReturn(Optional.of(assessmentAnalysis));
-        doNothing().when(updateAssessmentAnalysisInputPathPort).update(assessmentAnalysis.getId(), inputPath);
+        doNothing().when(updateAssessmentAnalysisInputPathPort).updateInputPath(assessmentAnalysis.getId(), inputPath);
         doNothing().when(deleteFilePort).deleteFile(assessmentAnalysis.getInputPath());
         when(createFileDownloadLinkPort.createDownloadLink(eq(inputPath), any())).thenReturn(inputFileLink);
 
