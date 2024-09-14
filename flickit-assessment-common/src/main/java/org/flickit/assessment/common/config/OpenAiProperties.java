@@ -31,9 +31,10 @@ public class OpenAiProperties {
         """;
 
     private String adviceAiNarrationPrompt = """
-        As a software quality assessor, I have evaluated the maturity level of a system. Below, I have outlined the selected option and provided the recommended option for improvement.
-        Please generate advice in up to 10 concise bullets, with a total character limit of 900 characters, to help achieve the recommended option. You may shorten the bullet list if it improves clarity.
-        The advice should be polite, clear, and considerate, avoiding any mention of individual scores or derogatory terms. Focus on offering actionable suggestions. Do not use bold formatting for emphasis.
+        As a software quality assessor, I have evaluated the system's maturity level. Below, I have listed the selected option and provided a recommended improvement option.
+        Please generate advice in up to 10 concise bullet points, with a total character limit of 900 characters, including HTML tags. You may shorten the list if it enhances clarity.
+        Ensure the advice is polite, clear, and constructive, avoiding mention of individual scores or derogatory language. Focus on actionable suggestions.
+        Format the response in HTML with <li> tags for each bullet point, wrapped in a <ul> tag, and enclose the entire list within <p> tags. Avoid using the <HTML> tag.
         Provided advice items: {adviceListItems}.
         Provided attribute level targets: {attributeLevelTargets}.
         """;
