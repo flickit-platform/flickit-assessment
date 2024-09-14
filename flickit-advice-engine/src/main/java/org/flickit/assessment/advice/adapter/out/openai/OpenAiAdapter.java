@@ -1,7 +1,6 @@
 package org.flickit.assessment.advice.adapter.out.openai;
 
 import lombok.RequiredArgsConstructor;
-
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceAiNarrationPort;
 import org.flickit.assessment.common.config.OpenAiProperties;
 import org.springframework.ai.chat.model.ChatModel;
