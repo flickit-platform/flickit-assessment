@@ -65,6 +65,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("""
             UPDATE AssessmentJpaEntity a SET
                 a.title = :title,
+                a.shortTitle = :shortTitle,
                 a.code = :code,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
@@ -72,6 +73,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         """)
     void update(@Param(value = "id") UUID id,
                 @Param(value = "title") String title,
+                @Param(value = "shortTitle") String shortTitle,
                 @Param(value = "code") String code,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);

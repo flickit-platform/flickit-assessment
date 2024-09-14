@@ -9,6 +9,7 @@ public interface CreateAssessmentPort {
 
     record Param(String code,
                  String title,
+                 String shortTitle,
                  Long assessmentKitId,
                  Long spaceId,
                  LocalDateTime creationTime,

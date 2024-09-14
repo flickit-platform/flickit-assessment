@@ -27,6 +27,10 @@ public interface CreateAssessmentUseCase {
         @Size(max = 100, message = CREATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
+        @Size(min = 3, message = CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN)
+        @Size(max = 20, message = CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX)
+        String shortTitle;
+
         @NotNull(message = CREATE_ASSESSMENT_SPACE_ID_NOT_NULL)
         Long spaceId;
 
@@ -36,8 +40,9 @@ public interface CreateAssessmentUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long spaceId, String title, Long kitId, UUID currentUserId) {
+        public Param(Long spaceId, String title, String shortTitle, Long kitId, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
+            this.shortTitle = shortTitle != null ? shortTitle.strip() : null;
             this.spaceId = spaceId;
             this.kitId = kitId;
             this.currentUserId = currentUserId;
