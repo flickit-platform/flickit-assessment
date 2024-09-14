@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AdviceNarrationJpaAdapter implements
+public class AdviceNarrationPersistenceJpaAdapter implements
     CreateAdviceNarrationPort,
     UpdateAdviceNarrationPort,
     LoadAdviceNarrationPort {

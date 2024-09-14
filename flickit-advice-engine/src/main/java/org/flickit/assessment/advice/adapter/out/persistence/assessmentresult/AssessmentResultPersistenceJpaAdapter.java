@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AssessmentResultJpaAdapter implements LoadAssessmentResultPort {
+public class AssessmentResultPersistenceJpaAdapter implements LoadAssessmentResultPort {
 
     private final AssessmentResultJpaRepository repository;
 
