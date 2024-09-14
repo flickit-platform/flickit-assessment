@@ -16,9 +16,9 @@ public interface AssessmentAnalysisJpaRepository extends JpaRepository<Assessmen
 
     @Modifying
     @Query("""
-        UPDATE AssessmentAnalysisJpaEntity a
-        SET a.inputPath = :inputPath
-        WHERE a.id = :id
+            UPDATE AssessmentAnalysisJpaEntity a
+            SET a.inputPath = :inputPath
+            WHERE a.id = :id
         """)
     void updateInputPath(@Param(value = "id") UUID id, @Param(value = "inputPath") String inputPath);
 }
