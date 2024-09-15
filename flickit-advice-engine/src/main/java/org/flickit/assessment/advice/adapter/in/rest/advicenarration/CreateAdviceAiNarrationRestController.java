@@ -2,7 +2,8 @@ package org.flickit.assessment.advice.adapter.in.rest.advicenarration;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase;
-import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase.*;
+import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase.Param;
+import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase.Result;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class CreateAdviceAiNarrationRestController {
 
     @PostMapping("assessments/{assessmentId}/advice-narration-ai")
     ResponseEntity<Result> createAdviceAiNarration(@PathVariable("assessmentId") UUID assessmentId,
-                                                 @RequestBody CreateAdviceAiNarrationRequestDto requestDto) {
+                                                   @RequestBody CreateAdviceAiNarrationRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         var result = useCase.createAdviceAiNarration(toParam(assessmentId, requestDto, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.CREATED);
