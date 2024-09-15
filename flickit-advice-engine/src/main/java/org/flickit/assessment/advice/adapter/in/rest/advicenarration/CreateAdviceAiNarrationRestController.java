@@ -1,8 +1,8 @@
 package org.flickit.assessment.advice.adapter.in.rest.advicenarration;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceNarrationUseCase;
-import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceNarrationUseCase.*;
+import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase;
+import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase.*;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,20 +15,20 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class CreateAdviceNarrationRestController {
+public class CreateAdviceAiNarrationRestController {
 
-    private final CreateAdviceNarrationUseCase useCase;
+    private final CreateAdviceAiNarrationUseCase useCase;
     private final UserContext userContext;
 
     @PostMapping("assessments/{assessmentId}/advice-narration-ai")
-    ResponseEntity<Void> createAdviceNarration(@PathVariable("assessmentId") UUID assessmentId,
-                                               @RequestBody CreateAdviceNarrationRequestDto requestDto) {
+    ResponseEntity<Void> createAdviceAiNarration(@PathVariable("assessmentId") UUID assessmentId,
+                                                 @RequestBody CreateAdviceAiNarrationRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        useCase.createAdviceNarration(toParam(assessmentId, requestDto, currentUserId));
+        useCase.createAdviceAiNarration(toParam(assessmentId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private Param toParam(UUID assessmentId, CreateAdviceNarrationRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(UUID assessmentId, CreateAdviceAiNarrationRequestDto requestDto, UUID currentUserId) {
         return new Param(assessmentId, requestDto.adviceListItems(), requestDto.attributeLevelTargets(), currentUserId);
     }
 }

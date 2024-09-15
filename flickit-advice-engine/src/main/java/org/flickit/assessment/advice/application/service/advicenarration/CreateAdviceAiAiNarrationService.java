@@ -2,7 +2,7 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
-import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceNarrationUseCase;
+import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateAdviceNarrationService implements CreateAdviceNarrationUseCase {
+public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarrationUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
@@ -38,12 +38,12 @@ public class CreateAdviceNarrationService implements CreateAdviceNarrationUseCas
     private final CallAiPromptPort callAiPromptPort;
 
     @Override
-    public void createAdviceNarration(Param param) {
+    public void createAdviceAiNarration(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
