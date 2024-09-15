@@ -56,10 +56,10 @@
 			]
 		},
 		{
-			"name": "AdviceNarration",
+			"name": "AdviceAiNarration",
 			"item": [
 				{
-					"name": "Create Advice Narration",
+					"name": "Create Advice Ai Narration",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -79,7 +79,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/b064f522-da94-4047-9c19-50c3e43d0a3d/advice-narration",
+							"raw": "{{base_url}}/{{api_path}}/assessments/b064f522-da94-4047-9c19-50c3e43d0a3d/advice-narration-ai",
 							"host": [
 								"{{base_url}}"
 							],
@@ -87,7 +87,7 @@
 								"{{api_path}}",
 								"assessments",
 								"b064f522-da94-4047-9c19-50c3e43d0a3d",
-								"advice-narration"
+								"advice-narration-ai"
 							]
 						}
 					},
