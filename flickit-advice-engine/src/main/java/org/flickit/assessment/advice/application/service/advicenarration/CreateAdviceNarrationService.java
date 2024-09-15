@@ -2,14 +2,15 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
+import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceNarrationUseCase;
+import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
-import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceNarrationUseCase;
-import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceAiNarrationPort;
-import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
+import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,11 @@ public class CreateAdviceNarrationService implements CreateAdviceNarrationUseCas
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
-    private final CreateAdviceAiNarrationPort createAdviceNarrationAiPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
+    private final OpenAiProperties openAiProperties;
+    private final CallAiPromptPort callAiPromptPort;
 
     @Override
     public void createAdviceNarration(Param param) {
@@ -47,8 +49,9 @@ public class CreateAdviceNarrationService implements CreateAdviceNarrationUseCas
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
 
-        var adviceAiNarration = createAdviceNarrationAiPort.createAdviceAiNarration(param.getAdviceListItems().toString(),
+        var prompt = openAiProperties.createAdviceAiNarrationPrompt(param.getAdviceListItems().toString(),
             param.getAttributeLevelTargets().toString());
+        var adviceAiNarration = callAiPromptPort.call(prompt);
 
         Runnable action = adviceNarration.isEmpty() ?
             () -> handleNewAdviceNarration(assessmentResult.getId(), adviceAiNarration, param.getCurrentUserId()) :
