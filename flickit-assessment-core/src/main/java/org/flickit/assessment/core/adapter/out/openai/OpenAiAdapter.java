@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.core.application.domain.AnalysisType;
+import org.flickit.assessment.core.application.domain.AssessmentAnalysisInsight;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
@@ -33,8 +34,8 @@ public class OpenAiAdapter implements
     }
 
     @Override
-    public AssessmentAnalysisDto generateAssessmentAnalysis(String assessmentTitle, String factSheet, AnalysisType analysisType) {
-        BeanOutputConverter<AssessmentAnalysisDto> converter = new BeanOutputConverter<>(AssessmentAnalysisDto.class);
+    public AssessmentAnalysisInsight generateAssessmentAnalysis(String assessmentTitle, String factSheet, AnalysisType analysisType) {
+        BeanOutputConverter<AssessmentAnalysisInsight> converter = new BeanOutputConverter<>(AssessmentAnalysisInsight.class);
         String format = converter.getFormat();
         Prompt prompt = openAiProperties.createAssessmentAnalysisPrompt(assessmentTitle, factSheet, analysisType.name(), format);
 

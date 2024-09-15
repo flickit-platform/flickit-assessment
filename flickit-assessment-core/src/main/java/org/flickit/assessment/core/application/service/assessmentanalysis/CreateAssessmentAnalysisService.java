@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentanalysis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
@@ -18,7 +19,6 @@ import org.flickit.assessment.core.application.port.out.minio.ReadAssessmentAnal
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -57,12 +57,15 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND);
 
         var stream = readAssessmentAnalysisFilePort.readFileContent(assessmentAnalysis.get().getInputPath());
-        String fileContent = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        String fileContent = new String(stream.readAllBytes());
 
         var analysisType = AnalysisType.valueOfById(param.getType());
-        String aiAnalysis = createAssessmentAiAnalysisPort.generateAssessmentAnalysis(fileContent, analysisType);
+        var aiAnalysis = createAssessmentAiAnalysisPort.generateAssessmentAnalysis(assessmentResult.get().getAssessment().getTitle(), fileContent, analysisType);
 
-        createAssessmentAnalysisPort.persist(toAssessmentAnalysis(assessmentAnalysis.get(), aiAnalysis));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(aiAnalysis);
+
+        createAssessmentAnalysisPort.persist(toAssessmentAnalysis(assessmentAnalysis.get(), jsonString));
     }
 
     private AssessmentAnalysis toAssessmentAnalysis(AssessmentAnalysis assessmentAnalysis, String aiAnalysis) {
