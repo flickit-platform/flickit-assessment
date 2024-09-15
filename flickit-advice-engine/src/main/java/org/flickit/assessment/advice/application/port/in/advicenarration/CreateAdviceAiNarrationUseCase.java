@@ -15,7 +15,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface CreateAdviceAiNarrationUseCase {
 
-    void createAdviceAiNarration(Param param);
+    String createAdviceAiNarration(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

@@ -38,7 +38,7 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
     private final CallAiPromptPort callAiPromptPort;
 
     @Override
-    public void createAdviceAiNarration(Param param) {
+    public String createAdviceAiNarration(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -51,12 +51,14 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
 
         var prompt = openAiProperties.createAdviceAiNarrationPrompt(param.getAdviceListItems().toString(),
             param.getAttributeLevelTargets().toString());
-        var adviceAiNarration = callAiPromptPort.call(prompt);
+        var aiNarration = callAiPromptPort.call(prompt);
 
         Runnable action = adviceNarration.isEmpty() ?
-            () -> handleNewAdviceNarration(assessmentResult.getId(), adviceAiNarration, param.getCurrentUserId()) :
-            () -> handleExistingAdviceNarration(assessmentResult.getId(), adviceAiNarration);
+            () -> handleNewAdviceNarration(assessmentResult.getId(), aiNarration, param.getCurrentUserId()) :
+            () -> handleExistingAdviceNarration(assessmentResult.getId(), aiNarration);
         action.run();
+
+        return aiNarration;
     }
 
     private void handleExistingAdviceNarration(UUID assessmentResultId, String adviceAiNarration) {
