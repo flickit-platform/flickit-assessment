@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.advice.common.MessageKey.ADVICE_AI_IS_DISABLED;
+import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,7 +104,7 @@ class CreateAdviceAiNarrationServiceTest {
         when(appAiProperties.isEnabled()).thenReturn(false);
 
         var result = assertDoesNotThrow(() -> service.createAdviceAiNarration(param));
-        assertEquals(MessageBundle.message(ADVICE_AI_IS_DISABLED), result.content());
+        assertEquals(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED), result.content());
 
         verifyNoInteractions(loadAssessmentResultPort,
             validateAssessmentResultPort,

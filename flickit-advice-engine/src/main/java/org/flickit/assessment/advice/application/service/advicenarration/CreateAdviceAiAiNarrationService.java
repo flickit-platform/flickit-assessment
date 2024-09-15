@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.advice.common.MessageKey.ADVICE_AI_IS_DISABLED;
+import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -47,7 +47,7 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (!appAiProperties.isEnabled())
-            return new Result(MessageBundle.message(ADVICE_AI_IS_DISABLED));
+            return new Result(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED));
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
