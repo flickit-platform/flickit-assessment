@@ -31,11 +31,10 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
         boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
-        var adviceNarration = loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.id());
+        var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
         if (adviceNarration.isEmpty()) {
             if (!appAiProperties.isEnabled()) {
-                var aiNarration = new Result.AdviceNarration(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED,
-                    assessmentResult.assessmentTitle()), null);
+                var aiNarration = new Result.AdviceNarration(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED), null);
                 return new Result(aiNarration, null, false);
             }
             return new Result(null, null, editable);

@@ -1,6 +1,7 @@
 package org.flickit.assessment.advice.application.service.advice;
 
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
+import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.port.in.GetAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -59,21 +60,16 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        LocalDateTime lastCalcTime = LocalDateTime.now();
-        var assessmentResult = new LoadAssessmentResultPort.AssessmentResult(UUID.randomUUID(),
-            "assessment1",
-            1L,
-            lastCalcTime);
+        var assessmentResult = new AssessmentResult(UUID.randomUUID());
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(false);
-        when(loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.id())).thenReturn(Optional.empty());
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(appAiProperties.isEnabled()).thenReturn(false);
 
         var result = service.getAdviceNarration(param);
         assertNotNull(result);
-        assertEquals(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED,
-            assessmentResult.assessmentTitle()), result.aiNarration().narration());
+        assertEquals(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED), result.aiNarration().narration());
         assertFalse(result.editable());
         assertNull(result.aiNarration().creationTime());
         assertNull(result.assessorNarration());
@@ -84,15 +80,11 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        LocalDateTime lastCalcTime = LocalDateTime.now();
-        var assessmentResult = new LoadAssessmentResultPort.AssessmentResult(UUID.randomUUID(),
-            "assessment1",
-            1L,
-            lastCalcTime);
+        var assessmentResult = new AssessmentResult(UUID.randomUUID());
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
-        when(loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.id())).thenReturn(Optional.empty());
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(appAiProperties.isEnabled()).thenReturn(true);
 
         var result = service.getAdviceNarration(param);
@@ -107,14 +99,10 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        LocalDateTime lastCalcTime = LocalDateTime.now();
-        var assessmentResult = new LoadAssessmentResultPort.AssessmentResult(UUID.randomUUID(),
-            "assessment1",
-            1L,
-            lastCalcTime);
+        var assessmentResult = new AssessmentResult(UUID.randomUUID());
         LocalDateTime aiNarrationTime = LocalDateTime.now();
         var adviceNarration = new AdviceNarration(UUID.randomUUID(),
-            assessmentResult.id(),
+            assessmentResult.getId(),
             "aiNarration",
             null,
             aiNarrationTime,
@@ -123,7 +111,7 @@ class GetAdviceNarrationServiceTest {
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
-        when(loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.id())).thenReturn(Optional.of(adviceNarration));
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
 
         var result = service.getAdviceNarration(param);
 
@@ -137,14 +125,10 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        LocalDateTime lastCalcTime = LocalDateTime.now();
-        var assessmentResult = new LoadAssessmentResultPort.AssessmentResult(UUID.randomUUID(),
-            "assessment1",
-            1L,
-            lastCalcTime);
+        var assessmentResult = new AssessmentResult(UUID.randomUUID());
         LocalDateTime assessorNarrationTime = LocalDateTime.now();
         var adviceNarration = new AdviceNarration(UUID.randomUUID(),
-            assessmentResult.id(),
+            assessmentResult.getId(),
             null,
             "assessorNarration",
             null,
@@ -153,7 +137,7 @@ class GetAdviceNarrationServiceTest {
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
-        when(loadAdviceNarrationPort.loadAdviceNarration(assessmentResult.id())).thenReturn(Optional.of(adviceNarration));
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
 
         var result = service.getAdviceNarration(param);
 
