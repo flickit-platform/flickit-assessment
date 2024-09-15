@@ -25,4 +25,15 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
     void updateAiNarration(@Param("assessmentResultId") UUID assessmentResultId,
                            @Param("aiNarration") String aiNarration,
                            @Param("aiNarrationTime") LocalDateTime aiNarrationTime);
+
+    @Modifying
+    @Query("""
+        UPDATE AdviceNarrationJpaEntity a
+        SET a.assessorNarration = :assessorNarration,
+            a.assessorNarrationTime = :assessorNarrationTime
+        WHERE a.assessmentResultId = :assessmentResultId
+    """)
+    void updateAssessorNarration(@Param("assessmentResultId") UUID assessmentResultId,
+                                 @Param("assessorNarration") String assessorNarration,
+                                 @Param("assessorNarrationTime") LocalDateTime assessorNarrationTime);
 }
