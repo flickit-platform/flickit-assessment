@@ -1,10 +1,9 @@
-package org.flickit.assessment.advice.application.port.in;
+package org.flickit.assessment.advice.application.port.in.advicenarration;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
+import org.flickit.assessment.advice.application.port.in.GetAdviceNarrationUseCase;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,12 +18,11 @@ class GetAdviceNarrationUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAdviceNarrationUseCase.Param(null, currentUserId));
-
         assertThat(throwable).hasMessage("assessmentId: " + GET_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAdviceParam_CurrentUserIdIsNull_ErrorMessage() {
+    void testGetAdviceParam_CurrentUserIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAdviceNarrationUseCase.Param(assessmentId, null));
