@@ -92,6 +92,7 @@ class GetAdviceNarrationServiceTest {
         assertNotNull(result);
         assertNull(result.aiNarration());
         assertNull(result.assessorNarration());
+        assertTrue(result.editable());
     }
 
     @Test
@@ -118,6 +119,7 @@ class GetAdviceNarrationServiceTest {
         assertNotNull(result);
         assertNotNull(result.aiNarration());
         assertNull(result.assessorNarration());
+        assertTrue(result.editable());
     }
 
     @Test
@@ -144,5 +146,6 @@ class GetAdviceNarrationServiceTest {
         assertNotNull(result);
         assertNull(result.aiNarration());
         assertNotNull(result.assessorNarration());
+        assertTrue(result.editable());
     }
 }
