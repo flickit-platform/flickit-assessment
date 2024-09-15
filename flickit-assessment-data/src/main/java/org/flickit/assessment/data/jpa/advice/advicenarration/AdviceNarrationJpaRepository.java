@@ -17,10 +17,10 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
 
     @Modifying
     @Query("""
-        UPDATE AdviceNarrationJpaEntity a
-        SET a.aiNarration = :aiNarration,
-            a.aiNarrationTime = :aiNarrationTime
-        WHERE a.assessmentResultId = :assessmentResultId
+            UPDATE AdviceNarrationJpaEntity a
+            SET a.aiNarration = :aiNarration,
+                a.aiNarrationTime = :aiNarrationTime
+            WHERE a.assessmentResultId = :assessmentResultId
         """)
     void updateAiNarration(@Param("assessmentResultId") UUID assessmentResultId,
                            @Param("aiNarration") String aiNarration,
