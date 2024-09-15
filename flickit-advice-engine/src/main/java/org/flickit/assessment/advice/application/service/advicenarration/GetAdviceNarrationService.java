@@ -1,7 +1,7 @@
-package org.flickit.assessment.advice.application.service.advice;
+package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.port.in.GetAdviceNarrationUseCase;
+import org.flickit.assessment.advice.application.port.in.advicenarration.GetAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.MessageBundle;

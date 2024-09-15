@@ -1,7 +1,6 @@
 package org.flickit.assessment.advice.application.port.in.advicenarration;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.advice.application.port.in.GetAdviceNarrationUseCase;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
