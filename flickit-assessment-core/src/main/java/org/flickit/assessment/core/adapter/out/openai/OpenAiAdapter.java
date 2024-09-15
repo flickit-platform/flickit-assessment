@@ -8,6 +8,8 @@ import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,7 +33,12 @@ public class OpenAiAdapter implements
     }
 
     @Override
-    public String generateAssessmentAnalysis(String fileContent, AnalysisType analysisType) {
-        return "";
+    public AssessmentAnalysisDto generateAssessmentAnalysis(String assessmentTitle, String factSheet, AnalysisType analysisType) {
+        BeanOutputConverter<AssessmentAnalysisDto> converter = new BeanOutputConverter<>(AssessmentAnalysisDto.class);
+        String format = converter.getFormat();
+        Prompt prompt = openAiProperties.createAssessmentAnalysisPrompt(assessmentTitle, factSheet, analysisType.name(), format);
+
+        var generation = chatModel.call(prompt).getResult();
+        return converter.convert(generation.getOutput().getContent());
     }
 }
