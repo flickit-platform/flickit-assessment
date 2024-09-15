@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.port.in.evidenceattachment.Delete
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.DeleteEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentFilePathPort;
-import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
+import org.flickit.assessment.core.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.core.test.fixture.application.EvidenceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ class DeleteEvidenceAttachmentServiceTest {
     private DeleteEvidenceAttachmentService deleteEvidenceAttachmentService;
 
     @Mock
-    private DeleteEvidenceAttachmentFilePort deleteEvidenceAttachmentFilePort;
+    private DeleteFilePort deleteFilePort;
 
     @Mock
     private DeleteEvidenceAttachmentPort deleteEvidenceAttachmentPort;
@@ -72,7 +72,7 @@ class DeleteEvidenceAttachmentServiceTest {
 
         deleteEvidenceAttachmentService.deleteEvidenceAttachment(param);
 
-        verify(deleteEvidenceAttachmentFilePort).deleteEvidenceAttachmentFile(filePath);
+        verify(deleteFilePort).deleteFile(filePath);
         verify(deleteEvidenceAttachmentPort).deleteEvidenceAttachment(attachmentId);
     }
 }

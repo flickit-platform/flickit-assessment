@@ -91,7 +91,8 @@ public enum AssessmentUserRole {
             VIEW_ANSWER_HISTORY_LIST,
             CREATE_ATTRIBUTE_INSIGHT,
             CREATE_ASSESSMENT_INSIGHT,
-            CREATE_SUBJECT_INSIGHT)),
+            CREATE_SUBJECT_INSIGHT,
+            MANAGE_ADD_ON)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
