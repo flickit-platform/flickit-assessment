@@ -15,7 +15,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface CreateAdviceAiNarrationUseCase {
 
-    String createAdviceAiNarration(Param param);
+    Result createAdviceAiNarration(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -40,5 +40,8 @@ public interface CreateAdviceAiNarrationUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+    }
+
+    record Result(String content){
     }
 }

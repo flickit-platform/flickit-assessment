@@ -18,7 +18,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 
 @Service
 @Transactional
@@ -45,7 +45,7 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
 
         if (attributeInsight.isEmpty()) {
             if (!appAiProperties.isEnabled()) {
-                var aiInsight = new Result.Insight(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED,
+                var aiInsight = new Result.Insight(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED,
                     attribute.getTitle()), null, false);
                 return new Result(aiInsight, null, false);
             }

@@ -41,7 +41,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSM
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.simpleAttributeAiInsightMinInsightTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -280,7 +280,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
 
         var result = service.createAiInsight(param);
-        assertEquals(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()), result.content());
+        assertEquals(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()), result.content());
 
         verifyNoInteractions(updateAttributeInsightPort,
             callAiPromptPort,
@@ -402,7 +402,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
 
         var result = service.createAiInsight(param);
-        assertEquals(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()), result.content());
+        assertEquals(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()), result.content());
 
         verifyNoInteractions(callAiPromptPort,
             createAttributeInsightPort,

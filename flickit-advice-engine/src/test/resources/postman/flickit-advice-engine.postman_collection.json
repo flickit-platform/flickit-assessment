@@ -91,41 +91,74 @@
 							]
 						}
 					},
-					"response": []
-				},
-				{
-					"name": "Create Assessor Advice Narration",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"assessorNarration\": \"test\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/01e9ac0c-3a45-4acd-94cc-4fe3b2cb1aab/advice-narration",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"01e9ac0c-3a45-4acd-94cc-4fe3b2cb1aab",
-								"advice-narration"
-							]
-						}
-					},
+                  "response": []
+                },
+              {
+                "name": "Create Assessor Advice Narration",
+                "request": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"assessorNarration\": \"test\"\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/assessments/01e9ac0c-3a45-4acd-94cc-4fe3b2cb1aab/advice-narration",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "assessments",
+                      "01e9ac0c-3a45-4acd-94cc-4fe3b2cb1aab",
+                      "advice-narration"
+                    ]
+                  }
+                },
+                "response": []
+              },
+              {
+                "name": "Get Advice Narration",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/assessments/987a2930-f741-44b5-869f-2e0f78ae9094/advice-narration",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "assessments",
+                      "987a2930-f741-44b5-869f-2e0f78ae9094",
+                      "advice-narration"
+                    ],
+                    "query": [
+                      {
+                        "key": "",
+                        "value": null,
+                        "disabled": true
+                      }
+                    ]
+                  }
+                },
 					"response": []
 				}
 			]
