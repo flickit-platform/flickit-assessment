@@ -11,7 +11,6 @@ import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMoth
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
@@ -32,6 +31,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_AI_IS_DISABLED;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 class CreateAdviceAiNarrationServiceTest {
 
     @InjectMocks
-    CreateAdviceAiAiNarrationService createAdviceAiNarrationService;
+    CreateAdviceAiAiNarrationService service;
 
     @Mock
     AssessmentAccessChecker assessmentAccessChecker;
@@ -70,32 +70,48 @@ class CreateAdviceAiNarrationServiceTest {
     @Mock
     AppAiProperties appAiProperties;
 
-
     @Test
-    void testCreateAdviceAiNarration_AiIsDisabled_ShouldReturnAccessDenied() {
+    void testCreateAdviceAiNarration_UserDoesNotHaveRequiredPermission_ShouldThrowAccessDeniedException() {
         var assessmentId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
         var currentUserId = UUID.randomUUID();
         var param = new CreateAdviceAiNarrationUseCase.Param(assessmentId, adviceListItems, attributeLevelTargets, currentUserId);
 
-        when(appAiProperties.isEnabled()).thenReturn(false);
-        var result = assertDoesNotThrow(() -> createAdviceAiNarrationService.createAdviceAiNarration(param));
-        assertEquals(MessageBundle.message(ADVICE_AI_IS_DISABLED), result.content());
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.createAdviceAiNarration(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(appAiProperties,
+            loadAssessmentResultPort,
+            validateAssessmentResultPort,
+            openAiProperties,
+            callAiPromptPort,
+            loadAdviceNarrationPort,
+            createAdviceNarrationPort);
     }
 
     @Test
-    void testCreateAdviceAiNarration_UserHasNoAccess_ShouldReturnAccessDenied() {
+    void testCreateAdviceAiNarration_AiIsDisabled_ShouldReturnAiIsDisabledMessage() {
         var assessmentId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(AttributeLevelTargetMother.createAttributeLevelTarget());
         var currentUserId = UUID.randomUUID();
         var param = new CreateAdviceAiNarrationUseCase.Param(assessmentId, adviceListItems, attributeLevelTargets, currentUserId);
 
-        when(appAiProperties.isEnabled()).thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ADVICE)).thenReturn(false);
-        var throwable = assertThrows(AccessDeniedException.class, () -> createAdviceAiNarrationService.createAdviceAiNarration(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(appAiProperties.isEnabled()).thenReturn(false);
+
+        var result = assertDoesNotThrow(() -> service.createAdviceAiNarration(param));
+        assertEquals(MessageBundle.message(ADVICE_AI_IS_DISABLED), result.content());
+
+        verifyNoInteractions(loadAssessmentResultPort,
+            validateAssessmentResultPort,
+            openAiProperties,
+            callAiPromptPort,
+            loadAdviceNarrationPort,
+            createAdviceNarrationPort);
     }
 
     @Test
@@ -106,11 +122,18 @@ class CreateAdviceAiNarrationServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new CreateAdviceAiNarrationUseCase.Param(assessmentId, adviceListItems, attributeLevelTargets, currentUserId);
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(appAiProperties.isEnabled()).thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> createAdviceAiNarrationService.createAdviceAiNarration(param));
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAdviceAiNarration(param));
         assertEquals(CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(validateAssessmentResultPort,
+            openAiProperties,
+            callAiPromptPort,
+            loadAdviceNarrationPort,
+            createAdviceNarrationPort);
     }
 
     @Test
@@ -124,17 +147,17 @@ class CreateAdviceAiNarrationServiceTest {
         var aiNarration = "aiNarration";
         var prompt = new Prompt("AI prompt");
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(appAiProperties.isEnabled()).thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(openAiProperties.createAdviceAiNarrationPrompt(adviceListItems.toString(), attributeLevelTargets.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(aiNarration);
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
-        assertDoesNotThrow(() -> createAdviceAiNarrationService.createAdviceAiNarration(param));
 
-        verify(loadAssessmentResultPort).loadByAssessmentId(param.getAssessmentId());
+        service.createAdviceAiNarration(param);
+
         verifyNoInteractions(updateAdviceNarrationPort);
     }
 
@@ -151,16 +174,16 @@ class CreateAdviceAiNarrationServiceTest {
         var prompt = new Prompt("AI prompt");
 
         when(appAiProperties.isEnabled()).thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(openAiProperties.createAdviceAiNarrationPrompt(adviceListItems.toString(), attributeLevelTargets.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(aiNarration);
         doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(AdviceNarration.class));
-        assertDoesNotThrow(() -> createAdviceAiNarrationService.createAdviceAiNarration(param));
 
-        verify(loadAssessmentResultPort).loadByAssessmentId(param.getAssessmentId());
+         service.createAdviceAiNarration(param);
+
         verifyNoInteractions(createAdviceNarrationPort);
     }
 }

@@ -43,11 +43,11 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
 
     @Override
     public Result createAdviceAiNarration(Param param) {
-        if (!appAiProperties.isEnabled())
-            return new Result(MessageBundle.message(ADVICE_AI_IS_DISABLED));
-
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        if (!appAiProperties.isEnabled())
+            return new Result(MessageBundle.message(ADVICE_AI_IS_DISABLED));
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
