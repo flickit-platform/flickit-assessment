@@ -8,6 +8,7 @@ import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadA
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.config.AppAiProperties;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,8 @@ import java.util.UUID;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -132,6 +135,8 @@ class GetAdviceNarrationServiceTest {
 
         assertNotNull(result);
         assertNotNull(result.aiNarration());
+        assertEquals(adviceNarration.getAiNarration(), result.aiNarration().narration());
+        assertEquals(adviceNarration.getAiNarrationTime(), result.aiNarration().creationTime());
         assertNull(result.assessorNarration());
         assertTrue(result.editable());
     }
@@ -161,6 +166,8 @@ class GetAdviceNarrationServiceTest {
         assertNotNull(result);
         assertNull(result.aiNarration());
         assertNotNull(result.assessorNarration());
+        assertEquals(adviceNarration.getAssessorNarration(), result.assessorNarration().narration());
+        assertEquals(adviceNarration.getAssessorNarrationTime(), result.assessorNarration().creationTime());
         assertTrue(result.editable());
     }
 }
