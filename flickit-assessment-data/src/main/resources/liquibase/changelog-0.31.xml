@@ -37,4 +37,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.31-04" author="Ali Sedaghat">
+        <dropNotNullConstraint tableName="faa_advice_narration" columnName="ai_narration"/>
+    </changeSet>
+
+    <changeSet id="0.31-05" author="Ali Sedaghat">
+        <dropNotNullConstraint tableName="faa_advice_narration" columnName="ai_narration_time"/>
+    </changeSet>
+
 </databaseChangeLog>
