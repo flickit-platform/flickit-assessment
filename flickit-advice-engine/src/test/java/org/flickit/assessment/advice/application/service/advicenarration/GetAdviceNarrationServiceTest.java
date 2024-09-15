@@ -44,14 +44,25 @@ class GetAdviceNarrationServiceTest {
     private AppAiProperties appAiProperties;
 
     @Test
+    void testGetAdviceNarration_WhenUserDoesNotHaveRequiredPermission_ThenThrowAccessDeniedException() {
+        var param = new GetAdviceNarrationUseCase.Param(UUID.randomUUID(), UUID.randomUUID());
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAdviceNarration(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
     void testGetAdviceNarration_WhenAssessmentDoesNotHaveAnyResult_ThenThrowResourceNotFoundException() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
-        ResourceNotFoundException throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAdviceNarration(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAdviceNarration(param));
         assertEquals(GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
     }
 
@@ -62,6 +73,7 @@ class GetAdviceNarrationServiceTest {
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
         var assessmentResult = new AssessmentResult(UUID.randomUUID());
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(false);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
@@ -82,6 +94,7 @@ class GetAdviceNarrationServiceTest {
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
         var assessmentResult = new AssessmentResult(UUID.randomUUID());
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
@@ -110,6 +123,7 @@ class GetAdviceNarrationServiceTest {
             null,
             currentUserId);
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
@@ -137,6 +151,7 @@ class GetAdviceNarrationServiceTest {
             assessorNarrationTime,
             currentUserId);
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
