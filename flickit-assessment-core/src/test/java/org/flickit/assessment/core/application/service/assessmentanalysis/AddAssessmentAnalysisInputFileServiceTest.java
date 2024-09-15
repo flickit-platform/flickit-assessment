@@ -70,10 +70,10 @@ class AddAssessmentAnalysisInputFileServiceTest {
 
     @SneakyThrows
     @Test
-    void testAddAssessmentAnalysisInputFile_UserHasNoAccessToAssessment_ThrowAccessDeniedException() {
+    void testAddAssessmentAnalysisInputFile_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
         var inputFile = new MockMultipartFile("file", "file1",
             "application/vnd.rar", getResourceAsStream("/no-where/nothing.rar"));
-        AddAssessmentAnalysisInputFileUseCase.Param param = new AddAssessmentAnalysisInputFileUseCase.Param(
+        var param = new AddAssessmentAnalysisInputFileUseCase.Param(
             UUID.randomUUID(),
             inputFile,
             1,
@@ -99,7 +99,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
     void testAddAssessmentAnalysisInputFile_AnalysisTypeIsNotValid_ThrowNotFoundException() {
         var inputFile = new MockMultipartFile("file", "file1",
             "application/vnd.rar", getResourceAsStream("/no-where/nothing.rar"));
-        AddAssessmentAnalysisInputFileUseCase.Param param = new AddAssessmentAnalysisInputFileUseCase.Param(
+        var param = new AddAssessmentAnalysisInputFileUseCase.Param(
             UUID.randomUUID(),
             inputFile,
             0,
@@ -125,7 +125,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
     void testAddAssessmentAnalysisInputFile_AssessmentAnalysisNotExist_PersistAssessmentAnalysis() {
         var inputFile = new MockMultipartFile("file", "file1",
             "application/vnd.rar", getResourceAsStream("/no-where/nothing.rar"));
-        AddAssessmentAnalysisInputFileUseCase.Param param = new AddAssessmentAnalysisInputFileUseCase.Param(
+        var param = new AddAssessmentAnalysisInputFileUseCase.Param(
             UUID.randomUUID(),
             inputFile,
             1,
@@ -161,7 +161,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
     void testAddAssessmentAnalysisInputFile_AssessmentAnalysisExists_UpdateAssessmentAnalysis() {
         var inputFile = new MockMultipartFile("file", "file1",
             "application/vnd.rar", getResourceAsStream("/no-where/nothing.rar"));
-        AddAssessmentAnalysisInputFileUseCase.Param param = new AddAssessmentAnalysisInputFileUseCase.Param(
+        var param = new AddAssessmentAnalysisInputFileUseCase.Param(
             UUID.randomUUID(),
             inputFile,
             1,
