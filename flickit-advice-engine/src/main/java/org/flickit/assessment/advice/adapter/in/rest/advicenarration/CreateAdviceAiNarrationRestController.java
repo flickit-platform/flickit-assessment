@@ -21,11 +21,11 @@ public class CreateAdviceAiNarrationRestController {
     private final UserContext userContext;
 
     @PostMapping("assessments/{assessmentId}/advice-narration-ai")
-    ResponseEntity<String> createAdviceAiNarration(@PathVariable("assessmentId") UUID assessmentId,
+    ResponseEntity<Result> createAdviceAiNarration(@PathVariable("assessmentId") UUID assessmentId,
                                                  @RequestBody CreateAdviceAiNarrationRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        String aiNarration = useCase.createAdviceAiNarration(toParam(assessmentId, requestDto, currentUserId));
-        return new ResponseEntity<>(aiNarration, HttpStatus.CREATED);
+        var result = useCase.createAdviceAiNarration(toParam(assessmentId, requestDto, currentUserId));
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, CreateAdviceAiNarrationRequestDto requestDto, UUID currentUserId) {
