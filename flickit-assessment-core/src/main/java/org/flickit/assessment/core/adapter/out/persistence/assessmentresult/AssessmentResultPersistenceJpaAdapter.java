@@ -20,7 +20,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
 
-@Component("coreAssessmentResultPersistenceJpaAdapter")
+@Component
 @RequiredArgsConstructor
 public class AssessmentResultPersistenceJpaAdapter implements
     InvalidateAssessmentResultPort,
