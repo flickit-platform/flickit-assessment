@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.port.in;
+package org.flickit.assessment.advice.application.port.in.advice;
 
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;

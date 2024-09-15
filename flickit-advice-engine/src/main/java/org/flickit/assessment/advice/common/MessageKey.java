@@ -6,5 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessageKey {
 
+    public static final String ADVICE_AI_IS_DISABLED = "advice.ai.disabled";
     public static final String ADVICE_NARRATION_AI_IS_DISABLED = "advice.narration.aiIsDisabled";
 }
