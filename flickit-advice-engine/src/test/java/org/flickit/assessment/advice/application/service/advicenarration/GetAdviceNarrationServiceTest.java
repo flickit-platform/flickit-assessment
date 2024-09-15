@@ -123,7 +123,7 @@ class GetAdviceNarrationServiceTest {
     }
 
     @Test
-    void testAdviceNarration_WhenAdviceNarrationIsNotEmptyAndJustAiNarrationIsNull_thenReturnAssessorNarrationAsResult() {
+    void testGetAdviceNarration_WhenAdviceNarrationIsNotEmptyAndJustAiNarrationIsNull_thenReturnAssessorNarrationAsResult() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);

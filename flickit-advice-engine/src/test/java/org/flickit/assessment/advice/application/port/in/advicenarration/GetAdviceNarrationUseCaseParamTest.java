@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetAdviceNarrationUseCaseParamTest {
 
     @Test
-    void testGetAdviceNarration_AssessmentIdIsNull_ErrorMessage() {
+    void testGetAdviceNarrationParam_AssessmentIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAdviceNarrationUseCase.Param(null, currentUserId));
@@ -21,7 +21,7 @@ class GetAdviceNarrationUseCaseParamTest {
     }
 
     @Test
-    void testGetAdviceParam_CurrentUserIdIsNull_ErrorMessage() {
+    void testGetAdviceNarrationParam_CurrentUserIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetAdviceNarrationUseCase.Param(assessmentId, null));
