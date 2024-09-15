@@ -14,4 +14,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION = "create-advice.finding-best-solution.execution";
     public static final String CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND =  "create-advice.assessmentAttributeRelation.notFound";
     public static final String CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND =  "create-advice.assessmentLevelRelation.notFound";
+
+    public static final String CREATE_ADVICE_AI_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL = "create-advice-ai-narration.adviceListItems.notNull";
+    public static final String CREATE_ADVICE_AI_NARRATION_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL = "create-advice-ai-narration.attributeLevelTargets.notNull";
+    public static final String CREATE_ADVICE_AI_NARRATION_ASSESSMENT_ID_NOT_NULL = "create-advice-ai-narration.assessmentId.notNull";
+    public static final String CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "create-advice-ai-narration.assessmentResult.notFound";
 }

@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
+import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -13,7 +15,6 @@ import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeAiInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeAiInsightPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
@@ -35,7 +36,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 
 @Service
 @Transactional
@@ -56,8 +57,9 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
     private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
-    private final CreateAttributeAiInsightPort createAttributeAiInsightPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
+    private final OpenAiProperties openAiProperties;
+    private final CallAiPromptPort callAiPromptPort;
 
     @SneakyThrows
     @Override
@@ -91,11 +93,12 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             return new Result(attributeInsight.getAiInsight());
 
         if (!appAiProperties.isEnabled())
-            return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
+            return new Result(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()));
 
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         String aiInputPath = uploadInputFile(attribute, file.stream());
-        String aiInsight = createAttributeAiInsightPort.generateInsight(file.text(), attribute);
+        var prompt = openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text());
+        String aiInsight = callAiPromptPort.call(prompt);
         updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
         return new Result(aiInsight);
     }
@@ -104,11 +107,12 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     private Result handleNewInsight(Attribute attribute, AssessmentResult assessmentResult,
                                     AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
         if (!appAiProperties.isEnabled())
-            return new Result(MessageBundle.message(ASSESSMENT_ATTRIBUTE_AI_IS_DISABLED, attribute.getTitle()));
+            return new Result(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()));
 
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         String aiInputPath = uploadInputFile(attribute, file.stream());
-        String aiInsight = createAttributeAiInsightPort.generateInsight(file.text(), attribute);
+        var prompt = openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text());
+        String aiInsight = callAiPromptPort.call(prompt);
         createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
         return new Result(aiInsight);
     }

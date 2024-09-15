@@ -54,6 +54,46 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "AdviceAiNarration",
+			"item": [
+				{
+					"name": "Create Advice Ai Narration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attributeLevelTargets\": [\n        {\n            \"attributeId\": \"1576\",\n            \"maturityLevelId\": \"1854\"\n        },\n        {\n            \"attributeId\": \"1577\",\n            \"maturityLevelId\": \"1854\"\n        }\n    ],\n   \"adviceListItems\": [\n        {\n            \"question\": {\n                \"id\": 13152,\n                \"title\": \"وجود سند پشتیبان‌گیری جامع و لاگ انجام عملیات آن\",\n                \"index\": 20\n            },\n            \"answeredOption\": {\n                \"index\": 1,\n                \"title\": \"Poor\"\n            },\n            \"recommendedOption\": {\n                \"index\": 5,\n                \"title\": \"Great\"\n            },\n            \"attributes\": [\n                {\n                    \"id\": 1579,\n                    \"title\": \"Operation Reliability\"\n                },\n                {\n                    \"id\": 1577,\n                    \"title\": \"Vendor Lock-in Prevention\"\n                }\n            ],\n            \"questionnaire\": {\n                \"id\": 2387,\n                \"title\": \"Operation Environment\"\n            }\n        },\n        {\n            \"question\": {\n                \"id\": 13088,\n                \"title\": \"ایجاد خودکار تگ قبل از ترخیص خودکار و ساخت Artifactها یا Containerها\",\n                \"index\": 7\n            },\n            \"answeredOption\": {\n                \"index\": 1,\n                \"title\": \"Poor\"\n            },\n            \"recommendedOption\": {\n                \"index\": 5,\n                \"title\": \"Great\"\n            },\n            \"attributes\": [\n                {\n                    \"id\": 1576,\n                    \"title\": \"Team Agility\"\n                }\n            ],\n            \"questionnaire\": {\n                \"id\": 2381,\n                \"title\": \"DevOps\"\n            }\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/b064f522-da94-4047-9c19-50c3e43d0a3d/advice-narration-ai",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"b064f522-da94-4047-9c19-50c3e43d0a3d",
+								"advice-narration-ai"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
