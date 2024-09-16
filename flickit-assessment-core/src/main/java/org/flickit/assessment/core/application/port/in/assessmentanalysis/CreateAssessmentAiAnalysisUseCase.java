@@ -36,7 +36,4 @@ public interface CreateAssessmentAiAnalysisUseCase {
             this.validateSelf();
         }
     }
-
-    record Result(String analysis) {
-    }
 }

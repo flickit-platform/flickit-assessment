@@ -18,7 +18,7 @@ public class CreateAssessmentAiAnalysisRestController {
     private final UserContext userContext;
 
     @PostMapping("/assessments/{assessmentId}/analysis")
-    public ResponseEntity<Result> createAssessmentAiAnalysis(@PathVariable("assessmentId") UUID assessmentId,
+    public ResponseEntity<Void> createAssessmentAiAnalysis(@PathVariable("assessmentId") UUID assessmentId,
                                                              @RequestBody CreateAssessmentAiAnalysisRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         createAssessmentAiAnalysisUseCase.createAiAnalysis(toParam(assessmentId, requestDto, currentUserId));
