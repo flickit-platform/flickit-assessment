@@ -28,7 +28,7 @@ public class CreateAssessorAdviceNarrationService implements CreateAssessorAdvic
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
-    private final ValidateAssessmentResultPort validateAssessmentResultPort;;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
