@@ -125,6 +125,41 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Create Assessor Advice Narration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"assessorNarration\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/01e9ac0c-3a45-4acd-94cc-4fe3b2cb1aab/advice-narration",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"01e9ac0c-3a45-4acd-94cc-4fe3b2cb1aab",
+								"advice-narration"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
