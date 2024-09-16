@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.AddAssessmentAnalysisInputFileUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.CreateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadAssessmentAnalysisPort;
-import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisInputPathPort;
+import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.DeleteFilePort;
@@ -37,7 +37,7 @@ public class AddAssessmentAnalysisInputFileService implements AddAssessmentAnaly
     private final LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
     private final CreateAssessmentAnalysisPort createAssessmentAnalysisPort;
     private final DeleteFilePort deleteFilePort;
-    private final UpdateAssessmentAnalysisInputPathPort updateAssessmentAnalysisInputPathPort;
+    private final UpdateAssessmentAnalysisPort updateAssessmentAnalysisPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
@@ -60,7 +60,7 @@ public class AddAssessmentAnalysisInputFileService implements AddAssessmentAnaly
         } else {
             String oldInputPath = assessmentAnalysis.get().getInputPath();
             deleteFilePort.deleteFile(oldInputPath);
-            updateAssessmentAnalysisInputPathPort.updateInputPath(assessmentAnalysis.get().getId(), inputPath);
+            updateAssessmentAnalysisPort.updateInputPath(assessmentAnalysis.get().getId(), inputPath);
         }
 
         var downloadLink = createFileDownloadLinkPort.createDownloadLink(inputPath, EXPIRY_DURATION);
