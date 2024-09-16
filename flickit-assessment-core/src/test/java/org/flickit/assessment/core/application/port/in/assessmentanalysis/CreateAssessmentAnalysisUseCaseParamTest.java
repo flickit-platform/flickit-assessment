@@ -17,7 +17,7 @@ class CreateAssessmentAiAnalysisUseCaseParamTest {
     void tesCreateAssessmentAiAnalysisUseCaseParam_AssessmentIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAnalysisUseCase.Param(null, 1, currentUserId));
+            () -> new CreateAssessmentAiAnalysisUseCase.Param(null, 1, currentUserId));
         assertThat(throwable).hasMessage("assessmentId: " + CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ID_NOT_NULL);
     }
 
@@ -26,7 +26,7 @@ class CreateAssessmentAiAnalysisUseCaseParamTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAnalysisUseCase.Param(assessmentId, null, currentUserId));
+            () -> new CreateAssessmentAiAnalysisUseCase.Param(assessmentId, null, currentUserId));
         assertThat(throwable).hasMessage("type: " + CREATE_ASSESSMENT_AI_ANALYSIS_TYPE_NOT_NULL);
     }
 
@@ -34,7 +34,7 @@ class CreateAssessmentAiAnalysisUseCaseParamTest {
     void tesCreateAssessmentAiAnalysisUseCaseParam_CurrentUserIdIsNull_ErrorMessage() {
         UUID assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentAnalysisUseCase.Param(assessmentId, 1, null));
+            () -> new CreateAssessmentAiAnalysisUseCase.Param(assessmentId, 1, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

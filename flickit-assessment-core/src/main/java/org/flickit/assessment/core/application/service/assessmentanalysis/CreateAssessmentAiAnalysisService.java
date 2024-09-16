@@ -14,7 +14,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysisInsight;
-import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAiAnalysisUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -32,7 +32,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysisUseCase {
+public class CreateAssessmentAiAnalysisService implements CreateAssessmentAiAnalysisUseCase {
 
     private final AssessmentPermissionChecker assessmentPermissionChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;

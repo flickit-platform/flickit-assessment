@@ -11,7 +11,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_AI_ANALYSIS_TYPE_NOT_NULL;
 
-public interface CreateAssessmentAnalysisUseCase {
+public interface CreateAssessmentAiAnalysisUseCase {
 
     void createAiAnalysis(Param param);
 

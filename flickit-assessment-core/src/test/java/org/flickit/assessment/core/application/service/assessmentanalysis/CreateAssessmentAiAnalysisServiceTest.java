@@ -4,7 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAiAnalysisUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateAssessmentAnalysisServiceTest {
+class CreateAssessmentAiAnalysisServiceTest {
 
     @InjectMocks
-    CreateAssessmentAnalysisService service;
+    CreateAssessmentAiAnalysisService service;
 
     @Mock
     AssessmentPermissionChecker assessmentPermissionChecker;
@@ -47,7 +47,7 @@ class CreateAssessmentAnalysisServiceTest {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var type = 1;
-        var param = new CreateAssessmentAnalysisUseCase.Param(assessmentId, type, currentUserId);
+        var param = new CreateAssessmentAiAnalysisUseCase.Param(assessmentId, type, currentUserId);
 
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_ANALYSIS)).thenReturn(false);
 
@@ -61,7 +61,7 @@ class CreateAssessmentAnalysisServiceTest {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var type = 1;
-        var param = new CreateAssessmentAnalysisUseCase.Param(assessmentId, type, currentUserId);
+        var param = new CreateAssessmentAiAnalysisUseCase.Param(assessmentId, type, currentUserId);
 
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_ANALYSIS)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.empty());
@@ -76,7 +76,7 @@ class CreateAssessmentAnalysisServiceTest {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var type = 1;
-        var param = new CreateAssessmentAnalysisUseCase.Param(assessmentId, type, currentUserId);
+        var param = new CreateAssessmentAiAnalysisUseCase.Param(assessmentId, type, currentUserId);
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
 
