@@ -28,12 +28,14 @@ public interface AdviceNarrationJpaRepository extends JpaRepository<AdviceNarrat
 
     @Modifying
     @Query("""
-        UPDATE AdviceNarrationJpaEntity a
-        SET a.assessorNarration = :assessorNarration,
-            a.assessorNarrationTime = :assessorNarrationTime
-        WHERE a.assessmentResultId = :assessmentResultId
-    """)
+            UPDATE AdviceNarrationJpaEntity a
+            SET a.assessorNarration = :assessorNarration,
+                a.assessorNarrationTime = :assessorNarrationTime,
+                a.createdBy = :createdBy
+            WHERE a.assessmentResultId = :assessmentResultId
+        """)
     void updateAssessorNarration(@Param("assessmentResultId") UUID assessmentResultId,
                                  @Param("assessorNarration") String assessorNarration,
-                                 @Param("assessorNarrationTime") LocalDateTime assessorNarrationTime);
+                                 @Param("assessorNarrationTime") LocalDateTime assessorNarrationTime,
+                                 @Param("createdBy") UUID createdBy);
 }

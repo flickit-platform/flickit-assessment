@@ -36,7 +36,8 @@ public class AdviceNarrationPersistenceJpaAdapter implements
     public void updateAssessorNarration(AdviceNarration adviceNarration) {
         repository.updateAssessorNarration(adviceNarration.getAssessmentResultId(),
             adviceNarration.getAssessorNarration(),
-            adviceNarration.getAssessorNarrationTime());
+            adviceNarration.getAssessorNarrationTime(),
+            adviceNarration.getCreatedBy());
     }
 
     @Override
