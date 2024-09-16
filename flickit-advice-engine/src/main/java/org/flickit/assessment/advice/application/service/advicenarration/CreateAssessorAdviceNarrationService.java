@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
@@ -44,25 +45,30 @@ public class CreateAssessorAdviceNarrationService implements CreateAssessorAdvic
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
 
-        if (adviceNarration.isEmpty()) {
-            AdviceNarration narration = new AdviceNarration(null,
-                assessmentResult.getId(),
-                null,
-                param.getAssessorNarration(),
-                null,
-                LocalDateTime.now(),
-                param.getCurrentUserId());
-            createAdviceNarrationPort.persist(narration);
-        } else {
-            AdviceNarration persisted = adviceNarration.get();
-            AdviceNarration updated = new AdviceNarration(null,
-                assessmentResult.getId(),
-                persisted.getAiNarration(),
-                param.getAssessorNarration(),
-                persisted.getAiNarrationTime(),
-                LocalDateTime.now(),
-                param.getCurrentUserId());
-            updateAdviceNarrationPort.updateAssessorNarration(updated);
-        }
+        adviceNarration.ifPresentOrElse(
+            narration -> handleExistingAdviceNarration(param, narration),
+            ()-> handleNewAdviceNarration(assessmentResult.getId(), param));
+    }
+
+    private void handleExistingAdviceNarration(Param param, AdviceNarration adviceNarration) {
+        AdviceNarration updated = new AdviceNarration(adviceNarration.getId(),
+            adviceNarration.getAssessmentResultId(),
+            adviceNarration.getAiNarration(),
+            param.getAssessorNarration(),
+            adviceNarration.getAiNarrationTime(),
+            LocalDateTime.now(),
+            param.getCurrentUserId());
+        updateAdviceNarrationPort.updateAssessorNarration(updated);
+    }
+
+    private void handleNewAdviceNarration(UUID assessmentResultId, Param param) {
+        AdviceNarration narration = new AdviceNarration(null,
+            assessmentResultId,
+            null,
+            param.getAssessorNarration(),
+            null,
+            LocalDateTime.now(),
+            param.getCurrentUserId());
+        createAdviceNarrationPort.persist(narration);
     }
 }
