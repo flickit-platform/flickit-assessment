@@ -1571,7 +1571,7 @@
 				{
 					"name": "Get Subject Insight",
 					"request": {
-						"method": "Get",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
@@ -1590,53 +1590,6 @@
 								"insights",
 								"subjects",
 								"15"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "AssessmentAiAnalysis",
-			"item": [
-				{
-					"name": "Create Assessment Ai Analysis",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"type\": 1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/9461d811-938b-40fe-8b9b-b1fcc8c32217/analysis",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"9461d811-938b-40fe-8b9b-b1fcc8c32217",
-								"analysis"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "1",
-									"disabled": true
-								}
 							]
 						}
 					},
