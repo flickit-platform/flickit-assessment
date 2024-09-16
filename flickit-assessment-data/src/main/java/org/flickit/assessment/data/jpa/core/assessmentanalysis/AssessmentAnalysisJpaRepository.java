@@ -13,8 +13,6 @@ import java.util.UUID;
 @Repository
 public interface AssessmentAnalysisJpaRepository extends JpaRepository<AssessmentAnalysisJpaEntity, UUID> {
 
-    Optional<AssessmentAnalysisJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
-
     @Modifying
     @Query("""
             UPDATE AssessmentAnalysisJpaEntity a
