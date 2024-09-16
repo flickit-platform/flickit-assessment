@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.CreateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadAssessmentAnalysisPort;
-import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisInputPathPort;
+import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisPort;
 import org.flickit.assessment.data.jpa.core.assessmentanalysis.AssessmentAnalysisJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class AssessmentAnalysisPersistenceJpaAdapter implements
     LoadAssessmentAnalysisPort,
     CreateAssessmentAnalysisPort,
-    UpdateAssessmentAnalysisInputPathPort {
+    UpdateAssessmentAnalysisPort {
 
     private final AssessmentAnalysisJpaRepository repository;
 
@@ -36,5 +36,10 @@ public class AssessmentAnalysisPersistenceJpaAdapter implements
     @Override
     public void updateInputPath(UUID id, String inputPath) {
         repository.updateInputPath(id, inputPath);
+    }
+
+    @Override
+    public void updateAiAnalysis(AssessmentAnalysis assessmentAnalysis) {
+        repository.updateAiAnalysis(assessmentAnalysis.getId(), assessmentAnalysis.getAiAnalysis(), assessmentAnalysis.getAssessorAnalysisTime());
     }
 }
