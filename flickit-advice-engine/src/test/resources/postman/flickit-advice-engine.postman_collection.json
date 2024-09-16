@@ -94,6 +94,39 @@
 					"response": []
 				},
 				{
+					"name": "Get Advice Narration",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/987a2930-f741-44b5-869f-2e0f78ae9094/advice-narration",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"987a2930-f741-44b5-869f-2e0f78ae9094",
+								"advice-narration"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Assessor Advice Narration",
 					"request": {
 						"method": "POST",

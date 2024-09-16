@@ -7,9 +7,11 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.Create
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
+import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -34,13 +37,17 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
+    private final AppAiProperties appAiProperties;
     private final OpenAiProperties openAiProperties;
     private final CallAiPromptPort callAiPromptPort;
 
     @Override
-    public String createAdviceAiNarration(Param param) {
+    public Result createAdviceAiNarration(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        if (!appAiProperties.isEnabled())
+            return new Result(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED));
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
@@ -58,7 +65,7 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
             () -> handleExistingAdviceNarration(assessmentResult.getId(), aiNarration);
         action.run();
 
-        return aiNarration;
+        return new Result(aiNarration);
     }
 
     private void handleExistingAdviceNarration(UUID assessmentResultId, String adviceAiNarration) {
