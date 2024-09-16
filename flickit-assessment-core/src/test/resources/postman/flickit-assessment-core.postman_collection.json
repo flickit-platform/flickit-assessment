@@ -412,51 +412,6 @@
 			]
 		},
 		{
-			"name": "AssessmentAnalysis",
-			"item": [
-				{
-					"name": "Add Assessment Analysis Input File",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "inputFile",
-									"type": "file",
-									"src": "/home/Downloads/doc.pdf"
-								},
-								{
-									"key": "analysisType",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/analysis-input",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
-								"analysis-input"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "AssessmentInsight",
 			"item": [
 				{
@@ -516,7 +471,7 @@
 							}
 						},
 						"url": {
-                          "raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/insight",
+							"raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/insights",
 							"host": [
 								"{{base_url}}"
 							],
@@ -524,7 +479,7 @@
 								"{{api_path}}",
 								"assessments",
 								"e4f4a1cc-f80f-4b30-aaea-27f642a3965b",
-                              "insight"
+								"insights"
 							]
 						}
 					},
@@ -1567,49 +1522,76 @@
 						}
 					},
 					"response": []
-                }
-            ]
-        },
-      {
-        "name": "AssessmentAiAnalysis",
-        "item": [
-          {
-            "name": "Create Assessment Ai Analysis",
+				},
+				{
+					"name": "Get Subject Insight",
 					"request": {
-                      "method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-                              "value": "{{authorization_header}}",
-                              "type": "text"
+								"value": "{{authorization_header}}"
 							}
 						],
-                      "body": {
-                        "mode": "raw",
-                        "raw": "{\n    \"type\": 1\n}",
-                        "options": {
-                          "raw": {
-                            "language": "json"
-                          }
-                        }
-                      },
 						"url": {
-                          "raw": "{{base_url}}/{{api_path}}/assessments/9461d811-938b-40fe-8b9b-b1fcc8c32217/analysis",
+							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/insights/subjects/15",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-                              "9461d811-938b-40fe-8b9b-b1fcc8c32217",
-                              "analysis"
-                            ],
-                          "query": [
-                            {
-                              "key": "type",
-                              "value": "1",
-                              "disabled": true
-                            }
+								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+								"insights",
+								"subjects",
+								"15"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AssessmentAiAnalysis",
+			"item": [
+				{
+					"name": "Create Assessment Ai Analysis",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/9461d811-938b-40fe-8b9b-b1fcc8c32217/analysis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"9461d811-938b-40fe-8b9b-b1fcc8c32217",
+								"analysis"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "1",
+									"disabled": true
+								}
 							]
 						}
 					},
