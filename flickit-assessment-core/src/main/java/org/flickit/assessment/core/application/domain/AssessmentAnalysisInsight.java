@@ -1,26 +1,34 @@
 package org.flickit.assessment.core.application.domain;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+public record AssessmentAnalysisInsight(
+    ProgrammingLanguages programmingLanguages,
+    OverallCodeQuality overallCodeQuality,
+    CodeComplexity codeComplexity,
+    CodeSmell codeSmell,
+    CodeDuplication codeDuplication,
+    CodeOrganization codeOrganization,
+    CodeReliability codeReliability,
+    CodeSecurity codeSecurity,
+    AutomatedTestCoverage automatedTestCoverage,
+    ThirdPartyLibraries thirdPartyLibraries) {
 
-@Getter
-@RequiredArgsConstructor
-public class AssessmentAnalysisInsight {
+    record ProgrammingLanguages(String info, String usage) {}
 
-    public final String languagesInfo;
-    public final String languagesUsage;
-    public final String codeQuality;
-    public final String codeComplexityDiagramText;
-    public final String codeComplexity;
-    public final String codeSmellDiagramText;
-    public final String codeSmell;
-    public final String codeDuplication;
-    public final String codeOrganization;
-    public final String codeReliabilityDiagramText;
-    public final String codeReliability;
-    public final String codeSecurityDiagramText;
-    public final String codeSecurity;
-    public final String testCoverageDiagramText;
-    public final String testCoverage;
-    public final String thirdPartyLibs;
+    record OverallCodeQuality(String text) {}
+
+    record CodeComplexity(String figureCaption, String text) {}
+
+    record CodeSmell(String figureCaption, String text) {}
+
+    record CodeDuplication(String text) {}
+
+    record CodeOrganization(String text) {}
+
+    record CodeReliability(String figureCaption, String text) {}
+
+    record CodeSecurity(String figureCaption, String text) {}
+
+    record AutomatedTestCoverage(String figureCaption, String text) {}
+
+    record ThirdPartyLibraries(String text) {}
 }
