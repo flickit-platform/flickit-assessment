@@ -83,7 +83,7 @@ class CreateAssessmentAnalysisServiceTest {
         when(assessmentPermissionChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_ANALYSIS)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.getId(), param.getType())).thenReturn(Optional.empty());
+        when(loadAssessmentAnalysisPort.load(assessmentResult.getId(), param.getType())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAiAnalysis(param));
 

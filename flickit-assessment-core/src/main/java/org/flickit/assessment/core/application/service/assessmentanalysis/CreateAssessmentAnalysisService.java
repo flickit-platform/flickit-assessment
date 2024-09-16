@@ -6,17 +6,20 @@ import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.*;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
+import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
+import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
+import org.flickit.assessment.core.application.domain.AssessmentAnalysisInsight;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAnalysisUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CreateAssessmentAiAnalysisPort;
-import org.flickit.assessment.core.application.port.out.assessmentanalysis.CreateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadAssessmentAnalysisPort;
+import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.minio.ReadAssessmentAnalysisFilePort;
+import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +39,9 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
     private final ReadAssessmentAnalysisFilePort readAssessmentAnalysisFilePort;
-    private final CreateAssessmentAiAnalysisPort createAssessmentAiAnalysisPort;
-    private final CreateAssessmentAnalysisPort createAssessmentAnalysisPort;
+    private final UpdateAssessmentAnalysisPort updateAssessmentAnalysisPort;
+    private final OpenAiProperties openAiProperties;
+    private final CallAiPromptPort callAiPromptPort;
 
     @SneakyThrows
     @Override
@@ -54,7 +58,7 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var assessmentAnalysis = loadAssessmentAnalysisPort.loadAssessmentAnalysis(assessmentResult.get().getId(), param.getType());
+        var assessmentAnalysis = loadAssessmentAnalysisPort.load(assessmentResult.get().getId(), param.getType());
         if (assessmentAnalysis.isEmpty())
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND);
 
@@ -63,12 +67,14 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
         String fileContent = convertWorkbookToText(workbook);
 
         var analysisType = AnalysisType.valueOfById(param.getType());
-        var aiAnalysis = createAssessmentAiAnalysisPort.generateAssessmentAnalysis(assessmentResult.get().getAssessment().getTitle(), fileContent, analysisType);
+        BeanOutputConverter<AssessmentAnalysisInsight> converter = new BeanOutputConverter<>(AssessmentAnalysisInsight.class);
+        var prompt = openAiProperties.createAssessmentAnalysisPrompt(assessmentResult.get().getAssessment().getTitle(), fileContent, analysisType.name(), converter.getFormat());
+        String aiAnalysis = callAiPromptPort.call(prompt);
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(aiAnalysis);
 
-        createAssessmentAnalysisPort.persist(toAssessmentAnalysis(assessmentAnalysis.get(), jsonString));
+        updateAssessmentAnalysisPort.updateAiAnalysis(toAssessmentAnalysis(assessmentAnalysis.get(), jsonString));
     }
 
     public String convertWorkbookToText(Workbook workbook) throws IOException {
@@ -124,9 +130,9 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
             assessmentAnalysis.getAssessmentResultId(),
             assessmentAnalysis.getType(),
             aiAnalysis,
-            null,
+            assessmentAnalysis.getAssessorAnalysis(),
             LocalDateTime.now(),
-            null,
-            null);
+            assessmentAnalysis.getAssessorAnalysisTime(),
+            assessmentAnalysis.getInputPath());
     }
 }
