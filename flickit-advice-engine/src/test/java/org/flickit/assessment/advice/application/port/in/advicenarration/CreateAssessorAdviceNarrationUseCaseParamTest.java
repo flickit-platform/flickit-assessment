@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreateAssessorAdviceNarrationUseCaseParamTest {
 
     @Test
-    void testCreateAssessorAdviceNarration_assessmentIdIsNull_ErrorMessage() {
+    void testCreateAssessorAdviceNarrationParam_assessmentIdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateAssessorAdviceNarrationUseCase.Param(null, "assessorNarration",currentUserId));
@@ -23,7 +23,7 @@ class CreateAssessorAdviceNarrationUseCaseParamTest {
     }
 
     @Test
-    void testCreateAssessorAdviceNarration_assessorNarrationIsGreaterThanMaxSize_ErrorMessage() {
+    void testCreateAssessorAdviceNarrationParam_assessorNarrationIsGreaterThanMaxSize_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var assessmentId = UUID.randomUUID();
         String assessorNarration = RandomStringUtils.randomAlphabetic(1001);
@@ -33,7 +33,7 @@ class CreateAssessorAdviceNarrationUseCaseParamTest {
     }
 
     @Test
-    void testCreateAssessorAdviceNarration_currentUserIdIsNull_ErrorMessage() {
+    void testCreateAssessorAdviceNarrationParam_currentUserIdIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, "assessorNarration",null));
