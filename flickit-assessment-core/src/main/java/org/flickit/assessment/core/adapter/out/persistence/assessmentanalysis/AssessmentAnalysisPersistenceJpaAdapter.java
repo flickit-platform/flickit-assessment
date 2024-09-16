@@ -40,6 +40,6 @@ public class AssessmentAnalysisPersistenceJpaAdapter implements
 
     @Override
     public void updateAiAnalysis(AssessmentAnalysis assessmentAnalysis) {
-        repository.updateAiAnalysis(assessmentAnalysis.getId(), assessmentAnalysis.getAiAnalysis(), assessmentAnalysis.getAssessorAnalysisTime());
+        repository.updateAiAnalysis(assessmentAnalysis.getId(), assessmentAnalysis.getAiAnalysis(), assessmentAnalysis.getAiAnalysisTime());
     }
 }
