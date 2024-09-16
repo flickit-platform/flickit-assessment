@@ -28,7 +28,6 @@ public class CreateAssessorAdviceNarrationRestController {
     }
 
     private CreateAssessorAdviceNarrationUseCase.Param toParam(UUID assessmentId, String assessorNarration, UUID currentUserId) {
-
         return new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration, currentUserId);
     }
 }
