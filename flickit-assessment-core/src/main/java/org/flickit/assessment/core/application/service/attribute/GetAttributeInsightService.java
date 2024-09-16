@@ -46,7 +46,7 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
         if (attributeInsight.isEmpty()) {
             if (!appAiProperties.isEnabled()) {
                 var aiInsight = new Result.Insight(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED,
-                    attribute.getTitle()), null, false);
+                    attribute.getTitle()), null, true);
                 return new Result(aiInsight, null, false);
             }
             return new Result(null, null, editable);

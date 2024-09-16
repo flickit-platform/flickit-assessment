@@ -101,6 +101,8 @@ class GetAttributeInsightServiceTest {
         assertNotNull(result);
         assertNotNull(result.aiInsight());
         assertEquals(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()), result.aiInsight().insight());
+        assertNull(result.aiInsight().creationTime());
+        assertTrue(result.aiInsight().isValid());
         assertNull(result.assessorInsight());
         assertFalse(result.editable());
     }
