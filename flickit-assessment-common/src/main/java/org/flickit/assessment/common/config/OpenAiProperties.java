@@ -63,7 +63,7 @@ public class OpenAiProperties {
             11. Provide a random text about AutomatedTestCoverage  according to the Provided factSheet in one paragraph.
             12. Provide a random text about CodeSecurity according to the Provided factSheet in one sentence.
             Only use english chars.
-            Please provide the data in the following JSON format: {format}
+            Please provide the data in the following JSON format: {format}. Avoid using newline characters (\\n).
             """;
 
         return new Prompt(new PromptTemplate(
