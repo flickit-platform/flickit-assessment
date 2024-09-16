@@ -13,6 +13,8 @@ import java.util.UUID;
 @Repository
 public interface AssessmentAnalysisJpaRepository extends JpaRepository<AssessmentAnalysisJpaEntity, UUID> {
 
+    Optional<AssessmentAnalysisJpaEntity> findByAssessmentResultIdAndType(UUID assessmentResultId, int type);
+
     @Modifying
     @Query("""
             UPDATE AssessmentAnalysisJpaEntity a
@@ -31,6 +33,4 @@ public interface AssessmentAnalysisJpaRepository extends JpaRepository<Assessmen
     void updateAiAnalysis(@Param("id") UUID id,
                 @Param("aiAnalysis") String aiAnalysis,
                 @Param("aiAnalysisTime") LocalDateTime aiAnalysisTime);
-
-    Optional<AssessmentAnalysisJpaEntity> findByAssessmentResultIdAndType(UUID assessmentResultId, int type);
 }
