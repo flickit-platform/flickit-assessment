@@ -1,8 +1,15 @@
 package org.flickit.assessment.core.application.port.out.assessmentanalysis;
 
-import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
+import org.flickit.assessment.core.application.domain.AnalysisType;
+
+import java.util.UUID;
 
 public interface CreateAssessmentAnalysisPort {
 
-    void persist(AssessmentAnalysis assessmentAnalysis);
+    UUID persist(Param param);
+
+    record Param(UUID assessmentResultId,
+                 AnalysisType type,
+                 String inputPath) {
+    }
 }

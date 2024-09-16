@@ -18,7 +18,7 @@ public enum AnalysisType {
     }
 
     public static boolean isValidId(int id) {
-        return id > 0 && id < EvidenceType.values().length + 1;
+        return id > 0 && id < AnalysisType.values().length + 1;
     }
 
     public int getId() {
