@@ -46,7 +46,7 @@ public class CreateAssessmentAiAnalysisService implements CreateAssessmentAiAnal
     @SneakyThrows
     @Override
     public void createAiAnalysis(Param param) {
-        if (!assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ASSESSMENT_ANALYSIS))
+        if (!assessmentPermissionChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.CREATE_ASSESSMENT_AI_ANALYSIS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (!AnalysisType.isValidId(param.getType()))
