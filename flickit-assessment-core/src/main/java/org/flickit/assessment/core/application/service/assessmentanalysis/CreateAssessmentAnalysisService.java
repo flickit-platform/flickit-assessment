@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentanalysis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.poi.ss.usermodel.*;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
@@ -19,6 +20,7 @@ import org.flickit.assessment.core.application.port.out.minio.ReadAssessmentAnal
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -56,8 +58,9 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
         if (assessmentAnalysis.isEmpty())
             throw new ResourceNotFoundException(CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND);
 
-        var stream = readAssessmentAnalysisFilePort.readFileContent(assessmentAnalysis.get().getInputPath());
-        String fileContent = new String(stream.readAllBytes());
+        var inputStream = readAssessmentAnalysisFilePort.readFileContent(assessmentAnalysis.get().getInputPath());
+        Workbook workbook = WorkbookFactory.create(inputStream);
+        String fileContent = convertWorkbookToText(workbook);
 
         var analysisType = AnalysisType.valueOfById(param.getType());
         var aiAnalysis = createAssessmentAiAnalysisPort.generateAssessmentAnalysis(assessmentResult.get().getAssessment().getTitle(), fileContent, analysisType);
@@ -66,6 +69,54 @@ public class CreateAssessmentAnalysisService implements CreateAssessmentAnalysis
         String jsonString = objectMapper.writeValueAsString(aiAnalysis);
 
         createAssessmentAnalysisPort.persist(toAssessmentAnalysis(assessmentAnalysis.get(), jsonString));
+    }
+
+    public String convertWorkbookToText(Workbook workbook) throws IOException {
+        StringBuilder textBuilder = new StringBuilder();
+
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            textBuilder.append("Sheet: ").append(sheet.getSheetName()).append("\n");
+
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    String cellValue = getCellValue(cell);
+                    textBuilder.append(cellValue).append("\t");
+                }
+                textBuilder.append("\n");
+            }
+            textBuilder.append("\n");
+        }
+
+        workbook.close();
+        return textBuilder.toString();
+    }
+
+    private String getCellValue(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
+        switch (cell.getCellType()) {
+            case STRING -> {
+                return cell.getStringCellValue();
+            }
+            case NUMERIC -> {
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            }
+            case BOOLEAN -> {
+                return String.valueOf(cell.getBooleanCellValue());
+            }
+            case FORMULA -> {
+                return cell.getCellFormula();
+            }
+            default -> {
+                return "";
+            }
+        }
     }
 
     private AssessmentAnalysis toAssessmentAnalysis(AssessmentAnalysis assessmentAnalysis, String aiAnalysis) {
