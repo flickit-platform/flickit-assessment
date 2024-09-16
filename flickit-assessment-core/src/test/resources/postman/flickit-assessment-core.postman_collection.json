@@ -1571,7 +1571,7 @@
 				{
 					"name": "Get Subject Insight",
 					"request": {
-						"method": "GET",
+						"method": "Get",
 						"header": [
 							{
 								"key": "Authorization",
