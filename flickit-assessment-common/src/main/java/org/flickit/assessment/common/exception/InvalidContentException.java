@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.exception;
+package org.flickit.assessment.common.exception;
 
 public class InvalidContentException extends RuntimeException {
 

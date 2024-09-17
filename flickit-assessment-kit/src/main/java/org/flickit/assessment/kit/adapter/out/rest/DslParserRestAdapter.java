@@ -1,11 +1,11 @@
 package org.flickit.assessment.kit.adapter.out.rest;
 
 import lombok.AllArgsConstructor;
+import org.flickit.assessment.common.exception.InvalidContentException;
 import org.flickit.assessment.kit.adapter.out.rest.exception.DSLSyntaxErrorException;
 import org.flickit.assessment.kit.adapter.out.rest.exception.DslParserRestException;
 import org.flickit.assessment.kit.adapter.out.rest.exception.ZipBombException;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.exception.InvalidContentException;
 import org.flickit.assessment.kit.application.port.out.kitdsl.ParsDslFilePort;
 import org.flickit.assessment.kit.config.DslParserRestProperties;
 import org.springframework.http.HttpEntity;
