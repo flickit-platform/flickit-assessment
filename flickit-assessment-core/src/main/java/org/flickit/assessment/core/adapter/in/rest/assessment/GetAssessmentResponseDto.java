@@ -8,6 +8,7 @@ import java.util.UUID;
 public record GetAssessmentResponseDto(
     UUID id,
     String title,
+    String shortTitle,
     SpaceResponseDto space,
     KitResponseDto kit,
     LocalDateTime creationTime,

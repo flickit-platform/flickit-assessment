@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
+import static org.flickit.assessment.advice.application.service.advice.PlanConstraintProvider.SOFT_SCORE_FACTOR;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -144,7 +145,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                                           List<ImpactfulQuestionOption> impactfulQuestionOptions,
                                           AttributeLevelScore attributeLevelScore) {
         List<Option> options = mapToOptions(impactfulQuestionOptions, attributeLevelScore);
-        return new Question(impactfulQuestionId, DEFAULT_QUESTION_COST, options, answeredOptionIndex);
+        return new Question(impactfulQuestionId, DEFAULT_QUESTION_COST * SOFT_SCORE_FACTOR, options, answeredOptionIndex);
     }
 
     private static List<Option> mapToOptions(List<ImpactfulQuestionOption> impactfulQuestionOptions,

@@ -187,6 +187,7 @@ public class AssessmentPersistenceJpaAdapter implements
         repository.update(
             param.id(),
             param.title(),
+            param.shortTitle(),
             param.code(),
             param.lastModificationTime(),
             param.lastModifiedBy());
