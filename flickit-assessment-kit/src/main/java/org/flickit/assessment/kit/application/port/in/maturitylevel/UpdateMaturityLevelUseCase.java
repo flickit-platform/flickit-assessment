@@ -24,11 +24,11 @@ public interface UpdateMaturityLevelUseCase {
         @Size(max = 100, message = UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX)
         String title;
 
-        @NotNull(message = UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL)
-        Integer value;
-
         @NotNull(message = UPDATE_MATURITY_LEVEL_INDEX_NOT_NULL)
         Integer index;
+
+        @NotNull(message = UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL)
+        Integer value;
 
         @NotNull(message = UPDATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL)
         @Size(min = 3, message = UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN)
@@ -37,10 +37,10 @@ public interface UpdateMaturityLevelUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(String title, Integer value, Integer index, String description, UUID currentUserId) {
+        public Param(String title, Integer index, Integer value, String description, UUID currentUserId) {
             this.title = title != null && !title.isBlank() ? title.strip() : null;
-            this.value = value;
             this.index = index;
+            this.value = value;
             this.description = description != null && !description.isBlank() ? description.strip() : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
