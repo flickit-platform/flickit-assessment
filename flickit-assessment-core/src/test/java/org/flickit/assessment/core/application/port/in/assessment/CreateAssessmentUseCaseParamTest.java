@@ -10,6 +10,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateAssessmentUseCaseParamTest {
@@ -54,6 +55,13 @@ class CreateAssessmentUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateAssessmentUseCase.Param(0L, "title", shortTitle, 1L, currentUserId));
         assertThat(throwable).hasMessage("shortTitle: " + CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX);
+    }
+
+    @Test
+    void tesCreateAssessmentUseCaseParam_ShortTitleIsEmptyString_ErrorMessage() {
+        UUID currentUserId = UUID.randomUUID();
+        var shortTitle = "";
+        assertDoesNotThrow(() -> new CreateAssessmentUseCase.Param(0L, "title", shortTitle, 1L, currentUserId));
     }
 
     @Test
