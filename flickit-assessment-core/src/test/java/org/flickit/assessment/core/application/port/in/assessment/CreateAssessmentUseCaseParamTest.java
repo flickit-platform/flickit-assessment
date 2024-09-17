@@ -60,8 +60,9 @@ class CreateAssessmentUseCaseParamTest {
     @Test
     void tesCreateAssessmentUseCaseParam_ShortTitleIsEmptyString_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
-        var shortTitle = "";
-        assertDoesNotThrow(() -> new CreateAssessmentUseCase.Param(0L, "title", shortTitle, 1L, currentUserId));
+        assertDoesNotThrow(() -> new CreateAssessmentUseCase.Param(0L, "title", "", 1L, currentUserId));
+        assertDoesNotThrow(() -> new CreateAssessmentUseCase.Param(0L, "title", "            ", 1L, currentUserId));
+
     }
 
     @Test
