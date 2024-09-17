@@ -257,7 +257,7 @@ public class ErrorMessageKey {
     public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_ANALYSIS_TYPE_NOT_NULL = "add-assessment-analysis-input-file.analysisType.notNull";
 
     public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-assessment-analysis-insight.analysisId.notNull";
-    public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_NOT_BLANK = "get-assessment-analysis-insight.type.notBlank";
+    public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_NOT_NULL = "get-assessment-analysis-insight.type.notNull";
     public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_INVALID = "get-assessment-analysis-insight.type.invalid";
     public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-analysis-insight.assessmentResult.notFound";
     public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_ANALYSIS_NOT_FOUND = "get-assessment-analysis-insight.assessmentAnalysis.notFound";

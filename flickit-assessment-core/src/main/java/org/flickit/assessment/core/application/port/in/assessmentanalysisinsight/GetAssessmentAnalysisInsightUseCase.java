@@ -1,13 +1,12 @@
 package org.flickit.assessment.core.application.port.in.assessmentanalysisinsight;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.validation.EnumValue;
+import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysisInsight;
-import org.flickit.assessment.core.application.domain.AssessmentAnalysisType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,8 +25,8 @@ public interface GetAssessmentAnalysisInsightUseCase {
         @NotNull(message = GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotBlank(message = GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_NOT_BLANK)
-        @EnumValue(enumClass = AssessmentAnalysisType.class, message = GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_INVALID)
+        @NotNull(message = GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_NOT_NULL)
+        @EnumValue(enumClass = AnalysisType.class, message = GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_INVALID)
         String type;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
