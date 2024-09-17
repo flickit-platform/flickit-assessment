@@ -62,7 +62,6 @@ class CreateAssessmentUseCaseParamTest {
         UUID currentUserId = UUID.randomUUID();
         assertDoesNotThrow(() -> new CreateAssessmentUseCase.Param(0L, "title", "", 1L, currentUserId));
         assertDoesNotThrow(() -> new CreateAssessmentUseCase.Param(0L, "title", "            ", 1L, currentUserId));
-
     }
 
     @Test
