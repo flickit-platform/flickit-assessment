@@ -260,5 +260,5 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_NOT_NULL = "get-assessment-analysis-insight.type.notNull";
     public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_TYPE_INVALID = "get-assessment-analysis-insight.type.invalid";
     public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-analysis-insight.assessmentResult.notFound";
-    public static final String GET_ASSESSMENT_ANALYSIS_INSIGHT_ASSESSMENT_ANALYSIS_NOT_FOUND = "get-assessment-analysis-insight.assessmentAnalysis.notFound";
+    public static final String GET_ASSESSMENT_ANALYSIS_UNABLE_TO_PARSE_JSON ="get-assessment-analysis-insight.unable.to.parse.json";
 }

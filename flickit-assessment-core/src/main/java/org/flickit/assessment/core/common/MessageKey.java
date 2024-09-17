@@ -12,4 +12,6 @@ public class MessageKey {
     public static final String ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE = "assessment-default-insight.incomplete";
 
     public static final String SUBJECT_DEFAULT_INSIGHT = "subject-default-insight";
+
+    public static final String ASSESSMENT_ANALYSIS_AI_IS_DISABLED = "assessment.analysis.aiIsDisabled";
 }
