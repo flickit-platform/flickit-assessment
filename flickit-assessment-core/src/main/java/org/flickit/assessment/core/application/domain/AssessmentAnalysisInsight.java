@@ -12,23 +12,23 @@ public record AssessmentAnalysisInsight(
     AutomatedTestCoverage automatedTestCoverage,
     ThirdPartyLibraries thirdPartyLibraries) {
 
-    record ProgrammingLanguages(String info, String usage) {}
+    public record ProgrammingLanguages(String info, String usage) {}
 
-    record OverallCodeQuality(String text) {}
+    public record OverallCodeQuality(String text) {}
 
-    record CodeComplexity(String figureCaption, String text) {}
+    public record CodeComplexity(String figureCaption, String text) {}
 
-    record CodeSmell(String figureCaption, String text) {}
+    public record CodeSmell(String figureCaption, String text) {}
 
-    record CodeDuplication(String text) {}
+    public record CodeDuplication(String text) {}
 
-    record CodeOrganization(String text) {}
+    public record CodeOrganization(String text) {}
 
-    record CodeReliability(String figureCaption, String text) {}
+    public record CodeReliability(String figureCaption, String text) {}
 
-    record CodeSecurity(String figureCaption, String text) {}
+    public record CodeSecurity(String figureCaption, String text) {}
 
-    record AutomatedTestCoverage(String figureCaption, String text) {}
+    public record AutomatedTestCoverage(String figureCaption, String text) {}
 
-    record ThirdPartyLibraries(String text) {}
+    public record ThirdPartyLibraries(String text) {}
 }
