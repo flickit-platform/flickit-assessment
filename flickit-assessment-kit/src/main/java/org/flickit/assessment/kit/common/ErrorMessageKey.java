@@ -126,6 +126,7 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String UPDATE_MATURITY_LEVEL_KIT_ID_NOT_NULL = "update-maturity-level.kitId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_TITLE_NOT_NULL = "update-maturity-level.title.notNull";
     public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN = "update-maturity-level.title.size.min";
     public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX =  "update-maturity-level.title.size.max";
