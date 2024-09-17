@@ -112,7 +112,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
     @Query("""
             SELECT a.id
             FROM AssessmentJpaEntity a
-            WHERE a.id = :assessmentId AND
+            WHERE a.id = :assessmentId AND a.deleted = FALSE AND
             EXISTS (
               SELECT 1 FROM SpaceUserAccessJpaEntity su
               WHERE a.spaceId = su.spaceId AND su.userId = :userId)
