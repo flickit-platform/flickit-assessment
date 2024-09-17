@@ -1571,7 +1571,7 @@
 				{
 					"name": "Get Subject Insight",
 					"request": {
-						"method": "Get",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
@@ -1590,6 +1590,43 @@
 								"insights",
 								"subjects",
 								"15"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Assessment Analysis Insight",
+			"item": [
+				{
+					"name": "Get Assessment Analysis Insight",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/e30c5281-d5a6-46b0-a0c1-54f5fc66fb9b/analysis?type=CODE_QUALITY",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"e30c5281-d5a6-46b0-a0c1-54f5fc66fb9b",
+								"analysis"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "CODE_QUALITY"
+								}
 							]
 						}
 					},
