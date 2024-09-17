@@ -130,8 +130,8 @@ public class ErrorMessageKey {
     public static final String UPDATE_MATURITY_LEVEL_TITLE_NOT_NULL = "update-maturity-level.title.notNull";
     public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN = "update-maturity-level.title.size.min";
     public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX =  "update-maturity-level.title.size.max";
-    public static final String UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL = "update-maturity-level.value.notNull";
     public static final String UPDATE_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level.index.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL = "update-maturity-level.value.notNull";
     public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL = "update-maturity-level.description.notNull";
     public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "update-maturity-level.description.size.min";
 
