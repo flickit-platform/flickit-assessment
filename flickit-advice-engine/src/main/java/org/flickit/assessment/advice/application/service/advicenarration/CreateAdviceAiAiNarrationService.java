@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase;
+import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceAiNarrationPromptPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
@@ -12,7 +13,6 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
-import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -37,8 +37,8 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
+    private final CreateAdviceAiNarrationPromptPort createAdviceAiNarrationPromptPort;
     private final AppAiProperties appAiProperties;
-    private final OpenAiProperties openAiProperties;
     private final CallAiPromptPort callAiPromptPort;
 
     @Override
@@ -56,7 +56,7 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
 
-        var prompt = openAiProperties.createAdviceAiNarrationPrompt(param.getAdviceListItems().toString(),
+        var prompt = createAdviceAiNarrationPromptPort.createAdviceAiNarrationPrompt(param.getAdviceListItems().toString(),
             param.getAttributeLevelTargets().toString());
         var aiNarration = callAiPromptPort.call(prompt);
 

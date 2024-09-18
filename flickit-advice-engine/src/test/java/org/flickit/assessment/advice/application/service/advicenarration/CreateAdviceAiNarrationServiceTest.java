@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.application.service.advicenarration;
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
 import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase;
+import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceAiNarrationPromptPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
@@ -69,6 +70,9 @@ class CreateAdviceAiNarrationServiceTest {
 
     @Mock
     AppAiProperties appAiProperties;
+
+    @Mock
+    CreateAdviceAiNarrationPromptPort createAdviceAiNarrationPromptPort;
 
     @Test
     void testCreateAdviceAiNarration_UserDoesNotHaveRequiredPermission_ShouldThrowAccessDeniedException() {
@@ -152,7 +156,7 @@ class CreateAdviceAiNarrationServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
-        when(openAiProperties.createAdviceAiNarrationPrompt(adviceListItems.toString(), attributeLevelTargets.toString())).thenReturn(prompt);
+        when(createAdviceAiNarrationPromptPort.createAdviceAiNarrationPrompt(adviceListItems.toString(), attributeLevelTargets.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(aiNarration);
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
 
@@ -178,7 +182,7 @@ class CreateAdviceAiNarrationServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
-        when(openAiProperties.createAdviceAiNarrationPrompt(adviceListItems.toString(), attributeLevelTargets.toString())).thenReturn(prompt);
+        when(createAdviceAiNarrationPromptPort.createAdviceAiNarrationPrompt(adviceListItems.toString(), attributeLevelTargets.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(aiNarration);
         doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(AdviceNarration.class));
 

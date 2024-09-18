@@ -255,4 +255,9 @@ public class ErrorMessageKey {
     public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_ASSESSMENT_ID_NOT_NULL = "add-assessment-analysis-input-file.assessmentId.notNull";
     public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_INPUT_FILE_NOT_NULL = "add-assessment-analysis-input-file.inputFile.notNull";
     public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_ANALYSIS_TYPE_NOT_NULL = "add-assessment-analysis-input-file.analysisType.notNull";
+
+    public static final String CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ID_NOT_NULL = "create-assessment-ai-analysis.assessmentId.notNull";
+    public static final String CREATE_ASSESSMENT_AI_ANALYSIS_TYPE_NOT_NULL = "create-assessment-ai-analysis.type.notNull";
+    public static final String CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-ai-analysis.assessmentResult.notFound";
+    public static final String CREATE_ASSESSMENT_AI_ANALYSIS_ASSESSMENT_ANALYSIS_NOT_FOUND= "create-assessment-ai-analysis.assessmentAnalysis.notFound";
 }

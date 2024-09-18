@@ -7,7 +7,6 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
-import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -17,6 +16,7 @@ import org.flickit.assessment.core.application.port.out.assessment.GetAssessment
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeAiInsightPromptPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
@@ -58,7 +58,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
-    private final OpenAiProperties openAiProperties;
+    private final CreateAttributeAiInsightPromptPort createAttributeAiInsightPromptPort;
     private final CallAiPromptPort callAiPromptPort;
 
     @SneakyThrows
@@ -97,7 +97,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
 
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         String aiInputPath = uploadInputFile(attribute, file.stream());
-        var prompt = openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text());
+        var prompt = createAttributeAiInsightPromptPort.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text());
         String aiInsight = callAiPromptPort.call(prompt);
         updateAttributeInsightPort.updateAiInsight(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
         return new Result(aiInsight);
@@ -111,7 +111,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
 
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         String aiInputPath = uploadInputFile(attribute, file.stream());
-        var prompt = openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text());
+        var prompt = createAttributeAiInsightPromptPort.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text());
         String aiInsight = callAiPromptPort.call(prompt);
         createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
         return new Result(aiInsight);

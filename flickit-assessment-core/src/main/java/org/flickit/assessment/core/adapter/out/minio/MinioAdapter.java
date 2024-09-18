@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.port.out.evidenceattachment.Uploa
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAssessmentAnalysisInputFilePort;
+import org.flickit.assessment.core.application.port.out.minio.ReadAssessmentAnalysisFilePort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,8 @@ public class MinioAdapter implements
     UploadEvidenceAttachmentPort,
     DeleteFilePort,
     UploadAttributeScoresFilePort,
-    UploadAssessmentAnalysisInputFilePort {
+    UploadAssessmentAnalysisInputFilePort,
+    ReadAssessmentAnalysisFilePort{
 
     public static final String SLASH = "/";
     private final MinioClient minioClient;
@@ -135,5 +137,21 @@ public class MinioAdapter implements
         String objectName = uniqueDir + SLASH + inputFile.getOriginalFilename();
         writeFile(bucketName, objectName, inputFile.getInputStream(), inputFile.getContentType());
         return bucketName + SLASH + objectName;
+    }
+
+    @SneakyThrows
+    @Override
+    public InputStream readFileContent(String filePath) {
+        if (filePath == null || filePath.isBlank())
+            return null;
+
+        String bucketName = filePath.substring(0, filePath.indexOf(SLASH));
+        String objectName = filePath.substring(filePath.indexOf(SLASH) + 1);
+
+        checkFileExistence(bucketName, objectName);
+        return minioClient.getObject(GetObjectArgs.builder()
+            .bucket(bucketName)
+            .object(objectName)
+            .build());
     }
 }

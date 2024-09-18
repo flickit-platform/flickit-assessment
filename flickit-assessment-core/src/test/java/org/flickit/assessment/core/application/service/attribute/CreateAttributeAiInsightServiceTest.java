@@ -5,7 +5,6 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
-import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -17,6 +16,7 @@ import org.flickit.assessment.core.application.port.out.assessment.GetAssessment
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeAiInsightPromptPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
@@ -72,9 +72,6 @@ class CreateAttributeAiInsightServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    private OpenAiProperties openAiProperties;
-
-    @Mock
     private CallAiPromptPort callAiPromptPort;
 
     @Mock
@@ -97,6 +94,9 @@ class CreateAttributeAiInsightServiceTest {
 
     @Mock
     private GetAssessmentProgressPort getAssessmentProgressPort;
+
+    @Mock
+    private CreateAttributeAiInsightPromptPort createAttributeAiInsightPromptPort;
 
     @Test
     void testCreateAttributeAiInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
@@ -208,7 +208,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
-        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
+        when(createAttributeAiInsightPromptPort.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(aiReport);
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
@@ -245,7 +245,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
-        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
+        when(createAttributeAiInsightPromptPort.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(aiReport);
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
@@ -334,7 +334,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
+        when(createAttributeAiInsightPromptPort.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(attributeInsight.getAiInsight());
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
@@ -370,7 +370,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
+        when(createAttributeAiInsightPromptPort.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(attributeInsight.getAiInsight());
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);

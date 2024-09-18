@@ -10,7 +10,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.AddAssessmentAnalysisInputFileUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.CreateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadAssessmentAnalysisPort;
-import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisInputPathPort;
+import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.core.application.port.out.minio.DeleteFilePort;
@@ -63,7 +63,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
     private DeleteFilePort deleteFilePort;
 
     @Mock
-    private UpdateAssessmentAnalysisInputPathPort updateAssessmentAnalysisInputPathPort;
+    private UpdateAssessmentAnalysisPort updateAssessmentAnalysisPort;
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -90,7 +90,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
             loadAssessmentAnalysisPort,
             createAssessmentAnalysisPort,
             deleteFilePort,
-            updateAssessmentAnalysisInputPathPort,
+            updateAssessmentAnalysisPort,
             createFileDownloadLinkPort);
     }
 
@@ -116,7 +116,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
             loadAssessmentAnalysisPort,
             createAssessmentAnalysisPort,
             deleteFilePort,
-            updateAssessmentAnalysisInputPathPort,
+                updateAssessmentAnalysisPort,
             createFileDownloadLinkPort);
     }
 
@@ -153,7 +153,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
 
         assertEquals(inputFileLink, result.fileLink());
         verifyNoInteractions(deleteFilePort,
-            updateAssessmentAnalysisInputPathPort);
+                updateAssessmentAnalysisPort);
     }
 
     @SneakyThrows
@@ -177,7 +177,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
         when(uploadAssessmentAnalysisInputFilePort.uploadAssessmentAnalysisInputFile(inputFile)).thenReturn(inputPath);
 
         when(loadAssessmentAnalysisPort.load(assessmentResult.getId(), param.getAnalysisType())).thenReturn(Optional.of(assessmentAnalysis));
-        doNothing().when(updateAssessmentAnalysisInputPathPort).updateInputPath(assessmentAnalysis.getId(), inputPath);
+        doNothing().when(updateAssessmentAnalysisPort).updateInputPath(assessmentAnalysis.getId(), inputPath);
         doNothing().when(deleteFilePort).deleteFile(assessmentAnalysis.getInputPath());
         when(createFileDownloadLinkPort.createDownloadLink(eq(inputPath), any())).thenReturn(inputFileLink);
 
