@@ -17,7 +17,7 @@ public class CreateAssessmentAiAnalysisRestController {
     private final CreateAssessmentAiAnalysisUseCase createAssessmentAiAnalysisUseCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessments/{assessmentId}/analysis")
+    @PostMapping("/assessments/{assessmentId}/analysis-ai")
     public ResponseEntity<Void> createAssessmentAiAnalysis(@PathVariable("assessmentId") UUID assessmentId,
                                                              @RequestBody CreateAssessmentAiAnalysisRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
