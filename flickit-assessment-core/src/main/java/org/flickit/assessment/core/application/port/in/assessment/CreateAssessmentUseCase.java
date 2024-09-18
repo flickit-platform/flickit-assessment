@@ -42,7 +42,7 @@ public interface CreateAssessmentUseCase {
 
         public Param(Long spaceId, String title, String shortTitle, Long kitId, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
-            this.shortTitle = shortTitle != null ? shortTitle.strip() : null;
+            this.shortTitle = shortTitle != null && !shortTitle.isBlank() ? shortTitle.strip() : null;
             this.spaceId = spaceId;
             this.kitId = kitId;
             this.currentUserId = currentUserId;
