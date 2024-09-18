@@ -25,13 +25,13 @@ public class OpenAiAdapter implements
     @Override
     public Prompt createAssessmentAnalysisPrompt(String assessmentTitle, String factSheet, String analysisType) {
         var converter = new BeanOutputConverter<>(AssessmentAnalysisInsight.class);
-        return new Prompt(new PromptTemplate(appAiProperties.getTemplate(), Map.of("title", assessmentTitle, "factSheet", factSheet,
+        return new Prompt(new PromptTemplate(appAiProperties.getCreateAssessmentAnalysisPromptTemplate(), Map.of("title", assessmentTitle, "factSheet", factSheet,
             "analysisType", analysisType, "format", converter.getFormat())).createMessage());
     }
 
     @Override
     public Prompt createAttributeAiInsightPrompt(String title, String description, String excelFile) {
-        var promptTemplate = new PromptTemplate(appAiProperties.getAttributeAiInsightPrompt(), Map.of("title", title, "description", description, "excelFile", excelFile));
+        var promptTemplate = new PromptTemplate(appAiProperties.getAttributeAiInsightPromptTemplate(), Map.of("title", title, "description", description, "excelFile", excelFile));
         return new Prompt(promptTemplate.createMessage(), openAiProperties.getChatOptions());
     }
 }

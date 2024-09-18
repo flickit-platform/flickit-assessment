@@ -19,7 +19,7 @@ public class OpenAiAdapter implements CreateAdviceAiNarrationPromptPort {
 
     @Override
     public Prompt createAdviceAiNarrationPrompt(String adviceListItems, String attributeLevelTargets) {
-        var promptTemplate = new PromptTemplate(appAiProperties.getAdviceAiNarrationPrompt(), Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
+        var promptTemplate = new PromptTemplate(appAiProperties.getAdviceAiNarrationPromptTemplate(), Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
         return new Prompt(promptTemplate.createMessage(), openAiProperties.getChatOptions());
     }
 }

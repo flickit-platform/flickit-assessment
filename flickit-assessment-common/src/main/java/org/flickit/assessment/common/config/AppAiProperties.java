@@ -17,7 +17,7 @@ public class AppAiProperties {
 
     private boolean saveAiInputFileEnabled = false;
 
-    private String attributeAiInsightPrompt = """
+    private String attributeAiInsightPromptTemplate = """
         As a software quality assessor, I have evaluated the {title} maturity of a system.
         We define {title} as {description}. The uploaded Excel file contains multiple-choice questions used to assess {title}.
         The Excel columns include the question, a hint, the weight of the question in calculating the overall score,
@@ -26,7 +26,7 @@ public class AppAiProperties {
         Here is the uploaded Excel file: {excelFile}.
         """;
 
-    private String adviceAiNarrationPrompt = """
+    private String adviceAiNarrationPromptTemplate = """
         As a software quality assessor, I have evaluated the system's maturity level. Below, I have listed the selected option and provided a recommended improvement option.
         Please generate advice in up to 10 concise bullet points, with a total character limit of 800 characters, including HTML tags. You may shorten the list if it enhances clarity.
         Ensure the advice is polite, clear, and constructive, avoiding mention of individual scores or derogatory language. Focus on actionable suggestions.
@@ -35,7 +35,7 @@ public class AppAiProperties {
         Provided attribute level targets: {attributeLevelTargets}.
         """;
 
-    private String template = """
+    private String createAssessmentAnalysisPromptTemplate = """
         Generate detailed information for the assessment: {title}.
         This the FactSheet about the result: {factSheet}.
         About FactSheet: The table provides an overview of the software quality aspects for different repositories in an organization. Each repository's status is evaluated based on technical debt, maintainability grade and issue count, reliability grade and issue count, security grade and issue count, and test coverage. Note that the above table is just an example, and values may vary.
