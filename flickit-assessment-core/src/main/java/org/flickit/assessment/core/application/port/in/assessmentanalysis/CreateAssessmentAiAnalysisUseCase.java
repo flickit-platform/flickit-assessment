@@ -29,7 +29,6 @@ public interface CreateAssessmentAiAnalysisUseCase {
         UUID currentUserId;
 
         public Param(UUID assessmentId, Integer type, UUID currentUserId) {
-
             this.assessmentId = assessmentId;
             this.type = type;
             this.currentUserId = currentUserId;

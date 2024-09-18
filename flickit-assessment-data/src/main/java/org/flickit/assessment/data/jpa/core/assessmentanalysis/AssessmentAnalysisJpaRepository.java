@@ -25,12 +25,12 @@ public interface AssessmentAnalysisJpaRepository extends JpaRepository<Assessmen
 
     @Modifying
     @Query("""
-        UPDATE AssessmentAnalysisJpaEntity AS a SET
-            a.aiAnalysis = :aiAnalysis,
-            a.aiAnalysisTime = :aiAnalysisTime
-        WHERE a.id = :id
+            UPDATE AssessmentAnalysisJpaEntity AS a SET
+                a.aiAnalysis = :aiAnalysis,
+                a.aiAnalysisTime = :aiAnalysisTime
+            WHERE a.id = :id
         """)
     void updateAiAnalysis(@Param("id") UUID id,
-                @Param("aiAnalysis") String aiAnalysis,
-                @Param("aiAnalysisTime") LocalDateTime aiAnalysisTime);
+                          @Param("aiAnalysis") String aiAnalysis,
+                          @Param("aiAnalysisTime") LocalDateTime aiAnalysisTime);
 }
