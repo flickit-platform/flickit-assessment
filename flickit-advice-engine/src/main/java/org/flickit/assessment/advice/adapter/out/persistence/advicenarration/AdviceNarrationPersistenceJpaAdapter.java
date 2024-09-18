@@ -33,6 +33,14 @@ public class AdviceNarrationPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateAssessorNarration(AdviceNarration adviceNarration) {
+        repository.updateAssessorNarration(adviceNarration.getAssessmentResultId(),
+            adviceNarration.getAssessorNarration(),
+            adviceNarration.getAssessorNarrationTime(),
+            adviceNarration.getCreatedBy());
+    }
+
+    @Override
     public Optional<AdviceNarration> loadByAssessmentResultId(UUID assessmentResultId) {
         return repository.findByAssessmentResultId(assessmentResultId)
             .map(AdviceNarrationMapper::toDomain);
