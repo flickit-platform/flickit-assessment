@@ -12,20 +12,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public abstract class AbstractNovuRequestConverter implements NovuRequestConverter {
 
-    private final TenantProperties tenantProperties;
+    private final Tenant tenant;
 
     @Override
     public TriggerEventRequest convert(NotificationEnvelope envelope) {
         var triggerEvent = new TriggerEventRequest();
-        triggerEvent.setTenant(createTenant());
+        triggerEvent.setTenant(tenant);
         triggerEvent.setName(getEventName());
         triggerEvent.setTo(createSubscriberRequest(envelope.targetUserId()));
         triggerEvent.setPayload(Map.of("data", envelope.payload(), "title", envelope.title()));
         return triggerEvent;
-    }
-
-    private Tenant createTenant() {
-        return new Tenant(tenantProperties.getTenantId());
     }
 
     protected abstract String getEventName();

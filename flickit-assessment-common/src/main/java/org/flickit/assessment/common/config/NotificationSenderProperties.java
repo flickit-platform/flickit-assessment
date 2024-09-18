@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.flickit.assessment.common.adapter.out.novu.TenantProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -12,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 @Validated
 @ConfigurationProperties("app.notif-sender")
-public class NotificationSenderProperties implements TenantProperties {
+public class NotificationSenderProperties {
 
     private TaskExecutorProps executor = new TaskExecutorProps();
 
@@ -35,10 +34,5 @@ public class NotificationSenderProperties implements TenantProperties {
         private String euBaseUrl;
 
         private String tenantId;
-    }
-
-    @Override
-    public String getTenantId() {
-        return getNovu().getTenantId();
     }
 }
