@@ -71,7 +71,10 @@ public class InviteSpaceMemberService implements InviteSpaceMemberUseCase {
 
     private void sendInviteEmail(String sendTo) {
         String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
-        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, appSpecProperties.getHost(), appSpecProperties.getName());
+        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY,
+            appSpecProperties.getHost(),
+            appSpecProperties.getName(),
+            appSpecProperties.getDomain());
         log.debug("Sending invite email to [{}]", sendTo);
         sendEmailPort.send(sendTo, subject, body);
     }
