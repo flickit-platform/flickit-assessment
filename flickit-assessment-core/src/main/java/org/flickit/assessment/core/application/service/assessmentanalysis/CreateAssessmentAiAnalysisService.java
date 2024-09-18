@@ -8,18 +8,16 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
-import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AnalysisType;
 import org.flickit.assessment.core.application.domain.AssessmentAnalysis;
-import org.flickit.assessment.core.application.domain.AssessmentAnalysisInsight;
 import org.flickit.assessment.core.application.port.in.assessmentanalysis.CreateAssessmentAiAnalysisUseCase;
+import org.flickit.assessment.core.application.port.out.assessmentanalysis.CreateAssessmentAnalysisPromptPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.LoadAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentanalysis.UpdateAssessmentAnalysisPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.minio.ReadAssessmentAnalysisFilePort;
-import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +38,7 @@ public class CreateAssessmentAiAnalysisService implements CreateAssessmentAiAnal
     private final LoadAssessmentAnalysisPort loadAssessmentAnalysisPort;
     private final ReadAssessmentAnalysisFilePort readAssessmentAnalysisFilePort;
     private final UpdateAssessmentAnalysisPort updateAssessmentAnalysisPort;
-    private final OpenAiProperties openAiProperties;
+    private final CreateAssessmentAnalysisPromptPort createAssessmentAnalysisPromptPort;
     private final CallAiPromptPort callAiPromptPort;
 
     @SneakyThrows
@@ -67,8 +65,7 @@ public class CreateAssessmentAiAnalysisService implements CreateAssessmentAiAnal
         String fileContent = convertWorkbookToText(workbook);
 
         var analysisType = AnalysisType.valueOfById(param.getType());
-        BeanOutputConverter<AssessmentAnalysisInsight> converter = new BeanOutputConverter<>(AssessmentAnalysisInsight.class);
-        var prompt = openAiProperties.createAssessmentAnalysisPrompt(assessmentResult.get().getAssessment().getTitle(), fileContent, analysisType.name(), converter.getFormat());
+        var prompt = createAssessmentAnalysisPromptPort.createAssessmentAnalysisPrompt(assessmentResult.get().getAssessment().getTitle(), fileContent, analysisType.name());
         String aiAnalysis = callAiPromptPort.call(prompt);
 
         ObjectMapper objectMapper = new ObjectMapper();
