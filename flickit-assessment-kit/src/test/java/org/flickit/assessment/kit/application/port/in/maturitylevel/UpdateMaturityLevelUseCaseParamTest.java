@@ -17,12 +17,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @Size(min = 3, message = UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN)
 @Size(max = 100, message = UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX)
 class UpdateMaturityLevelUseCaseParamTest {
+    @Test
+    void testUpdateMaturityLevelUseCaseParam_IdIsNull_ErrorMessage() {
+        var currentUserId = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new UpdateMaturityLevelUseCase.Param(null, 123L, "title", 2, 1, "Description", currentUserId));
+        assertThat(throwable).hasMessage("id: " + UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL);
+    }
 
     @Test
     void testUpdateMaturityLevelUseCaseParam_kitIdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(null, "title", 2, 1, "Description", currentUserId));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, null, "title", 2, 1, "Description", currentUserId));
         assertThat(throwable).hasMessage("kitId: " + UPDATE_MATURITY_LEVEL_KIT_ID_NOT_NULL);
     }
 
@@ -30,7 +37,7 @@ class UpdateMaturityLevelUseCaseParamTest {
     void testUpdateMaturityLevelUseCaseParam_titleIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(123L, null, 2, 1, "Description", currentUserId));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, 123L, null, 2, 1, "Description", currentUserId));
         assertThat(throwable).hasMessage("title: " + UPDATE_MATURITY_LEVEL_TITLE_NOT_NULL);
     }
 
@@ -39,7 +46,7 @@ class UpdateMaturityLevelUseCaseParamTest {
         String title = "       t        ";
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(123L, title, 2, 1, "Description", currentUserId));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, 123L, title, 2, 1, "Description", currentUserId));
         assertThat(throwable).hasMessage("title: " + UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN);
     }
 
@@ -48,7 +55,7 @@ class UpdateMaturityLevelUseCaseParamTest {
         String title = RandomStringUtils.random(101);
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(123L, title, 2, 1, "Description", currentUserId));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, 123L, title, 2, 1, "Description", currentUserId));
         assertThat(throwable).hasMessage("title: " + UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX);
     }
 
@@ -56,7 +63,7 @@ class UpdateMaturityLevelUseCaseParamTest {
     void testUpdateMaturityLevelUseCaseParam_ValueIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(123L,"title", 2, null, "Description", currentUserId));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, 123L, "title", 2, null, "Description", currentUserId));
         assertThat(throwable).hasMessage("value: " + UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL);
     }
 
@@ -64,7 +71,7 @@ class UpdateMaturityLevelUseCaseParamTest {
     void testUpdateMaturityLevelUseCaseParam_IndexIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(123L,"title", null, 1, "Description", currentUserId));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, 123L, "title", null, 1, "Description", currentUserId));
         assertThat(throwable).hasMessage("index: " + UPDATE_MATURITY_LEVEL_INDEX_NOT_NULL);
     }
 
@@ -72,7 +79,7 @@ class UpdateMaturityLevelUseCaseParamTest {
     void testUpdateMaturityLevelUseCaseParam_DescriptionIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(123L,"title", 2, 1, null, currentUserId));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, 123L, "title", 2, 1, null, currentUserId));
         assertThat(throwable).hasMessage("description: " + UPDATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL);
     }
 
@@ -81,14 +88,14 @@ class UpdateMaturityLevelUseCaseParamTest {
         var description = "          a      ";
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(123L,"title", 2, 1, description, currentUserId));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, 123L, "title", 2, 1, description, currentUserId));
         assertThat(throwable).hasMessage("description: " + UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN);
     }
 
     @Test
     void testUpdateMaturityLevelUseCaseParam_CurrentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateMaturityLevelUseCase.Param(123L,"title", 2, 1, "Description", null));
+            () -> new UpdateMaturityLevelUseCase.Param(1L, 123L, "title", 2, 1, "Description", null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }
