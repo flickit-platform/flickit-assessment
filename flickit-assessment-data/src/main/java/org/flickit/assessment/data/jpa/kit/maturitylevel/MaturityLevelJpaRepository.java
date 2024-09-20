@@ -51,8 +51,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                     @Param("description") String description,
                     @Param("value") Integer value,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
-                    @Param("lastModifiedBy") UUID lastModifiedBy
-    );
+                    @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
             FROM MaturityLevelJpaEntity ml
