@@ -126,14 +126,19 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL = "update-maturity-level.maturityLevelId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_KIT_ID_NOT_NULL = "update-maturity-level.kitId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_TITLE_NOT_NULL = "update-maturity-level.title.notNull";
     public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN = "update-maturity-level.title.size.min";
-    public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX =  "update-maturity-level.title.size.max";
+    public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX = "update-maturity-level.title.size.max";
     public static final String UPDATE_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level.index.notNull";
     public static final String UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL = "update-maturity-level.value.notNull";
     public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL = "update-maturity-level.description.notNull";
     public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "update-maturity-level.description.size.min";
+    public static final String UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND = "update-maturity-level.maturityLevel.notFound";
+    public static final String UPDATE_MATURITY_LEVEL_TITLE_KIT_VERSION_ID_DUPLICATE = "update-maturity-level.title-kitVersionId.duplicate";
+    public static final String UPDATE_MATURITY_LEVEL_INDEX_KIT_VERSION_ID_DUPLICATE = "update-maturity-level.index-kitVersionId.duplicate";
+    public static final String UPDATE_MATURITY_LEVEL_VALUE_KIT_VERSION_ID_DUPLICATE = "update-maturity-level.value-kitVersionId.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
