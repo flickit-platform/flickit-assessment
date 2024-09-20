@@ -48,7 +48,8 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                     @Param("code") String code,
                     @Param("index") Integer index,
                     @Param("title") String title,
-                    @Param("description") String description, @Param("value") Integer value,
+                    @Param("description") String description,
+                    @Param("value") Integer value,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
                     @Param("lastModifiedBy") UUID lastModifiedBy
     );
