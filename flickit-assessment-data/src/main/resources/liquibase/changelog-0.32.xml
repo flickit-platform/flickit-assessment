@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.32-01" author="Maziyar Gerami">
+        <modifyDataType tableName="fak_maturity_level" columnName="code" newDataType="varchar(100)"/>
+    </changeSet>
+
+    <changeSet id="0.32-02" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level" constraintName="uq_fak_maturitylevel_title_kitversionid"/>
+    </changeSet>
+
+</databaseChangeLog>
