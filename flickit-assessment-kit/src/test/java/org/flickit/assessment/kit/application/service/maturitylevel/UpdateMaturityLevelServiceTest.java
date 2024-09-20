@@ -1,0 +1,64 @@
+package org.flickit.assessment.kit.application.service.maturitylevel;
+
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelUseCase;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.UUID;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class UpdateMaturityLevelServiceTest {
+
+    @InjectMocks
+    UpdateMaturityLevelService service;
+
+    @Mock
+    LoadKitExpertGroupPort loadKitExpertGroupPort;
+
+    @Test
+    void testUpdateMaturityLevelService_KitNotFound_ResourceNotFoundException() {
+        var currentUserId = UUID.randomUUID();
+        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, 2, "description", currentUserId);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateMaturityLevel(param));
+
+        assertEquals(KIT_ID_NOT_FOUND, throwable.getMessage());
+    }
+
+    @Test
+    void testUpdateMaturityLevelService_ExpertGroupNotFound_ResourceNotFoundException() {
+        var currentUserId = UUID.randomUUID();
+        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, 2, "description", currentUserId);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(null);
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateMaturityLevel(param));
+
+        assertEquals(EXPERT_GROUP_ID_NOT_FOUND, throwable.getMessage());
+    }
+
+    @Test
+    void testUpdateMaturityLevelService_UserIsNotExpertGroupOwner_AccessDeniedException() {
+        var currentUserId = UUID.randomUUID();
+        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, 2, "description", currentUserId);
+        var expertGroup = ExpertGroupMother.createExpertGroup();
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateMaturityLevel(param));
+
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+}

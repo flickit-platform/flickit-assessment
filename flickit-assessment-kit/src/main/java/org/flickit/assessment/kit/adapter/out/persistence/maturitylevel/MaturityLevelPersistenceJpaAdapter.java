@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -19,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -61,6 +63,15 @@ public class MaturityLevelPersistenceJpaAdapter implements
         });
         repository.saveAll(entities);
         repository.flush();
+    }
+
+    @Override
+    public void updateInfo(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy ) {
+        if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
+            throw new ResourceNotFoundException(UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND);
+
+        repository.updateInfo(maturityLevel.getId(), kitVersionId, maturityLevel.getTitle(), maturityLevel.getIndex(), maturityLevel.getCode(),
+            maturityLevel.getDescription(), maturityLevel.getValue(), lastModificationTime, lastModifiedBy);
     }
 
     @Override
