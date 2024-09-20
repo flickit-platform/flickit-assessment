@@ -28,6 +28,6 @@ public class UpdateMaturityLevelRestController {
     }
 
     private Param toParam(Long id, Long kitId, UpdateMaturityLevelRequestDto requestDto, UUID currentUserId) {
-        return new Param(id, kitId, requestDto.title(), requestDto.index(), requestDto.value(), requestDto.description(), currentUserId);
+        return new Param(id, kitId, requestDto.title(), requestDto.index(), requestDto.description(), requestDto.value(), currentUserId);
     }
 }

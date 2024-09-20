@@ -31,7 +31,7 @@ class UpdateMaturityLevelServiceTest {
     @Test
     void testUpdateMaturityLevelService_KitNotFound_ResourceNotFoundException() {
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, 2, "description", currentUserId);
+        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, "description", 2, currentUserId);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateMaturityLevel(param));
@@ -42,7 +42,7 @@ class UpdateMaturityLevelServiceTest {
     @Test
     void testUpdateMaturityLevelService_ExpertGroupNotFound_ResourceNotFoundException() {
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, 2, "description", currentUserId);
+        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, "description", 2, currentUserId);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(null);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateMaturityLevel(param));
@@ -53,7 +53,7 @@ class UpdateMaturityLevelServiceTest {
     @Test
     void testUpdateMaturityLevelService_UserIsNotExpertGroupOwner_AccessDeniedException() {
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, 2, "description", currentUserId);
+        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, "description", 2, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 

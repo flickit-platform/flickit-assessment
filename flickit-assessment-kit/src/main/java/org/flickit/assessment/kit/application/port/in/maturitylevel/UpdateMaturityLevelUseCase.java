@@ -33,23 +33,23 @@ public interface UpdateMaturityLevelUseCase {
         @NotNull(message = UPDATE_MATURITY_LEVEL_INDEX_NOT_NULL)
         Integer index;
 
-        @NotNull(message = UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL)
-        Integer value;
-
         @NotNull(message = UPDATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL)
         @Size(min = 3, message = UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN)
         String description;
 
+        @NotNull(message = UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL)
+        Integer value;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long id, Long kitId, String title, Integer index, Integer value, String description, UUID currentUserId) {
+        public Param(Long id, Long kitId, String title, Integer index, String description, Integer value, UUID currentUserId) {
             this.id = id;
             this.kitId = kitId;
             this.title = title != null && !title.isBlank() ? title.strip() : null;
             this.index = index;
-            this.value = value;
             this.description = description != null && !description.isBlank() ? description.strip() : null;
+            this.value = value;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
