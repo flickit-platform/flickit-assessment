@@ -31,12 +31,18 @@ public class OpenAiProperties {
         """;
 
     private String adviceAiNarrationPrompt = """
-        As a software quality assessor, I have evaluated the system's maturity level. Below, I have listed the selected option and provided a recommended improvement option.
-        Please generate advice in up to 10 concise bullet points, with a total character limit of 800 characters, including HTML tags. You may shorten the list if it enhances clarity.
-        Ensure the advice is polite, clear, and constructive, avoiding mention of individual scores or derogatory language. Focus on actionable suggestions.
-        Format the response in HTML with <li> tags for each bullet point, wrapped in a <ul> tag, and enclose the entire list within <p> tags. Avoid using newline characters (\\n) and the <HTML> tag.
-        Provided advice items: {adviceListItems}.
-        Provided attribute level targets: {attributeLevelTargets}.
+        A software quality assessment platform has evaluated a software product by answers of the various questions which affect on some quality attributes. user has
+        Generate a concise and professional narrative based on a software quality assessment report.
+        The platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
+        The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
+        The advice includes the current status (selected option) and the goal status for each relevant question.
+        Task: Based on the provided advice items, generate a clear narrative in up to 10 concise bullet points formatted with HTML tags.
+        Ensure that the advice is polite, constructive, and focused on actionable improvements, tailored for an expert software assessor.
+        Avoid references to individual scores or negative phrasing. Keep the tone professional and supportive.
+        Start with a brief mention of the attribute targets in no more than two sentences.
+        Ensure the total response, including HTML tags, is under 900 characters.
+        Advice Items: {adviceListItems}
+        Attribute Targets: {attributeLevelTargets}
         """;
 
     public Prompt createAttributeAiInsightPrompt(String title, String description, String excelFile) {
