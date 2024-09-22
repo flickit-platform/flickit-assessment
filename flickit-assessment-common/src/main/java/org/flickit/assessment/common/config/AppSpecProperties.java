@@ -19,9 +19,6 @@ public class AppSpecProperties {
     private String host;
 
     @NotBlank
-    private String domain;
-
-    @NotBlank
     private String expertGroupInviteUrlPath = "account/expert-group-invitation";
 
     @NotBlank
@@ -32,6 +29,9 @@ public class AppSpecProperties {
 
     @NotBlank
     private String favIcon;
+
+    @NotBlank
+    private String supportEmail;
 
     @Valid
     private Email email = new Email();

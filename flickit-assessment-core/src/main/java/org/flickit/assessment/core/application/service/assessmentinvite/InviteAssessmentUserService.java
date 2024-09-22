@@ -91,7 +91,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY,
             appSpecProperties.getHost(),
             appSpecProperties.getName(),
-            appSpecProperties.getDomain());
+            appSpecProperties.getSupportEmail());
         log.debug("Sending invite email to [{}]", sendTo);
         sendEmailPort.send(sendTo, subject, body);
     }

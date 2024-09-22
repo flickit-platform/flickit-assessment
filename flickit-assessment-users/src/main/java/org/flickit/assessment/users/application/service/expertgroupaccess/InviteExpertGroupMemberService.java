@@ -86,7 +86,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         String body = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY,
             inviteUrl,
             appSpecProperties.getName(),
-            appSpecProperties.getDomain());
+            appSpecProperties.getSupportEmail());
         log.debug("Sending 'invite to expertGroup [{}]' email to [{}]", expertGroupId, to);
         sendEmailPort.send(to, subject, body);
     }
