@@ -4,7 +4,5 @@ import org.flickit.assessment.advice.application.domain.AdviceNarration;
 
 public interface UpdateAdviceNarrationPort {
 
-    void updateAiNarration(AdviceNarration adviceNarration);
-
     void updateAssessorNarration(AdviceNarration adviceNarration);
 }

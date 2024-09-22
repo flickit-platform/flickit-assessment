@@ -9,7 +9,6 @@ import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
-import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
@@ -51,7 +50,6 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
     private final LoadAttributesPort loadAttributesPort;
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
-    private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
     private final AppAiProperties appAiProperties;
     private final OpenAiProperties openAiProperties;
     private final CallAiPromptPort callAiPromptPort;
@@ -76,11 +74,14 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId());
         var aiNarration = callAiPromptPort.call(prompt);
 
-        Runnable action = adviceNarration.isEmpty() ?
-            () -> handleNewAdviceNarration(assessmentResult.getId(), aiNarration, param.getCurrentUserId()) :
-            () -> handleExistingAdviceNarration(assessmentResult.getId(), aiNarration);
-        action.run();
-
+        if (adviceNarration.isPresent()) {
+            UUID narrationId = adviceNarration.get().getId();
+            UUID assessmentResultId = assessmentResult.getId();
+            handleExistingAdviceNarration(narrationId, assessmentResultId, aiNarration, param.getCurrentUserId());
+        } else {
+            UUID assessmentResultId = assessmentResult.getId();
+            handleNewAdviceNarration(assessmentResultId, aiNarration, param.getCurrentUserId());
+        }
         return new Result(aiNarration);
     }
 
@@ -120,8 +121,7 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
                 maturityLevelsMap.getOrDefault(target.getMaturityLevelId(), "Unknown")))
             .toList();
 
-        return openAiProperties.createAdviceAiNarrationPrompt(promptAdviceItems.toString(),
-            targetAttributes.toString());
+        return openAiProperties.createAdviceAiNarrationPrompt(promptAdviceItems.toString(), targetAttributes.toString());
     }
 
     record AdviceItem(String question, String currentOption, String recommendedOption) {
@@ -130,16 +130,16 @@ public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarration
     record TargetAttribute(String attribute, String maturityLevel) {
     }
 
-    private void handleExistingAdviceNarration(UUID assessmentResultId, String adviceAiNarration) {
-        updateAdviceNarrationPort.updateAiNarration(toAdviceNarration(assessmentResultId, adviceAiNarration, null));
+    private void handleExistingAdviceNarration(UUID adviceId, UUID assessmentResultId, String aiNarration, UUID createdBy) {
+        createAdviceNarrationPort.persist(toAdviceNarration(adviceId, assessmentResultId, aiNarration, createdBy));
     }
 
     private void handleNewAdviceNarration(UUID assessmentResultId, String adviceAiNarration, UUID createdBy) {
-        createAdviceNarrationPort.persist(toAdviceNarration(assessmentResultId, adviceAiNarration, createdBy));
+        createAdviceNarrationPort.persist(toAdviceNarration(null, assessmentResultId, adviceAiNarration, createdBy));
     }
 
-    AdviceNarration toAdviceNarration(UUID assessmentResultId, String aiNarration, UUID createdBy) {
-        return new AdviceNarration(null, assessmentResultId,
+    AdviceNarration toAdviceNarration(UUID adviceId, UUID assessmentResultId, String aiNarration, UUID createdBy) {
+        return new AdviceNarration(adviceId, assessmentResultId,
             aiNarration,
             null,
             LocalDateTime.now(),

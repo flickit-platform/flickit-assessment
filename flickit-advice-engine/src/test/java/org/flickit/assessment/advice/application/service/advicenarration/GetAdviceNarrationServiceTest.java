@@ -74,7 +74,7 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID());
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -95,7 +95,7 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID());
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -116,7 +116,7 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID());
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
         LocalDateTime aiNarrationTime = LocalDateTime.now();
         var adviceNarration = new AdviceNarration(UUID.randomUUID(),
             assessmentResult.getId(),
@@ -146,7 +146,7 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID());
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
         LocalDateTime assessorNarrationTime = LocalDateTime.now();
         var adviceNarration = new AdviceNarration(UUID.randomUUID(),
             assessmentResult.getId(),
