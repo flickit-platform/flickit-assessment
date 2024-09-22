@@ -712,6 +712,42 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update Questionnaire",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"descripton\": \"sample desc\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/393/questionnaire/3072",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"393",
+								"questionnaire",
+								"3072"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
