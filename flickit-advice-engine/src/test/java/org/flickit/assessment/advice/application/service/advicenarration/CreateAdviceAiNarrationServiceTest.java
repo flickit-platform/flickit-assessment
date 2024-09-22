@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 class CreateAdviceAiNarrationServiceTest {
 
     @InjectMocks
-    CreateAdviceAiAiNarrationService service;
+    CreateAdviceAiNarrationService service;
 
     @Mock
     AssessmentAccessChecker assessmentAccessChecker;
@@ -170,11 +170,11 @@ class CreateAdviceAiNarrationServiceTest {
         var attributes = List.of(new Attribute(attributeLevelTargets.getFirst().getAttributeId(), "Reliability"));
         var maturityLevels = List.of(new MaturityLevel(attributeLevelTargets.getFirst().getMaturityLevelId(), "Great"));
 
-        var promptAdviceItems = List.of(new CreateAdviceAiAiNarrationService.AdviceItem(adviceListItems.getFirst().question().title(),
+        var promptAdviceItems = List.of(new CreateAdviceAiNarrationService.AdviceItem(adviceListItems.getFirst().question().title(),
             adviceListItems.getFirst().answeredOption().title(),
             adviceListItems.getFirst().recommendedOption().title()));
 
-        var targetAttributes = List.of(new CreateAdviceAiAiNarrationService.TargetAttribute(
+        var targetAttributes = List.of(new CreateAdviceAiNarrationService.TargetAttribute(
             attributes.getFirst().getTitle(), maturityLevels.getFirst().getTitle()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
@@ -208,11 +208,11 @@ class CreateAdviceAiNarrationServiceTest {
         var attributes = List.of(new Attribute(attributeLevelTargets.getFirst().getAttributeId(), "Reliability"));
         var maturityLevels = List.of(new MaturityLevel(attributeLevelTargets.getFirst().getMaturityLevelId(), "Great"));
 
-        var promptAdviceItems = List.of(new CreateAdviceAiAiNarrationService.AdviceItem(adviceListItems.getFirst().question().title(),
+        var promptAdviceItems = List.of(new CreateAdviceAiNarrationService.AdviceItem(adviceListItems.getFirst().question().title(),
             adviceListItems.getFirst().answeredOption().title(),
             adviceListItems.getFirst().recommendedOption().title()));
 
-        var targetAttributes = List.of(new CreateAdviceAiAiNarrationService.TargetAttribute(
+        var targetAttributes = List.of(new CreateAdviceAiNarrationService.TargetAttribute(
             attributes.getFirst().getTitle(), maturityLevels.getFirst().getTitle()));
 
         when(appAiProperties.isEnabled()).thenReturn(true);

@@ -40,7 +40,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateAdviceAiAiNarrationService implements CreateAdviceAiNarrationUseCase {
+public class CreateAdviceAiNarrationService implements CreateAdviceAiNarrationUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
