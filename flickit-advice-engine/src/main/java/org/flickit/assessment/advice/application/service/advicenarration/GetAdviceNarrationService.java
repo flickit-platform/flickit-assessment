@@ -39,9 +39,8 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
         boolean aiEnabled = appAiProperties.isEnabled();
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
-        if (adviceNarration.isEmpty()) {
+        if (adviceNarration.isEmpty())
             return new Result(null, null, editable, aiEnabled);
-        }
 
         var narration = adviceNarration.get();
         if (narration.getAssessorNarration() == null) {

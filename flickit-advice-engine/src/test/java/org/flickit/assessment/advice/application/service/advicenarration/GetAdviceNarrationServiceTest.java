@@ -86,6 +86,7 @@ class GetAdviceNarrationServiceTest {
         assertNull(result.aiNarration());
         assertNull(result.assessorNarration());
         assertTrue(result.editable());
+        assertTrue(result.aiEnabled());
     }
 
     @Test
@@ -107,6 +108,7 @@ class GetAdviceNarrationServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
+        when(appAiProperties.isEnabled()).thenReturn(false);
 
         var result = service.getAdviceNarration(param);
 
@@ -116,6 +118,7 @@ class GetAdviceNarrationServiceTest {
         assertEquals(adviceNarration.getAiNarrationTime(), result.aiNarration().creationTime());
         assertNull(result.assessorNarration());
         assertTrue(result.editable());
+        assertFalse(result.aiEnabled());
     }
 
     @Test
@@ -137,6 +140,7 @@ class GetAdviceNarrationServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
+        when(appAiProperties.isEnabled()).thenReturn(true);
 
         var result = service.getAdviceNarration(param);
 
@@ -146,5 +150,6 @@ class GetAdviceNarrationServiceTest {
         assertEquals(adviceNarration.getAssessorNarration(), result.assessorNarration().narration());
         assertEquals(adviceNarration.getAssessorNarrationTime(), result.assessorNarration().creationTime());
         assertTrue(result.editable());
+        assertTrue(result.aiEnabled());
     }
 }
