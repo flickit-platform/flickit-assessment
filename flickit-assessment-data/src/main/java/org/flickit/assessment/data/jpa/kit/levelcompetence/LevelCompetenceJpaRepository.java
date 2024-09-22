@@ -51,7 +51,7 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
                 l.lastModificationTime = :lastModificationTime
             WHERE l.id = :id AND l.kitVersionId = :kitVersionId
         """)
-    void updateInfo(@Param("id") Integer id,
+    void updateInfo(@Param("id") Long id,
                     @Param("kitVersionId") Long kitVersionId,
                     @Param("value") Integer value,
                     @Param("lastModifiedBy") UUID lastModifiedBy,

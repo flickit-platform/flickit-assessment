@@ -24,7 +24,7 @@ class UpdateLevelCompetenceUseCaseParamTest {
     void testUpdateLevelCompetence_KitIdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateLevelCompetenceUseCase.Param(1, null, 3, currentUserId));
+            () -> new UpdateLevelCompetenceUseCase.Param(1L, null, 3, currentUserId));
         assertThat(throwable.getMessage()).isEqualTo("kitId: " + UPDATE_LEVEL_COMPETENCE_KIT_ID_NOT_NULL);
     }
 
@@ -32,14 +32,14 @@ class UpdateLevelCompetenceUseCaseParamTest {
     void testUpdateLevelCompetence_ValueIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateLevelCompetenceUseCase.Param(1, 2L, null, currentUserId));
+            () -> new UpdateLevelCompetenceUseCase.Param(1L, 2L, null, currentUserId));
         assertThat(throwable.getMessage()).isEqualTo("value: " + UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL);
     }
 
     @Test
     void testUpdateLevelCompetence_CurrentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateLevelCompetenceUseCase.Param(1, 2L, 3, null));
+            () -> new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

@@ -34,7 +34,7 @@ public class UpdateLevelCompetenceService implements UpdateLevelCompetenceUseCas
         updateLevelCompetencePort.updateInfo(toParam(param.getId(), kitVersionId, param.getValue(), param.getCurrentUserId()));
     }
 
-    private UpdateLevelCompetencePort.Param toParam(Integer id, Long kitVersionId, Integer value, UUID currentUserId) {
+    private UpdateLevelCompetencePort.Param toParam(Long id, Long kitVersionId, Integer value, UUID currentUserId) {
         return new UpdateLevelCompetencePort.Param(id, kitVersionId, value, currentUserId, LocalDateTime.now());
     }
 }

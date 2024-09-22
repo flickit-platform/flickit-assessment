@@ -21,7 +21,7 @@ public class UpdateLevelCompetenceRestController {
     private final UserContext userContext;
 
     @PutMapping("assessment-kits/{kitId}/level-competences/{id}")
-    public ResponseEntity<Void> updateLevelCompetence(@PathVariable("id") Integer id,
+    public ResponseEntity<Void> updateLevelCompetence(@PathVariable("id") Long id,
                                                        @PathVariable("kitId") Long kitId,
                                                        @RequestBody UpdateLevelCompetenceRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
@@ -29,7 +29,7 @@ public class UpdateLevelCompetenceRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Integer id, Long kitId, UpdateLevelCompetenceRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(Long id, Long kitId, UpdateLevelCompetenceRequestDto requestDto, UUID currentUserId) {
         return new Param(id, kitId, requestDto.value(), currentUserId);
     }
 }

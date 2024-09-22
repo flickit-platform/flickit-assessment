@@ -40,7 +40,7 @@ class UpdateLevelCompetenceServiceTest {
     @Test
     void testUpdateLevelCompetence_kitIdInvalid_ShouldReturnResourceNotFoundException() {
         var currentUserId = UUID.randomUUID();
-        var param = new UpdateLevelCompetenceUseCase.Param(1, 2L, 3, currentUserId);
+        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
 
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
@@ -53,7 +53,7 @@ class UpdateLevelCompetenceServiceTest {
     void testUpdateLevelCompetence_ExpertGroupOfKitNotValid_ShouldReturnResourceNotFoundException() {
         var currentUserId = UUID.randomUUID();
         var kitVersionId = 123L;
-        var param = new UpdateLevelCompetenceUseCase.Param(1, 2L, 3, currentUserId);
+        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
 
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
@@ -67,7 +67,7 @@ class UpdateLevelCompetenceServiceTest {
     void testUpdateLevelCompetence_CurrentUserIsNotExpertGroupOwner_ShouldReturnAccessDeniedException() {
         var currentUserId = UUID.randomUUID();
         var kitVersionId = 123L;
-        var param = new UpdateLevelCompetenceUseCase.Param(1, 2L, 3, currentUserId);
+        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
@@ -82,7 +82,7 @@ class UpdateLevelCompetenceServiceTest {
     void testUpdateLevelCompetence_ValidParams_SuccessfulUpdate() {
         var currentUserId = UUID.randomUUID();
         var kitVersionId = 123L;
-        var param = new UpdateLevelCompetenceUseCase.Param(1, 2L, 3, currentUserId);
+        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
         ArgumentCaptor<UpdateLevelCompetencePort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateLevelCompetencePort.Param.class);
 

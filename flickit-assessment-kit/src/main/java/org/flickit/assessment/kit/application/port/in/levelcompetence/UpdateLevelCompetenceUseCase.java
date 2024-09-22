@@ -19,7 +19,7 @@ public interface UpdateLevelCompetenceUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = UPDATE_LEVEL_COMPETENCE_ID_NOT_NULL)
-        Integer id;
+        Long id;
 
         @NotNull(message = UPDATE_LEVEL_COMPETENCE_KIT_ID_NOT_NULL)
         Long kitId;
@@ -30,7 +30,7 @@ public interface UpdateLevelCompetenceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Integer id, Long kitId, Integer value, UUID currentUserId) {
+        public Param(Long id, Long kitId, Integer value, UUID currentUserId) {
             this.id = id;
             this.kitId = kitId;
             this.value = value;
