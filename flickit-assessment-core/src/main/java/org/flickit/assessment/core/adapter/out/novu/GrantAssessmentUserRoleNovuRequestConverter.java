@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.adapter.out.novu;
 
 import org.flickit.assessment.common.adapter.out.novu.AbstractNovuRequestConverter;
-import org.flickit.assessment.common.application.domain.notification.Tenant;
 import org.flickit.assessment.core.application.service.assessmentuserrole.notification.GrantAssessmentUserRoleNotificationPayload;
 import org.springframework.stereotype.Component;
 
@@ -9,10 +8,6 @@ import static org.flickit.assessment.common.adapter.out.novu.NotificationType.GR
 
 @Component
 public class GrantAssessmentUserRoleNovuRequestConverter extends AbstractNovuRequestConverter {
-
-    public GrantAssessmentUserRoleNovuRequestConverter(Tenant tenant) {
-        super(tenant);
-    }
 
     @Override
     protected String getEventName() {
