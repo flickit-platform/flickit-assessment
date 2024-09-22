@@ -126,6 +126,10 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String UPDATE_LEVEL_COMPETENCE_ID_NOT_NULL = "update-level-competence.id.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_KIT_ID_NOT_NULL = "update-level-competence.kitId.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL = "update-level-competence.value.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
