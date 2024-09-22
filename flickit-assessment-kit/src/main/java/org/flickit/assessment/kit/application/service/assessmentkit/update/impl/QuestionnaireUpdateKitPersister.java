@@ -112,6 +112,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
                 savedQuestionnaire.getId(),
                 kitVersionId,
                 dslQuestionnaire.getTitle(),
+                Questionnaire.generateSlugCode(dslQuestionnaire.getTitle()),
                 dslQuestionnaire.getIndex(),
                 dslQuestionnaire.getDescription(),
                 LocalDateTime.now(),

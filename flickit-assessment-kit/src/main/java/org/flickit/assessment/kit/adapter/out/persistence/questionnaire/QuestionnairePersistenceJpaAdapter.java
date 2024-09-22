@@ -47,6 +47,7 @@ public class QuestionnairePersistenceJpaAdapter implements
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
+            param.code(),
             param.index(),
             param.description(),
             param.lastModificationTime(),

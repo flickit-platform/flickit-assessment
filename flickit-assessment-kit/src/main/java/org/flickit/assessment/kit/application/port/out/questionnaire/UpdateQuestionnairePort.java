@@ -11,6 +11,7 @@ public interface UpdateQuestionnairePort {
         long id,
         long kitVersionId,
         String title,
+        String code,
         int index,
         String description,
         LocalDateTime lastModificationTime,
