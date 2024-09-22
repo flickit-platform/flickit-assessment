@@ -16,6 +16,8 @@ import java.util.UUID;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
+    Optional<AssessmentKitJpaEntity> findByKitVersionId(long kitVersionId);
+
     List<AssessmentKitJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
 
     @Query("""
