@@ -126,7 +126,7 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
-    public static final String UPDATE_KIT_ATTRIBUTE_KIT_ID_NOT_NULL = "update-kit-attribute.kitId.notNull";
+    public static final String UPDATE_KIT_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "update-kit-attribute.kitVersionId.notNull";
     public static final String UPDATE_KIT_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "update-kit-attribute.attributeId.notNull";
     public static final String UPDATE_KIT_ATTRIBUTE_CODE_NOT_BLANK = "update-kit-attribute.code.notBlank";
     public static final String UPDATE_KIT_ATTRIBUTE_CODE_SIZE_MIN = "update-kit-attribute.code.sizeMin";

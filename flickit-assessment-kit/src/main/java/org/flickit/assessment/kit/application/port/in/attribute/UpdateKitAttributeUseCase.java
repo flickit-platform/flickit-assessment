@@ -21,8 +21,8 @@ public interface UpdateKitAttributeUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_KIT_ATTRIBUTE_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = UPDATE_KIT_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = UPDATE_KIT_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
@@ -54,7 +54,7 @@ public interface UpdateKitAttributeUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitId,
+        public Param(Long kitVersionId,
                      Long attributeId,
                      String code,
                      String title,
@@ -63,7 +63,7 @@ public interface UpdateKitAttributeUseCase {
                      Integer index,
                      Integer weight,
                      UUID currentUserId) {
-            this.kitId = kitId;
+            this.kitVersionId = kitVersionId;
             this.attributeId = attributeId;
             this.code = code;
             this.title = title;

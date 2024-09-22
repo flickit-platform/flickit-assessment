@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateKitAttributeUseCaseParamTest {
 
     @Test
-    void testUpdateKitAttributeParam_kitIdIsNull_ErrorMessage() {
+    void testUpdateKitAttributeParam_kitVersionIdIsNull_ErrorMessage() {
         var attributeId = 25L;
         var code = "code";
         var title = "title";
@@ -26,7 +26,7 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(null, attributeId, code, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("kitId: " + UPDATE_KIT_ATTRIBUTE_KIT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_KIT_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
