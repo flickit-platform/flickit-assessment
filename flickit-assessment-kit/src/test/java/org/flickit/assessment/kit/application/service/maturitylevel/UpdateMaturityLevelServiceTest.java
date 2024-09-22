@@ -37,27 +37,31 @@ class UpdateMaturityLevelServiceTest {
     UpdateMaturityLevelPort updateMaturityLevelPort;
 
     @Test
-    void testUpdateMaturityLevelService_KitNotFound_ResourceNotFoundException() {
+    void testUpdateMaturityLevelService_KitIdNotFound_AccessDeniedException() {
         var currentUserId = UUID.randomUUID();
         var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, "description", 2, currentUserId);
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateMaturityLevel(param));
 
         assertEquals(KIT_ID_NOT_FOUND, throwable.getMessage());
-        verifyNoInteractions(loadActiveKitVersionIdPort, updateMaturityLevelPort);
+
+        verifyNoInteractions(loadKitExpertGroupPort, updateMaturityLevelPort);
     }
 
     @Test
     void testUpdateMaturityLevelService_ExpertGroupNotFound_ResourceNotFoundException() {
         var currentUserId = UUID.randomUUID();
         var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, "description", 2, currentUserId);
+
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(1L);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(null);
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateMaturityLevel(param));
 
         assertEquals(EXPERT_GROUP_ID_NOT_FOUND, throwable.getMessage());
-        verifyNoInteractions(loadActiveKitVersionIdPort, updateMaturityLevelPort);
+        verifyNoInteractions(updateMaturityLevelPort);
     }
 
     @Test
@@ -65,26 +69,14 @@ class UpdateMaturityLevelServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, "description", 2, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
+
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(1L);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateMaturityLevel(param));
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
-        verifyNoInteractions(loadActiveKitVersionIdPort, updateMaturityLevelPort);
-    }
-
-    @Test
-    void testUpdateMaturityLevelService_KitIdNotFound_AccessDeniedException() {
-        var currentUserId = UUID.randomUUID();
-        var param = new UpdateMaturityLevelUseCase.Param(1L, 0L, "title", 1, "description", 2, currentUserId);
-        var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
-
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateMaturityLevel(param));
-
-        assertEquals(KIT_ID_NOT_FOUND, throwable.getMessage());
+        verifyNoInteractions(updateMaturityLevelPort);
     }
 
     @Test
@@ -94,8 +86,8 @@ class UpdateMaturityLevelServiceTest {
         var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
         var kitVersionId = 321L;
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         doNothing().when(updateMaturityLevelPort).updateInfo(any(), any(), any(), any());
 
         assertDoesNotThrow(() -> service.updateMaturityLevel(param));

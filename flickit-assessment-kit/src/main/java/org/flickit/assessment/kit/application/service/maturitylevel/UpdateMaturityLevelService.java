@@ -28,6 +28,7 @@ public class UpdateMaturityLevelService implements UpdateMaturityLevelUseCase {
 
     @Override
     public void updateMaturityLevel(Param param) {
+        var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
         var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
         if (expertGroup == null)
             throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
@@ -35,7 +36,6 @@ public class UpdateMaturityLevelService implements UpdateMaturityLevelUseCase {
         if (!Objects.equals(expertGroup.getOwnerId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
         var maturityLevel = new MaturityLevel(param.getId(), MaturityLevel.generateSlugCode(param.getTitle()),
             param.getTitle(), param.getIndex(), param.getDescription(), param.getValue(), null);
         updateMaturityLevelPort.updateInfo(maturityLevel, kitVersionId, LocalDateTime.now(), param.getCurrentUserId());
