@@ -5,7 +5,6 @@ import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.port.in.advicenarration.GetAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -21,7 +20,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -70,28 +68,7 @@ class GetAdviceNarrationServiceTest {
     }
 
     @Test
-    void testGetAdviceNarration_WhenThereIsNoAdviceNarrationAndAiIsDisabled_ThenAiNarrationContainsAiIsNotEnabledMessageAndIsNotEditable() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID());
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(false);
-        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
-        when(appAiProperties.isEnabled()).thenReturn(false);
-
-        var result = service.getAdviceNarration(param);
-        assertNotNull(result);
-        assertEquals(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED), result.aiNarration().narration());
-        assertFalse(result.editable());
-        assertNull(result.aiNarration().creationTime());
-        assertNull(result.assessorNarration());
-    }
-
-    @Test
-    void testGetAdviceNarration_WhenThereIsNoAdviceNarrationAndAiIsEnabled_ThenAiNarrationAndAssessorNarrationAreNull() {
+    void testGetAdviceNarration_WhenThereIsNoAdviceNarration_ThenAiNarrationAndAssessorNarrationAreNull() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
