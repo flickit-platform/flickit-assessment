@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Size(min = 3, message = UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN)
 @Size(max = 100, message = UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX)
 class UpdateMaturityLevelUseCaseParamTest {
+
     @Test
     void testUpdateMaturityLevelUseCaseParam_IdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
