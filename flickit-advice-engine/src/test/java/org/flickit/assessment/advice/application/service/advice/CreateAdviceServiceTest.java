@@ -8,7 +8,7 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.advice.*;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
+import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
