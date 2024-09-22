@@ -102,6 +102,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
                                  UUID updatedBy) {
         UpdateAttributePort.Param param = new UpdateAttributePort.Param(savedAttribute.getId(),
             kitVersionId,
+            savedAttribute.getCode(),
             dslAttribute.getTitle(),
             dslAttribute.getIndex(),
             dslAttribute.getDescription(),

@@ -31,6 +31,7 @@ public class AttributePersistenceJpaAdapter implements
     public void update(UpdateAttributePort.Param param) {
         repository.update(param.id(),
             param.kitVersionId(),
+            param.code(),
             param.title(),
             param.index(),
             param.description(),

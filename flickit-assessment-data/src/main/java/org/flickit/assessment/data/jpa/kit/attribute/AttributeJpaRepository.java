@@ -26,7 +26,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     @Modifying
     @Query("""
             UPDATE AttributeJpaEntity a
-            SET a.title = :title,
+            SET a.code = :code,
+                a.title = :title,
                 a.index = :index,
                 a.description = :description,
                 a.weight = :weight,
@@ -37,6 +38,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
         """)
     void update(@Param("id") long id,
                 @Param("kitVersionId") long kitVersionId,
+                @Param("code") String code,
                 @Param("title") String title,
                 @Param("index") int index,
                 @Param("description") String description,

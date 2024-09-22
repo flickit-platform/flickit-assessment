@@ -10,6 +10,7 @@ public interface UpdateAttributePort {
     record Param(
         long id,
         long kitVersionId,
+        String code,
         String title,
         int index,
         String description,
