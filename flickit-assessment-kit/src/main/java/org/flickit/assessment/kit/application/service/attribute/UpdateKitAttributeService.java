@@ -11,6 +11,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionStatusByIdPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionModificationInfoPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_NOT_UPDATING_STATUS;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UpdateKitAttributeService implements UpdateKitAttributeUseCase {
 
