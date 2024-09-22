@@ -747,6 +747,38 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "MaturityLevel",
+			"item": [
+				{
+					"name": "Update Maturity Level",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/maturity-levels/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"144",
+								"maturity-levels",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
