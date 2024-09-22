@@ -50,4 +50,13 @@ public class LevelCompetencePersistenceJpaAdapter implements
             value,
             LocalDateTime.now(), lastModifiedBy);
     }
+
+    @Override
+    public void updateInfo(Param param) {
+        repository.updateInfo(param.id(),
+            param.kitVersionId(),
+            param.value(),
+            param.lastModifiedBy(),
+            param.lastModificationTime());
+    }
 }

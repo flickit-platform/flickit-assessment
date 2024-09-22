@@ -42,4 +42,18 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
                 @Param(value = "value") Integer value,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
+
+    @Modifying
+    @Query("""
+            UPDATE LevelCompetenceJpaEntity l
+            SET l.value = :value,
+                l.lastModifiedBy = :lastModifiedBy,
+                l.lastModificationTime = :lastModificationTime
+            WHERE l.id = :id AND l.kitVersionId = :kitVersionId
+        """)
+    void updateInfo(@Param("id") Integer id,
+                    @Param("kitVersionId") Long kitVersionId,
+                    @Param("value") Integer value,
+                    @Param("lastModifiedBy") UUID lastModifiedBy,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }
