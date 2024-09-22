@@ -6,7 +6,7 @@ import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAdviceAiNarrationUseCase;
+import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_AI_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -40,7 +40,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateAdviceAiNarrationService implements CreateAdviceAiNarrationUseCase {
+public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
@@ -55,7 +55,7 @@ public class CreateAdviceAiNarrationService implements CreateAdviceAiNarrationUs
     private final CallAiPromptPort callAiPromptPort;
 
     @Override
-    public Result createAdviceAiNarration(Param param) {
+    public Result createAiAdviceNarration(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -63,7 +63,7 @@ public class CreateAdviceAiNarrationService implements CreateAdviceAiNarrationUs
             return new Result(MessageBundle.message(ADVICE_NARRATION_AI_IS_DISABLED));
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
@@ -92,7 +92,7 @@ public class CreateAdviceAiNarrationService implements CreateAdviceAiNarrationUs
             .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)
             .collect(Collectors.toSet());
         if (validAttributeIds.isEmpty())
-            throw new ValidationException(CREATE_ADVICE_AI_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
+            throw new ValidationException(CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN);
 
         return attributeLevelTargets.stream()
             .filter(a -> validAttributeIds.contains(a.getAttributeId()))
@@ -121,7 +121,7 @@ public class CreateAdviceAiNarrationService implements CreateAdviceAiNarrationUs
                 maturityLevelsMap.getOrDefault(target.getMaturityLevelId(), "Unknown")))
             .toList();
 
-        return openAiProperties.createAdviceAiNarrationPrompt(promptAdviceItems.toString(), targetAttributes.toString());
+        return openAiProperties.createAiAdviceNarrationPrompt(promptAdviceItems.toString(), targetAttributes.toString());
     }
 
     record AdviceItem(String question, String currentOption, String recommendedOption) {
@@ -134,8 +134,8 @@ public class CreateAdviceAiNarrationService implements CreateAdviceAiNarrationUs
         createAdviceNarrationPort.persist(toAdviceNarration(adviceId, assessmentResultId, aiNarration, createdBy));
     }
 
-    private void handleNewAdviceNarration(UUID assessmentResultId, String adviceAiNarration, UUID createdBy) {
-        createAdviceNarrationPort.persist(toAdviceNarration(null, assessmentResultId, adviceAiNarration, createdBy));
+    private void handleNewAdviceNarration(UUID assessmentResultId, String aiNarration, UUID createdBy) {
+        createAdviceNarrationPort.persist(toAdviceNarration(null, assessmentResultId, aiNarration, createdBy));
     }
 
     AdviceNarration toAdviceNarration(UUID adviceId, UUID assessmentResultId, String aiNarration, UUID createdBy) {

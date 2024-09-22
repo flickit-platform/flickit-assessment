@@ -30,7 +30,7 @@ public class OpenAiProperties {
         Here is the uploaded Excel file: {excelFile}.
         """;
 
-    private String adviceAiNarrationPrompt = """
+    private String aiAdviceNarrationPrompt = """
         A software quality assessment platform has evaluated a software product by answers of the various questions which affect on some quality attributes. user has
         Generate a concise and professional narrative based on a software quality assessment report.
         The platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
@@ -50,8 +50,8 @@ public class OpenAiProperties {
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
 
-    public Prompt createAdviceAiNarrationPrompt(String adviceListItems, String attributeLevelTargets) {
-        var promptTemplate = new PromptTemplate(adviceAiNarrationPrompt, Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
+    public Prompt createAiAdviceNarrationPrompt(String adviceListItems, String attributeLevelTargets) {
+        var promptTemplate = new PromptTemplate(aiAdviceNarrationPrompt, Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
 }

@@ -15,11 +15,11 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND =  "create-advice.assessmentAttributeRelation.notFound";
     public static final String CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND =  "create-advice.assessmentLevelRelation.notFound";
 
-    public static final String CREATE_ADVICE_AI_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL = "create-advice-ai-narration.adviceListItems.notNull";
-    public static final String CREATE_ADVICE_AI_NARRATION_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL = "create-advice-ai-narration.attributeLevelTargets.notNull";
-    public static final String CREATE_ADVICE_AI_NARRATION_ASSESSMENT_ID_NOT_NULL = "create-advice-ai-narration.assessmentId.notNull";
-    public static final String CREATE_ADVICE_AI_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "create-advice-ai-narration.assessmentResult.notFound";
-    public static final String CREATE_ADVICE_AI_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN = "create-advice-ai-narration.attributeLevelTargets.size.min";
+    public static final String CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL = "create-ai-advice-narration.adviceListItems.notNull";
+    public static final String CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL = "create-ai-advice-narration.attributeLevelTargets.notNull";
+    public static final String CREATE_AI_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "create-ai-advice-narration.assessmentId.notNull";
+    public static final String CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "create-ai-advice-narration.assessmentResult.notFound";
+    public static final String CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN = "create-ai-advice-narration.attributeLevelTargets.size.min";
 
 
     public static final String GET_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL = "get-advice-narration.assessmentId.notNull";
