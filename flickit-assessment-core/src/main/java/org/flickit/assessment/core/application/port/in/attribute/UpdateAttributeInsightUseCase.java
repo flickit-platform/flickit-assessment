@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.attribute;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -26,6 +27,7 @@ public interface UpdateAttributeInsightUseCase {
         Long attributeId;
 
         @NotNull(message = UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL)
+        @Size(max = 1000, message = UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX)
         String assessorInsight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
