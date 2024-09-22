@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.UpdateLevelCompetenceUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ public class UpdateLevelCompetenceService implements UpdateLevelCompetenceUseCas
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
     private final UpdateLevelCompetencePort updateLevelCompetencePort;
+    private final DeleteLevelCompetencePort deleteLevelCompetencePort;
 
     @Override
     public void updateLevelCompetence(Param param) {
@@ -31,7 +33,10 @@ public class UpdateLevelCompetenceService implements UpdateLevelCompetenceUseCas
         if (!expertGroup.getOwnerId().equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        updateLevelCompetencePort.updateInfo(toParam(param.getId(), kitVersionId, param.getValue(), param.getCurrentUserId()));
+        if (param.getValue() == 0)
+            deleteLevelCompetencePort.deleteByIdAndKitVersionId(param.getId(), kitVersionId);
+        else
+            updateLevelCompetencePort.updateInfo(toParam(param.getId(), kitVersionId, param.getValue(), param.getCurrentUserId()));
     }
 
     private UpdateLevelCompetencePort.Param toParam(Long id, Long kitVersionId, Integer value, UUID currentUserId) {

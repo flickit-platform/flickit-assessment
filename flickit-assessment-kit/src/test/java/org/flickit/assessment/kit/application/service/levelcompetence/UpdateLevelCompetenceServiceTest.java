@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.UpdateLevelCompetenceUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class UpdateLevelCompetenceServiceTest {
 
     @Mock
     private UpdateLevelCompetencePort updateLevelCompetencePort;
+
+    @Mock
+    private DeleteLevelCompetencePort deleteLevelCompetencePort;
 
     @Test
     void testUpdateLevelCompetence_kitIdInvalid_ShouldReturnResourceNotFoundException() {
@@ -95,5 +99,22 @@ class UpdateLevelCompetenceServiceTest {
         assertEquals(param.getId(), updatePortParam.getValue().id());
         assertEquals(kitVersionId, updatePortParam.getValue().kitVersionId());
         assertEquals(currentUserId, updatePortParam.getValue().lastModifiedBy());
+    }
+
+    @Test
+    void testUpdateLevelCompetence_ValueIsZero_SuccessfulDeleteLevelCompetence() {
+        var currentUserId = UUID.randomUUID();
+        var id = 0L;
+        var kitVersionId = 123L;
+        var value = 0;
+        var param = new UpdateLevelCompetenceUseCase.Param(id, 2L, value, currentUserId);
+        var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        doNothing().when(deleteLevelCompetencePort).deleteByIdAndKitVersionId(id, kitVersionId);
+
+        assertDoesNotThrow(() -> service.updateLevelCompetence(param));
+        verify(deleteLevelCompetencePort).deleteByIdAndKitVersionId(id, kitVersionId);
+        verifyNoInteractions(updateLevelCompetencePort);
     }
 }

@@ -26,6 +26,11 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
+    public void deleteByIdAndKitVersionId(long id, long kitVersionId) {
+        repository.deleteByIdAndKitVersionId(id, kitVersionId);
+    }
+
+    @Override
     public Long persist(Long affectedLevelId, Long effectiveLevelId, int value, Long kitVersionId, UUID createdBy) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,
