@@ -85,7 +85,7 @@ class UpdateLevelCompetenceServiceTest {
 
         assertDoesNotThrow(() -> service.updateLevelCompetence(param));
         verify(updateLevelCompetencePort).updateInfo(updatePortParam.capture());
-        assertEquals(param.getId(), updatePortParam.getValue().id());
+        assertEquals(param.getLevelCompetenceId(), updatePortParam.getValue().id());
         assertEquals(currentUserId, updatePortParam.getValue().lastModifiedBy());
     }
 

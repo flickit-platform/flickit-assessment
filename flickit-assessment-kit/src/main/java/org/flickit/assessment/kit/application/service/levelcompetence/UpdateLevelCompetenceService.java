@@ -30,9 +30,9 @@ public class UpdateLevelCompetenceService implements UpdateLevelCompetenceUseCas
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         if (param.getValue() == 0)
-            deleteLevelCompetencePort.deleteById(param.getId());
+            deleteLevelCompetencePort.deleteById(param.getLevelCompetenceId());
         else
-            updateLevelCompetencePort.updateInfo(toParam(param.getId(), param.getValue(), param.getCurrentUserId()));
+            updateLevelCompetencePort.updateInfo(toParam(param.getLevelCompetenceId(), param.getValue(), param.getCurrentUserId()));
     }
 
     private UpdateLevelCompetencePort.Param toParam(Long id, Integer value, UUID currentUserId) {

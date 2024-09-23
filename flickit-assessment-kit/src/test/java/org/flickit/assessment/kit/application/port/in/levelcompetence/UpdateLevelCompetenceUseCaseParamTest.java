@@ -17,7 +17,7 @@ class UpdateLevelCompetenceUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateLevelCompetenceUseCase.Param(null, 1L, 2, currentUserId));
-        assertThat(throwable.getMessage()).isEqualTo("id: " + UPDATE_LEVEL_COMPETENCE_ID_NOT_NULL);
+        assertThat(throwable.getMessage()).isEqualTo("id: " + UPDATE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL);
     }
 
     @Test
