@@ -79,6 +79,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
 
         return new SubjectReportItem(subjectEntity.getId(),
             subjectEntity.getTitle(),
+            subjectEntity.getDescription(),
             subjectMaturityLevel,
             svEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),

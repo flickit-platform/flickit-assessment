@@ -17,8 +17,10 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
-    @Query("SELECT COUNT(a) as answerCount FROM AnswerJpaEntity a " +
-        "WHERE a.assessmentResult.id=:assessmentResultId AND a.questionId IN :questionIds AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)")
+    @Query("""
+        SELECT COUNT(a) as answerCount FROM AnswerJpaEntity a
+        WHERE a.assessmentResult.id=:assessmentResultId AND a.questionId IN :questionIds AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+        """)
     int getCountByQuestionIds(UUID assessmentResultId, List<Long> questionIds);
 
     @Query("""
@@ -30,12 +32,14 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     int getCountByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Modifying
-    @Query("UPDATE AnswerJpaEntity a SET " +
-        "a.answerOptionId = :answerOptionId, " +
-        "a.confidenceLevelId = :confidenceLevelId, " +
-        "a.isNotApplicable = :isNotApplicable, " +
-        "a.lastModifiedBy = :currentUserId " +
-        "WHERE a.id = :answerId")
+    @Query("""
+        UPDATE AnswerJpaEntity a SET
+        a.answerOptionId = :answerOptionId,
+        a.confidenceLevelId = :confidenceLevelId,
+        a.isNotApplicable = :isNotApplicable,
+        a.lastModifiedBy = :currentUserId
+        WHERE a.id = :answerId
+        """)
     void update(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId);
 
     @Query("""

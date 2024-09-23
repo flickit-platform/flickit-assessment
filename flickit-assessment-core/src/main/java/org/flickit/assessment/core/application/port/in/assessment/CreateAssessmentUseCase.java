@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
+import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 
 import java.util.UUID;
 
@@ -25,6 +27,10 @@ public interface CreateAssessmentUseCase {
         @Size(max = 100, message = CREATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
+        @Size(min = 3, message = CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN)
+        @Size(max = 20, message = CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX)
+        String shortTitle;
+
         @NotNull(message = CREATE_ASSESSMENT_SPACE_ID_NOT_NULL)
         Long spaceId;
 
@@ -34,8 +40,9 @@ public interface CreateAssessmentUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long spaceId, String title, Long kitId, UUID currentUserId) {
+        public Param(Long spaceId, String title, String shortTitle, Long kitId, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
+            this.shortTitle = shortTitle != null && !shortTitle.isBlank() ? shortTitle.strip() : null;
             this.spaceId = spaceId;
             this.kitId = kitId;
             this.currentUserId = currentUserId;
@@ -43,6 +50,6 @@ public interface CreateAssessmentUseCase {
         }
     }
 
-    record Result(UUID id){
+    record Result(UUID id, CreateAssessmentNotificationCmd notificationCmd) implements HasNotificationCmd {
     }
 }

@@ -127,10 +127,10 @@ public class ErrorMessageKey {
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
-        return String.format("entities.%s.single.first", fieldName);
+        return "entities.%s.single.first".formatted(fieldName);
     }
 
     public static String entityNamePlural(String fieldName) {
-        return String.format("entities.%s.plural", fieldName);
+        return "entities.%s.plural".formatted(fieldName);
     }
 }

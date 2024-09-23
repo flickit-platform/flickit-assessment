@@ -32,6 +32,7 @@ public class UpdateAssessmentService implements UpdateAssessmentUseCase {
         UpdateAssessmentPort.AllParam updateParam = new UpdateAssessmentPort.AllParam(
             param.getId(),
             param.getTitle(),
+            param.getShortTitle(),
             code,
             lastModificationTime,
             param.getCurrentUserId());

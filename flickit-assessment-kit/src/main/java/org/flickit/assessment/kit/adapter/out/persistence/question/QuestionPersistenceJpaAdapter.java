@@ -113,9 +113,9 @@ public class QuestionPersistenceJpaAdapter implements
         return myMap.entrySet().stream()
             .map(entry -> {
                 Question question = QuestionMapper.mapToDomainModel(entry.getKey());
-                Questionnaire questionnaire = mapToDomainModel(entry.getValue().get(0).getQuestionnaire());
+                Questionnaire questionnaire = mapToDomainModel(entry.getValue().getFirst().getQuestionnaire());
 
-                QuestionImpact impact = QuestionImpactMapper.mapToDomainModel(entry.getValue().get(0).getQuestionImpact());
+                QuestionImpact impact = QuestionImpactMapper.mapToDomainModel(entry.getValue().getFirst().getQuestionImpact());
                 Map<Long, AnswerOptionImpactJpaEntity> optionMap = entry.getValue().stream()
                     .collect(Collectors.toMap(e -> e.getOptionImpact().getId(), AttributeLevelImpactfulQuestionsView::getOptionImpact,
                         (existing, replacement) -> existing));

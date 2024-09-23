@@ -66,8 +66,10 @@ class CreateExpertGroupServiceTest {
         when(uploadExpertGroupPicturePort.uploadPicture(picture)).thenReturn(link);
 
         var result = service.createExpertGroup(param);
-        assertNotNull(result, "The result of createExpertGroup service" +
-            "should be CreateExpertGroupUseCase.Member");
+        assertNotNull(result, """
+            The result of createExpertGroup service
+            should be CreateExpertGroupUseCase.Member
+            """);
         assertEquals(expectedId, result.id(), "The result should be long ID");
     }
 
@@ -87,8 +89,10 @@ class CreateExpertGroupServiceTest {
         doNothing().when(createExpertGroupAccessPort).persist(any(CreateExpertGroupAccessPort.Param.class));
 
         var result = service.createExpertGroup(param);
-        assertNotNull(result, "The result of createExpertGroup service" +
-            "should be CreateExpertGroupUseCase.Member");
+        assertNotNull(result, """
+            The result of createExpertGroup service
+            should be CreateExpertGroupUseCase.Member
+            """);
         assertEquals(expectedId, result.id(), "The result should be long ID");
     }
 
