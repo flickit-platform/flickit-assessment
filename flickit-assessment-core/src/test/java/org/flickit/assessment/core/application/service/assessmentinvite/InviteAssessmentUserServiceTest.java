@@ -142,7 +142,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
         var assessmentId = assessment.getId();
         var param = new Param(assessmentId, email, roleId, currentUserId);
-        var user = new User(UUID.randomUUID(), "Display Name");
+        var user = new User(UUID.randomUUID(), "Display Name", "user@mail.com");
 
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(email)).thenReturn(Optional.of(user));
@@ -169,7 +169,7 @@ class InviteAssessmentUserServiceTest {
         var assessment = AssessmentMother.assessment();
         var assessmentId = assessment.getId();
         var param = new Param(assessmentId, email, roleId, currentUserId);
-        var user = new User(UUID.randomUUID(), "Display Name");
+        var user = new User(UUID.randomUUID(), "Display Name", "user@mail.com");
         when(getAssessmentPort.getAssessmentById(assessmentId)).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(email)).thenReturn(Optional.of(user));
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, GRANT_USER_ASSESSMENT_ROLE)).thenReturn(true);

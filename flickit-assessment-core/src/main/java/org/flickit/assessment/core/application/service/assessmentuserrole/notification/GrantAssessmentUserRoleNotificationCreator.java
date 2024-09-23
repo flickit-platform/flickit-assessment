@@ -35,16 +35,18 @@ public class GrantAssessmentUserRoleNotificationCreator
     public List<NotificationEnvelope> create(GrantAssessmentUserRoleNotificationCmd cmd) {
         Optional<Assessment> assessment = getAssessmentPort.getAssessmentById(cmd.assessmentId());
         Optional<User> user = loadUserPort.loadById(cmd.assignerUserId());
-        if (assessment.isEmpty() || user.isEmpty()) {
+        var targetUser = loadUserPort.loadById(cmd.targetUserId())
+            .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));
+        if (assessment.isEmpty() || user.isEmpty() || targetUser.isEmpty()) {
             log.warn("assessment or user not found");
             return List.of();
         }
         var title = MessageBundle.message(NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE);
         var payload = new GrantAssessmentUserRoleNotificationPayload(
-            new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
+            new AssessmentModel(assessment.get()),
             new UserModel(user.get().getId(), user.get().getDisplayName()),
             new RoleModel(cmd.role().getTitle()));
-        return List.of(new NotificationEnvelope(cmd.targetUserId(), title, payload));
+        return List.of(new NotificationEnvelope(targetUser.get(), title, payload));
     }
 
     @Override

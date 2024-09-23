@@ -41,13 +41,19 @@ public class SubmitAnswerNotificationCreator implements
             log.warn("assessment or user not found");
             return List.of();
         }
+        var createdBy = loadUserPort.loadById(assessment.get().getCreatedBy())
+            .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));
+        if (createdBy.isEmpty()) {
+            log.warn("user not found");
+            return List.of();
+        }
 
         var progress = getAssessmentProgressPort.getProgress(cmd.assessmentId());
 
         if (isFinished(progress) && !isFinishedByCreator(cmd, assessment.get())) {
             var title = MessageBundle.message(NOTIFICATION_TITLE_COMPLETE_ASSESSMENT);
             var payload = new SubmitAnswerNotificationPayload(new AssessmentModel(assessment.get()), new UserModel(user.get()));
-            return List.of(new NotificationEnvelope(assessment.get().getCreatedBy(), title, payload));
+            return List.of(new NotificationEnvelope(createdBy.get(), title, payload));
         }
         return List.of();
     }

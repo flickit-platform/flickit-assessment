@@ -103,7 +103,7 @@ class GetEvidenceServiceTest {
         var param = new Param(id, currentUserId);
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         Question question = QuestionMother.withOptions();
-        User user = new User(evidence.getCreatedById(), "displayName");
+        User user = new User(evidence.getCreatedById(), "displayName", "user@mail.com");
         Answer answer = AnswerMother.answerWithNullNotApplicable(question.getOptions().getFirst());
 
         when(loadEvidencePort.loadNotDeletedEvidence(id)).thenReturn(evidence);
