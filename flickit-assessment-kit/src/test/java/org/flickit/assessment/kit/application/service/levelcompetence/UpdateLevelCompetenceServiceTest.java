@@ -74,7 +74,7 @@ class UpdateLevelCompetenceServiceTest {
     }
 
     @Test
-    void testUpdateLevelCompetence_ValidParams_SuccessfulUpdate() {
+    void testUpdateLevelCompetence_ValidParamsAndValueIsNotZero_SuccessfulUpdateLevelCompetence() {
         var currentUserId = UUID.randomUUID();
         var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
@@ -87,10 +87,11 @@ class UpdateLevelCompetenceServiceTest {
         verify(updateLevelCompetencePort).updateValue(updatePortParam.capture());
         assertEquals(param.getLevelCompetenceId(), updatePortParam.getValue().id());
         assertEquals(currentUserId, updatePortParam.getValue().lastModifiedBy());
+        verifyNoInteractions(deleteLevelCompetencePort);
     }
 
     @Test
-    void testUpdateLevelCompetence_ValueIsZero_SuccessfulDeleteLevelCompetence() {
+    void testUpdateLevelCompetence_ValidParamsAndValueIsZero_SuccessfulDeleteLevelCompetence() {
         var currentUserId = UUID.randomUUID();
         var id = 0L;
         var value = 0;
