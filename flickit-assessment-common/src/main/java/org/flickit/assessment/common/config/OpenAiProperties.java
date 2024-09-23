@@ -40,7 +40,7 @@ public class OpenAiProperties {
         Ensure that the advice is polite, constructive, and focused on actionable improvements, tailored for an expert software assessor.
         Avoid references to individual scores or negative phrasing. Keep the tone professional and supportive.
         Start with a brief mention of the attribute targets in no more than two sentences.
-        Ensure the total response, including HTML tags, is under 900 characters.
+        Ensure the total response, including HTML tags, is under 900 characters and without markdown.
         Advice Items: {adviceListItems}
         Attribute Targets: {attributeLevelTargets}
         """;
