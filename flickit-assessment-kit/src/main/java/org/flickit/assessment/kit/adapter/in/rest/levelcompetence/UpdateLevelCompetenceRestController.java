@@ -22,8 +22,8 @@ public class UpdateLevelCompetenceRestController {
 
     @PutMapping("assessment-kits/{kitId}/level-competences/{levelCompetenceId}")
     public ResponseEntity<Void> updateLevelCompetence(@PathVariable("levelCompetenceId") Long levelCompetenceId,
-                                                       @PathVariable("kitId") Long kitId,
-                                                       @RequestBody UpdateLevelCompetenceRequestDto requestDto) {
+                                                      @PathVariable("kitId") Long kitId,
+                                                      @RequestBody UpdateLevelCompetenceRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         useCase.updateLevelCompetence(toParam(levelCompetenceId, kitId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);

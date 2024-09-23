@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.levelcompetence;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import static org.flickit.assessment.kit.common.ErrorMessageKey.LEVEL_COMPETENCE_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +30,8 @@ public class LevelCompetencePersistenceJpaAdapter implements
 
     @Override
     public void deleteById(long id) {
+        if (!repository.existsById(id))
+            throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
         repository.deleteById(id);
     }
 
