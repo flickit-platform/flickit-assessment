@@ -747,6 +747,32 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "LevelCompetence",
+			"item": [
+				{
+					"name": "Update Level Competence",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/440/level-compeneces/2323",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"440",
+								"level-compeneces",
+								"2323"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
