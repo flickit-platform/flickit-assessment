@@ -81,10 +81,10 @@ class UpdateLevelCompetenceServiceTest {
         ArgumentCaptor<UpdateLevelCompetencePort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateLevelCompetencePort.Param.class);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        doNothing().when(updateLevelCompetencePort).updateInfo(any());
+        doNothing().when(updateLevelCompetencePort).updateValue(any());
 
         assertDoesNotThrow(() -> service.updateLevelCompetence(param));
-        verify(updateLevelCompetencePort).updateInfo(updatePortParam.capture());
+        verify(updateLevelCompetencePort).updateValue(updatePortParam.capture());
         assertEquals(param.getLevelCompetenceId(), updatePortParam.getValue().id());
         assertEquals(currentUserId, updatePortParam.getValue().lastModifiedBy());
     }

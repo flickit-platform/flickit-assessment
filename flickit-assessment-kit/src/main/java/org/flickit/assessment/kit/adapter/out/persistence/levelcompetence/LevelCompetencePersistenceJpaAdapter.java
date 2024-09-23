@@ -57,7 +57,7 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateInfo(Param param) {
+    public void updateValue(Param param) {
         repository.updateValue(param.id(),
             param.value(),
             param.lastModifiedBy(),

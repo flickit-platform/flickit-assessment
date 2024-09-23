@@ -7,7 +7,7 @@ public interface UpdateLevelCompetencePort {
 
     void update(Long affectedLevelId, Long effectiveLevelId, Long kitVersionId, Integer value, UUID lastModifiedBy);
 
-    void updateInfo(Param param);
+    void updateValue(Param param);
 
     record Param(long id, int value, UUID lastModifiedBy, LocalDateTime lastModificationTime){
     }

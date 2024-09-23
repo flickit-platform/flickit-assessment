@@ -32,7 +32,7 @@ public class UpdateLevelCompetenceService implements UpdateLevelCompetenceUseCas
         if (param.getValue() == 0)
             deleteLevelCompetencePort.deleteById(param.getLevelCompetenceId());
         else
-            updateLevelCompetencePort.updateInfo(toParam(param.getLevelCompetenceId(), param.getValue(), param.getCurrentUserId()));
+            updateLevelCompetencePort.updateValue(toParam(param.getLevelCompetenceId(), param.getValue(), param.getCurrentUserId()));
     }
 
     private UpdateLevelCompetencePort.Param toParam(Long id, Integer value, UUID currentUserId) {
