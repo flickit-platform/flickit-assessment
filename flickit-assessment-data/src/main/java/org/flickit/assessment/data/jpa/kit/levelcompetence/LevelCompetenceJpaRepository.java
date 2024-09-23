@@ -55,4 +55,6 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
                      @Param("value") Integer value,
                      @Param("lastModifiedBy") UUID lastModifiedBy,
                      @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 }

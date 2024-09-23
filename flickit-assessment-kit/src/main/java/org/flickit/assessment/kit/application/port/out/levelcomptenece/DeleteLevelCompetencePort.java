@@ -4,5 +4,5 @@ public interface DeleteLevelCompetencePort {
 
     void delete(Long affectedLevelId, Long effectiveLevelId, Long kitVersionId);
 
-    void deleteById(long id);
+    void deleteByIdAndKitVersionId(long id, Long kitVersionId);
 }

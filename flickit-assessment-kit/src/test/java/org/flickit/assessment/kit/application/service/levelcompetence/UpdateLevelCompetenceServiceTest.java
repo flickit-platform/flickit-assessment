@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.levelcompetence;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.UpdateLevelCompetenceUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
@@ -36,6 +37,9 @@ class UpdateLevelCompetenceServiceTest {
 
     @Mock
     private DeleteLevelCompetencePort deleteLevelCompetencePort;
+
+    @Mock
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Test
     void testUpdateLevelCompetence_kitIdInvalid_ShouldReturnResourceNotFoundException() {
@@ -76,11 +80,13 @@ class UpdateLevelCompetenceServiceTest {
     @Test
     void testUpdateLevelCompetence_ValidParamsAndValueIsNotZero_SuccessfulUpdateLevelCompetence() {
         var currentUserId = UUID.randomUUID();
+        var kitVersionId = 444L;
         var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
         ArgumentCaptor<UpdateLevelCompetencePort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateLevelCompetencePort.Param.class);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         doNothing().when(updateLevelCompetencePort).updateValue(any());
 
         assertDoesNotThrow(() -> service.updateLevelCompetence(param));
@@ -93,15 +99,16 @@ class UpdateLevelCompetenceServiceTest {
     @Test
     void testUpdateLevelCompetence_ValidParamsAndValueIsZero_SuccessfulDeleteLevelCompetence() {
         var currentUserId = UUID.randomUUID();
-        var id = 0L;
         var value = 0;
-        var param = new UpdateLevelCompetenceUseCase.Param(id, 2L, value, currentUserId);
+        var kitVersionId = 444L;
+        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, value, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        doNothing().when(deleteLevelCompetencePort).deleteById(id);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        doNothing().when(deleteLevelCompetencePort).deleteByIdAndKitVersionId(1L, kitVersionId);
 
         assertDoesNotThrow(() -> service.updateLevelCompetence(param));
-        verify(deleteLevelCompetencePort).deleteById(id);
+        verify(deleteLevelCompetencePort).deleteByIdAndKitVersionId(1L, kitVersionId);
         verifyNoInteractions(updateLevelCompetencePort);
     }
 }

@@ -29,9 +29,10 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteById(long id) {
-        if (!repository.existsById(id))
+    public void deleteByIdAndKitVersionId(long id, Long kitVersionId) {
+        if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
             throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
+
         repository.deleteById(id);
     }
 
@@ -63,6 +64,9 @@ public class LevelCompetencePersistenceJpaAdapter implements
 
     @Override
     public void updateValue(Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
+
         repository.updateValue(param.id(),
             param.value(),
             param.lastModifiedBy(),
