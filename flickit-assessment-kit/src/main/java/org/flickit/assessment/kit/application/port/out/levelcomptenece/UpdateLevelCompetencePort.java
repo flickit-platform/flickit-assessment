@@ -9,6 +9,6 @@ public interface UpdateLevelCompetencePort {
 
     void updateInfo(Param param);
 
-    record Param(long id, long kitVersionId, int value, UUID lastModifiedBy, LocalDateTime lastModificationTime){
+    record Param(long id, int value, UUID lastModifiedBy, LocalDateTime lastModificationTime){
     }
 }

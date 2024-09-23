@@ -26,8 +26,8 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteByIdAndKitVersionId(long id, long kitVersionId) {
-        repository.deleteByIdAndKitVersionId(id, kitVersionId);
+    public void deleteById(long id) {
+        repository.deleteById(id);
     }
 
     @Override
@@ -58,8 +58,7 @@ public class LevelCompetencePersistenceJpaAdapter implements
 
     @Override
     public void updateInfo(Param param) {
-        repository.updateInfo(param.id(),
-            param.kitVersionId(),
+        repository.updateValue(param.id(),
             param.value(),
             param.lastModifiedBy(),
             param.lastModificationTime());

@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.levelcompetence;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.UpdateLevelCompetenceUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
@@ -33,9 +32,6 @@ class UpdateLevelCompetenceServiceTest {
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
 
     @Mock
-    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
-
-    @Mock
     private UpdateLevelCompetencePort updateLevelCompetencePort;
 
     @Mock
@@ -46,20 +42,17 @@ class UpdateLevelCompetenceServiceTest {
         var currentUserId = UUID.randomUUID();
         var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
 
-        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateLevelCompetence(param));
         assertEquals(KIT_ID_NOT_FOUND, throwable.getMessage());
-        verifyNoInteractions(loadKitExpertGroupPort);
     }
 
     @Test
     void testUpdateLevelCompetence_ExpertGroupOfKitNotValid_ShouldReturnResourceNotFoundException() {
         var currentUserId = UUID.randomUUID();
-        var kitVersionId = 123L;
         var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
 
-        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateLevelCompetence(param));
@@ -70,11 +63,9 @@ class UpdateLevelCompetenceServiceTest {
     @Test
     void testUpdateLevelCompetence_CurrentUserIsNotExpertGroupOwner_ShouldReturnAccessDeniedException() {
         var currentUserId = UUID.randomUUID();
-        var kitVersionId = 123L;
         var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroup();
 
-        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateLevelCompetence(param));
@@ -85,19 +76,16 @@ class UpdateLevelCompetenceServiceTest {
     @Test
     void testUpdateLevelCompetence_ValidParams_SuccessfulUpdate() {
         var currentUserId = UUID.randomUUID();
-        var kitVersionId = 123L;
         var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
         ArgumentCaptor<UpdateLevelCompetencePort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateLevelCompetencePort.Param.class);
 
-        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         doNothing().when(updateLevelCompetencePort).updateInfo(any());
 
         assertDoesNotThrow(() -> service.updateLevelCompetence(param));
         verify(updateLevelCompetencePort).updateInfo(updatePortParam.capture());
         assertEquals(param.getId(), updatePortParam.getValue().id());
-        assertEquals(kitVersionId, updatePortParam.getValue().kitVersionId());
         assertEquals(currentUserId, updatePortParam.getValue().lastModifiedBy());
     }
 
@@ -105,16 +93,14 @@ class UpdateLevelCompetenceServiceTest {
     void testUpdateLevelCompetence_ValueIsZero_SuccessfulDeleteLevelCompetence() {
         var currentUserId = UUID.randomUUID();
         var id = 0L;
-        var kitVersionId = 123L;
         var value = 0;
         var param = new UpdateLevelCompetenceUseCase.Param(id, 2L, value, currentUserId);
         var expertGroup = ExpertGroupMother.createExpertGroupWithCreatedBy(currentUserId);
-        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        doNothing().when(deleteLevelCompetencePort).deleteByIdAndKitVersionId(id, kitVersionId);
+        doNothing().when(deleteLevelCompetencePort).deleteById(id);
 
         assertDoesNotThrow(() -> service.updateLevelCompetence(param));
-        verify(deleteLevelCompetencePort).deleteByIdAndKitVersionId(id, kitVersionId);
+        verify(deleteLevelCompetencePort).deleteById(id);
         verifyNoInteractions(updateLevelCompetencePort);
     }
 }
