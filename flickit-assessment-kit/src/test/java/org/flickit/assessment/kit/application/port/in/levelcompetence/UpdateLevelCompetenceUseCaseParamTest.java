@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class UpdateLevelCompetenceUseCaseParamTest {
 
     @Test
-    void testUpdateLevelCompetence_IdIsNull_ErrorMessage() {
+    void testUpdateLevelCompetence_LevelCompetenceIdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateLevelCompetenceUseCase.Param(null, 1L, 2, currentUserId));
-        assertThat(throwable.getMessage()).isEqualTo("id: " + UPDATE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL);
+        assertThat(throwable.getMessage()).isEqualTo("levelCompetenceId: " + UPDATE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL);
     }
 
     @Test
@@ -41,5 +41,11 @@ class UpdateLevelCompetenceUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    @Test
+    void testUpdateLevelCompetence_ValidParams_ShouldNotThrowException() {
+        var currentUserId = UUID.randomUUID();
+        assertDoesNotThrow(() -> new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId));
     }
 }
