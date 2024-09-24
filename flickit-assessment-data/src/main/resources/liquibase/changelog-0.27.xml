@@ -50,8 +50,4 @@
         <modifyDataType tableName="fac_attribute_insight" columnName="ai_insight" newDataType="varchar(1000)"/>
         <modifyDataType tableName="fac_attribute_insight" columnName="assessor_insight" newDataType="varchar(1000)"/>
     </changeSet>
-
-    <changeSet id="0.27-05" author="Ali Sedaghat">
-        <modifyDataType tableName="fak_subject" columnName="code" newDataType="varchar(100)"/>
-    </changeSet>
 </databaseChangeLog>
