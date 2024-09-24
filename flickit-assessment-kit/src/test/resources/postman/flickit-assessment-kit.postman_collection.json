@@ -759,7 +759,7 @@
                   ],
                   "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1,\n    \"expertGroupId\": 1\n}",
+                    "raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
                     "options": {
                       "raw": {
                         "language": "json"
