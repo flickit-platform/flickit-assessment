@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.port.in.subject;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -32,7 +31,9 @@ public interface CreateSubjectUseCase {
         @Size(max = 100, message = CREATE_SUBJECT_TITLE_SIZE_MAX)
         String title;
 
-        @NotBlank(message = CREATE_SUBJECT_DESCRIPTION_NOT_BLANK)
+        @NotNull(message = CREATE_SUBJECT_DESCRIPTION_NOT_NULL)
+        @Size(min = 3, message = CREATE_SUBJECT_DESCRIPTION_SIZE_MIN)
+        @Size(max = 500, message = CREATE_SUBJECT_DESCRIPTION_SIZE_MAX)
         String description;
 
         int weight;
@@ -50,8 +51,8 @@ public interface CreateSubjectUseCase {
 
             this.kitId = kitId;
             this.index = index;
-            this.title = title;
-            this.description = description;
+            this.title = title != null && !title.isBlank() ? title.trim() : null;
+            this.description = description != null && !description.isBlank() ? description.trim() : null;
             this.weight = weight;
             this.currentUserId = currentUserId;
             this.validateSelf();

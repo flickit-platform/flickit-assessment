@@ -129,13 +129,14 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_KIT_ID_NOT_NULL = "create-subject.kitId.notNull";
     public static final String CREATE_SUBJECT_INDEX_NOT_NULL = "create-subject.index.notNull";
     public static final String CREATE_SUBJECT_TITLE_NOT_NULL = "create-subject.title.notNull";
-    public static final String CREATE_SUBJECT_DESCRIPTION_NOT_BLANK = "create-subject.description.notBlank";
-    public static final String CREATE_SUBJECT_TITLE_SIZE_MIN= "create-subject.title.size.min";
-    public static final String CREATE_SUBJECT_TITLE_SIZE_MAX= "create-subject.title.size.max";
-
-    public static final String CREATE_KIT_BY_WIZARD_SUBJECT_INDEX_DUPLICATE = "create-kit-by-wizard.subject-index.duplicate";
-    public static final String CREATE_KIT_BY_WIZARD_SUBJECT_TITLE_DUPLICATE = "create-kit-by-wizard.subject-title.duplicate";
-    public static final String CREATE_KIT_BY_WIZARD_SUBJECT_CODE_DUPLICATE = "create-kit-by-wizard.subject-code.duplicate";
+    public static final String CREATE_SUBJECT_TITLE_SIZE_MIN = "create-subject.title.size.min";
+    public static final String CREATE_SUBJECT_TITLE_SIZE_MAX = "create-subject.title.size.max";
+    public static final String CREATE_SUBJECT_DESCRIPTION_NOT_NULL = "create-subject.description.notNull";
+    public static final String CREATE_SUBJECT_DESCRIPTION_SIZE_MIN = "create-subject.description.size.min";
+    public static final String CREATE_SUBJECT_DESCRIPTION_SIZE_MAX = "create-subject.description.size.max";
+    public static final String CREATE_SUBJECT_INDEX_DUPLICATE = "create-subject.index.duplicate";
+    public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
+    public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
