@@ -486,6 +486,42 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update Kit Attribute",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"code\": \"code\",\r\n    \"title\": \"title\",\r\n    \"description\": \"description\",\r\n    \"subjectId\": \"3\",\r\n    \"index\": \"2\",\r\n    \"weight\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/attributes/10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"302",
+								"attributes",
+								"10"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
