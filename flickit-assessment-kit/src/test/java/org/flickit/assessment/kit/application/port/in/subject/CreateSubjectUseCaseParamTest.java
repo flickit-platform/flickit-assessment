@@ -22,7 +22,7 @@ class CreateSubjectUseCaseParamTest {
     }
 
     @Test
-    void testCreateSubjectUseCaseParam_IndexIsNull_ErrorMessage() {
+    void testCreateSubjectUseCaseParam_indexIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.index(null)));
         assertThat(throwable).hasMessage("index: " + CREATE_SUBJECT_INDEX_NOT_NULL);

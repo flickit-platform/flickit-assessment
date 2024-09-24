@@ -46,7 +46,7 @@ class CreateSubjectServiceTest {
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
 
-        AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.createSubject(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.createSubject(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
@@ -59,8 +59,8 @@ class CreateSubjectServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
         when(createSubjectPort.persist(any(CreateSubjectPort.Param.class))).thenReturn(subjectId);
 
-        long actualSubject = service.createSubject(param);
-        assertEquals(subjectId, actualSubject);
+        long createdSubjectId = service.createSubject(param);
+        assertEquals(subjectId, createdSubjectId);
     }
 
     private CreateSubjectUseCase.Param createParam(Consumer<CreateSubjectUseCase.Param.ParamBuilder> changer) {
