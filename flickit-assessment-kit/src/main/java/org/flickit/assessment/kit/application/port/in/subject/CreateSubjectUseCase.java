@@ -48,7 +48,6 @@ public interface CreateSubjectUseCase {
                      String description,
                      int weight,
                      UUID currentUserId) {
-
             this.kitId = kitId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
