@@ -25,14 +25,19 @@ class GetNotificationPlatformSettingsServiceTest {
     private NotificationSenderSettingProvider settingProvider;
 
     @Test
-    void testGetNotificationPlatformSettingsTest_ValidInput_ValidResult() {
-        UUID currentUserId = UUID.randomUUID();
+    void testGetNotificationPlatformSettings_ValidInput_ValidResult() {
         UUID hash = UUID.randomUUID();
-        when(settingProvider.getSettings(currentUserId)).thenReturn(Map.of("hash", hash.toString()));
-        GetNotificationPlatformSettingsUseCase.Param param = new GetNotificationPlatformSettingsUseCase.Param(currentUserId);
+        var param = new GetNotificationPlatformSettingsUseCase.Param(UUID.randomUUID());
 
-        GetNotificationPlatformSettingsUseCase.Result result = service.getNotificationPlatformSettings(param);
+        var settingsMap = Map.of("hash", hash.toString());
+
+        when(settingProvider.getSettings(param.getCurrentUserId())).thenReturn(settingsMap);
+
+        var result = service.getNotificationPlatformSettings(param);
+
         assertNotNull(result.settings());
+        assertEquals(settingsMap.size(), result.settings().size());
+        assertNotNull(result.settings().get("hash"));
         assertEquals(hash.toString(), result.settings().get("hash"));
     }
 }

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetNotificationPlatformSettingsUseCaseParamTest {
 
     @Test
-    void testGetNotificationPlatformSettings_CurrentUserIdIsNull_ErrorMessage() {
+    void testGetNotificationPlatformSettingsParam_CurrentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new GetNotificationPlatformSettingsUseCase.Param(null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
