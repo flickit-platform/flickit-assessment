@@ -8,4 +8,8 @@
         <modifyDataType tableName="fak_subject" columnName="code" newDataType="varchar(100)"/>
     </changeSet>
 
+    <changeSet id="0.32-02" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_subject" columnName="description" newDataType="varchar(500)"/>
+    </changeSet>
+
 </databaseChangeLog>
