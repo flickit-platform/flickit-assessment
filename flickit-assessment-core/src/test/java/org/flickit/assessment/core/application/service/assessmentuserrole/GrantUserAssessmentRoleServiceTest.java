@@ -3,11 +3,11 @@ package org.flickit.assessment.core.application.service.assessmentuserrole;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
-import org.flickit.assessment.core.application.service.assessmentuserrole.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -70,7 +70,7 @@ class GrantUserAssessmentRoleServiceTest {
 
         var result = service.grantAssessmentUserRole(param);
 
-        GrantAssessmentUserRoleNotificationCmd cmd = (GrantAssessmentUserRoleNotificationCmd) result.notificationCmd();
+        GrantAssessmentUserRoleNotificationCmd cmd = result.notificationCmd();
         assertEquals(notificationData.targetUserId(), cmd.targetUserId());
         assertEquals(notificationData.assignerUserId(), cmd.assignerUserId());
         assertEquals(notificationData.assessmentId(), cmd.assessmentId());
@@ -106,7 +106,7 @@ class GrantUserAssessmentRoleServiceTest {
 
         var result = service.grantAssessmentUserRole(param);
 
-        GrantAssessmentUserRoleNotificationCmd cmd = (GrantAssessmentUserRoleNotificationCmd) result.notificationCmd();
+        GrantAssessmentUserRoleNotificationCmd cmd = result.notificationCmd();
         assertEquals(notificationData.targetUserId(), cmd.targetUserId());
         assertEquals(notificationData.assignerUserId(), cmd.assignerUserId());
         assertEquals(notificationData.assessmentId(), cmd.assessmentId());

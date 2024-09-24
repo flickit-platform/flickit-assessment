@@ -109,12 +109,12 @@ class GetKitQuestionDetailServiceTest {
         assertEquals(answerOptions.size(), result.options().size());
         assertEquals(2, result.attributeImpacts().size());
 
-        var attributeImpact1 = result.attributeImpacts().get(0);
+        var attributeImpact1 = result.attributeImpacts().getFirst();
         assertEquals(attr1.getId(), attributeImpact1.id());
         assertEquals(attr1.getTitle(), attributeImpact1.title());
         assertEquals(2, attributeImpact1.affectedLevels().size());
 
-        var attr1AffectedLevel1 = attributeImpact1.affectedLevels().get(0);
+        var attr1AffectedLevel1 = attributeImpact1.affectedLevels().getFirst();
         assertEquals(impact1.getAttributeId(), attributeImpact1.id());
         assertEquals(impact1.getMaturityLevelId(), attr1AffectedLevel1.maturityLevel().id());
         assertEquals(optionImpacts.size(), attr1AffectedLevel1.optionValues().size());
@@ -125,7 +125,7 @@ class GetKitQuestionDetailServiceTest {
         assertEquals(optionImpacts.size(), attr1AffectedLevel2.optionValues().size());
 
         var attributeImpact2 = result.attributeImpacts().get(1);
-        var attr2AffectedLevel1 = attributeImpact1.affectedLevels().get(0);
+        var attr2AffectedLevel1 = attributeImpact1.affectedLevels().getFirst();
         assertEquals(impact3.getAttributeId(), attributeImpact2.id());
         assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().id());
         assertEquals(optionImpacts.size(), attr2AffectedLevel1.optionValues().size());

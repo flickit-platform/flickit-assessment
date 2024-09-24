@@ -1,10 +1,11 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
+import org.flickit.assessment.common.application.port.out.SendEmailPort;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.InviteSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
@@ -43,7 +44,10 @@ class InviteSpaceMemberServiceTest {
     InviteSpaceMemberPort inviteSpaceMemberPort;
 
     @Mock
-    SendFlickitInviteMailPort SendFlickitInviteMailPort;
+    AppSpecProperties appSpecProperties;
+
+    @Mock
+    SendEmailPort sendEmailPort;
 
     @Test
     @DisplayName("Inviting member to a space by a non-member should cause AccessDeniedException")
@@ -60,7 +64,7 @@ class InviteSpaceMemberServiceTest {
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verifyNoInteractions(loadUserPort);
         verifyNoInteractions(inviteSpaceMemberPort);
-        verifyNoInteractions(SendFlickitInviteMailPort);
+        verifyNoInteractions(sendEmailPort);
     }
 
     @Test
@@ -80,7 +84,7 @@ class InviteSpaceMemberServiceTest {
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadUserPort).loadUserIdByEmail(email);
         verifyNoInteractions(inviteSpaceMemberPort);
-        verifyNoInteractions(SendFlickitInviteMailPort);
+        verifyNoInteractions(sendEmailPort);
     }
 
     @Test
@@ -100,7 +104,7 @@ class InviteSpaceMemberServiceTest {
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadUserPort).loadUserIdByEmail(email);
         verifyNoInteractions(inviteSpaceMemberPort);
-        verifyNoInteractions(SendFlickitInviteMailPort);
+        verifyNoInteractions(sendEmailPort);
     }
 
     @Test
@@ -113,13 +117,14 @@ class InviteSpaceMemberServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.empty());
         doNothing().when(inviteSpaceMemberPort).invite(isA(InviteSpaceMemberPort.Param.class));
-        doNothing().when(SendFlickitInviteMailPort).inviteToFlickit(email);
+        doNothing().when(sendEmailPort).send(anyString(), anyString(), anyString());
 
         assertDoesNotThrow(() -> service.inviteMember(usecaseParam));
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadUserPort).loadUserIdByEmail(email);
         verify(inviteSpaceMemberPort).invite(any(InviteSpaceMemberPort.Param.class));
-        verify(SendFlickitInviteMailPort).inviteToFlickit(email);
+        verify(appSpecProperties, times(2)).getName();
+        verify(appSpecProperties).getHost();
     }
 }

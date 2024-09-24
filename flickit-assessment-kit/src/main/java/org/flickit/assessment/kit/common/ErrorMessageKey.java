@@ -138,10 +138,10 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_WIZARD_SUBJECT_CODE_DUPLICATE = "create-kit-by-wizard.subject-code.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
-        return String.format("entities.%s.single.first", fieldName);
+        return "entities.%s.single.first".formatted(fieldName);
     }
 
     public static String entityNamePlural(String fieldName) {
-        return String.format("entities.%s.plural", fieldName);
+        return "entities.%s.plural".formatted(fieldName);
     }
 }

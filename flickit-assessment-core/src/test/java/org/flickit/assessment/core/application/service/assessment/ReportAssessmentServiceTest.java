@@ -71,6 +71,7 @@ class ReportAssessmentServiceTest {
         Space space = new Space(1563L, "Space");
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
             "assessmentTitle",
+            "shortAssessmentTitle",
             kit,
             assessmentMaturityLevel,
             1.5,
@@ -144,6 +145,7 @@ class ReportAssessmentServiceTest {
         Space space = new Space(1563L, "Space");
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
             "assessmentTitle",
+            "shortAssessmentTitle",
             null,
             null,
             1.5,
@@ -185,6 +187,7 @@ class ReportAssessmentServiceTest {
         Space space = new Space(1563L, "Space");
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
             "assessmentTitle",
+            "shortAssessmentTitle",
             null,
             null,
             1.5,

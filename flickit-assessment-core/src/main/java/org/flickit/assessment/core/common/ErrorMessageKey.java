@@ -15,10 +15,13 @@ public class ErrorMessageKey {
     public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
     public static final String ASSESSMENT_INVITE_ID_NOT_FOUND = "assessment-invite.id.notFound";
+    public static final String ANALYSIS_TYPE_ID_NOT_VALID = "analysis-type.id.notValid";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MAX = "create-assessment.title.size.max";
+    public static final String CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN = "create-assessment.shortTitle.size.min";
+    public static final String CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX = "create-assessment.shortTitle.size.max";
     public static final String CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL = "create-assessment.assessmentKitId.notNull";
     public static final String CREATE_ASSESSMENT_SPACE_ID_NOT_NULL = "create-assessment.spaceId.notNull";
     public static final String CREATE_ASSESSMENT_DUPLICATE_TITLE_AND_SPACE_ID = "create-assessment.duplicate.titleAndSpaceId";
@@ -62,6 +65,8 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_TITLE_NOT_BLANK = "update-assessment.title.notBlank";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MIN = "update-assessment.title.min";
     public static final String UPDATE_ASSESSMENT_TITLE_SIZE_MAX = "update-assessment.title.max";
+    public static final String UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN = "update-assessment.shortTitle.size.min";
+    public static final String UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX = "update-assessment.shortTitle.size.max";
 
     public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";
     public static final String CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "calculate-assessment.assessmentResult.notFount";
@@ -203,6 +208,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-attribute-ai-insight.assessmentId.notNull";
     public static final String CREATE_ATTRIBUTE_AI_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "create-attribute-ai-insight.attributeId.notNull";
     public static final String CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-attribute-ai-insight.assessmentResult.notFound";
+    public static final String CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED = "create-attribute-ai-insight.all-questions.notAnswered";
 
     public static final String DELETE_ASSESSMENT_INVITE_ID_NOT_NULL = "delete-assessment-invite.id.notNull";
 
@@ -213,11 +219,40 @@ public class ErrorMessageKey {
     public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "update-attribute-insight.assessmentId.notNull";
     public static final String UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "update-attribute-insight.attributeId.notNull";
     public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL = "update-attribute-insight.assessorInsight.notNull";
+    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX= "update-attribute-insight.assessorInsight.size.max";
     public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "update-attribute-insight.assessmentResult.notFound";
     public static final String UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND = "update-attribute-insight.attributeInsight.notFound";
 
     public static final String GET_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-attribute-insight.assessmentId.notNull";
     public static final String GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "get-attribute-insight.attributeId.notNull";
     public static final String GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "get-attribute-insight.assessmentResult.notFound";
-    public static final String GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND = "get-attribute-insight.attributeInsight.notFound";
+
+    public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-assessment-insight.assessmentId.notNull";
+    public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_NULL = "create-assessment-insight.insight.notNull";
+    public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MIN = "create-assessment-insight.insight.size.min";
+    public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MAX = "create-assessment-insight.insight.size.max";
+    public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-assessment-insight.assessmentResult.notFound";
+    public static final String CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_FOUND = "create-assessment-insight.insight.notFound";
+    public static final String CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_DUPLICATE = "create-assessment-insight.assessmentResult.duplicate";
+
+    public static final String CREATE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-subject-insight.assessmentId.notNull";
+    public static final String CREATE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "create-subject-insight.subjectId.notNull";
+    public static final String CREATE_SUBJECT_INSIGHT_INSIGHT_NOT_NULL = "create-subject-insight.insight.notNull";
+    public static final String CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MIN = "create-subject-insight.insight.size.min";
+    public static final String CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MAX = "create-subject-insight.insight.size.max";
+    public static final String CREATE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-subject-insight.assessmentResult.notFound";
+
+    public static final String GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-assessment-insight.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-insight.assessmentResult.notFound";
+
+    public static final String GET_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-subject-insight.assessmentId.notNull";
+    public static final String GET_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "get-subject-insight.subjectId.notNull";
+
+    public static final String NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE = "notification-title.grant-assessment-user-role";
+    public static final String NOTIFICATION_TITLE_CREATE_ASSESSMENT = "notification-title.create-assessment";
+    public static final String NOTIFICATION_TITLE_COMPLETE_ASSESSMENT = "notification-title.completed-assessment";
+
+    public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_ASSESSMENT_ID_NOT_NULL = "add-assessment-analysis-input-file.assessmentId.notNull";
+    public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_INPUT_FILE_NOT_NULL = "add-assessment-analysis-input-file.inputFile.notNull";
+    public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_ANALYSIS_TYPE_NOT_NULL = "add-assessment-analysis-input-file.analysisType.notNull";
 }
