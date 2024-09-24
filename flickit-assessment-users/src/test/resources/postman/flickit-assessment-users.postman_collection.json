@@ -1013,7 +1013,7 @@
 					"response": []
 				},
               {
-                "name": "Get User Subscriber Hash",
+                "name": "Get Notification Platform Setting",
                 "request": {
                   "method": "GET",
                   "header": [
@@ -1023,14 +1023,14 @@
                     }
                   ],
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/users/subscriber-hash",
+                    "raw": "{{base_url}}/{{api_path}}/users/notification-platform-settings",
                     "host": [
                       "{{base_url}}"
                     ],
                     "path": [
                       "{{api_path}}",
                       "users",
-                      "subscriber-hash"
+                      "notification-platform-settings"
                     ]
                   }
                 },

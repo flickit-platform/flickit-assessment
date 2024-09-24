@@ -1,7 +1,7 @@
-package org.flickit.assessment.users.application.service.user;
+package org.flickit.assessment.users.application.service.notification;
 
 import org.flickit.assessment.common.application.domain.notification.NotificationSenderSettingProvider;
-import org.flickit.assessment.users.application.port.in.user.GetNotificationPlatformSettingsUseCase;
+import org.flickit.assessment.users.application.port.in.notification.GetNotificationPlatformSettingsUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

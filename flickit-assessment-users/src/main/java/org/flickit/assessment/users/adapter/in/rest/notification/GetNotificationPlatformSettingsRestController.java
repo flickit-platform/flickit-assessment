@@ -1,9 +1,9 @@
-package org.flickit.assessment.users.adapter.in.rest.user;
+package org.flickit.assessment.users.adapter.in.rest.notification;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.users.application.port.in.user.GetNotificationPlatformSettingsUseCase;
-import org.flickit.assessment.users.application.port.in.user.GetNotificationPlatformSettingsUseCase.Param;
+import org.flickit.assessment.users.application.port.in.notification.GetNotificationPlatformSettingsUseCase;
+import org.flickit.assessment.users.application.port.in.notification.GetNotificationPlatformSettingsUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class GetNotificationPlatformSettingsRestController {
     private final GetNotificationPlatformSettingsUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/users/notification-platform-settings")
+    @GetMapping("/notification-platform-settings")
     public ResponseEntity<Map<String, String>> getNotificationPlatformSettings() {
         var currentUserId = userContext.getUser().id();
         var responseDto = useCase.getNotificationPlatformSettings(new Param(currentUserId)).settings();

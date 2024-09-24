@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.port.in.user;
+package org.flickit.assessment.users.application.port.in.notification;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
