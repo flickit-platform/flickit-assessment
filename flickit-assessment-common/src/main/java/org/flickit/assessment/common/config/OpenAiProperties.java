@@ -31,16 +31,14 @@ public class OpenAiProperties {
         """;
 
     private String aiAdviceNarrationPrompt = """
-        A software quality assessment platform has evaluated a software product by answers of the various questions which affect on some quality attributes. user has
-        Generate a concise and professional narrative based on a software quality assessment report.
         The platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
         The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
         The advice includes the current status (selected option) and the goal status for each relevant question.
         Task: Based on the provided advice items, generate a clear narrative in up to 10 concise bullet points formatted with HTML tags.
         Ensure that the advice is polite, constructive, and focused on actionable improvements, tailored for an expert software assessor.
         Avoid references to individual scores or negative phrasing. Keep the tone professional and supportive.
-        Start with a brief mention of the attribute targets in no more than two sentences.
-        Ensure the total response, including HTML tags, is under 900 characters and without markdown.
+        Before the bullets, write a brief paragraph mentioning of the attribute targets in no more than two sentences and put it in paragraph HTML tag.
+        Ensure the total response, including HTML tags, is under 1000 characters and without markdown.
         Advice Items: {adviceListItems}
         Attribute Targets: {attributeLevelTargets}
         """;
