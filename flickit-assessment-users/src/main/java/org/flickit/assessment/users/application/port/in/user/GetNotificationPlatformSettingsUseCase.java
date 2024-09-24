@@ -5,13 +5,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-public interface GetUserSubscriberHashUseCase {
+public interface GetNotificationPlatformSettingsUseCase {
 
-    Result getUserSubscriberHash(Param param);
+    Result getNotificationPlatformSettings(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -26,6 +27,6 @@ public interface GetUserSubscriberHashUseCase {
         }
     }
 
-    record Result(String subscriberHash) {
+    record Result(Map<String, String> settings) {
     }
 }
