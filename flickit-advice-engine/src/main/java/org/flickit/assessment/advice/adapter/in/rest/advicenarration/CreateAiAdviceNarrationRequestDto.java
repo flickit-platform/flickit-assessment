@@ -5,6 +5,6 @@ import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 
 import java.util.List;
 
-public record CreateAdviceAiNarrationRequestDto(List<AdviceListItem> adviceListItems,
+public record CreateAiAdviceNarrationRequestDto(List<AdviceListItem> adviceListItems,
                                                 List<AttributeLevelTarget> attributeLevelTargets) {
 }

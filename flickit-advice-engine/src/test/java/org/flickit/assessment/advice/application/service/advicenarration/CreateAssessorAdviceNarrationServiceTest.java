@@ -88,7 +88,7 @@ class CreateAssessorAdviceNarrationServiceTest {
         String assessorNarration = RandomStringUtils.randomAlphabetic(100);
         var param = new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration, currentUserId);
         UUID assessmentResultId = UUID.randomUUID();
-        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId);
+        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, 123L);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
@@ -108,7 +108,7 @@ class CreateAssessorAdviceNarrationServiceTest {
         String assessorNarration = RandomStringUtils.randomAlphabetic(100);
         var param = new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration, currentUserId);
         UUID assessmentResultId = UUID.randomUUID();
-        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId);
+        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, 123L);
         AdviceNarration adviceNarration = new AdviceNarration(null,
             assessmentResultId,
             "aiNarration",

@@ -13,7 +13,5 @@ public interface CreateSubjectPort {
         int weight,
         String description,
         Long kitVersionId,
-        UUID createdBy
-    ) {
-    }
+        UUID createdBy) {}
 }

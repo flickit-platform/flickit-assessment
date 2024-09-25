@@ -136,7 +136,7 @@ class GetSubjectInsightServiceTest {
         var defaultInsight = MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subjectReport.subject().title(),
             subjectReport.subject().description(),
-            subjectReport.subject().confidenceValue().intValue(),
+            (int) Math.ceil(subjectReport.subject().confidenceValue()),
             subjectReport.subject().title(),
             subjectReport.subject().maturityLevel().getIndex(),
             subjectReport.maturityLevels().size(),
@@ -184,7 +184,7 @@ class GetSubjectInsightServiceTest {
             "desc2",
             maturityLevel2,
             List.of(maturityScore1, maturityScore2),
-            90.0);
+            90.3);
 
         return new LoadSubjectReportInfoPort.Result(subjectReportItem,
             List.of(maturityLevel1, maturityLevel2),

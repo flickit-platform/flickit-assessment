@@ -3,13 +3,11 @@ package org.flickit.assessment.advice.application.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Getter
 @AllArgsConstructor
-public class AssessmentResult {
+public class Attribute {
 
-    private final UUID id;
+    private final long id;
 
-    private final long kitVersionId;
+    private final String title;
 }

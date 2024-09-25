@@ -9,6 +9,6 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 public class AssessmentResultMapper {
 
     public static AssessmentResult mapToDomain(AssessmentResultJpaEntity entity) {
-        return new AssessmentResult(entity.getId());
+        return new AssessmentResult(entity.getId(), entity.getKitVersionId());
     }
 }
