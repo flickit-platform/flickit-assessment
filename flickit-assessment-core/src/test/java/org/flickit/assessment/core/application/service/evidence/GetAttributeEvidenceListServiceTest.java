@@ -63,9 +63,9 @@ class GetAttributeEvidenceListServiceTest {
         var result = service.getAttributeEvidenceList(param);
 
         assertEquals(2, result.getItems().size());
-        assertEquals(attributeEvidence1.id(), result.getItems().get(0).id());
-        assertEquals(attributeEvidence1.description(), result.getItems().get(0).description());
-        assertEquals(attributeEvidence1.attachmentsCount(), result.getItems().get(0).attachmentsCount());
+        assertEquals(attributeEvidence1.id(), result.getItems().getFirst().id());
+        assertEquals(attributeEvidence1.description(), result.getItems().getFirst().description());
+        assertEquals(attributeEvidence1.attachmentsCount(), result.getItems().getFirst().attachmentsCount());
         assertEquals(attributeEvidence2.id(), result.getItems().get(1).id());
         assertEquals(attributeEvidence2.description(), result.getItems().get(1).description());
         assertEquals(attributeEvidence2.attachmentsCount(), result.getItems().get(1).attachmentsCount());

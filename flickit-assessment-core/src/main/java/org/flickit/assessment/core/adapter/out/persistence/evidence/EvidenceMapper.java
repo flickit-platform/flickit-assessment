@@ -36,7 +36,9 @@ public class EvidenceMapper {
             view.getType() != null ? EvidenceType.values()[view.getType()].getTitle() : null,
             view.getLastModificationTime(),
             view.getAttachmentsCount(),
-            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName(), user.getPicture())
+            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName(), user.getPicture()),
+            null,
+            null
         );
     }
 

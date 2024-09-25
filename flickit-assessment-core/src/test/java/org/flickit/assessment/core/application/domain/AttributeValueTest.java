@@ -2,14 +2,18 @@ package org.flickit.assessment.core.application.domain;
 
 import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcWithQAAndAnswers;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.flickit.assessment.core.test.fixture.application.QuestionMother.withImpactsOnLevel45;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AttributeValueTest {
 
@@ -136,7 +140,7 @@ class AttributeValueTest {
             QuestionMother.withImpactsOnLevel45(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(0).getId()),
+            AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.getFirst().getId()),
             AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(1).getId()),
             AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(2).getId()),
             AnswerMother.fullScoreOnLevels24(attributeId),
@@ -203,7 +207,7 @@ class AttributeValueTest {
     }
 
     @Test
-    void testCalculateConfidenceLevel_whitNoAnswerdQuestions() {
+    void testCalculateConfidenceLevel_whitNoAnsweredQuestions() {
         long attributeId = 256L;
         Question q1 = QuestionMother.withImpactsOnLevel23(attributeId);
         Question q2 = QuestionMother.withImpactsOnLevel23(attributeId);
@@ -223,5 +227,160 @@ class AttributeValueTest {
         double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
 
         assertEquals(confidenceValue, qav.getConfidenceValue());
+    }
+
+    @Test
+    void testCalculate_onlyImpactOnLevel3_totalScoreOnLevel4ShouldBeNull() {
+        long attributeId = 256L;
+        long anotherAttributeId = 257L;
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId));
+
+        List<Answer> answers = List.of();
+
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+
+        Map<Long, Double> totalScore = ReflectionTestUtils.invokeMethod(qav, "calcTotalScore", allLevels());
+        assertNotNull(totalScore);
+        Double attributeTotalImpactOnLevelFour = totalScore.get(MaturityLevelMother.LEVEL_FOUR_ID);
+        assertNull(attributeTotalImpactOnLevelFour);
+
+        Double attributeTotalImpactOnLevelTree = totalScore.get(MaturityLevelMother.LEVEL_THREE_ID);
+        assertEquals(1, attributeTotalImpactOnLevelTree);
+    }
+
+    @Test
+    void testCalculate_onlyImpactOnLevel34_totalScoreOnLevel34ShouldBeCorrect() {
+        long attributeId = 256L;
+        long anotherAttributeId = 257L;
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId),
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
+
+        List<Answer> answers = List.of();
+
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+
+        Map<Long, Double> totalScore = ReflectionTestUtils.invokeMethod(qav, "calcTotalScore", allLevels());
+        assertNotNull(totalScore);
+        Double attributeTotalImpactOnLevelFour = totalScore.get(MaturityLevelMother.LEVEL_FOUR_ID);
+        assertEquals(1, attributeTotalImpactOnLevelFour);
+
+        Double attributeTotalImpactOnLevelTree = totalScore.get(MaturityLevelMother.LEVEL_THREE_ID);
+        assertEquals(2, attributeTotalImpactOnLevelTree);
+    }
+
+    @Test
+    void testCalculate_onlyImpactOnLevel3_gainedScoreOnLevel4ShouldBeNull() {
+        long attributeId = 256L;
+        long anotherAttributeId = 257L;
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId));
+
+        List<Answer> answers = List.of(
+            AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId));
+
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+
+        Map<Long, Double> gainedScore = ReflectionTestUtils.invokeMethod(qav, "calcGainedScore", allLevels());
+        assertNotNull(gainedScore);
+
+        Double attributeGainedScoreOnLevel4 = gainedScore.get(MaturityLevelMother.LEVEL_FOUR_ID);
+        assertNull(attributeGainedScoreOnLevel4);
+
+        Double attributeGainedScoreOnLevel3 = gainedScore.get(MaturityLevelMother.LEVEL_THREE_ID);
+        assertEquals(1, attributeGainedScoreOnLevel3);
+    }
+
+    @Test
+    void testCalculate_onlyImpactOnLevels34_gainedScoreOnLevel34ShouldBeCorrect() {
+        long attributeId = 256L;
+        long anotherAttributeId = 257L;
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId),
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
+
+        List<Answer> answers = List.of(
+            AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId),
+            AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
+
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+
+        Map<Long, Double> gainedScore = ReflectionTestUtils.invokeMethod(qav, "calcGainedScore", allLevels());
+        assertNotNull(gainedScore);
+
+        Double attributeGainedScoreOnLevel4 = gainedScore.get(MaturityLevelMother.LEVEL_FOUR_ID);
+        assertEquals(1, attributeGainedScoreOnLevel4);
+
+        Double attributeGainedScoreOnLevel3 = gainedScore.get(MaturityLevelMother.LEVEL_THREE_ID);
+        assertEquals(2, attributeGainedScoreOnLevel3);
+    }
+
+    @Test
+    void testCalculate_onlyImpactOnLevel3_maturityScoreOnLevel4ShouldBeNull() {
+        long attributeId = 256L;
+        long anotherAttributeId = 257L;
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId));
+
+        List<Answer> answers = List.of();
+
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+
+        qav.calculate(allLevels());
+
+        Set<MaturityScore> maturityScores = qav.getMaturityScores();
+
+        var maturityScoreOnLevel4 = maturityScores.stream()
+            .filter(m -> Objects.equals(m.getMaturityLevelId(), MaturityLevelMother.LEVEL_FOUR_ID))
+            .findAny();
+        assertTrue(maturityScoreOnLevel4.isPresent());
+        assertNull(maturityScoreOnLevel4.get().getScore());
+
+        var maturityScoreOnLevel3 = maturityScores.stream()
+            .filter(m -> Objects.equals(m.getMaturityLevelId(), MaturityLevelMother.LEVEL_THREE_ID))
+            .findAny();
+        assertTrue(maturityScoreOnLevel3.isPresent());
+        assertNotNull(maturityScoreOnLevel3.get().getScore());
+    }
+
+    @Test
+    void testCalculate_onlyImpactOnLevels34_maturityScoreOnLevel34ShouldBeCorrect() {
+        long attributeId = 256L;
+        long anotherAttributeId = 257L;
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId),
+            QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
+
+        List<Answer> answers = List.of(
+            AnswerMother.noScoreOnLevel3AndFullScoreOnAnotherAttributeLevel4(attributeId, anotherAttributeId),
+            AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
+
+        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+
+        qav.calculate(allLevels());
+
+        Set<MaturityScore> maturityScores = qav.getMaturityScores();
+
+        var maturityScoreOnLevel4 = maturityScores.stream()
+            .filter(m -> Objects.equals(m.getMaturityLevelId(), MaturityLevelMother.LEVEL_FOUR_ID))
+            .findAny();
+
+        assertTrue(maturityScoreOnLevel4.isPresent());
+        assertNotNull(maturityScoreOnLevel4.get().getScore());
+        assertEquals(100, maturityScoreOnLevel4.get().getScore());
+
+        var maturityScoreOnLevel3 = maturityScores.stream()
+            .filter(m -> Objects.equals(m.getMaturityLevelId(), MaturityLevelMother.LEVEL_THREE_ID))
+            .findAny();
+        assertTrue(maturityScoreOnLevel3.isPresent());
+        assertNotNull(maturityScoreOnLevel3.get().getScore());
+        assertEquals(50, maturityScoreOnLevel3.get().getScore());
     }
 }

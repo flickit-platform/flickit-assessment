@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
-import org.flickit.assessment.common.application.domain.notification.NotificationCmd;
+import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 
 import java.util.UUID;
 
@@ -41,7 +41,7 @@ public interface GrantUserAssessmentRoleUseCase {
         }
     }
 
-    record Result(NotificationCmd notificationCmd) implements HasNotificationCmd {
+    record Result(GrantAssessmentUserRoleNotificationCmd notificationCmd) implements HasNotificationCmd {
 
     }
 }

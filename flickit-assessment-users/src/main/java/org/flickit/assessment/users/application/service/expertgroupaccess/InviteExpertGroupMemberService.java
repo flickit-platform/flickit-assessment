@@ -1,6 +1,10 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.port.out.SendEmailPort;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
@@ -8,7 +12,6 @@ import org.flickit.assessment.users.application.port.in.expertgroupaccess.Invite
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMemberStatusPort;
-import org.flickit.assessment.users.application.port.out.mail.SendExpertGroupInviteMailPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserEmailByUserIdPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +24,10 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE;
+import static org.flickit.assessment.users.common.MessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY;
+import static org.flickit.assessment.users.common.MessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT;
 
+@Slf4j
 @Service
 @Transactional
 @AllArgsConstructor
@@ -32,8 +38,9 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     private final LoadUserEmailByUserIdPort loadUserEmailByUserIdPort;
     private final LoadExpertGroupMemberStatusPort loadExpertGroupMemberPort;
     private final InviteExpertGroupMemberPort inviteExpertGroupMemberPort;
-    private final SendExpertGroupInviteMailPort sendExpertGroupInviteMailPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final AppSpecProperties appSpecProperties;
+    private final SendEmailPort sendEmailPort;
 
     @Override
     public void inviteMember(Param param) {
@@ -49,7 +56,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
 
         inviteExpertGroupMemberPort.invite(toParam(param, inviteDate, inviteExpirationDate, inviteToken));
-        sendExpertGroupInviteMailPort.inviteToExpertGroup(email, param.getExpertGroupId(), inviteToken);
+        sendInviteEmail(email, param.getExpertGroupId(), inviteToken);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
@@ -68,5 +75,19 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
             inviteToken,
             ExpertGroupAccessStatus.PENDING,
             param.getCurrentUserId());
+    }
+
+    private void sendInviteEmail(String to, long expertGroupId, UUID inviteToken) {
+        String subject = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT);
+
+        String inviteUrl = String.join("/", appSpecProperties.getHost(), appSpecProperties.getExpertGroupInviteUrlPath(),
+            String.valueOf(expertGroupId), inviteToken.toString());
+
+        String body = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY,
+            inviteUrl,
+            appSpecProperties.getName(),
+            appSpecProperties.getSupportEmail());
+        log.debug("Sending 'invite to expertGroup [{}]' email to [{}]", expertGroupId, to);
+        sendEmailPort.send(to, subject, body);
     }
 }
