@@ -11,10 +11,10 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_MATURITY_
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
-class UpdateMaturityLevelUseCaseTest {
+class DeleteMaturityLevelUseCaseTest {
 
     @Test
-    void testUpdateMaturityLevelParam_maturityLevelIdIsNull_ErrorMessage() {
+    void testDeleteMaturityLevelParam_maturityLevelIdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteMaturityLevelUseCase.Param(null, 123L, currentUserId));
@@ -22,7 +22,7 @@ class UpdateMaturityLevelUseCaseTest {
     }
 
     @Test
-    void testUpdateMaturityLevelParam_kitIdIsNull_ErrorMessage() {
+    void testDeleteMaturityLevelParam_kitIdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteMaturityLevelUseCase.Param(123L, null, currentUserId));
@@ -31,14 +31,14 @@ class UpdateMaturityLevelUseCaseTest {
 
 
     @Test
-    void testUpdateMaturityLevelParam_currentUserIdIsNull_ErrorMessage() {
+    void testDeleteMaturityLevelParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new DeleteMaturityLevelUseCase.Param(123L, 123L, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateMaturityLevelParam_ValidParams_ShouldNotThrowException() {
+    void testDeleteMaturityLevelParam_ValidParams_ShouldNotThrowException() {
         var currentUserId = UUID.randomUUID();
         assertDoesNotThrow(() -> new DeleteMaturityLevelUseCase.Param(123L, 123L, currentUserId));
     }
