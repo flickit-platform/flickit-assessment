@@ -73,7 +73,7 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subject.title(),
             subject.description(),
-            subject.confidenceValue()!= null? subject.confidenceValue().intValue(): 0,
+            subject.confidenceValue() != null ? (int) Math.ceil(subject.confidenceValue()) : 0,
             subject.title(),
             subject.maturityLevel().getIndex(),
             subjectReport.maturityLevels().size(),
