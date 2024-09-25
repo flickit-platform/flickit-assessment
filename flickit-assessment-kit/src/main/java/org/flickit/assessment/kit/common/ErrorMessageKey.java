@@ -126,6 +126,13 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String CREATE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "create-level-competence.kitVersionId.notNull";
+    public static final String CREATE_LEVEL_COMPETENCE_AFFECTED_LEVEL_ID_NOT_NULL = "create-level-competence.affectedLevelId.notNull";
+    public static final String CREATE_LEVEL_COMPETENCE_EFFECTIVE_LEVEL_ID_NOT_NULL = "create-level-competence.effectiveLevelId.notNull";
+    public static final String CREATE_LEVEL_COMPETENCE_VALUE_NOT_NULL = "create-level-competence.value.notNull";
+    public static final String CREATE_LEVEL_COMPETENCE_VALUE_MIN = "create-level-competence.value.min";
+    public static final String CREATE_LEVEL_COMPETENCE_VALUE_MAX = "create-level-competence.value.max";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
