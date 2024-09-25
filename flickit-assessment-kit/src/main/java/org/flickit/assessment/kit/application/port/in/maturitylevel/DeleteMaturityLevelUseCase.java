@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.maturitylevel;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -28,6 +29,7 @@ public interface DeleteMaturityLevelUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long maturityLevelId, Long kitId, UUID currentUserId) {
             this.maturityLevelId = maturityLevelId;
             this.kitId = kitId;
