@@ -126,6 +126,9 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String DELETE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL = "delete-maturity-level.maturityLevelId.notNull";
+    public static final String DELETE_MATURITY_LEVEL_KIT_ID_NOT_NULL = "delete-maturity-level.kitId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
