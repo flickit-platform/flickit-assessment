@@ -32,5 +32,7 @@ public class NotificationSenderProperties {
         private String workflowGroupName;
 
         private String euBaseUrl;
+
+        private String tenantId;
     }
 }
