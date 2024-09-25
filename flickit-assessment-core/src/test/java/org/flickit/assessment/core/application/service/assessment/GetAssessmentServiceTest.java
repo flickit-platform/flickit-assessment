@@ -63,7 +63,7 @@ class GetAssessmentServiceTest {
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
         Assessment assessment = assessmentResult.getAssessment();
         UUID assessmentId = assessment.getId();
-        User assessmentCreator = new User(assessment.getCreatedBy(), "Display name");
+        User assessmentCreator = new User(assessment.getCreatedBy(), "Display name", "user@mail.com");
         UUID currentUserId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(true);
@@ -105,7 +105,7 @@ class GetAssessmentServiceTest {
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
         Assessment assessment = assessmentResult.getAssessment();
         UUID assessmentId = assessment.getId();
-        User assessmentCreator = new User(assessment.getCreatedBy(), "Display name");
+        User assessmentCreator = new User(assessment.getCreatedBy(), "Display name", "user@mail.com");
         UUID currentUserId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(true);
@@ -136,7 +136,7 @@ class GetAssessmentServiceTest {
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
         Assessment assessment = assessmentResult.getAssessment();
         UUID assessmentId = assessment.getId();
-        User assessmentCreator = new User(assessment.getCreatedBy(), "Display name");
+        User assessmentCreator = new User(assessment.getCreatedBy(), "Display name", "user@mail.com");
         UUID currentUserId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT)).thenReturn(true);

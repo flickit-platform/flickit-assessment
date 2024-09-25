@@ -11,6 +11,7 @@ public interface UpdateAssessmentPort {
 
     record AllParam(UUID id,
                     String title,
+                    String shortTitle,
                     String code,
                     LocalDateTime lastModificationTime,
                     UUID lastModifiedBy) {}

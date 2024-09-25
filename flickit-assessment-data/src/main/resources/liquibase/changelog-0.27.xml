@@ -7,7 +7,7 @@
     <changeSet id="0.27-01" author="Maziyar Gerami">
         <createTable tableName="fac_attribute_insight">
             <column name="assessment_result_id" type="uuid">
-                <constraints nullable="false" />
+                <constraints nullable="false"/>
             </column>
             <column name="attribute_id" type="bigint">
                 <constraints nullable="false"/>
@@ -44,5 +44,10 @@
                                  deferrable="true"
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.27-04" author="Maziyar Gerami">
+        <modifyDataType tableName="fac_attribute_insight" columnName="ai_insight" newDataType="varchar(1000)"/>
+        <modifyDataType tableName="fac_attribute_insight" columnName="assessor_insight" newDataType="varchar(1000)"/>
     </changeSet>
 </databaseChangeLog>

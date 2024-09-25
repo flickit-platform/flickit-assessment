@@ -98,7 +98,15 @@ class SubmitAnswerServiceTest {
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+
+        assertNotNull(result);
+        assertInstanceOf(SubmitAnswerUseCase.Submitted.class, result);
+        SubmitAnswerUseCase.Submitted submittedResult = (SubmitAnswerUseCase.Submitted) result;
+        assertEquals(savedAnswerId, submittedResult.id());
+        assertEquals(assessmentId, submittedResult.notificationCmd().assessmentId());
+        assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
+        assertTrue(submittedResult.notificationCmd().hasProgressed());
 
         ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(createAnswerPort).persist(saveAnswerParam.capture());
@@ -114,13 +122,12 @@ class SubmitAnswerServiceTest {
         assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
+        assertNotNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption());
         assertEquals(answerOptionId, saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
         assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
 
-        verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
-        verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultPort, times(1)).invalidateById(assessmentResult.getId(), Boolean.FALSE, Boolean.FALSE);
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort, updateAnswerPort);
     }
@@ -136,9 +143,15 @@ class SubmitAnswerServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+        assertInstanceOf(SubmitAnswerUseCase.NotAffected.class, result);
+        assertNull(result.id());
 
-        verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort, createAnswerHistoryPort, updateAnswerPort, invalidateAssessmentResultPort);
+        verifyNoInteractions(loadQuestionMayNotBeApplicablePort,
+            createAnswerPort,
+            createAnswerHistoryPort,
+            updateAnswerPort,
+            invalidateAssessmentResultPort);
     }
 
     @Test
@@ -158,7 +171,14 @@ class SubmitAnswerServiceTest {
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+
+        assertInstanceOf(SubmitAnswerUseCase.Submitted.class, result);
+        var submittedResult = (SubmitAnswerUseCase.Submitted) result;
+        assertEquals(savedAnswerId, submittedResult.id());
+        assertEquals(assessmentId, submittedResult.notificationCmd().assessmentId());
+        assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
+        assertTrue(submittedResult.notificationCmd().hasProgressed());
 
         ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(createAnswerPort).persist(saveAnswerParam.capture());
@@ -174,7 +194,7 @@ class SubmitAnswerServiceTest {
         assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
-        assertNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
+        assertNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
         assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
@@ -201,7 +221,15 @@ class SubmitAnswerServiceTest {
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+
+        assertInstanceOf(SubmitAnswerUseCase.Submitted.class, result);
+
+        var submittedResult = (SubmitAnswerUseCase.Submitted) result;
+        assertEquals(existAnswer.getId(), submittedResult.id());
+        assertEquals(assessmentId, submittedResult.notificationCmd().assessmentId());
+        assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
+        assertFalse(submittedResult.notificationCmd().hasProgressed());
 
         ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
@@ -215,6 +243,7 @@ class SubmitAnswerServiceTest {
         assertEquals(existAnswer.getId(), saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
         assertEquals(QUESTION_ID, saveAnswerHistoryParam.getValue().getAnswer().getQuestionId());
+        assertNotNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption());
         assertEquals(newAnswerOptionId, saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
@@ -247,7 +276,13 @@ class SubmitAnswerServiceTest {
         var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+
+        var submittedResult = (SubmitAnswerUseCase.Submitted) result;
+        assertEquals(existAnswer.getId(), submittedResult.id());
+        assertEquals(assessmentId, submittedResult.notificationCmd().assessmentId());
+        assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
+        assertTrue(submittedResult.notificationCmd().hasProgressed());
 
         ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
@@ -275,7 +310,9 @@ class SubmitAnswerServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+        var notModifiedResult = (SubmitAnswerUseCase.NotAffected) result;
+        assertEquals(existAnswer.getId(), notModifiedResult.id());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort,
@@ -304,7 +341,13 @@ class SubmitAnswerServiceTest {
         var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+
+        var submittedResult = (SubmitAnswerUseCase.Submitted) result;
+        assertEquals(existAnswer.getId(), submittedResult.id());
+        assertEquals(assessmentId, submittedResult.notificationCmd().assessmentId());
+        assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
+        assertFalse(submittedResult.notificationCmd().hasProgressed());
 
         ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
@@ -357,7 +400,9 @@ class SubmitAnswerServiceTest {
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+        var notModifiedResult = (SubmitAnswerUseCase.NotAffected) result;
+        assertEquals(existAnswer.getId(), notModifiedResult.id());
 
         verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(any());
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
@@ -378,7 +423,13 @@ class SubmitAnswerServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
-        service.submitAnswer(param);
+        var result = service.submitAnswer(param);
+
+        var submittedResult = (SubmitAnswerUseCase.Submitted) result;
+        assertEquals(existAnswer.getId(), submittedResult.id());
+        assertEquals(assessmentId, submittedResult.notificationCmd().assessmentId());
+        assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
+        assertFalse(submittedResult.notificationCmd().hasProgressed());
 
         ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());

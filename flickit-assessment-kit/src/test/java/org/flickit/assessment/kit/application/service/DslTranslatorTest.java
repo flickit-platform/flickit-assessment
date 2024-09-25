@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +16,7 @@ class DslTranslatorTest {
     @SneakyThrows
     void testJsonParser() {
         String file = "src/test/resources/dsl.json";
-        String json = new String(Files.readAllBytes(Paths.get(file)));
+        String json = new String(Files.readAllBytes(Path.of(file)));
 
         AssessmentKitDslModel kit = DslTranslator.parseJson(json);
         assertNotNull(kit);

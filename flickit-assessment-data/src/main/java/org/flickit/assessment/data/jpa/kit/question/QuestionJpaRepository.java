@@ -176,4 +176,16 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             WHERE q.kitVersionId = :kitVersionId
         """)
     int countByKitVersionId(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT
+                qsn as question,
+                qi as questionImpact
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
+            WHERE qi.attributeId = :attributeId
+                AND qi.kitVersionId = :kitVersionId
+            ORDER BY qsn.questionnaireId asc, qsn.index asc
+        """)
+    List<AttributeImpactfulQuestionsView> findByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId);
 }

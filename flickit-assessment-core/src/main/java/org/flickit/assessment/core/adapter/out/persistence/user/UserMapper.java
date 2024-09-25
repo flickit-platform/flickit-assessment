@@ -10,7 +10,7 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 public class UserMapper {
 
     public static User mapToDomainModel(UserJpaEntity entity) {
-        return new User(entity.getId(), entity.getDisplayName());
+        return new User(entity.getId(), entity.getDisplayName(), entity.getEmail());
     }
 
     public static FullUser mapToFullDomain(UserJpaEntity entity) {

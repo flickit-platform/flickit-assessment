@@ -8,7 +8,6 @@ public class ErrorMessageKey {
 
     public static final String TRANSLATE_KIT_DSL_UNABLE_TO_PARSE_JSON = "translate-kit-dsl.unable.to.parse.json";
 
-    public static final String FIND_MATURITY_LEVEL_ID_NOT_FOUND = "find-maturity-level.id.notFound";
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
@@ -126,6 +125,19 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String CREATE_SUBJECT_KIT_ID_NOT_NULL = "create-subject.kitId.notNull";
+    public static final String CREATE_SUBJECT_INDEX_NOT_NULL = "create-subject.index.notNull";
+    public static final String CREATE_SUBJECT_TITLE_NOT_NULL = "create-subject.title.notNull";
+    public static final String CREATE_SUBJECT_TITLE_SIZE_MIN = "create-subject.title.size.min";
+    public static final String CREATE_SUBJECT_TITLE_SIZE_MAX = "create-subject.title.size.max";
+    public static final String CREATE_SUBJECT_DESCRIPTION_NOT_NULL = "create-subject.description.notNull";
+    public static final String CREATE_SUBJECT_DESCRIPTION_SIZE_MIN = "create-subject.description.size.min";
+    public static final String CREATE_SUBJECT_DESCRIPTION_SIZE_MAX = "create-subject.description.size.max";
+    public static final String CREATE_SUBJECT_WEIGHT_NOT_NULL = "create-subject.weight.notNull";
+    public static final String CREATE_SUBJECT_INDEX_DUPLICATE = "create-subject.index.duplicate";
+    public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
+    public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
+
     public static final String CREATE_ATTRIBUTE_KIT_ID_NOT_NULL = "create-attribute.kitId.notNull";
     public static final String CREATE_ATTRIBUTE_INDEX_NOT_NULL = "create-attribute.index.notNull";
     public static final String CREATE_ATTRIBUTE_TITLE_NOT_BLANK = "create-attribute.title.notBlank";
@@ -134,10 +146,10 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "create-attribute.subjectId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
-        return String.format("entities.%s.single.first", fieldName);
+        return "entities.%s.single.first".formatted(fieldName);
     }
 
     public static String entityNamePlural(String fieldName) {
-        return String.format("entities.%s.plural", fieldName);
+        return "entities.%s.plural".formatted(fieldName);
     }
 }
