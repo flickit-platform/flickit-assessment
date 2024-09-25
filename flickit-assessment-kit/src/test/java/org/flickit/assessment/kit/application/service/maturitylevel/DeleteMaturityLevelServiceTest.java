@@ -58,7 +58,7 @@ class DeleteMaturityLevelServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         assertDoesNotThrow(() -> service.delete(param));
-        verify(deleteMaturityLevelPort).delete(assessmentKit.getId(), assessmentKit.getKitVersionId());
+        verify(deleteMaturityLevelPort).delete(param.getMaturityLevelId(), assessmentKit.getKitVersionId());
     }
 
     private DeleteMaturityLevelUseCase.Param createParam(Consumer<DeleteMaturityLevelUseCase.Param.ParamBuilder> changer) {
