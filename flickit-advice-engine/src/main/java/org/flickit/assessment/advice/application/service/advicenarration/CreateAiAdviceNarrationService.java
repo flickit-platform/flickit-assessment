@@ -72,7 +72,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var attributeLevelTargets = filterValidAttributeLevelTargets(param.getAssessmentId(), param.getAttributeLevelTargets());
 
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId());
-        var aiNarration = callAiPromptPort.call(prompt).replace("\n", "");
+        var aiNarration = callAiPromptPort.call(prompt);
 
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
@@ -127,7 +127,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     record AdviceItem(String question, String currentOption, String recommendedOption) {
     }
 
-    record TargetAttribute(String attribute, String maturityLevel) {
+    record TargetAttribute(String attribute, String targetMaturityLevel) {
     }
 
     private void handleExistingAdviceNarration(UUID adviceId, UUID assessmentResultId, String aiNarration, UUID createdBy) {

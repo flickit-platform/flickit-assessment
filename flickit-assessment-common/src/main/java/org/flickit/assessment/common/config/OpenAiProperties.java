@@ -31,16 +31,18 @@ public class OpenAiProperties {
         """;
 
     private String aiAdviceNarrationPrompt = """
-        The platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
+        An assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
         The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
         The advice includes the current status (selected option) and the goal status for each relevant question.
         Task: Based on the provided advice items, generate a clear narrative in up to 10 concise bullet points formatted with HTML tags.
         Ensure that the advice is polite, constructive, and focused on actionable improvements, tailored for an expert software assessor.
         Avoid references to individual scores or negative phrasing. Keep the tone professional and supportive.
-        Before the bullets, write a brief paragraph mentioning of the attribute targets in no more than two sentences and put it in paragraph HTML tag.
-        Ensure the total response, including HTML tags, is under 1000 characters and without markdown.
-        Advice Items: {adviceListItems}
+        Before the bullets, write a brief paragraph mentioning of the attributes and their target levels in no more than two sentences and put it in paragraph HTML tag.
         Attribute Targets: {attributeLevelTargets}
+
+        Advice Items: {adviceListItems}
+
+        Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
         """;
 
     public Prompt createAttributeAiInsightPrompt(String title, String description, String excelFile) {
