@@ -43,6 +43,12 @@ class CreateSubjectUseCaseParamTest {
     }
 
     @Test
+    void testCreateSubjectUseCaseParam_weightIsNull_ErrorMessage() {
+        var param = assertDoesNotThrow(() -> createParam(b -> b.weight(null)));
+        assertEquals(1, param.getWeight());
+    }
+
+    @Test
     void testCreateSubjectUseCaseParam_titleLengthIsGreaterThanMax_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(RandomStringUtils.randomAlphanumeric(101))));
@@ -78,10 +84,10 @@ class CreateSubjectUseCaseParamTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private void createParam(Consumer<CreateSubjectUseCase.Param.ParamBuilder> changer) {
+    private CreateSubjectUseCase.Param createParam(Consumer<CreateSubjectUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
-        paramBuilder.build();
+        return paramBuilder.build();
     }
 
     private CreateSubjectUseCase.Param.ParamBuilder paramBuilder() {

@@ -20,6 +20,8 @@ public interface CreateSubjectUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
+        private static final int DEFAULT_WEIGHT = 1;
+
         @NotNull(message = CREATE_SUBJECT_KIT_ID_NOT_NULL)
         Long kitId;
 
@@ -36,23 +38,19 @@ public interface CreateSubjectUseCase {
         @Size(max = 500, message = CREATE_SUBJECT_DESCRIPTION_SIZE_MAX)
         String description;
 
-        int weight;
+        @NotNull(message = CREATE_SUBJECT_WEIGHT_NOT_NULL)
+        Integer weight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitId,
-                     Integer index,
-                     String title,
-                     String description,
-                     int weight,
-                     UUID currentUserId) {
+        public Param(Long kitId, Integer index, String title, String description, Integer weight, UUID currentUserId) {
             this.kitId = kitId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
             this.description = description != null && !description.isBlank() ? description.trim() : null;
-            this.weight = weight;
+            this.weight = weight != null ? weight : DEFAULT_WEIGHT;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

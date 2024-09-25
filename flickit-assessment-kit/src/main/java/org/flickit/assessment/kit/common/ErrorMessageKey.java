@@ -134,6 +134,7 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_DESCRIPTION_NOT_NULL = "create-subject.description.notNull";
     public static final String CREATE_SUBJECT_DESCRIPTION_SIZE_MIN = "create-subject.description.size.min";
     public static final String CREATE_SUBJECT_DESCRIPTION_SIZE_MAX = "create-subject.description.size.max";
+    public static final String CREATE_SUBJECT_WEIGHT_NOT_NULL = "create-subject.weight.notNull";
     public static final String CREATE_SUBJECT_INDEX_DUPLICATE = "create-subject.index.duplicate";
     public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
     public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
