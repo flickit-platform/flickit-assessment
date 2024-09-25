@@ -15,70 +15,58 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreateSubjectUseCaseParamTest {
 
     @Test
-    void testCreateSubjectUseCaseParam_kitIsNull_ErrorMessage() {
+    void testCreateSubjectUseCaseParam_kitParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitId(null)));
         assertThat(throwable).hasMessage("kitId: " + CREATE_SUBJECT_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateSubjectUseCaseParam_indexIsNull_ErrorMessage() {
+    void testCreateSubjectUseCaseParam_indexParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.index(null)));
         assertThat(throwable).hasMessage("index: " + CREATE_SUBJECT_INDEX_NOT_NULL);
     }
 
     @Test
-    void testCreateSubjectUseCaseParam_titleIsNull_ErrorMessage() {
+    void testCreateSubjectUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
         assertThat(throwable).hasMessage("title: " + CREATE_SUBJECT_TITLE_NOT_NULL);
-    }
 
-    @Test
-    void testCreateSubjectUseCaseParam_titleLengthIsLessThanMin_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title("ti")));
         assertThat(throwable).hasMessage("title: " + CREATE_SUBJECT_TITLE_SIZE_MIN);
-    }
 
-    @Test
-    void testCreateSubjectUseCaseParam_weightIsNull_ErrorMessage() {
-        var param = assertDoesNotThrow(() -> createParam(b -> b.weight(null)));
-        assertEquals(1, param.getWeight());
-    }
-
-    @Test
-    void testCreateSubjectUseCaseParam_titleLengthIsGreaterThanMax_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(RandomStringUtils.randomAlphanumeric(101))));
         assertThat(throwable).hasMessage("title: " + CREATE_SUBJECT_TITLE_SIZE_MAX);
     }
 
     @Test
-    void testCreateSubjectUseCaseParam_descriptionIsNull_ErrorMessage() {
+    void testCreateSubjectUseCaseParam_weight_SuccessWithDefaultValue() {
+        var param = assertDoesNotThrow(() -> createParam(b -> b.weight(null)));
+        assertEquals(1, param.getWeight());
+    }
+
+    @Test
+    void testCreateSubjectUseCaseParam_descriptionParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.description(null)));
         assertThat(throwable).hasMessage("description: " + CREATE_SUBJECT_DESCRIPTION_NOT_NULL);
-    }
 
-    @Test
-    void testCreateSubjectUseCaseParam_descriptionSizeIsLowerThanMin_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.description("ab")));
         assertThat(throwable).hasMessage("description: " + CREATE_SUBJECT_DESCRIPTION_SIZE_MIN);
-    }
 
-    @Test
-    void testCreateSubjectUseCaseParam_descriptionSizeIsGreaterThanMax_ErrorMessage() {
-        String description = RandomStringUtils.randomAlphanumeric(501);
-        var throwable = assertThrows(ConstraintViolationException.class,
+        var description = RandomStringUtils.randomAlphanumeric(501);
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.description(description)));
         assertThat(throwable).hasMessage("description: " + CREATE_SUBJECT_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
-    void testCreateSubjectUseCaseParam_currentUserIdIsNull_ErrorMessage() {
+    void testCreateSubjectUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
