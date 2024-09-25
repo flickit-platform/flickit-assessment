@@ -84,9 +84,9 @@ class AcceptAssessmentInvitationsServiceTest {
 
         // Assert that the captured list contains exactly one item ,and it is equal to the expected item
         assertEquals(1, capturedList.size());
-        assertEquals(assessmentUserRoleItem.getAssessmentId(), capturedList.get(0).getAssessmentId());
-        assertEquals(assessmentUserRoleItem.getUserId(), capturedList.get(0).getUserId());
-        assertEquals(assessmentUserRoleItem.getRole().getId(), capturedList.get(0).getRole().getId());
+        assertEquals(assessmentUserRoleItem.getAssessmentId(), capturedList.getFirst().getAssessmentId());
+        assertEquals(assessmentUserRoleItem.getUserId(), capturedList.getFirst().getUserId());
+        assertEquals(assessmentUserRoleItem.getRole().getId(), capturedList.getFirst().getRole().getId());
 
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verify(loadAssessmentsUserInvitationsPort).loadInvitations(email);

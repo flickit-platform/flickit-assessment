@@ -69,8 +69,8 @@ class CreateAttributeScoresFileAdapterTest {
         Row questionsFirstRow = questionsSheet.getRow(1);
         assertEquals(question.getTitle(), questionsFirstRow.getCell(0).getStringCellValue());
         assertEquals(question.getHint(), questionsFirstRow.getCell(1).getStringCellValue());
-        assertEquals(question.getImpacts().get(0).getWeight(), questionsFirstRow.getCell(2).getNumericCellValue());
-        assertEquals(answer.getSelectedOption().getImpacts().get(0).getValue(), questionsFirstRow.getCell(3).getNumericCellValue());
+        assertEquals(question.getImpacts().getFirst().getWeight(), questionsFirstRow.getCell(2).getNumericCellValue());
+        assertEquals(answer.getSelectedOption().getImpacts().getFirst().getValue(), questionsFirstRow.getCell(3).getNumericCellValue());
 
         Sheet attributeSheet = workbook.getSheetAt(1);
         assertEquals(1, attributeSheet.getLastRowNum());
@@ -94,8 +94,8 @@ class CreateAttributeScoresFileAdapterTest {
         assertEquals("Description", maturityLevelsHeaderRow.getCell(2).getStringCellValue());
 
         Row maturityLevelsFirstRow = maturityLevelsSheet.getRow(1);
-        assertEquals(maturityLevels.get(0).getTitle(), maturityLevelsFirstRow.getCell(0).getStringCellValue());
-        assertEquals(maturityLevels.get(0).getIndex(), maturityLevelsFirstRow.getCell(1).getNumericCellValue());
-        assertEquals(maturityLevels.get(0).getDescription(), maturityLevelsFirstRow.getCell(2).getStringCellValue());
+        assertEquals(maturityLevels.getFirst().getTitle(), maturityLevelsFirstRow.getCell(0).getStringCellValue());
+        assertEquals(maturityLevels.getFirst().getIndex(), maturityLevelsFirstRow.getCell(1).getNumericCellValue());
+        assertEquals(maturityLevels.getFirst().getDescription(), maturityLevelsFirstRow.getCell(2).getStringCellValue());
     }
 }

@@ -78,7 +78,7 @@ class GetKitListServiceTest {
         assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
         assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
 
-        var item = kitList.getItems().get(0);
+        var item = kitList.getItems().getFirst();
         assertEquals(assessmentKit.getId(), item.id());
         assertEquals(assessmentKit.getTitle(), item.title());
         assertEquals(assessmentKit.getSummary(), item.summary());
@@ -128,7 +128,7 @@ class GetKitListServiceTest {
         assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
         assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
 
-        var item = kitList.getItems().get(0);
+        var item = kitList.getItems().getFirst();
         assertEquals(assessmentKit.getId(), item.id());
         assertEquals(assessmentKit.getTitle(), item.title());
         assertEquals(assessmentKit.getSummary(), item.summary());

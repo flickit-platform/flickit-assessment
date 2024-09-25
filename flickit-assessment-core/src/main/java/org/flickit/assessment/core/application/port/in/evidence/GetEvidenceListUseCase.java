@@ -57,7 +57,9 @@ public interface GetEvidenceListUseCase {
                             String type,
                             LocalDateTime lastModificationTime,
                             Integer attachmentsCount,
-                            User createdBy) {
+                            User createdBy,
+                            Boolean editable,
+                            Boolean deletable) {
     }
 
     record User(UUID id,

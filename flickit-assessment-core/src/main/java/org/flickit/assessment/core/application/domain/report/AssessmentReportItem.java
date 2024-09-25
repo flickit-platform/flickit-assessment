@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record AssessmentReportItem(UUID id,
                                    String title,
+                                   String shortTitle,
                                    AssessmentKitItem assessmentKit,
                                    MaturityLevel maturityLevel,
                                    Double confidenceValue,

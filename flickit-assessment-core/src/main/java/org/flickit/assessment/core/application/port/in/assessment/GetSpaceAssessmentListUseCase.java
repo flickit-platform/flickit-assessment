@@ -50,6 +50,7 @@ public interface GetSpaceAssessmentListUseCase {
                                    AssessmentListItem.Kit kit,
                                    LocalDateTime lastModificationTime,
                                    AssessmentListItem.MaturityLevel maturityLevel,
+                                   Double confidenceValue,
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
                                    Boolean manageable,
