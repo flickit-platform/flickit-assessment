@@ -2,13 +2,10 @@ package org.flickit.assessment.kit.application.port.in.questionnaire;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -17,74 +14,69 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CreateQuestionnaireUseCaseParamTest {
 
-    private Long kitId;
-    private Integer index;
-    private String title;
-    private String description;
-    private Integer weight;
-    private UUID currentUserId;
-
-    @BeforeEach
-    void setUp() {
-        kitId = 1L;
-        index = 2;
-        title = "Clean Architecture";
-        description = "Clean Architecture Description";
-        currentUserId = UUID.randomUUID();
-    }
-
     @Test
-    void testCreateQuestionnaireUseCase_kitIdIsNull_ErrorMessage() {
-        kitId = null;
+    void testCreateQuestionnaireUseCaseParam_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, description, currentUserId));
+            () -> createParam(b -> b.kitId(null)));
         assertThat(throwable).hasMessage("kitId: " + CREATE_QUESTIONNAIRE_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateQuestionnaireUseCase_indexIsNull_ErrorMessage() {
-        index = null;
+    void testCreateQuestionnaireUseCaseParam_indexIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, description, currentUserId));
+            () -> createParam(b -> b.index(null)));
         assertThat(throwable).hasMessage("index: " + CREATE_QUESTIONNAIRE_INDEX_NOT_NULL);
     }
 
     @Test
     void testCreateQuestionnaireUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, null, description, currentUserId));
+            () -> createParam(b -> b.title(null)));
         assertThat(throwable).hasMessage("title: " + CREATE_QUESTIONNAIRE_TITLE_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, "ab", description, currentUserId));
+            () -> createParam(b -> b.title("ab")));
         assertThat(throwable).hasMessage("title: " + CREATE_QUESTIONNAIRE_TITLE_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, RandomStringUtils.randomAlphabetic(101), description, currentUserId));
+            () -> createParam(b -> b.title(RandomStringUtils.randomAlphabetic(101))));
         assertThat(throwable).hasMessage("title: " + CREATE_QUESTIONNAIRE_TITLE_SIZE_MAX);
     }
 
     @Test
     void testCreateQuestionnaireUseCaseParam_descriptionParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, null, currentUserId));
+            () -> createParam(b -> b.description(null)));
         assertThat(throwable).hasMessage("description: " + CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, "ab", currentUserId));
+            () -> createParam(b -> b.description("ab")));
         assertThat(throwable).hasMessage("description: " + CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, RandomStringUtils.randomAlphabetic(501), currentUserId));
+            () -> createParam(b -> b.description(RandomStringUtils.randomAlphabetic(501))));
         assertThat(throwable).hasMessage("description: " + CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
-    void testCreateQuestionnaireUseCase_currentUserIdIsNull_ErrorMessage() {
-        currentUserId = null;
+    void testCreateQuestionnaireUseCaseParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, description, currentUserId));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
+    private void createParam(Consumer<CreateQuestionnaireUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private CreateQuestionnaireUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateQuestionnaireUseCase.Param.builder()
+            .kitId(1L)
+            .index(1)
+            .title("title")
+            .description("description")
+            .currentUserId(UUID.randomUUID());
+    }
 }
