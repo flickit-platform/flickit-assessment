@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.port.in.questionnaire;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
@@ -31,7 +30,9 @@ public interface CreateQuestionnaireUseCase {
         @Size(max = 100, message = CREATE_QUESTIONNAIRE_TITLE_SIZE_MAX)
         String title;
 
-        @NotBlank(message = CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_BLANK)
+        @NotNull(message = CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL)
+        @Size(min = 3, message = CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN)
+        @Size(max = 500, message = CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX)
         String description;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -41,7 +42,7 @@ public interface CreateQuestionnaireUseCase {
             this.kitId = kitId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
-            this.description = description;
+            this.description = description != null && !description.isBlank() ? description.trim() : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

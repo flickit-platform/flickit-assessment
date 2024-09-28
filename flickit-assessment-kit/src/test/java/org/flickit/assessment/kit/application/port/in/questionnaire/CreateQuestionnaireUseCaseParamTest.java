@@ -64,13 +64,19 @@ class CreateQuestionnaireUseCaseParamTest {
         assertThat(throwable).hasMessage("title: " + CREATE_QUESTIONNAIRE_TITLE_SIZE_MAX);
     }
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    @ValueSource(strings = {"  ", "\t", "\n"})
-    void testCreateQuestionnaireUseCase_descriptionIsBlank_ErrorMessage(String description) {
+    @Test
+    void testCreateQuestionnaireUseCaseParam_descriptionParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, description, currentUserId));
-        assertThat(throwable).hasMessage("description: " + CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_BLANK);
+            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, null, currentUserId));
+        assertThat(throwable).hasMessage("description: " + CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, "ab", currentUserId));
+        assertThat(throwable).hasMessage("description: " + CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, RandomStringUtils.randomAlphabetic(501), currentUserId));
+        assertThat(throwable).hasMessage("description: " + CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
