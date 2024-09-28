@@ -29,7 +29,7 @@ public class MaturityLevelJpaEntity {
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
-    @Column(name = "code", length = 50)
+    @Column(name = "code", length = 100)
     private String code;
 
     @Column(name = "index", nullable = false)
