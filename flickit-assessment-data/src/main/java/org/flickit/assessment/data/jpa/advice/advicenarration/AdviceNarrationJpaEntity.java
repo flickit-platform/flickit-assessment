@@ -26,10 +26,10 @@ public class AdviceNarrationJpaEntity {
     @Column(name = "assessment_result_id", updatable = false, nullable = false)
     private UUID assessmentResultId;
 
-    @Column(name = "ai_narration", length = 1000)
+    @Column(name = "ai_narration")
     private String aiNarration;
 
-    @Column(name = "assessor_narration", length = 1000)
+    @Column(name = "assessor_narration")
     private String assessorNarration;
 
     @Column(name = "ai_narration_time")
