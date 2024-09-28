@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.maturitylevel;
 
 import jakarta.validation.ConstraintViolationException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,13 +50,19 @@ class CreateMaturityLevelUseCaseParamTest {
         assertThat(throwable).hasMessage("index: " + CREATE_MATURITY_LEVEL_INDEX_NOT_NULL);
     }
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    @ValueSource(strings = {"  ", "\t", "\n"})
-    void testCreateMaturityLevelUseCase_titleIsBlank_ErrorMessage(String title) {
+    @Test
+    void testCreateMaturityLevelUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateMaturityLevelUseCase.Param(kitId, index, title, description, value, currentUserId));
-        assertThat(throwable).hasMessage("title: " + CREATE_MATURITY_LEVEL_TITLE_NOT_BLANK);
+            () -> new CreateMaturityLevelUseCase.Param(kitId, index, null, description, value, currentUserId));
+        assertThat(throwable).hasMessage("title: " + CREATE_MATURITY_LEVEL_TITLE_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateMaturityLevelUseCase.Param(kitId, index, "ab", description, value, currentUserId));
+        assertThat(throwable).hasMessage("title: " + CREATE_MATURITY_LEVEL_TITLE_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateMaturityLevelUseCase.Param(kitId, index, RandomStringUtils.randomAlphabetic(101), description, value, currentUserId));
+        assertThat(throwable).hasMessage("title: " + CREATE_MATURITY_LEVEL_TITLE_SIZE_MAX);
     }
 
     @ParameterizedTest

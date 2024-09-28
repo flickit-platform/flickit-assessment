@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.in.maturitylevel;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -25,7 +26,9 @@ public interface CreateMaturityLevelUseCase {
         @NotNull(message = CREATE_MATURITY_LEVEL_INDEX_NOT_NULL)
         Integer index;
 
-        @NotBlank(message = CREATE_MATURITY_LEVEL_TITLE_NOT_BLANK)
+        @NotNull(message = CREATE_MATURITY_LEVEL_TITLE_NOT_NULL)
+        @Size(min = 3, message = CREATE_MATURITY_LEVEL_TITLE_SIZE_MIN)
+        @Size(max = 100, message = CREATE_MATURITY_LEVEL_TITLE_SIZE_MAX)
         String title;
 
         @NotBlank(message = CREATE_MATURITY_LEVEL_DESCRIPTION_NOT_BLANK)
@@ -45,7 +48,7 @@ public interface CreateMaturityLevelUseCase {
                      UUID currentUserId) {
             this.kitId = kitId;
             this.index = index;
-            this.title = title;
+            this.title = title != null && !title.isBlank() ? title : null;
             this.description = description;
             this.value = value;
             this.currentUserId = currentUserId;
