@@ -9,8 +9,8 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.DeleteA
 import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentsUserInvitationsPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
-import org.flickit.assessment.core.application.service.assessmentinvite.notification.AcceptAssessmentInvitationNotificationCmd;
-import org.flickit.assessment.core.application.service.assessmentinvite.notification.AcceptAssessmentInvitationNotificationCmd.*;
+import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationCmd;
+import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationCmd.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -251,6 +251,7 @@ public class ErrorMessageKey {
     public static final String NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE = "notification-title.grant-assessment-user-role";
     public static final String NOTIFICATION_TITLE_CREATE_ASSESSMENT = "notification-title.create-assessment";
     public static final String NOTIFICATION_TITLE_COMPLETE_ASSESSMENT = "notification-title.completed-assessment";
+    public static final String NOTIFICATION_TITLE_ACCEPT_ASSESSMENT_INVITATION = "notification-title.accept-assessment-invitation";
 
     public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_ASSESSMENT_ID_NOT_NULL = "add-assessment-analysis-input-file.assessmentId.notNull";
     public static final String ADD_ASSESSMENT_ANALYSIS_INPUT_FILE_INPUT_FILE_NOT_NULL = "add-assessment-analysis-input-file.inputFile.notNull";

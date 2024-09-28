@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.DeleteA
 import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentsUserInvitationsPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
-import org.flickit.assessment.core.application.service.assessmentinvite.notification.AcceptAssessmentInvitationNotificationCmd;
+import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationCmd;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -43,7 +43,7 @@ class AcceptAssessmentInvitationsServiceTest {
     private DeleteAssessmentUserInvitationPort deleteAssessmentUserInvitationPort;
 
     @Test
-    void testAcceptAssessmentInvitations_userIdNotFound_ThrowResourceNotFoundException(){
+    void testAcceptAssessmentInvitations_userIdNotFound_ThrowResourceNotFoundException() {
         var userId = UUID.randomUUID();
         var param = new AcceptAssessmentInvitationsUseCase.Param(userId);
 
@@ -73,6 +73,7 @@ class AcceptAssessmentInvitationsServiceTest {
 
         var result = assertDoesNotThrow(() -> service.acceptInvitations(param));
 
+        @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AssessmentUserRoleItem>> captor = ArgumentCaptor.forClass(List.class);
         verify(grantUserAssessmentRolePort).persistAll(captor.capture());
 
@@ -81,9 +82,9 @@ class AcceptAssessmentInvitationsServiceTest {
         var assessmentUserRoleItem = new AssessmentUserRoleItem(assessmentInvitee2.getAssessmentId(), userId, assessmentInvitee2.getRole(), assessmentInvitee2.getCreatedBy());
 
         assertEquals(1, capturedList.size());
-        assertEquals(assessmentUserRoleItem.getAssessmentId(), capturedList.get(0).getAssessmentId());
-        assertEquals(assessmentUserRoleItem.getUserId(), capturedList.get(0).getUserId());
-        assertEquals(assessmentUserRoleItem.getRole().getId(), capturedList.get(0).getRole().getId());
+        assertEquals(assessmentUserRoleItem.getAssessmentId(), capturedList.getFirst().getAssessmentId());
+        assertEquals(assessmentUserRoleItem.getUserId(), capturedList.getFirst().getUserId());
+        assertEquals(assessmentUserRoleItem.getRole().getId(), capturedList.getFirst().getRole().getId());
         assertEquals(1, cmd.notificationCmdItems().size());
 
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
@@ -108,6 +109,7 @@ class AcceptAssessmentInvitationsServiceTest {
         var result = assertDoesNotThrow(() -> service.acceptInvitations(param));
 
         AcceptAssessmentInvitationNotificationCmd cmd = (AcceptAssessmentInvitationNotificationCmd) result.notificationCmd();
+        @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AssessmentUserRoleItem>> captor = ArgumentCaptor.forClass(List.class);
         verify(grantUserAssessmentRolePort).persistAll(captor.capture());
 
@@ -118,7 +120,7 @@ class AcceptAssessmentInvitationsServiceTest {
 
         // Assert that the captured list contains exactly one item ,and it is equal to the expected item
         assertEquals(2, capturedList.size());
-        assertEquals(assessmentUserRoleListItem.get(0).getAssessmentId(), capturedList.get(0).getAssessmentId());
+        assertEquals(assessmentUserRoleListItem.getFirst().getAssessmentId(), capturedList.getFirst().getAssessmentId());
         assertEquals(assessmentUserRoleListItem.get(0).getUserId(), capturedList.get(0).getUserId());
         assertEquals(assessmentUserRoleListItem.get(0).getRole().getId(), capturedList.get(0).getRole().getId());
         assertEquals(assessmentUserRoleListItem.get(1).getAssessmentId(), capturedList.get(1).getAssessmentId());
