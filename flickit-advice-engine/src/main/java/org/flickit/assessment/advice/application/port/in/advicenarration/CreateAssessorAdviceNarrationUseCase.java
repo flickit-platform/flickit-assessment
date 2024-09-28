@@ -30,6 +30,7 @@ public interface CreateAssessorAdviceNarrationUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, String assessorNarration, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.assessorNarration = assessorNarration != null && !assessorNarration.isBlank() ? assessorNarration.strip() : null;
