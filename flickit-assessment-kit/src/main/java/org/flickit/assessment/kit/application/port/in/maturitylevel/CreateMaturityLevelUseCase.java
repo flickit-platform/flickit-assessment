@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.in.maturitylevel;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -41,6 +42,7 @@ public interface CreateMaturityLevelUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long kitId,
                      Integer index,
                      String title,
