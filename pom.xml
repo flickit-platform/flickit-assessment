@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.6</version>
+		<version>3.2.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -27,22 +27,23 @@
     </modules>
 
 	<properties>
-		<revision>0.28.0-SNAPSHOT</revision>
+		<revision>0.32.0-SNAPSHOT</revision>
 
-		<java.version>17</java.version>
-		<spring-boot.version>3.0.6</spring-boot.version>
+		<java.version>21</java.version>
+		<spring-boot.version>3.2.8</spring-boot.version>
 
 		<sentry.version>7.3.0</sentry.version>
 		<archunit.version>1.1.0</archunit.version>
 		<minio.version>8.5.11</minio.version>
         <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
-		<jib-maven-plugin.version>3.3.1</jib-maven-plugin.version>
+		<jib-maven-plugin.version>3.4.3</jib-maven-plugin.version>
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
-		<jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 		<poi.version>5.3.0</poi.version>
 		<novu.version>1.6.0</novu.version>
+        <spring-ai.version>1.0.0-M2</spring-ai.version>
 
-		<sonar.organization>flickit-platform-dev</sonar.organization>
+		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
@@ -109,6 +110,11 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+            <version>${spring-ai.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -211,12 +217,12 @@
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
 						<labels>
 							<org.opencontainers.image.source>
-								https://github.com/flickit-platform-dev/flickit-assessment
+								https://github.com/flickit-platform/flickit-assessment
 							</org.opencontainers.image.source>
 						</labels>
 					</container>
 					<from>
-						<image>ghcr.io/flickit-platform-dev/jdk:17.0.7</image>
+						<image>ghcr.io/flickit-platform/flickit-base-image-jdk:21.0.4</image>
 					</from>
 				</configuration>
 			</plugin>
@@ -268,4 +274,14 @@
 		</plugins>
 	</build>
 
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

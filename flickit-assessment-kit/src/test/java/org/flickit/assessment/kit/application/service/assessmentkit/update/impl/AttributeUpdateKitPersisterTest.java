@@ -118,7 +118,7 @@ class AttributeUpdateKitPersisterTest {
 
         Mockito.verify(updateAttributePort, Mockito.times(2)).update(captor.capture());
         List<UpdateAttributePort.Param> params = captor.getAllValues();
-        UpdateAttributePort.Param firstAttr = params.get(0);
+        UpdateAttributePort.Param firstAttr = params.getFirst();
         UpdateAttributePort.Param secondAttr = params.get(1);
 
         assertEquals(attrOne.getId(), firstAttr.id());
@@ -180,7 +180,7 @@ class AttributeUpdateKitPersisterTest {
 
         Mockito.verify(updateAttributePort, Mockito.times(2)).update(captor.capture());
         List<UpdateAttributePort.Param> params = captor.getAllValues();
-        UpdateAttributePort.Param firstAttr = params.get(0);
+        UpdateAttributePort.Param firstAttr = params.getFirst();
         UpdateAttributePort.Param secondAttr = params.get(1);
 
         assertEquals(attrOne.getId(), firstAttr.id());

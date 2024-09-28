@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.32-01" author="Maziyar Gerami">
+        <modifyDataType tableName="faa_advice_narration" columnName="ai_narration" newDataType="varchar(1500)"/>
+    </changeSet>
+
+    <changeSet id="0.32-02" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_subject" columnName="code" newDataType="varchar(100)"/>
+    </changeSet>
+
+    <changeSet id="0.32-03" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_subject" columnName="description" newDataType="varchar(500)"/>
+    </changeSet>
+</databaseChangeLog>

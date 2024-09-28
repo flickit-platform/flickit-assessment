@@ -53,11 +53,12 @@ public class GetAssessmentService implements GetAssessmentUseCase {
         return new Result(
             assessment.getId(),
             assessment.getTitle(),
+            assessment.getShortTitle(),
             assessment.getSpace(),
             assessment.getAssessmentKit(),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
-            new User(createdBy.getId(), createdBy.getDisplayName()),
+            new User(createdBy.getId(), createdBy.getDisplayName(), null),
             viewable ? assessmentResult.getMaturityLevel() : null,
             assessmentResult.getIsCalculateValid(),
             userRole.map(role -> role.equals(MANAGER)).orElse(false),

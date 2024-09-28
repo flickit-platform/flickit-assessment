@@ -101,7 +101,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             1
         );
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
-        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2,
+        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -119,7 +119,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(expectedPaginatedResponse.getOrder(), result.getOrder());
         assertEquals(expectedPaginatedResponse.getPage(), result.getPage());
         assertEquals(expectedPaginatedResponse.getSort(), result.getSort());
-        Result item = result.getItems().get(0);
+        Result item = result.getItems().getFirst();
         assertEquals(question.getId(), item.id());
         assertEquals(question.getTitle(), item.title());
         assertEquals(question.getIndex(), item.index());
@@ -127,7 +127,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(question.getMayNotBeApplicable(), item.mayNotBeApplicable());
         assertNotNull(answer.getSelectedOption());
         assertEquals(answer.getSelectedOption().getId(), item.answer().selectedOption().id());
-        assertEquals(question.getOptions().get(0).getTitle(), item.answer().selectedOption().title());
+        assertEquals(question.getOptions().getFirst().getTitle(), item.answer().selectedOption().title());
     }
 
     @Test
@@ -142,7 +142,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
-        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().get(0).getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
+        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -160,7 +160,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(expectedPaginatedResponse.getOrder(), result.getOrder());
         assertEquals(expectedPaginatedResponse.getPage(), result.getPage());
         assertEquals(expectedPaginatedResponse.getSort(), result.getSort());
-        Result item = result.getItems().get(0);
+        Result item = result.getItems().getFirst();
         assertEquals(question.getId(), item.id());
         assertEquals(question.getTitle(), item.title());
         assertEquals(question.getIndex(), item.index());
@@ -201,7 +201,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertEquals(expectedPaginatedResponse.getOrder(), result.getOrder());
         assertEquals(expectedPaginatedResponse.getPage(), result.getPage());
         assertEquals(expectedPaginatedResponse.getSort(), result.getSort());
-        Result item = result.getItems().get(0);
+        Result item = result.getItems().getFirst();
         assertEquals(question.getId(), item.id());
         assertEquals(question.getTitle(), item.title());
         assertEquals(question.getIndex(), item.index());

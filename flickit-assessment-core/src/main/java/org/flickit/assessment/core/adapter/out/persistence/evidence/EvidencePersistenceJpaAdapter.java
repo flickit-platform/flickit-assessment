@@ -63,7 +63,7 @@ public class EvidencePersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
-            throw new ResourceNotFoundException(GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL);
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
 
         var order = EvidenceJpaEntity.Fields.lastModificationTime;
         var sort = Sort.Direction.DESC;

@@ -140,7 +140,7 @@ class AttributeValueTest {
             QuestionMother.withImpactsOnLevel45(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(0).getId()),
+            AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.getFirst().getId()),
             AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(1).getId()),
             AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(2).getId()),
             AnswerMother.fullScoreOnLevels24(attributeId),
