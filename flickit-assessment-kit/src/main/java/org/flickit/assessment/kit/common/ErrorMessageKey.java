@@ -143,7 +143,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_TITLE_NOT_NULL = "create-attribute.title.notNull";
     public static final String CREATE_ATTRIBUTE_TITLE_MIN_SIZE = "create-attribute.title.min.size";
     public static final String CREATE_ATTRIBUTE_TITLE_MAX_SIZE = "create-attribute.title.max.size";
-    public static final String CREATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK = "create-attribute.description.notBlank";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_NOT_NULL = "create-attribute.description.notNull";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "create-attribute.description.size.min";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "create-attribute.description.size.max";
     public static final String CREATE_ATTRIBUTE_WEIGHT_NOT_NULL = "create-attribute.weight.notNull";
     public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "create-attribute.subjectId.notNull";
 

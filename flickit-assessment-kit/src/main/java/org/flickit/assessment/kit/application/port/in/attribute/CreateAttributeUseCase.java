@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.port.in.attribute;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -32,7 +31,9 @@ public interface CreateAttributeUseCase {
         @Size(max = 100, message = CREATE_ATTRIBUTE_TITLE_MAX_SIZE)
         String title;
 
-        @NotBlank(message = CREATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK)
+        @NotNull(message = CREATE_ATTRIBUTE_DESCRIPTION_NOT_NULL)
+        @Size(min = 3, message = CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN)
+        @Size(max = 1000, message = CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX)
         String description;
 
         @NotNull(message = CREATE_ATTRIBUTE_WEIGHT_NOT_NULL)
@@ -54,7 +55,7 @@ public interface CreateAttributeUseCase {
             this.kitId = kitId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
-            this.description = description;
+            this.description = description != null && !description.isBlank() ? description.trim() : null;
             this.weight = weight;
             this.subjectId = subjectId;
             this.currentUserId = currentUserId;

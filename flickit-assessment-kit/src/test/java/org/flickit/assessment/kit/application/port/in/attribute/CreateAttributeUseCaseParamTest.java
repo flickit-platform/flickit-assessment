@@ -44,10 +44,18 @@ class CreateAttributeUseCaseParamTest {
     }
 
     @Test
-    void testCreateAttributeUseCaseParam_descriptionIsNull_ErrorMessage() {
+    void testCreateAttributeUseCaseParam_descriptionParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.description(null)));
-        assertThat(throwable).hasMessage("description: " + CREATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK);
+        assertThat(throwable).hasMessage("description: " + CREATE_ATTRIBUTE_DESCRIPTION_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.description("ab")));
+        assertThat(throwable).hasMessage("description: " + CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.description(RandomStringUtils.randomAlphabetic(1001))));
+        assertThat(throwable).hasMessage("description: " + CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
