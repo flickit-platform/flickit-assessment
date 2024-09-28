@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.questionnaire;
 
 import jakarta.validation.ConstraintViolationException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,13 +49,19 @@ class CreateQuestionnaireUseCaseParamTest {
         assertThat(throwable).hasMessage("index: " + CREATE_QUESTIONNAIRE_INDEX_NOT_NULL);
     }
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    @ValueSource(strings = {"  ", "\t", "\n"})
-    void testCreateQuestionnaireUseCase_titleIsBlank_ErrorMessage(String title) {
+    @Test
+    void testCreateQuestionnaireUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateQuestionnaireUseCase.Param(kitId, index, title, description, currentUserId));
-        assertThat(throwable).hasMessage("title: " + CREATE_QUESTIONNAIRE_TITLE_NOT_BLANK);
+            () -> new CreateQuestionnaireUseCase.Param(kitId, index, null, description, currentUserId));
+        assertThat(throwable).hasMessage("title: " + CREATE_QUESTIONNAIRE_TITLE_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateQuestionnaireUseCase.Param(kitId, index, "ab", description, currentUserId));
+        assertThat(throwable).hasMessage("title: " + CREATE_QUESTIONNAIRE_TITLE_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateQuestionnaireUseCase.Param(kitId, index, RandomStringUtils.randomAlphabetic(101), description, currentUserId));
+        assertThat(throwable).hasMessage("title: " + CREATE_QUESTIONNAIRE_TITLE_SIZE_MAX);
     }
 
     @ParameterizedTest
