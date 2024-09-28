@@ -147,6 +147,10 @@ public class ErrorMessageKey {
     public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "create-maturity-level.description.size.min";
     public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "create-maturity-level.description.size.max";
     public static final String CREATE_MATURITY_LEVEL_VALUE_NOT_NULL = "create-maturity-level.value.notNull";
+    public static final String CREATE_MATURITY_LEVEL_CODE_DUPLICATE = "create-maturity-level.code.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_INDEX_DUPLICATE = "create-maturity-level.index.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_DUPLICATE = "create-maturity-level.title.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_VALUE_DUPLICATE = "create-maturity-level.value.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
