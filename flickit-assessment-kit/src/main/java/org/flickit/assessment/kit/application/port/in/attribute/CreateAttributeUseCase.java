@@ -20,6 +20,8 @@ public interface CreateAttributeUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
+        private static final int DEFAULT_WEIGHT = 1;
+
         @NotNull(message = CREATE_ATTRIBUTE_KIT_ID_NOT_NULL)
         Long kitId;
 
@@ -56,7 +58,7 @@ public interface CreateAttributeUseCase {
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
             this.description = description != null && !description.isBlank() ? description.trim() : null;
-            this.weight = weight;
+            this.weight = weight != null ? weight : DEFAULT_WEIGHT;;
             this.subjectId = subjectId;
             this.currentUserId = currentUserId;
             this.validateSelf();

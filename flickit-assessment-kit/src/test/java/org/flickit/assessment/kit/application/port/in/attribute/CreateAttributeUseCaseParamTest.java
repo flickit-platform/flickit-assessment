@@ -59,10 +59,9 @@ class CreateAttributeUseCaseParamTest {
     }
 
     @Test
-    void testCreateAttributeUseCaseParam_weightIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.weight(null)));
-        assertThat(throwable).hasMessage("weight: " + CREATE_ATTRIBUTE_WEIGHT_NOT_NULL);
+    void testCreateAttributeUseCaseParam_weight_SuccessWithDefaultValue() {
+        var param = assertDoesNotThrow(() -> createParam(b -> b.weight(null)));
+        assertEquals(1, param.getWeight());
     }
 
     @Test
