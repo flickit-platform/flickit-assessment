@@ -746,41 +746,73 @@
 					},
 					"response": []
 				},
-              {
-                "name": "Create Subject",
-                "request": {
-                  "method": "POST",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
-                    "options": {
-                      "raw": {
-                        "language": "json"
-                      }
-                    }
-                  },
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/336/subjects",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "assessment-kits",
-                      "336",
-                      "subjects"
-                    ]
-                  }
-                },
-                "response": []
-              }
+				{
+					"name": "Create Subject",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/336/subjects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"336",
+								"subjects"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Maturity Level",
+			"item": [
+				{
+					"name": "Delete Maturity Level",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/447/maturity-levels/2350",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"447",
+								"maturity-levels",
+								"2350"
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		}
 	],
