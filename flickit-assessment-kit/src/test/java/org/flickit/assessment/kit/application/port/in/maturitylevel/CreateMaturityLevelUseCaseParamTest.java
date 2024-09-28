@@ -4,9 +4,6 @@ import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
@@ -65,13 +62,19 @@ class CreateMaturityLevelUseCaseParamTest {
         assertThat(throwable).hasMessage("title: " + CREATE_MATURITY_LEVEL_TITLE_SIZE_MAX);
     }
 
-    @ParameterizedTest
-    @NullAndEmptySource
-    @ValueSource(strings = {"  ", "\t", "\n"})
-    void testCreateMaturityLevelUseCase_descriptionIsBlank_ErrorMessage(String description) {
+    @Test
+    void testCreateMaturityLevelUseCaseParam_descriptionParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateMaturityLevelUseCase.Param(kitId, index, title, description, value, currentUserId));
-        assertThat(throwable).hasMessage("description: " + CREATE_MATURITY_LEVEL_DESCRIPTION_NOT_BLANK);
+            () -> new CreateMaturityLevelUseCase.Param(kitId, index, title, null, value, currentUserId));
+        assertThat(throwable).hasMessage("description: " + CREATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateMaturityLevelUseCase.Param(kitId, index, title, "ab", value, currentUserId));
+        assertThat(throwable).hasMessage("description: " + CREATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> new CreateMaturityLevelUseCase.Param(kitId, index, title, RandomStringUtils.randomAlphabetic(501), value, currentUserId));
+        assertThat(throwable).hasMessage("description: " + CREATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
