@@ -35,7 +35,7 @@ public interface CreateAttributeUseCase {
 
         @NotNull(message = CREATE_ATTRIBUTE_DESCRIPTION_NOT_NULL)
         @Size(min = 3, message = CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN)
-        @Size(max = 1000, message = CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX)
+        @Size(max = 500, message = CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX)
         String description;
 
         @NotNull(message = CREATE_ATTRIBUTE_WEIGHT_NOT_NULL)

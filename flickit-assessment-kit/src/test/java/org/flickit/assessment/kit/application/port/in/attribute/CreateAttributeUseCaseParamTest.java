@@ -54,7 +54,7 @@ class CreateAttributeUseCaseParamTest {
         assertThat(throwable).hasMessage("description: " + CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.description(RandomStringUtils.randomAlphabetic(1001))));
+            () -> createParam(b -> b.description(RandomStringUtils.randomAlphabetic(501))));
         assertThat(throwable).hasMessage("description: " + CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX);
     }
 
