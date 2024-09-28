@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,8 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -26,7 +28,7 @@ import static org.mockito.Mockito.when;
 class CreateAttributeServiceTest {
 
     @InjectMocks
-    private CreateAttributeService createAttributeService;
+    private CreateAttributeService service;
 
     @Mock
     private CreateAttributePort createAttributePort;
@@ -37,61 +39,48 @@ class CreateAttributeServiceTest {
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
-    private int index;
-    private String title;
-    private String description;
-    private int weight;
-    private long subjectId;
-    private UUID currentUserId;
-    private UUID ownerId;
-    private AssessmentKit kit;
-
-    @BeforeEach
-    void setUp() {
-        index = 2;
-        title = "team";
-        description = "about team";
-        weight = 3;
-        subjectId = 4;
-        currentUserId = UUID.randomUUID();
-        ownerId = UUID.randomUUID();
-        kit = AssessmentKitMother.simpleKit();
-    }
+    private final UUID ownerId = UUID.randomUUID();
+    private final AssessmentKit kit = AssessmentKitMother.simpleKit();
 
     @Test
     void testCreateAttribute_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
-        CreateAttributeUseCase.Param param = new CreateAttributeUseCase.Param(kit.getId(),
-            index,
-            title,
-            description,
-            weight,
-            subjectId,
-            currentUserId);
+        var param = createParam(CreateAttributeUseCase.Param.ParamBuilder::build);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
 
-        assertThrows(AccessDeniedException.class, () -> createAttributeService.createAttribute(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.createAttribute(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
     void testCreateAttribute_WhenCurrentUserIsOwner_ThenCreateAttribute() {
-        long attributeId = 1;
-        currentUserId = ownerId;
-        CreateAttributeUseCase.Param param = new CreateAttributeUseCase.Param(kit.getId(),
-            index,
-            title,
-            description,
-            weight,
-            subjectId,
-            currentUserId);
+        long attributeId = 123L;
+        var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
         when(createAttributePort.persist(any(Attribute.class), anyLong(), anyLong())).thenReturn(attributeId);
 
-        long actualAttributeId = createAttributeService.createAttribute(param);
+        long actualAttributeId = service.createAttribute(param);
 
         assertEquals(attributeId, actualAttributeId);
+    }
+
+    private CreateAttributeUseCase.Param createParam(Consumer<CreateAttributeUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private CreateAttributeUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateAttributeUseCase.Param.builder()
+            .kitId(1L)
+            .index(1)
+            .title("software maintainability")
+            .description("desc")
+            .weight(2)
+            .subjectId(1L)
+            .currentUserId(UUID.randomUUID());
     }
 }
