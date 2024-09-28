@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.port.in.levelcompetence;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -37,6 +38,7 @@ public interface CreateLevelCompetenceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(Long kitVersionId, Long affectedLevelId, Long effectiveLevelId, Integer value, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.affectedLevelId = affectedLevelId;
