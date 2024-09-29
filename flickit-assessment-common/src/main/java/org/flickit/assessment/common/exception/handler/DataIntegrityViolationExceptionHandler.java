@@ -10,6 +10,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.orm.jpa.JpaSystemException;
@@ -61,12 +62,19 @@ public class DataIntegrityViolationExceptionHandler {
     private String extractConstraintIfPossible(NonTransientDataAccessException ex) {
         if (ex instanceof DataIntegrityViolationException e && e.getCause() instanceof ConstraintViolationException cause)
             return extractConstraint(cause.getConstraintName());
-        if (ex instanceof JpaSystemException e && e.getCause() != null && e.getCause().getCause() != null) {
-            String msg = e.getCause().getCause().getMessage(); // org.postgresql.util.PSQLException
+        if (ex instanceof JpaSystemException && ex.getCause() != null && ex.getCause().getCause() != null) {
+            String msg = ex.getCause().getCause().getMessage(); // org.postgresql.util.PSQLException
             Pattern pattern = Pattern.compile("foreign key constraint \"(.+)\"");
             Matcher matcher = pattern.matcher(msg);
             if (matcher.find())
                return matcher.group(1);
+            return null;
+        } else if (ex instanceof DuplicateKeyException && ex.getCause() != null) {
+            String msg = ex.getCause().getMessage(); // org.postgresql.util.PSQLException
+            Pattern pattern = Pattern.compile("unique constraint \"(.+)\"");
+            Matcher matcher = pattern.matcher(msg);
+            if (matcher.find())
+                return matcher.group(1);
             return null;
         }
         return null;
