@@ -59,28 +59,6 @@ public class AttributeJpaEntity {
     @Column(name = "subject_id", nullable = false)
     private Long subjectId;
 
-    public AttributeJpaEntity(Long id,
-                              long kitVersionId,
-                              String code,
-                              String title,
-                              Integer index,
-                              String description,
-                              Integer weight,
-                              LocalDateTime creationTime,
-                              LocalDateTime lastModificationTime,
-                              long subjectId) {
-        this.id = id;
-        this.kitVersionId = kitVersionId;
-        this.code = code;
-        this.title = title;
-        this.index = index;
-        this.description = description;
-        this.weight = weight;
-        this.creationTime = creationTime;
-        this.lastModificationTime = lastModificationTime;
-        this.subjectId = subjectId;
-    }
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
