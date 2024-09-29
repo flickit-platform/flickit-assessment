@@ -21,6 +21,8 @@ public class AssessmentKitDataConstraintErrorMapper implements DataConstraintErr
         entry("uq_fak_subject_index_kitversionid", CREATE_SUBJECT_INDEX_DUPLICATE),
         entry("uq_fak_subject_title_kitversionid", CREATE_SUBJECT_TITLE_DUPLICATE),
         entry("uq_fak_subject_code_kitversionid", CREATE_SUBJECT_CODE_DUPLICATE),
+        entry("fk_fak_levelcompetence_maturitylevel_effectivelevelid", MATURITY_LEVEL_ID_NOT_FOUND),
+        entry("fk_fak_levelcompetence_maturitylevel_affectedlevelid", MATURITY_LEVEL_ID_NOT_FOUND),
         entry("uq_fak_levelcompetence_affectedlevel_effectivelevel_kitversion", CREATE_LEVEL_COMPETENCE_DUPLICATE));
 
     @Override
