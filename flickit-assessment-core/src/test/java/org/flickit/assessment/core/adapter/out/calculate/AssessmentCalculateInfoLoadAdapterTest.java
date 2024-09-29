@@ -195,9 +195,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var qav6 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute6Id);
         List<AttributeValueJpaEntity> attributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
 
-        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), kitVersionId, 1, List.of(attribute1, attribute2));
-        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), kitVersionId, 1, List.of(attribute3, attribute4));
-        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), kitVersionId, 1, List.of(attribute5, attribute6));
+        var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), kitVersionId, 1);
+        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), kitVersionId, 1);
+        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), kitVersionId, 1);
         List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
         var question1 = questionEntity(1L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
