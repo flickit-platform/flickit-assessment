@@ -145,6 +145,7 @@ public class ErrorMessageKey {
     public static final String CREATE_LEVEL_COMPETENCE_VALUE_NOT_NULL = "create-level-competence.value.notNull";
     public static final String CREATE_LEVEL_COMPETENCE_VALUE_MIN = "create-level-competence.value.min";
     public static final String CREATE_LEVEL_COMPETENCE_VALUE_MAX = "create-level-competence.value.max";
+    public static final String CREATE_LEVEL_COMPETENCE_DUPLICATE = "create-level-competence.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

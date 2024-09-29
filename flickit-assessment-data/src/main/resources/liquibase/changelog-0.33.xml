@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.33-01" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_level_competence"
+                             columnNames="affected_level_id, effective_level_id, kit_version_id"
+                             constraintName="uq_fak_levelcompetence_affectedlevel_effectivelevel_kitversion"/>
+    </changeSet>
+</databaseChangeLog>
