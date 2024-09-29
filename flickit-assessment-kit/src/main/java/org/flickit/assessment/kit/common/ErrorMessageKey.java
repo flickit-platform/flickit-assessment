@@ -138,6 +138,10 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
     public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
 
+    public static final String UPDATE_SUBJECT_INDEX_KIT_VERSION_ID_NOT_NULL = "update-subject-index.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_INDEX_SUBJECT_ID_NOT_NULL = "update-subject-index.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_INDEX_INDEX_NOT_NULL = "update-subject-index.index.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
