@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,8 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -26,7 +28,7 @@ import static org.mockito.Mockito.when;
 class CreateMaturityLevelServiceTest {
 
     @InjectMocks
-    private CreateMaturityLevelService createMaturityLevelService;
+    private CreateMaturityLevelService service;
 
     @Mock
     private CreateMaturityLevelPort createMaturityLevelPort;
@@ -37,55 +39,46 @@ class CreateMaturityLevelServiceTest {
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
-    private int index;
-    private String title;
-    private String description;
-    private Integer value;
-    private UUID currentUserId;
-    private UUID ownerId;
-    private AssessmentKit kit;
-
-    @BeforeEach
-    void setUp() {
-        index = 1;
-        title = "basic";
-        description = "basic level indicating fundamental and essential functionalities of the system.";
-        value = 1;
-        currentUserId = UUID.randomUUID();
-        ownerId = UUID.randomUUID();
-        kit = AssessmentKitMother.simpleKit();
-    }
+    private final UUID ownerId = UUID.randomUUID();
+    private final AssessmentKit kit = AssessmentKitMother.simpleKit();
 
     @Test
     void testCreateMaturityLevel_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
-        CreateMaturityLevelUseCase.Param param = new CreateMaturityLevelUseCase.Param(kit.getId(),
-            index,
-            title,
-            description,
-            value,
-            currentUserId);
+        var param = createParam(CreateMaturityLevelUseCase.Param.ParamBuilder::build);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
 
-        assertThrows(AccessDeniedException.class, () -> createMaturityLevelService.createMaturityLevel(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.createMaturityLevel(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
     void testCreateMaturityLevel_WhenCurrentUserIsOwner_ThenCreateMaturityLevel() {
-        ownerId = currentUserId;
-        long levelId = 1;
-        CreateMaturityLevelUseCase.Param param = new CreateMaturityLevelUseCase.Param(kit.getId(),
-            index,
-            title,
-            description,
-            value,
-            currentUserId);
+        long levelId = 123L;
+        var param = createParam(b -> b.currentUserId(ownerId));
+
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
         when(createMaturityLevelPort.persist(any(MaturityLevel.class), anyLong(), any(UUID.class))).thenReturn(levelId);
 
-        long actualLevelId = createMaturityLevelService.createMaturityLevel(param);
+        long actualLevelId = service.createMaturityLevel(param);
         assertEquals(levelId, actualLevelId);
+    }
+
+    private CreateMaturityLevelUseCase.Param createParam(Consumer<CreateMaturityLevelUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private CreateMaturityLevelUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateMaturityLevelUseCase.Param.builder()
+            .kitId(1L)
+            .index(1)
+            .title("title")
+            .description("description")
+            .value(1)
+            .currentUserId(UUID.randomUUID());
     }
 }
