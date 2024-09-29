@@ -21,13 +21,19 @@ public class CreateQuestionnaireRestController {
 
     @PostMapping("/assessment-kits/{kitId}/questionnaires")
     public ResponseEntity<CreateQuestionnaireResponseDto> createQuestionnaire(@PathVariable("kitId") Long kitId,
-                                                                              @RequestBody CreateQuestionnaireRequestDto dto) {
+                                                                              @RequestBody CreateQuestionnaireRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        long questionnaireId = useCase.createQuestionnaire(toParam(kitId, currentUserId, dto));
+        long questionnaireId = useCase.createQuestionnaire(toParam(kitId, requestDto, currentUserId));
         return new ResponseEntity<>(new CreateQuestionnaireResponseDto(questionnaireId), HttpStatus.CREATED);
     }
 
-    private CreateQuestionnaireUseCase.Param toParam(Long kitId, UUID currentUserId, CreateQuestionnaireRequestDto dto) {
-        return new CreateQuestionnaireUseCase.Param(kitId, dto.index(), dto.title(), dto.description(), currentUserId);
+    private CreateQuestionnaireUseCase.Param toParam(Long kitId,
+                                                     CreateQuestionnaireRequestDto requestDto,
+                                                     UUID currentUserId) {
+        return new CreateQuestionnaireUseCase.Param(kitId,
+            requestDto.index(),
+            requestDto.title(),
+            requestDto.description(),
+            currentUserId);
     }
 }

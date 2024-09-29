@@ -21,9 +21,9 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class CreateQuestionnaireService implements CreateQuestionnaireUseCase {
 
-    private final CreateQuestionnairePort createQuestionnairePort;
-    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadAssessmentKitPort loadAssessmentKitPort;
+    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final CreateQuestionnairePort createQuestionnairePort;
 
     @Override
     public long createQuestionnaire(Param param) {
