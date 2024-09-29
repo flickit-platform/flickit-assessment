@@ -58,7 +58,7 @@ public interface CreateAttributeUseCase {
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
             this.description = description != null && !description.isBlank() ? description.trim() : null;
-            this.weight = weight != null ? weight : DEFAULT_WEIGHT;;
+            this.weight = weight != null ? weight : DEFAULT_WEIGHT;
             this.subjectId = subjectId;
             this.currentUserId = currentUserId;
             this.validateSelf();
