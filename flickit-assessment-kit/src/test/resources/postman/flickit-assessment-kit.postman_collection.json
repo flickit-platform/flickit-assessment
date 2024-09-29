@@ -486,7 +486,42 @@
 						}
 					},
 					"response": []
-				}
+				},
+              {
+                "name": "Create Attribute",
+                "request": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/393/attributes",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "assessment-kits",
+                      "393",
+                      "attributes"
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		},
 		{
@@ -712,7 +747,42 @@
 						}
 					},
 					"response": []
-				}
+				},
+              {
+                "name": "Create Questionnaire",
+                "request": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/393/questionnaires",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "assessment-kits",
+                      "393",
+                      "questionnaires"
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		},
 		{
@@ -782,7 +852,47 @@
                 "response": []
               }
 			]
-		}
+		},
+      {
+        "name": "Maturity Level",
+        "item": [
+          {
+            "name": "Create MaturityLevel",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/assessment-kits/393/maturity-levels",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "assessment-kits",
+                  "393",
+                  "maturity-levels"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      }
 	],
 	"event": [
 		{
