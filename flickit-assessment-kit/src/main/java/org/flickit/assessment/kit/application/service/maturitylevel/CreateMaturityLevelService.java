@@ -20,10 +20,9 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class CreateMaturityLevelService implements CreateMaturityLevelUseCase {
 
-    private final CreateMaturityLevelPort createMaturityLevelPort;
-    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadAssessmentKitPort loadAssessmentKitPort;
-
+    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final CreateMaturityLevelPort createMaturityLevelPort;
 
     @Override
     public long createMaturityLevel(Param param) {
