@@ -174,7 +174,6 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL = "create-questionnaire.description.notNull";
     public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "create-questionnaire.description.size.min";
     public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "create-questionnaire.description.size.max";
-    public static final String CREATE_QUESTIONNAIRE_CODE_DUPLICATE = "create-questionnaire.code.duplicate";
     public static final String CREATE_QUESTIONNAIRE_INDEX_DUPLICATE = "create-questionnaire.index.duplicate";
     public static final String CREATE_QUESTIONNAIRE_TITLE_DUPLICATE = "create-questionnaire.title.duplicate";
 
