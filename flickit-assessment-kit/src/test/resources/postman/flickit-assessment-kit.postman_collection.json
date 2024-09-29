@@ -500,7 +500,7 @@
                   ],
                   "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n}",
+                    "raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
                     "options": {
                       "raw": {
                         "language": "json"
@@ -508,7 +508,7 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/393/subjects/529/attributes",
+                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/393/attributes",
                     "host": [
                       "{{base_url}}"
                     ],
@@ -516,8 +516,6 @@
                       "{{api_path}}",
                       "assessment-kits",
                       "393",
-                      "subjects",
-                      "529",
                       "attributes"
                     ]
                   }

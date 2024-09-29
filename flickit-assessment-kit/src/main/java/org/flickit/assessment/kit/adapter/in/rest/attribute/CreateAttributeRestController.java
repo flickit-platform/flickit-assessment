@@ -19,26 +19,23 @@ public class CreateAttributeRestController {
     private final CreateAttributeUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessment-kits/{kitId}/subjects/{subjectId}/attributes")
+    @PostMapping("/assessment-kits/{kitId}/attributes")
     public ResponseEntity<CreateAttributeResponseDto> createAttribute(@PathVariable("kitId") Long kitId,
-                                                                      @PathVariable("subjectId") Long subjectId,
-                                                                      @RequestBody CreateAttributeRequestDto dto) {
-
+                                                                      @RequestBody CreateAttributeRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        long attributeId = useCase.createAttribute(toParam(kitId, subjectId, currentUserId, dto));
+        long attributeId = useCase.createAttribute(toParam(kitId, requestDto, currentUserId));
         return new ResponseEntity<>(new CreateAttributeResponseDto(attributeId), HttpStatus.CREATED);
     }
 
     private CreateAttributeUseCase.Param toParam(Long kitId,
-                                                 Long subjectId,
-                                                 UUID currentUserId,
-                                                 CreateAttributeRequestDto dto) {
+                                                 CreateAttributeRequestDto requestDto,
+                                                 UUID currentUserId) {
         return new CreateAttributeUseCase.Param(kitId,
-            dto.index(),
-            dto.title(),
-            dto.description(),
-            dto.weight(),
-            subjectId,
+            requestDto.index(),
+            requestDto.title(),
+            requestDto.description(),
+            requestDto.weight(),
+            requestDto.subjectId(),
             currentUserId);
     }
 }
