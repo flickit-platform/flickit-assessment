@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TITLE_ACCEPT_ASSESSMENT_INVITATION;
@@ -32,27 +33,28 @@ public class AcceptAssessmentInvitationNotificationCreator
     @Override
     public List<NotificationEnvelope> create(AcceptAssessmentInvitationNotificationCmd cmd) {
         return cmd.notificationCmdItems().stream()
-            .map(this::creator)
+            .map(notificationCmdItem -> {
+                Optional<Assessment> assessment = getAssessmentPort.getAssessmentById(notificationCmdItem.assessmentId());
+                Optional<User> user = loadUserPort.loadById(notificationCmdItem.inviteeId());
+                var targetUser = loadUserPort.loadById(notificationCmdItem.targetUserId())
+                    .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));
+
+                if (assessment.isEmpty() || user.isEmpty() || targetUser.isEmpty()) {
+                    log.warn("Assessment or user not found");
+                    return null;
+                }
+
+                var title = MessageBundle.message(NOTIFICATION_TITLE_ACCEPT_ASSESSMENT_INVITATION);
+                var payload = new AcceptAssessmentInvitationNotificationPayload(
+                    new AssessmentModel(notificationCmdItem.assessmentId(), assessment.get().getTitle()),
+                    new InviteeModel(notificationCmdItem.inviteeId(), user.get().getDisplayName()),
+                    new RoleModel(notificationCmdItem.assessmentUserRole().getTitle())
+                );
+
+                return new NotificationEnvelope(targetUser.get(), title, payload);
+            })
+            .filter(Objects::nonNull)
             .toList();
-    }
-
-    public NotificationEnvelope creator(AcceptAssessmentInvitationNotificationCmd.NotificationCmdItem cmd) {
-        Optional<Assessment> assessment = getAssessmentPort.getAssessmentById(cmd.assessmentId());
-        Optional<User> user = loadUserPort.loadById(cmd.inviteeId());
-        var targetUser = loadUserPort.loadById(cmd.targetUserId())
-            .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));
-        if (assessment.isEmpty() || user.isEmpty() || targetUser.isEmpty()) {
-            log.warn("assessment or user not found");
-            return null;
-        }
-
-        var title = MessageBundle.message(NOTIFICATION_TITLE_ACCEPT_ASSESSMENT_INVITATION);
-        var payload = new AcceptAssessmentInvitationNotificationPayload(
-            new AssessmentModel(cmd.assessmentId(), assessment.get().getTitle()),
-            new InviteeModel(cmd.inviteeId(), user.get().getDisplayName()),
-            new RoleModel(cmd.assessmentUserRole().getTitle()));
-
-        return new NotificationEnvelope(targetUser.get(), title, payload);
     }
 
     @Override
