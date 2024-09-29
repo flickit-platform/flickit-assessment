@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,8 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -37,46 +39,24 @@ class CreateQuestionnaireServiceTest {
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
-    private int index;
-    private String title;
-    private String description;
-    private UUID currentUserId;
-    private UUID ownerId;
-    private AssessmentKit kit;
-
-    @BeforeEach
-    void setUp() {
-        index = 2;
-        title = "team";
-        description = "about team";
-        currentUserId = UUID.randomUUID();
-        ownerId = UUID.randomUUID();
-        kit = AssessmentKitMother.simpleKit();
-    }
+    private final UUID ownerId = UUID.randomUUID();
+    private final AssessmentKit kit = AssessmentKitMother.simpleKit();
 
     @Test
     void testCreateQuestionnaire_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
-        CreateQuestionnaireUseCase.Param param = new CreateQuestionnaireUseCase.Param(kit.getId(),
-            index,
-            title,
-            description,
-            currentUserId);
+        var param = createParam(CreateQuestionnaireUseCase.Param.ParamBuilder::build);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
 
-        assertThrows(AccessDeniedException.class, () -> createQuestionnaireService.createQuestionnaire(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> createQuestionnaireService.createQuestionnaire(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
     void testCreateQuestionnaire_WhenCurrentUserIsOwner_ThenCreateQuestionnaire() {
-        long questionnaireId = 1;
-        currentUserId = ownerId;
-        CreateQuestionnaireUseCase.Param param = new CreateQuestionnaireUseCase.Param(kit.getId(),
-            index,
-            title,
-            description,
-            currentUserId);
+        long questionnaireId = 123L;
+        var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
@@ -84,5 +64,20 @@ class CreateQuestionnaireServiceTest {
 
         long actualQuestionnaireId = createQuestionnaireService.createQuestionnaire(param);
         assertEquals(questionnaireId, actualQuestionnaireId);
+    }
+
+    private CreateQuestionnaireUseCase.Param createParam(Consumer<CreateQuestionnaireUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private CreateQuestionnaireUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateQuestionnaireUseCase.Param.builder()
+            .kitId(1L)
+            .index(1)
+            .title("title")
+            .description("description")
+            .currentUserId(UUID.randomUUID());
     }
 }
