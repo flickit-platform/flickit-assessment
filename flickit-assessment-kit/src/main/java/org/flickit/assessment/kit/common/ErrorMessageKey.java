@@ -166,6 +166,17 @@ public class ErrorMessageKey {
     public static final String CREATE_MATURITY_LEVEL_TITLE_DUPLICATE = "create-maturity-level.title.duplicate";
     public static final String CREATE_MATURITY_LEVEL_VALUE_DUPLICATE = "create-maturity-level.value.duplicate";
 
+    public static final String CREATE_QUESTIONNAIRE_KIT_ID_NOT_NULL = "create-questionnaire.kitId.notNull";
+    public static final String CREATE_QUESTIONNAIRE_INDEX_NOT_NULL = "create-questionnaire.index.notNull";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_NOT_NULL = "create-questionnaire.title.notNull";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_SIZE_MIN = "create-questionnaire.title.size.min";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_SIZE_MAX = "create-questionnaire.title.size.max";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL = "create-questionnaire.description.notNull";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "create-questionnaire.description.size.min";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "create-questionnaire.description.size.max";
+    public static final String CREATE_QUESTIONNAIRE_INDEX_DUPLICATE = "create-questionnaire.index.duplicate";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_DUPLICATE = "create-questionnaire.title.duplicate";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
