@@ -363,7 +363,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,
         List<AnswerJpaEntity> answerEntities,
         List<AnswerOptionJpaEntity> answerOptionEntities,
-        List<AnswerOptionImpactJpaEntity> answerOptionImpactEntities
-    ) {
+        List<AnswerOptionImpactJpaEntity> answerOptionImpactEntities) {
     }
 }
