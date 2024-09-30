@@ -139,6 +139,45 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
     public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
 
+    public static final String CREATE_ATTRIBUTE_KIT_ID_NOT_NULL = "create-attribute.kitId.notNull";
+    public static final String CREATE_ATTRIBUTE_INDEX_NOT_NULL = "create-attribute.index.notNull";
+    public static final String CREATE_ATTRIBUTE_TITLE_NOT_NULL = "create-attribute.title.notNull";
+    public static final String CREATE_ATTRIBUTE_TITLE_MIN_SIZE = "create-attribute.title.min.size";
+    public static final String CREATE_ATTRIBUTE_TITLE_MAX_SIZE = "create-attribute.title.max.size";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_NOT_NULL = "create-attribute.description.notNull";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "create-attribute.description.size.min";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "create-attribute.description.size.max";
+    public static final String CREATE_ATTRIBUTE_WEIGHT_NOT_NULL = "create-attribute.weight.notNull";
+    public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "create-attribute.subjectId.notNull";
+    public static final String CREATE_ATTRIBUTE_CODE_DUPLICATE = "create-attribute.code.duplicate";
+    public static final String CREATE_ATTRIBUTE_INDEX_DUPLICATE = "create-attribute.index.duplicate";
+    public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND = "create-attribute.subjectId.notFound";
+
+    public static final String CREATE_MATURITY_LEVEL_KIT_ID_NOT_NULL = "create-maturity-level.kitId.notNull";
+    public static final String CREATE_MATURITY_LEVEL_INDEX_NOT_NULL = "create-maturity-level.index.notNull";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_NOT_NULL = "create-maturity-level.title.notNull";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_SIZE_MIN = "create-maturity-level.title.size.min";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_SIZE_MAX = "create-maturity-level.title.size.max";
+    public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL = "create-maturity-level.description.notNull";
+    public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "create-maturity-level.description.size.min";
+    public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "create-maturity-level.description.size.max";
+    public static final String CREATE_MATURITY_LEVEL_VALUE_NOT_NULL = "create-maturity-level.value.notNull";
+    public static final String CREATE_MATURITY_LEVEL_CODE_DUPLICATE = "create-maturity-level.code.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_INDEX_DUPLICATE = "create-maturity-level.index.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_DUPLICATE = "create-maturity-level.title.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_VALUE_DUPLICATE = "create-maturity-level.value.duplicate";
+
+    public static final String CREATE_QUESTIONNAIRE_KIT_ID_NOT_NULL = "create-questionnaire.kitId.notNull";
+    public static final String CREATE_QUESTIONNAIRE_INDEX_NOT_NULL = "create-questionnaire.index.notNull";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_NOT_NULL = "create-questionnaire.title.notNull";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_SIZE_MIN = "create-questionnaire.title.size.min";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_SIZE_MAX = "create-questionnaire.title.size.max";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL = "create-questionnaire.description.notNull";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "create-questionnaire.description.size.min";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "create-questionnaire.description.size.max";
+    public static final String CREATE_QUESTIONNAIRE_INDEX_DUPLICATE = "create-questionnaire.index.duplicate";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_DUPLICATE = "create-questionnaire.title.duplicate";
+
     public static final String CREATE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "create-level-competence.kitVersionId.notNull";
     public static final String CREATE_LEVEL_COMPETENCE_AFFECTED_LEVEL_ID_NOT_NULL = "create-level-competence.affectedLevelId.notNull";
     public static final String CREATE_LEVEL_COMPETENCE_EFFECTIVE_LEVEL_ID_NOT_NULL = "create-level-competence.effectiveLevelId.notNull";
