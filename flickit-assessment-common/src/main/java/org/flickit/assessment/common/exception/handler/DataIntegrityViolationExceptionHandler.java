@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -77,14 +76,6 @@ public class DataIntegrityViolationExceptionHandler {
         } else if (ex instanceof DuplicateKeyException && ex.getCause() != null) {
             String msg = ex.getCause().getMessage(); // org.postgresql.util.PSQLException
             return extractConstraint(POSTGRES_UQ_CONSTRAINT_PATTERN, msg);
-        }
-        if (ex.getCause() instanceof SQLException e) {
-            String msg = e.getMessage(); // org.postgresql.util.PSQLException
-            Pattern pattern = Pattern.compile("foreign key constraint \"(.+)\"");
-            Matcher matcher = pattern.matcher(msg);
-            if (matcher.find())
-                return matcher.group(1);
-            return null;
         }
         return null;
     }
