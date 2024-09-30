@@ -10,7 +10,7 @@ public enum KitVersionStatus {
 
     ACTIVE, UPDATING, ARCHIVE;
 
-    public static KitVersionStatus valueOfByOrdinal(Integer ordinal) {
+    public static KitVersionStatus valueOfByOrdinal(int ordinal) {
         return Stream.of(KitVersionStatus.values())
             .filter(x -> Objects.equals(x.ordinal(), ordinal))
             .findFirst()
