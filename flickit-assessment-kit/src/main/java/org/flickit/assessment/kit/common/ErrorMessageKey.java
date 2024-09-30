@@ -139,7 +139,7 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
     public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
 
-    public static final String CREATE_ATTRIBUTE_KIT_ID_NOT_NULL = "create-attribute.kitId.notNull";
+    public static final String CREATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "create-attribute.kitVersionId.notNull";
     public static final String CREATE_ATTRIBUTE_INDEX_NOT_NULL = "create-attribute.index.notNull";
     public static final String CREATE_ATTRIBUTE_TITLE_NOT_NULL = "create-attribute.title.notNull";
     public static final String CREATE_ATTRIBUTE_TITLE_MIN_SIZE = "create-attribute.title.min.size";

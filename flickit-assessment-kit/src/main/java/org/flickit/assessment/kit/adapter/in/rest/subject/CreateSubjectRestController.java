@@ -19,7 +19,7 @@ public class CreateSubjectRestController {
     private final CreateSubjectUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("kit-versions/{kitVersionId}/subjects")
+    @PostMapping("/kit-versions/{kitVersionId}/subjects")
     public ResponseEntity<CreateSubjectResponseDto> createSubject(@PathVariable("kitVersionId") Long kitVersionId,
                                                                   @RequestBody CreateSubjectRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();

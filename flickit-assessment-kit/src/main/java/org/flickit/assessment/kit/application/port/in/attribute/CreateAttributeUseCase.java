@@ -22,8 +22,8 @@ public interface CreateAttributeUseCase {
 
         private static final int DEFAULT_WEIGHT = 1;
 
-        @NotNull(message = CREATE_ATTRIBUTE_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = CREATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = CREATE_ATTRIBUTE_INDEX_NOT_NULL)
         Integer index;
@@ -48,13 +48,13 @@ public interface CreateAttributeUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitId,
+        public Param(Long kitVersionId,
                      Integer index,
                      String title,
                      String description,
                      Integer weight,
                      Long subjectId, UUID currentUserId) {
-            this.kitId = kitId;
+            this.kitVersionId = kitVersionId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
             this.description = description != null && !description.isBlank() ? description.trim() : null;
