@@ -135,5 +135,5 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             LEFT JOIN KitVersionJpaEntity kv ON e.id = kv.kit.expertGroupId
             WHERE kv.id = :kitVersionId AND e.deleted = FALSE
         """)
-    Optional<ExpertGroupJpaEntity> findByKitVersionId(Long kitVersionId);
+    Optional<ExpertGroupJpaEntity> findByKitVersionId(@Param("kitVersionId") long kitVersionId);
 }

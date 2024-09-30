@@ -49,7 +49,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
     }
 
     @Override
-    public ExpertGroup loadKitVersionExpertGroup(Long kitVersionId) {
+    public ExpertGroup loadKitVersionExpertGroup(long kitVersionId) {
         return repository.findByKitVersionId(kitVersionId)
             .map(ExpertGroupMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));

@@ -79,7 +79,7 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateIndex(Long kitVersionId, Long subjectId, int index) {
+    public void updateIndex(long kitVersionId, long subjectId, int index) {
         repository.updateIndex(kitVersionId, subjectId, index);
     }
 

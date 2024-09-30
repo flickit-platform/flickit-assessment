@@ -66,11 +66,14 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
             SET s.index = :index
         WHERE s.id = :id AND s.kitVersionId = :kitVersionId
         """)
-    void updateIndex(@Param("kitVersionId") Long kitVersionId, @Param("id") Long id, @Param("index") int index);
+    void updateIndex(@Param("kitVersionId") long kitVersionId, @Param("id") long id, @Param("index") int index);
 
     @Query("""
         FROM SubjectJpaEntity s
         WHERE s.kitVersionId = :kitVersionId AND s.index >= :from AND s.index < :to
         """)
-    List<SubjectJpaEntity> findAllByKitVersionIdAndIndexes(long kitVersionId, int from, int to, Pageable pageable);
+    List<SubjectJpaEntity> findAllByKitVersionIdAndIndexes(@Param("kitVersionId") long kitVersionId,
+                                                           @Param("from") int from,
+                                                           @Param("to") int to,
+                                                           Pageable pageable);
 }
