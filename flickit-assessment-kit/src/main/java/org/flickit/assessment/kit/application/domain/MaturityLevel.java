@@ -25,4 +25,5 @@ public class MaturityLevel {
             .strip()
             .replaceAll("\\s+", "-");
     }
+
 }

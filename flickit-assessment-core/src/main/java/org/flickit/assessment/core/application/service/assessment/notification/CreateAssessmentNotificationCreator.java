@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.notification.NotificationCreator;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
+import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope.User;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitInfoPort;
@@ -31,7 +32,7 @@ public class CreateAssessmentNotificationCreator implements NotificationCreator<
             var kitInfo = loadKitInfoPort.loadKitInfo(cmd.kitId());
             KitModel kitModel = new KitModel(cmd.kitId(), kitInfo.title());
             var payload = new CreateAssessmentNotificationPayload(kitModel);
-            return List.of(new NotificationEnvelope(kitInfo.createdBy(), title, payload));
+            return List.of(new NotificationEnvelope(new User(kitInfo.createdBy(), null), title, payload));
         } catch (ResourceNotFoundException e) {
             log.warn("kit not found");
             return List.of();
