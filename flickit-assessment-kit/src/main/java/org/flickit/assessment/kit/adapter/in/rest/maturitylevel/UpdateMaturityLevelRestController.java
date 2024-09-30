@@ -21,13 +21,13 @@ public class UpdateMaturityLevelRestController {
     private final UserContext userContext;
 
     @PutMapping("assessment-kits/{kitId}/maturity-levels/{id}")
-    ResponseEntity<Void> updateMaturityLevel(@PathVariable Long id, @PathVariable Long kitId, @RequestBody UpdateMaturityLevelRequestDto requestDto) {
+    public ResponseEntity<Void> updateMaturityLevel(@PathVariable Long kitId, @PathVariable Long id, @RequestBody UpdateMaturityLevelRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        useCase.updateMaturityLevel(toParam(id, kitId, requestDto, currentUserId));
+        useCase.updateMaturityLevel(toParam(kitId, id, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Long id, Long kitId, UpdateMaturityLevelRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(Long kitId, Long id, UpdateMaturityLevelRequestDto requestDto, UUID currentUserId) {
         return new Param(id, kitId, requestDto.title(), requestDto.index(), requestDto.description(), requestDto.value(), currentUserId);
     }
 }
