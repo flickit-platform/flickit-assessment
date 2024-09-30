@@ -34,6 +34,6 @@ public class UpdateMaturityLevelService implements UpdateMaturityLevelUseCase {
 
         var maturityLevel = new MaturityLevel(param.getId(), MaturityLevel.generateSlugCode(param.getTitle()),
             param.getTitle(), param.getIndex(), param.getDescription(), param.getValue(), null);
-        updateMaturityLevelPort.updateInfo(maturityLevel, assessmentKit.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
+        updateMaturityLevelPort.update(maturityLevel, assessmentKit.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
     }
 }

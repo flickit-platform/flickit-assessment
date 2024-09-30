@@ -73,7 +73,7 @@ class UpdateMaturityLevelServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(currentUserId);
-        doNothing().when(updateMaturityLevelPort).updateInfo(any(), any(), any(), any());
+        doNothing().when(updateMaturityLevelPort).update(any(), any(), any(), any());
 
         assertDoesNotThrow(() -> service.updateMaturityLevel(param));
     }

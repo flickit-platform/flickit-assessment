@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface UpdateMaturityLevelPort {
 
-    void update(List<MaturityLevel> maturityLevels, Long kitVersionId, UUID lastModifiedBy);
+    void updateAll(List<MaturityLevel> maturityLevels, Long kitVersionId, UUID lastModifiedBy);
 
-    void updateInfo(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy);
+    void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy);
 }
