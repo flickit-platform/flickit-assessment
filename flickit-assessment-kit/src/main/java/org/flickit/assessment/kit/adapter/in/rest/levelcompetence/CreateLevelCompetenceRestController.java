@@ -28,8 +28,7 @@ public class CreateLevelCompetenceRestController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private Param toParam(Long kitVersionId,
-                          CreateLevelCompetenceRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(Long kitVersionId, CreateLevelCompetenceRequestDto requestDto, UUID currentUserId) {
         return new Param(kitVersionId,
             requestDto.affectedLevelId(),
             requestDto.effectiveLevelId(),
