@@ -35,6 +35,7 @@ public interface UpdateMaturityLevelUseCase {
 
         @NotNull(message = UPDATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL)
         @Size(min = 3, message = UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN)
+        @Size(max = 500, message = UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX)
         String description;
 
         @NotNull(message = UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL)
