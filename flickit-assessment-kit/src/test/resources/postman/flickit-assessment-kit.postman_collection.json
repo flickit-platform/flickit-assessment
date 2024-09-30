@@ -837,13 +837,13 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/336/subjects",
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects",
                     "host": [
                       "{{base_url}}"
                     ],
                     "path": [
                       "{{api_path}}",
-                      "assessment-kits",
+                      "kit-versions",
                       "336",
                       "subjects"
                     ]

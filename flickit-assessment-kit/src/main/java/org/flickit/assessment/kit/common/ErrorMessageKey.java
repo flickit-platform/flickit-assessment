@@ -126,7 +126,7 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
-    public static final String CREATE_SUBJECT_KIT_ID_NOT_NULL = "create-subject.kitId.notNull";
+    public static final String CREATE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "create-subject.kitVersionId.notNull";
     public static final String CREATE_SUBJECT_INDEX_NOT_NULL = "create-subject.index.notNull";
     public static final String CREATE_SUBJECT_TITLE_NOT_NULL = "create-subject.title.notNull";
     public static final String CREATE_SUBJECT_TITLE_SIZE_MIN = "create-subject.title.size.min";
