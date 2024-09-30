@@ -30,11 +30,13 @@ class UpdateSubjectIndexUseCaseParamTest {
 
     @Test
     void testUpdateSubjectIndexUseCaseParam_indexParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
+        var throwableNullViolates = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.index(null)));
-        assertThat(throwable).hasMessage("index: " + UPDATE_SUBJECT_INDEX_INDEX_NOT_NULL);
+        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_SUBJECT_INDEX_INDEX_NOT_NULL);
+        var throwableMinViolates = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.index(0)));
+        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_SUBJECT_INDEX_INDEX_MIN);
     }
-
 
     @Test
     void testUpdateSubjectIndexUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {

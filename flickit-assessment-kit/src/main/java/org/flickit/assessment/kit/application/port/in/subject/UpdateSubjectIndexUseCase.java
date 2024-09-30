@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.subject;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -26,6 +27,7 @@ public interface UpdateSubjectIndexUseCase {
         Long subjectId;
 
         @NotNull(message = UPDATE_SUBJECT_INDEX_INDEX_NOT_NULL)
+        @Min(value = 1, message = UPDATE_SUBJECT_INDEX_INDEX_MIN)
         Integer index;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
