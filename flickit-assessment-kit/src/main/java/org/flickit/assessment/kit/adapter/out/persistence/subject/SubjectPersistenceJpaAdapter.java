@@ -75,12 +75,11 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateIndexes(long kitVersionId, List<SubjectParam> subjectOrders) {
-        var ids = subjectOrders.stream().map(SubjectParam::getId).collect(Collectors.toSet());
-        var subjectIdToIndexMap = subjectOrders.stream()
+    public void updateIndexes(long kitVersionId, List<SubjectParam> subjects) {
+        var ids = subjects.stream().map(SubjectParam::getId).collect(Collectors.toSet());
+        var subjectIdToIndexMap = subjects.stream()
             .collect(Collectors.toMap(SubjectParam::getId, SubjectParam::getIndex));
         var entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
-
         entities.forEach(e -> e.setIndex(subjectIdToIndexMap.get(e.getId())));
         repository.saveAll(entities);
     }

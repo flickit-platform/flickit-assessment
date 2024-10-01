@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface UpdateSubjectsIndexPort {
 
-    void updateIndexes(long kitVersionId, List<SubjectParam> subjectOrders);
+    void updateIndexes(long kitVersionId, List<SubjectParam> subjects);
 }
