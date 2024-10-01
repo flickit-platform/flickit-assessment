@@ -153,7 +153,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_INDEX_DUPLICATE = "create-attribute.index.duplicate";
     public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND = "create-attribute.subjectId.notFound";
 
-    public static final String CREATE_MATURITY_LEVEL_KIT_ID_NOT_NULL = "create-maturity-level.kitId.notNull";
+    public static final String CREATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "create-maturity-level.kitVersionId.notNull";
     public static final String CREATE_MATURITY_LEVEL_INDEX_NOT_NULL = "create-maturity-level.index.notNull";
     public static final String CREATE_MATURITY_LEVEL_TITLE_NOT_NULL = "create-maturity-level.title.notNull";
     public static final String CREATE_MATURITY_LEVEL_TITLE_SIZE_MIN = "create-maturity-level.title.size.min";
