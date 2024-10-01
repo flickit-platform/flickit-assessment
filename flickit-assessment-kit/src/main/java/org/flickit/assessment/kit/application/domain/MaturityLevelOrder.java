@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 public class MaturityLevelOrder {
+
     private final Long id;
     private final Integer index;
     private final Integer value;
