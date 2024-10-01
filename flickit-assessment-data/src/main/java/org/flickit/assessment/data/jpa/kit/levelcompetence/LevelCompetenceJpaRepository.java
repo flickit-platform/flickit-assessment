@@ -15,6 +15,8 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
 
     List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdInAndKitVersionId(Iterable<Long> levelIds, Long kitVersionId);
 
+    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
+
     @Modifying
     @Query("""
             DELETE LevelCompetenceJpaEntity l
@@ -47,14 +49,12 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
     @Query("""
             UPDATE LevelCompetenceJpaEntity l
             SET l.value = :value,
-                l.lastModifiedBy = :lastModifiedBy,
                 l.lastModificationTime = :lastModificationTime
+                l.lastModifiedBy = :lastModifiedBy,
             WHERE l.id = :id
         """)
-    void updateValue(@Param("id") Long id,
-                     @Param("value") Integer value,
-                     @Param("lastModifiedBy") UUID lastModifiedBy,
-                     @Param("lastModificationTime") LocalDateTime lastModificationTime);
-
-    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
+    void updateById(@Param("id") Long id,
+                    @Param("value") Integer value,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                    @Param("lastModifiedBy") UUID lastModifiedBy);
 }

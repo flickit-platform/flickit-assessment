@@ -67,9 +67,6 @@ public class LevelCompetencePersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
             throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
 
-        repository.updateValue(param.id(),
-            param.value(),
-            param.lastModifiedBy(),
-            param.lastModificationTime());
+        repository.updateById(id, value, LocalDateTime.now(), lastModifiedBy);
     }
 }
