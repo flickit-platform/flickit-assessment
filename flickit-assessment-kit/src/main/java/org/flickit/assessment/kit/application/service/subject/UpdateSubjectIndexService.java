@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectIndexUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionStatusByIdPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectsIndexPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_NOT_
 public class UpdateSubjectIndexService implements UpdateSubjectIndexUseCase {
 
     private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
-    private final LoadKitVersionStatusByIdPort loadKitVersionStatusByIdPort;
+    private final LoadKitVersionPort loadKitVersionPort;
     private final UpdateSubjectsIndexPort updateSubjectsIndexesPort;
 
     @Override
@@ -43,8 +43,8 @@ public class UpdateSubjectIndexService implements UpdateSubjectIndexUseCase {
     }
 
     private void checkKitVersionStatus(Long kitVersionId) {
-        KitVersionStatus status = loadKitVersionStatusByIdPort.loadStatusById(kitVersionId);
-        if (!Objects.equals(status, KitVersionStatus.UPDATING)) {
+        var kitVersion = loadKitVersionPort.load(kitVersionId);
+        if (!Objects.equals(kitVersion.getStatus(), KitVersionStatus.UPDATING)) {
             throw new ValidationException(KIT_VERSION_NOT_UPDATING_STATUS);
         }
     }
