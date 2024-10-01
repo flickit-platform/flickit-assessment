@@ -167,7 +167,7 @@ public class ErrorMessageKey {
     public static final String CREATE_MATURITY_LEVEL_TITLE_DUPLICATE = "create-maturity-level.title.duplicate";
     public static final String CREATE_MATURITY_LEVEL_VALUE_DUPLICATE = "create-maturity-level.value.duplicate";
 
-    public static final String CREATE_QUESTIONNAIRE_KIT_ID_NOT_NULL = "create-questionnaire.kitId.notNull";
+    public static final String CREATE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "create-questionnaire.kitVersionId.notNull";
     public static final String CREATE_QUESTIONNAIRE_INDEX_NOT_NULL = "create-questionnaire.index.notNull";
     public static final String CREATE_QUESTIONNAIRE_TITLE_NOT_NULL = "create-questionnaire.title.notNull";
     public static final String CREATE_QUESTIONNAIRE_TITLE_SIZE_MIN = "create-questionnaire.title.size.min";
