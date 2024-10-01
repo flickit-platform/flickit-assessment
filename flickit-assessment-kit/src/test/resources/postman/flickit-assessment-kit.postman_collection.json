@@ -927,6 +927,42 @@
               }
             },
             "response": []
+          },
+          {
+            "name": "Update MaturityLevel",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166\r\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels/2227",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "kit-versions",
+                  "393",
+                  "maturity-levels",
+                  "2227"
+                ]
+              }
+            },
+            "response": []
           }
         ]
       }
