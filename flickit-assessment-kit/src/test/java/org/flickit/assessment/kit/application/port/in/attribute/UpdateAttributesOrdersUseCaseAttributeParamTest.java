@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateAttributesOrdersUseCaseAttributeParamTest {
 
     @Test
-    void testUpdateAttributesOrderUseCaseSubjectParam_subjectIdParamViolatesConstraints_ErrorMessage() {
+    void testUpdateAttributesOrderUseCaseAttributeParam_attributeIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.id(null)));
         assertThat(throwable).hasMessage("id: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributesOrderUseCaseSubjectParam_indexParamViolatesConstraints_ErrorMessage() {
+    void testUpdateAttributesOrderUseCaseAttributeParam_indexParamViolatesConstraints_ErrorMessage() {
         var throwableNullViolates = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.index(null)));
         assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_ATTRIBUTES_ORDER_INDEX_NOT_NULL);
