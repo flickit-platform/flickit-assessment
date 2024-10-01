@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectIndexUseCase;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectIndexUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectIndexUseCase.SubjectOrderParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,20 +23,20 @@ public class UpdateSubjectIndexRestController {
 
     @PutMapping("assessment-kits/{kitVersionId}/subjects/{subjectId}/indexes")
     public ResponseEntity<Void> updateSubjectIndex(@PathVariable("kitVersionId") Long kitVersionId,
-                                                   @PathVariable("subjectId") Long subjectId,
                                                    @RequestBody UpdateSubjectIndexRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.updateSubjectIndex(toParam(kitVersionId, subjectId, requestDto, currentUserId));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        useCase.updateSubjectIndex(toParam(kitVersionId, requestDto, currentUserId));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Param toParam(Long kitVersionId,
-                          Long subjectId,
                           UpdateSubjectIndexRequestDto requestDto,
                           UUID currentUserId) {
+        var orders = requestDto.orders().stream()
+            .map(s -> new SubjectOrderParam(s.id(), s.order()))
+            .toList();
         return new Param(kitVersionId,
-            subjectId,
-            requestDto.index(),
+            orders,
             currentUserId);
     }
 }
