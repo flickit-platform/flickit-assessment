@@ -1,0 +1,37 @@
+package org.flickit.assessment.kit.application.service.attribute;
+
+import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase;
+import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributesIndexPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+import java.util.UUID;
+
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class UpdateAttributesOrderService implements UpdateAttributesOrderUseCase {
+
+    private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
+    private final UpdateAttributesIndexPort updateAttributesIndexPort;
+
+    @Override
+    public void updateAttributesOrder(Param param) {
+        checkUserAccess(param.getKitVersionId(), param.getCurrentUserId());
+        updateAttributesIndexPort.updateIndexes(param.getKitVersionId(), param.getAttributes());
+    }
+
+    private void checkUserAccess(Long kitVersionId, UUID currentUserId) {
+        ExpertGroup expertGroup = loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(kitVersionId);
+        if (!Objects.equals(currentUserId, expertGroup.getOwnerId())) {
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        }
+    }
+}
