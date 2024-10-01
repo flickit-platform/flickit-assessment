@@ -37,17 +37,17 @@ class CreateLevelCompetenceUseCaseParamTest {
 
     @Test
     void testCreateLevelCompetenceUseCaseParam_valueParamViolatesConstraints_ErrorMessage() {
-        var throwableForNullViolation = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.value(null)));
-        assertThat(throwableForNullViolation).hasMessage("value: " + CREATE_LEVEL_COMPETENCE_VALUE_NOT_NULL);
+        assertThat(throwable).hasMessage("value: " + CREATE_LEVEL_COMPETENCE_VALUE_NOT_NULL);
 
-        var throwableForMinViolation = assertThrows(ConstraintViolationException.class,
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.value(0)));
-        assertThat(throwableForMinViolation).hasMessage("value: " + CREATE_LEVEL_COMPETENCE_VALUE_MIN);
+        assertThat(throwable).hasMessage("value: " + CREATE_LEVEL_COMPETENCE_VALUE_MIN);
 
-        var throwableForMaxViolation = assertThrows(ConstraintViolationException.class,
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.value(101)));
-        assertThat(throwableForMaxViolation).hasMessage("value: " + CREATE_LEVEL_COMPETENCE_VALUE_MAX);
+        assertThat(throwable).hasMessage("value: " + CREATE_LEVEL_COMPETENCE_VALUE_MAX);
     }
 
     @Test
