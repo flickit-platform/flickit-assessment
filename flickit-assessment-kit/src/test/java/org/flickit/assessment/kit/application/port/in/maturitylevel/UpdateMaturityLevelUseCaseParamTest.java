@@ -18,14 +18,14 @@ class UpdateMaturityLevelUseCaseParamTest {
     void testUpdateMaturityLevelUseCaseParam_IdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.maturityLevelId(null)));
-        assertThat(throwable).hasMessage("id: " + UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("maturityLevelId: " + UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL);
     }
 
     @Test
     void testUpdateMaturityLevelUseCaseParam_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
-        assertThat(throwable).hasMessage("kitId: " + UPDATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
