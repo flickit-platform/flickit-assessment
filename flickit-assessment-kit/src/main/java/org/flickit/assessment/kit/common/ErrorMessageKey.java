@@ -202,6 +202,9 @@ public class ErrorMessageKey {
     public static final String UPDATE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL = "update-level-competence.levelCompetenceId.notNull";
     public static final String UPDATE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "update-level-competence.kitVersionId.notNull";
     public static final String UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL = "update-level-competence.value.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_MIN = "update-level-competence.value.min";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_MAX = "update-level-competence.value.max";
+
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

@@ -33,6 +33,14 @@ class UpdateLevelCompetenceUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.value(null)));
         assertThat(throwable.getMessage()).isEqualTo("value: " + UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.value(-1)));
+        assertThat(throwable).hasMessage("value: " + UPDATE_LEVEL_COMPETENCE_VALUE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.value(101)));
+        assertThat(throwable).hasMessage("value: " + UPDATE_LEVEL_COMPETENCE_VALUE_MAX);
     }
 
     @Test

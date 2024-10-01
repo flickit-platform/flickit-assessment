@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.levelcompetence;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -26,6 +28,8 @@ public interface UpdateLevelCompetenceUseCase {
         Long kitVersionId;
 
         @NotNull(message = UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL)
+        @Min(value = 0, message = UPDATE_LEVEL_COMPETENCE_VALUE_MIN)
+        @Max(value = 100, message = UPDATE_LEVEL_COMPETENCE_VALUE_MAX)
         Integer value;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
