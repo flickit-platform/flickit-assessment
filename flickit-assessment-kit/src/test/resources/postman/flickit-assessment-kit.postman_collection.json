@@ -864,7 +864,7 @@
                   ],
                   "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"order\": 2\n        },\n        {\"id\": 325,\n        \"order\": 1\n        }\n    ]\n}",
+                    "raw": "{\n    \"subjects\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
                     "options": {
                       "raw": {
                         "language": "json"
