@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -70,7 +71,10 @@ public class DataIntegrityViolationExceptionHandler {
     private String extractConstraintIfPossible(NonTransientDataAccessException ex) {
         if (ex instanceof DataIntegrityViolationException e && e.getCause() instanceof ConstraintViolationException cause)
             return extractConstraint(cause.getConstraintName());
-        if (ex instanceof JpaSystemException && ex.getCause() != null && ex.getCause().getCause() != null) {
+        if (ex instanceof DataIntegrityViolationException e && e.getCause() instanceof SQLException cause) {
+            String msg = cause.getMessage();
+            return extractConstraint(POSTGRES_FK_CONSTRAINT_PATTERN, msg);
+        } else if (ex instanceof JpaSystemException && ex.getCause() != null && ex.getCause().getCause() != null) {
             String msg = ex.getCause().getCause().getMessage(); // org.postgresql.util.PSQLException
             return extractConstraint(POSTGRES_FK_CONSTRAINT_PATTERN, msg);
         } else if (ex instanceof DuplicateKeyException && ex.getCause() != null) {
