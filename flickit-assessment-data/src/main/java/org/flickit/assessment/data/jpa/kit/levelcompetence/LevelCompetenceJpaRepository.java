@@ -15,6 +15,10 @@ public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompete
 
     List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdInAndKitVersionId(Iterable<Long> levelIds, Long kitVersionId);
 
+    boolean existsByIdAndKitVersionId(Long id, Long kitVersionId);
+
+    void deleteByIdAndKitVersionId(Long levelId, Long kitVersionId);
+
     @Modifying
     @Query("""
             DELETE LevelCompetenceJpaEntity l
