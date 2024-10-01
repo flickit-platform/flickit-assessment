@@ -17,8 +17,8 @@ class CreateSubjectUseCaseParamTest {
     @Test
     void testCreateSubjectUseCaseParam_kitParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.kitId(null)));
-        assertThat(throwable).hasMessage("kitId: " + CREATE_SUBJECT_KIT_ID_NOT_NULL);
+            () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitVersionId: " + CREATE_SUBJECT_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
@@ -80,7 +80,7 @@ class CreateSubjectUseCaseParamTest {
 
     private CreateSubjectUseCase.Param.ParamBuilder paramBuilder() {
         return CreateSubjectUseCase.Param.builder()
-            .kitId(1L)
+            .kitVersionId(1L)
             .index(3)
             .title("Team")
             .description("team description")

@@ -17,8 +17,8 @@ class CreateAttributeUseCaseParamTest {
     @Test
     void testCreateAttributeUseCaseParam_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.kitId(null)));
-        assertThat(throwable).hasMessage("kitId: " + CREATE_ATTRIBUTE_KIT_ID_NOT_NULL);
+            () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitVersionId: " + CREATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
@@ -86,7 +86,7 @@ class CreateAttributeUseCaseParamTest {
 
     private CreateAttributeUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAttributeUseCase.Param.builder()
-            .kitId(1L)
+            .kitVersionId(1L)
             .index(1)
             .title("software maintainability")
             .description("desc")

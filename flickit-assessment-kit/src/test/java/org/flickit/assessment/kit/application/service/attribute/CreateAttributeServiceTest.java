@@ -1,13 +1,12 @@
 package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.attribute.CreateAttributeUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +17,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,17 +38,17 @@ class CreateAttributeServiceTest {
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
-    private LoadAssessmentKitPort loadAssessmentKitPort;
+    private LoadKitVersionPort loadKitVersionPort;
 
     private final UUID ownerId = UUID.randomUUID();
-    private final AssessmentKit kit = AssessmentKitMother.simpleKit();
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
     void testCreateAttribute_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
         var param = createParam(CreateAttributeUseCase.Param.ParamBuilder::build);
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAttribute(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -58,8 +59,8 @@ class CreateAttributeServiceTest {
         long attributeId = 123L;
         var param = createParam(b -> b.currentUserId(ownerId));
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(createAttributePort.persist(any(Attribute.class), anyLong(), anyLong())).thenReturn(attributeId);
 
         long actualAttributeId = service.createAttribute(param);
@@ -75,7 +76,7 @@ class CreateAttributeServiceTest {
 
     private CreateAttributeUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAttributeUseCase.Param.builder()
-            .kitId(1L)
+            .kitVersionId(1L)
             .index(1)
             .title("software maintainability")
             .description("desc")
