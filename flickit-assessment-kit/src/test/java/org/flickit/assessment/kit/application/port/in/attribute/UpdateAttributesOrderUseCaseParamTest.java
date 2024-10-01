@@ -27,10 +27,10 @@ class UpdateAttributesOrderUseCaseParamTest {
     void testUpdateAttributesOrderUseCaseParam_attributesParamViolatesConstraints_ErrorMessage() {
         var throwableNullViolation = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributes(null)));
-        assertThat(throwableNullViolation).hasMessage("subjects: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_NOT_NULL);
+        assertThat(throwableNullViolation).hasMessage("attributes: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_NOT_NULL);
         var throwableMinViolation = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributes(List.of())));
-        assertThat(throwableMinViolation).hasMessage("subjects: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_SIZE_MIN);
+        assertThat(throwableMinViolation).hasMessage("attributes: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_SIZE_MIN);
     }
 
     @Test
