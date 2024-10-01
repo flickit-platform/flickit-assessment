@@ -14,6 +14,7 @@ public class ErrorMessageKey {
     public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
     public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
+    public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -125,7 +126,7 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
-    public static final String CREATE_SUBJECT_KIT_ID_NOT_NULL = "create-subject.kitId.notNull";
+    public static final String CREATE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "create-subject.kitVersionId.notNull";
     public static final String CREATE_SUBJECT_INDEX_NOT_NULL = "create-subject.index.notNull";
     public static final String CREATE_SUBJECT_TITLE_NOT_NULL = "create-subject.title.notNull";
     public static final String CREATE_SUBJECT_TITLE_SIZE_MIN = "create-subject.title.size.min";
@@ -138,7 +139,7 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
     public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
 
-    public static final String CREATE_ATTRIBUTE_KIT_ID_NOT_NULL = "create-attribute.kitId.notNull";
+    public static final String CREATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "create-attribute.kitVersionId.notNull";
     public static final String CREATE_ATTRIBUTE_INDEX_NOT_NULL = "create-attribute.index.notNull";
     public static final String CREATE_ATTRIBUTE_TITLE_NOT_NULL = "create-attribute.title.notNull";
     public static final String CREATE_ATTRIBUTE_TITLE_MIN_SIZE = "create-attribute.title.min.size";
@@ -152,7 +153,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_INDEX_DUPLICATE = "create-attribute.index.duplicate";
     public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND = "create-attribute.subjectId.notFound";
 
-    public static final String CREATE_MATURITY_LEVEL_KIT_ID_NOT_NULL = "create-maturity-level.kitId.notNull";
+    public static final String CREATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "create-maturity-level.kitVersionId.notNull";
     public static final String CREATE_MATURITY_LEVEL_INDEX_NOT_NULL = "create-maturity-level.index.notNull";
     public static final String CREATE_MATURITY_LEVEL_TITLE_NOT_NULL = "create-maturity-level.title.notNull";
     public static final String CREATE_MATURITY_LEVEL_TITLE_SIZE_MIN = "create-maturity-level.title.size.min";
@@ -166,7 +167,7 @@ public class ErrorMessageKey {
     public static final String CREATE_MATURITY_LEVEL_TITLE_DUPLICATE = "create-maturity-level.title.duplicate";
     public static final String CREATE_MATURITY_LEVEL_VALUE_DUPLICATE = "create-maturity-level.value.duplicate";
 
-    public static final String CREATE_QUESTIONNAIRE_KIT_ID_NOT_NULL = "create-questionnaire.kitId.notNull";
+    public static final String CREATE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "create-questionnaire.kitVersionId.notNull";
     public static final String CREATE_QUESTIONNAIRE_INDEX_NOT_NULL = "create-questionnaire.index.notNull";
     public static final String CREATE_QUESTIONNAIRE_TITLE_NOT_NULL = "create-questionnaire.title.notNull";
     public static final String CREATE_QUESTIONNAIRE_TITLE_SIZE_MIN = "create-questionnaire.title.size.min";

@@ -22,8 +22,8 @@ public interface CreateSubjectUseCase {
 
         private static final int DEFAULT_WEIGHT = 1;
 
-        @NotNull(message = CREATE_SUBJECT_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = CREATE_SUBJECT_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = CREATE_SUBJECT_INDEX_NOT_NULL)
         Integer index;
@@ -45,8 +45,8 @@ public interface CreateSubjectUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitId, Integer index, String title, String description, Integer weight, UUID currentUserId) {
-            this.kitId = kitId;
+        public Param(Long kitVersionId, Integer index, String title, String description, Integer weight, UUID currentUserId) {
+            this.kitVersionId = kitVersionId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
             this.description = description != null && !description.isBlank() ? description.trim() : null;

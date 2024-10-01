@@ -20,8 +20,8 @@ public interface CreateMaturityLevelUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_MATURITY_LEVEL_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = CREATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = CREATE_MATURITY_LEVEL_INDEX_NOT_NULL)
         Integer index;
@@ -43,13 +43,13 @@ public interface CreateMaturityLevelUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitId,
+        public Param(Long kitVersionId,
                      Integer index,
                      String title,
                      String description,
                      Integer value,
                      UUID currentUserId) {
-            this.kitId = kitId;
+            this.kitVersionId = kitVersionId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
             this.description = description != null && !description.isBlank() ? description.trim() : null;
