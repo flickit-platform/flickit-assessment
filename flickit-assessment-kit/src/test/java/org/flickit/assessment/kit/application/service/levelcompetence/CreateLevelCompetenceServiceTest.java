@@ -1,13 +1,12 @@
 package org.flickit.assessment.kit.application.service.levelcompetence;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.kit.application.domain.KitVersionStatus;
+import org.flickit.assessment.kit.application.domain.KitVersion;
+import org.flickit.assessment.kit.application.port.in.levelcompetence.CreateLevelCompetenceUseCase;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.CreateLevelCompetenceUseCase.Param;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionStatusByIdPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
-import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -16,9 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_NOT_UPDATING_STATUS;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -30,78 +31,36 @@ class CreateLevelCompetenceServiceTest {
     private CreateLevelCompetenceService service;
 
     @Mock
-    private LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
+    private LoadKitVersionPort loadKitVersionPort;
 
     @Mock
-    private LoadKitVersionStatusByIdPort loadKitVersionStatusByIdPort;
+    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
     private CreateLevelCompetencePort createLevelCompetencePort;
 
+    private final UUID ownerId = UUID.randomUUID();
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
+
     @Test
     void testCreateLevelCompetence_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        Param param = new Param(12L,
-            13L,
-            15L,
-            80,
-            UUID.randomUUID());
+        Param param = createParam(Param.ParamBuilder::build);
 
-        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(param.getKitVersionId())).thenReturn(expertGroup);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.createLevelCompetence(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
-
-        verifyNoInteractions(loadKitVersionStatusByIdPort, createLevelCompetencePort);
-    }
-
-    @Test
-    void testCreateLevelCompetence_KitIsOnActiveStatus_ThrowsException() {
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        Param param = new Param(12L,
-            13L,
-            15L,
-            80,
-            expertGroup.getOwnerId());
-
-        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(param.getKitVersionId())).thenReturn(expertGroup);
-        when(loadKitVersionStatusByIdPort.loadStatusById(param.getKitVersionId())).thenReturn(KitVersionStatus.ACTIVE);
-
-        var exception = assertThrows(ValidationException.class, () -> service.createLevelCompetence(param));
-        assertEquals(KIT_VERSION_NOT_UPDATING_STATUS, exception.getMessageKey());
-
-        verifyNoInteractions(createLevelCompetencePort);
-    }
-
-    @Test
-    void testCreateLevelCompetence_KitIsOnArchiveStatus_ThrowsException() {
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        Param param = new Param(12L,
-            13L,
-            15L,
-            80,
-            expertGroup.getOwnerId());
-
-        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(param.getKitVersionId())).thenReturn(expertGroup);
-        when(loadKitVersionStatusByIdPort.loadStatusById(param.getKitVersionId())).thenReturn(KitVersionStatus.ARCHIVE);
-
-        var exception = assertThrows(ValidationException.class, () -> service.createLevelCompetence(param));
-        assertEquals(KIT_VERSION_NOT_UPDATING_STATUS, exception.getMessageKey());
 
         verifyNoInteractions(createLevelCompetencePort);
     }
 
     @Test
     void testCreateLevelCompetence_ValidParam_CreateLevelCompetence() {
-        var expertGroup = ExpertGroupMother.createExpertGroup();
-        Param param = new Param(12L,
-            13L,
-            15L,
-            80,
-            expertGroup.getOwnerId());
+        Param param = createParam(b -> b.currentUserId(ownerId));
 
-        when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(param.getKitVersionId())).thenReturn(expertGroup);
-        when(loadKitVersionStatusByIdPort.loadStatusById(param.getKitVersionId())).thenReturn(KitVersionStatus.UPDATING);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(createLevelCompetencePort.persist(anyLong(), anyLong(), anyInt(), anyLong(), any(UUID.class))).thenReturn(153L);
 
         service.createLevelCompetence(param);
@@ -123,5 +82,20 @@ class CreateLevelCompetenceServiceTest {
         assertEquals(param.getKitVersionId(), kitVersionIdParam.getValue());
         assertEquals(param.getValue(), valueParam.getValue());
         assertEquals(param.getCurrentUserId(), createdByIdParam.getValue());
+    }
+
+    private CreateLevelCompetenceUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .kitVersionId(1L)
+            .affectedLevelId(3L)
+            .effectiveLevelId(2L)
+            .value(60)
+            .currentUserId(UUID.randomUUID());
     }
 }
