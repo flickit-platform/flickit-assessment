@@ -22,19 +22,18 @@ public class UpdateMaturityLevelOrdersRestController {
     private final UpdateMaturityLevelOrdersUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessment-kits/{kitId}/maturity-levels/change-orders")
-    ResponseEntity<Void> changeMaturityLevelOrders(@PathVariable("kitId") Long kitId,
+    @PutMapping("/kit-versions/{kitVersionId}/maturity-levels/change-orders")
+    ResponseEntity<Void> changeMaturityLevelOrders(@PathVariable("kitVersionId") Long kitVersionId,
                                                    @RequestBody List<UpdateMaturityLevelOrdersRequestDto> requestDto) {
         var currentUserId = userContext.getUser().id();
-        useCase.changeOrders(toParam(kitId, requestDto, currentUserId));
+        useCase.changeOrders(toParam(kitVersionId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Long kitId, List<UpdateMaturityLevelOrdersRequestDto> requestDto, UUID currentUserId) {
-        return new Param(kitId,
-            requestDto.stream()
-                .map(request -> new MaturityLevelOrder(request.id(), request.index(), request.value()))
-                .toList(),
+    private Param toParam(Long kitVersionId, List<UpdateMaturityLevelOrdersRequestDto> requestDto, UUID currentUserId) {
+        return new Param(kitVersionId,
+            requestDto.stream().map(
+                request -> new MaturityLevelOrder(request.id(), request.index(), request.value())).toList(),
             currentUserId);
     }
 }

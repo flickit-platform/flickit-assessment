@@ -27,4 +27,28 @@
     <changeSet id="0.33-06" author="Ali Sedaghat">
         <modifyDataType tableName="fak_questionnaire" columnName="description" newDataType="varchar(500)"/>
     </changeSet>
+
+    <changeSet id="0.33-07" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="uq_fak_maturitylevel_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.33-08" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_maturitylevel_index_kitversionid"
+                             tableName="fak_maturity_level"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.33-09" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="uq_fak_maturitylevel_value_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.33-10" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, value"
+                             constraintName="uq_fak_maturitylevel_value_kitversionid"
+                             tableName="fak_maturity_level"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>
