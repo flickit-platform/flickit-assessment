@@ -31,7 +31,7 @@ public class UpdateSubjectsOrderRestController {
 
     private Param toParam(Long kitVersionId, UpdateSubjectsOrderRequestDto requestDto, UUID currentUserId) {
         var orders = requestDto.subjects().stream()
-            .map(s -> new SubjectParam(s.id(), s.order()))
+            .map(s -> new SubjectParam(s.id(), s.index()))
             .toList();
         return new Param(kitVersionId, orders, currentUserId);
     }
