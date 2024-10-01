@@ -940,7 +940,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"orders\": [\n    {\n      \"id\": 2342,\n      \"value\": 2,\n      \"index\": 2\n    },\n    {\n      \"id\": 2343,\n      \"value\": 1,\n      \"index\": 1\n    }\n  ]\n}",
+							"raw": "[\n    {\n    \"id\": 2342,\n    \"value\" : 2,\n    \"index\": 2\n},\n{\n    \"id\": 2343,\n    \"value\" : 3,\n    \"index\": 3\n}\n]",
 							"options": {
 								"raw": {
 									"language": "json"
