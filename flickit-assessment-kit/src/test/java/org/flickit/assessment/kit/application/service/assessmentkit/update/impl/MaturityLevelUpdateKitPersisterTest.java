@@ -156,14 +156,14 @@ class MaturityLevelUpdateKitPersisterTest {
             .maturityLevels(List.of(dslLevel))
             .build();
 
-        doNothing().when(updateMaturityLevelPort).update(anyList(), anyLong(), any(UUID.class));
+        doNothing().when(updateMaturityLevelPort).updateAll(anyList(), anyLong(), any(UUID.class));
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         ArgumentCaptor<List<MaturityLevel>> updateCaptor = ArgumentCaptor.forClass(List.class);
         ArgumentCaptor<UUID> uuidCaptor = ArgumentCaptor.forClass(UUID.class);
-        verify(updateMaturityLevelPort).update(updateCaptor.capture(), any(), uuidCaptor.capture());
+        verify(updateMaturityLevelPort).updateAll(updateCaptor.capture(), any(), uuidCaptor.capture());
 
         var updatedMaturityLevel = new MaturityLevel(
             levelTwo().getId(), levelTwo().getCode(), dslLevel.getTitle(), dslLevel.getIndex(), dslLevel.getDescription(), dslLevel.getValue(), levelTwo().getCompetences()
