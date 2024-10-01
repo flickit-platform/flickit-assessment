@@ -179,6 +179,8 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTIONNAIRE_TITLE_DUPLICATE = "create-questionnaire.title.duplicate";
 
     public static final String UPDATE_SUBJECT_INDEX_KIT_VERSION_ID_NOT_NULL = "update-subject-index.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_INDEX_SUBJECT_ORDERS_NOT_NULL = "update-subject-index.subjectOrders.notNull";
+    public static final String UPDATE_SUBJECT_INDEX_SUBJECT_ORDERS_MIN = "update-subject-index.subjectOrders.min";
     public static final String UPDATE_SUBJECT_INDEX_SUBJECT_ID_NOT_NULL = "update-subject-index.subjectId.notNull";
     public static final String UPDATE_SUBJECT_INDEX_INDEX_NOT_NULL = "update-subject-index.index.notNull";
     public static final String UPDATE_SUBJECT_INDEX_INDEX_MIN = "update-subject-index.index.min";
