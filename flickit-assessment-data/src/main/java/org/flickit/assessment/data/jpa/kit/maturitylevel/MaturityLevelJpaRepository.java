@@ -45,15 +45,15 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 ml.lastModifiedBy = :lastModifiedBy
             WHERE ml.id = :id AND ml.kitVersionId = :kitVersionId
         """)
-    void updateInfo(@Param("id") Long id,
-                    @Param("kitVersionId") Long kitVersionId,
-                    @Param("code") String code,
-                    @Param("index") Integer index,
-                    @Param("title") String title,
-                    @Param("description") String description,
-                    @Param("value") Integer value,
-                    @Param("lastModificationTime") LocalDateTime lastModificationTime,
-                    @Param("lastModifiedBy") UUID lastModifiedBy);
+    void update(@Param("id") Long id,
+                @Param("kitVersionId") Long kitVersionId,
+                @Param("code") String code,
+                @Param("index") Integer index,
+                @Param("title") String title,
+                @Param("description") String description,
+                @Param("value") Integer value,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
             FROM MaturityLevelJpaEntity ml

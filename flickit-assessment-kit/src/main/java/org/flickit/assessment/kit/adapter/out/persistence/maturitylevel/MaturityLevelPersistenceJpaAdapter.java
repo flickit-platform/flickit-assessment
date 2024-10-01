@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -68,9 +68,9 @@ public class MaturityLevelPersistenceJpaAdapter implements
     @Override
     public void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy ) {
         if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
-            throw new ResourceNotFoundException(UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_NOT_FOUND);
+            throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
-        repository.updateInfo(maturityLevel.getId(), kitVersionId, maturityLevel.getTitle(), maturityLevel.getIndex(), maturityLevel.getCode(),
+        repository.update(maturityLevel.getId(), kitVersionId, maturityLevel.getTitle(), maturityLevel.getIndex(), maturityLevel.getCode(),
             maturityLevel.getDescription(), maturityLevel.getValue(), lastModificationTime, lastModifiedBy);
     }
 
