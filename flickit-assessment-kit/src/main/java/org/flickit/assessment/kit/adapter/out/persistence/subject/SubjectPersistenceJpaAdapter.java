@@ -8,16 +8,14 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectIndexUseCase.SubjectOrderParam;
 import org.flickit.assessment.kit.application.port.out.subject.*;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity.Fields.INDEX;
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
 
@@ -29,9 +27,7 @@ public class SubjectPersistenceJpaAdapter implements
     CreateSubjectPort,
     LoadSubjectsPort,
     LoadSubjectPort,
-    UpdateSubjectIndexPort,
-    IncreaseSubjectIndexPort,
-    DecreaseSubjectIndexPort {
+    UpdateSubjectsIndexPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
@@ -79,23 +75,12 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateIndex(long kitVersionId, long subjectId, int index) {
-        repository.updateIndex(kitVersionId, subjectId, index);
-    }
+    public void updateIndexes(long kitVersionId, List<SubjectOrderParam> subjectOrders) {
+        var ids = subjectOrders.stream().map(SubjectOrderParam::getSubjectId).collect(Collectors.toSet());
+        var subjectIdToIndexMap = subjectOrders.stream().collect(Collectors.toMap(SubjectOrderParam::getSubjectId, SubjectOrderParam::getIndex));
+        List<SubjectJpaEntity> entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
 
-    @Override
-    public void decreaseSubjectsIndexes(long kitVersionId, int fromIndex, int toIndex) {
-        var subjects = repository.findAllByKitVersionIdAndIndexes(kitVersionId, fromIndex, toIndex,
-            PageRequest.of(0, toIndex - fromIndex, Sort.Direction.ASC, INDEX));
-        subjects.forEach(s -> s.setIndex(s.getIndex() - 1));
-        repository.saveAll(subjects);
-    }
-
-    @Override
-    public void increaseSubjectsIndexes(long kitVersionId, int fromIndex, int toIndex) {
-        var subjects = repository.findAllByKitVersionIdAndIndexes(kitVersionId, fromIndex, toIndex,
-            PageRequest.of(0, toIndex - fromIndex, Sort.Direction.DESC, INDEX));
-        subjects.forEach(s -> s.setIndex(s.getIndex() + 1));
-        repository.saveAll(subjects);
+        entities.forEach(e -> e.setIndex(subjectIdToIndexMap.get(e.getId())));
+        repository.saveAll(entities);
     }
 }
