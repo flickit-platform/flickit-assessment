@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "ced9fd61-142c-4259-9aae-0aac1e7c97b0",
-		"name": "flickit-assessment-kit",
+		"_postman_id": "4efd9bb2-0717-4ea1-9f9b-ef2fbe4a81f1",
+		"name": "flickit-assessment-kit Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "11099181"
+		"_exporter_id": "6692064"
 	},
 	"item": [
 		{
@@ -487,41 +487,41 @@
 					},
 					"response": []
 				},
-              {
-                "name": "Create Attribute",
-                "request": {
-                  "method": "POST",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
-                    "options": {
-                      "raw": {
-                        "language": "json"
-                      }
-                    }
-                  },
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "393",
-                      "attributes"
-                    ]
-                  }
-                },
-                "response": []
-              }
+				{
+					"name": "Create Attribute",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"attributes"
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		},
 		{
@@ -686,43 +686,7 @@
 		},
 		{
 			"name": "levelcompetence",
-			"item": [
-				{
-					"name": "Create Level Competence",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"affectedLevelId\": 3,\n    \"effectiveLevelId\": 5,\n    \"value\": 60\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-                          "raw": "{{base_url}}/{{api_path}}/kit-versions/303/level-competences",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-                              "kit-versions",
-								"303",
-								"level-competences"
-							]
-						}
-					},
-					"response": []
-				}
-			]
+			"item": []
 		},
 		{
 			"name": "Question",
@@ -788,41 +752,41 @@
 					},
 					"response": []
 				},
-              {
-                "name": "Create Questionnaire",
-                "request": {
-                  "method": "POST",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
-                    "options": {
-                      "raw": {
-                        "language": "json"
-                      }
-                    }
-                  },
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "393",
-                      "questionnaires"
-                    ]
-                  }
-                },
-                "response": []
-              }
+				{
+					"name": "Create Questionnaire",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questionnaires"
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		},
 		{
@@ -856,160 +820,195 @@
 					},
 					"response": []
 				},
-              {
-                "name": "Create Subject",
-                "request": {
-                  "method": "POST",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
-                    "options": {
-                      "raw": {
-                        "language": "json"
-                      }
-                    }
-                  },
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "336",
-                      "subjects"
-                    ]
-                  }
-                },
-                "response": []
-              }
+				{
+					"name": "Create Subject",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"336",
+								"subjects"
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		},
-      {
-        "name": "Maturity Level",
-        "item": [
-          {
-            "name": "Create MaturityLevel",
-            "request": {
-              "method": "POST",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "{{authorization_header}}",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
-                "options": {
-                  "raw": {
-                    "language": "json"
-                  }
-                }
-              },
-              "url": {
-                "raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels",
-                "host": [
-                  "{{base_url}}"
-                ],
-                "path": [
-                  "{{api_path}}",
-                  "kit-versions",
-                  "393",
-                  "maturity-levels"
-                ]
-              }
-            },
-            "response": []
-          },
-          {
-            "name": "Update MaturityLevel",
-            "request": {
-              "method": "PUT",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "{{authorization_header}}",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166\r\n}",
-                "options": {
-                  "raw": {
-                    "language": "json"
-                  }
-                }
-              },
-              "url": {
-                "raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels/2227",
-                "host": [
-                  "{{base_url}}"
-                ],
-                "path": [
-                  "{{api_path}}",
-                  "kit-versions",
-                  "393",
-                  "maturity-levels",
-                  "2227"
-                ]
-              }
-            },
-            "response": []
-          }
-        ]
-      },
-      {
-        "name": "LevelCompetence",
-        "item": [
-          {
-            "name": "Update Level Competence",
-            "request": {
-              "method": "PUT",
-              "header": [
-                {
-                  "key": "Authorization",
-                  "value": "{{authorization_header}}",
-                  "type": "text"
-                }
-              ],
-              "body": {
-                "mode": "raw",
-                "raw": "{\n    \"value\": 0\n}",
-                "options": {
-                  "raw": {
-                    "language": "json"
-                  }
-                }
-              },
-              "url": {
-                "raw": "{{base_url}}/{{api_path}}/kit-versions/424/level-competences/2027",
-                "host": [
-                  "{{base_url}}"
-                ],
-                "path": [
-                  "{{api_path}}",
-                  "kit-versions",
-                  "424",
-                  "level-competences",
-                  "2027"
-                ]
-              }
-            },
-            "response": []
-          }
-        ]
-      }
+		{
+			"name": "Maturity Level",
+			"item": [
+				{
+					"name": "Create MaturityLevel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"maturity-levels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update MaturityLevel",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels/2227",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"maturity-levels",
+								"2227"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LevelCompetence",
+			"item": [
+				{
+					"name": "Update Level Competence",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/424/level-competences/2027",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"424",
+								"level-competences",
+								"2027"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Level Competence",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"affectedLevelId\": 3,\n    \"effectiveLevelId\": 5,\n    \"value\": 60\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/303/level-competences",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"303",
+								"level-competences"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
 	],
 	"event": [
 		{
