@@ -189,6 +189,13 @@ public class ErrorMessageKey {
     public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "update-maturity-level.description.size.min";
     public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "update-maturity-level.description.size.max";
 
+    public static final String UPDATE_SUBJECTS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-subjects-order.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECTS_ORDER_SUBJECTS_NOT_NULL = "update-subjects-order.subjects.notNull";
+    public static final String UPDATE_SUBJECTS_ORDER_SUBJECTS_SIZE_MIN = "update-subjects-order.subjects.size.min";
+    public static final String UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL = "update-subjects-order.subjectId.notNull";
+    public static final String UPDATE_SUBJECTS_ORDER_INDEX_NOT_NULL = "update-subjects-order.index.notNull";
+    public static final String UPDATE_SUBJECTS_ORDER_INDEX_MIN = "update-subjects-order.index.min";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }

@@ -8,10 +8,8 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
-import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectParam;
+import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,7 +26,8 @@ public class SubjectPersistenceJpaAdapter implements
     UpdateSubjectPort,
     CreateSubjectPort,
     LoadSubjectsPort,
-    LoadSubjectPort {
+    LoadSubjectPort,
+    UpdateSubjectsIndexPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
@@ -73,5 +72,15 @@ public class SubjectPersistenceJpaAdapter implements
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, kitVersionId);
         return mapToDomainModel(subjectEntity,
             attributeEntities.stream().map(AttributeMapper::mapToDomainModel).toList());
+    }
+
+    @Override
+    public void updateIndexes(long kitVersionId, List<SubjectParam> subjects) {
+        var ids = subjects.stream().map(SubjectParam::getId).collect(Collectors.toSet());
+        var subjectIdToIndexMap = subjects.stream()
+            .collect(Collectors.toMap(SubjectParam::getId, SubjectParam::getIndex));
+        var entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
+        entities.forEach(e -> e.setIndex(subjectIdToIndexMap.get(e.getId())));
+        repository.saveAll(entities);
     }
 }
