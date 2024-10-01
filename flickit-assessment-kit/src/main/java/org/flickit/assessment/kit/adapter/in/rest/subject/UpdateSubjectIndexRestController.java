@@ -21,7 +21,7 @@ public class UpdateSubjectIndexRestController {
     private final UpdateSubjectIndexUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("assessment-kits/{kitVersionId}/subjects/{subjectId}/indexes")
+    @PutMapping("kit-versions/{kitVersionId}/subjects/change-orders")
     public ResponseEntity<Void> updateSubjectIndex(@PathVariable("kitVersionId") Long kitVersionId,
                                                    @RequestBody UpdateSubjectIndexRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
