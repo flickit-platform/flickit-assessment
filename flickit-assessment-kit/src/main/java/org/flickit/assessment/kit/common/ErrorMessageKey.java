@@ -189,6 +189,9 @@ public class ErrorMessageKey {
     public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "update-maturity-level.description.size.min";
     public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "update-maturity-level.description.size.max";
 
+    public static final String DELETE_QUESTION_KIT_VERSION_ID_NOT_NULL = "delete-question.kitVersionId.notNull";
+    public static final String DELETE_QUESTION_QUESTION_ID_NOT_NULL = "delete-question.questionId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
