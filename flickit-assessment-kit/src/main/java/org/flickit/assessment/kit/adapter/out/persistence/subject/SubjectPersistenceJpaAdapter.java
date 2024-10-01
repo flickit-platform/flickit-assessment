@@ -77,8 +77,9 @@ public class SubjectPersistenceJpaAdapter implements
     @Override
     public void updateIndexes(long kitVersionId, List<SubjectOrderParam> subjectOrders) {
         var ids = subjectOrders.stream().map(SubjectOrderParam::getSubjectId).collect(Collectors.toSet());
-        var subjectIdToIndexMap = subjectOrders.stream().collect(Collectors.toMap(SubjectOrderParam::getSubjectId, SubjectOrderParam::getIndex));
-        List<SubjectJpaEntity> entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
+        var subjectIdToIndexMap = subjectOrders.stream()
+            .collect(Collectors.toMap(SubjectOrderParam::getSubjectId, SubjectOrderParam::getIndex));
+        var entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
 
         entities.forEach(e -> e.setIndex(subjectIdToIndexMap.get(e.getId())));
         repository.saveAll(entities);
