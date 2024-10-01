@@ -22,32 +22,24 @@ class UpdateMaturityLevelUseCaseParamTest {
     }
 
     @Test
-    void testUpdateMaturityLevelUseCaseParam_kitIdIsNull_ErrorMessage() {
+    void testUpdateMaturityLevelUseCaseParam_kitVersionIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateMaturityLevelUseCaseParam_titleIsNull_ErrorMessage() {
+    void testUpdateMaturityLevelUseCaseParam_titleParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
         assertThat(throwable).hasMessage("title: " + UPDATE_MATURITY_LEVEL_TITLE_NOT_NULL);
-    }
 
-    @Test
-    void testUpdateMaturityLevelUseCaseParam_titleIsShort_ErrorMessage() {
-        String title = "       t        ";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.title(title)));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title("       t        ")));
         assertThat(throwable).hasMessage("title: " + UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN);
-    }
 
-    @Test
-    void testUpdateMaturityLevelUseCaseParam_titleIsLong_ErrorMessage() {
-        var title = RandomStringUtils.random(101);
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.title(title)));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title(RandomStringUtils.random(101))));
         assertThat(throwable).hasMessage("title: " + UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX);
     }
 
@@ -59,26 +51,18 @@ class UpdateMaturityLevelUseCaseParamTest {
     }
 
     @Test
-    void testUpdateMaturityLevelUseCaseParam_DescriptionIsNull_ErrorMessage() {
+    void testUpdateMaturityLevelUseCaseParam_DescriptionViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.description(null)));
         assertThat(throwable).hasMessage("description: " + UPDATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL);
-    }
 
-    @Test
-    void testUpdateMaturityLevelUseCaseParam_DescriptionIsLong_ErrorMessage() {
-        var description = RandomStringUtils.random(501);
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.description(description)));
-        assertThat(throwable).hasMessage("description: " + UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX);
-    }
-
-    @Test
-    void testUpdateMaturityLevelUseCaseParam_DescriptionIsShort_ErrorMessage() {
-        var description = "            a        ";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.description(description)));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.description("            a        ")));
         assertThat(throwable).hasMessage("description: " + UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.description(RandomStringUtils.random(501))));
+        assertThat(throwable).hasMessage("description: " + UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
@@ -89,7 +73,7 @@ class UpdateMaturityLevelUseCaseParamTest {
     }
 
     @Test
-    void testCreateSubjectUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
+    void testCreateSubjectUseCaseParam_CurrentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
