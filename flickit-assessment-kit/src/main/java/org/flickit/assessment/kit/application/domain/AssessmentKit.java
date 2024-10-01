@@ -27,7 +27,6 @@ public class AssessmentKit {
     private final List<Questionnaire> questionnaires;
     private final Long kitVersionId;
 
-
     public static String generateSlugCode(String title) {
         return title
             .toLowerCase()

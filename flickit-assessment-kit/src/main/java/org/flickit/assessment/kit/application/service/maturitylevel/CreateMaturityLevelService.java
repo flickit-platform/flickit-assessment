@@ -2,11 +2,11 @@ package org.flickit.assessment.kit.application.service.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.CreateMaturityLevelUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.CreateMaturityLevelPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,14 +20,14 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class CreateMaturityLevelService implements CreateMaturityLevelUseCase {
 
-    private final LoadAssessmentKitPort loadAssessmentKitPort;
+    private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CreateMaturityLevelPort createMaturityLevelPort;
 
     @Override
     public long createMaturityLevel(Param param) {
-        AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
-        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId());
+        KitVersion kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -37,6 +37,6 @@ public class CreateMaturityLevelService implements CreateMaturityLevelUseCase {
             param.getIndex(),
             param.getDescription(),
             param.getValue());
-        return createMaturityLevelPort.persist(maturityLevel, kit.getKitVersionId(), param.getCurrentUserId());
+        return createMaturityLevelPort.persist(maturityLevel, param.getKitVersionId(), param.getCurrentUserId());
     }
 }

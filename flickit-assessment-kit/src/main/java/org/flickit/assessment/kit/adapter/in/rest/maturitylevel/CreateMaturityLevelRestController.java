@@ -19,18 +19,18 @@ public class CreateMaturityLevelRestController {
     private final CreateMaturityLevelUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessment-kits/{kitId}/maturity-levels")
-    public ResponseEntity<CreateMaturityLevelResponseDto> createMaturityLevel(@PathVariable("kitId") Long kitId,
+    @PostMapping("/kit-versions/{kitVersionId}/maturity-levels")
+    public ResponseEntity<CreateMaturityLevelResponseDto> createMaturityLevel(@PathVariable("kitVersionId") Long kitVersionId,
                                                                               @RequestBody CreateMaturityLevelRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        long levelId = useCase.createMaturityLevel(toParam(kitId, requestDto, currentUserId));
+        long levelId = useCase.createMaturityLevel(toParam(kitVersionId, requestDto, currentUserId));
         return new ResponseEntity<>(new CreateMaturityLevelResponseDto(levelId), HttpStatus.CREATED);
     }
 
-    private static CreateMaturityLevelUseCase.Param toParam(Long kitId,
+    private static CreateMaturityLevelUseCase.Param toParam(Long kitVersionId,
                                                             CreateMaturityLevelRequestDto requestDto,
                                                             UUID currentUserId) {
-        return new CreateMaturityLevelUseCase.Param(kitId,
+        return new CreateMaturityLevelUseCase.Param(kitVersionId,
             requestDto.index(),
             requestDto.title(),
             requestDto.description(),

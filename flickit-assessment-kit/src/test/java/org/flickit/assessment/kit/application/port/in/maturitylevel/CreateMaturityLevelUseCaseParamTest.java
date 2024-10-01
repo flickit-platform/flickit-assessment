@@ -10,15 +10,15 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateMaturityLevelUseCaseParamTest {
 
     @Test
     void testCreateMaturityLevelUseCaseParam_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.kitId(null)));
-        assertThat(throwable).hasMessage("kitId: " + CREATE_MATURITY_LEVEL_KIT_ID_NOT_NULL);
+            () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitVersionId: " + CREATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
@@ -80,7 +80,7 @@ class CreateMaturityLevelUseCaseParamTest {
 
     private CreateMaturityLevelUseCase.Param.ParamBuilder paramBuilder() {
         return CreateMaturityLevelUseCase.Param.builder()
-            .kitId(1L)
+            .kitVersionId(1L)
             .index(1)
             .title("title")
             .description("description")

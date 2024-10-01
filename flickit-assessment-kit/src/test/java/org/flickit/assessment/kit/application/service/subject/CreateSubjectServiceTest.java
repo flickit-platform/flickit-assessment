@@ -1,12 +1,11 @@
 package org.flickit.assessment.kit.application.service.subject;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.subject.CreateSubjectUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +16,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -34,17 +36,17 @@ class CreateSubjectServiceTest {
     private CreateSubjectPort createSubjectPort;
 
     @Mock
-    private LoadAssessmentKitPort loadAssessmentKitPort;
+    private LoadKitVersionPort loadKitVersionPort;
 
     private final UUID ownerId = UUID.randomUUID();
-    private final AssessmentKit kit = AssessmentKitMother.simpleKit();
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
     void testCreateSubject_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
         CreateSubjectUseCase.Param param = createParam(CreateSubjectUseCase.Param.ParamBuilder::build);
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createSubject(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -55,8 +57,8 @@ class CreateSubjectServiceTest {
         long subjectId = 1;
         CreateSubjectUseCase.Param param = createParam(b -> b.currentUserId(ownerId));
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(createSubjectPort.persist(any(CreateSubjectPort.Param.class))).thenReturn(subjectId);
 
         long createdSubjectId = service.createSubject(param);
@@ -71,7 +73,7 @@ class CreateSubjectServiceTest {
 
     private CreateSubjectUseCase.Param.ParamBuilder paramBuilder() {
         return CreateSubjectUseCase.Param.builder()
-            .kitId(kit.getId())
+            .kitVersionId(kitVersion.getId())
             .index(3)
             .title("Team")
             .description("team description")
