@@ -1,6 +1,5 @@
 package org.flickit.assessment.data.jpa.kit.subject;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -59,21 +58,4 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
-
-    @Modifying
-    @Query("""
-        UPDATE SubjectJpaEntity s
-            SET s.index = :index
-        WHERE s.id = :id AND s.kitVersionId = :kitVersionId
-        """)
-    void updateIndex(@Param("kitVersionId") long kitVersionId, @Param("id") long id, @Param("index") int index);
-
-    @Query("""
-        FROM SubjectJpaEntity s
-        WHERE s.kitVersionId = :kitVersionId AND s.index >= :from AND s.index < :to
-        """)
-    List<SubjectJpaEntity> findAllByKitVersionIdAndIndexes(@Param("kitVersionId") long kitVersionId,
-                                                           @Param("from") int from,
-                                                           @Param("to") int to,
-                                                           Pageable pageable);
 }
