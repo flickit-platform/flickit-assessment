@@ -26,7 +26,7 @@ public interface UpdateSubjectsOrderUseCase {
         Long kitVersionId;
 
         @NotNull(message = UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_NOT_NULL)
-        @Size(min = 1, message = UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_MIN)
+        @Size(min = 1, message = UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_SIZE_MIN)
         List<SubjectOrderParam> subjectOrders;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

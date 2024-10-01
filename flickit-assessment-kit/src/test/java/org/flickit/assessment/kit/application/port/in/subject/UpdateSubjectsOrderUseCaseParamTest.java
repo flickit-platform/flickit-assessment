@@ -30,7 +30,7 @@ class UpdateSubjectsOrderUseCaseParamTest {
         assertThat(throwableNullViolation).hasMessage("subjectOrders: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_NOT_NULL);
         var throwableMinViolation = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjectOrders(List.of())));
-        assertThat(throwableMinViolation).hasMessage("subjectOrders: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_MIN);
+        assertThat(throwableMinViolation).hasMessage("subjectOrders: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_SIZE_MIN);
     }
 
     @Test

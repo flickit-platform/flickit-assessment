@@ -7,8 +7,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static lombok.AccessLevel.PRIVATE;
-
 @Entity
 @IdClass(SubjectJpaEntity.EntityId.class)
 @Table(name = "fak_subject")
@@ -65,10 +63,5 @@ public class SubjectJpaEntity {
 
         private long id;
         private long kitVersionId;
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String INDEX = "index";
     }
 }

@@ -192,7 +192,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_SUBJECTS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-subjects-order.kitVersionId.notNull";
     public static final String UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_NOT_NULL = "update-subjects-order.subjectOrders.notNull";
-    public static final String UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_MIN = "update-subjects-order.subjectOrders.min";
+    public static final String UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_SIZE_MIN = "update-subjects-order.subjectOrders.size.min";
     public static final String UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL = "update-subjects-order.subjectId.notNull";
     public static final String UPDATE_SUBJECTS_ORDER_INDEX_NOT_NULL = "update-subjects-order.index.notNull";
     public static final String UPDATE_SUBJECTS_ORDER_INDEX_MIN = "update-subjects-order.index.min";

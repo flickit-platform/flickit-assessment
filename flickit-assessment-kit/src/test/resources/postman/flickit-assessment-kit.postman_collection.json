@@ -852,7 +852,7 @@
                 "response": []
               },
               {
-                "name": "Update Subject Index",
+                "name": "Update Subjects Orders",
                 "request": {
                   "method": "PUT",
                   "header": [
@@ -864,7 +864,7 @@
                   ],
                   "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"index\": 3\n}",
+                    "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"order\": 2\n        },\n        {\"id\": 325,\n        \"order\": 1\n        }\n    ]\n}",
                     "options": {
                       "raw": {
                         "language": "json"
@@ -872,17 +872,16 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/336/subjects/3/indexes",
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects/change-orders",
                     "host": [
                       "{{base_url}}"
                     ],
                     "path": [
                       "{{api_path}}",
-                      "assessment-kits",
+                      "kit-versions",
                       "336",
                       "subjects",
-                      "3",
-                      "indexes"
+                      "change-orders"
                     ]
                   }
                 },

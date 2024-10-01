@@ -5,6 +5,5 @@ import java.util.List;
 public record UpdateSubjectsOrderRequestDto(List<SubjectOrder> orders) {
 
     record SubjectOrder(Long id, Integer order){
-
     }
 }
