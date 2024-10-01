@@ -138,6 +138,9 @@ public class ErrorMessageKey {
     public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
     public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
 
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_KIT_ID_NOT_NULL = "update-maturity-level-orders.kitId.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL = "update-maturity-level-orders.orders.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
