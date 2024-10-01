@@ -20,7 +20,7 @@ public class CreateLevelCompetenceRestController {
     private final CreateLevelCompetenceUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("assessment-kits/{kitVersionId}/level-competences")
+    @PostMapping("/kit-versions/{kitVersionId}/level-competences")
     public ResponseEntity<Void> createLevelCompetence(@PathVariable("kitVersionId") Long kitVersionId,
                                                       @RequestBody CreateLevelCompetenceRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();

@@ -708,13 +708,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/303/level-competences",
+                          "raw": "{{base_url}}/{{api_path}}/kit-versions/303/level-competences",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-								"assessment-kits",
+                              "kit-versions",
 								"303",
 								"level-competences"
 							]
