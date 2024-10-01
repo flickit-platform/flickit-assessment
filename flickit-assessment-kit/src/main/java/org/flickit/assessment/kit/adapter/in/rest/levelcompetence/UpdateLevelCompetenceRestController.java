@@ -20,16 +20,16 @@ public class UpdateLevelCompetenceRestController {
     private final UpdateLevelCompetenceUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("assessment-kits/{kitId}/level-competences/{levelCompetenceId}")
-    public ResponseEntity<Void> updateLevelCompetence(@PathVariable("levelCompetenceId") Long levelCompetenceId,
-                                                      @PathVariable("kitId") Long kitId,
+    @PutMapping("/kit-versions/{kitVersionId}/level-competences/{levelCompetenceId}")
+    public ResponseEntity<Void> updateLevelCompetence(@PathVariable("kitVersionId") Long kitVersionId,
+                                                      @PathVariable("levelCompetenceId") Long levelCompetenceId,
                                                       @RequestBody UpdateLevelCompetenceRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        useCase.updateLevelCompetence(toParam(levelCompetenceId, kitId, requestDto, currentUserId));
+        useCase.updateLevelCompetence(toParam(levelCompetenceId, kitVersionId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Long levelCompetenceId, Long kitId, UpdateLevelCompetenceRequestDto requestDto, UUID currentUserId) {
-        return new Param(levelCompetenceId, kitId, requestDto.value(), currentUserId);
+    private Param toParam(Long levelCompetenceId, Long kitVersionId, UpdateLevelCompetenceRequestDto requestDto, UUID currentUserId) {
+        return new Param(levelCompetenceId, kitVersionId, requestDto.value(), currentUserId);
     }
 }

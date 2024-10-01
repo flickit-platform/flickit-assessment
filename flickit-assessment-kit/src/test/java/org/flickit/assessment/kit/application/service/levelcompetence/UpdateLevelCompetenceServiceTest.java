@@ -1,26 +1,26 @@
 package org.flickit.assessment.kit.application.service.levelcompetence;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.UpdateLevelCompetenceUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.DeleteLevelCompetencePort;
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.UpdateLevelCompetencePort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +30,7 @@ class UpdateLevelCompetenceServiceTest {
     private UpdateLevelCompetenceService service;
 
     @Mock
-    private LoadAssessmentKitPort loadAssessmentKitPort;
+    private LoadKitVersionPort loadKitVersionPort;
 
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -41,62 +41,59 @@ class UpdateLevelCompetenceServiceTest {
     @Mock
     private DeleteLevelCompetencePort deleteLevelCompetencePort;
 
-
-    @Test
-    void testUpdateLevelCompetence_kitIdInvalid_ShouldReturnResourceNotFoundException() {
-        var currentUserId = UUID.randomUUID();
-        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
-
-        when(loadAssessmentKitPort.load(param.getKitId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateLevelCompetence(param));
-        assertEquals(KIT_ID_NOT_FOUND, throwable.getMessage());
-    }
+    private final UUID ownerId = UUID.randomUUID();
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
     void testUpdateLevelCompetence_CurrentUserIsNotExpertGroupOwner_ShouldReturnAccessDeniedException() {
-        var currentUserId = UUID.randomUUID();
-        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
-        var assessmentKit = mock(AssessmentKit.class);
+        var param = createParam(UpdateLevelCompetenceUseCase.Param.ParamBuilder::build);
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(UUID.randomUUID());
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateLevelCompetence(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
     void testUpdateLevelCompetence_ValidParamsAndValueIsNotZero_SuccessfulUpdateLevelCompetence() {
-        var currentUserId = UUID.randomUUID();
-        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId);
-        var assessmentKit = mock(AssessmentKit.class);
-        ArgumentCaptor<UpdateLevelCompetencePort.Param> updatePortParam = ArgumentCaptor.forClass(UpdateLevelCompetencePort.Param.class);
+        var param = createParam(b -> b.currentUserId(ownerId));
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(currentUserId);
-        doNothing().when(updateLevelCompetencePort).updateValue(any());
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        doNothing().when(updateLevelCompetencePort).updateById(anyLong(), anyLong(), anyInt(), any());
 
-        assertDoesNotThrow(() -> service.updateLevelCompetence(param));
-        verify(updateLevelCompetencePort).updateValue(updatePortParam.capture());
-        assertEquals(param.getLevelCompetenceId(), updatePortParam.getValue().id());
-        assertEquals(currentUserId, updatePortParam.getValue().lastModifiedBy());
+        service.updateLevelCompetence(param);
+
+        verify(updateLevelCompetencePort).updateById(param.getLevelCompetenceId(), param.getKitVersionId(), param.getValue(), param.getCurrentUserId());
         verifyNoInteractions(deleteLevelCompetencePort);
     }
 
     @Test
     void testUpdateLevelCompetence_ValidParamsAndValueIsZero_SuccessfulDeleteLevelCompetence() {
-        var currentUserId = UUID.randomUUID();
-        var value = 0;
-        var assessmentKit = AssessmentKitMother.simpleKit();
-        var param = new UpdateLevelCompetenceUseCase.Param(1L, 2L, value, currentUserId);
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(currentUserId);
-        doNothing().when(deleteLevelCompetencePort).deleteByIdAndKitVersionId(1L, assessmentKit.getKitVersionId());
+        var param = createParam(b -> b.value(0).currentUserId(ownerId));
 
-        assertDoesNotThrow(() -> service.updateLevelCompetence(param));
-        verify(deleteLevelCompetencePort).deleteByIdAndKitVersionId(1L, assessmentKit.getKitVersionId());
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        doNothing().when(deleteLevelCompetencePort).deleteByIdAndKitVersionId(anyLong(), anyLong());
+
+        service.updateLevelCompetence(param);
+
+        verify(deleteLevelCompetencePort).deleteByIdAndKitVersionId(param.getLevelCompetenceId(), param.getKitVersionId());
         verifyNoInteractions(updateLevelCompetencePort);
+    }
+
+    private UpdateLevelCompetenceUseCase.Param createParam(Consumer<UpdateLevelCompetenceUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private UpdateLevelCompetenceUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateLevelCompetenceUseCase.Param.builder()
+                .levelCompetenceId(123L)
+                .kitVersionId(1L)
+                .value(55)
+                .currentUserId(UUID.randomUUID());
     }
 }

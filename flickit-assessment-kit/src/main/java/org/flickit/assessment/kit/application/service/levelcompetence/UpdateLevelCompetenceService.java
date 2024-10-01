@@ -20,15 +20,15 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class UpdateLevelCompetenceService implements UpdateLevelCompetenceUseCase {
 
-    private final LoadAssessmentKitPort loadAssessmentKitPort;
+    private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final UpdateLevelCompetencePort updateLevelCompetencePort;
     private final DeleteLevelCompetencePort deleteLevelCompetencePort;
 
     @Override
     public void updateLevelCompetence(Param param) {
-        var assessmentKit = loadAssessmentKitPort.load(param.getKitId());
-        var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId());
+        var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 

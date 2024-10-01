@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.levelcompetence;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -21,8 +22,8 @@ public interface UpdateLevelCompetenceUseCase {
         @NotNull(message = UPDATE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL)
         Long levelCompetenceId;
 
-        @NotNull(message = UPDATE_LEVEL_COMPETENCE_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = UPDATE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL)
         Integer value;
@@ -30,9 +31,10 @@ public interface UpdateLevelCompetenceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long levelCompetenceId, Long kitId, Integer value, UUID currentUserId) {
+        @Builder
+        public Param(Long levelCompetenceId, Long kitVersionId, Integer value, UUID currentUserId) {
             this.levelCompetenceId = levelCompetenceId;
-            this.kitId = kitId;
+            this.kitVersionId = kitVersionId;
             this.value = value;
             this.currentUserId = currentUserId;
             this.validateSelf();

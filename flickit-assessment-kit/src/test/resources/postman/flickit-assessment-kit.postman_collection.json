@@ -993,13 +993,13 @@
                 }
               },
               "url": {
-                "raw": "{{base_url}}/{{api_path}}/assessment-kits/424/level-competences/2027",
+                "raw": "{{base_url}}/{{api_path}}/kit-versions/424/level-competences/2027",
                 "host": [
                   "{{base_url}}"
                 ],
                 "path": [
                   "{{api_path}}",
-                  "assessment-kits",
+                  "kit-versions",
                   "424",
                   "level-competences",
                   "2027"

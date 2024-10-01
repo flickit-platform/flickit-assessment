@@ -63,8 +63,8 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateValue(Param param) {
-        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+    public void updateById(long id, long kitVersionId, int value, UUID lastModifiedBy) {
+        if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
             throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
 
         repository.updateValue(param.id(),
