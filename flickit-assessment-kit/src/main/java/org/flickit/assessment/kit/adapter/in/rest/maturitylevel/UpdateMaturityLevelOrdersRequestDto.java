@@ -1,4 +1,8 @@
 package org.flickit.assessment.kit.adapter.in.rest.maturitylevel;
 
-public record UpdateMaturityLevelOrdersRequestDto(Long id, Integer index, Integer value) {
+import java.util.List;
+
+public record UpdateMaturityLevelOrdersRequestDto(List<MaturityLevelOrderDto> orders) {
+    record MaturityLevelOrderDto(Long id, Integer index, Integer value) {
+    }
 }

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,15 +23,15 @@ public class UpdateMaturityLevelOrdersRestController {
 
     @PutMapping("/kit-versions/{kitVersionId}/maturity-levels/change-orders")
     ResponseEntity<Void> changeMaturityLevelOrders(@PathVariable("kitVersionId") Long kitVersionId,
-                                                   @RequestBody List<UpdateMaturityLevelOrdersRequestDto> requestDto) {
+                                                   @RequestBody UpdateMaturityLevelOrdersRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         useCase.changeOrders(toParam(kitVersionId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Long kitVersionId, List<UpdateMaturityLevelOrdersRequestDto> requestDto, UUID currentUserId) {
+    private Param toParam(Long kitVersionId, UpdateMaturityLevelOrdersRequestDto requestDto, UUID currentUserId) {
         return new Param(kitVersionId,
-            requestDto.stream().map(
+            requestDto.orders().stream().map(
                 request -> new MaturityLevelOrder(request.id(), request.index(), request.value())).toList(),
             currentUserId);
     }
