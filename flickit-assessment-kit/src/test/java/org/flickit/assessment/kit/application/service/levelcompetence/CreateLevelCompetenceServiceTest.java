@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.levelcomptenece.CreateLevelCompetencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -65,23 +64,11 @@ class CreateLevelCompetenceServiceTest {
 
         service.createLevelCompetence(param);
 
-        var affectedLevelIdParam = ArgumentCaptor.forClass(Long.class);
-        var effectiveLevelIdParam = ArgumentCaptor.forClass(Long.class);
-        var kitVersionIdParam = ArgumentCaptor.forClass(Long.class);
-        var valueParam = ArgumentCaptor.forClass(Integer.class);
-        var createdByIdParam = ArgumentCaptor.forClass(UUID.class);
-
-        verify(createLevelCompetencePort, times(1)).persist(affectedLevelIdParam.capture(),
-            effectiveLevelIdParam.capture(),
-            valueParam.capture(),
-            kitVersionIdParam.capture(),
-            createdByIdParam.capture());
-
-        assertEquals(param.getAffectedLevelId(), affectedLevelIdParam.getValue());
-        assertEquals(param.getEffectiveLevelId(), effectiveLevelIdParam.getValue());
-        assertEquals(param.getKitVersionId(), kitVersionIdParam.getValue());
-        assertEquals(param.getValue(), valueParam.getValue());
-        assertEquals(param.getCurrentUserId(), createdByIdParam.getValue());
+        verify(createLevelCompetencePort, times(1)).persist(param.getAffectedLevelId(),
+            param.getEffectiveLevelId(),
+            param.getValue(),
+            param.getKitVersionId(),
+            param.getCurrentUserId());
     }
 
     private CreateLevelCompetenceUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
