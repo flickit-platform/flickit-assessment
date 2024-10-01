@@ -10,22 +10,22 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UpdateMaturityLevelUseCaseParamTest {
 
     @Test
     void testUpdateMaturityLevelUseCaseParam_IdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.id(null)));
+            () -> createParam(b -> b.maturityLevelId(null)));
         assertThat(throwable).hasMessage("id: " + UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL);
     }
 
     @Test
     void testUpdateMaturityLevelUseCaseParam_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.kitId(null)));
-        assertThat(throwable).hasMessage("kitId: " + UPDATE_MATURITY_LEVEL_KIT_ID_NOT_NULL);
+            () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitId: " + UPDATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
@@ -103,8 +103,8 @@ class UpdateMaturityLevelUseCaseParamTest {
 
     private UpdateMaturityLevelUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateMaturityLevelUseCase.Param.builder()
-            .id(1L)
-            .kitId(2L)
+            .maturityLevelId(1L)
+            .kitVersionId(2L)
             .title("title")
             .index(3)
             .description("team description")

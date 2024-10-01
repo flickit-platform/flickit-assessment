@@ -9,8 +9,8 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface UpdateMaturityLevelUseCase {
 
@@ -21,10 +21,10 @@ public interface UpdateMaturityLevelUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL)
-        Long id;
+        Long maturityLevelId;
 
-        @NotNull(message = UPDATE_MATURITY_LEVEL_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = UPDATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = UPDATE_MATURITY_LEVEL_TITLE_NOT_NULL)
         @Size(min = 3, message = UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN)
@@ -46,9 +46,9 @@ public interface UpdateMaturityLevelUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long id, Long kitId, String title, Integer index, String description, Integer value, UUID currentUserId) {
-            this.id = id;
-            this.kitId = kitId;
+        public Param(Long maturityLevelId, Long kitVersionId, String title, Integer index, String description, Integer value, UUID currentUserId) {
+            this.maturityLevelId = maturityLevelId;
+            this.kitVersionId = kitVersionId;
             this.title = title != null && !title.isBlank() ? title.strip() : null;
             this.index = index;
             this.description = description != null && !description.isBlank() ? description.strip() : null;

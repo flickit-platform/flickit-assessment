@@ -20,14 +20,22 @@ public class UpdateMaturityLevelRestController {
     private final UpdateMaturityLevelUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("assessment-kits/{kitId}/maturity-levels/{maturityLevelId}")
-    public ResponseEntity<Void> updateMaturityLevel(@PathVariable Long kitId, @PathVariable Long maturityLevelId, @RequestBody UpdateMaturityLevelRequestDto requestDto) {
+    @PutMapping("kit-versions/{kitVersionId}/maturity-levels/{maturityLevelId}")
+    public ResponseEntity<Void> updateMaturityLevel(@PathVariable Long kitVersionId,
+                                                    @PathVariable Long maturityLevelId,
+                                                    @RequestBody UpdateMaturityLevelRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        useCase.updateMaturityLevel(toParam(kitId, maturityLevelId, requestDto, currentUserId));
+        useCase.updateMaturityLevel(toParam(kitVersionId, maturityLevelId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Long kitId, Long maturityLevelId, UpdateMaturityLevelRequestDto requestDto, UUID currentUserId) {
-        return new Param(maturityLevelId, kitId, requestDto.title(), requestDto.index(), requestDto.description(), requestDto.value(), currentUserId);
+    private Param toParam(Long kitVersionId, Long maturityLevelId, UpdateMaturityLevelRequestDto requestDto, UUID currentUserId) {
+        return new Param(maturityLevelId,
+            kitVersionId,
+            requestDto.title(),
+            requestDto.index(),
+            requestDto.description(),
+            requestDto.value(),
+            currentUserId);
     }
 }

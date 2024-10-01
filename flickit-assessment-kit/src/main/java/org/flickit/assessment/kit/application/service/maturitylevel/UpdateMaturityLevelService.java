@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,20 +20,20 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class UpdateMaturityLevelService implements UpdateMaturityLevelUseCase {
 
-    private final LoadAssessmentKitPort loadAssessmentKitPort;
+    private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final UpdateMaturityLevelPort updateMaturityLevelPort;
 
     @Override
     public void updateMaturityLevel(Param param) {
-        var assessmentKit = loadAssessmentKitPort.load(param.getKitId());
-        var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId());
+        var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
 
         if (!Objects.equals(expertGroupOwnerId, param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var maturityLevel = new MaturityLevel(param.getId(), MaturityLevel.generateSlugCode(param.getTitle()),
+        var maturityLevel = new MaturityLevel(param.getMaturityLevelId(), MaturityLevel.generateSlugCode(param.getTitle()),
             param.getTitle(), param.getIndex(), param.getDescription(), param.getValue(), null);
-        updateMaturityLevelPort.update(maturityLevel, assessmentKit.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
+        updateMaturityLevelPort.update(maturityLevel, param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
     }
 }
