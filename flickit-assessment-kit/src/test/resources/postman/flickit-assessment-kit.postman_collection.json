@@ -685,6 +685,46 @@
 			]
 		},
 		{
+			"name": "levelcompetence",
+			"item": [
+				{
+					"name": "Create Level Competence",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"affectedLevelId\": 3,\n    \"effectiveLevelId\": 5,\n    \"value\": 60\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+                          "raw": "{{base_url}}/{{api_path}}/kit-versions/303/level-competences",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+                              "kit-versions",
+								"303",
+								"level-competences"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Question",
 			"item": [
 				{
