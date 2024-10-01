@@ -58,5 +58,6 @@ class UpdateSubjectsOrderServiceTest {
         doNothing().when(updateSubjectsIndexPort).updateIndexes(param.getKitVersionId(), param.getSubjectOrders());
 
         service.updateSubjectsOrder(param);
+        verify(updateSubjectsIndexPort, times(1)).updateIndexes(param.getKitVersionId(), param.getSubjectOrders());
     }
 }
