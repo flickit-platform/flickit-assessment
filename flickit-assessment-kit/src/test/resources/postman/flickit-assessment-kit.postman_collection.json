@@ -486,7 +486,42 @@
 						}
 					},
 					"response": []
-				}
+				},
+              {
+                "name": "Create Attribute",
+                "request": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "attributes"
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		},
 		{
@@ -712,7 +747,42 @@
 						}
 					},
 					"response": []
-				}
+				},
+              {
+                "name": "Create Questionnaire",
+                "request": {
+                  "method": "POST",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "questionnaires"
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		},
 		{
@@ -767,13 +837,13 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/336/subjects",
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects",
                     "host": [
                       "{{base_url}}"
                     ],
                     "path": [
                       "{{api_path}}",
-                      "assessment-kits",
+                      "kit-versions",
                       "336",
                       "subjects"
                     ]
@@ -783,47 +853,123 @@
               }
 			]
 		},
-		{
-			"name": "LevelCompetence",
-			"item": [
-				{
-					"name": "Update Level Competence",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"value\": 0\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/424/level-competences/2027",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"424",
-								"level-competences",
-								"2027"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
+      {
+        "name": "Maturity Level",
+        "item": [
+          {
+            "name": "Create MaturityLevel",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "kit-versions",
+                  "393",
+                  "maturity-levels"
+                ]
+              }
+            },
+            "response": []
+          },
+          {
+            "name": "Update MaturityLevel",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166\r\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels/2227",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "kit-versions",
+                  "393",
+                  "maturity-levels",
+                  "2227"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      },
+      {
+        "name": "LevelCompetence",
+        "item": [
+          {
+            "name": "Update Level Competence",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"value\": 0\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/assessment-kits/424/level-competences/2027",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "assessment-kits",
+                  "424",
+                  "level-competences",
+                  "2027"
+                ]
+              }
+            },
+            "response": []
+          }
+        ]
+      }
 	],
 	"event": [
 		{
