@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectIndexUseCase;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectsIndexPort;
@@ -21,18 +21,18 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_NOT_
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateSubjectIndexService implements UpdateSubjectIndexUseCase {
+public class UpdateSubjectsOrderService implements UpdateSubjectsOrderUseCase {
 
     private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
     private final LoadKitVersionPort loadKitVersionPort;
-    private final UpdateSubjectsIndexPort updateSubjectsIndexesPort;
+    private final UpdateSubjectsIndexPort updateSubjectsIndexPort;
 
     @Override
-    public void updateSubjectIndex(Param param) {
+    public void updateSubjectsOrder(Param param) {
         checkUserAccess(param.getKitVersionId(), param.getCurrentUserId());
         checkKitVersionStatus(param.getKitVersionId());
 
-        updateSubjectsIndexesPort.updateIndexes(param.getKitVersionId(), param.getSubjectOrders());
+        updateSubjectsIndexPort.updateIndexes(param.getKitVersionId(), param.getSubjectOrders());
     }
 
     private void checkUserAccess(Long kitVersionId, UUID currentUserId) {

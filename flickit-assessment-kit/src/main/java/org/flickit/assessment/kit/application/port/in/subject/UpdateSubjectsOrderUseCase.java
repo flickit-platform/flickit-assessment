@@ -14,19 +14,19 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public interface UpdateSubjectIndexUseCase {
+public interface UpdateSubjectsOrderUseCase {
 
-    void updateSubjectIndex(Param param);
+    void updateSubjectsOrder(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_SUBJECT_INDEX_KIT_VERSION_ID_NOT_NULL)
+        @NotNull(message = UPDATE_SUBJECTS_ORDER_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = UPDATE_SUBJECT_INDEX_SUBJECT_ORDERS_NOT_NULL)
-        @Size(min = 1, message = UPDATE_SUBJECT_INDEX_SUBJECT_ORDERS_MIN)
+        @NotNull(message = UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_NOT_NULL)
+        @Size(min = 1, message = UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_MIN)
         List<SubjectOrderParam> subjectOrders;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -45,11 +45,11 @@ public interface UpdateSubjectIndexUseCase {
     @EqualsAndHashCode(callSuper = true)
     class SubjectOrderParam extends SelfValidating<SubjectOrderParam> {
 
-        @NotNull(message = UPDATE_SUBJECT_INDEX_SUBJECT_ID_NOT_NULL)
+        @NotNull(message = UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL)
         Long subjectId;
 
-        @NotNull(message = UPDATE_SUBJECT_INDEX_INDEX_NOT_NULL)
-        @Min(value = 1, message = UPDATE_SUBJECT_INDEX_INDEX_MIN)
+        @NotNull(message = UPDATE_SUBJECTS_ORDER_INDEX_NOT_NULL)
+        @Min(value = 1, message = UPDATE_SUBJECTS_ORDER_INDEX_MIN)
         Integer index;
 
         @Builder
