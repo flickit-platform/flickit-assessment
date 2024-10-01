@@ -30,7 +30,7 @@ public class KitVersionPersistenceJpaAdapter implements
     @Override
     public KitVersionStatus loadStatusById(long id) {
         return repository.findById(id)
-            .map(x -> KitVersionStatus.valueOfByOrdinal(x.getStatus()))
+            .map(x -> KitVersionStatus.valueOfById(x.getStatus()))
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
     }
 }
