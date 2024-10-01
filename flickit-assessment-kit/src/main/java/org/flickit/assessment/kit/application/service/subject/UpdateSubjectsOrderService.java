@@ -25,7 +25,7 @@ public class UpdateSubjectsOrderService implements UpdateSubjectsOrderUseCase {
     @Override
     public void updateSubjectsOrder(Param param) {
         checkUserAccess(param.getKitVersionId(), param.getCurrentUserId());
-        updateSubjectsIndexPort.updateIndexes(param.getKitVersionId(), param.getSubjectOrders());
+        updateSubjectsIndexPort.updateIndexes(param.getKitVersionId(), param.getSubjects());
     }
 
     private void checkUserAccess(Long kitVersionId, UUID currentUserId) {

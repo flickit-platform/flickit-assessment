@@ -25,17 +25,17 @@ public interface UpdateSubjectsOrderUseCase {
         @NotNull(message = UPDATE_SUBJECTS_ORDER_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_NOT_NULL)
-        @Size(min = 1, message = UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_SIZE_MIN)
-        List<SubjectOrderParam> subjectOrders;
+        @NotNull(message = UPDATE_SUBJECTS_ORDER_SUBJECTS_NOT_NULL)
+        @Size(min = 1, message = UPDATE_SUBJECTS_ORDER_SUBJECTS_SIZE_MIN)
+        List<SubjectParam> subjects;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitVersionId, List<SubjectOrderParam> subjectOrders, UUID currentUserId) {
+        public Param(Long kitVersionId, List<SubjectParam> subjects, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
-            this.subjectOrders = subjectOrders;
+            this.subjects = subjects;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
@@ -43,18 +43,18 @@ public interface UpdateSubjectsOrderUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    class SubjectOrderParam extends SelfValidating<SubjectOrderParam> {
+    class SubjectParam extends SelfValidating<SubjectParam> {
 
         @NotNull(message = UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL)
-        Long subjectId;
+        Long id;
 
         @NotNull(message = UPDATE_SUBJECTS_ORDER_INDEX_NOT_NULL)
         @Min(value = 1, message = UPDATE_SUBJECTS_ORDER_INDEX_MIN)
         Integer index;
 
         @Builder
-        public SubjectOrderParam(Long subjectId, Integer index) {
-            this.subjectId = subjectId;
+        public SubjectParam(Long id, Integer index) {
+            this.id = id;
             this.index = index;
             this.validateSelf();
         }

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectOrderParam;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +30,8 @@ public class UpdateSubjectsOrderRestController {
     }
 
     private Param toParam(Long kitVersionId, UpdateSubjectsOrderRequestDto requestDto, UUID currentUserId) {
-        var orders = requestDto.orders().stream()
-            .map(s -> new SubjectOrderParam(s.id(), s.order()))
+        var orders = requestDto.subjects().stream()
+            .map(s -> new SubjectParam(s.id(), s.order()))
             .toList();
         return new Param(kitVersionId, orders, currentUserId);
     }

@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.port.in.subject;
 
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectOrderParam;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectParam;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -24,13 +24,13 @@ class UpdateSubjectsOrderUseCaseParamTest {
     }
 
     @Test
-    void testUpdateSubjectsOrderUseCaseParam_subjectOrdersParamViolatesConstraints_ErrorMessage() {
+    void testUpdateSubjectsOrderUseCaseParam_subjectsParamViolatesConstraints_ErrorMessage() {
         var throwableNullViolation = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.subjectOrders(null)));
-        assertThat(throwableNullViolation).hasMessage("subjectOrders: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_NOT_NULL);
+            () -> createParam(b -> b.subjects(null)));
+        assertThat(throwableNullViolation).hasMessage("subjects: " + UPDATE_SUBJECTS_ORDER_SUBJECTS_NOT_NULL);
         var throwableMinViolation = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.subjectOrders(List.of())));
-        assertThat(throwableMinViolation).hasMessage("subjectOrders: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ORDERS_SIZE_MIN);
+            () -> createParam(b -> b.subjects(List.of())));
+        assertThat(throwableMinViolation).hasMessage("subjects: " + UPDATE_SUBJECTS_ORDER_SUBJECTS_SIZE_MIN);
     }
 
     @Test
@@ -49,7 +49,7 @@ class UpdateSubjectsOrderUseCaseParamTest {
     private Param.ParamBuilder paramBuilder() {
         return Param.builder()
             .kitVersionId(1L)
-            .subjectOrders(List.of(new SubjectOrderParam(2L, 5)))
+            .subjects(List.of(new SubjectParam(2L, 5)))
             .currentUserId(UUID.randomUUID());
     }
 

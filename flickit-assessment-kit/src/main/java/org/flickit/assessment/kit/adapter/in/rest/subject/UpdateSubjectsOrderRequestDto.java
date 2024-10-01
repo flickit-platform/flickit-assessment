@@ -2,8 +2,8 @@ package org.flickit.assessment.kit.adapter.in.rest.subject;
 
 import java.util.List;
 
-public record UpdateSubjectsOrderRequestDto(List<SubjectOrder> orders) {
+public record UpdateSubjectsOrderRequestDto(List<Subject> subjects) {
 
-    record SubjectOrder(Long id, Integer order){
+    record Subject(Long id, Integer order){
     }
 }

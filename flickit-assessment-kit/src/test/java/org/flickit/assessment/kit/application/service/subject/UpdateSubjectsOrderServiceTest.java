@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.subject;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectOrderParam;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectParam;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectsIndexPort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
@@ -36,7 +36,7 @@ class UpdateSubjectsOrderServiceTest {
     void testUpdateSubjectsOrder_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
         var expertGroup = ExpertGroupMother.createExpertGroup();
         Param param = new Param(12L,
-            List.of(new SubjectOrderParam(5L, 2), new SubjectOrderParam(6L, 1)),
+            List.of(new SubjectParam(5L, 2), new SubjectParam(6L, 1)),
             UUID.randomUUID());
 
         when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(param.getKitVersionId())).thenReturn(expertGroup);
@@ -51,13 +51,13 @@ class UpdateSubjectsOrderServiceTest {
     void testUpdateSubjectsOrder_ValidParam_UpdateSubjectsIndex() {
         var expertGroup = ExpertGroupMother.createExpertGroup();
         Param param = new Param(12L,
-            List.of(new SubjectOrderParam(5L, 2), new SubjectOrderParam(6L, 1)),
+            List.of(new SubjectParam(5L, 2), new SubjectParam(6L, 1)),
             expertGroup.getOwnerId());
 
         when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(param.getKitVersionId())).thenReturn(expertGroup);
-        doNothing().when(updateSubjectsIndexPort).updateIndexes(param.getKitVersionId(), param.getSubjectOrders());
+        doNothing().when(updateSubjectsIndexPort).updateIndexes(param.getKitVersionId(), param.getSubjects());
 
         service.updateSubjectsOrder(param);
-        verify(updateSubjectsIndexPort, times(1)).updateIndexes(param.getKitVersionId(), param.getSubjectOrders());
+        verify(updateSubjectsIndexPort, times(1)).updateIndexes(param.getKitVersionId(), param.getSubjects());
     }
 }

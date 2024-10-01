@@ -8,7 +8,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectOrderParam;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectParam;
 import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.stereotype.Component;
 
@@ -75,10 +75,10 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateIndexes(long kitVersionId, List<SubjectOrderParam> subjectOrders) {
-        var ids = subjectOrders.stream().map(SubjectOrderParam::getSubjectId).collect(Collectors.toSet());
+    public void updateIndexes(long kitVersionId, List<SubjectParam> subjectOrders) {
+        var ids = subjectOrders.stream().map(SubjectParam::getId).collect(Collectors.toSet());
         var subjectIdToIndexMap = subjectOrders.stream()
-            .collect(Collectors.toMap(SubjectOrderParam::getSubjectId, SubjectOrderParam::getIndex));
+            .collect(Collectors.toMap(SubjectParam::getId, SubjectParam::getIndex));
         var entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
 
         entities.forEach(e -> e.setIndex(subjectIdToIndexMap.get(e.getId())));

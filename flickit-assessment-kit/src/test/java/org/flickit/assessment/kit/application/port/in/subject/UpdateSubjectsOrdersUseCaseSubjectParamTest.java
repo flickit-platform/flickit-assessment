@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.subject;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectOrderParam;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectParam;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Consumer;
@@ -10,17 +10,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class UpdateSubjectsOrdersUseCaseSubjectOrderParamTest {
+class UpdateSubjectsOrdersUseCaseSubjectParamTest {
 
     @Test
-    void testUpdateSubjectsOrderUseCaseSubjectOrderParam_subjectIdParamViolatesConstraints_ErrorMessage() {
+    void testUpdateSubjectsOrderUseCaseSubjectParam_subjectIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.subjectId(null)));
-        assertThat(throwable).hasMessage("subjectId: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL);
+            () -> createParam(b -> b.id(null)));
+        assertThat(throwable).hasMessage("id: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateSubjectsOrderUseCaseSubjectOrderParam_indexParamViolatesConstraints_ErrorMessage() {
+    void testUpdateSubjectsOrderUseCaseSubjectParam_indexParamViolatesConstraints_ErrorMessage() {
         var throwableNullViolates = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.index(null)));
         assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_SUBJECTS_ORDER_INDEX_NOT_NULL);
@@ -29,15 +29,15 @@ class UpdateSubjectsOrdersUseCaseSubjectOrderParamTest {
         assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_SUBJECTS_ORDER_INDEX_MIN);
     }
 
-    private void createParam(Consumer<SubjectOrderParam.SubjectOrderParamBuilder> changer) {
+    private void createParam(Consumer<SubjectParam.SubjectParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         paramBuilder.build();
     }
 
-    private SubjectOrderParam.SubjectOrderParamBuilder paramBuilder() {
-        return SubjectOrderParam.builder()
-            .subjectId(2L)
+    private SubjectParam.SubjectParamBuilder paramBuilder() {
+        return SubjectParam.builder()
+            .id(2L)
             .index(3);
     }
 }
