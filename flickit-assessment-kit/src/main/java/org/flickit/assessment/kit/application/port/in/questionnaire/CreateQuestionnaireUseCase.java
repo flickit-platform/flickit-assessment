@@ -20,8 +20,8 @@ public interface CreateQuestionnaireUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_QUESTIONNAIRE_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = CREATE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = CREATE_QUESTIONNAIRE_INDEX_NOT_NULL)
         Integer index;
@@ -40,8 +40,8 @@ public interface CreateQuestionnaireUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitId, Integer index, String title, String description, UUID currentUserId) {
-            this.kitId = kitId;
+        public Param(Long kitVersionId, Integer index, String title, String description, UUID currentUserId) {
+            this.kitVersionId = kitVersionId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
             this.description = description != null && !description.isBlank() ? description.trim() : null;

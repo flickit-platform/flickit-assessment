@@ -19,18 +19,18 @@ public class CreateAttributeRestController {
     private final CreateAttributeUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessment-kits/{kitId}/attributes")
-    public ResponseEntity<CreateAttributeResponseDto> createAttribute(@PathVariable("kitId") Long kitId,
+    @PostMapping("/kit-versions/{kitVersionId}/attributes")
+    public ResponseEntity<CreateAttributeResponseDto> createAttribute(@PathVariable("kitVersionId") Long kitVersionId,
                                                                       @RequestBody CreateAttributeRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        long attributeId = useCase.createAttribute(toParam(kitId, requestDto, currentUserId));
+        long attributeId = useCase.createAttribute(toParam(kitVersionId, requestDto, currentUserId));
         return new ResponseEntity<>(new CreateAttributeResponseDto(attributeId), HttpStatus.CREATED);
     }
 
-    private CreateAttributeUseCase.Param toParam(Long kitId,
+    private CreateAttributeUseCase.Param toParam(Long kitVersionId,
                                                  CreateAttributeRequestDto requestDto,
                                                  UUID currentUserId) {
-        return new CreateAttributeUseCase.Param(kitId,
+        return new CreateAttributeUseCase.Param(kitVersionId,
             requestDto.index(),
             requestDto.title(),
             requestDto.description(),

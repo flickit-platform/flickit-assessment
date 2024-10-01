@@ -2,12 +2,12 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.attribute.CreateAttributeUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.attribute.CreateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +23,12 @@ public class CreateAttributeService implements CreateAttributeUseCase {
 
     private final CreateAttributePort createAttributePort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final LoadAssessmentKitPort loadAssessmentKitPort;
+    private final LoadKitVersionPort loadKitVersionPort;
 
     @Override
     public long createAttribute(Param param) {
-        AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
-        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId());
+        KitVersion kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -43,6 +43,6 @@ public class CreateAttributeService implements CreateAttributeUseCase {
             param.getCurrentUserId(),
             param.getCurrentUserId());
 
-        return createAttributePort.persist(attribute, param.getSubjectId(), kit.getKitVersionId());
+        return createAttributePort.persist(attribute, param.getSubjectId(), param.getKitVersionId());
     }
 }
