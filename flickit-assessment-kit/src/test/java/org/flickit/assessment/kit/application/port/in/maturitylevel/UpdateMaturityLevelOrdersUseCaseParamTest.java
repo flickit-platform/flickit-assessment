@@ -16,21 +16,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateMaturityLevelOrdersUseCaseParamTest {
 
     @Test
-    void testUpdateMaturityLevelOrdersUseCaseParam_kitVersionIdIdIsNull_ErrorMessage() {
+    void testUpdateMaturityLevelOrdersUseCaseParam_kitVersionViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateMaturityLevelOrdersUseCaseParam_ordersIsNull_ErrorMessage() {
+    void testUpdateMaturityLevelOrdersUseCaseParam_ordersViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.orders(null)));
         assertThat(throwable).hasMessage("orders: " + UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL);
     }
 
     @Test
-    void testUpdateMaturityLevelOrdersUseCaseParam_currentUserIsNull_ErrorMessage() {
+    void testUpdateMaturityLevelOrdersUseCaseParam_currentUserIdViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
