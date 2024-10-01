@@ -2,8 +2,10 @@ package org.flickit.assessment.kit.application.port.in.subject;
 
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectIndexUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectIndexUseCase.SubjectOrderParam;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -22,20 +24,13 @@ class UpdateSubjectIndexUseCaseParamTest {
     }
 
     @Test
-    void testUpdateSubjectIndexUseCaseParam_subjectIdParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.subjectId(null)));
-        assertThat(throwable).hasMessage("subjectId: " + UPDATE_SUBJECT_INDEX_SUBJECT_ID_NOT_NULL);
-    }
-
-    @Test
-    void testUpdateSubjectIndexUseCaseParam_indexParamViolatesConstraints_ErrorMessage() {
-        var throwableNullViolates = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.index(null)));
-        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_SUBJECT_INDEX_INDEX_NOT_NULL);
-        var throwableMinViolates = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.index(0)));
-        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_SUBJECT_INDEX_INDEX_MIN);
+    void testUpdateSubjectIndexUseCaseParam_subjectOrdersParamViolatesConstraints_ErrorMessage() {
+        var throwableNullViolation = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.subjectOrders(null)));
+        assertThat(throwableNullViolation).hasMessage("subjectOrders: " + UPDATE_SUBJECT_INDEX_SUBJECT_ORDERS_NOT_NULL);
+        var throwableMinViolation = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.subjectOrders(List.of())));
+        assertThat(throwableMinViolation).hasMessage("subjectOrders: " + UPDATE_SUBJECT_INDEX_SUBJECT_ORDERS_MIN);
     }
 
     @Test
@@ -54,8 +49,7 @@ class UpdateSubjectIndexUseCaseParamTest {
     private Param.ParamBuilder paramBuilder() {
         return Param.builder()
             .kitVersionId(1L)
-            .subjectId(2L)
-            .index(3)
+            .subjectOrders(List.of(new SubjectOrderParam(2L, 5)))
             .currentUserId(UUID.randomUUID());
     }
 
