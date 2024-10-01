@@ -12,5 +12,6 @@ public interface UpdateMaturityLevelPort {
     void updateAll(List<MaturityLevel> maturityLevels, Long kitVersionId, UUID lastModifiedBy);
 
     void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy);
+
     void updateOrders(List<MaturityLevelOrder> maturityLevelOrders, Long kitVersionId, UUID lastModifiedBy);
 }
