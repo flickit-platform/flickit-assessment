@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_MATURITY_LEVEL_KIT_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DeleteMaturityLevelUseCaseTest {
 
@@ -22,8 +22,8 @@ class DeleteMaturityLevelUseCaseTest {
 
     @Test
     void testDeleteMaturityLevelParam_kitIdIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.kitId(null)));
-        assertThat(throwable).hasMessage("kitId: " + DELETE_MATURITY_LEVEL_KIT_ID_NOT_NULL);
+        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitId: " + DELETE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
@@ -41,7 +41,7 @@ class DeleteMaturityLevelUseCaseTest {
     private DeleteMaturityLevelUseCase.Param.ParamBuilder paramBuilder() {
         return DeleteMaturityLevelUseCase.Param.builder()
             .maturityLevelId(1L)
-            .kitId(2L)
+            .kitVersionId(2L)
             .currentUserId(UUID.randomUUID());
     }
 }

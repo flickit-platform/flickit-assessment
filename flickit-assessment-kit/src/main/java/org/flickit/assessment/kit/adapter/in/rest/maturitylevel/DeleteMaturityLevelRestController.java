@@ -19,14 +19,14 @@ public class DeleteMaturityLevelRestController {
     private final DeleteMaturityLevelUseCase useCase;
     private final UserContext userContext;
 
-    @DeleteMapping("/assessment-kits/{kitId}/maturity-levels/{maturityLevelId}")
-    ResponseEntity<Void> deleteMaturityLevel(@PathVariable("kitId") Long kitId, @PathVariable("maturityLevelId") Long maturityLevelId) {
+    @DeleteMapping("/kit-versions/{kitVersionId}/maturity-levels/{maturityLevelId}")
+    public ResponseEntity<Void> deleteMaturityLevel(@PathVariable("kitVersionId") Long kitId, @PathVariable("maturityLevelId") Long maturityLevelId) {
         var currentUserId = userContext.getUser().id();
         useCase.delete(toParam(maturityLevelId, kitId, currentUserId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    private Param toParam(Long maturityLevelId, Long kitId, UUID currentUserId) {
-        return new Param(maturityLevelId, kitId, currentUserId);
+    private Param toParam(Long maturityLevelId, Long kitVersionId, UUID currentUserId) {
+        return new Param(maturityLevelId, kitVersionId, currentUserId);
     }
 }

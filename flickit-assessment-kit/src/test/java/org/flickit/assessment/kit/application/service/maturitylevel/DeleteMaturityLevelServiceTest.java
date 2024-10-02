@@ -1,12 +1,12 @@
 package org.flickit.assessment.kit.application.service.maturitylevel;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.DeleteMaturityLevelUseCase;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.DeleteMaturityLevelUseCase.Param;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.DeleteMaturityLevelPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +17,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,7 +31,7 @@ class DeleteMaturityLevelServiceTest {
     DeleteMaturityLevelService service;
 
     @Mock
-    LoadAssessmentKitPort loadAssessmentKitPort;
+    LoadKitVersionPort loadKitVersionPort;
 
     @Mock
     LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -36,29 +39,29 @@ class DeleteMaturityLevelServiceTest {
     @Mock
     DeleteMaturityLevelPort deleteMaturityLevelPort;
 
+    private final UUID ownerId = UUID.randomUUID();
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
+
     @Test
     void testDeleteMaturityLevelService_CurrentUserIsNotExpertGroupOwner_AccessDenied() {
         Param param = createParam(DeleteMaturityLevelUseCase.Param.ParamBuilder::build);
-        var assessmentKit = AssessmentKitMother.simpleKit();
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(UUID.randomUUID());
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.delete(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
     void testDeleteMaturityLevelService_ValidParameters_ShouldDeleteMaturityLevel() {
-        Param param = createParam(DeleteMaturityLevelUseCase.Param.ParamBuilder::build);
-        var assessmentKit = AssessmentKitMother.simpleKit();
+        Param param = createParam(b -> b.currentUserId(ownerId));
 
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        assertDoesNotThrow(() -> service.delete(param));
-        verify(deleteMaturityLevelPort).delete(param.getMaturityLevelId(), assessmentKit.getKitVersionId());
+        service.delete(param);
+        verify(deleteMaturityLevelPort).delete(param.getMaturityLevelId(), param.getKitVersionId());
     }
 
     private DeleteMaturityLevelUseCase.Param createParam(Consumer<DeleteMaturityLevelUseCase.Param.ParamBuilder> changer) {
@@ -70,7 +73,7 @@ class DeleteMaturityLevelServiceTest {
     private DeleteMaturityLevelUseCase.Param.ParamBuilder paramBuilder() {
         return DeleteMaturityLevelUseCase.Param.builder()
             .maturityLevelId(1L)
-            .kitId(2L)
+            .kitVersionId(2L)
             .currentUserId(UUID.randomUUID());
     }
 }
