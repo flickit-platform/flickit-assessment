@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TITLE_ACCEPT_ASSESSMENT_INVITATION;
+import static org.flickit.assessment.core.common.MessageKey.NOTIFICATION_TITLE_ACCEPT_ASSESSMENT_INVITATION;
 
 @Slf4j
 @Component
