@@ -40,10 +40,10 @@ public class LevelCompetencePersistenceJpaAdapter implements
     public Long persist(Long affectedLevelId, Long effectiveLevelId, int value, Long kitVersionId, UUID createdBy) {
         LevelCompetenceJpaEntity entity = new LevelCompetenceJpaEntity(
             null,
+            kitVersionId,
             affectedLevelId,
             effectiveLevelId,
             value,
-            kitVersionId,
             LocalDateTime.now(),
             LocalDateTime.now(),
             createdBy,
