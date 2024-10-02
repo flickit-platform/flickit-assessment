@@ -29,13 +29,12 @@ public class UpdateLevelCompetenceService implements UpdateLevelCompetenceUseCas
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (param.getValue() == 0)
-            deleteLevelCompetencePort.deleteByIdAndKitVersionId(param.getLevelCompetenceId(), param.getKitVersionId());
-        else
+        if (param.getValue() != 0)
             updateLevelCompetencePort.updateById(param.getLevelCompetenceId(),
-                param.getKitVersionId(),
-                param.getValue(),
-                param.getCurrentUserId());
+                    param.getKitVersionId(),
+                    param.getValue(),
+                    param.getCurrentUserId());
+        else
+            deleteLevelCompetencePort.deleteByIdAndKitVersionId(param.getLevelCompetenceId(), param.getKitVersionId());
     }
-
 }

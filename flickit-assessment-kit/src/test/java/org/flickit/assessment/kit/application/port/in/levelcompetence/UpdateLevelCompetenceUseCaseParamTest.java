@@ -15,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateLevelCompetenceUseCaseParamTest {
 
     @Test
-    void testUpdateLevelCompetence_LevelCompetenceIdIsNull_ErrorMessage() {
+    void testUpdateLevelCompetenceUseCaseParam_LevelCompetenceIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.levelCompetenceId(null)));
         assertThat(throwable.getMessage()).isEqualTo("levelCompetenceId: " + UPDATE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateLevelCompetence_KitIdIsNull_ErrorMessage() {
+    void testUpdateLevelCompetenceUseCaseParam_KitVersionIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable.getMessage()).isEqualTo("kitVersionId: " + UPDATE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateLevelCompetence_ValueParamViolatesConstraint_ErrorMessage() {
+    void testUpdateLevelCompetenceUseCaseParam_ValueParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.value(null)));
         assertThat(throwable.getMessage()).isEqualTo("value: " + UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL);
@@ -44,16 +44,15 @@ class UpdateLevelCompetenceUseCaseParamTest {
     }
 
     @Test
-    void testUpdateLevelCompetence_CurrentUserIdIsNull_ErrorMessage() {
+    void testUpdateLevelCompetenceUseCaseParam_CurrentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, null));
+            () -> createParam(b->b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateLevelCompetence_ValidParams_ShouldNotThrowException() {
-        var currentUserId = UUID.randomUUID();
-        assertDoesNotThrow(() -> new UpdateLevelCompetenceUseCase.Param(1L, 2L, 3, currentUserId));
+    void testUpdateLevelCompetenceUseCaseParam_ValidParams_ShouldNotThrowException() {
+        assertDoesNotThrow(() -> createParam(UpdateLevelCompetenceUseCase.Param.ParamBuilder::build));
     }
 
     private void createParam(Consumer<UpdateLevelCompetenceUseCase.Param.ParamBuilder> changer) {
