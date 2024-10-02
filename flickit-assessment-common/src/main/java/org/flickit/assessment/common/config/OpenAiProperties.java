@@ -34,7 +34,7 @@ public class OpenAiProperties {
         An assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
         The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
         The advice includes the current status (selected option) and the goal status for each relevant question.
-        Task: Based on the provided advice items, generate a clear narrative in up to 10 concise bullet points formatted with HTML tags.
+        Task: Based on the provided advice items, generate a clear narrative in up to 10 concise bullet points formatted with HTML tags (this could be 2, 3, or more, depending on the advice).
         Ensure that the advice is polite, constructive, and focused on actionable improvements, tailored for an expert software assessor.
         Avoid references to individual scores or negative phrasing. Keep the tone professional and supportive.
         Before the bullets, write a brief paragraph mentioning of the attributes and their target levels in no more than two sentences and put it in paragraph HTML tag.
