@@ -82,7 +82,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
                 codeToPersistedLevels.put(existingLevel.getCode(), existingLevel);
             }
         }
-        updateMaturityLevelPort.update(updatedLevels, savedKit.getKitVersionId(), currentUserId);
+        updateMaturityLevelPort.updateAll(updatedLevels, savedKit.getKitVersionId(), currentUserId);
 
         newLevels.forEach(code -> {
             MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getKitVersionId(), currentUserId);

@@ -47,7 +47,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(List<MaturityLevel> maturityLevels, Long kitVersionId, UUID lastModifiedBy) {
+    public void updateAll(List<MaturityLevel> maturityLevels, Long kitVersionId, UUID lastModifiedBy) {
         Map<EntityId, MaturityLevel> idToModel = maturityLevels.stream()
             .collect(Collectors.toMap(
                 ml -> new EntityId(ml.getId(), kitVersionId),
@@ -65,6 +65,15 @@ public class MaturityLevelPersistenceJpaAdapter implements
         });
         repository.saveAll(entities);
         repository.flush();
+    }
+
+    @Override
+    public void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy ) {
+        if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
+            throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
+
+        repository.update(maturityLevel.getId(), kitVersionId, maturityLevel.getTitle(), maturityLevel.getIndex(), maturityLevel.getCode(),
+            maturityLevel.getDescription(), maturityLevel.getValue(), lastModificationTime, lastModifiedBy);
     }
 
     @Override

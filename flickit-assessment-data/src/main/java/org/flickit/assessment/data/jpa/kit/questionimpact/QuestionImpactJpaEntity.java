@@ -3,7 +3,6 @@ package org.flickit.assessment.data.jpa.kit.questionimpact;
 import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;

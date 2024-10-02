@@ -22,4 +22,11 @@ public class Attribute {
     @EqualsAndHashCode.Exclude private final LocalDateTime lastModificationTime;
     private final UUID createdBy;
     private final UUID lastModifiedBy;
+
+    public static String generateSlugCode(String title) {
+        return title
+            .toLowerCase()
+            .strip()
+            .replaceAll("\\s+", "-");
+    }
 }
