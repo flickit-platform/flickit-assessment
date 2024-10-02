@@ -41,6 +41,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void delete(Long id, Long kitVersionId) {
+        if(!repository.existsByIdAndKitVersionId(id, kitVersionId))
+            throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
         repository.deleteByIdAndKitVersionId(id, kitVersionId);
     }
 

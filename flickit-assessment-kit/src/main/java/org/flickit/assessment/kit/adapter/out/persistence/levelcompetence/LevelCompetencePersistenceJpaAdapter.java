@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.LEVEL_COMPETENCE_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_LEVEL_COMPETENCE_ID_NOT_FOUND;
 
 @Component
@@ -60,5 +61,13 @@ public class LevelCompetencePersistenceJpaAdapter implements
             kitVersionId,
             value,
             LocalDateTime.now(), lastModifiedBy);
+    }
+
+    @Override
+    public void updateById(long id, long kitVersionId, int value, UUID lastModifiedBy) {
+        if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
+            throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
+
+        repository.updateById(id, kitVersionId, value, LocalDateTime.now(), lastModifiedBy);
     }
 }
