@@ -50,8 +50,8 @@ public class OpenAiProperties {
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
 
-    public Prompt createAiAdviceNarrationPrompt(String adviceListItems, String attributeLevelTargets) {
-        var promptTemplate = new PromptTemplate(aiAdviceNarrationPrompt, Map.of("adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
+    public Prompt createAiAdviceNarrationPrompt(String assessmentTitle, String adviceListItems, String attributeLevelTargets) {
+        var promptTemplate = new PromptTemplate(aiAdviceNarrationPrompt, Map.of("assessmentTitle", assessmentTitle, "adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
 }
