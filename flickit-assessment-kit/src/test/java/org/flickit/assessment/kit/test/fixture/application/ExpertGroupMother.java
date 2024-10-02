@@ -14,11 +14,4 @@ public class ExpertGroupMother {
             "path/to/picture",
             UUID.randomUUID());
     }
-
-    public static ExpertGroup createExpertGroupWithCreatedBy(UUID createdBy) {
-        return new ExpertGroup(id++,
-            "title" + id,
-            "path/to/picture",
-            createdBy);
-    }
 }
