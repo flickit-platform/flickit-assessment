@@ -33,7 +33,7 @@ public class LevelCompetencePersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
             throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
 
-        repository.deleteById(id);
+        repository.deleteByIdAndKitVersionId(id, kitVersionId);
     }
 
     @Override
@@ -67,6 +67,6 @@ public class LevelCompetencePersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
             throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
 
-        repository.updateById(id, value, LocalDateTime.now(), lastModifiedBy);
+        repository.updateById(id, kitVersionId, value, LocalDateTime.now(), lastModifiedBy);
     }
 }
