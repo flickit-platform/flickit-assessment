@@ -721,6 +721,42 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update Level Competence",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/424/level-competences/2027",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"424",
+								"level-competences",
+								"2027"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
