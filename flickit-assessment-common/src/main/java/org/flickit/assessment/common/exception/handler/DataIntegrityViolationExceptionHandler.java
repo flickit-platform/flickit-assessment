@@ -71,15 +71,15 @@ public class DataIntegrityViolationExceptionHandler {
     private String extractConstraintIfPossible(NonTransientDataAccessException ex) {
         if (ex instanceof DataIntegrityViolationException e && e.getCause() instanceof ConstraintViolationException cause)
             return extractConstraint(cause.getConstraintName());
-        if (ex instanceof DataIntegrityViolationException e && e.getCause() instanceof SQLException cause) {
-            String msg = cause.getMessage();
-            return extractConstraint(POSTGRES_FK_CONSTRAINT_PATTERN, msg);
-        } else if (ex instanceof JpaSystemException && ex.getCause() != null && ex.getCause().getCause() != null) {
+        else if (ex instanceof JpaSystemException && ex.getCause() != null && ex.getCause().getCause() != null) {
             String msg = ex.getCause().getCause().getMessage(); // org.postgresql.util.PSQLException
             return extractConstraint(POSTGRES_FK_CONSTRAINT_PATTERN, msg);
         } else if (ex instanceof DuplicateKeyException && ex.getCause() != null) {
             String msg = ex.getCause().getMessage(); // org.postgresql.util.PSQLException
             return extractConstraint(POSTGRES_UQ_CONSTRAINT_PATTERN, msg);
+        } else if (ex instanceof DataIntegrityViolationException e && e.getCause() instanceof SQLException cause) {
+            String msg = cause.getMessage();
+            return extractConstraint(POSTGRES_FK_CONSTRAINT_PATTERN, msg);
         }
         return null;
     }
