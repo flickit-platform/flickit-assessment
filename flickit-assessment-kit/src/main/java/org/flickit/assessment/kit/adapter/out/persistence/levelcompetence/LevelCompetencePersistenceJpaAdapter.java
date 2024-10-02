@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.LEVEL_COMPETENCE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_LEVEL_COMPETENCE_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -29,11 +30,11 @@ public class LevelCompetencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteByIdAndKitVersionId(long id, Long kitVersionId) {
-        if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
-            throw new ResourceNotFoundException(LEVEL_COMPETENCE_ID_NOT_FOUND);
-
-        repository.deleteByIdAndKitVersionId(id, kitVersionId);
+    public void delete(Long levelCompetenceId, Long kitVersionId) {
+        if (repository.existsByIdAndKitVersionId(levelCompetenceId, kitVersionId))
+            repository.deleteByIdAndKitVersionId(levelCompetenceId, kitVersionId);
+        else
+            throw new ResourceNotFoundException(DELETE_LEVEL_COMPETENCE_ID_NOT_FOUND);
     }
 
     @Override

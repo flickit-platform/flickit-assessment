@@ -75,11 +75,11 @@ class UpdateLevelCompetenceServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        doNothing().when(deleteLevelCompetencePort).deleteByIdAndKitVersionId(anyLong(), anyLong());
+        doNothing().when(deleteLevelCompetencePort).delete(anyLong(), anyLong());
 
         service.updateLevelCompetence(param);
 
-        verify(deleteLevelCompetencePort).deleteByIdAndKitVersionId(param.getLevelCompetenceId(), param.getKitVersionId());
+        verify(deleteLevelCompetencePort).delete(param.getLevelCompetenceId(), param.getKitVersionId());
         verifyNoInteractions(updateLevelCompetencePort);
     }
 
