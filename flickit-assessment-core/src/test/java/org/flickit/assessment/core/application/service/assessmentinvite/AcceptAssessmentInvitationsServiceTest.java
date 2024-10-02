@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.DeleteA
 import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentsUserInvitationsPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
-import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationCmd;
+import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationsCmd;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -77,7 +77,7 @@ class AcceptAssessmentInvitationsServiceTest {
         ArgumentCaptor<List<AssessmentUserRoleItem>> captor = ArgumentCaptor.forClass(List.class);
         verify(grantUserAssessmentRolePort).persistAll(captor.capture());
 
-        AcceptAssessmentInvitationNotificationCmd cmd = (AcceptAssessmentInvitationNotificationCmd) result.notificationCmd();
+        AcceptAssessmentInvitationNotificationsCmd cmd = (AcceptAssessmentInvitationNotificationsCmd) result.notificationCmd();
         List<AssessmentUserRoleItem> capturedList = captor.getValue();
         var assessmentUserRoleItem = new AssessmentUserRoleItem(assessmentInvitee2.getAssessmentId(), userId, assessmentInvitee2.getRole(), assessmentInvitee2.getCreatedBy());
 
@@ -108,7 +108,7 @@ class AcceptAssessmentInvitationsServiceTest {
 
         var result = assertDoesNotThrow(() -> service.acceptInvitations(param));
 
-        AcceptAssessmentInvitationNotificationCmd cmd = (AcceptAssessmentInvitationNotificationCmd) result.notificationCmd();
+        AcceptAssessmentInvitationNotificationsCmd cmd = (AcceptAssessmentInvitationNotificationsCmd) result.notificationCmd();
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AssessmentUserRoleItem>> captor = ArgumentCaptor.forClass(List.class);
         verify(grantUserAssessmentRolePort).persistAll(captor.capture());

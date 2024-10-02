@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import static org.flickit.assessment.common.adapter.out.novu.NotificationType.ACCEPT_ASSESSMENT_INVITATION;
 
 @Component
-public class AcceptAssessmentInvitationNovuRequestConvertor extends AbstractNovuRequestConverter {
+public class AcceptAssessmentInvitationNovuRequestConverter extends AbstractNovuRequestConverter {
 
     @Override
     protected String getEventName() {

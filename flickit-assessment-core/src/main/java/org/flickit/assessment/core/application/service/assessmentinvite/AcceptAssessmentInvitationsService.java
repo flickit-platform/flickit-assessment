@@ -9,8 +9,8 @@ import org.flickit.assessment.core.application.port.out.assessmentinvite.DeleteA
 import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentsUserInvitationsPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserEmailByUserIdPort;
-import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationCmd;
-import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationCmd.*;
+import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationsCmd;
+import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationsCmd.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +47,7 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
             .map(this::mapToNotificationCmdItem)
             .toList();
 
-        return new Result(new AcceptAssessmentInvitationNotificationCmd(assessmentTargetUserRole));
+        return new Result(new AcceptAssessmentInvitationNotificationsCmd(assessmentTargetUserRole));
     }
 
     private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvite invitation, UUID userId) {

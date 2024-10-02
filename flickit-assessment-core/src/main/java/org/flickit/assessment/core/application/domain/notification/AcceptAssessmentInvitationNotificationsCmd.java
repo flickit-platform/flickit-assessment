@@ -6,7 +6,7 @@ import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import java.util.List;
 import java.util.UUID;
 
-public record AcceptAssessmentInvitationNotificationCmd(
+public record AcceptAssessmentInvitationNotificationsCmd(
     List<NotificationCmdItem> notificationCmdItems) implements NotificationCmd {
 
     public record NotificationCmdItem(UUID targetUserId,

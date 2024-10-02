@@ -7,7 +7,7 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.User;
-import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationCmd;
+import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationsCmd;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.application.service.assessmentinvite.notification.AcceptAssessmentInvitationNotificationPayload.*;
@@ -25,13 +25,13 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TI
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AcceptAssessmentInvitationNotificationCreator
-    implements NotificationCreator<AcceptAssessmentInvitationNotificationCmd> {
+    implements NotificationCreator<AcceptAssessmentInvitationNotificationsCmd> {
 
     private final GetAssessmentPort getAssessmentPort;
     private final LoadUserPort loadUserPort;
 
     @Override
-    public List<NotificationEnvelope> create(AcceptAssessmentInvitationNotificationCmd cmd) {
+    public List<NotificationEnvelope> create(AcceptAssessmentInvitationNotificationsCmd cmd) {
         return cmd.notificationCmdItems().stream()
             .map(notificationCmdItem -> {
                 Optional<Assessment> assessment = getAssessmentPort.getAssessmentById(notificationCmdItem.assessmentId());
@@ -58,7 +58,7 @@ public class AcceptAssessmentInvitationNotificationCreator
     }
 
     @Override
-    public Class<AcceptAssessmentInvitationNotificationCmd> cmdClass() {
-        return AcceptAssessmentInvitationNotificationCmd.class;
+    public Class<AcceptAssessmentInvitationNotificationsCmd> cmdClass() {
+        return AcceptAssessmentInvitationNotificationsCmd.class;
     }
 }
