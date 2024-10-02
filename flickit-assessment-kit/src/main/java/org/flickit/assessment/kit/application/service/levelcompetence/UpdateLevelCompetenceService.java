@@ -35,6 +35,6 @@ public class UpdateLevelCompetenceService implements UpdateLevelCompetenceUseCas
                     param.getValue(),
                     param.getCurrentUserId());
         else
-            deleteLevelCompetencePort.deleteByIdAndKitVersionId(param.getLevelCompetenceId(), param.getKitVersionId());
+            deleteLevelCompetencePort.delete(param.getLevelCompetenceId(), param.getKitVersionId());
     }
 }
