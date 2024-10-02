@@ -1002,6 +1002,32 @@
               }
             },
             "response": []
+          },{
+            "name": "Delete Maturity Level",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "{{authorization_header}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{base_url}}/{{api_path}}/kit-versions/447/maturity-levels/2350",
+                "host": [
+                  "{{base_url}}"
+                ],
+                "path": [
+                  "{{api_path}}",
+                  "kit-versions",
+                  "447",
+                  "maturity-levels",
+                  "2350"
+                ]
+              }
+            },
+            "response": []
           }
         ]
       }
