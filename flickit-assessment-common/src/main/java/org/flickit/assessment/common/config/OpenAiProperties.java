@@ -31,7 +31,7 @@ public class OpenAiProperties {
         """;
 
     private String aiAdviceNarrationPrompt = """
-        An assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
+        For an assessment, titled {assessmentTitle}, an assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
         The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
         The advice includes the current status (selected option) and the goal status for each relevant question.
         Task: Based on the provided advice items, generate a clear narrative in up to 10 concise bullet points formatted with HTML tags (this could be 2, 3, or more, depending on the advice).
