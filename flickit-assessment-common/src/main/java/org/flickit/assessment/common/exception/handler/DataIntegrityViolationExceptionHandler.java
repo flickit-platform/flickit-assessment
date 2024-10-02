@@ -10,6 +10,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.NonTransientDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.orm.jpa.JpaSystemException;
@@ -18,12 +19,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.flickit.assessment.common.adapter.out.persistence.util.ConstraintExtractor.extractConstraint;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @RestControllerAdvice
@@ -32,6 +34,14 @@ import static org.flickit.assessment.common.adapter.out.persistence.util.Constra
 public class DataIntegrityViolationExceptionHandler {
 
     private final List<DataConstraintErrorMapper> collectors;
+
+    /**
+     * - oracle, postgres, mysql pattern: 'schemaName:constraintName' <p>
+     * - h2 pattern: schemaName:constraintName_index_d .*
+     */
+    private static final Pattern CONSTRAINT_NAME_PATTERN = Pattern.compile("\\.([a-z]+)");
+    private static final Pattern POSTGRES_FK_CONSTRAINT_PATTERN = Pattern.compile("foreign key constraint \"(.+)\"");
+    private static final Pattern POSTGRES_UQ_CONSTRAINT_PATTERN = Pattern.compile("unique constraint \"(.+)\"");
 
     @ResponseBody
     @ExceptionHandler({DataIntegrityViolationException.class, JpaSystemException.class})
@@ -61,14 +71,50 @@ public class DataIntegrityViolationExceptionHandler {
     private String extractConstraintIfPossible(NonTransientDataAccessException ex) {
         if (ex instanceof DataIntegrityViolationException e && e.getCause() instanceof ConstraintViolationException cause)
             return extractConstraint(cause.getConstraintName());
-        if (ex instanceof JpaSystemException e && e.getCause() != null && e.getCause().getCause() != null) {
-            String msg = e.getCause().getCause().getMessage(); // org.postgresql.util.PSQLException
-            Pattern pattern = Pattern.compile("foreign key constraint \"(.+)\"");
-            Matcher matcher = pattern.matcher(msg);
-            if (matcher.find())
-               return matcher.group(1);
-            return null;
+        if (ex instanceof DataIntegrityViolationException e && e.getCause() instanceof SQLException cause) {
+            String msg = cause.getMessage();
+            return extractConstraint(POSTGRES_FK_CONSTRAINT_PATTERN, msg);
+        } else if (ex instanceof JpaSystemException && ex.getCause() != null && ex.getCause().getCause() != null) {
+            String msg = ex.getCause().getCause().getMessage(); // org.postgresql.util.PSQLException
+            return extractConstraint(POSTGRES_FK_CONSTRAINT_PATTERN, msg);
+        } else if (ex instanceof DuplicateKeyException && ex.getCause() != null) {
+            String msg = ex.getCause().getMessage(); // org.postgresql.util.PSQLException
+            return extractConstraint(POSTGRES_UQ_CONSTRAINT_PATTERN, msg);
         }
         return null;
+    }
+
+    @Nullable
+    public static String extractConstraint(@Nullable String rawConstraint) {
+        String finalConstraint = doExtractConstraint(rawConstraint);
+        log.debug("Extract constraint: [{}] => [{}]", rawConstraint, finalConstraint);
+        return finalConstraint;
+    }
+
+    @Nullable
+    private static String doExtractConstraint(@Nullable String rawConstraint) {
+        if (isBlank(rawConstraint))
+            return null;
+        String normalizedConstraint = normalize(rawConstraint);
+        Matcher matcher = CONSTRAINT_NAME_PATTERN.matcher(normalizedConstraint);
+        if (matcher.find())
+            return matcher.group(1);
+        return normalizedConstraint;
+    }
+
+    @Nullable
+    private static String extractConstraint(Pattern pattern, String msg) {
+        Matcher matcher = pattern.matcher(msg);
+        if (matcher.find()) {
+            String constraint = normalize(matcher.group(1));
+            log.debug("Extract constraint: [{}] => [{}]", msg, constraint);
+            return constraint;
+        }
+        log.debug("Extract constraint: [{}] => [null]", msg);
+        return null;
+    }
+
+    private static String normalize(String constraint) {
+        return constraint.toLowerCase();
     }
 }
