@@ -23,7 +23,7 @@ class DeleteMaturityLevelUseCaseTest {
     @Test
     void testDeleteMaturityLevelParam_kitIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.kitVersionId(null)));
-        assertThat(throwable).hasMessage("kitId: " + DELETE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitVersionId: " + DELETE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
