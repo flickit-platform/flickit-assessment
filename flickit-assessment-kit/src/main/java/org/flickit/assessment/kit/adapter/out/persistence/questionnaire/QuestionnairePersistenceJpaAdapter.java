@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.QuestionnaireOrder;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
@@ -51,6 +53,16 @@ public class QuestionnairePersistenceJpaAdapter implements
             param.description(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public void updateIndexes(Long kitVersionId, List<QuestionnaireOrder> orders) {
+        var ids = orders.stream().map(QuestionnaireOrder::getId).collect(Collectors.toSet());
+        var subjectIdToIndexMap = orders.stream()
+            .collect(Collectors.toMap(QuestionnaireOrder::getId, QuestionnaireOrder::getIndex));
+        var entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
+        entities.forEach(e -> e.setIndex(subjectIdToIndexMap.get(e.getId())));
+        repository.saveAll(entities);
     }
 
     @Override

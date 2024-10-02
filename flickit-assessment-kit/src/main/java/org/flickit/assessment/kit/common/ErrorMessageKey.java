@@ -198,6 +198,9 @@ public class ErrorMessageKey {
     public static final String CREATE_LEVEL_COMPETENCE_VALUE_MAX = "create-level-competence.value.max";
     public static final String CREATE_LEVEL_COMPETENCE_DUPLICATE = "create-level-competence.duplicate";
 
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-questionnaire-orders.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_NOT_NULL = "update-questionnaire-orders.orders.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }

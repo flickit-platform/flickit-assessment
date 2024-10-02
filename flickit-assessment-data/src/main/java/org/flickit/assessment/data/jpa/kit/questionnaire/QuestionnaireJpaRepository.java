@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJpaEntity, QuestionnaireJpaEntity.EntityId> {
@@ -52,4 +53,6 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         """)
     Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId,
                                                                            Pageable pageable);
+
+    List<QuestionnaireJpaEntity> findAllByIdInAndKitVersionId(Set<Long> ids, Long kitVersionId);
 }
