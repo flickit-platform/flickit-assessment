@@ -5,15 +5,11 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import java.util.UUID;
 
 public record AcceptAssessmentInvitationNotificationPayload(AssessmentModel assessmentModel,
-                                                            InviteeModel inviteeModel,
-                                                            RoleModel roleModel) implements NotificationPayload {
+                                                            InviteeModel inviteeModel) implements NotificationPayload {
 
     public record AssessmentModel(UUID id, String title) {
     }
 
     public record InviteeModel(UUID id, String displayName) {
-    }
-
-    public record RoleModel(String title) {
     }
 }

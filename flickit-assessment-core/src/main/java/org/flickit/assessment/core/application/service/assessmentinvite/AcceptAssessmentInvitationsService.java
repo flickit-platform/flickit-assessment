@@ -58,8 +58,7 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
         return new NotificationCmdItem(
             validInvitation.getCreatedBy(),
             validInvitation.getAssessmentId(),
-            validInvitation.getUserId(),
-            validInvitation.getRole()
+            validInvitation.getUserId()
         );
     }
 }

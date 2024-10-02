@@ -47,9 +47,7 @@ public class AcceptAssessmentInvitationNotificationCreator
                 var title = MessageBundle.message(NOTIFICATION_TITLE_ACCEPT_ASSESSMENT_INVITATION);
                 var payload = new AcceptAssessmentInvitationNotificationPayload(
                     new AssessmentModel(notificationCmdItem.assessmentId(), assessment.get().getTitle()),
-                    new InviteeModel(notificationCmdItem.inviteeId(), user.get().getDisplayName()),
-                    new RoleModel(notificationCmdItem.assessmentUserRole().getTitle())
-                );
+                    new InviteeModel(notificationCmdItem.inviteeId(), user.get().getDisplayName()));
 
                 return new NotificationEnvelope(targetUser.get(), title, payload);
             })
