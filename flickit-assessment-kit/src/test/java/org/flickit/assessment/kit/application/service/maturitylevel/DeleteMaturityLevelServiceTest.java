@@ -21,8 +21,7 @@ import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitM
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteMaturityLevelServiceTest {
@@ -51,6 +50,8 @@ class DeleteMaturityLevelServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.delete(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(deleteMaturityLevelPort);
     }
 
     @Test
@@ -61,6 +62,7 @@ class DeleteMaturityLevelServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         service.delete(param);
+
         verify(deleteMaturityLevelPort).delete(param.getMaturityLevelId(), param.getKitVersionId());
     }
 

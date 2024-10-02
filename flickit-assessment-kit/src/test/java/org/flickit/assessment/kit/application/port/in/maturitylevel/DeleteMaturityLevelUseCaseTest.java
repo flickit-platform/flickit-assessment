@@ -16,19 +16,22 @@ class DeleteMaturityLevelUseCaseTest {
 
     @Test
     void testDeleteMaturityLevelParam_maturityLevelIdIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.maturityLevelId(null)));
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.maturityLevelId(null)));
         assertThat(throwable).hasMessage("maturityLevelId: " + DELETE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL);
     }
 
     @Test
     void testDeleteMaturityLevelParam_kitIdIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.kitVersionId(null)));
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + DELETE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
     void testDeleteMaturityLevelParam_currentUserIdIsNull_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.currentUserId(null)));
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
