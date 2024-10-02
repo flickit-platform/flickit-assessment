@@ -10,20 +10,20 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DeleteLevelCompetenceUseCaseParamTest {
 
     @Test
     void testDeleteLevelCompetenceUseCaseParam_kitVersionIdIsNull_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + DELETE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
     void testDeleteLevelCompetenceUseCaseParam_levelCompetenceIdIsNull_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.levelCompetenceId(null)));
         assertThat(throwable).hasMessage("levelCompetenceId: " + DELETE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL);
     }

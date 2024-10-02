@@ -18,7 +18,8 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,16 +49,19 @@ class DeleteLevelCompetenceServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteLevelCompetence(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(deleteLevelCompetencePort);
     }
 
    @Test
    void testDeleteLevelCompetence_WhenCurrentUserIsOwner_ThenDeleteLevelCompetence() {
        var param = createParam(b -> b.currentUserId(ownerId));
+
        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
        doNothing().when(deleteLevelCompetencePort).delete(param.getLevelCompetenceId(), param.getKitVersionId());
 
-       assertDoesNotThrow(() -> service.deleteLevelCompetence(param));
+       service.deleteLevelCompetence(param);
 
        verify(deleteLevelCompetencePort).delete(param.getLevelCompetenceId(), param.getKitVersionId());
    }
