@@ -8,8 +8,6 @@ import java.util.UUID;
 public record AcceptAssessmentInvitationNotificationsCmd(
     List<NotificationCmdItem> notificationCmdItems) implements NotificationCmd {
 
-    public record NotificationCmdItem(UUID targetUserId,
-                                      UUID assessmentId,
-                                      UUID inviteeId) implements NotificationCmd {
+    public record NotificationCmdItem(UUID targetUserId, UUID inviteeId) implements NotificationCmd {
     }
 }

@@ -43,22 +43,22 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
         if (!invitations.isEmpty())
             deleteAssessmentUserInvitationPort.deleteAllByEmail(email);
 
-        var assessmentTargetUserRole = validInvitations.stream()
-            .map(this::mapToNotificationCmdItem)
+        var assessmentTargetUser = validInvitations.stream()
+            .map(AssessmentUserRoleItem::getCreatedBy)
+            .distinct()
             .toList();
 
-        return new Result(new AcceptAssessmentInvitationNotificationsCmd(assessmentTargetUserRole));
+        return new Result(new AcceptAssessmentInvitationNotificationsCmd(createNotificationCmdItems(assessmentTargetUser, param.getUserId())));
     }
 
     private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvite invitation, UUID userId) {
         return new AssessmentUserRoleItem(invitation.getAssessmentId(), userId, invitation.getRole(), invitation.getCreatedBy());
     }
 
-    private NotificationCmdItem mapToNotificationCmdItem(AssessmentUserRoleItem validInvitation) {
-        return new NotificationCmdItem(
-            validInvitation.getCreatedBy(),
-            validInvitation.getAssessmentId(),
-            validInvitation.getUserId()
-        );
+    private List<NotificationCmdItem> createNotificationCmdItems(List<UUID> targetUserIds, UUID userId) {
+        return targetUserIds
+            .stream()
+            .map(e -> new NotificationCmdItem(e, userId))
+            .toList();
     }
 }
