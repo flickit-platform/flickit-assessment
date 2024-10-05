@@ -1,5 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +16,7 @@ import java.util.UUID;
 @Repository
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, MaturityLevelJpaEntity.EntityId> {
 
-    List<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
+    Page<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId, Pageable pageable);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 

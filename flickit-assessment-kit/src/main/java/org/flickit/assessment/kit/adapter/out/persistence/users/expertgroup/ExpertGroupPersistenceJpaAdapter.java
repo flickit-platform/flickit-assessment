@@ -8,20 +8,21 @@ import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component("kitExpertGroupPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class ExpertGroupPersistenceJpaAdapter implements
     LoadKitExpertGroupPort,
     LoadExpertGroupOwnerPort,
-    LoadExpertGroupMemberIdsPort {
+    LoadExpertGroupMemberIdsPort,
+    LoadKitVersionExpertGroupPort {
 
     private final ExpertGroupJpaRepository repository;
 
@@ -44,5 +45,12 @@ public class ExpertGroupPersistenceJpaAdapter implements
         return memberIds.stream()
             .map(LoadExpertGroupMemberIdsPort.Result::new)
             .toList();
+    }
+
+    @Override
+    public ExpertGroup loadKitVersionExpertGroup(long kitVersionId) {
+        ExpertGroupJpaEntity entity = repository.findByKitVersionId(kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
+        return ExpertGroupMapper.mapToDomainModel(entity);
     }
 }

@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
@@ -11,6 +12,8 @@ import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.Maturi
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -30,7 +33,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
     LoadAllMaturityLevelsPort,
-    LoadAttributeMaturityLevelsPort {
+    LoadAttributeMaturityLevelsPort,
+    LoadMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
@@ -79,7 +83,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public List<MaturityLevel> loadByKitVersionId(Long kitVersionId) {
-        List<MaturityLevelJpaEntity> maturityLevelEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        List<MaturityLevelJpaEntity> maturityLevelEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId, null).getContent();
 
         List<Long> levelIds = maturityLevelEntities.stream()
             .map(MaturityLevelJpaEntity::getId)
@@ -109,5 +113,39 @@ public class MaturityLevelPersistenceJpaAdapter implements
         return repository.loadAttributeLevels(attributeId, kitVersionId).stream()
             .map(e -> new LoadAttributeMaturityLevelsPort.Result(e.getId(), e.getTitle(), e.getIndex(), e.getQuestionCount()))
             .toList();
+    }
+
+    @Override
+    public PaginatedResponse<MaturityLevel> loadByKitVersionId(long kitVersionId, Integer size, Integer page) {
+        var pageResult = repository.findAllByKitVersionIdOrderByIndex(kitVersionId, PageRequest.of(page, size));
+
+        List<Long> levelIds = pageResult.stream()
+            .map(MaturityLevelJpaEntity::getId)
+            .toList();
+
+        List<LevelCompetenceJpaEntity> levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
+        Map<Long, List<LevelCompetenceJpaEntity>> levelIdToLevelCompetences = levelCompetenceEntities.stream()
+            .collect(Collectors.groupingBy(LevelCompetenceJpaEntity::getAffectedLevelId));
+
+        var maturityLevels = pageResult.stream()
+            .map(e -> {
+                MaturityLevel maturityLevel = MaturityLevelMapper.mapToDomainModel(e);
+                if (levelIdToLevelCompetences.containsKey(e.getId())) {
+                    List<LevelCompetenceJpaEntity> levelCompetenceJpaEntities = levelIdToLevelCompetences.get(maturityLevel.getId());
+                    List<MaturityLevelCompetence> maturityLevelCompetences = levelCompetenceJpaEntities.stream()
+                        .map(MaturityLevelCompetenceMapper::mapToDomainModel)
+                        .toList();
+                    maturityLevel.setCompetences(maturityLevelCompetences);
+                } else
+                    maturityLevel.setCompetences(new ArrayList<>());
+                return maturityLevel;
+            }).toList();
+
+        return new PaginatedResponse<>(maturityLevels,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            MaturityLevelJpaEntity.Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements());
     }
 }

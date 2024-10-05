@@ -128,4 +128,12 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE e.id = :id
         """)
     void updatePicture(@Param("id") long expertGroupId, @Param("picture") String picture);
+
+    @Query("""
+            SELECT e
+            FROM ExpertGroupJpaEntity e
+            LEFT JOIN KitVersionJpaEntity kv On e.id = kv.kit.expertGroupId
+            WHERE kv.id = :kitVersionId AND e.deleted = false
+        """)
+    Optional<ExpertGroupJpaEntity> findByKitVersionId(@Param("kitVersionId") long kitVersionId);
 }

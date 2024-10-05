@@ -55,7 +55,7 @@ public class LoadSubjectReportInfoAdapter implements LoadSubjectReportInfoPort {
         SubjectJpaEntity subjectEntity = subjectRepository.findByIdAndKitVersionId(subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ID_NOT_FOUND));
 
-        var maturityLevels = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+        var maturityLevels = maturityLevelJpaRepository.findAllByKitVersionIdOrderByIndex(kitVersionId, null).stream()
             .map(e -> MaturityLevelMapper.mapToDomainModel(e, null))
             .toList();
 
