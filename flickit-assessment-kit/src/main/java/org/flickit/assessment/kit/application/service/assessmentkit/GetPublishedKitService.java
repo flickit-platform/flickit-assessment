@@ -10,7 +10,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAllMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     private final CountKitStatsPort countKitStatsPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadQuestionnairesPort loadQuestionnairesPort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private final LoadAllMaturityLevelsPort loadAllMaturityLevelsPort;
     private final LoadKitTagListPort loadKitTagListPort;
     private final CheckKitLikeExistencePort checkKitLikeExistencePort;
 
@@ -52,7 +52,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toQuestionnaire)
             .toList();
 
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(kit.getKitVersionId()).stream()
+        var maturityLevels = loadAllMaturityLevelsPort.loadByKitVersionId(kit.getKitVersionId()).stream()
             .map(this::toMaturityLevel)
             .toList();
 

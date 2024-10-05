@@ -30,6 +30,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     UpdateMaturityLevelPort,
     LoadMaturityLevelsPort,
     LoadAttributeMaturityLevelsPort {
+    LoadAllMaturityLevelsPort,
 
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;

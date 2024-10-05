@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveK
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAllMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
@@ -52,7 +52,7 @@ class GetKitQuestionDetailServiceTest {
     private LoadQuestionPort loadQuestionPort;
 
     @Mock
-    private LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private LoadAllMaturityLevelsPort loadAllMaturityLevelsPort;
 
     @Mock
     private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
@@ -101,7 +101,7 @@ class GetKitQuestionDetailServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(question.getId(), kitVersionId)).thenReturn(question);
         when(loadAllAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId)).thenReturn(List.of(attr1, attr2));
-        when(loadMaturityLevelsPort.loadByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
+        when(loadAllMaturityLevelsPort.loadByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var result = service.getKitQuestionDetail(param);

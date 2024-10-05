@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.domain.MaturityLevel;
 
 import java.util.List;
 
-public interface LoadMaturityLevelsPort {
+public interface LoadAllMaturityLevelsPort {
 
     /**
      * Loads maturity levels associated with a specific kit ID and kit's last version,
