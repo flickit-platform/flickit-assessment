@@ -3,7 +3,8 @@ package org.flickit.assessment.kit.adapter.in.rest.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelOrdersUseCase;
-import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelOrdersUseCase.*;
+import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelOrdersUseCase.MaturityLevelParam;
+import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelOrdersUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ public class UpdateMaturityLevelOrdersRestController {
     private Param toParam(Long kitVersionId, UpdateMaturityLevelOrdersRequestDto requestDto, UUID currentUserId) {
         return new Param(kitVersionId,
             requestDto.orders().stream().map(
-                request -> new MaturityLevelParam(request.id(), request.index())).toList(), currentUserId);
+                request -> new MaturityLevelParam(request.id(), request.index())).toList(),
+            currentUserId);
     }
 }

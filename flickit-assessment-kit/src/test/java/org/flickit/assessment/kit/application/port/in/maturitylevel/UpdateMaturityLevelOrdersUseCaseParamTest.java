@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateMaturityLevelOrdersUseCaseParamTest {
 
     @Test
-    void testUpdateMaturityLevelOrdersUseCaseParam_kitVersionIdParamViolatesConstraint_ErrorMessage() {
+    void testUpdateMaturityLevelOrdersUseCaseParam_kitVersionIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL);
@@ -29,27 +29,28 @@ class UpdateMaturityLevelOrdersUseCaseParamTest {
     }
 
     @Test
-    void testUpdateMaturityLevelOrdersUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
+    void testUpdateMaturityLevelOrdersUseCaseParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateMaturityLevelOrdersMaturityLevelUseCaseParam_idViolatesConstraints_ErrorMessage() {
-        var throwableNullViolation = assertThrows(ConstraintViolationException.class,
+    void testUpdateMaturityLevelOrdersUseCaseParam_maturityLevelIdIsNull_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParamMaturityLevelOrder(b -> b.id(null)));
-        assertThat(throwableNullViolation).hasMessage("id: " + UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("id: " + UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateMaturityLevelOrdersMaturityLevelUseCaseParam_indexViolatesConstraints_ErrorMessage() {
-        var throwableNullViolation = assertThrows(ConstraintViolationException.class,
+    void testUpdateMaturityLevelOrdersUseCaseParam_maturityLevelIndexParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParamMaturityLevelOrder(b -> b.index(null)));
-        assertThat(throwableNullViolation).hasMessage("index: " + UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL);
-        var throwableMinViolation = assertThrows(ConstraintViolationException.class,
+        assertThat(throwable).hasMessage("index: " + UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createParamMaturityLevelOrder(b -> b.index(0)));
-        assertThat(throwableMinViolation).hasMessage("index: " + UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN);
+        assertThat(throwable).hasMessage("index: " + UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN);
     }
 
     private void createParamMaturityLevelOrder(Consumer<UpdateMaturityLevelOrdersUseCase.MaturityLevelParam.MaturityLevelParamBuilder> changer) {

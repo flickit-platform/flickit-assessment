@@ -31,8 +31,8 @@ public class UpdateMaturityLevelOrdersService implements UpdateMaturityLevelOrde
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var maturityLevels = param.getOrders().stream().map(this::toMaturityLevelOrderParam).toList();
-        updateMaturityLevelPort.updateOrders(maturityLevels, param.getKitVersionId(), param.getCurrentUserId());
+        var maturityLevelOrders = param.getOrders().stream().map(this::toMaturityLevelOrderParam).toList();
+        updateMaturityLevelPort.updateOrders(maturityLevelOrders, param.getKitVersionId(), param.getCurrentUserId());
     }
 
     private MaturityLevelOrder toMaturityLevelOrderParam(MaturityLevelParam param) {

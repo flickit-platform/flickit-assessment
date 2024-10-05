@@ -43,30 +43,32 @@ class UpdateMaturityLevelOrdersServiceTest {
 
     @Test
     void testUpdateMaturityLevelOrdersService_kitVersionIdNotFound_NotFoundException() {
-        UpdateMaturityLevelOrdersUseCase.Param param = createParam(UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder::build);
+        var param = createParam(UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.changeOrders(param));
         assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
+
         verifyNoInteractions(loadExpertGroupOwnerPort, updateMaturityLevelPort);
     }
 
     @Test
     void testUpdateMaturityLevelOrdersService_currentUserIsNotOwner_AccessDeniedException() {
-        UpdateMaturityLevelOrdersUseCase.Param param = createParam(UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder::build);
+        var param = createParam(UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.changeOrders(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(updateMaturityLevelPort);
     }
 
     @Test
     void testUpdateMaturityLevelOrdersService_validParameters_SuccessfulUpdate() {
-        UpdateMaturityLevelOrdersUseCase.Param param = createParam(UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder::build);
+        var param = createParam(UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
