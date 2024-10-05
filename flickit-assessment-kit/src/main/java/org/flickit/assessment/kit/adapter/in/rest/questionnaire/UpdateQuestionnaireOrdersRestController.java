@@ -21,7 +21,7 @@ public class UpdateQuestionnaireOrdersRestController {
     private final UpdateQuestionnaireOrdersUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/kit-versions/{kitVersionId}/questionnaires-change-order")
+    @PutMapping("/kit-versions/{kitVersionId}/questionnaires-change-orders")
     ResponseEntity<Void> changeMaturityLevelOrders(@PathVariable("kitVersionId") Long kitVersionId,
                                                    @RequestBody UpdateQuestionnaireOrdersRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
