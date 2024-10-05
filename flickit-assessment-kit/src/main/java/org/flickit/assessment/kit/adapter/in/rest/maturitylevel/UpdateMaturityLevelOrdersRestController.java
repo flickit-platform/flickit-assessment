@@ -21,7 +21,7 @@ public class UpdateMaturityLevelOrdersRestController {
     private final UpdateMaturityLevelOrdersUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/kit-versions/{kitVersionId}/maturity-levels/change-orders")
+    @PutMapping("/kit-versions/{kitVersionId}/maturity-levels/maturity-levels-change-order")
     ResponseEntity<Void> changeMaturityLevelOrders(@PathVariable("kitVersionId") Long kitVersionId,
                                                    @RequestBody UpdateMaturityLevelOrdersRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
