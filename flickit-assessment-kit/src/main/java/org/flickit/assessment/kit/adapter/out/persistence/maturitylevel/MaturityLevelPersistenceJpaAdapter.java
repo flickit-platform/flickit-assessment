@@ -91,7 +91,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
         entities.forEach(x -> {
             MaturityLevelOrder newLevel = idToModel.get(new EntityId(x.getId(), kitVersionId));
             x.setIndex(newLevel.getIndex());
-            x.setValue(newLevel.getIndex());
+            x.setValue(newLevel.getValue());
             x.setLastModificationTime(LocalDateTime.now());
             x.setLastModifiedBy(lastModifiedBy);
         });
