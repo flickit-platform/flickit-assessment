@@ -207,6 +207,10 @@ public class ErrorMessageKey {
     public static final String DELETE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL = "delete-maturity-level.maturityLevelId.notNull";
     public static final String DELETE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "delete-maturity-level.kitVersionId.notNull";
 
+    public static final String DELETE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "delete-level-competence.kitVersionId.notNull";
+    public static final String DELETE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL = "delete-level-competence.levelCompetenceId.notNull";
+    public static final String DELETE_LEVEL_COMPETENCE_ID_NOT_FOUND = "delete-level-competence.id.notFound";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
