@@ -11,7 +11,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_N
 
 @Component
 @RequiredArgsConstructor
-public class KitVersionPersistenceJpaAdapter implements LoadKitVersionPort {
+public class KitVersionPersistenceJpaAdapter implements
+    LoadKitVersionPort {
 
     private final KitVersionJpaRepository repository;
 
