@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.MaturityLevelOrder;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -30,6 +31,11 @@ public class UpdateMaturityLevelOrdersService implements UpdateMaturityLevelOrde
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        updateMaturityLevelPort.updateOrders(param.getOrders(), param.getKitVersionId(), param.getCurrentUserId());
+        var maturityLevels = param.getOrders().stream().map(this::toMaturityLevelOrderParam).toList();
+        updateMaturityLevelPort.updateOrders(maturityLevels, param.getKitVersionId(), param.getCurrentUserId());
+    }
+
+    private MaturityLevelOrder toMaturityLevelOrderParam(MaturityLevelParam param) {
+        return new MaturityLevelOrder(param.getId(), param.getIndex(), param.getIndex());
     }
 }
