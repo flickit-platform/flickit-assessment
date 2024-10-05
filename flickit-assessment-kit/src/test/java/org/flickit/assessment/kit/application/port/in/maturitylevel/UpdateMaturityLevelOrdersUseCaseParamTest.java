@@ -26,6 +26,10 @@ class UpdateMaturityLevelOrdersUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.orders(null)));
         assertThat(throwable).hasMessage("orders: " + UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.orders(List.of())));
+        assertThat(throwable).hasMessage("orders: " + UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL);
     }
 
     @Test
@@ -74,7 +78,9 @@ class UpdateMaturityLevelOrdersUseCaseParamTest {
     private UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateMaturityLevelOrdersUseCase.Param.builder()
             .kitVersionId(1L)
-            .orders(List.of())
+            .orders(List.of(
+                new UpdateMaturityLevelOrdersUseCase.MaturityLevelParam(123L, 3),
+                new UpdateMaturityLevelOrdersUseCase.MaturityLevelParam(124L, 2)))
             .currentUserId(UUID.randomUUID());
     }
 }

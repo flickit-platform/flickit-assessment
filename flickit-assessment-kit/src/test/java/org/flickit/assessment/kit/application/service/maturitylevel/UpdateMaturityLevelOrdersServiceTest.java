@@ -86,7 +86,9 @@ class UpdateMaturityLevelOrdersServiceTest {
     private UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateMaturityLevelOrdersUseCase.Param.builder()
             .kitVersionId(1L)
-            .orders(List.of())
+            .orders(List.of(
+                new UpdateMaturityLevelOrdersUseCase.MaturityLevelParam(123L, 3),
+                new UpdateMaturityLevelOrdersUseCase.MaturityLevelParam(124L, 2)))
             .currentUserId(UUID.randomUUID());
     }
 }

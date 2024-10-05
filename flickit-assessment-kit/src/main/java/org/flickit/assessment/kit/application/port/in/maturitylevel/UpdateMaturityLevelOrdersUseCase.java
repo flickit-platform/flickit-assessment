@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.maturitylevel;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -24,7 +25,7 @@ public interface UpdateMaturityLevelOrdersUseCase {
         @NotNull(message = UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL)
+        @NotEmpty(message = UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL)
         List<MaturityLevelParam> orders;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
