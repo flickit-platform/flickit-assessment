@@ -79,6 +79,10 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void updateOrders(List<MaturityLevelOrder> maturityLevelOrders, Long kitVersionId, UUID lastModifiedBy) {
+        Integer existedMaturityLevel = repository.countByIds(maturityLevelOrders.stream().map(MaturityLevelOrder::getId).toList());
+        if (existedMaturityLevel != maturityLevelOrders.size())
+            throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
+
         Map<EntityId, MaturityLevelOrder> idToModel = maturityLevelOrders.stream()
             .collect(Collectors.toMap(
                 ml -> new EntityId(ml.getId(), kitVersionId),
