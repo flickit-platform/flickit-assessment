@@ -52,4 +52,28 @@
                        columnNames="id, kit_version_id"
                        constraintName="pk_fak_level_competence"/>
     </changeSet>
+
+    <changeSet id="0.33-11" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="uq_fak_maturitylevel_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.33-12" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_maturitylevel_index_kitversionid"
+                             tableName="fak_maturity_level"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.33-13" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="uq_fak_maturitylevel_value_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.33-14" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, value"
+                             constraintName="uq_fak_maturitylevel_value_kitversionid"
+                             tableName="fak_maturity_level"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>
