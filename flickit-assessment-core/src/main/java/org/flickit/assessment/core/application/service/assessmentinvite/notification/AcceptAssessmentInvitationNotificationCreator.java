@@ -8,7 +8,7 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationsCmd;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
-import org.flickit.assessment.core.application.service.assessmentinvite.notification.AcceptAssessmentInvitationNotificationPayload.*;
+import org.flickit.assessment.core.application.service.assessmentinvite.notification.AcceptAssessmentInvitationNotificationPayload.InviteeModel;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +29,10 @@ public class AcceptAssessmentInvitationNotificationCreator
 
     @Override
     public List<NotificationEnvelope> create(AcceptAssessmentInvitationNotificationsCmd cmd) {
-        return cmd.notificationCmdItems().stream()
-            .map(notificationCmdItem -> {
-                Optional<User> user = loadUserPort.loadById(notificationCmdItem.inviteeId());
-                var targetUser = loadUserPort.loadById(notificationCmdItem.targetUserId())
+        return cmd.targetUserIds().stream()
+            .map(targetUserId -> {
+                Optional<User> user = loadUserPort.loadById(cmd.inviteeId());
+                var targetUser = loadUserPort.loadById(targetUserId)
                     .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));
 
                 if (user.isEmpty() || targetUser.isEmpty()) {
@@ -42,7 +42,7 @@ public class AcceptAssessmentInvitationNotificationCreator
 
                 var title = MessageBundle.message(NOTIFICATION_TITLE_ACCEPT_ASSESSMENT_INVITATION);
                 var payload = new AcceptAssessmentInvitationNotificationPayload(
-                    new InviteeModel(notificationCmdItem.inviteeId(), user.get().getDisplayName()));
+                    new InviteeModel(cmd.inviteeId(), user.get().getDisplayName()));
 
                 return new NotificationEnvelope(targetUser.get(), title, payload);
             })

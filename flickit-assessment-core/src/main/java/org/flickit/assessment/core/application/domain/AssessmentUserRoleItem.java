@@ -12,5 +12,4 @@ public class AssessmentUserRoleItem {
     private final UUID assessmentId;
     private final UUID userId;
     private final AssessmentUserRole role;
-    private final UUID createdBy;
 }
