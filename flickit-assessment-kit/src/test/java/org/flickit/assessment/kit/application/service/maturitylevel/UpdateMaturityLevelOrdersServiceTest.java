@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.maturitylevel;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
+import org.flickit.assessment.kit.application.domain.MaturityLevelOrder;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -21,7 +22,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,7 +75,14 @@ class UpdateMaturityLevelOrdersServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
-        assertDoesNotThrow(() -> service.changeOrders(param));
+        service.changeOrders(param);
+
+        var maturityLevelOrders = List.of(
+            new MaturityLevelOrder(123L, 3, 3),
+            new MaturityLevelOrder(124L, 2, 2)
+        );
+        verify(updateMaturityLevelPort, times(1))
+            .updateOrders(maturityLevelOrders, param.getKitVersionId(), param.getCurrentUserId());
     }
 
     private UpdateMaturityLevelOrdersUseCase.Param createParam(Consumer<UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder> changer) {
