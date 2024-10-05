@@ -21,6 +21,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     Page<QuestionJpaEntity> findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(Long questionnaireId, Long kitVersionId, Pageable pageable);
 
+    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
+
+    void deleteByIdAndKitVersionId(long id, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE QuestionJpaEntity q
