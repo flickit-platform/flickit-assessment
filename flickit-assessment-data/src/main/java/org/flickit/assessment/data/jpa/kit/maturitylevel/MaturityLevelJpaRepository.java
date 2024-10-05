@@ -74,11 +74,4 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             ORDER BY a.index
         """)
     List<MaturityQuestionCountView> loadAttributeLevels(@Param("attributeId") Long attributeId, @Param("kitVersionId") Long kitVersionId);
-
-    @Query("""
-            SELECT COUNT(ml)
-            FROM MaturityLevelJpaEntity ml
-            WHERE ml.id IN :ids
-        """)
-    Integer countByIds(@Param("ids") List<Long> ids);
 }
