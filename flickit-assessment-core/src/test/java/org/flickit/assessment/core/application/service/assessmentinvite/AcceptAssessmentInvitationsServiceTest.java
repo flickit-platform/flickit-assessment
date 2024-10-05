@@ -50,8 +50,8 @@ class AcceptAssessmentInvitationsServiceTest {
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.acceptInvitations(param));
-
         assertEquals(USER_ID_NOT_FOUND, throwable.getMessage());
+
         verify(loadUserEmailByUserIdPort).loadEmail(userId);
         verifyNoInteractions(loadAssessmentsUserInvitationsPort,
             grantUserAssessmentRolePort, deleteAssessmentUserInvitationPort);
@@ -62,12 +62,12 @@ class AcceptAssessmentInvitationsServiceTest {
         var userId = UUID.randomUUID();
         var email = "test@test.com";
         var param = new AcceptAssessmentInvitationsUseCase.Param(userId);
-        var assessmentInvitee1 = expiredAssessmentInvite(email);
-        var assessmentInvitee2 = notExpiredAssessmentInvite(email);
-        var assessmentInviteeList = List.of(assessmentInvitee1, assessmentInvitee2);
+        var invitation1 = expiredAssessmentInvite(email);
+        var invitation2 = notExpiredAssessmentInvite(email);
+        var invitations = List.of(invitation1, invitation2);
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadAssessmentsUserInvitationsPort.loadInvitations(email)).thenReturn(assessmentInviteeList);
+        when(loadAssessmentsUserInvitationsPort.loadInvitations(email)).thenReturn(invitations);
         doNothing().when(grantUserAssessmentRolePort).persistAll(any());
         doNothing().when(deleteAssessmentUserInvitationPort).deleteAllByEmail(email);
 
@@ -79,7 +79,7 @@ class AcceptAssessmentInvitationsServiceTest {
 
         AcceptAssessmentInvitationNotificationsCmd cmd = (AcceptAssessmentInvitationNotificationsCmd) result.notificationCmd();
         List<AssessmentUserRoleItem> capturedList = captor.getValue();
-        var assessmentUserRoleItem = new AssessmentUserRoleItem(assessmentInvitee2.getAssessmentId(), userId, assessmentInvitee2.getRole());
+        var assessmentUserRoleItem = new AssessmentUserRoleItem(invitation2.getAssessmentId(), userId, invitation2.getRole());
 
         assertEquals(1, capturedList.size());
         assertEquals(assessmentUserRoleItem.getAssessmentId(), capturedList.getFirst().getAssessmentId());
@@ -96,17 +96,17 @@ class AcceptAssessmentInvitationsServiceTest {
         var userId = UUID.randomUUID();
         var email = "test@test.com";
         var param = new AcceptAssessmentInvitationsUseCase.Param(userId);
-        var assessmentInvitee1 = expiredAssessmentInvite(email);
-        var assessmentInvitee2 = notExpiredAssessmentInvite(email);
-        var assessmentInvitee3 = notExpiredAssessmentInvite(email);
-        var assessmentInviteeList = List.of(assessmentInvitee1, assessmentInvitee2, assessmentInvitee3);
+        var invitation1 = expiredAssessmentInvite(email);
+        var invitation2 = notExpiredAssessmentInvite(email);
+        var invitation3 = notExpiredAssessmentInvite(email);
+        var invitations = List.of(invitation1, invitation2, invitation3);
 
         when(loadUserEmailByUserIdPort.loadEmail(userId)).thenReturn(email);
-        when(loadAssessmentsUserInvitationsPort.loadInvitations(email)).thenReturn(assessmentInviteeList);
+        when(loadAssessmentsUserInvitationsPort.loadInvitations(email)).thenReturn(invitations);
         doNothing().when(grantUserAssessmentRolePort).persistAll(any());
         doNothing().when(deleteAssessmentUserInvitationPort).deleteAllByEmail(email);
 
-        var result = assertDoesNotThrow(() -> service.acceptInvitations(param));
+        var result = service.acceptInvitations(param);
 
         AcceptAssessmentInvitationNotificationsCmd cmd = (AcceptAssessmentInvitationNotificationsCmd) result.notificationCmd();
         @SuppressWarnings("unchecked")
@@ -114,8 +114,8 @@ class AcceptAssessmentInvitationsServiceTest {
         verify(grantUserAssessmentRolePort).persistAll(captor.capture());
 
         List<AssessmentUserRoleItem> capturedList = captor.getValue();
-        var assessmentUserRoleItem1 = new AssessmentUserRoleItem(assessmentInvitee2.getAssessmentId(), userId, assessmentInvitee2.getRole());
-        var assessmentUserRoleItem2 = new AssessmentUserRoleItem(assessmentInvitee3.getAssessmentId(), userId, assessmentInvitee3.getRole());
+        var assessmentUserRoleItem1 = new AssessmentUserRoleItem(invitation2.getAssessmentId(), userId, invitation2.getRole());
+        var assessmentUserRoleItem2 = new AssessmentUserRoleItem(invitation3.getAssessmentId(), userId, invitation3.getRole());
         var assessmentUserRoleListItem = List.of(assessmentUserRoleItem1, assessmentUserRoleItem2);
 
         // Assert that the captured list contains exactly one item ,and it is equal to the expected item
