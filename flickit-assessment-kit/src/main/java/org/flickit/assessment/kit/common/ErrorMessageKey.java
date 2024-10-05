@@ -15,7 +15,7 @@ public class ErrorMessageKey {
     public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
-    public static final String KIT_VERSION_NOT_UPDATING_STATUS = "kit-version.notUpdatingStatus";
+    public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -197,6 +197,19 @@ public class ErrorMessageKey {
     public static final String CREATE_LEVEL_COMPETENCE_VALUE_MIN = "create-level-competence.value.min";
     public static final String CREATE_LEVEL_COMPETENCE_VALUE_MAX = "create-level-competence.value.max";
     public static final String CREATE_LEVEL_COMPETENCE_DUPLICATE = "create-level-competence.duplicate";
+
+    public static final String UPDATE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL = "update-level-competence.levelCompetenceId.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "update-level-competence.kitVersionId.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL = "update-level-competence.value.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_MIN = "update-level-competence.value.min";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_MAX = "update-level-competence.value.max";
+
+    public static final String DELETE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL = "delete-maturity-level.maturityLevelId.notNull";
+    public static final String DELETE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "delete-maturity-level.kitVersionId.notNull";
+
+    public static final String DELETE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "delete-level-competence.kitVersionId.notNull";
+    public static final String DELETE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL = "delete-level-competence.levelCompetenceId.notNull";
+    public static final String DELETE_LEVEL_COMPETENCE_ID_NOT_FOUND = "delete-level-competence.id.notFound";
 
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-maturity-level-orders.kitVersionId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL = "update-maturity-level-orders.orders.notNull";
