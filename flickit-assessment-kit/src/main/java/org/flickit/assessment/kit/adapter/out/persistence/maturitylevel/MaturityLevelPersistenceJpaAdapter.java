@@ -7,6 +7,7 @@ import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRep
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
@@ -28,9 +29,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
-    LoadMaturityLevelsPort,
-    LoadAttributeMaturityLevelsPort {
     LoadAllMaturityLevelsPort,
+    LoadAttributeMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
@@ -95,7 +95,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
                 if (levelIdToLevelCompetences.containsKey(e.getId())) {
                     List<LevelCompetenceJpaEntity> levelCompetenceJpaEntities = levelIdToLevelCompetences.get(maturityLevel.getId());
                     List<MaturityLevelCompetence> maturityLevelCompetences = levelCompetenceJpaEntities.stream()
-                        .map(x -> new MaturityLevelCompetence(x.getEffectiveLevelId(), x.getValue()))
+                        .map(MaturityLevelCompetenceMapper::mapToDomainModel)
                         .toList();
                     maturityLevel.setCompetences(maturityLevelCompetences);
                 } else

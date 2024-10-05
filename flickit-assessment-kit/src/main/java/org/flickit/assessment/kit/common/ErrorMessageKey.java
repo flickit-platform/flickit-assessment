@@ -211,6 +211,11 @@ public class ErrorMessageKey {
     public static final String DELETE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL = "delete-level-competence.levelCompetenceId.notNull";
     public static final String DELETE_LEVEL_COMPETENCE_ID_NOT_FOUND = "delete-level-competence.id.notFound";
 
+    public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notnull";
+    public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
+    public static final String GET_KIT_MATURITY_LEVELS_SIZE_MAX = "get-kit-maturity-levels-size-max";
+    public static final String GET_KIT_MATURITY_LEVELS_PAGE_MIN = "get-kit-maturity-levels-page-min";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
