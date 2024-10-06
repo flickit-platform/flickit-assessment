@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.33-01" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_attribute" columnName="description" newDataType="varchar(500)"/>
+    </changeSet>
+
+    <changeSet id="0.33-02" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_attribute" columnName="code" newDataType="varchar(100)"/>
+    </changeSet>
+
+    <changeSet id="0.33-03" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_maturity_level" columnName="description" newDataType="varchar(500)"/>
+    </changeSet>
+
+    <changeSet id="0.33-04" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_maturity_level" columnName="code" newDataType="varchar(100)"/>
+    </changeSet>
+
+    <changeSet id="0.33-05" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_questionnaire" columnName="title" newDataType="varchar(100)"/>
+    </changeSet>
+
+    <changeSet id="0.33-06" author="Ali Sedaghat">
+        <modifyDataType tableName="fak_questionnaire" columnName="description" newDataType="varchar(500)"/>
+    </changeSet>
+
+    <changeSet id="0.33-07" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_level_competence"
+                             columnNames="affected_level_id, effective_level_id, kit_version_id"
+                             constraintName="uq_fak_levelcompetence_affectedlevel_effectivelevel_kitversion"/>
+    </changeSet>
+
+    <changeSet id="0.33-08" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_level_competence"
+                                 baseColumnNames="kit_version_id"
+                                 constraintName="fk_fak_levelcompetence_kitversion"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.33-09" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_level_competence"/>
+    </changeSet>
+
+    <changeSet id="0.33-10" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_level_competence"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_level_competence"/>
+    </changeSet>
+
+    <changeSet id="0.33-11" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="uq_fak_maturitylevel_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.33-12" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_maturitylevel_index_kitversionid"
+                             tableName="fak_maturity_level"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.33-13" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="uq_fak_maturitylevel_value_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.33-14" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, value"
+                             constraintName="uq_fak_maturitylevel_value_kitversionid"
+                             tableName="fak_maturity_level"
+                             initiallyDeferred="true"/>
+    </changeSet>
+</databaseChangeLog>

@@ -1,8 +1,10 @@
 package org.flickit.assessment.core.application.service.assessmentinvite;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.core.application.domain.AssessmentInvite;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
+import org.flickit.assessment.core.application.domain.notification.AcceptAssessmentInvitationNotificationsCmd;
 import org.flickit.assessment.core.application.port.in.assessmentinvite.AcceptAssessmentInvitationsUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.DeleteAssessmentUserInvitationPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentsUserInvitationsPort;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,7 +28,8 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
     private final DeleteAssessmentUserInvitationPort deleteAssessmentUserInvitationPort;
 
     @Override
-    public void acceptInvitations(Param param) {
+    @SendNotification
+    public Result acceptInvitations(Param param) {
         var email = loadUserEmailByUserIdPort.loadEmail(param.getUserId());
         var invitations = loadAssessmentsUserInvitationsPort.loadInvitations(email);
 
@@ -38,6 +42,13 @@ public class AcceptAssessmentInvitationsService implements AcceptAssessmentInvit
             grantUserAssessmentRolePort.persistAll(validInvitations);
         if (!invitations.isEmpty())
             deleteAssessmentUserInvitationPort.deleteAllByEmail(email);
+
+        var inviterUserIds = invitations.stream()
+            .filter(AssessmentInvite::isNotExpired)
+            .map(AssessmentInvite::getCreatedBy)
+            .collect(Collectors.toSet());
+
+        return new Result(new AcceptAssessmentInvitationNotificationsCmd(inviterUserIds, param.getUserId()));
     }
 
     private AssessmentUserRoleItem toAssessmentUserRoleItem(AssessmentInvite invitation, UUID userId) {

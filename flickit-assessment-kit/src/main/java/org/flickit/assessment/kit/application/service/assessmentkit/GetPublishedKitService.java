@@ -100,7 +100,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     }
 
     private MinimalMaturityLevel toMaturityLevel(MaturityLevel level) {
-        return new MinimalMaturityLevel(level.getId(), level.getTitle(), level.getValue(), level.getIndex());
+        return new MinimalMaturityLevel(level.getId(), level.getTitle(), level.getDescription(), level.getValue(), level.getIndex());
     }
 
     private MinimalKitTag toKitTag(KitTag tag) {

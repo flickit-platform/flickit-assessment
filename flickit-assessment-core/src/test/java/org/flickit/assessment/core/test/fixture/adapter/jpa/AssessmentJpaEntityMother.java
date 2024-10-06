@@ -19,6 +19,7 @@ public class AssessmentJpaEntityMother {
             UUID.randomUUID(),
             "assessment-code" + assessmentCounter,
             "assessment-title" + assessmentCounter,
+            "shortTitle" + assessmentCounter,
             kitId++,
             1L,
             LocalDateTime.now(),

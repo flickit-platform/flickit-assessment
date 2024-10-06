@@ -70,15 +70,47 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.29-06" author="Maziyar Gerami">
-        <modifyDataType tableName="fak_assessment_kit" columnName="code" newDataType="varchar(100)"/>
+    <changeSet id="0.29-05" author="Ali Sedaghat">
+        <createTable tableName="fac_assessment_analysis">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment_analysis"/>
+            </column>
+            <column name="assessment_result_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ai_analysis" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="assessor_analysis" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ai_analysis_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="assessor_analysis_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="true"/>
+            </column>
+            <column name="input_path" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
 
-    <changeSet id="0.29-07" author="Maziyar Gerami">
-        <modifyDataType tableName="fak_assessment_kit" columnName="summary" newDataType="varchar(1000)"/>
+    <changeSet id="0.29-06" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fac_assessment_analysis" columnNames="assessment_result_id,type"
+                             constraintName="uq_fac_assessment_analysis_assessmentresultid_type"/>
     </changeSet>
 
-    <changeSet id="0.29-08" author="Maziyar Gerami">
-        <modifyDataType tableName="fak_assessment_kit" columnName="about" newDataType="varchar(1000)"/>
+    <changeSet id="0.29-07" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fac_assessment_analysis" baseColumnNames="assessment_result_id"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessmentanalysis_assessmentresult"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

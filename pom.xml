@@ -27,7 +27,7 @@
     </modules>
 
 	<properties>
-		<revision>0.29.0-SNAPSHOT</revision>
+		<revision>0.33.0-SNAPSHOT</revision>
 
 		<java.version>21</java.version>
 		<spring-boot.version>3.2.8</spring-boot.version>
@@ -41,6 +41,7 @@
 		<jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 		<poi.version>5.3.0</poi.version>
 		<novu.version>1.6.0</novu.version>
+        <spring-ai.version>1.0.0-M2</spring-ai.version>
 
 		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -109,6 +110,11 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+            <version>${spring-ai.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -268,4 +274,14 @@
 		</plugins>
 	</build>
 
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
