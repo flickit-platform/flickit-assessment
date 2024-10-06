@@ -11,7 +11,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class GetSubjectUseCaseParamListTest {
+class GetSubjectListUseCaseParamTest {
 
     @Test
     void testGetSubjectListUseCaseParam_kitVersionIdViolateConstraints_ErrorMessage() {
