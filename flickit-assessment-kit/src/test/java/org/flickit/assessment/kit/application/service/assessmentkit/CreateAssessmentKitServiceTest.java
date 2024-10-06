@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -32,6 +33,9 @@ class CreateAssessmentKitServiceTest {
     @Mock
     private CreateAssessmentKitPort createAssessmentKitPort;
 
+    @Mock
+    private CreateKitVersionPort createKitVersionPort;
+
     private final UUID ownerId = UUID.randomUUID();
 
     @Test
@@ -44,35 +48,40 @@ class CreateAssessmentKitServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(param.getExpertGroupId());
-        verifyNoMoreInteractions(createAssessmentKitPort);
+        verifyNoMoreInteractions(createAssessmentKitPort, createKitVersionPort);
     }
 
     @Test
     void testCreateAssessmentKit_validParameters_CreateAssessmentKit() {
         var kitId = 2L;
-        var kitVersionId = 3L;
-        var portResult = new CreateAssessmentKitPort.Result(kitId, kitVersionId);
+        var kitVersionId = 22L;
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(ownerId);
-        when(createAssessmentKitPort.persist(any())).thenReturn(portResult);
+        when(createAssessmentKitPort.persist(any())).thenReturn(kitId);
+        when(createKitVersionPort.persist(any())).thenReturn(kitVersionId);
 
         var result = service.createAssessmentKit(param);
 
         assertNotNull(result);
-        assertEquals(portResult.kitId(), result.kitId());
+        assertEquals(kitId, result.kitId());
 
-        ArgumentCaptor<CreateAssessmentKitPort.Param> paramCaptor = ArgumentCaptor.forClass(CreateAssessmentKitPort.Param.class);
-        verify(createAssessmentKitPort).persist(paramCaptor.capture());
-        assertEquals(AssessmentKit.generateSlugCode(param.getTitle()), paramCaptor.getValue().code());
-        assertEquals(param.getTitle(), paramCaptor.getValue().title());
-        assertEquals(param.getSummary(), paramCaptor.getValue().summary());
-        assertEquals(param.getAbout(), paramCaptor.getValue().about());
-        assertFalse(paramCaptor.getValue().published());
-        assertEquals(param.getIsPrivate(), paramCaptor.getValue().isPrivate());
-        assertEquals(param.getExpertGroupId(), paramCaptor.getValue().expertGroupId());
-        assertEquals(KitVersionStatus.UPDATING, paramCaptor.getValue().kitVersionStatus());
-        assertEquals(param.getCurrentUserId(), paramCaptor.getValue().createdBy());
+        ArgumentCaptor<CreateAssessmentKitPort.Param> createKitPortParamCaptor = ArgumentCaptor.forClass(CreateAssessmentKitPort.Param.class);
+        verify(createAssessmentKitPort).persist(createKitPortParamCaptor.capture());
+        assertEquals(AssessmentKit.generateSlugCode(param.getTitle()), createKitPortParamCaptor.getValue().code());
+        assertEquals(param.getTitle(), createKitPortParamCaptor.getValue().title());
+        assertEquals(param.getSummary(), createKitPortParamCaptor.getValue().summary());
+        assertEquals(param.getAbout(), createKitPortParamCaptor.getValue().about());
+        assertFalse(createKitPortParamCaptor.getValue().published());
+        assertEquals(param.getIsPrivate(), createKitPortParamCaptor.getValue().isPrivate());
+        assertEquals(param.getExpertGroupId(), createKitPortParamCaptor.getValue().expertGroupId());
+        assertEquals(param.getCurrentUserId(), createKitPortParamCaptor.getValue().createdBy());
+
+        ArgumentCaptor<CreateKitVersionPort.Param> createVersionPortParamCaptor = ArgumentCaptor.forClass(CreateKitVersionPort.Param.class);
+        verify(createKitVersionPort).persist(createVersionPortParamCaptor.capture());
+        assertEquals(kitId, createVersionPortParamCaptor.getValue().kitId());
+        assertEquals(KitVersionStatus.UPDATING, createVersionPortParamCaptor.getValue().status());
+        assertEquals(param.getCurrentUserId(), createVersionPortParamCaptor.getValue().createdBy());
     }
 
     private CreateAssessmentKitUseCase.Param createParam(Consumer<CreateAssessmentKitUseCase.Param.ParamBuilder> changer) {
