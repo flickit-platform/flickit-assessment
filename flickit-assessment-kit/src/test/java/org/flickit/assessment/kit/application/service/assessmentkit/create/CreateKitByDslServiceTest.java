@@ -83,15 +83,7 @@ class CreateKitByDslServiceTest {
         when(loadKitDSLJsonFilePort.loadDslJson(DSL_JSON)).thenReturn(dslContent);
 
         UUID currentUserId = EXPERT_GROUP_OWNER_ID;
-//        var kitCreateParam = new CreateAssessmentKitPort.Param(
-//            TITLE,
-//            TITLE,
-//            SUMMARY,
-//            ABOUT,
-//            Boolean.FALSE,
-//            Boolean.FALSE,
-//            EXPERT_GROUP_ID,
-//            currentUserId);
+
         when(createAssessmentKitPort.persist(any())).thenReturn(KIT_ID);
         when(createKitVersionPort.persist(any())).thenReturn(kitVersionId);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(KIT_ID, kitVersionId);
