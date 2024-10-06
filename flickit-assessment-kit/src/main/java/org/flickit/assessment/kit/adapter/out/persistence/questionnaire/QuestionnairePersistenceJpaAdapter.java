@@ -65,7 +65,7 @@ public class QuestionnairePersistenceJpaAdapter implements
             ));
         List<QuestionnaireJpaEntity> entities = repository.findAllById(idToModel.keySet());
         if (entities.size() != questionnaireOrders.size())
-            throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
 
         entities.forEach(x -> {
             QuestionnaireOrder newLevel = idToModel.get(new QuestionnaireJpaEntity.EntityId(x.getId(), kitVersionId));
