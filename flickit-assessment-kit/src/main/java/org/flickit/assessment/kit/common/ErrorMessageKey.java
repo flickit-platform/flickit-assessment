@@ -211,6 +211,12 @@ public class ErrorMessageKey {
     public static final String DELETE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL = "delete-level-competence.levelCompetenceId.notNull";
     public static final String DELETE_LEVEL_COMPETENCE_ID_NOT_FOUND = "delete-level-competence.id.notFound";
 
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-maturity-level-orders.kitVersionId.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL = "update-maturity-level-orders.orders.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_ID_NOT_NULL = "update-maturity-level-orders.maturityLevelId.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level-orders.maturityLevel.index.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
+
     public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notnull";
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MAX = "get-kit-maturity-levels-size-max";

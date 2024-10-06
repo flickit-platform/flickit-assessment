@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TITLE_COMPLETE_ASSESSMENT;
+import static org.flickit.assessment.core.common.MessageKey.NOTIFICATION_TITLE_COMPLETE_ASSESSMENT;
 
 @Slf4j
 @Component

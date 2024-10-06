@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompetenceJpaEntity, Long> {
+public interface LevelCompetenceJpaRepository extends JpaRepository<LevelCompetenceJpaEntity, LevelCompetenceJpaEntity.EntityId> {
 
-    List<LevelCompetenceJpaEntity> findByAffectedLevelId(Long affectedLevelId);
+    List<LevelCompetenceJpaEntity> findByAffectedLevelIdAndKitVersionId(long affectedLevelId, long kitVersionId);
 
     List<LevelCompetenceJpaEntity> findAllByAffectedLevelIdInAndKitVersionId(Iterable<Long> levelIds, Long kitVersionId);
 
