@@ -13,6 +13,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UpdateQuestionnaireOrderUseCaseTest {
+
     @Test
     void testUpdateQuestionnaireOrdersUseCaseParam_kitVersionIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
