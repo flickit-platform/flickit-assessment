@@ -1055,7 +1055,33 @@
               }
             },
             "response": []
-          }
+			},
+			{
+				"name": "Get Kit Maturity Levels",
+				"request": {
+					"method": "GET",
+					"header": [
+						{
+							"key": "Authorization",
+							"value": "{{authorization_header}}",
+							"type": "text"
+						}
+					],
+					"url": {
+						"raw": "{{base_url}}/{{api_path}}/kit-versions/348/maturity-levels",
+						"host": [
+							"{{base_url}}"
+						],
+						"path": [
+							"{{api_path}}",
+							"kit-versions",
+							"348",
+							"maturity-levels"
+						]
+					}
+				},
+				"response": []
+			}
         ]
       }
 	],
