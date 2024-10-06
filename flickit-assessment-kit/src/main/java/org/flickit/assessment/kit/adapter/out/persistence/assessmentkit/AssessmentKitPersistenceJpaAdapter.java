@@ -53,7 +53,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     CountKitAssessmentsPort,
     LoadExpertGroupKitListPort,
     SearchKitOptionsPort,
-    LoadActiveKitVersionIdPort {
+    LoadActiveKitVersionIdPort,
+    UpdateKitActiveVersionPort {
 
     private final AssessmentKitJpaRepository repository;
     private final UserJpaRepository userRepository;
@@ -274,5 +275,10 @@ public class AssessmentKitPersistenceJpaAdapter implements
     public long loadKitVersionId(long kitId) {
         return repository.loadKitVersionId(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+    }
+
+    @Override
+    public void updateActiveVersion(long kitId, long activeVersionId) {
+        repository.updateKitVersionId(kitId, activeVersionId);
     }
 }
