@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.subject.GetSubjectListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class GetSubjectListService implements GetSubjectListUseCase {
 
     private final LoadKitVersionPort loadKitVersionPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
+    private final LoadSubjectsPort loadSubjectsPort;
 
     @Override
     public PaginatedResponse<SubjectListItem> getSubjectList(Param param) {
@@ -26,7 +28,22 @@ public class GetSubjectListService implements GetSubjectListUseCase {
         if (!checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+        var portResult = loadSubjectsPort.loadPaginatedByKitVersionId(kitVersion.getId(), param.getPage(), param.getSize());
 
-        return null;
+        return new PaginatedResponse<>(
+            portResult.getItems().stream().map(this::mapToSubjectListItem).toList(),
+            param.getPage(),
+            param.getSize(),
+            portResult.getSort(),
+            portResult.getOrder(),
+            portResult.getTotal());
+    }
+
+    private SubjectListItem mapToSubjectListItem(LoadSubjectsPort.Result portResult) {
+        return new SubjectListItem(portResult.id(),
+            portResult.title(),
+            portResult.description(),
+            portResult.index(),
+            portResult.weight());
     }
 }

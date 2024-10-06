@@ -1,11 +1,13 @@
 package org.flickit.assessment.kit.application.service.subject;
 
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.subject.GetSubjectListUseCase;
 import org.flickit.assessment.kit.application.port.in.subject.GetSubjectListUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -34,6 +37,9 @@ class GetSubjectListServiceTest {
     @Mock
     CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
+    @Mock
+    LoadSubjectsPort loadSubjectsPort;
+
     @Test
     void testGetSubjectListService_kitVersionNotExist_shouldThrowResourceNotFoundException() {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
@@ -45,7 +51,7 @@ class GetSubjectListServiceTest {
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
 
-        verifyNoInteractions(checkExpertGroupAccessPort);
+        verifyNoInteractions(checkExpertGroupAccessPort, loadSubjectsPort);
     }
 
     @Test
@@ -62,6 +68,27 @@ class GetSubjectListServiceTest {
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
         verify(checkExpertGroupAccessPort).checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId());
+        verifyNoInteractions(loadSubjectsPort);
+    }
+
+    @Test
+    void testGetSubjectListService_ValidParam_shouldReturnSubjectList() {
+        Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
+        var assessmentKit = AssessmentKitMother.simpleKit();
+        var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
+        var subjectList = List.of(new LoadSubjectsPort.Result(1L, "title", "description", 1, 2),
+            new LoadSubjectsPort.Result(2L, "title2", "description2", 2, 3));
+        var paginatedResponse = new PaginatedResponse<>(subjectList, param.getPage(), param.getSize(), "index", "desc", 4);
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSubjectsPort.loadPaginatedByKitVersionId(kitVersion.getId(), param.getPage(), param.getSize())).thenReturn(paginatedResponse);
+
+        assertDoesNotThrow(() -> service.getSubjectList(param));
+
+        verify(loadKitVersionPort).load(param.getKitVersionId());
+        verify(checkExpertGroupAccessPort).checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId());
+        verify(loadSubjectsPort).loadPaginatedByKitVersionId(kitVersion.getId(), param.getPage(), param.getSize());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
@@ -73,9 +100,9 @@ class GetSubjectListServiceTest {
 
     private GetSubjectListUseCase.Param.ParamBuilder paramBuilder() {
         return GetSubjectListUseCase.Param.builder()
-            .kitVersionId(1L)
-            .size(1)
-            .page(10)
+            .kitVersionId(123L)
+            .size(10)
+            .page(1)
             .currentUserId(UUID.randomUUID());
     }
 }
