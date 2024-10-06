@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.subject;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -10,7 +12,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_SUBJECT_LIST_KIT_VERSION_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetSubjectListUseCase {
 
@@ -26,10 +28,19 @@ public interface GetSubjectListUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Min(value = 1, message = GET_SUBJECT_LIST_SIZE_MIN)
+        @Max(value = 50, message = GET_SUBJECT_LIST_SIZE_MAX)
+        int size;
+
+        @Min(value = 0, message = GET_SUBJECT_LIST_PAGE_MIN)
+        int page;
+
         @Builder
-        public Param(Long kitVersionId, UUID currentUserId) {
+        public Param(Long kitVersionId, UUID currentUserId, int size, int page) {
             this.kitVersionId = kitVersionId;
             this.currentUserId = currentUserId;
+            this.size = size;
+            this.page = page;
             this.validateSelf();
         }
     }

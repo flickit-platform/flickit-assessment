@@ -218,6 +218,9 @@ public class ErrorMessageKey {
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
 
     public static final String GET_SUBJECT_LIST_KIT_VERSION_ID_NOT_NULL = "get-subject-list.kitVersionId.notNull";
+    public static final String GET_SUBJECT_LIST_SIZE_MIN = "get-subject-list.size.min";
+    public static final String GET_SUBJECT_LIST_SIZE_MAX = "get-subject-list.size.max";
+    public static final String GET_SUBJECT_LIST_PAGE_MIN = "get-subject-list.page.min";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
