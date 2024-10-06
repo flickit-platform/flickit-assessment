@@ -79,7 +79,7 @@ class UpdateQuestionnaireOrdersServiceTest {
 
         var questionnaireOrders = List.of(
             new QuestionnaireOrder(123L, 3),
-            new QuestionnaireOrder(456L, 4)
+            new QuestionnaireOrder(124L, 2)
         );
         verify(updateQuestionnairePort, times(1))
             .updateOrders(questionnaireOrders, param.getKitVersionId(), param.getCurrentUserId());
