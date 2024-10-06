@@ -12,17 +12,20 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.QuestionnaireOrder;
 import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -51,6 +54,26 @@ public class QuestionnairePersistenceJpaAdapter implements
             param.description(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public void updateOrders(List<QuestionnaireOrder> questionnaireOrders, Long kitVersionId,  UUID lastModifiedBy) {
+        Map<QuestionnaireJpaEntity.EntityId, QuestionnaireOrder> idToModel = questionnaireOrders.stream()
+            .collect(Collectors.toMap(
+                qs -> new QuestionnaireJpaEntity.EntityId(qs.getId(), kitVersionId),
+                qs -> qs
+            ));
+        List<QuestionnaireJpaEntity> entities = repository.findAllById(idToModel.keySet());
+        if (entities.size() != questionnaireOrders.size())
+            throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            QuestionnaireOrder newLevel = idToModel.get(new QuestionnaireJpaEntity.EntityId(x.getId(), kitVersionId));
+            x.setIndex(newLevel.getIndex());
+            x.setLastModificationTime(LocalDateTime.now());
+            x.setLastModifiedBy(lastModifiedBy);
+        });
+        repository.saveAll(entities);
     }
 
     @Override

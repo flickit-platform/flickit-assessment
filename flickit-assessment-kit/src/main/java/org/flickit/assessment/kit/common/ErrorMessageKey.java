@@ -217,6 +217,12 @@ public class ErrorMessageKey {
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level-orders.maturityLevel.index.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
 
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-questionnaire-orders.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_NOT_NULL = "update-questionnaire-orders.orders.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_ID_NOT_NULL = "update-questionnaire-orders.questionnaireId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire-orders.questionnaireIndex.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_MIN = "update-questionnaire-orders.questionnaireIndex.min";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
