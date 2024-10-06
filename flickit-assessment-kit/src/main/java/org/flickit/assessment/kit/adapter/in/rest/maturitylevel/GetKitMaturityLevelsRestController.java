@@ -28,7 +28,7 @@ public class GetKitMaturityLevelsRestController {
                                                                                          @RequestParam(defaultValue = "20") int size) {
         var currentUserId = userContext.getUser().id();
         var kitMaturityLevels = useCase.getKitMaturityLevels(toParam(kitVersionId, size, page, currentUserId));
-        return new ResponseEntity<>(kitMaturityLevels, HttpStatus.CREATED);
+        return new ResponseEntity<>(kitMaturityLevels, HttpStatus.OK);
     }
 
     private Param toParam(Long kitVersionId, Integer size, Integer page, UUID currentUserId) {
