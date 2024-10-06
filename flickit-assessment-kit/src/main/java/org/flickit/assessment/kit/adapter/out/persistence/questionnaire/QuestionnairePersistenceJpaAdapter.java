@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -16,6 +17,8 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuest
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -65,7 +68,30 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
+    public PaginatedResponse<LoadQuestionnairesPort.Result> loadAllByKitVersionId(long kitVersionId, int page, int size) {
+        var pageResult = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
+            .map(e -> new LoadQuestionnairesPort.Result(new Questionnaire(e.getId(),
+                null,
+                e.getTitle(),
+                e.getIndex(),
+                e.getDescription(),
+                null,
+                null), e.getQuestionCount()))
+            .toList();
+
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            QuestionnaireJpaEntity.Fields.INDEX,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+    }
+
+    @Override
+    public LoadKitQuestionnaireDetailPort.Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
         QuestionnaireJpaEntity questionnaireEntity = repository.findByIdAndKitVersionId(questionnaireId, kitVersionId)
             .orElseThrow(() ->  new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
@@ -81,6 +107,6 @@ public class QuestionnairePersistenceJpaAdapter implements
             .map(QuestionMapper::mapToDomainModel)
             .toList();
 
-        return new Result(questionEntities.size(), relatedSubjects, questionnaireEntity.getDescription(), questions);
+        return new LoadKitQuestionnaireDetailPort.Result(questionEntities.size(), relatedSubjects, questionnaireEntity.getDescription(), questions);
     }
 }
