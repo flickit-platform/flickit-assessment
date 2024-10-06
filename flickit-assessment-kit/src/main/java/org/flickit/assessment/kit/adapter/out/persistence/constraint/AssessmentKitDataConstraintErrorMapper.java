@@ -33,7 +33,8 @@ public class AssessmentKitDataConstraintErrorMapper implements DataConstraintErr
         entry("uq_fak_questionnaire_title_kitversionid", CREATE_QUESTIONNAIRE_TITLE_DUPLICATE),
         entry("fk_fak_levelcompetence_maturitylevel_effectivelevelid", MATURITY_LEVEL_ID_NOT_FOUND),
         entry("fk_fak_levelcompetence_maturitylevel_affectedlevelid", MATURITY_LEVEL_ID_NOT_FOUND),
-        entry("uq_fak_levelcompetence_affectedlevel_effectivelevel_kitversion", CREATE_LEVEL_COMPETENCE_DUPLICATE));
+        entry("uq_fak_levelcompetence_affectedlevel_effectivelevel_kitversion", CREATE_LEVEL_COMPETENCE_DUPLICATE),
+        entry("fk_fak_levelcompetence_kitversion", KIT_VERSION_ID_NOT_FOUND));
 
     @Override
     public boolean contains(String constraintName) {
