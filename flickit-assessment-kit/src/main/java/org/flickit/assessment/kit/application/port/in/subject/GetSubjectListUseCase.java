@@ -16,7 +16,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetSubjectListUseCase {
 
-    PaginatedResponse<SubjectListItem> getSubjectList();
+    PaginatedResponse<SubjectListItem> getSubjectList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -28,19 +28,19 @@ public interface GetSubjectListUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Min(value = 0, message = GET_SUBJECT_LIST_PAGE_MIN)
+        int page;
+
         @Min(value = 1, message = GET_SUBJECT_LIST_SIZE_MIN)
         @Max(value = 50, message = GET_SUBJECT_LIST_SIZE_MAX)
         int size;
 
-        @Min(value = 0, message = GET_SUBJECT_LIST_PAGE_MIN)
-        int page;
-
         @Builder
-        public Param(Long kitVersionId, UUID currentUserId, int size, int page) {
+        public Param(Long kitVersionId, int page, int size, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.currentUserId = currentUserId;
-            this.size = size;
             this.page = page;
+            this.size = size;
             this.validateSelf();
         }
     }

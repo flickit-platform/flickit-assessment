@@ -17,7 +17,7 @@ public class GetSubjectListService implements GetSubjectListUseCase {
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Override
-    public PaginatedResponse<SubjectListItem> getSubjectList() {
+    public PaginatedResponse<SubjectListItem> getSubjectList(Param param) {
         return null;
     }
 }
