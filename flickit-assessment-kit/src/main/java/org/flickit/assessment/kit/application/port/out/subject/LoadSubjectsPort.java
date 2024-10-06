@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.out.subject;
 
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Subject;
 
@@ -16,4 +17,9 @@ public interface LoadSubjectsPort {
      * @throws ResourceNotFoundException if the kit ID is not found.
      */
     List<Subject> loadByKitVersionId(long kitVersionId);
+
+    PaginatedResponse<Result> loadPaginatedByKitVersionId(long kitVersionId, int page, int size);
+
+    record Result(Long id, String title, String description, Integer index, Integer weight){
+    }
 }
