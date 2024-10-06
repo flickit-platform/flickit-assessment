@@ -77,12 +77,12 @@
                              initiallyDeferred="true"/>
     </changeSet>
 
-    <changeSet id="0.33-08" author="Maziyar Gerami">
+    <changeSet id="0.33-15" author="Maziyar Gerami">
         <dropUniqueConstraint tableName="fak_questionnaire"
                               constraintName="uq_fak_questionnaire_index_kitversionid"/>
     </changeSet>
 
-    <changeSet id="0.33-09" author="Maziyar Gerami">
+    <changeSet id="0.33-16" author="Maziyar Gerami">
         <addUniqueConstraint columnNames="kit_version_id, index"
                              constraintName="uq_fak_questionnaire_index_kitversionid"
                              tableName="fak_questionnaire"
