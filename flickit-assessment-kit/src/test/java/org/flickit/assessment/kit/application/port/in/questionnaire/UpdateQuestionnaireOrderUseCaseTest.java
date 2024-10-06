@@ -46,9 +46,10 @@ class UpdateQuestionnaireOrderUseCaseTest {
         var throwableNullViolation = assertThrows(ConstraintViolationException.class,
             () -> createQuestionnaireOrderParam(b -> b.index(null)));
         assertThat(throwableNullViolation).hasMessage("index: " + UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_NOT_NULL);
+
         var throwableMinViolation = assertThrows(ConstraintViolationException.class,
             () -> createQuestionnaireOrderParam(b -> b.index(0)));
-        assertThat(throwableMinViolation).hasMessage("index: " + UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_MIN );
+        assertThat(throwableMinViolation).hasMessage("index: " + UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_MIN);
     }
 
     private void createQuestionnaireOrderParam(Consumer<UpdateQuestionnaireOrdersUseCase.QuestionnaireParam.QuestionnaireParamBuilder> changer) {
@@ -63,8 +64,7 @@ class UpdateQuestionnaireOrderUseCaseTest {
             .index(2);
     }
 
-
-        private void createParam(Consumer<UpdateQuestionnaireOrdersUseCase.Param.ParamBuilder> changer) {
+    private void createParam(Consumer<UpdateQuestionnaireOrdersUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         paramBuilder.build();
@@ -73,7 +73,9 @@ class UpdateQuestionnaireOrderUseCaseTest {
     private UpdateQuestionnaireOrdersUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateQuestionnaireOrdersUseCase.Param.builder()
             .kitVersionId(1L)
-            .orders(List.of())
+            .orders(List.of(
+                new UpdateQuestionnaireOrdersUseCase.QuestionnaireParam(123L, 3),
+                new UpdateQuestionnaireOrdersUseCase.QuestionnaireParam(124L, 2)))
             .currentUserId(UUID.randomUUID());
     }
 }

@@ -19,12 +19,13 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestio
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -56,12 +57,22 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateIndexes(Long kitVersionId, List<QuestionnaireOrder> orders) {
-        var ids = orders.stream().map(QuestionnaireOrder::getId).collect(Collectors.toSet());
-        var subjectIdToIndexMap = orders.stream()
-            .collect(Collectors.toMap(QuestionnaireOrder::getId, QuestionnaireOrder::getIndex));
-        var entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
-        entities.forEach(e -> e.setIndex(subjectIdToIndexMap.get(e.getId())));
+    public void updateOrders(List<QuestionnaireOrder> questionnaireOrders, Long kitVersionId,  UUID lastModifiedBy) {
+        Map<QuestionnaireJpaEntity.EntityId, QuestionnaireOrder> idToModel = questionnaireOrders.stream()
+            .collect(Collectors.toMap(
+                qs -> new QuestionnaireJpaEntity.EntityId(qs.getId(), kitVersionId),
+                qs -> qs
+            ));
+        List<QuestionnaireJpaEntity> entities = repository.findAllById(idToModel.keySet());
+        if (entities.size() != questionnaireOrders.size())
+            throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            QuestionnaireOrder newLevel = idToModel.get(new QuestionnaireJpaEntity.EntityId(x.getId(), kitVersionId));
+            x.setIndex(newLevel.getIndex());
+            x.setLastModificationTime(LocalDateTime.now());
+            x.setLastModifiedBy(lastModifiedBy);
+        });
         repository.saveAll(entities);
     }
 

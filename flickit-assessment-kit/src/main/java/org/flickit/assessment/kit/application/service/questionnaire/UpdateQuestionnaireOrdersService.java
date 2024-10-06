@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.QuestionnaireOrder;
 import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -28,6 +29,11 @@ public class UpdateQuestionnaireOrdersService implements UpdateQuestionnaireOrde
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        updateQuestionnairePort.updateIndexes(param.getKitVersionId(), param.getOrders());
+        var questionnairesOrders = param.getOrders().stream().map(this::toQuestionnaireOrderParam).toList();
+        updateQuestionnairePort.updateOrders(questionnairesOrders, param.getKitVersionId(), param.getCurrentUserId());
+    }
+
+    private QuestionnaireOrder toQuestionnaireOrderParam(QuestionnaireParam param) {
+        return new QuestionnaireOrder(param.getId(), param.getIndex());
     }
 }

@@ -10,7 +10,7 @@ public interface UpdateQuestionnairePort {
 
     void update(Param param);
 
-    void updateIndexes(Long kitVersionId, List<QuestionnaireOrder> orders);
+    void updateOrders(List<QuestionnaireOrder> orders, Long kitVersionId, UUID lastModifiedBy);
 
     record Param(
         long id,
