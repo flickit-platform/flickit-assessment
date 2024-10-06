@@ -98,7 +98,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
     private void setLevelCompetences(List<MaturityLevel> levels) {
         levels.forEach(level -> level.setCompetences(
             levelCompetenceRepository.findByAffectedLevelId(level.getId()).stream()
-                .map(MaturityLevelCompetenceMapper::mapToDomainModel)
+                .map(x -> MaturityLevelCompetenceMapper.mapToDomainModel(x, null))
                 .toList()));
     }
 

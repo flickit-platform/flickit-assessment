@@ -16,7 +16,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetKitMaturityLevelsUseCase {
 
-    PaginatedResponse<Result> getKitMaturityLevels(Param param);
+    PaginatedResponse<MaturityLevelListItem> getKitMaturityLevels(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -44,7 +44,7 @@ public interface GetKitMaturityLevelsUseCase {
         }
     }
 
-    record Result(long id, String title, int index, int value, List<Competences> competences) {
+    record MaturityLevelListItem(long id, String title, int index, int value, List<Competences> competences) {
     }
 
     record Competences(Long id, String title, int value, long maturityLevelId) {

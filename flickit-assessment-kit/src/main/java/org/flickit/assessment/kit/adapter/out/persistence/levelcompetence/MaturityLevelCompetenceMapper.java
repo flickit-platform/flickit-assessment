@@ -8,10 +8,11 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MaturityLevelCompetenceMapper {
 
-    public static MaturityLevelCompetence mapToDomainModel(LevelCompetenceJpaEntity entity) {
+    public static MaturityLevelCompetence mapToDomainModel(LevelCompetenceJpaEntity entity, String effectiveLevelTitle) {
         return new MaturityLevelCompetence(
             entity.getId(),
             entity.getEffectiveLevelId(),
+            effectiveLevelTitle,
             entity.getValue()
         );
     }

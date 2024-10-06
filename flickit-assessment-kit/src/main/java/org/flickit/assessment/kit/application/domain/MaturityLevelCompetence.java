@@ -9,5 +9,6 @@ public class MaturityLevelCompetence {
 
     private final long id;
     private final long effectiveLevelId;
+    private final String effectiveLevelTitle;
     private final int value;
 }

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase;
+import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase.MaturityLevelListItem;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +23,9 @@ public class GetKitMaturityLevelsRestController {
     private final UserContext userContext;
 
     @GetMapping("/kit-versions/{kitVersionId}/maturity-levels")
-    public ResponseEntity<PaginatedResponse<Result>> getKitMaturityLevels(@PathVariable("kitVersionId") Long kitVersionId,
-                                                                          @RequestParam(defaultValue = "0") int page,
-                                                                          @RequestParam(defaultValue = "20") int size) {
+    public ResponseEntity<PaginatedResponse<MaturityLevelListItem>> getKitMaturityLevels(@PathVariable("kitVersionId") Long kitVersionId,
+                                                                                         @RequestParam(defaultValue = "0") int page,
+                                                                                         @RequestParam(defaultValue = "20") int size) {
         var currentUserId = userContext.getUser().id();
         var kitMaturityLevels = useCase.getKitMaturityLevels(toParam(kitVersionId, size, page, currentUserId));
         return new ResponseEntity<>(kitMaturityLevels, HttpStatus.CREATED);

@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
@@ -51,7 +53,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     @Override
     public void updateAll(List<MaturityLevel> maturityLevels, Long kitVersionId, UUID lastModifiedBy) {
         Map<EntityId, MaturityLevel> idToModel = maturityLevels.stream()
-            .collect(Collectors.toMap(
+            .collect(toMap(
                 ml -> new EntityId(ml.getId(), kitVersionId),
                 ml -> ml
             ));
@@ -87,7 +89,9 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .toList();
 
         var levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
-        return mapToDomainModel(maturityLevelEntities, levelCompetenceEntities);
+        var idToTitleMap = maturityLevelEntities.stream()
+            .collect(toMap(MaturityLevelJpaEntity::getId, MaturityLevelJpaEntity::getTitle));
+        return mapToDomainModel(maturityLevelEntities, levelCompetenceEntities, idToTitleMap);
     }
 
     @Override
@@ -106,7 +110,12 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .toList();
 
         var levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
-        var maturityLevels = mapToDomainModel(pageResult.getContent(), levelCompetenceEntities);
+        var effectiveLevelsId = levelCompetenceEntities.stream().map(LevelCompetenceJpaEntity::getEffectiveLevelId)
+            .collect(Collectors.toSet());
+        var idToTitleMap = repository.findAllByKitVersionIdAndIdIn(kitVersionId, effectiveLevelsId)
+            .stream()
+            .collect(toMap(MaturityLevelJpaEntity::getId, MaturityLevelJpaEntity::getTitle));
+        var maturityLevels = mapToDomainModel(pageResult.getContent(), levelCompetenceEntities, idToTitleMap);
 
         return new PaginatedResponse<>(maturityLevels,
             pageResult.getNumber(),
