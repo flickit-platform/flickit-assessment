@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.out.questionnaire;
 
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 
@@ -16,4 +17,8 @@ public interface LoadQuestionnairesPort {
      * @throws ResourceNotFoundException if the kit ID is not found.
      */
     List<Questionnaire> loadByKitId(Long kitId);
+
+    PaginatedResponse<Result> loadAllByKitVersionId(long kitVersionId, int page, int size);
+
+    record Result(Questionnaire questionnaire, int questionsCount) {}
 }
