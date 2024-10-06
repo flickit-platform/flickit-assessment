@@ -76,4 +76,16 @@
                              tableName="fak_maturity_level"
                              initiallyDeferred="true"/>
     </changeSet>
+
+    <changeSet id="0.33-15" author="Maziyar Gerami">
+        <modifyDataType tableName="fak_assessment_kit" columnName="code" newDataType="varchar(100)"/>
+    </changeSet>
+
+    <changeSet id="0.33-16" author="Maziyar Gerami">
+        <modifyDataType tableName="fak_assessment_kit" columnName="summary" newDataType="varchar(1000)"/>
+    </changeSet>
+
+    <changeSet id="0.33-17" author="Maziyar Gerami">
+        <modifyDataType tableName="fak_assessment_kit" columnName="about" newDataType="varchar(1000)"/>
+    </changeSet>
 </databaseChangeLog>
