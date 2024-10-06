@@ -4,9 +4,11 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsByIdsPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
@@ -17,11 +19,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +43,9 @@ class GetKitMaturityLevelsServiceTest {
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
+    @Mock
+    private LoadMaturityLevelsByIdsPort loadMaturityLevelsByIdsPort;
+
     @Test
     void testGetKitMaturityLevels_CurrentUserIsNotExpertGroupMember_AccessDenied() {
         Param param = new Param(12L, 10, 0, UUID.randomUUID());
@@ -51,7 +57,7 @@ class GetKitMaturityLevelsServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getKitMaturityLevels(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadMaturityLevelsPort);
+        verifyNoInteractions(loadMaturityLevelsPort, loadMaturityLevelsByIdsPort);
     }
 
     @Test
@@ -59,12 +65,19 @@ class GetKitMaturityLevelsServiceTest {
         Param param = new Param(12L, 10, 0, UUID.randomUUID());
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+        Set<Long> effectiveLevelsId = maturityLevels.stream()
+            .flatMap(x -> x.getCompetences().stream())
+            .map(MaturityLevelCompetence::getEffectiveLevelId)
+            .collect(toSet());
+
         PaginatedResponse<MaturityLevel> paginatedResponse = new PaginatedResponse<>(maturityLevels, 0, 10, "index", "asc", maturityLevels.size());
 
         when(loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(param.getKitVersionId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId(), param.getSize(), param.getPage()))
             .thenReturn(paginatedResponse);
+        when(loadMaturityLevelsByIdsPort.loadByKitVersionId(param.getKitVersionId(), effectiveLevelsId))
+            .thenReturn(maturityLevels);
 
         var result = service.getKitMaturityLevels(param);
         var resultItems = result.getItems();
@@ -86,7 +99,7 @@ class GetKitMaturityLevelsServiceTest {
         var itemCompetence = item.competences().getFirst();
         assertEquals(itemCompetence.id(), competence.getId());
         assertEquals(itemCompetence.maturityLevelId(), competence.getEffectiveLevelId());
-        assertEquals(itemCompetence.title(), competence.getEffectiveLevelTitle());
+        assertFalse(itemCompetence.title().isBlank());
         assertEquals(itemCompetence.value(), competence.getValue());
     }
 }

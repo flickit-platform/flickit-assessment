@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
@@ -16,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,7 +34,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     UpdateMaturityLevelPort,
     LoadAllMaturityLevelsPort,
     LoadAttributeMaturityLevelsPort,
-    LoadMaturityLevelsPort {
+    LoadMaturityLevelsPort,
+    LoadMaturityLevelsByIdsPort {
 
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
@@ -111,9 +112,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .toList();
 
         var levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
-        var idToTitleMap = maturityLevelEntities.stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId, MaturityLevelJpaEntity::getTitle));
-        return mapToDomainModel(maturityLevelEntities, levelCompetenceEntities, idToTitleMap);
+        return mapToDomainModel(maturityLevelEntities, levelCompetenceEntities);
     }
 
     @Override
@@ -132,12 +131,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .toList();
 
         var levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
-        var effectiveLevelsId = levelCompetenceEntities.stream().map(LevelCompetenceJpaEntity::getEffectiveLevelId)
-            .collect(Collectors.toSet());
-        var idToTitleMap = repository.findAllByKitVersionIdAndIdIn(kitVersionId, effectiveLevelsId)
-            .stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId, MaturityLevelJpaEntity::getTitle));
-        var maturityLevels = mapToDomainModel(pageResult.getContent(), levelCompetenceEntities, idToTitleMap);
+        var maturityLevels = mapToDomainModel(pageResult.getContent(), levelCompetenceEntities);
 
         return new PaginatedResponse<>(maturityLevels,
             pageResult.getNumber(),
@@ -145,5 +139,12 @@ public class MaturityLevelPersistenceJpaAdapter implements
             MaturityLevelJpaEntity.Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public List<MaturityLevel> loadByKitVersionId(long kitVersionId, Collection<Long> ids) {
+        return repository.findAllByKitVersionIdAndIdIn(kitVersionId, ids).stream()
+            .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
     }
 }

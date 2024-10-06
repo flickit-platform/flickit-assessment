@@ -11,7 +11,6 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,7 @@ public class MaturityLevelMapper {
         );
     }
 
-    public static List<MaturityLevel> mapToDomainModel(List<MaturityLevelJpaEntity> maturityLevelEntities, List<LevelCompetenceJpaEntity> levelCompetenceEntities, Map<Long, String> idToTitleMap) {
+    public static List<MaturityLevel> mapToDomainModel(List<MaturityLevelJpaEntity> maturityLevelEntities, List<LevelCompetenceJpaEntity> levelCompetenceEntities) {
         var levelIdToLevelCompetences = levelCompetenceEntities.stream()
             .collect(Collectors.groupingBy(LevelCompetenceJpaEntity::getAffectedLevelId));
 
@@ -39,7 +38,7 @@ public class MaturityLevelMapper {
                 if (levelIdToLevelCompetences.containsKey(e.getId())) {
                     List<LevelCompetenceJpaEntity> levelCompetenceJpaEntities = levelIdToLevelCompetences.get(maturityLevel.getId());
                     List<MaturityLevelCompetence> maturityLevelCompetences = levelCompetenceJpaEntities.stream()
-                        .map(x -> MaturityLevelCompetenceMapper.mapToDomainModel(x, idToTitleMap.get(x.getEffectiveLevelId())))
+                        .map(MaturityLevelCompetenceMapper::mapToDomainModel)
                         .toList();
                     maturityLevel.setCompetences(maturityLevelCompetences);
                 } else
