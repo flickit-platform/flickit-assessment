@@ -17,7 +17,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.users.expertgroup.Expe
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
 import org.springframework.data.domain.Page;
@@ -59,17 +58,21 @@ public class AssessmentKitPersistenceJpaAdapter implements
     private final KitTagRelationJpaRepository kitTagRelationRepository;
 
     @Override
-    public PaginatedResponse<GetKitUserListUseCase.UserListItem> loadKitUsers(LoadKitUsersPort.Param param) {
-        Page<UserJpaEntity> pageResult = repository.findAllKitUsers(
-            param.kitId(),
-            PageRequest.of(param.page(), param.size()));
+    public PaginatedResponse<LoadKitUsersPort.KitUser> loadKitUsers(LoadKitUsersPort.Param param) {
+        PageRequest pageRequest = PageRequest.of(
+            param.page(),
+            param.size(),
+            Sort.by(Sort.Order.asc(UserJpaEntity.Fields.NAME))
+        );
 
-        List<GetKitUserListUseCase.UserListItem> items = pageResult.getContent().stream()
+        Page<UserJpaEntity> pageResult = repository.findAllKitUsers(param.kitId(), pageRequest);
+
+        List<LoadKitUsersPort.KitUser> users = pageResult.stream()
             .map(UserMapper::mapToUserListItem)
             .toList();
 
         return new PaginatedResponse<>(
-            items,
+            users,
             pageResult.getNumber(),
             pageResult.getSize(),
             UserJpaEntity.Fields.NAME,
