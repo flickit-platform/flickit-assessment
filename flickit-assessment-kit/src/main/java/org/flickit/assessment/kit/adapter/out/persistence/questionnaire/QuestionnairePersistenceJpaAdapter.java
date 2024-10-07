@@ -12,10 +12,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadKitQuestionnaireDetailPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
-import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,7 +27,8 @@ public class QuestionnairePersistenceJpaAdapter implements
     CreateQuestionnairePort,
     UpdateQuestionnairePort,
     LoadQuestionnairesPort,
-    LoadKitQuestionnaireDetailPort {
+    LoadKitQuestionnaireDetailPort,
+    DeleteQuestionnairePort {
 
     private final QuestionnaireJpaRepository repository;
     private final AssessmentKitJpaRepository assessmentKitRepository;
@@ -82,5 +80,13 @@ public class QuestionnairePersistenceJpaAdapter implements
             .toList();
 
         return new Result(questionEntities.size(), relatedSubjects, questionnaireEntity.getDescription(), questions);
+    }
+
+    @Override
+    public void delete(long kitVersionId, long questionnaireId) {
+        if (!repository.existsByIdAndKitVersionId(questionnaireId, kitVersionId))
+            throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
+
+        repository.deleteByIdAndKitVersionId(questionnaireId, kitVersionId);
     }
 }
