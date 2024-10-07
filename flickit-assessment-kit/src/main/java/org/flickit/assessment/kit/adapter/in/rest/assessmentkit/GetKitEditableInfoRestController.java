@@ -39,7 +39,8 @@ public class GetKitEditableInfoRestController {
             kitEditableInfo.price(),
             kitEditableInfo.about(),
             kitEditableInfo.tags(),
-            kitEditableInfo.editable()
+            kitEditableInfo.editable(),
+            kitEditableInfo.hasActiveVersion()
         );
     }
 }
