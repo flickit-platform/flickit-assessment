@@ -89,7 +89,7 @@ class ActivateKitVersionServiceTest {
     void testActivateKitVersion_ThereIsNoActiveVersion_ActivateNewKitVersion() {
         Param param = new Param(12L, UUID.randomUUID());
         UUID expertGroupOwner = param.getCurrentUserId();
-        AssessmentKit kit = AssessmentKitMother.kitWithoutKitVersion();
+        AssessmentKit kit = AssessmentKitMother.kitWithKitVersionId(null);
         KitVersion kitVersion = KitVersionMother.createKitVersion(kit);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);

@@ -161,7 +161,7 @@ public class AssessmentKitMother {
             id++);
     }
 
-    public static AssessmentKit kitWithoutKitVersion() {
+    public static AssessmentKit kitWithKitVersionId(Long kitVersionId) {
         return new AssessmentKit(
             id++,
             CODE + id,
@@ -176,6 +176,6 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            null);
+            kitVersionId);
     }
 }
