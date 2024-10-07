@@ -69,7 +69,7 @@ class DeleteSubjectServiceTest {
     }
 
     @Test
-    void testDeleteSubjectService_KitVersionStatusIsUpdating_throwsValidationException() {
+    void testDeleteSubjectService_KitVersionStatusIsUpdating_throwsAccessDeniedException() {
         DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createActiveKitVersion(AssessmentKitMother.simpleKit());
 

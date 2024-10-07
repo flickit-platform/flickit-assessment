@@ -15,30 +15,30 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DeleteSubjectUseCaseParamTest {
 
     @Test
-    void testDeleteSubjectUseCaseParam_idViolatesConstraints_ErrorMessage() {
+    void testDeleteSubjectUseCaseParam_idParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.id(null)));
         assertThat(throwable).hasMessage("id: " + DELETE_SUBJECT_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
-    void testDeleteSubjectUseCaseParam_kitVersionIdViolatesConstraints_ErrorMessage() {
+    void testDeleteSubjectUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + DELETE_SUBJECT_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testDeleteSubjectUseCaseParam_currentUserParamViolateConstraints_ErrorMessage() {
+    void testDeleteSubjectUseCaseParam_currentUserIdParamViolateConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private DeleteSubjectUseCase.Param createParam(Consumer<DeleteSubjectUseCase.Param.ParamBuilder> consumer) {
+    private void createParam(Consumer<DeleteSubjectUseCase.Param.ParamBuilder> consumer) {
         var paramBuilder = paramBuilder();
         consumer.accept(paramBuilder);
-        return paramBuilder.build();
+        paramBuilder.build();
     }
 
     private DeleteSubjectUseCase.Param.ParamBuilder paramBuilder(){
