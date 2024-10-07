@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class GetQuestionsRestController {
+public class GetQuestionnairesRestController {
 
     private final GetQuestionnairesUseCase useCase;
     private final UserContext userContext;
