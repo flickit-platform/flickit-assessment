@@ -69,7 +69,7 @@ class ActivateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId()))
             .thenReturn(expertGroupOwner);
         doNothing().when(updateKitVersionStatusPort)
-            .updateStatus(kit.getKitVersionId(), KitVersionStatus.ARCHIVE);
+            .updateStatus(kit.getActiveVersionId(), KitVersionStatus.ARCHIVE);
         doNothing().when(updateKitVersionStatusPort)
             .updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort)
@@ -78,7 +78,7 @@ class ActivateKitVersionServiceTest {
         service.activateKitVersion(param);
 
         verify(updateKitVersionStatusPort, times(1))
-            .updateStatus(kit.getKitVersionId(), KitVersionStatus.ARCHIVE);
+            .updateStatus(kit.getActiveVersionId(), KitVersionStatus.ARCHIVE);
         verify(updateKitVersionStatusPort, times(1))
             .updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         verify(updateKitActiveVersionPort, times(1))

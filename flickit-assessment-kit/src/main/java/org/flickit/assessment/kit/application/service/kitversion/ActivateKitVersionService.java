@@ -30,8 +30,8 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (kit.getKitVersionId() != null)
-            updateKitVersionStatusPort.updateStatus(kit.getKitVersionId(), KitVersionStatus.ARCHIVE);
+        if (kit.getActiveVersionId() != null)
+            updateKitVersionStatusPort.updateStatus(kit.getActiveVersionId(), KitVersionStatus.ARCHIVE);
         updateKitVersionStatusPort.updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         updateKitActiveVersionPort.updateActiveVersion(kit.getId(), param.getKitVersionId());
     }
