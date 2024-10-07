@@ -32,7 +32,7 @@ public interface GetSubjectListUseCase {
         int page;
 
         @Min(value = 1, message = GET_SUBJECT_LIST_SIZE_MIN)
-        @Max(value = 50, message = GET_SUBJECT_LIST_SIZE_MAX)
+        @Max(value = 100, message = GET_SUBJECT_LIST_SIZE_MAX)
         int size;
 
         @Builder
