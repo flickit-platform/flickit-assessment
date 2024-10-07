@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.subject.DeleteSubjectUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.subject.DeleteSubjectPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ class DeleteSubjectServiceTest {
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
+    @Mock
+    private DeleteSubjectPort deleteSubjectPort;
+
     @Test
     void testDeleteSubjectService_kitVersionDoesNotExist_throwsResourceNotFoundException() {
         DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
@@ -44,7 +48,7 @@ class DeleteSubjectServiceTest {
         assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
-        verifyNoInteractions(loadExpertGroupOwnerPort);
+        verifyNoInteractions(loadExpertGroupOwnerPort, deleteSubjectPort);
     }
 
     @Test
@@ -61,6 +65,39 @@ class DeleteSubjectServiceTest {
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
         verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
+        verifyNoInteractions(deleteSubjectPort);
+    }
+
+    @Test
+    void testDeleteSubjectService_KitVersionStatusIsUpdating_throwsValidationException() {
+        DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
+        var kitVersion = KitVersionMother.createActiveKitVersion(AssessmentKitMother.simpleKit());
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSubject(param));
+
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verify(loadKitVersionPort).load(param.getKitVersionId());
+        verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
+        verifyNoInteractions(deleteSubjectPort);
+    }
+
+    @Test
+    void testDeleteSubjectService_validParams_successfulDelete() {
+        DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
+        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
+
+        assertDoesNotThrow(() -> service.deleteSubject(param));
+
+        verify(loadKitVersionPort).load(param.getKitVersionId());
+        verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
+        verify(deleteSubjectPort).deleteByIdAndKitVersionId(param.getId(), param.getKitVersionId());
     }
 
     private DeleteSubjectUseCase.Param createParam(Consumer<DeleteSubjectUseCase.Param.ParamBuilder> consumer) {
@@ -71,8 +108,8 @@ class DeleteSubjectServiceTest {
 
     private DeleteSubjectUseCase.Param.ParamBuilder paramBuilder() {
         return DeleteSubjectUseCase.Param.builder()
-            .id(1L)
-            .kitVersionId(2L)
+            .id(123L)
+            .kitVersionId(123L)
             .currentUserId(UUID.randomUUID());
     }
 }
