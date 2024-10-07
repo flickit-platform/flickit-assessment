@@ -61,7 +61,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
                 return SubjectMapper.mapToDomainModel(e, attributes);})
             .toList();
 
-        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId, null).stream()
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
         setLevelCompetences(levels, kitVersionId);

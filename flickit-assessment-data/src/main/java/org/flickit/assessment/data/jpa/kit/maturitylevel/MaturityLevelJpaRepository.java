@@ -17,7 +17,11 @@ import java.util.UUID;
 @Repository
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, MaturityLevelJpaEntity.EntityId> {
 
-    Page<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId, Pageable pageable);
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
+
+    Page<MaturityLevelJpaEntity> findByKitVersionId(Long kitVersionId, Pageable pageable);
+
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdAndIdIn(long kitVersionId, Collection<Long> ids);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
@@ -77,6 +81,4 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             ORDER BY a.index
         """)
     List<MaturityQuestionCountView> loadAttributeLevels(@Param("attributeId") Long attributeId, @Param("kitVersionId") Long kitVersionId);
-
-    List<MaturityLevelJpaEntity> findAllByKitVersionIdAndIdIn(long kitVersionId, Collection<Long> ids);
 }

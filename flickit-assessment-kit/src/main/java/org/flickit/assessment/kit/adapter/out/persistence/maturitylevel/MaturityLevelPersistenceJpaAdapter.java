@@ -103,7 +103,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public List<MaturityLevel> loadAllByKitVersionId(Long kitVersionId) {
-        var maturityLevelEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId, null).getContent();
+        var maturityLevelEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
 
         var levelIds = maturityLevelEntities.stream()
             .map(MaturityLevelJpaEntity::getId)
@@ -122,7 +122,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<MaturityLevel> loadByKitVersionId(long kitVersionId, Integer size, Integer page) {
-        var pageResult = repository.findAllByKitVersionIdOrderByIndex(kitVersionId, PageRequest.of(page, size));
+        var pageResult = repository.findByKitVersionId(kitVersionId,
+            PageRequest.of(page, size, Sort.Direction.ASC, MaturityLevelJpaEntity.Fields.index));
 
         var levelIds = pageResult.stream()
             .map(MaturityLevelJpaEntity::getId)

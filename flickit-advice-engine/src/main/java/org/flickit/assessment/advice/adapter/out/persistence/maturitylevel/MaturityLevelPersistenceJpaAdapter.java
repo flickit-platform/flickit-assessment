@@ -16,7 +16,7 @@ public class MaturityLevelPersistenceJpaAdapter implements LoadMaturityLevelsPor
 
     @Override
     public List<MaturityLevel> loadAll(long kitVersionId) {
-        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId, null).stream()
+        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
     }
