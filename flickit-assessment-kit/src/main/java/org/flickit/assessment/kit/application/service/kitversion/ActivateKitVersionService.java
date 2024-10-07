@@ -25,8 +25,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
 
     @Override
     public void activateKitVersion(Param param) {
-        var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
-        var kit = kitVersion.getKit();
+        var kit = loadKitVersionPort.load(param.getKitVersionId()).getKit();
         var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
