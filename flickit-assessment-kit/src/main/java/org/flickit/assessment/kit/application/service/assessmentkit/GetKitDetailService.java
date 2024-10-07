@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDetail
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAllMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
-    private final LoadAllMaturityLevelsPort loadAllMaturityLevelsPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
@@ -40,7 +40,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
 
-        var maturityLevels = loadAllMaturityLevelsPort.loadByKitVersionId(kitVersionId);
+        var maturityLevels = loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId);
         var subjects = loadSubjectsPort.loadByKitVersionId(kitVersionId);
         var questionnaires = loadQuestionnairesPort.loadByKitId(param.getKitId());
 

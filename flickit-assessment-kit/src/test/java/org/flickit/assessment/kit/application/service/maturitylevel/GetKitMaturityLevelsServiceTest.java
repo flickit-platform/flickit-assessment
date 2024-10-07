@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsByIdsPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
@@ -43,9 +42,6 @@ class GetKitMaturityLevelsServiceTest {
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
-    @Mock
-    private LoadMaturityLevelsByIdsPort loadMaturityLevelsByIdsPort;
-
     @Test
     void testGetKitMaturityLevels_CurrentUserIsNotExpertGroupMember_AccessDenied() {
         Param param = new Param(12L, 10, 0, UUID.randomUUID());
@@ -57,7 +53,7 @@ class GetKitMaturityLevelsServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getKitMaturityLevels(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadMaturityLevelsPort, loadMaturityLevelsByIdsPort);
+        verifyNoInteractions(loadMaturityLevelsPort);
     }
 
     @Test
@@ -76,7 +72,7 @@ class GetKitMaturityLevelsServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId(), param.getSize(), param.getPage()))
             .thenReturn(paginatedResponse);
-        when(loadMaturityLevelsByIdsPort.loadByKitVersionId(param.getKitVersionId(), effectiveLevelsId))
+        when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId(), effectiveLevelsId))
             .thenReturn(maturityLevels);
 
         var result = service.getKitMaturityLevels(param);

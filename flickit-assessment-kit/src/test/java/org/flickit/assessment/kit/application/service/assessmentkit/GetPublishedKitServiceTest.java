@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.kitlike.CheckKitLikeExistencePort;
 import org.flickit.assessment.kit.application.port.out.kittag.LoadKitTagListPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAllMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.*;
@@ -49,7 +49,7 @@ class GetPublishedKitServiceTest {
     private LoadQuestionnairesPort loadQuestionnairesPort;
 
     @Mock
-    private LoadAllMaturityLevelsPort loadAllMaturityLevelsPort;
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
     private LoadKitTagListPort loadKitTagListPort;
@@ -70,7 +70,7 @@ class GetPublishedKitServiceTest {
             countKitStatsPort,
             loadSubjectsPort,
             loadQuestionnairesPort,
-            loadAllMaturityLevelsPort,
+            loadMaturityLevelsPort,
             loadKitTagListPort);
     }
 
@@ -86,7 +86,7 @@ class GetPublishedKitServiceTest {
             countKitStatsPort,
             loadSubjectsPort,
             loadQuestionnairesPort,
-            loadAllMaturityLevelsPort,
+            loadMaturityLevelsPort,
             loadKitTagListPort);
     }
 
@@ -103,7 +103,7 @@ class GetPublishedKitServiceTest {
         verifyNoInteractions(countKitStatsPort,
             loadSubjectsPort,
             loadQuestionnairesPort,
-            loadAllMaturityLevelsPort,
+            loadMaturityLevelsPort,
             loadKitTagListPort);
     }
 
@@ -124,7 +124,7 @@ class GetPublishedKitServiceTest {
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadByKitVersionId(kit.getKitVersionId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
-        when(loadAllMaturityLevelsPort.loadByKitVersionId(kit.getKitVersionId())).thenReturn(List.of(maturityLevel));
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kit.getKitVersionId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
 
@@ -175,7 +175,7 @@ class GetPublishedKitServiceTest {
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadByKitVersionId(kit.getKitVersionId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
-        when(loadAllMaturityLevelsPort.loadByKitVersionId(kit.getKitVersionId())).thenReturn(List.of(maturityLevel));
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kit.getKitVersionId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
 

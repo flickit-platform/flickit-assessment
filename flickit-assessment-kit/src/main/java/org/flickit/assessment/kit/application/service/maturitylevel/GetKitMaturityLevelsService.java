@@ -8,7 +8,6 @@ import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsByIdsPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +26,6 @@ public class GetKitMaturityLevelsService implements GetKitMaturityLevelsUseCase 
     private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final LoadMaturityLevelsByIdsPort loadMaturityLevelsByIdsPort;
 
     @Override
     public PaginatedResponse<MaturityLevelListItem> getKitMaturityLevels(Param param) {
@@ -50,7 +48,7 @@ public class GetKitMaturityLevelsService implements GetKitMaturityLevelsUseCase 
             .map(MaturityLevelCompetence::getEffectiveLevelId)
             .collect(toSet());
 
-        var idToTitleMap = loadMaturityLevelsByIdsPort.loadByKitVersionId(kitVersionId, effectiveLevelsId)
+        var idToTitleMap = loadMaturityLevelsPort.loadByKitVersionId(kitVersionId, effectiveLevelsId)
             .stream().collect(toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
         return maturityLevels.getItems().stream()

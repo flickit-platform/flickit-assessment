@@ -8,7 +8,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveK
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
-import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadAllMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadAllAttributesPort loadAllAttributesPort;
     private final LoadQuestionPort loadQuestionPort;
-    private final LoadAllMaturityLevelsPort loadAllMaturityLevelsPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
 
     @Override
@@ -43,7 +43,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
         Question question = loadQuestionPort.load(param.getQuestionId(), kitVersionId);
 
-        var maturityLevelsMap = loadAllMaturityLevelsPort.loadByKitVersionId(kitVersionId).stream()
+        var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
         var options = question.getOptions().stream()
             .map(opt -> new Option(opt.getIndex(), opt.getTitle()))

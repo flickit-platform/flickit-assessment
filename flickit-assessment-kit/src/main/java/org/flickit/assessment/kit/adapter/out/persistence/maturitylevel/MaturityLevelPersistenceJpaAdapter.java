@@ -32,10 +32,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
-    LoadAllMaturityLevelsPort,
     LoadAttributeMaturityLevelsPort,
-    LoadMaturityLevelsPort,
-    LoadMaturityLevelsByIdsPort {
+    LoadMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
@@ -104,7 +102,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<MaturityLevel> loadByKitVersionId(Long kitVersionId) {
+    public List<MaturityLevel> loadAllByKitVersionId(Long kitVersionId) {
         var maturityLevelEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId, null).getContent();
 
         var levelIds = maturityLevelEntities.stream()
