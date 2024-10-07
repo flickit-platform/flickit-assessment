@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.domain;
 
 import jakarta.annotation.Nullable;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
