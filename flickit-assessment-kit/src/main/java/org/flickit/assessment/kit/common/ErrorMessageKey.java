@@ -217,6 +217,18 @@ public class ErrorMessageKey {
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level-orders.maturityLevel.index.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
 
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_NOT_NULL = "create-assessment-kit.title.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_SIZE_MIN = "create-assessment-kit.title.min";
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_SIZE_MAX = "create-assessment-kit.title.max";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_NOT_NULL = "create-assessment-kit.summary.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_SIZE_MIN = "create-assessment-kit.summary.size.min";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_SIZE_MAX = "create-assessment-kit.summary.size.max";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_NOT_NULL = "create-assessment-kit.about.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MIN = "create-assessment-kit.about.size.min";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MAX = "create-assessment-kit.about.size.max";
+    public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
+
     public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notNull";
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MAX = "get-kit-maturity-levels-size-max";
