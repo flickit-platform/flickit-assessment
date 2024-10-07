@@ -9,7 +9,6 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -46,9 +45,6 @@ public interface GetKitMaturityLevelsUseCase {
         }
     }
 
-    record MaturityLevelListItem(long id, String title, int index, int value, List<Competences> competences) {
-    }
-
-    record Competences(Long id, String title, int value, long maturityLevelId) {
+    record MaturityLevelListItem(long id, int index, String title, String description, int value) {
     }
 }

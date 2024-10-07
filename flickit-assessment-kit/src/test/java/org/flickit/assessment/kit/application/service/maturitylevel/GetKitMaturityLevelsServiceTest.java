@@ -4,7 +4,6 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -18,12 +17,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
-import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -61,10 +59,6 @@ class GetKitMaturityLevelsServiceTest {
         Param param = new Param(12L, 10, 0, UUID.randomUUID());
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        Set<Long> effectiveLevelsId = maturityLevels.stream()
-            .flatMap(x -> x.getCompetences().stream())
-            .map(MaturityLevelCompetence::getEffectiveLevelId)
-            .collect(toSet());
 
         PaginatedResponse<MaturityLevel> paginatedResponse = new PaginatedResponse<>(maturityLevels, 0, 10, "index", "asc", maturityLevels.size());
 
@@ -72,8 +66,6 @@ class GetKitMaturityLevelsServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId(), param.getSize(), param.getPage()))
             .thenReturn(paginatedResponse);
-        when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId(), effectiveLevelsId))
-            .thenReturn(maturityLevels);
 
         var result = service.getKitMaturityLevels(param);
         var resultItems = result.getItems();
@@ -88,14 +80,8 @@ class GetKitMaturityLevelsServiceTest {
         var maturityLevel = maturityLevels.get(1);
         assertEquals(maturityLevel.getId(), item.id());
         assertEquals(maturityLevel.getTitle(), item.title());
+        assertEquals(maturityLevel.getDescription(), item.description());
         assertEquals(maturityLevel.getIndex(), item.index());
         assertEquals(maturityLevel.getValue(), item.value());
-
-        var competence = maturityLevel.getCompetences().getFirst();
-        var itemCompetence = item.competences().getFirst();
-        assertEquals(itemCompetence.id(), competence.getId());
-        assertEquals(itemCompetence.maturityLevelId(), competence.getEffectiveLevelId());
-        assertFalse(itemCompetence.title().isBlank());
-        assertEquals(itemCompetence.value(), competence.getValue());
     }
 }

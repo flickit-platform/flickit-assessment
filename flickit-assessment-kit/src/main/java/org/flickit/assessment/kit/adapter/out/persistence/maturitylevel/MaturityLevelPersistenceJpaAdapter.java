@@ -122,21 +122,19 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<MaturityLevel> loadByKitVersionId(long kitVersionId, Integer size, Integer page) {
+        String sort = MaturityLevelJpaEntity.Fields.index;
+        Sort.Direction sortDirection = Sort.Direction.ASC;
+
         var pageResult = repository.findByKitVersionId(kitVersionId,
-            PageRequest.of(page, size, Sort.Direction.ASC, MaturityLevelJpaEntity.Fields.index));
+            PageRequest.of(page, size, sortDirection, sort));
 
-        var levelIds = pageResult.stream()
-            .map(MaturityLevelJpaEntity::getId)
-            .toList();
-
-        var levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
-        var maturityLevels = mapToDomainModel(pageResult.getContent(), levelCompetenceEntities);
+        var maturityLevels = pageResult.getContent().stream().map(MaturityLevelMapper::mapToDomainModel).toList();
 
         return new PaginatedResponse<>(maturityLevels,
             pageResult.getNumber(),
             pageResult.getSize(),
-            MaturityLevelJpaEntity.Fields.index,
-            Sort.Direction.ASC.name().toLowerCase(),
+            sort,
+            sortDirection.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
 
