@@ -35,7 +35,6 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
         if (!Objects.equals(expertGroupOwnerId, param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-//        give access to private kits here
         var kitId = createAssessmentKitPort.persist(toPortParam(param));
         createKitVersionPort.persist(new CreateKitVersionPort.Param(kitId, KitVersionStatus.UPDATING, param.getCurrentUserId()));
 
