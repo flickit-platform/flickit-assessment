@@ -25,7 +25,7 @@ public class AssessmentKit {
     private final List<Subject> subjects;
     private final List<MaturityLevel> maturityLevels;
     private final List<Questionnaire> questionnaires;
-    private final Long kitVersionId;
+    private final Long activeVersionId;
     private final Long draftVersionId;
 
     public static String generateSlugCode(String title) {
