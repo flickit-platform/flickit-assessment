@@ -16,6 +16,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.kittagrelation.KitTagR
 import org.flickit.assessment.kit.adapter.out.persistence.users.expertgroup.ExpertGroupMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.users.user.UserMapper;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitMinimalInfoUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.*;
@@ -31,6 +32,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
@@ -166,7 +168,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         AssessmentKitJpaEntity kitEntity = repository.findById(kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        return AssessmentKitMapper.mapToDomainModel(kitEntity);
+        return mapToDomainModel(kitEntity);
     }
 
     @Override
@@ -174,7 +176,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
-                AssessmentKitMapper.mapToDomainModel(v.getKit()),
+                mapToDomainModel(v.getKit()),
                 ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())
             ))
             .toList();
@@ -194,7 +196,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
-                AssessmentKitMapper.mapToDomainModel(v.getKit()),
+                mapToDomainModel(v.getKit()),
                 ExpertGroupMapper.mapToDomainModel(v.getExpertGroup())))
             .toList();
 
@@ -233,6 +235,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var pageResult = repository.findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(expertGroupId,
             userId,
             includeUnpublishedKits,
+            KitVersionStatus.UPDATING.getId(),
             PageRequest.of(page, size));
         var items = pageResult.getContent().stream().map(AssessmentKitMapper::mapToDomainModel).toList();
 
