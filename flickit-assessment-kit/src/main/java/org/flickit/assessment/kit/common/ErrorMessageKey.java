@@ -229,6 +229,12 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
     public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
 
+    public static final String CREATE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "create-question-impact.kitVersionId.notNull";
+    public static final String CREATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL = "create-question-impact.attributeId.notNull";
+    public static final String CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "create-question-impact.maturityLevelId.notNull";
+    public static final String CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "create-question-impact.weight.notNull";
+    public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_NULL = "create-question-impact.questionId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
