@@ -14,21 +14,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class GetSubjectListUseCaseParamTest {
 
     @Test
-    void testGetSubjectListUseCaseParam_kitVersionIdViolateConstraints_ErrorMessage() {
+    void testGetSubjectListUseCaseParam_kitVersionIdParamViolateConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + GET_SUBJECT_LIST_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testGetSubjectListUseCaseParam_currentUserIdViolateConstraints_ErrorMessage() {
+    void testGetSubjectListUseCaseParam_currentUserIdParamViolateConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
-    void testGetSubjectListUseCaseParam_sizeViolateConstraints_ErrorMessage() {
+    void testGetSubjectListUseCaseParam_sizeParamViolateConstraints_ErrorMessage() {
         var throwableMin = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.size(0)));
         assertThat(throwableMin).hasMessage("size: " + GET_SUBJECT_LIST_SIZE_MIN);
@@ -39,7 +39,7 @@ class GetSubjectListUseCaseParamTest {
     }
 
     @Test
-    void testGetSubjectListUseCaseParam_pageViolateConstraints_ErrorMessage() {
+    void testGetSubjectListUseCaseParam_pageParamViolateConstraints_ErrorMessage() {
         var throwableMin = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.page(-1)));
         assertThat(throwableMin).hasMessage("page: " + GET_SUBJECT_LIST_PAGE_MIN);
