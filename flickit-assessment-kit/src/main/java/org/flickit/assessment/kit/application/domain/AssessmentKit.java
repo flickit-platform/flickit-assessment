@@ -1,14 +1,15 @@
 package org.flickit.assessment.kit.application.domain;
 
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder(toBuilder = true)
 @RequiredArgsConstructor
 public class AssessmentKit {
 
@@ -26,7 +27,14 @@ public class AssessmentKit {
     private final List<MaturityLevel> maturityLevels;
     private final List<Questionnaire> questionnaires;
     private final Long activeVersionId;
-    private final Long draftVersionId;
+
+    /**
+     * Represents the version ID of the draft. This field is not always required and may be {@code null}.
+     * When a draft version is necessary, this field is set to the appropriate version ID.
+     */
+    @Setter
+    @Nullable
+    private Long draftVersionId;
 
     public static String generateSlugCode(String title) {
         return title

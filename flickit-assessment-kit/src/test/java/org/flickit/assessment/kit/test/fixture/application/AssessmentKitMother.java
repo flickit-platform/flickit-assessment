@@ -32,8 +32,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++,
-            null);
+            id++);
     }
 
     public static AssessmentKit notPublishedKit() {
@@ -51,8 +50,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++,
-            null);
+            id++);
     }
 
     public static AssessmentKit completeKit(List<Subject> subjects, List<MaturityLevel> maturityLevels, List<Questionnaire> questionnaires) {
@@ -70,8 +68,7 @@ public class AssessmentKitMother {
             subjects,
             maturityLevels,
             questionnaires,
-            id++,
-            null);
+            id++);
     }
 
     public static AssessmentKit kitWithMaturityLevels(List<MaturityLevel> maturityLevels) {
@@ -89,8 +86,7 @@ public class AssessmentKitMother {
             null,
             maturityLevels,
             null,
-            id++,
-            null);
+            id++);
     }
 
     public static AssessmentKit kitWithQuestionnaires(List<Questionnaire> questionnaires) {
@@ -108,8 +104,7 @@ public class AssessmentKitMother {
             null,
             null,
             questionnaires,
-            id++,
-            null);
+            id++);
     }
 
     public static AssessmentKit kitWithSubjects(List<Subject> subjects) {
@@ -127,8 +122,7 @@ public class AssessmentKitMother {
             subjects,
             null,
             null,
-            id++,
-            null);
+            id++);
     }
 
     public static AssessmentKit kitWithSubjectsAndQuestionnaires(List<Subject> subjects, List<Questionnaire> questionnaires) {
@@ -146,8 +140,7 @@ public class AssessmentKitMother {
             subjects,
             null,
             questionnaires,
-            id++,
-            null);
+            id++);
     }
 
     public static AssessmentKit privateKit() {
@@ -165,7 +158,6 @@ public class AssessmentKitMother {
             null,
             null,
             null,
-            id++,
-            null);
+            id++);
     }
 }

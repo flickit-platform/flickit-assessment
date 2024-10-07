@@ -69,13 +69,12 @@ public class AssessmentKitMapper {
             null,
             null,
             null,
-            entity.getKitVersionId(),
-            null);
+            entity.getKitVersionId());
     }
 
     public static AssessmentKit mapToDomainModel(KitWithDraftVersionIdView view) {
         AssessmentKitJpaEntity entity = view.getKit();
-        return new AssessmentKit(
+        var kit = new AssessmentKit(
             entity.getId(),
             entity.getCode(),
             entity.getTitle(),
@@ -89,7 +88,8 @@ public class AssessmentKitMapper {
             null,
             null,
             null,
-            entity.getKitVersionId(),
-            view.getDraftVersionId());
+            entity.getKitVersionId());
+        kit.setDraftVersionId(view.getDraftVersionId());
+        return kit;
     }
 }
