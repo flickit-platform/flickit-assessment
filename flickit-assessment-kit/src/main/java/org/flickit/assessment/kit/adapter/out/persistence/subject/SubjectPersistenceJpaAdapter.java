@@ -80,7 +80,6 @@ public class SubjectPersistenceJpaAdapter implements
             SubjectJpaEntity.Fields.INDEX,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
-
     }
 
     @Override
