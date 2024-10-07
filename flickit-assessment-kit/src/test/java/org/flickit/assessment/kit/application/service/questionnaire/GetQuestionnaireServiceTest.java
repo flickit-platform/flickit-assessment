@@ -6,7 +6,7 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnairesUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
@@ -41,17 +41,17 @@ class GetQuestionnaireServiceTest {
     private LoadKitVersionPort loadKitVersionPort;
 
     @Mock
-    LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
+    private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
     void testGetQuestionnaire_WhenCurrentUserIsNotMemberOfExpertGroup_ThenThrowAccessDeniedException() {
         var param = createParam(GetQuestionnairesUseCase.Param.ParamBuilder::build);
-        List<LoadExpertGroupMemberIdsPort.Result> results = List.of(new LoadExpertGroupMemberIdsPort.Result(UUID.randomUUID()));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupMemberIdsPort.loadMemberIds(kitVersion.getKit().getExpertGroupId())).thenReturn(results);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
+            .thenReturn(false);
 
         AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaires(param));
 
@@ -62,7 +62,6 @@ class GetQuestionnaireServiceTest {
     @Test
     void testGetQuestionnaire_WhenCurrentUserIsMemberOfExpertGroup_ThenGetQuestionnaires() {
         var param = createParam(GetQuestionnairesUseCase.Param.ParamBuilder::build);
-        List<LoadExpertGroupMemberIdsPort.Result> results = List.of(new LoadExpertGroupMemberIdsPort.Result(param.getCurrentUserId()));
         Questionnaire questionnaire1 = QuestionnaireMother.questionnaireWithTitle("title1");
         Questionnaire questionnaire2 = QuestionnaireMother.questionnaireWithTitle("title2");
         List<LoadQuestionnairesPort.Result> items = List.of(new LoadQuestionnairesPort.Result(questionnaire1, 4),
@@ -77,8 +76,10 @@ class GetQuestionnaireServiceTest {
         );
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupMemberIdsPort.loadMemberIds(kitVersion.getKit().getExpertGroupId())).thenReturn(results);
-        when(loadQuestionnairesPort.loadAllByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize())).thenReturn(pageResult);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
+            .thenReturn(true);
+        when(loadQuestionnairesPort.loadAllByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize()))
+            .thenReturn(pageResult);
 
         var paginatedResponse = assertDoesNotThrow(() -> service.getQuestionnaires(param));
         assertNotNull(paginatedResponse);

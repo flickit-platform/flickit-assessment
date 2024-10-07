@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnairesUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.springframework.data.domain.Sort;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -25,15 +24,12 @@ public class GetQuestionnaireService implements GetQuestionnairesUseCase {
 
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadKitVersionPort loadKitVersionPort;
-    private final LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
+    private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Override
     public PaginatedResponse<QuestionnaireListItem> getQuestionnaires(Param param) {
         KitVersion kitVersion = loadKitVersionPort.load(param.getKitVersionId());
-        List<UUID> ids = loadExpertGroupMemberIdsPort.loadMemberIds(kitVersion.getKit().getExpertGroupId()).stream()
-            .map(LoadExpertGroupMemberIdsPort.Result::userId)
-            .toList();
-        if (!ids.contains(param.getCurrentUserId()))
+        if (!checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var pageResult = loadQuestionnairesPort.loadAllByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize());
