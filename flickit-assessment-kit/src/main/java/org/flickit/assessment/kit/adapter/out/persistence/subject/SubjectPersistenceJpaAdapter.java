@@ -76,7 +76,7 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public void deleteByIdAndKitVersionId(long id, long kitVersionId) {
-        if (!repository.existsByIdAndKitVersionId())
+        if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(id, kitVersionId);
