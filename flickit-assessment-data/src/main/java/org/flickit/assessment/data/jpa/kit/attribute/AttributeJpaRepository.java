@@ -23,6 +23,9 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
+    void deleteByIdAndKitVersionId(long id, long kitVersionId);
+
+
     @Modifying
     @Query("""
             UPDATE AttributeJpaEntity a
