@@ -6,7 +6,9 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,8 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CreateAssessmentKitPort createAssessmentKitPort;
     private final CreateKitVersionPort createKitVersionPort;
+    private final LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
+    private final GrantUserAccessToKitPort grantUserAccessToKitPort;
 
     @Override
     public Result createAssessmentKit(Param param) {
@@ -31,8 +35,16 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
         if (!Objects.equals(expertGroupOwnerId, param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+//        give access to private kits here
         var kitId = createAssessmentKitPort.persist(toPortParam(param));
         createKitVersionPort.persist(new CreateKitVersionPort.Param(kitId, KitVersionStatus.UPDATING, param.getCurrentUserId()));
+
+        var expertGroupMemberIds = loadExpertGroupMemberIdsPort.loadMemberIds(param.getExpertGroupId())
+            .stream()
+            .map(LoadExpertGroupMemberIdsPort.Result::userId)
+            .toList();
+        grantUserAccessToKitPort.grantUsersAccess(kitId, expertGroupMemberIds);
+
         return new Result(kitId);
     }
 

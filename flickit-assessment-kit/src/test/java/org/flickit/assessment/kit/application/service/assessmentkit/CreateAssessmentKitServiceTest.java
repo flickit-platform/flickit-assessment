@@ -5,7 +5,9 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -36,6 +39,12 @@ class CreateAssessmentKitServiceTest {
     @Mock
     private CreateKitVersionPort createKitVersionPort;
 
+    @Mock
+    private LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
+
+    @Mock
+    private GrantUserAccessToKitPort grantUserAccessToKitPort;
+
     private final UUID ownerId = UUID.randomUUID();
 
     @Test
@@ -48,7 +57,7 @@ class CreateAssessmentKitServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(param.getExpertGroupId());
-        verifyNoMoreInteractions(createAssessmentKitPort, createKitVersionPort);
+        verifyNoMoreInteractions(createAssessmentKitPort, createKitVersionPort, loadExpertGroupMemberIdsPort, grantUserAccessToKitPort);
     }
 
     @Test
@@ -60,6 +69,8 @@ class CreateAssessmentKitServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(ownerId);
         when(createAssessmentKitPort.persist(any())).thenReturn(kitId);
         when(createKitVersionPort.persist(any())).thenReturn(kitVersionId);
+        when(loadExpertGroupMemberIdsPort.loadMemberIds(param.getExpertGroupId()))
+            .thenReturn(List.of(new LoadExpertGroupMemberIdsPort.Result(param.getCurrentUserId())));
 
         var result = service.createAssessmentKit(param);
 
@@ -82,6 +93,8 @@ class CreateAssessmentKitServiceTest {
         assertEquals(kitId, createVersionPortParamCaptor.getValue().kitId());
         assertEquals(KitVersionStatus.UPDATING, createVersionPortParamCaptor.getValue().status());
         assertEquals(param.getCurrentUserId(), createVersionPortParamCaptor.getValue().createdBy());
+
+        verify(grantUserAccessToKitPort, times(1)).grantUsersAccess(kitId, List.of(param.getCurrentUserId()));
     }
 
     private CreateAssessmentKitUseCase.Param createParam(Consumer<CreateAssessmentKitUseCase.Param.ParamBuilder> changer) {
