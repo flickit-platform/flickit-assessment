@@ -5,7 +5,7 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepositor
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionByDslPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,14 +13,14 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class AnswerOptionPersistenceJpaAdapter implements
-    UpdateAnswerOptionPort,
+    UpdateAnswerOptionByDslPort,
     LoadAnswerOptionsByQuestionPort,
     CreateAnswerOptionPort {
 
     private final AnswerOptionJpaRepository repository;
 
     @Override
-    public void update(UpdateAnswerOptionPort.Param param) {
+    public void updateByDsl(UpdateAnswerOptionByDslPort.Param param) {
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),

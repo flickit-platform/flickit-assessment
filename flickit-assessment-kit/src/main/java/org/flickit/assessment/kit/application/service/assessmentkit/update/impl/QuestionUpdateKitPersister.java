@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionByDslPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
@@ -39,7 +39,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final UpdateQuestionImpactPort updateQuestionImpactPort;
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
     private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
-    private final UpdateAnswerOptionPort updateAnswerOptionPort;
+    private final UpdateAnswerOptionByDslPort updateAnswerOptionByDslPort;
     private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
 
@@ -288,7 +288,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             String savedOptionTitle = optionEntry.getValue().getTitle();
             String dslOptionTitle = dslOptionIndexMap.get(optionEntry.getKey()).getCaption();
             if (!savedOptionTitle.equals(dslOptionTitle)) {
-                updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(optionEntry.getValue().getId(),
+                updateAnswerOptionByDslPort.updateByDsl(new UpdateAnswerOptionByDslPort.Param(optionEntry.getValue().getId(),
                     kitVersionId, dslOptionTitle, LocalDateTime.now(), currentUserId));
                 log.debug("AnswerOption[id={}, index={}, newTitle{}, questionId{}] updated.",
                     optionEntry.getValue().getId(), optionEntry.getKey(), dslOptionTitle, savedQuestion.getId());
