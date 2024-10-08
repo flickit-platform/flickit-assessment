@@ -5,8 +5,9 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +19,15 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class GetKitMaturityLevelsService implements GetKitMaturityLevelsUseCase {
 
-    private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
+    private final LoadKitVersionPort loadKitVersionPort;
+    private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Override
     public PaginatedResponse<MaturityLevelListItem> getKitMaturityLevels(Param param) {
-        var expertGroup = loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(param.getKitVersionId());
+        var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        var expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(kitVersion.getKit().getId());
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         var paginatedResponse = loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId(), param.getSize(), param.getPage());
