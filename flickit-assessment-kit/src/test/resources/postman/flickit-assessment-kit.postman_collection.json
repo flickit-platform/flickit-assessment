@@ -1126,6 +1126,46 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Question Impact",
+			"item": [
+				{
+					"name": "Create Question Impact",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attributeId\": 2116,\n    \"questionId\": 25916,\n    \"maturityLevelId\": 2214,\n    \"weight\": 60\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/412/question-impacts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"412",
+								"question-impacts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
