@@ -24,8 +24,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE;
-import static org.flickit.assessment.users.common.MessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY;
-import static org.flickit.assessment.users.common.MessageKey.INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT;
+import static org.flickit.assessment.users.common.MessageKey.*;
 
 @Slf4j
 @Service
@@ -83,11 +82,19 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
         String inviteUrl = String.join("/", appSpecProperties.getHost(), appSpecProperties.getExpertGroupInviteUrlPath(),
             String.valueOf(expertGroupId), inviteToken.toString());
 
-        String body = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY,
+        String body = generateEmailBody(inviteUrl);
+        log.debug("Sending 'invite to expertGroup [{}]' email to [{}]", expertGroupId, to);
+        sendEmailPort.send(to, subject, body);
+    }
+
+    private String generateEmailBody(String inviteUrl) {
+        if (appSpecProperties.getSupportEmail().isBlank())
+            return MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY_WITHOUT_SUPPORT_EMAIL,
+                inviteUrl,
+                appSpecProperties.getName());
+        return MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY,
             inviteUrl,
             appSpecProperties.getName(),
             appSpecProperties.getSupportEmail());
-        log.debug("Sending 'invite to expertGroup [{}]' email to [{}]", expertGroupId, to);
-        sendEmailPort.send(to, subject, body);
     }
 }
