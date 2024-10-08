@@ -94,7 +94,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     }
 
     private String generateEmailBody() {
-        if (appSpecProperties.getSupportEmail().isBlank())
+        if (appSpecProperties.getSupportEmail() == null || appSpecProperties.getSupportEmail().isBlank())
             return MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL,
                 appSpecProperties.getHost(),
                 appSpecProperties.getName());

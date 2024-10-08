@@ -88,7 +88,7 @@ public class InviteExpertGroupMemberService implements InviteExpertGroupMemberUs
     }
 
     private String generateEmailBody(String inviteUrl) {
-        if (appSpecProperties.getSupportEmail().isBlank())
+        if (appSpecProperties.getSupportEmail() == null || appSpecProperties.getSupportEmail().isBlank())
             return MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY_WITHOUT_SUPPORT_EMAIL,
                 inviteUrl,
                 appSpecProperties.getName());
