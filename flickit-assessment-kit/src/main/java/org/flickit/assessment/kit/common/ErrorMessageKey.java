@@ -234,6 +234,9 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "create-question-impact.maturityLevelId.notNull";
     public static final String CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "create-question-impact.weight.notNull";
     public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_NULL = "create-question-impact.questionId.notNull";
+    public static final String CREATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_FOUND = "create-question-impact.attributeId.notFound";
+    public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_FOUND = "create-question-impact.questionId.notFound";
+    public static final String CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_FOUND = "create-question-impact.maturityLevelId.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
