@@ -5,7 +5,7 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepos
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
-import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
+import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactByDslPort;
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper.mapToJpaEntityToPersist;
@@ -15,7 +15,7 @@ import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.
 public class QuestionImpactPersistenceJpaAdapter implements
     CreateQuestionImpactPort,
     DeleteQuestionImpactPort,
-    UpdateQuestionImpactPort {
+    UpdateQuestionImpactByDslPort {
 
     private final QuestionImpactJpaRepository repository;
 
@@ -30,7 +30,7 @@ public class QuestionImpactPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(UpdateQuestionImpactPort.Param param) {
+    public void updateByDsl(UpdateQuestionImpactByDslPort.Param param) {
         repository.update(param.id(),
             param.weight(),
             param.questionId(),
