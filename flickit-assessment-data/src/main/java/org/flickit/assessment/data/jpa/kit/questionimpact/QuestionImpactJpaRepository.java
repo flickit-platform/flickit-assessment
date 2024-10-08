@@ -32,4 +32,8 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
     @Modifying
     @Query("DELETE FROM QuestionImpactJpaEntity qi where qi.id = :id")
     void deleteById(@NotNull Long id);
+
+    void deleteByIdAndKitVersionId(Long id, Long kitVersionId);
+
+    boolean existsByIdAndKitVersionId(Long id, Long kitVersionId);
 }
