@@ -61,10 +61,10 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
         newQuestionnairesCodes.forEach(i ->
             finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i),
-                savedKit.getKitVersionId(),
+                savedKit.getActiveVersionId(),
                 currentUserId)));
         sameQuestionnairesCodes.forEach(i ->
-            finalQuestionnaires.add(updateQuestionnaire(savedKit.getKitVersionId(),
+            finalQuestionnaires.add(updateQuestionnaire(savedKit.getActiveVersionId(),
                 savedQuestionnaireCodesMap.get(i),
                 dslQuestionnaireCodesMap.get(i),
                 currentUserId)));

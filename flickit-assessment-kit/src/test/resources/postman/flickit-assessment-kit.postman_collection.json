@@ -718,6 +718,37 @@
 			]
 		},
 		{
+			"name": "KitVersion",
+			"item": [
+				{
+					"name": "Activate Kit Version",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/516/activate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"516",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "levelcompetence",
 			"item": [
 				{
