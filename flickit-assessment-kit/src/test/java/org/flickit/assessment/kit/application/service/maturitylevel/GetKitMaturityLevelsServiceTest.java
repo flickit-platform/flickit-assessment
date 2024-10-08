@@ -2,16 +2,13 @@ package org.flickit.assessment.kit.application.service.maturitylevel;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.GetKitMaturityLevelsUseCase.Param;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
@@ -39,9 +36,6 @@ class GetKitMaturityLevelsServiceTest {
     private LoadKitVersionPort loadKitVersionPort;
 
     @Mock
-    private LoadKitExpertGroupPort loadKitExpertGroupPort;
-
-    @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
@@ -51,11 +45,9 @@ class GetKitMaturityLevelsServiceTest {
     void testGetKitMaturityLevels_CurrentUserIsNotExpertGroupMember_AccessDenied() {
         Param param = new Param(12L, 10, 0, UUID.randomUUID());
         KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadKitExpertGroupPort.loadKitExpertGroup(kitVersion.getKit().getId())).thenReturn(expertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(false);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getKitMaturityLevels(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -67,14 +59,12 @@ class GetKitMaturityLevelsServiceTest {
     void testGetKitMaturityLevels_ValidParam_ReturnResult() {
         Param param = new Param(12L, 10, 0, UUID.randomUUID());
         KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
-        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
 
         PaginatedResponse<MaturityLevel> paginatedResponse = new PaginatedResponse<>(maturityLevels, 0, 10, "index", "asc", maturityLevels.size());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadKitExpertGroupPort.loadKitExpertGroup(kitVersion.getKit().getId())).thenReturn(expertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId(), param.getSize(), param.getPage()))
             .thenReturn(paginatedResponse);
 
