@@ -38,7 +38,7 @@ class DeleteQuestionImpactServiceTest {
     private DeleteQuestionImpactPort deleteQuestionImpactPort;
 
     @Test
-    void testDeleteQuestionImpact_kitVersionIdNoExists_ShouldThrowNotFoundException() {
+    void testDeleteQuestionImpactService_kitVersionIdNotExists_ShouldThrowNotFoundException() {
         var param = createParam(DeleteQuestionImpactUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
@@ -52,7 +52,7 @@ class DeleteQuestionImpactServiceTest {
     }
 
     @Test
-    void testDeleteQuestionImpact_currentUserNotExpertGroupOwner_ShouldThrowNotAccessDeniedException() {
+    void testDeleteQuestionImpactService_currentUserNotExpertGroupOwner_ShouldThrowAccessDeniedException() {
         var param = createParam(DeleteQuestionImpactUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
@@ -69,7 +69,7 @@ class DeleteQuestionImpactServiceTest {
     }
 
     @Test
-    void testDeleteQuestionImpact_validParam_ShouldDeleteQuestionImpact() {
+    void testDeleteQuestionImpactService_validParams_ShouldDeleteQuestionImpact() {
         var param = createParam(DeleteQuestionImpactUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
