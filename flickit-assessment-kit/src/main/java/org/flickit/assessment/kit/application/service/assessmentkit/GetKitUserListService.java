@@ -44,7 +44,7 @@ public class GetKitUserListService implements GetKitUserListUseCase {
                     e.displayName(),
                     e.email(),
                     pictureLink,
-                    expertGroup.getOwnerId().equals(e.id()));
+                    !expertGroup.getOwnerId().equals(e.id()));
             }).toList();
 
         return new PaginatedResponse<>(items,
