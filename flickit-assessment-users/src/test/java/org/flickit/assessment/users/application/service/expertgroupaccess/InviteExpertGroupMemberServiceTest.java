@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -28,6 +29,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus.ACTIVE;
 import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_EXPERT_GROUP_MEMBER_EXPERT_GROUP_ID_USER_ID_DUPLICATE;
+import static org.flickit.assessment.users.common.MessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -60,6 +62,7 @@ class InviteExpertGroupMemberServiceTest {
     void testInviteMember_validParameters_success() {
         var param = createParam(InviteExpertGroupMemberUseCase.Param.ParamBuilder::build);
         String email = "test@example.com";
+        UUID mockInviteToken = UUID.randomUUID();
 
         when(loadUserEmailByUserIdPort.loadEmail(param.getUserId())).thenReturn(email);
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(param.getCurrentUserId());
@@ -67,17 +70,59 @@ class InviteExpertGroupMemberServiceTest {
         doNothing().when(inviteExpertGroupMemberPort).invite(any());
         doNothing().when(sendEmailPort).send(anyString(), anyString(), anyString());
 
-        service.inviteMember(param);
+        try (var mockedUUID = mockStatic(UUID.class)) {
+            mockedUUID.when(UUID::randomUUID).thenReturn(mockInviteToken);
 
-        ArgumentCaptor<InviteExpertGroupMemberPort.Param> invitePortParamCaptor = ArgumentCaptor.forClass(InviteExpertGroupMemberPort.Param.class);
-        verify(inviteExpertGroupMemberPort).invite(invitePortParamCaptor.capture());
-        assertEquals(param.getExpertGroupId(), invitePortParamCaptor.getValue().expertGroupId());
-        assertNotNull(invitePortParamCaptor.getValue().inviteDate());
-        assertEquals(param.getUserId(), invitePortParamCaptor.getValue().userId());
-        assertEquals(invitePortParamCaptor.getValue().inviteDate().plusDays(7), invitePortParamCaptor.getValue().inviteExpirationDate());
-        assertNotNull(invitePortParamCaptor.getValue().inviteToken());
-        assertEquals(ExpertGroupAccessStatus.PENDING, invitePortParamCaptor.getValue().status());
-        assertEquals(param.getCurrentUserId(), invitePortParamCaptor.getValue().createdBy());
+            service.inviteMember(param);
+
+            ArgumentCaptor<InviteExpertGroupMemberPort.Param> invitePortParamCaptor = ArgumentCaptor.forClass(InviteExpertGroupMemberPort.Param.class);
+            verify(inviteExpertGroupMemberPort).invite(invitePortParamCaptor.capture());
+            assertEquals(param.getExpertGroupId(), invitePortParamCaptor.getValue().expertGroupId());
+            assertNotNull(invitePortParamCaptor.getValue().inviteDate());
+            assertEquals(param.getUserId(), invitePortParamCaptor.getValue().userId());
+            assertEquals(invitePortParamCaptor.getValue().inviteDate().plusDays(7), invitePortParamCaptor.getValue().inviteExpirationDate());
+            assertNotNull(invitePortParamCaptor.getValue().inviteToken());
+            assertEquals(ExpertGroupAccessStatus.PENDING, invitePortParamCaptor.getValue().status());
+            assertEquals(param.getCurrentUserId(), invitePortParamCaptor.getValue().createdBy());
+
+            String subject = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT, appSpecProperties.getName());
+            String inviteUrl = String.join("/", appSpecProperties.getHost(), appSpecProperties.getExpertGroupInviteUrlPath(),
+                String.valueOf(param.getExpertGroupId()), mockInviteToken.toString());
+            String body = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY,
+                inviteUrl,
+                appSpecProperties.getName(),
+                appSpecProperties.getSupportEmail());
+            verify(sendEmailPort).send(email, subject, body);
+        }
+    }
+
+    @Test
+    void testInviteMember_validParameters_sendInvitationWithoutSupportEmail() {
+        var param = createParam(InviteExpertGroupMemberUseCase.Param.ParamBuilder::build);
+        String email = "test@example.com";
+        UUID mockInviteToken = UUID.randomUUID();
+
+        when(loadUserEmailByUserIdPort.loadEmail(param.getUserId())).thenReturn(email);
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(param.getCurrentUserId());
+        when(loadExpertGroupMemberPort.getMemberStatus(param.getExpertGroupId(), param.getUserId())).thenReturn(Optional.empty());
+        doNothing().when(inviteExpertGroupMemberPort).invite(any());
+        doNothing().when(sendEmailPort).send(anyString(), anyString(), anyString());
+
+        try (var mockedUUID = mockStatic(UUID.class)) {
+            mockedUUID.when(UUID::randomUUID).thenReturn(mockInviteToken);
+
+            appSpecProperties.setSupportEmail("  ");
+
+            service.inviteMember(param);
+
+            String subject = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_SUBJECT, appSpecProperties.getName());
+            String inviteUrl = String.join("/", appSpecProperties.getHost(), appSpecProperties.getExpertGroupInviteUrlPath(),
+                String.valueOf(param.getExpertGroupId()), mockInviteToken.toString());
+            String body = MessageBundle.message(INVITE_EXPERT_GROUP_MEMBER_MAIL_BODY_WITHOUT_SUPPORT_EMAIL,
+                inviteUrl,
+                appSpecProperties.getName());
+            verify(sendEmailPort).send(email, subject, body);
+        }
     }
 
     @Test
