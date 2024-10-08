@@ -229,6 +229,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
     public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
 
+    public static final String DELETE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "delete-question-impact.questionImpactId.notNull";
+    public static final String DELETE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "delete-question-impact.kitVersionId.notNull";
+
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
