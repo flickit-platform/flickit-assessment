@@ -16,6 +16,7 @@ public class ErrorMessageKey {
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
+    public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -228,6 +229,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MAX = "create-assessment-kit.about.size.max";
     public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
     public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
+
+    public static final String DELETE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "delete-question-impact.questionImpactId.notNull";
+    public static final String DELETE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "delete-question-impact.kitVersionId.notNull";
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
 
