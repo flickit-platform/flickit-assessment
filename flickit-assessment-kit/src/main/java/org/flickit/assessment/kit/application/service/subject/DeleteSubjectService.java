@@ -34,6 +34,6 @@ public class DeleteSubjectService implements DeleteSubjectUseCase {
         if(!KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
             throw new ValidationException(DELETE_SUBJECT_KIT_DELETION_UNSUPPORTED);
 
-        deleteSubjectPort.delete(param.getId(), param.getKitVersionId());
+        deleteSubjectPort.delete(param.getSubjectId(), param.getKitVersionId());
     }
 }
