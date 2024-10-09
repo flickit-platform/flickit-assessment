@@ -238,6 +238,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_OPTION_TITLE_NOT_BLANK = "create-answer-option.title.notBlank";
     public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MIN = "create-answer-option.title.size.min";
     public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MAX = "create-answer-option.title.size.max";
+    public static final String CREATE_ANSWER_OPTION_INDEX_DUPLICATE = "create-answer-option.index.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
