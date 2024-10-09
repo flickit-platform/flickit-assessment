@@ -61,5 +61,6 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
-    void deleteByIdAndKitVersionId(long id, long kitVersionId);
+    @Query("DELETE FROM SubjectJpaEntity s where s.id = :id AND s.kitVersionId= :kitVersionId")
+    void deleteByIdAndKitVersionId(@Param("id") long id, @Param("kitVersionId") long kitVersionId);
 }
