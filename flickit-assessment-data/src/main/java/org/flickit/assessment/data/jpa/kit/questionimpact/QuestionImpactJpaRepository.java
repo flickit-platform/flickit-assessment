@@ -14,6 +14,8 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
 
     List<QuestionImpactJpaEntity> findAllByQuestionIdAndKitVersionId(long questionId, long kitVersionId);
 
+    boolean existsByIdAndKitVersionId(long questionImpactId, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE QuestionImpactJpaEntity q SET
@@ -32,4 +34,22 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
     @Modifying
     @Query("DELETE FROM QuestionImpactJpaEntity qi where qi.id = :id")
     void deleteById(@NotNull Long id);
+
+    @Modifying
+    @Query("""
+            UPDATE QuestionImpactJpaEntity q SET
+                q.weight = :weight,
+                q.attributeId = :attributeId,
+                q.maturityLevelId = :maturityLevelId,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.id = :id AND q.kitVersionId = :kitVersionId
+        """)
+    void update(@Param("id") long id,
+                @Param("kitVersionId") long kitVersionId,
+                @Param("weight") int weight,
+                @Param("attributeId") long attributeId,
+                @Param("maturityLevelId") long maturityLevelId,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 }

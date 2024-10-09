@@ -14,7 +14,7 @@ import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPo
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
-import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
+import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactByDslPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
@@ -36,7 +36,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final CreateQuestionPort createQuestionPort;
     private final CreateQuestionImpactPort createQuestionImpactPort;
     private final DeleteQuestionImpactPort deleteQuestionImpactPort;
-    private final UpdateQuestionImpactPort updateQuestionImpactPort;
+    private final UpdateQuestionImpactByDslPort updateQuestionImpactByDslPort;
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
     private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
@@ -373,14 +373,14 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                  UUID currentUserId) {
         boolean isMajorUpdate = false;
         if (savedImpact.getWeight() != dslImpact.getWeight()) {
-            var updateParam = new UpdateQuestionImpactPort.Param(
+            var updateParam = new UpdateQuestionImpactByDslPort.Param(
                 savedImpact.getId(),
                 dslImpact.getWeight(),
                 savedImpact.getQuestionId(),
                 LocalDateTime.now(),
                 currentUserId
             );
-            updateQuestionImpactPort.update(updateParam);
+            updateQuestionImpactByDslPort.updateByDsl(updateParam);
             log.debug("QuestionImpact[id={}, questionId={}] updated.", savedImpact.getId(), savedQuestion.getId());
             isMajorUpdate = true;
         }

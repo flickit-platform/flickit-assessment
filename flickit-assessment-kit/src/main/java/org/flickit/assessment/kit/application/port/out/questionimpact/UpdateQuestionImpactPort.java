@@ -8,11 +8,11 @@ public interface UpdateQuestionImpactPort {
     void update(Param param);
 
     record Param(
-        Long id,
+        long kitVersionId,
+        long questionImpactId,
         int weight,
-        Long questionId,
+        long attributeId,
+        long maturityLevelId,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy
-    ) {
-    }
+        UUID lastModifiedBy) {}
 }
