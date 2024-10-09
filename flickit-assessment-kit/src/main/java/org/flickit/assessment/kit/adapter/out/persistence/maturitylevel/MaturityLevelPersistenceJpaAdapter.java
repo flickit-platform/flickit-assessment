@@ -1,26 +1,28 @@
 package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
-import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
 import org.flickit.assessment.kit.application.domain.MaturityLevelOrder;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
 
@@ -30,8 +32,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
     CreateMaturityLevelPort,
     DeleteMaturityLevelPort,
     UpdateMaturityLevelPort,
-    LoadMaturityLevelsPort,
-    LoadAttributeMaturityLevelsPort {
+    LoadAttributeMaturityLevelsPort,
+    LoadMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
@@ -51,7 +53,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     @Override
     public void updateAll(List<MaturityLevel> maturityLevels, Long kitVersionId, UUID lastModifiedBy) {
         Map<EntityId, MaturityLevel> idToModel = maturityLevels.stream()
-            .collect(Collectors.toMap(
+            .collect(toMap(
                 ml -> new EntityId(ml.getId(), kitVersionId),
                 ml -> ml
             ));
@@ -100,36 +102,48 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<MaturityLevel> loadByKitVersionId(Long kitVersionId) {
-        List<MaturityLevelJpaEntity> maturityLevelEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+    public List<MaturityLevel> loadAllByKitVersionId(Long kitVersionId) {
+        var maturityLevelEntities = repository.findAllByKitVersionIdOrderByIndex(kitVersionId);
 
-        List<Long> levelIds = maturityLevelEntities.stream()
+        var levelIds = maturityLevelEntities.stream()
             .map(MaturityLevelJpaEntity::getId)
             .toList();
 
-        List<LevelCompetenceJpaEntity> levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
-        Map<Long, List<LevelCompetenceJpaEntity>> levelIdToLevelCompetences = levelCompetenceEntities.stream()
-            .collect(Collectors.groupingBy(LevelCompetenceJpaEntity::getAffectedLevelId));
-
-        return maturityLevelEntities.stream()
-            .map(e -> {
-                MaturityLevel maturityLevel = MaturityLevelMapper.mapToDomainModel(e);
-                if (levelIdToLevelCompetences.containsKey(e.getId())) {
-                    List<LevelCompetenceJpaEntity> levelCompetenceJpaEntities = levelIdToLevelCompetences.get(maturityLevel.getId());
-                    List<MaturityLevelCompetence> maturityLevelCompetences = levelCompetenceJpaEntities.stream()
-                        .map(MaturityLevelCompetenceMapper::mapToDomainModel)
-                        .toList();
-                    maturityLevel.setCompetences(maturityLevelCompetences);
-                } else
-                    maturityLevel.setCompetences(new ArrayList<>());
-                return maturityLevel;
-            }).toList();
+        var levelCompetenceEntities = levelCompetenceRepository.findAllByAffectedLevelIdInAndKitVersionId(levelIds, kitVersionId);
+        return mapToDomainModel(maturityLevelEntities, levelCompetenceEntities);
     }
 
     @Override
     public List<LoadAttributeMaturityLevelsPort.Result> loadAttributeLevels(long attributeId, long kitVersionId) {
         return repository.loadAttributeLevels(attributeId, kitVersionId).stream()
             .map(e -> new LoadAttributeMaturityLevelsPort.Result(e.getId(), e.getTitle(), e.getIndex(), e.getQuestionCount()))
+            .toList();
+    }
+
+    @Override
+    public PaginatedResponse<MaturityLevel> loadByKitVersionId(long kitVersionId, Integer size, Integer page) {
+        String sort = MaturityLevelJpaEntity.Fields.index;
+        Sort.Direction sortDirection = Sort.Direction.ASC;
+
+        var pageResult = repository.findByKitVersionId(kitVersionId,
+            PageRequest.of(page, size, sortDirection, sort));
+
+        var maturityLevels = pageResult.getContent().stream()
+            .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
+
+        return new PaginatedResponse<>(maturityLevels,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            sort,
+            sortDirection.name().toLowerCase(),
+            (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public List<MaturityLevel> loadByKitVersionId(long kitVersionId, Collection<Long> ids) {
+        return repository.findAllByKitVersionIdAndIdIn(kitVersionId, ids).stream()
+            .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
     }
 }
