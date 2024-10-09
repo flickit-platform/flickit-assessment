@@ -237,6 +237,9 @@ public class ErrorMessageKey {
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MAX = "get-kit-maturity-levels-size-max";
     public static final String GET_KIT_MATURITY_LEVELS_PAGE_MIN = "get-kit-maturity-levels-page-min";
 
+    public static final String GET_QUESTION_OPTIONS_KIT_VERSION_ID_NOT_NULL = "get-question-options.kitVersionId.notNull";
+    public static final String GET_QUESTION_OPTIONS_QUESTION_ID_NOT_NULL = "get-question-options.questionId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
