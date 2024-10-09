@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.levelcompetence;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.GetLevelCompetencesUseCase;
-import org.flickit.assessment.kit.application.port.in.levelcompetence.GetLevelCompetencesUseCase.MaturityLevelListItem;
+import org.flickit.assessment.kit.application.port.in.levelcompetence.GetLevelCompetencesUseCase.LevelWithCompetencesListItem;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.GetLevelCompetencesUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class GetLevelCompetencesRestController {
         return new Param(kitVersionId, currentUserId);
     }
 
-    private GetLevelCompetencesResponseDto toResponse(List<MaturityLevelListItem> levelCompetences) {
+    private GetLevelCompetencesResponseDto toResponse(List<LevelWithCompetencesListItem> levelCompetences) {
         return new GetLevelCompetencesResponseDto(levelCompetences);
     }
 }

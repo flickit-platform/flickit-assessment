@@ -14,7 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_LEVEL_COMPET
 
 public interface GetLevelCompetencesUseCase {
 
-    List<MaturityLevelListItem> getLevelCompetences(Param param);
+    List<LevelWithCompetencesListItem> getLevelCompetences(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -34,7 +34,7 @@ public interface GetLevelCompetencesUseCase {
         }
     }
 
-    record MaturityLevelListItem(long id, int index, String title, List<Competence> competences) {
+    record LevelWithCompetencesListItem(long id, int index, String title, List<Competence> competences) {
     }
 
     record Competence(long id, int value, long maturityLevelId) {

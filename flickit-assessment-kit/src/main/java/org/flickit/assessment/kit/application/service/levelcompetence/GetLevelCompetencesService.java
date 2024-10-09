@@ -25,7 +25,7 @@ public class GetLevelCompetencesService implements GetLevelCompetencesUseCase {
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Override
-    public List<MaturityLevelListItem> getLevelCompetences(Param param) {
+    public List<LevelWithCompetencesListItem> getLevelCompetences(Param param) {
         var kit = loadKitVersionPort.load(param.getKitVersionId()).getKit();
         if (!checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -36,9 +36,11 @@ public class GetLevelCompetencesService implements GetLevelCompetencesUseCase {
             .toList();
     }
 
-    private MaturityLevelListItem toResult(MaturityLevel maturityLevel) {
-        return new MaturityLevelListItem(maturityLevel.getId(), maturityLevel.getIndex(), maturityLevel.getTitle(),
-            maturityLevel.getCompetences().stream().map(this::toCompetence).toList());
+    private LevelWithCompetencesListItem toResult(MaturityLevel maturityLevel) {
+        return new LevelWithCompetencesListItem(maturityLevel.getId(), maturityLevel.getIndex(), maturityLevel.getTitle(),
+            maturityLevel.getCompetences().stream()
+                .map(this::toCompetence)
+                .toList());
     }
 
     private Competence toCompetence(MaturityLevelCompetence competence) {
