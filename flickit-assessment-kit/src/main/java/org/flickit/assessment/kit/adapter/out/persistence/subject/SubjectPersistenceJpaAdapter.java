@@ -72,12 +72,12 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<LoadSubjectsPort.Result> loadPaginatedByKitVersionId(long kitVersionId, int page, int size) {
-        Page<SubjectJpaEntity> pageResult = repository.findByKitVersionIdOrderByIndex(kitVersionId, PageRequest.of(page, size, Sort.Direction.ASC, SubjectJpaEntity.Fields.INDEX));
+        Page<SubjectJpaEntity> pageResult = repository.findByKitVersionIdOrderByIndex(kitVersionId, PageRequest.of(page, size, Sort.Direction.ASC, SubjectJpaEntity.Fields.index));
         return new PaginatedResponse<>(
             pageResult.stream().map(SubjectMapper::mapToLoadPortResult).toList(),
             pageResult.getNumber(),
             pageResult.getSize(),
-            SubjectJpaEntity.Fields.INDEX,
+            SubjectJpaEntity.Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
