@@ -95,7 +95,7 @@ class DeleteSubjectServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
-        assertDoesNotThrow(() -> service.deleteSubject(param));
+        service.deleteSubject(param);
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
         verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
