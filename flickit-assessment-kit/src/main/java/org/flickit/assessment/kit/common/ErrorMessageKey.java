@@ -16,6 +16,7 @@ public class ErrorMessageKey {
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
+    public static final String ANSWER_OPTION_ID_NOT_FOUND = "answer-option.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -231,6 +232,14 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
+
+    public static final String UPDATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "update-answer-option.kitVersionId.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option.answerOptionId.notNull";
+    public static final String UPDATE_ANSWER_OPTION_INDEX_NOT_NULL = "update-answer-option.index.notNull";
+    public static final String UPDATE_ANSWER_OPTION_TITLE_NOT_NULL = "update-answer-option.title.notNull";
+    public static final String UPDATE_ANSWER_OPTION_TITLE_SIZE_MIN = "update-answer-option.title.size.min";
+    public static final String UPDATE_ANSWER_OPTION_TITLE_SIZE_MAX = "update-answer-option.title.size.max";
+
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

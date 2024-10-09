@@ -18,6 +18,8 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     List<AnswerOptionJpaEntity> findAllByIdInAndKitVersionId(List<Long> allAnswerOptionIds, long kitVersionId);
 
+    boolean existsByIdAndKitVersionId(Long id, Long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AnswerOptionJpaEntity a
@@ -41,4 +43,20 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
         """)
     List<AnswerOptionJpaEntity> findAllByQuestionIdInAndKitVersionIdOrderByQuestionIdIndex(@Param("questionIds") List<Long> questionIds,
                                                                                            @Param("kitVersionId") Long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE AnswerOptionJpaEntity a SET
+                a.index = :index,
+                a.title = :title,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :id AND a.kitVersionId = :kitVersionId
+        """)
+    void update(@Param("id") Long id,
+                @Param("kitVersionId") long kitVersionId,
+                @Param("index") int index,
+                @Param("title") String title,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 }

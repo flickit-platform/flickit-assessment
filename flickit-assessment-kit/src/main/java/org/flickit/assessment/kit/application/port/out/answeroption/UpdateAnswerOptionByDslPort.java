@@ -3,16 +3,14 @@ package org.flickit.assessment.kit.application.port.out.answeroption;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface UpdateAnswerOptionPort {
+public interface UpdateAnswerOptionByDslPort {
 
-    void updateAnswerOption(Param param);
+    void updateByDsl(Param param);
 
     record Param(
-        long kitVersionId,
-        long answerOptionId,
-        int index,
+        Long id,
+        Long kitVersionId,
         String title,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy
-        ) {}
+        UUID lastModifiedBy) {}
 }
