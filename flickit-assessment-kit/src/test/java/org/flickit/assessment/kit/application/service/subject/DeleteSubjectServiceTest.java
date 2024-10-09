@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.subject;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.port.in.subject.DeleteSubjectUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_SUBJECT_KIT_DELETION_UNSUPPORTED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -69,16 +71,16 @@ class DeleteSubjectServiceTest {
     }
 
     @Test
-    void testDeleteSubjectService_KitVersionStatusIsUpdating_throwsAccessDeniedException() {
+    void testDeleteSubjectService_KitVersionStatusIsUpdating_throwsValidationException() {
         DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createActiveKitVersion(AssessmentKitMother.simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSubject(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.deleteSubject(param));
 
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(DELETE_SUBJECT_KIT_DELETION_UNSUPPORTED, throwable.getMessageKey());
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
         verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());

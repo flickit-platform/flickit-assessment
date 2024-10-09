@@ -242,6 +242,7 @@ public class ErrorMessageKey {
 
     public static final String DELETE_SUBJECT_SUBJECT_ID_NOT_NULL = "delete-subject.id.notNull";
     public static final String DELETE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "delete-subject.kitVersionId.notNull";
+    public static final String DELETE_SUBJECT_KIT_DELETION_UNSUPPORTED = "delete-subject.deletion.unsupported";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
