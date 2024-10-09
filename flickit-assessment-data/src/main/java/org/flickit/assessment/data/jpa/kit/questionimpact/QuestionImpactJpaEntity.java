@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
+@IdClass(QuestionImpactJpaEntity.EntityId.class)
 @Table(name = "fak_question_impact")
 @Getter
 @Setter
@@ -27,6 +29,8 @@ public class QuestionImpactJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight;
 
+    @Id
+    @EqualsAndHashCode.Include
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
@@ -74,5 +78,14 @@ public class QuestionImpactJpaEntity {
         this.lastModificationTime = lastModificationTime;
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private Long id;
+        private Long kitVersionId;
     }
 }
