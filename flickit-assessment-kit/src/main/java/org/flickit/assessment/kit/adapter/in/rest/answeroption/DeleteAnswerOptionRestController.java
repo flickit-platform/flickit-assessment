@@ -19,7 +19,7 @@ public class DeleteAnswerOptionRestController {
     private final UserContext userContext;
 
     @DeleteMapping("/kit-versions/{kitVersionId}/answer-options/{answerOptionId}")
-    ResponseEntity<Void> deleteAnswerOption(@PathVariable Long kitVersionId, @PathVariable Long answerOptionId) {
+    public ResponseEntity<Void> deleteAnswerOption(@PathVariable Long kitVersionId, @PathVariable Long answerOptionId) {
         var currentUserId = userContext.getUser().id();
         useCase.delete(toParam(kitVersionId, answerOptionId, currentUserId));
 

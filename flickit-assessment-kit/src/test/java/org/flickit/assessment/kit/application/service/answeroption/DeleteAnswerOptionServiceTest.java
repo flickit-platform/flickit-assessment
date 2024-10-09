@@ -45,7 +45,6 @@ class DeleteAnswerOptionServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.delete(param));
 
-
         assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
 
         verify(loadKitVersionPort, times(1)).load(param.getKitVersionId());
@@ -70,7 +69,7 @@ class DeleteAnswerOptionServiceTest {
     }
 
     @Test
-    void deleteAnswerOptionServiceTest_validParam_shouldDeleteAnswerOption() {
+    void deleteAnswerOptionServiceTest_validParams_shouldDeleteAnswerOption() {
         var param = createParam(DeleteAnswerOptionUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
