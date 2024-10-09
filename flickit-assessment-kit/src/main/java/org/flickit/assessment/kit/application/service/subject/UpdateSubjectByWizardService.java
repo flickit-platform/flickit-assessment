@@ -28,7 +28,7 @@ public class UpdateSubjectByWizardService implements UpdateSubjectByWizardUseCas
     @Override
     public void updateSubject(Param param) {
         AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
-        Long kitVersionId = kit.getKitVersionId();
+        Long kitVersionId = kit.getActiveVersionId();
         long expertGroupId = kit.getExpertGroupId();
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
         if (!ownerId.equals(param.getCurrentUserId()))

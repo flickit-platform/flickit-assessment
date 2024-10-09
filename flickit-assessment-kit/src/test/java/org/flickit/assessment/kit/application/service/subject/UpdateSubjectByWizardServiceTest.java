@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,7 +58,7 @@ class UpdateSubjectByWizardServiceTest {
     @Test
     void testUpdateSubjectByWizard_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
         UpdateSubjectByWizardUseCase.Param param = new UpdateSubjectByWizardUseCase.Param(kit.getId(),
-            kit.getKitVersionId(),
+            kit.getActiveVersionId(),
             index,
             title,
             description,
@@ -75,7 +75,7 @@ class UpdateSubjectByWizardServiceTest {
     void testUpdateSubjectByWizard_WhenCurrentUserIsOwner_ShouldUpdateSubject() {
         currentUserId = ownerId;
         UpdateSubjectByWizardUseCase.Param param = new UpdateSubjectByWizardUseCase.Param(kit.getId(),
-            kit.getKitVersionId(),
+            kit.getActiveVersionId(),
             index,
             title,
             description,
