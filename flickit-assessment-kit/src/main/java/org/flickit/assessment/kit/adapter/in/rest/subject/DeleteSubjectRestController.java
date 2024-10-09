@@ -28,7 +28,7 @@ public class DeleteSubjectRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    private Param toParam(Long subjectId, Long kitVersionId, UUID currentUserId) {
+    private Param toParam(Long kitVersionId, Long subjectId, UUID currentUserId) {
         return new Param(subjectId, kitVersionId, currentUserId);
     }
 }
