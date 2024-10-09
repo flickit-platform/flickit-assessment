@@ -19,6 +19,10 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
 
     List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Set<Long> ids, long kitVersionId);
 
+    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
+
+    void deleteByIdAndKitVersionId(long id, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE SubjectJpaEntity s
@@ -59,9 +63,4 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
 
-    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
-
-    @Modifying
-    @Query("DELETE FROM SubjectJpaEntity s where s.id = :id AND s.kitVersionId= :kitVersionId")
-    void deleteByIdAndKitVersionId(@Param("id") long id, @Param("kitVersionId") long kitVersionId);
 }
