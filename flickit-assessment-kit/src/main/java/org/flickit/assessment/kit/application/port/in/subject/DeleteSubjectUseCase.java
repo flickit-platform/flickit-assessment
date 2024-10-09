@@ -9,8 +9,8 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_SUBJECT_SUBJECT_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_SUBJECT_KIT_VERSION_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_SUBJECT_SUBJECT_ID_NOT_NULL;
 
 public interface DeleteSubjectUseCase {
 
@@ -21,7 +21,7 @@ public interface DeleteSubjectUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = DELETE_SUBJECT_SUBJECT_ID_NOT_NULL )
-        Long id;
+        Long subjectId;
 
         @NotNull(message = DELETE_SUBJECT_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
@@ -30,8 +30,8 @@ public interface DeleteSubjectUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long id, Long kitVersionId, UUID currentUserId) {
-            this.id = id;
+        public Param(Long subjectId, Long kitVersionId, UUID currentUserId) {
+            this.subjectId = subjectId;
             this.kitVersionId = kitVersionId;
             this.currentUserId = currentUserId;
             this.validateSelf();

@@ -29,6 +29,6 @@ public class DeleteSubjectService implements DeleteSubjectUseCase {
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()) || !KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        deleteSubjectPort.deleteByIdAndKitVersionId(param.getId(), param.getKitVersionId());
+        deleteSubjectPort.deleteByIdAndKitVersionId(param.getSubjectId(), param.getKitVersionId());
     }
 }

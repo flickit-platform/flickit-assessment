@@ -17,8 +17,8 @@ class DeleteSubjectUseCaseParamTest {
     @Test
     void testDeleteSubjectUseCaseParam_idParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.id(null)));
-        assertThat(throwable).hasMessage("id: " + DELETE_SUBJECT_SUBJECT_ID_NOT_NULL);
+            () -> createParam(b -> b.subjectId(null)));
+        assertThat(throwable).hasMessage("subjectId: " + DELETE_SUBJECT_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
@@ -43,7 +43,7 @@ class DeleteSubjectUseCaseParamTest {
 
     private DeleteSubjectUseCase.Param.ParamBuilder paramBuilder(){
         return DeleteSubjectUseCase.Param.builder()
-            .id(1L)
+            .subjectId(1L)
             .kitVersionId(2L)
             .currentUserId(UUID.randomUUID());
     }
