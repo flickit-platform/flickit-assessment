@@ -10,11 +10,12 @@ public interface UpdateSubjectPort {
     record Param(
         long id,
         long kitVersionId,
+        String code,
         String title,
         int index,
         String description,
+        int weight,
         LocalDateTime lastModificationTime,
         UUID lastModifiedBy
-    ) {
-    }
+    ) {}
 }

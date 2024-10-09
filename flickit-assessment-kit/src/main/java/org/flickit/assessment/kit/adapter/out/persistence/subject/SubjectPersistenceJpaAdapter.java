@@ -22,17 +22,17 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_
 @Component
 @RequiredArgsConstructor
 public class SubjectPersistenceJpaAdapter implements
-    UpdateSubjectPort,
+    UpdateSubjectByDslPort,
     CreateSubjectPort,
     LoadSubjectsPort,
     LoadSubjectPort,
-    UpdateSubjectByWizardPort {
+    UpdateSubjectPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
 
     @Override
-    public void update(UpdateSubjectPort.Param param) {
+    public void update(UpdateSubjectByDslPort.Param param) {
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
@@ -74,8 +74,8 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateByWizard(UpdateSubjectByWizardPort.Param param) {
-        repository.updateByWizard(param.id(),
+    public void update(UpdateSubjectPort.Param param) {
+        repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
             param.title(),

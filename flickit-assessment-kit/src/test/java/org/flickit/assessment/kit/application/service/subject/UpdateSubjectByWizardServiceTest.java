@@ -2,10 +2,10 @@ package org.flickit.assessment.kit.application.service.subject;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectByWizardUseCase;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectByWizardPort;
+import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +25,10 @@ import static org.mockito.Mockito.when;
 class UpdateSubjectByWizardServiceTest {
 
     @InjectMocks
-    private UpdateSubjectByWizardService service;
+    private UpdateSubjectService service;
 
     @Mock
-    private UpdateSubjectByWizardPort updateSubjectByWizardPort;
+    private UpdateSubjectPort updateSubjectPort;
 
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
@@ -57,7 +57,7 @@ class UpdateSubjectByWizardServiceTest {
 
     @Test
     void testUpdateSubjectByWizard_WhenCurrentUserIsNotOwner_ShouldThrowAccessDeniedException() {
-        UpdateSubjectByWizardUseCase.Param param = new UpdateSubjectByWizardUseCase.Param(kit.getId(),
+        UpdateSubjectUseCase.Param param = new UpdateSubjectUseCase.Param(kit.getId(),
             kit.getActiveVersionId(),
             index,
             title,
@@ -74,7 +74,7 @@ class UpdateSubjectByWizardServiceTest {
     @Test
     void testUpdateSubjectByWizard_WhenCurrentUserIsOwner_ShouldUpdateSubject() {
         currentUserId = ownerId;
-        UpdateSubjectByWizardUseCase.Param param = new UpdateSubjectByWizardUseCase.Param(kit.getId(),
+        UpdateSubjectUseCase.Param param = new UpdateSubjectUseCase.Param(kit.getId(),
             kit.getActiveVersionId(),
             index,
             title,
@@ -85,6 +85,6 @@ class UpdateSubjectByWizardServiceTest {
         when(loadAssessmentKitPort.load(kit.getId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
         service.updateSubject(param);
-        verify(updateSubjectByWizardPort).updateByWizard(any(UpdateSubjectByWizardPort.Param.class));
+        verify(updateSubjectPort).update(any(UpdateSubjectPort.Param.class));
     }
 }

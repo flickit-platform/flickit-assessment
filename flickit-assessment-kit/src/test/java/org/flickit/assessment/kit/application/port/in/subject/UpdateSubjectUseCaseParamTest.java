@@ -11,7 +11,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class UpdateSubjectByWizardUseCaseParamTest {
+class UpdateSubjectUseCaseParamTest {
 
     private Long kitId;
     private Long subjectId;
@@ -36,7 +36,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_kitIdIsNull_ErrorMessage() {
         kitId = null;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -50,7 +50,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_subjectIdIsNull_ErrorMessage() {
         subjectId = null;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -64,7 +64,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_indexIsNull_ErrorMessage() {
         index = null;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -78,7 +78,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_titleIsNull_ErrorMessage() {
         title = null;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -92,7 +92,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_titleIsBlank_ErrorMessage() {
         title = " ";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -106,7 +106,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_titleIsEmpty_ErrorMessage() {
         title = "";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -120,7 +120,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_descriptionIsNull_ErrorMessage() {
         description = null;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -134,7 +134,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_descriptionIsBlank_ErrorMessage() {
         description = " ";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -148,7 +148,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_descriptionIsEmpty_ErrorMessage() {
         description = "";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -162,7 +162,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_weightIsNull_ErrorMessage() {
         weight = null;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,
@@ -176,7 +176,7 @@ class UpdateSubjectByWizardUseCaseParamTest {
     void testUpdateSubjectByWizardUseCase_currentUserIdIsNull_ErrorMessage() {
         currentUserId = null;
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectByWizardUseCase.Param(kitId,
+            () -> new UpdateSubjectUseCase.Param(kitId,
                 subjectId,
                 index,
                 title,

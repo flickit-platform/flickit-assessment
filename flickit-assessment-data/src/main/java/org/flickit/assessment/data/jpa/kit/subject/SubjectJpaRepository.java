@@ -50,15 +50,15 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
                 s.lastModifiedBy = :lastModifiedBy
             WHERE s.id = :id AND s.kitVersionId = :kitVersionId
         """)
-    void updateByWizard(@Param(value = "id") long id,
-                        @Param(value = "kitVersionId") long kitVersionId,
-                        @Param(value = "code") String code,
-                        @Param(value = "title") String title,
-                        @Param(value = "index") int index,
-                        @Param(value = "description") String description,
-                        @Param(value = "weight") int weight,
-                        @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
-                        @Param(value = "lastModifiedBy") UUID lastModifiedBy);
+    void update(@Param(value = "id") long id,
+                @Param(value = "kitVersionId") long kitVersionId,
+                @Param(value = "code") String code,
+                @Param(value = "title") String title,
+                @Param(value = "index") int index,
+                @Param(value = "description") String description,
+                @Param(value = "weight") int weight,
+                @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
+                @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
             SELECT s.id AS id,
