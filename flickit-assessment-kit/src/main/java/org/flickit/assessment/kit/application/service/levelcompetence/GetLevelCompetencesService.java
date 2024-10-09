@@ -37,10 +37,13 @@ public class GetLevelCompetencesService implements GetLevelCompetencesUseCase {
     }
 
     private LevelWithCompetencesListItem toResult(MaturityLevel maturityLevel) {
-        return new LevelWithCompetencesListItem(maturityLevel.getId(), maturityLevel.getIndex(), maturityLevel.getTitle(),
-            maturityLevel.getCompetences().stream()
-                .map(this::toCompetence)
-                .toList());
+        var competences = maturityLevel.getCompetences().stream()
+            .map(this::toCompetence)
+            .toList();
+        return new LevelWithCompetencesListItem(maturityLevel.getId(),
+            maturityLevel.getIndex(),
+            maturityLevel.getTitle(),
+            competences);
     }
 
     private Competence toCompetence(MaturityLevelCompetence competence) {
