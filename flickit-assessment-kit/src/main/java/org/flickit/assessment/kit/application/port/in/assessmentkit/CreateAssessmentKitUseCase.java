@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -42,16 +44,20 @@ public interface CreateAssessmentKitUseCase {
         @NotNull(message = CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL)
         Long expertGroupId;
 
+        @NotEmpty(message = CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL)
+        List<Long> tagIds;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(String title, String summary, String about, Boolean isPrivate, Long expertGroupId, UUID currentUserId) {
+        public Param(String title, String summary, String about, Boolean isPrivate, Long expertGroupId, List<Long> tagIds, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.summary = summary != null ? summary.strip() : null;
             this.about = about != null ? about.strip() : null;
             this.isPrivate = isPrivate;
             this.expertGroupId = expertGroupId;
+            this.tagIds = tagIds;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
