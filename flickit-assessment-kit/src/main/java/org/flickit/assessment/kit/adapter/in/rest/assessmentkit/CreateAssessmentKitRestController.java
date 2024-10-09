@@ -33,6 +33,7 @@ public class CreateAssessmentKitRestController {
             requestDto.about(),
             requestDto.isPrivate(),
             requestDto.expertGroupId(),
+            requestDto.tagIds(),
             currentUserId);
     }
 
