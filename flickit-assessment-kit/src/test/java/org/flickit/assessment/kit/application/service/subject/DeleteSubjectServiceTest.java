@@ -41,7 +41,7 @@ class DeleteSubjectServiceTest {
 
     @Test
     void testDeleteSubjectService_kitVersionDoesNotExist_throwsResourceNotFoundException() {
-        DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
+        var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
 
@@ -55,7 +55,7 @@ class DeleteSubjectServiceTest {
 
     @Test
     void testDeleteSubjectService_CurrentUserIsNotExpertGroupOwner_throwsAccessDeniedException() {
-        DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
+        var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -72,7 +72,7 @@ class DeleteSubjectServiceTest {
 
     @Test
     void testDeleteSubjectService_KitVersionStatusIsUpdating_throwsValidationException() {
-        DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
+        var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createActiveKitVersion(AssessmentKitMother.simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -89,7 +89,7 @@ class DeleteSubjectServiceTest {
 
     @Test
     void testDeleteSubjectService_validParams_successfulDelete() {
-        DeleteSubjectUseCase.Param param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
+        var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
