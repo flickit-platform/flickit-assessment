@@ -99,7 +99,7 @@ class DeleteSubjectServiceTest {
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
         verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
-        verify(deleteSubjectPort).deleteByIdAndKitVersionId(param.getId(), param.getKitVersionId());
+        verify(deleteSubjectPort).delete(param.getId(), param.getKitVersionId());
     }
 
     private DeleteSubjectUseCase.Param createParam(Consumer<DeleteSubjectUseCase.Param.ParamBuilder> consumer) {
