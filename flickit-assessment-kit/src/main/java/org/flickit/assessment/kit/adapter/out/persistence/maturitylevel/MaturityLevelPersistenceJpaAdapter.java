@@ -128,7 +128,9 @@ public class MaturityLevelPersistenceJpaAdapter implements
         var pageResult = repository.findByKitVersionId(kitVersionId,
             PageRequest.of(page, size, sortDirection, sort));
 
-        var maturityLevels = pageResult.getContent().stream().map(MaturityLevelMapper::mapToDomainModel).toList();
+        var maturityLevels = pageResult.getContent().stream()
+            .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
 
         return new PaginatedResponse<>(maturityLevels,
             pageResult.getNumber(),

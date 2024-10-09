@@ -59,5 +59,4 @@ class GetKitMaturityLevelsUseCaseParamTest {
             .page(2)
             .currentUserId(UUID.randomUUID());
     }
-
 }

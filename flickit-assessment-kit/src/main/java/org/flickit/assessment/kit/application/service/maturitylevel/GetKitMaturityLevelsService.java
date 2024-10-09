@@ -27,8 +27,12 @@ public class GetKitMaturityLevelsService implements GetKitMaturityLevelsUseCase 
         var kit = loadKitVersionPort.load(param.getKitVersionId()).getKit();
         if (!checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         var paginatedResponse = loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId(), param.getSize(), param.getPage());
-        var items = paginatedResponse.getItems().stream().map(this::toMaturityLevel).toList();
+        var items = paginatedResponse.getItems().stream()
+            .map(this::toMaturityLevelItem)
+            .toList();
+
         return new PaginatedResponse<>(items,
             paginatedResponse.getPage(),
             paginatedResponse.getSize(),
@@ -37,7 +41,7 @@ public class GetKitMaturityLevelsService implements GetKitMaturityLevelsUseCase 
             paginatedResponse.getTotal());
     }
 
-    private MaturityLevelListItem toMaturityLevel(MaturityLevel maturityLevel) {
+    private MaturityLevelListItem toMaturityLevelItem(MaturityLevel maturityLevel) {
         return new MaturityLevelListItem(maturityLevel.getId(),
             maturityLevel.getIndex(),
             maturityLevel.getTitle(),
