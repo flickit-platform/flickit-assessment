@@ -68,7 +68,7 @@ class DeleteSubjectServiceTest {
     }
 
     @Test
-    void testDeleteSubjectService_KitVersionStatusIsUpdating_throwsValidationException() {
+    void testDeleteSubjectService_KitVersionStatusIsNotUpdating_throwsValidationException() {
         var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
         var kitVersion = createActiveKitVersion(simpleKit());
 
