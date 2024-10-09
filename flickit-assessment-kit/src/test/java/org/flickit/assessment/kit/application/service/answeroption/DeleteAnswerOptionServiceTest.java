@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.answeroption;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.answeroption.DeleteAnswerOptionUseCase;
+import org.flickit.assessment.kit.application.port.out.answeroption.DeleteAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
@@ -34,6 +35,9 @@ class DeleteAnswerOptionServiceTest {
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
+    @Mock
+    private DeleteAnswerOptionPort deleteAnswerOptionPort;
+
     @Test
     void deleteAnswerOptionServiceTest_kitVersionIdNotExists_shouldThrowResourceNotFoundException() {
         var param = createParam(DeleteAnswerOptionUseCase.Param.ParamBuilder::build);
@@ -46,7 +50,7 @@ class DeleteAnswerOptionServiceTest {
         assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
 
         verify(loadKitVersionPort, times(1)).load(param.getKitVersionId());
-        verifyNoMoreInteractions(loadExpertGroupOwnerPort);
+        verifyNoMoreInteractions(loadExpertGroupOwnerPort, deleteAnswerOptionPort);
     }
 
     @Test
@@ -63,6 +67,24 @@ class DeleteAnswerOptionServiceTest {
 
         verify(loadKitVersionPort, times(1)).load(param.getKitVersionId());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(kitVersion.getKit().getExpertGroupId());
+        verifyNoInteractions(deleteAnswerOptionPort);
+    }
+
+    @Test
+    void deleteAnswerOptionServiceTest_validParam_shouldDeleteAnswerOption() {
+        var param = createParam(DeleteAnswerOptionUseCase.Param.ParamBuilder::build);
+        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.delete(param));
+
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verify(loadKitVersionPort, times(1)).load(param.getKitVersionId());
+        verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(kitVersion.getKit().getExpertGroupId());
+        verify(deleteAnswerOptionPort, times(1)).deleteByIdAndKitVersionId(param.getAnswerOptionId(), param.getKitVersionId());
     }
 
     private DeleteAnswerOptionUseCase.Param createParam(Consumer<DeleteAnswerOptionUseCase.Param.ParamBuilder> changer) {
