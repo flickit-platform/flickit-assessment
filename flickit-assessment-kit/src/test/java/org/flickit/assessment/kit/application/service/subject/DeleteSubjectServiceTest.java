@@ -7,8 +7,6 @@ import org.flickit.assessment.kit.application.port.in.subject.DeleteSubjectUseCa
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.subject.DeleteSubjectPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,7 +19,11 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_SUBJECT_KIT_DELETION_UNSUPPORTED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createActiveKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,40 +48,34 @@ class DeleteSubjectServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.deleteSubject(param));
-
         assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
 
-        verify(loadKitVersionPort).load(param.getKitVersionId());
         verifyNoInteractions(loadExpertGroupOwnerPort, deleteSubjectPort);
     }
 
     @Test
     void testDeleteSubjectService_CurrentUserIsNotExpertGroupOwner_throwsAccessDeniedException() {
         var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
-        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+        var kitVersion = createKitVersion(simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSubject(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(loadKitVersionPort).load(param.getKitVersionId());
-        verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
         verifyNoInteractions(deleteSubjectPort);
     }
 
     @Test
     void testDeleteSubjectService_KitVersionStatusIsUpdating_throwsValidationException() {
         var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
-        var kitVersion = KitVersionMother.createActiveKitVersion(AssessmentKitMother.simpleKit());
+        var kitVersion = createActiveKitVersion(simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteSubject(param));
-
         assertEquals(DELETE_SUBJECT_KIT_DELETION_UNSUPPORTED, throwable.getMessageKey());
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
@@ -90,15 +86,14 @@ class DeleteSubjectServiceTest {
     @Test
     void testDeleteSubjectService_validParams_successfulDelete() {
         var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
-        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+        var kitVersion = createKitVersion(simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
+        doNothing().when(deleteSubjectPort).delete(param.getSubjectId(), param.getKitVersionId());
 
         service.deleteSubject(param);
 
-        verify(loadKitVersionPort).load(param.getKitVersionId());
-        verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
         verify(deleteSubjectPort).delete(param.getSubjectId(), param.getKitVersionId());
     }
 
