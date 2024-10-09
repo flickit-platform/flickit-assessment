@@ -3,13 +3,11 @@ package org.flickit.assessment.kit.application.service.levelcompetence;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.port.in.levelcompetence.GetLevelCompetencesUseCase;
 import org.flickit.assessment.kit.application.port.in.levelcompetence.GetLevelCompetencesUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
-import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,8 +16,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -40,10 +42,11 @@ class GetLevelCompetencesServiceTest {
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
+
     @Test
     void testGetLevelCompetences_CurrentUserIsNotExpertGroupMember_AccessDenied() {
-        Param param = new Param(12L, UUID.randomUUID());
-        KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+        var param = createParam(GetLevelCompetencesUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
@@ -56,9 +59,8 @@ class GetLevelCompetencesServiceTest {
 
     @Test
     void testGetLevelCompetences_ValidParam_ReturnResult() {
-        Param param = new Param(12L, UUID.randomUUID());
-        KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
-        List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+        var param = createParam(GetLevelCompetencesUseCase.Param.ParamBuilder::build);
+        List<MaturityLevel> maturityLevels = allLevels();
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
@@ -66,6 +68,7 @@ class GetLevelCompetencesServiceTest {
             .thenReturn(maturityLevels);
 
         var resultItems = service.getLevelCompetences(param);
+
         assertEquals(maturityLevels.size(), resultItems.size());
 
         var item = resultItems.get(1);
@@ -80,5 +83,17 @@ class GetLevelCompetencesServiceTest {
         assertEquals(competence.getId(), itemCompetences.id());
         assertEquals(competence.getValue(), itemCompetences.value());
         assertEquals(competence.getEffectiveLevelId(), itemCompetences.maturityLevelId());
+    }
+
+    private GetLevelCompetencesUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .kitVersionId(kitVersion.getId())
+            .currentUserId(UUID.randomUUID());
     }
 }
