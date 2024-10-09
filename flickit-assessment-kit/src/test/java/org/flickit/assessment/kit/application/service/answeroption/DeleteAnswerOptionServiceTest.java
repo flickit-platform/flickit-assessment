@@ -19,8 +19,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,9 +77,7 @@ class DeleteAnswerOptionServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.delete(param));
-
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertDoesNotThrow(() -> service.delete(param));
 
         verify(loadKitVersionPort, times(1)).load(param.getKitVersionId());
         verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(kitVersion.getKit().getExpertGroupId());
