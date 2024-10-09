@@ -18,7 +18,7 @@ public class GetQuestionOptionsRestController {
     private final GetQuestionOptionsUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/kit-verions/{kitVersionId}/questions/{questionId}/options")
+    @GetMapping("/kit-versions/{kitVersionId}/questions/{questionId}/options")
     public ResponseEntity<GetQuestionOptionsUseCase.Result> getQuestionOptions(@PathVariable("kitVersionId") Long kitVersionId,
                                                                                @PathVariable("questionId") Long questionId) {
         UUID currentUserId = userContext.getUser().id();
