@@ -30,8 +30,10 @@ public class GetLevelCompetencesService implements GetLevelCompetencesUseCase {
         if (!checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId());
-        return maturityLevels.stream().map(this::toResult).toList();
+        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId());
+        return maturityLevels.stream()
+            .map(this::toResult)
+            .toList();
     }
 
     private MaturityLevelListItem toResult(MaturityLevel maturityLevel) {

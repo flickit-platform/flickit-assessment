@@ -62,7 +62,7 @@ class GetLevelCompetencesServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadMaturityLevelsPort.loadByKitVersionId(param.getKitVersionId()))
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId()))
             .thenReturn(maturityLevels);
 
         var resultItems = service.getLevelCompetences(param);
