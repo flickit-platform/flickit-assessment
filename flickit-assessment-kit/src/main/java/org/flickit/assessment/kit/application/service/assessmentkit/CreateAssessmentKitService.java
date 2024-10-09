@@ -6,6 +6,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateKitTagRelationPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
@@ -28,6 +29,7 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
     private final CreateKitVersionPort createKitVersionPort;
     private final LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
     private final GrantUserAccessToKitPort grantUserAccessToKitPort;
+    private final CreateKitTagRelationPort createKitTagRelationPort;
 
     @Override
     public Result createAssessmentKit(Param param) {
@@ -43,6 +45,7 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
             .map(LoadExpertGroupMemberIdsPort.Result::userId)
             .toList();
         grantUserAccessToKitPort.grantUsersAccess(kitId, expertGroupMemberIds);
+        createKitTagRelationPort.persist(param.getTagIds(), kitId);
 
         return new Result(kitId);
     }
