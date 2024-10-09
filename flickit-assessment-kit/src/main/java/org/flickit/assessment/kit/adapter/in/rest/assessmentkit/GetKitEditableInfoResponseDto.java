@@ -12,5 +12,6 @@ public record GetKitEditableInfoResponseDto(Long id,
                                             Double price,
                                             String about,
                                             List<KitTag> tags,
-                                            boolean editable) {
+                                            boolean editable,
+                                            boolean hasActiveVersion) {
 }
