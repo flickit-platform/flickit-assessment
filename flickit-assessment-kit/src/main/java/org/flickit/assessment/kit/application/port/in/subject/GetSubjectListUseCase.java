@@ -50,7 +50,6 @@ public interface GetSubjectListUseCase {
         String title,
         String description,
         Integer index,
-        Integer weight
-    ) {
+        Integer weight) {
     }
 }
