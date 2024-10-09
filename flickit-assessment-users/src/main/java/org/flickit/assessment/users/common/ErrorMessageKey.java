@@ -11,7 +11,6 @@ public class ErrorMessageKey {
     public static final String SPACE_ID_NOT_FOUND = "space.id.notFound";
     public static final String USER_ID_NOT_FOUND = "user.id.notFound";
 
-    public static final String GET_USER_BY_EMAIL_EMAIL_EMAIL_NOT_VALID = "get-user-by-email.email.notValid";
     public static final String GET_USER_BY_EMAIL_EMAIL_NOT_NULL = "get-user-by-email.email.notNull";
 
     public static final String GET_EXPERT_GROUP_LIST_PAGE_MIN = "get-expert-group-list.page.min";
@@ -87,6 +86,7 @@ public class ErrorMessageKey {
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_NULL = "delete-space-member.userId.notNull";
     public static final String DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "delete-space-member.spaceId.notNull";
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND = "delete-space-member.userId.notFound";
+    public static final String DELETE_SPACE_MEMBER_USER_IS_SPACE_OWNER = "delete-space-member.userId.isSpaceOwner";
 
     public static final String GET_SPACE_SPACE_ID_NOT_NULL = "get-space.spaceId.notNull";
 
@@ -142,7 +142,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_USER_PROFILE_LINKEDIN_NOT_VALID = "update-user-profile.linkedin.notValid";
 
     public static final String CREATE_USER_USER_ID_NOT_NULL = "create-user.userId.notNull";
-    public static final String CREATE_USER_EMAIL_NOT_VALID = "create-user.email.notValid";
     public static final String CREATE_USER_EMAIL_NOT_NULL = "create-user.email.notNull";
     public static final String CREATE_USER_DISPLAY_NAME_NOT_NULL = "create-user.displayName.notNull";
     public static final String CREATE_USER_DISPLAY_NAME_SIZE_MIN = "create-user.displayName.size.min";

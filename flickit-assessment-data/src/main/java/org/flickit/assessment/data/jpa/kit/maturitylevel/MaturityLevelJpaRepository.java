@@ -1,15 +1,27 @@
 package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+@Repository
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, MaturityLevelJpaEntity.EntityId> {
 
     List<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
+
+    Page<MaturityLevelJpaEntity> findByKitVersionId(Long kitVersionId, Pageable pageable);
+
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdAndIdIn(long kitVersionId, Collection<Long> ids);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
@@ -27,6 +39,28 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             WHERE l.kitVersionId = :kitVersionId
         """)
     List<MaturityJoinCompetenceView> findAllByKitVersionIdWithCompetence(@Param(value = "kitVersionId") Long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE MaturityLevelJpaEntity ml SET
+                ml.code = :code,
+                ml.index = :index,
+                ml.title = :title,
+                ml.description = :description,
+                ml.value = :value,
+                ml.lastModificationTime = :lastModificationTime,
+                ml.lastModifiedBy = :lastModifiedBy
+            WHERE ml.id = :id AND ml.kitVersionId = :kitVersionId
+        """)
+    void update(@Param("id") Long id,
+                @Param("kitVersionId") Long kitVersionId,
+                @Param("code") String code,
+                @Param("index") Integer index,
+                @Param("title") String title,
+                @Param("description") String description,
+                @Param("value") Integer value,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
             FROM MaturityLevelJpaEntity ml

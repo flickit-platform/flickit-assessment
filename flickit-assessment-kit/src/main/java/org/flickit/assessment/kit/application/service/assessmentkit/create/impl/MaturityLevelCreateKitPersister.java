@@ -74,6 +74,7 @@ public class MaturityLevelCreateKitPersister implements CreateKitPersister {
             newLevel.getCode(),
             newLevel.getTitle(),
             newLevel.getIndex(),
+            newLevel.getDescription(),
             newLevel.getValue(),
             null
         );

@@ -157,6 +157,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             Attribute attribute = new Attribute(
                 attributeId,
                 attributeIdToEntityMap.get(attributeId).getTitle(),
+                null,
                 attributeIdToEntityMap.get(attributeId).getWeight(),
                 impactfulQuestions
             );

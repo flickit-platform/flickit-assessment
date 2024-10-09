@@ -12,6 +12,7 @@ public class Attribute {
 
     private final long id;
     private final String title;
+    private final String description;
     private final int weight;
 
     /** This field is set when required (e.g., calculate) */

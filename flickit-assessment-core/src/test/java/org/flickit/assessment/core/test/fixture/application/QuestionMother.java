@@ -46,6 +46,12 @@ public class QuestionMother {
     }
 
     public static Question withIdAndImpactsOnLevel23(long id, long attributeId) {
-        return new Question(id, "question" + id, null, null, Boolean.FALSE, List.of(QuestionImpactMother.onLevelTwo(1, attributeId), QuestionImpactMother.onLevelThree(1, attributeId)), QuestionnaireMother.createQuestionnaire());
+        return new Question(id, "question" + id, null, "question hint", Boolean.FALSE, List.of(QuestionImpactMother.onLevelTwo(1, attributeId), QuestionImpactMother.onLevelThree(1, attributeId)), QuestionnaireMother.createQuestionnaire());
+    }
+
+    public static Question withImpactsOnLevel3AndAnotherAttributeLevel4(long attributeId, long anotherAttributeId) {
+        return new Question(id++, "question" + id, index++, null, Boolean.FALSE,
+            List.of(QuestionImpactMother.onLevelThree(1, attributeId), QuestionImpactMother.onLevelFour(1, anotherAttributeId)),
+            QuestionnaireMother.createQuestionnaire());
     }
 }

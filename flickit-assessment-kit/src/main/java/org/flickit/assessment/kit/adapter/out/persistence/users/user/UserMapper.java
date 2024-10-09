@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.kit.application.domain.User;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitUsersPort;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
@@ -13,10 +13,11 @@ public class UserMapper {
         return new User(entity.getId());
     }
 
-    public static GetKitUserListUseCase.UserListItem mapToUserListItem(UserJpaEntity entity) {
-        return new GetKitUserListUseCase.UserListItem(
+    public static LoadKitUsersPort.KitUser mapToUserListItem(UserJpaEntity entity) {
+        return new LoadKitUsersPort.KitUser(
             entity.getId(),
             entity.getDisplayName(),
-            entity.getEmail());
+            entity.getEmail(),
+            entity.getPicture());
     }
 }

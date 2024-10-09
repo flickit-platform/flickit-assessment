@@ -2,9 +2,12 @@ package org.flickit.assessment.core.application.service.assessmentuserrole;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
+import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
+import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GrantUserAssessmentRoleUseCase;
+import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CreateAssessmentSpaceUserAccessPort;
 import org.springframework.stereotype.Service;
@@ -26,7 +29,8 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
     private final CreateAssessmentSpaceUserAccessPort createSpaceUserAccessPort;
 
     @Override
-    public void grantAssessmentUserRole(Param param) {
+    @SendNotification
+    public Result grantAssessmentUserRole(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -34,6 +38,13 @@ public class GrantUserAssessmentRoleService implements GrantUserAssessmentRoleUs
             createSpaceUserAccessPort.persist(toCreateSpaceAccessPortParam(param));
 
         grantUserAssessmentRolePort.persist(param.getAssessmentId(), param.getUserId(), param.getRoleId());
+
+        return new Result(new GrantAssessmentUserRoleNotificationCmd(
+            param.getUserId(),
+            param.getAssessmentId(),
+            param.getCurrentUserId(),
+            AssessmentUserRole.valueOfById(param.getRoleId()))
+        );
     }
 
     private CreateAssessmentSpaceUserAccessPort.Param toCreateSpaceAccessPortParam(Param param) {

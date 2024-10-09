@@ -8,13 +8,14 @@ public class ErrorMessageKey {
 
     public static final String TRANSLATE_KIT_DSL_UNABLE_TO_PARSE_JSON = "translate-kit-dsl.unable.to.parse.json";
 
-    public static final String FIND_MATURITY_LEVEL_ID_NOT_FOUND = "find-maturity-level.id.notFound";
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
     public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
     public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
+    public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
+    public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -57,6 +58,7 @@ public class ErrorMessageKey {
     public static final String DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND = "delete-kit-user-access.kit-user.notFound";
     public static final String DELETE_KIT_USER_ACCESS_KIT_ID_NOT_FOUND = "delete-kit-user-access.kitId.notFound";
     public static final String DELETE_KIT_USER_ACCESS_USER_NOT_FOUND = "delete-kit-user-access.user.notFound";
+    public static final String DELETE_KIT_USER_ACCESS_USER_IS_EXPERT_GROUP_OWNER = "delete-kit-user-access.userId.isExpertGroupOwner";
 
     public static final String DELETE_KIT_KIT_ID_NOT_NULL = "delete-kit.kitId.notNull";
     public static final String DELETE_KIT_HAS_ASSESSMENT = "delete-kit.hasAssessment";
@@ -94,7 +96,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_INFO_ABOUT_SIZE_MIN = "update-kit-info.about.size.min";
     public static final String UPDATE_KIT_INFO_ABOUT_SIZE_MAX = "update-kit-info.about.size.max";
     public static final String UPDATE_KIT_INFO_TAGS_SIZE_MIN = "update-kit-info.tags.size.min";
-    public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFount";
+    public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFound";
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 
@@ -125,6 +127,118 @@ public class ErrorMessageKey {
 
     public static final String GET_PUBLISHED_KIT_KIT_ID_NOT_NULL = "get-published-kit.kitId.notNull";
 
+    public static final String CREATE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "create-subject.kitVersionId.notNull";
+    public static final String CREATE_SUBJECT_INDEX_NOT_NULL = "create-subject.index.notNull";
+    public static final String CREATE_SUBJECT_TITLE_NOT_NULL = "create-subject.title.notNull";
+    public static final String CREATE_SUBJECT_TITLE_SIZE_MIN = "create-subject.title.size.min";
+    public static final String CREATE_SUBJECT_TITLE_SIZE_MAX = "create-subject.title.size.max";
+    public static final String CREATE_SUBJECT_DESCRIPTION_NOT_NULL = "create-subject.description.notNull";
+    public static final String CREATE_SUBJECT_DESCRIPTION_SIZE_MIN = "create-subject.description.size.min";
+    public static final String CREATE_SUBJECT_DESCRIPTION_SIZE_MAX = "create-subject.description.size.max";
+    public static final String CREATE_SUBJECT_WEIGHT_NOT_NULL = "create-subject.weight.notNull";
+    public static final String CREATE_SUBJECT_INDEX_DUPLICATE = "create-subject.index.duplicate";
+    public static final String CREATE_SUBJECT_TITLE_DUPLICATE = "create-subject.title.duplicate";
+    public static final String CREATE_SUBJECT_CODE_DUPLICATE = "create-subject-code.duplicate";
+
+    public static final String CREATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "create-attribute.kitVersionId.notNull";
+    public static final String CREATE_ATTRIBUTE_INDEX_NOT_NULL = "create-attribute.index.notNull";
+    public static final String CREATE_ATTRIBUTE_TITLE_NOT_NULL = "create-attribute.title.notNull";
+    public static final String CREATE_ATTRIBUTE_TITLE_MIN_SIZE = "create-attribute.title.min.size";
+    public static final String CREATE_ATTRIBUTE_TITLE_MAX_SIZE = "create-attribute.title.max.size";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_NOT_NULL = "create-attribute.description.notNull";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "create-attribute.description.size.min";
+    public static final String CREATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "create-attribute.description.size.max";
+    public static final String CREATE_ATTRIBUTE_WEIGHT_NOT_NULL = "create-attribute.weight.notNull";
+    public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "create-attribute.subjectId.notNull";
+    public static final String CREATE_ATTRIBUTE_CODE_DUPLICATE = "create-attribute.code.duplicate";
+    public static final String CREATE_ATTRIBUTE_INDEX_DUPLICATE = "create-attribute.index.duplicate";
+    public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND = "create-attribute.subjectId.notFound";
+
+    public static final String CREATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "create-maturity-level.kitVersionId.notNull";
+    public static final String CREATE_MATURITY_LEVEL_INDEX_NOT_NULL = "create-maturity-level.index.notNull";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_NOT_NULL = "create-maturity-level.title.notNull";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_SIZE_MIN = "create-maturity-level.title.size.min";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_SIZE_MAX = "create-maturity-level.title.size.max";
+    public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL = "create-maturity-level.description.notNull";
+    public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "create-maturity-level.description.size.min";
+    public static final String CREATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "create-maturity-level.description.size.max";
+    public static final String CREATE_MATURITY_LEVEL_VALUE_NOT_NULL = "create-maturity-level.value.notNull";
+    public static final String CREATE_MATURITY_LEVEL_CODE_DUPLICATE = "create-maturity-level.code.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_INDEX_DUPLICATE = "create-maturity-level.index.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_TITLE_DUPLICATE = "create-maturity-level.title.duplicate";
+    public static final String CREATE_MATURITY_LEVEL_VALUE_DUPLICATE = "create-maturity-level.value.duplicate";
+
+    public static final String CREATE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "create-questionnaire.kitVersionId.notNull";
+    public static final String CREATE_QUESTIONNAIRE_INDEX_NOT_NULL = "create-questionnaire.index.notNull";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_NOT_NULL = "create-questionnaire.title.notNull";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_SIZE_MIN = "create-questionnaire.title.size.min";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_SIZE_MAX = "create-questionnaire.title.size.max";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL = "create-questionnaire.description.notNull";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "create-questionnaire.description.size.min";
+    public static final String CREATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "create-questionnaire.description.size.max";
+    public static final String CREATE_QUESTIONNAIRE_INDEX_DUPLICATE = "create-questionnaire.index.duplicate";
+    public static final String CREATE_QUESTIONNAIRE_TITLE_DUPLICATE = "create-questionnaire.title.duplicate";
+
+    public static final String UPDATE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL = "update-maturity-level.maturityLevelId.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "update-maturity-level.kitVersionId.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_TITLE_NOT_NULL = "update-maturity-level.title.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MIN = "update-maturity-level.title.size.min";
+    public static final String UPDATE_MATURITY_LEVEL_TITLE_SIZE_MAX = "update-maturity-level.title.size.max";
+    public static final String UPDATE_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level.index.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_VALUE_NOT_NULL = "update-maturity-level.value.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_NOT_NULL = "update-maturity-level.description.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MIN = "update-maturity-level.description.size.min";
+    public static final String UPDATE_MATURITY_LEVEL_DESCRIPTION_SIZE_MAX = "update-maturity-level.description.size.max";
+
+    public static final String CREATE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "create-level-competence.kitVersionId.notNull";
+    public static final String CREATE_LEVEL_COMPETENCE_AFFECTED_LEVEL_ID_NOT_NULL = "create-level-competence.affectedLevelId.notNull";
+    public static final String CREATE_LEVEL_COMPETENCE_EFFECTIVE_LEVEL_ID_NOT_NULL = "create-level-competence.effectiveLevelId.notNull";
+    public static final String CREATE_LEVEL_COMPETENCE_VALUE_NOT_NULL = "create-level-competence.value.notNull";
+    public static final String CREATE_LEVEL_COMPETENCE_VALUE_MIN = "create-level-competence.value.min";
+    public static final String CREATE_LEVEL_COMPETENCE_VALUE_MAX = "create-level-competence.value.max";
+    public static final String CREATE_LEVEL_COMPETENCE_DUPLICATE = "create-level-competence.duplicate";
+
+    public static final String UPDATE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL = "update-level-competence.levelCompetenceId.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "update-level-competence.kitVersionId.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_NOT_NULL = "update-level-competence.value.notNull";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_MIN = "update-level-competence.value.min";
+    public static final String UPDATE_LEVEL_COMPETENCE_VALUE_MAX = "update-level-competence.value.max";
+
+    public static final String DELETE_MATURITY_LEVEL_MATURITY_LEVEL_ID_NOT_NULL = "delete-maturity-level.maturityLevelId.notNull";
+    public static final String DELETE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "delete-maturity-level.kitVersionId.notNull";
+
+    public static final String DELETE_LEVEL_COMPETENCE_KIT_VERSION_ID_NOT_NULL = "delete-level-competence.kitVersionId.notNull";
+    public static final String DELETE_LEVEL_COMPETENCE_LEVEL_COMPETENCE_ID_NOT_NULL = "delete-level-competence.levelCompetenceId.notNull";
+    public static final String DELETE_LEVEL_COMPETENCE_ID_NOT_FOUND = "delete-level-competence.id.notFound";
+
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-maturity-level-orders.kitVersionId.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL = "update-maturity-level-orders.orders.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_ID_NOT_NULL = "update-maturity-level-orders.maturityLevelId.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level-orders.maturityLevel.index.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
+
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_NOT_NULL = "create-assessment-kit.title.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_SIZE_MIN = "create-assessment-kit.title.min";
+    public static final String CREATE_ASSESSMENT_KIT_TITLE_SIZE_MAX = "create-assessment-kit.title.max";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_NOT_NULL = "create-assessment-kit.summary.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_SIZE_MIN = "create-assessment-kit.summary.size.min";
+    public static final String CREATE_ASSESSMENT_KIT_SUMMARY_SIZE_MAX = "create-assessment-kit.summary.size.max";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_NOT_NULL = "create-assessment-kit.about.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MIN = "create-assessment-kit.about.size.min";
+    public static final String CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MAX = "create-assessment-kit.about.size.max";
+    public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
+
+    public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
+
+    public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notNull";
+    public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
+    public static final String GET_KIT_MATURITY_LEVELS_SIZE_MAX = "get-kit-maturity-levels-size-max";
+    public static final String GET_KIT_MATURITY_LEVELS_PAGE_MIN = "get-kit-maturity-levels-page-min";
+
+    public static final String GET_LEVEL_COMPETENCES_KIT_VERSION_ID_NOT_NULL = "get-level-competences.kitVersionId.notNull";
+
     public static final String UPDATE_SUBJECT_BY_WIZARD_KIT_ID_NOT_NULL = "update-subject-by-wizard.kitId.notNull";
     public static final String UPDATE_SUBJECT_BY_WIZARD_SUBJECT_ID_NOT_NULL = "update-subject-by-wizard.subjectId.notNull";
     public static final String UPDATE_SUBJECT_BY_WIZARD_INDEX_NOT_NULL = "update-subject-by-wizard.index.notNull";
@@ -133,10 +247,10 @@ public class ErrorMessageKey {
     public static final String UPDATE_SUBJECT_BY_WIZARD_WEIGHT_NOT_NULL = "update-subject-by-wizard.weight.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
-        return String.format("entities.%s.single.first", fieldName);
+        return "entities.%s.single.first".formatted(fieldName);
     }
 
     public static String entityNamePlural(String fieldName) {
-        return String.format("entities.%s.plural", fieldName);
+        return "entities.%s.plural".formatted(fieldName);
     }
 }

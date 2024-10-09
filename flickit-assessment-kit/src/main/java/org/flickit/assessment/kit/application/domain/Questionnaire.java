@@ -22,4 +22,11 @@ public class Questionnaire {
     @EqualsAndHashCode.Exclude private List<Question> questions;
     @EqualsAndHashCode.Exclude private final LocalDateTime creationTime;
     @EqualsAndHashCode.Exclude private final LocalDateTime lastModificationTime;
+
+    public static String generateSlugCode(String title) {
+        return title
+            .toLowerCase()
+            .strip()
+            .replaceAll("\\s+", "-");
+    }
 }

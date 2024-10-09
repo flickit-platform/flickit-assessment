@@ -64,18 +64,18 @@ class SubjectUpdateKitPersisterTest {
         verify(updateSubjectPort, times(2)).update(param.capture());
 
         List<UpdateSubjectPort.Param> paramList = param.getAllValues();
-        UpdateSubjectPort.Param softwareSubject = paramList.get(0);
+        UpdateSubjectPort.Param softwareSubject = paramList.getFirst();
         UpdateSubjectPort.Param teamSubject = paramList.get(1);
 
         assertEquals(subjectOne.getId(), softwareSubject.id());
         assertEquals(dslSubjectOne.getTitle(), softwareSubject.title());
-        assertEquals(savedKit.getKitVersionId(), softwareSubject.kitVersionId());
+        assertEquals(savedKit.getActiveVersionId(), softwareSubject.kitVersionId());
         assertEquals(dslSubjectOne.getDescription(), softwareSubject.description());
         assertEquals(dslSubjectOne.getIndex(), softwareSubject.index());
         assertThat(softwareSubject.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
 
         assertEquals(subjectTwo.getId(), teamSubject.id());
-        assertEquals(savedKit.getKitVersionId(), teamSubject.kitVersionId());
+        assertEquals(savedKit.getActiveVersionId(), teamSubject.kitVersionId());
         assertEquals(dslSubjectTwo.getTitle(), teamSubject.title());
         assertEquals(dslSubjectTwo.getDescription(), teamSubject.description());
         assertEquals(dslSubjectTwo.getIndex(), teamSubject.index());
