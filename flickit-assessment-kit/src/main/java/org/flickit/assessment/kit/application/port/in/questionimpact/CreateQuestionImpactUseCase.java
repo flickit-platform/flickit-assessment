@@ -14,7 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface CreateQuestionImpactUseCase {
 
-    Result createQuestionImpact(Param param);
+    long createQuestionImpact(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -48,8 +48,5 @@ public interface CreateQuestionImpactUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-    }
-
-    record Result(long questionImpactId) {
     }
 }

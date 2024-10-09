@@ -24,15 +24,14 @@ public class CreateQuestionImpactService implements CreateQuestionImpactUseCase 
     private final CreateQuestionImpactPort createQuestionImpactPort;
 
     @Override
-    public Result createQuestionImpact(Param param) {
+    public long createQuestionImpact(Param param) {
         var kitversion = loadKitVersionPort.load(param.getKitVersionId());
         var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(kitversion.getKit().getExpertGroupId());
 
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var questionImpactId = createQuestionImpactPort.persist(toQuestionImpact(param));
-        return new Result(questionImpactId);
+        return createQuestionImpactPort.persist(toQuestionImpact(param));
     }
 
     private QuestionImpact toQuestionImpact(Param param) {

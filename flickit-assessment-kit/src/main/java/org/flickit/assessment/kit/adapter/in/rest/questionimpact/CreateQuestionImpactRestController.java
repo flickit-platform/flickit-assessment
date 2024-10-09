@@ -24,9 +24,9 @@ public class CreateQuestionImpactRestController {
     public ResponseEntity<CreateQuestionImpactResponseDto> createQuestionImpact(@PathVariable("kitVersionId") Long kitVersionId,
                                                                                 @RequestBody CreateQuestionImpactRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
-        var result = useCase.createQuestionImpact(toParam(kitVersionId, requestDto, currentUserId));
+        var questionImpactId = useCase.createQuestionImpact(toParam(kitVersionId, requestDto, currentUserId));
 
-        return new ResponseEntity<>(new CreateQuestionImpactResponseDto(result.questionImpactId()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CreateQuestionImpactResponseDto(questionImpactId), HttpStatus.CREATED);
     }
 
     private Param toParam(Long kitVersionId, CreateQuestionImpactRequestDto requestDto, UUID currentUserId) {
