@@ -233,6 +233,11 @@ public class ErrorMessageKey {
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
 
+    public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notNull";
+    public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
+    public static final String GET_KIT_MATURITY_LEVELS_SIZE_MAX = "get-kit-maturity-levels-size-max";
+    public static final String GET_KIT_MATURITY_LEVELS_PAGE_MIN = "get-kit-maturity-levels-page-min";
+
     public static final String DELETE_ANSWER_OPTION_ANSWER_OPTION_ID_NOT_NULL = "delete-answer-option.answerOptionId.notNull";
     public static final String DELETE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "delete-answer-option.kitVersionId.notNull";
 
