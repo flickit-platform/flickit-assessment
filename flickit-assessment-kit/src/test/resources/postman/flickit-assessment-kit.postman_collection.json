@@ -787,6 +787,32 @@
 					"response": []
 				},
 				{
+					"name": "Get Level Competences",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/348/competence-levels",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"348",
+								"competence-levels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Update Level Competence",
 					"request": {
 						"method": "PUT",
