@@ -43,9 +43,12 @@ class CreateAnswerOptionUseCaseParamTest {
         assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_OPTION_TITLE_NOT_BLANK);
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title("     ")));
-        assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_OPTION_TITLE_NOT_BLANK);
+        assertThat(throwable).hasMessageContaining("title: " + CREATE_ANSWER_OPTION_TITLE_NOT_BLANK);
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(randomAlphabetic(2))));
+        assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_OPTION_TITLE_SIZE_MIN);
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title("     a     ")));
         assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_OPTION_TITLE_SIZE_MIN);
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(randomAlphabetic(101))));

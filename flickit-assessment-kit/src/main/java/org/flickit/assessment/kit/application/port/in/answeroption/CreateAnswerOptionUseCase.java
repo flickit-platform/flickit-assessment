@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.answeroption;
 
+import io.jsonwebtoken.lang.Strings;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -43,7 +44,7 @@ public interface CreateAnswerOptionUseCase {
             this.kitVersionId = kitVersionId;
             this.questionId = questionId;
             this.index = index;
-            this.title = title;
+            this.title = Strings.trimWhitespace(title);
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
