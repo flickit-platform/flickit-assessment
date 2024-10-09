@@ -232,12 +232,12 @@ public class ErrorMessageKey {
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
 
-    public static final String ADD_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "add-answer-option.kitVersionId.notNull";
-    public static final String ADD_ANSWER_OPTION_QUESTION_ID_NOT_NULL = "add-answer-option.questionId.notNull";
-    public static final String ADD_ANSWER_OPTION_INDEX_NOT_NULL = "add-answer-option.index.notNull";
-    public static final String ADD_ANSWER_OPTION_TITLE_NOT_BLANK = "add-answer-option.title.notBlank";
-    public static final String ADD_ANSWER_OPTION_TITLE_SIZE_MIN = "add-answer-option.title.size.min";
-    public static final String ADD_ANSWER_OPTION_TITLE_SIZE_MAX = "add-answer-option.title.size.max";
+    public static final String CREATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-option.kitVersionId.notNull";
+    public static final String CREATE_ANSWER_OPTION_QUESTION_ID_NOT_NULL = "create-answer-option.questionId.notNull";
+    public static final String CREATE_ANSWER_OPTION_INDEX_NOT_NULL = "create-answer-option.index.notNull";
+    public static final String CREATE_ANSWER_OPTION_TITLE_NOT_BLANK = "create-answer-option.title.notBlank";
+    public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MIN = "create-answer-option.title.size.min";
+    public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MAX = "create-answer-option.title.size.max";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
