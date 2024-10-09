@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DeleteSubjectUseCaseParamTest {
 
     @Test
-    void testDeleteSubjectUseCaseParam_idParamViolatesConstraints_ErrorMessage() {
+    void testDeleteSubjectUseCaseParam_subjectIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjectId(null)));
         assertThat(throwable).hasMessage("subjectId: " + DELETE_SUBJECT_SUBJECT_ID_NOT_NULL);
