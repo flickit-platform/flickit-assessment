@@ -7,6 +7,46 @@
 	},
 	"item": [
 		{
+			"name": "AnswerOption",
+			"item": [
+				{
+					"name": "Create Answer Option",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"questionId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-options",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"answer-options"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "AssessmentKit",
 			"item": [
 				{

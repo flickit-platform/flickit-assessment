@@ -237,6 +237,14 @@ public class ErrorMessageKey {
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MAX = "get-kit-maturity-levels-size-max";
     public static final String GET_KIT_MATURITY_LEVELS_PAGE_MIN = "get-kit-maturity-levels-page-min";
 
+    public static final String CREATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-option.kitVersionId.notNull";
+    public static final String CREATE_ANSWER_OPTION_QUESTION_ID_NOT_NULL = "create-answer-option.questionId.notNull";
+    public static final String CREATE_ANSWER_OPTION_INDEX_NOT_NULL = "create-answer-option.index.notNull";
+    public static final String CREATE_ANSWER_OPTION_TITLE_NOT_BLANK = "create-answer-option.title.notBlank";
+    public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MIN = "create-answer-option.title.size.min";
+    public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MAX = "create-answer-option.title.size.max";
+    public static final String CREATE_ANSWER_OPTION_INDEX_DUPLICATE = "create-answer-option.index.duplicate";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
