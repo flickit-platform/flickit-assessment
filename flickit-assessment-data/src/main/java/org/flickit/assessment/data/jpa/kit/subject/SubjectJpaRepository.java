@@ -21,6 +21,8 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
 
     List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Set<Long> ids, long kitVersionId);
 
+    Page<SubjectJpaEntity> findByKitVersionId(long kitVersionId, PageRequest pageRequest);
+
     @Modifying
     @Query("""
             UPDATE SubjectJpaEntity s
@@ -60,6 +62,4 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
-
-    Page<SubjectJpaEntity> findByKitVersionId(long kitVersionId, PageRequest pageRequest);
 }
