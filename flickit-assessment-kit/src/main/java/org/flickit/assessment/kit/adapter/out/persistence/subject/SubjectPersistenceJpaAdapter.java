@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
 
 
 @Component
@@ -32,7 +33,8 @@ public class SubjectPersistenceJpaAdapter implements
     UpdateSubjectPort,
     CreateSubjectPort,
     LoadSubjectsPort,
-    LoadSubjectPort {
+    LoadSubjectPort,
+    DeleteSubjectPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
@@ -89,5 +91,13 @@ public class SubjectPersistenceJpaAdapter implements
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, kitVersionId);
         return mapToDomainModel(subjectEntity,
             attributeEntities.stream().map(AttributeMapper::mapToDomainModel).toList());
+    }
+
+    @Override
+    public void delete(long subjectId, long kitVersionId) {
+        if (!repository.existsByIdAndKitVersionId(subjectId, kitVersionId))
+            throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
+
+        repository.deleteByIdAndKitVersionId(subjectId, kitVersionId);
     }
 }
