@@ -73,7 +73,7 @@ class GetSubjectListServiceTest {
     }
 
     @Test
-    void testGetSubjectListService_ValidParam_shouldReturnSubjectList() {
+    void testGetSubjectListService_ValidParams_shouldReturnPaginatedSubjectList() {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
