@@ -375,6 +375,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         if (savedImpact.getWeight() != dslImpact.getWeight()) {
             var updateParam = new UpdateQuestionImpactPort.Param(
                 savedImpact.getId(),
+                savedImpact.getKitVersionId(),
                 dslImpact.getWeight(),
                 savedImpact.getQuestionId(),
                 LocalDateTime.now(),
