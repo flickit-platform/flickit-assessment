@@ -6,7 +6,6 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,8 +19,10 @@ public class SubjectMapper {
             entity.getCode(),
             entity.getTitle(),
             entity.getIndex(),
+            entity.getWeight(),
             entity.getDescription(),
             attributes,
+            entity.getCreatedBy(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
@@ -41,10 +42,6 @@ public class SubjectMapper {
             creationTime,
             param.createdBy(),
             param.createdBy());
-    }
-
-    public static LoadSubjectsPort.Result mapToLoadPortResult(SubjectJpaEntity entity) {
-        return new LoadSubjectsPort.Result(entity.getId(), entity.getTitle(), entity.getDescription(), entity.getIndex(), entity.getWeight());
     }
 }
 

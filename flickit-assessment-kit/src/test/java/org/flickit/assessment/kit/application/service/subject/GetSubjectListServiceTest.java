@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
+import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -76,8 +77,7 @@ class GetSubjectListServiceTest {
         Param param = createParam(GetSubjectListUseCase.Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
-        var subjectList = List.of(new LoadSubjectsPort.Result(1L, "title", "description", 1, 2),
-            new LoadSubjectsPort.Result(2L, "title2", "description2", 2, 3));
+        var subjectList = List.of(SubjectMother.subjectWithTitle("title1"), SubjectMother.subjectWithTitle("title2"));
         var paginatedResponse = new PaginatedResponse<>(subjectList, param.getPage(), param.getSize(), "index", "desc", 4);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);

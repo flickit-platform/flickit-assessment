@@ -18,8 +18,5 @@ public interface LoadSubjectsPort {
      */
     List<Subject> loadByKitVersionId(long kitVersionId);
 
-    PaginatedResponse<Result> loadPaginatedByKitVersionId(long kitVersionId, int page, int size);
-
-    record Result(Long id, String title, String description, Integer index, Integer weight){
-    }
+    PaginatedResponse<Subject> loadPaginatedByKitVersionId(long kitVersionId, int page, int size);
 }

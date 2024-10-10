@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.subject;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.subject.GetSubjectListUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -31,7 +32,7 @@ public class GetSubjectListService implements GetSubjectListUseCase {
         var portResult = loadSubjectsPort.loadPaginatedByKitVersionId(kitVersion.getId(), param.getPage(), param.getSize());
 
         return new PaginatedResponse<>(
-            portResult.getItems().stream().map(this::mapToSubjectListItem).toList(),
+            portResult.getItems().stream().map(this::toResult).toList(),
             param.getPage(),
             param.getSize(),
             portResult.getSort(),
@@ -39,11 +40,11 @@ public class GetSubjectListService implements GetSubjectListUseCase {
             portResult.getTotal());
     }
 
-    private SubjectListItem mapToSubjectListItem(LoadSubjectsPort.Result portResult) {
-        return new SubjectListItem(portResult.id(),
-            portResult.title(),
-            portResult.description(),
-            portResult.index(),
-            portResult.weight());
+    private SubjectListItem toResult(Subject subject) {
+        return new SubjectListItem(subject.getId(),
+            subject.getTitle(),
+            subject.getDescription(),
+            subject.getIndex(),
+            subject.getWeight());
     }
 }

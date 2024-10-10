@@ -34,7 +34,7 @@ class GetSubjectListUseCaseParamTest {
         assertThat(throwableMin).hasMessage("size: " + GET_SUBJECT_LIST_SIZE_MIN);
 
         var throwableMax = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.size(51)));
+            () -> createParam(b -> b.size(101)));
         assertThat(throwableMax).hasMessage("size: " + GET_SUBJECT_LIST_SIZE_MAX);
     }
 
