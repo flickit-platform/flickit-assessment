@@ -363,7 +363,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void deleteImpact(QuestionImpact impact, Long questionId) {
-        deleteQuestionImpactPort.delete(impact.getId());
+        deleteQuestionImpactPort.delete(impact.getId(), impact.getKitVersionId());
         log.debug("QuestionImpact[id={}, questionId={}] deleted.", impact.getId(), questionId);
     }
 
@@ -375,6 +375,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         if (savedImpact.getWeight() != dslImpact.getWeight()) {
             var updateParam = new UpdateQuestionImpactPort.Param(
                 savedImpact.getId(),
+                savedImpact.getKitVersionId(),
                 dslImpact.getWeight(),
                 savedImpact.getQuestionId(),
                 LocalDateTime.now(),

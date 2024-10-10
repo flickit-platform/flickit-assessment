@@ -12,8 +12,8 @@ public class QuestionImpactEntityMother {
     public static QuestionImpactJpaEntity questionImpactEntity(Long maturityLevelId, Long questionId, Long attributeId) {
         return new QuestionImpactJpaEntity(
             questionImpactId++,
-            1,
             123L,
+            1,
             questionId,
             attributeId,
             maturityLevelId,

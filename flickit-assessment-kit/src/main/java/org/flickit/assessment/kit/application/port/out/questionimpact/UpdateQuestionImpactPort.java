@@ -9,10 +9,10 @@ public interface UpdateQuestionImpactPort {
 
     record Param(
         Long id,
+        Long kitVersionId,
         int weight,
         Long questionId,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy
-    ) {
+        UUID lastModifiedBy) {
     }
 }
