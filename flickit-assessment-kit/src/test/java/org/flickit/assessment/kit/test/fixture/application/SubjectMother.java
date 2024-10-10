@@ -22,6 +22,7 @@ public class SubjectMother {
             weight++,
             "Description",
             UUID.randomUUID(),
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now()
         );
@@ -37,6 +38,7 @@ public class SubjectMother {
             "Description",
             attributes,
             UUID.randomUUID(),
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now()
         );
@@ -51,6 +53,7 @@ public class SubjectMother {
             weight++,
             "Description",
             attributes,
+            UUID.randomUUID(),
             UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now()

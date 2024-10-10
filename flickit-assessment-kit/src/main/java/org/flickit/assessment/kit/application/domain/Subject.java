@@ -23,6 +23,7 @@ public class Subject {
     @Setter
     private List<Attribute> attributes;
     private final UUID createdBy;
+    private final UUID lastModifiedBy;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
 

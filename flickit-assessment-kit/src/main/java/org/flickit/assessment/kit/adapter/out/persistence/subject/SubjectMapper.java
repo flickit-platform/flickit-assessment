@@ -23,6 +23,7 @@ public class SubjectMapper {
             entity.getDescription(),
             attributes,
             entity.getCreatedBy(),
+            entity.getLastModifiedBy(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
