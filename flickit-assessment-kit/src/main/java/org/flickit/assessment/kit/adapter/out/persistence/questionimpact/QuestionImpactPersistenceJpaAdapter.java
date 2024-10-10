@@ -25,8 +25,8 @@ public class QuestionImpactPersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void delete(Long questionImpactId, Long kitVersionId) {
+        repository.deleteByIdAndKitVersionId(questionImpactId, kitVersionId);
     }
 
     @Override

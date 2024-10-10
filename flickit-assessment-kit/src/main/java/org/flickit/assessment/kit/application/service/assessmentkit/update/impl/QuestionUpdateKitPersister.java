@@ -363,7 +363,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void deleteImpact(QuestionImpact impact, Long questionId) {
-        deleteQuestionImpactPort.delete(impact.getId());
+        deleteQuestionImpactPort.delete(impact.getId(), impact.getKitVersionId());
         log.debug("QuestionImpact[id={}, questionId={}] deleted.", impact.getId(), questionId);
     }
 
