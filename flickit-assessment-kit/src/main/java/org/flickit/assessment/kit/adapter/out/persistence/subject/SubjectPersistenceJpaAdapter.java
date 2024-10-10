@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.subject;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
@@ -9,6 +10,9 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.subject.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -63,6 +67,19 @@ public class SubjectPersistenceJpaAdapter implements
                     .map(AttributeMapper::mapToDomainModel)
                     .toList()))
             .toList();
+    }
+
+    @Override
+    public PaginatedResponse<Subject> loadPaginatedByKitVersionId(long kitVersionId, int page, int size) {
+        Page<SubjectJpaEntity> pageResult = repository.findByKitVersionId(kitVersionId,
+            PageRequest.of(page, size, Sort.Direction.ASC, SubjectJpaEntity.Fields.index));
+        return new PaginatedResponse<>(
+            pageResult.stream().map(s -> SubjectMapper.mapToDomainModel(s, null)).toList(),
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            SubjectJpaEntity.Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements());
     }
 
     @Override

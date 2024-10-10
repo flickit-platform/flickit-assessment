@@ -1,5 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.subject;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +20,8 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
     List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Set<Long> ids, long kitVersionId);
+
+    Page<SubjectJpaEntity> findByKitVersionId(long kitVersionId, PageRequest pageRequest);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
@@ -62,5 +66,4 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
-
 }
