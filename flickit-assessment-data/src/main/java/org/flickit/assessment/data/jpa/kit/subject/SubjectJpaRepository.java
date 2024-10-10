@@ -61,5 +61,5 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
 
-    Page<SubjectJpaEntity> findByKitVersionIdOrderByIndex(long kitVersionId, PageRequest pageRequest);
+    Page<SubjectJpaEntity> findByKitVersionId(long kitVersionId, PageRequest pageRequest);
 }
