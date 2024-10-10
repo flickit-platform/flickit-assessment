@@ -33,7 +33,7 @@ public interface LoadMaturityLevelsPort {
     List<MaturityLevel> loadAllByKitVersionId(Long kitVersionId);
 
     /**
-     * Loads maturity levels associated with a specific kit version ID and kit's last version,
+     * Loads maturity levels associated with a specific kit version ID,
      * ordered by their index.
      *
      * @param kitVersionId The kitVersionId of the kit for which maturity levels are to be loaded.
