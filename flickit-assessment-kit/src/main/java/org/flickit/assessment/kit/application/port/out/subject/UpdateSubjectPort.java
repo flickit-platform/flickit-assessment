@@ -16,6 +16,6 @@ public interface UpdateSubjectPort {
         String description,
         int weight,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy
-    ) {}
+        UUID lastModifiedBy) {
+    }
 }

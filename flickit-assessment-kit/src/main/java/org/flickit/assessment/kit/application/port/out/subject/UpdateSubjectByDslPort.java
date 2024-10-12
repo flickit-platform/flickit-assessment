@@ -14,7 +14,6 @@ public interface UpdateSubjectByDslPort {
         int index,
         String description,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy
-    ) {
+        UUID lastModifiedBy) {
     }
 }

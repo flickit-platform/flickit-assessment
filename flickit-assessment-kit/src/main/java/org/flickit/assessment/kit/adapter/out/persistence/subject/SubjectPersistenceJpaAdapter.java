@@ -13,7 +13,6 @@ import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -111,7 +110,6 @@ public class SubjectPersistenceJpaAdapter implements
             param.description(),
             param.weight(),
             param.lastModificationTime(),
-            param.lastModifiedBy()
-        );
+            param.lastModifiedBy());
     }
 }

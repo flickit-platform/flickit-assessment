@@ -39,25 +39,24 @@ class UpdateSubjectServiceTest {
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     private final UUID ownerId = UUID.randomUUID();
-
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
     void testUpdateSubject_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
-        UpdateSubjectUseCase.Param param = createParam(UpdateSubjectUseCase.Param.ParamBuilder::build);
+        var param = createParam(UpdateSubjectUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateSubject(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(updateSubjectPort);
     }
 
     @Test
     void testUpdateSubject_WhenCurrentUserIsExpertGroupOwnerOwner_ThenUpdateSubject() {
-        UpdateSubjectUseCase.Param param = createParam(b -> b.currentUserId(ownerId));
+        var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
