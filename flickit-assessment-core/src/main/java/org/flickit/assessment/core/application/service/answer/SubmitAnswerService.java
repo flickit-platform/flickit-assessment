@@ -87,11 +87,12 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var updateParam = toUpdateAnswerParam(loadedAnswerId, answerOptionId, confidenceLevelId,
             param.getIsNotApplicable(), param.getCurrentUserId());
-        var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged;
+        var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged && assessmentResult.getIsCalculateValid();
+        var isConfidenceValid = !isConfidenceLevelChanged && assessmentResult.getIsConfidenceValid();
         updateAnswerPort.update(updateParam);
         createAnswerHistoryPort.persist(toAnswerHistory(loadedAnswerId, param, assessmentResult.getId(),
             answerOptionId, confidenceLevelId, UPDATE));
-        invalidateAssessmentResultPort.invalidateById(assessmentResult.getId(), isCalculateValid, !isConfidenceLevelChanged);
+        invalidateAssessmentResultPort.invalidateById(assessmentResult.getId(), isCalculateValid, isConfidenceValid);
 
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswerId);
         var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), hasProgressed(param, loadedAnswer.get()));
