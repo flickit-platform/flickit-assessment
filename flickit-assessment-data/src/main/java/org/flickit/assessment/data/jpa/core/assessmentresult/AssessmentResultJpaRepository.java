@@ -14,13 +14,18 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
     @Modifying
     @Query("""
         UPDATE AssessmentResultJpaEntity a SET
-        a.isCalculateValid = :isCalculateValid,
-        a.isConfidenceValid = :isConfidenceValid
+        a.isCalculateValid = FALSE
         WHERE a.id = :id
         """)
-    void invalidateById(@Param(value = "id") UUID id,
-                        @Param(value = "isCalculateValid")Boolean isCalculateValid,
-                        @Param(value = "isConfidenceValid")Boolean isConfidenceValid);
+    void invalidateCalculateById(@Param(value = "id") UUID id);
+
+    @Modifying
+    @Query("""
+        UPDATE AssessmentResultJpaEntity a SET
+        a.isConfidenceValid = FALSE
+        WHERE a.id = :id
+        """)
+    void invalidateConfidenceById(@Param(value = "id") UUID id);
 
     Optional<AssessmentResultJpaEntity> findFirstByAssessment_IdOrderByLastModificationTimeDesc(UUID assessmentId);
 

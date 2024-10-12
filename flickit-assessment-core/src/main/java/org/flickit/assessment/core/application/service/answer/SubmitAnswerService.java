@@ -14,7 +14,8 @@ import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private final CreateAnswerHistoryPort createAnswerHistoryPort;
     private final LoadAnswerPort loadAnswerPort;
     private final UpdateAnswerPort updateAnswerPort;
-    private final InvalidateAssessmentResultPort invalidateAssessmentResultPort;
+    private final InvalidateAssessmentResultCalculatePort invalidateAssessmentResultCalculatePort;
+    private final InvalidateAssessmentResultConfidencePort invalidateAssessmentResultConfidencePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
@@ -87,12 +89,14 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var updateParam = toUpdateAnswerParam(loadedAnswerId, answerOptionId, confidenceLevelId,
             param.getIsNotApplicable(), param.getCurrentUserId());
-        var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged && assessmentResult.getIsCalculateValid();
-        var isConfidenceValid = !isConfidenceLevelChanged && assessmentResult.getIsConfidenceValid();
+        var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged;
         updateAnswerPort.update(updateParam);
         createAnswerHistoryPort.persist(toAnswerHistory(loadedAnswerId, param, assessmentResult.getId(),
             answerOptionId, confidenceLevelId, UPDATE));
-        invalidateAssessmentResultPort.invalidateById(assessmentResult.getId(), isCalculateValid, isConfidenceValid);
+        if (!isCalculateValid)
+            invalidateAssessmentResultCalculatePort.invalidateCalculateById(assessmentResult.getId());
+        if (isConfidenceLevelChanged)
+            invalidateAssessmentResultConfidencePort.invalidateConfidenceById(assessmentResult.getId());
 
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswerId);
         var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), hasProgressed(param, loadedAnswer.get()));
@@ -109,7 +113,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId, param, assessmentResultId, answerOptionId,
             confidenceLevelId, PERSIST));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
-            invalidateAssessmentResultPort.invalidateById(assessmentResultId, Boolean.FALSE, Boolean.FALSE);
+            invalidateAssessmentResultCalculatePort.invalidateCalculateById(assessmentResultId);
+            invalidateAssessmentResultConfidencePort.invalidateConfidenceById(assessmentResultId);
         }
         return savedAnswerId;
     }
