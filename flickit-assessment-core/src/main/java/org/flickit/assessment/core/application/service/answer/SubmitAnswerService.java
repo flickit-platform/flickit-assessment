@@ -89,14 +89,11 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var updateParam = toUpdateAnswerParam(loadedAnswerId, answerOptionId, confidenceLevelId,
             param.getIsNotApplicable(), param.getCurrentUserId());
-        var isCalculateValid = !isAnswerOptionChanged && !isNotApplicableChanged;
         updateAnswerPort.update(updateParam);
         createAnswerHistoryPort.persist(toAnswerHistory(loadedAnswerId, param, assessmentResult.getId(),
             answerOptionId, confidenceLevelId, UPDATE));
-        if (!isCalculateValid)
-            invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
-        if (isConfidenceLevelChanged)
-            invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResult.getId());
+
+        invalidateAssessmentResult(assessmentResult, isAnswerOptionChanged, isNotApplicableChanged, isConfidenceLevelChanged);
 
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswerId);
         var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), hasProgressed(param, loadedAnswer.get()));
@@ -161,5 +158,12 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Integer confidenceLevelId,
                                                        Boolean isNotApplicable, UUID currentUserId) {
         return new UpdateAnswerPort.Param(answerId, answerOptionId, confidenceLevelId, isNotApplicable, currentUserId);
+    }
+
+    private void invalidateAssessmentResult(AssessmentResult assessmentResult, boolean isAnswerOptionChanged, boolean isNotApplicableChanged, boolean isConfidenceLevelChanged) {
+        if (isAnswerOptionChanged || isNotApplicableChanged)
+            invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
+        if (isConfidenceLevelChanged)
+            invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResult.getId());
     }
 }
