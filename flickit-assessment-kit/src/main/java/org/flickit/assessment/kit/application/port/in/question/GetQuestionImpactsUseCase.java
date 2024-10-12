@@ -19,7 +19,7 @@ public interface GetQuestionImpactsUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    class Param extends SelfValidating<Param>{
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_QUESTION_IMPACT_LIST_QUESTION_ID_NOT_NULL)
         Long questionId;
@@ -39,13 +39,13 @@ public interface GetQuestionImpactsUseCase {
         }
     }
 
-    record Result(long questionId, List<Impact> attributes) {
+    record Result(long questionId, List<AttributeImpact> attributes) {
     }
 
-    record Impact(long id, String title, List<ImpactLevel> impacts) {
+    record AttributeImpact(long id, String title, List<Impact> impacts) {
     }
 
-    record ImpactLevel(long id, int weight, MaturityLevel maturityLevel, List<OptionValue> optionValues) {
+    record Impact(long id, int weight, MaturityLevel maturityLevel, List<OptionValue> optionValues) {
         public record MaturityLevel(long id, String title) {
         }
 

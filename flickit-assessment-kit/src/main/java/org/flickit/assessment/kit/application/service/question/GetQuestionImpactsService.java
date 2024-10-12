@@ -27,7 +27,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
     private final LoadKitVersionPort loadKitVersionPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadQuestionPort loadQuestionPort;
-    private  final LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAllAttributesPort loadAllAttributesPort;
 
     @Override
@@ -41,16 +41,13 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
         var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId()).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
 
-        var x = loadAttributeImpacts(param.getKitVersionId(), question, maturityLevelsMap);
+        var attributeImpacts = loadAttributeImpacts(param.getKitVersionId(), question, maturityLevelsMap);
 
-        return new Result(param.getQuestionId(), x);
+        return new Result(param.getQuestionId(), attributeImpacts);
     }
 
-    private List<Impact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
+    private List<AttributeImpact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
         var impacts = question.getImpacts();
-
-        var answerIdToIndexMap = question.getOptions().stream()
-            .collect(toMap(AnswerOption::getId, AnswerOption::getIndex));
 
         Map<Long, List<QuestionImpact>> attributeIdToImpacts = impacts.stream()
             .collect(groupingBy(QuestionImpact::getAttributeId,
@@ -63,37 +60,34 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(
                 attributeId,
-                answerIdToIndexMap,
                 attributeIdToTitleMap.get(attributeId),
                 attributeIdToImpacts.get(attributeId),
                 maturityLevelsMap))
             .toList();
     }
 
-    private Impact toAttributeImpact(long attributeId, Map<Long, Integer> answerIdToIndexMap, String attributeTitle,
-                                                                 List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap) {
-        var affectedLevels = attributeImpacts.stream()
-            .map(impact -> toAffectedLevel(
-                answerIdToIndexMap,
+    private AttributeImpact toAttributeImpact(long attributeId, String attributeTitle,
+                                              List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap) {
+        var impacts = attributeImpacts.stream()
+            .map(impact -> toImpact(
                 impact,
                 maturityLevelsMap.get(impact.getMaturityLevelId())))
             .toList();
-        return new Impact(attributeId,
+        return new AttributeImpact(attributeId,
             attributeTitle,
-            affectedLevels
+            impacts
         );
     }
 
-    private ImpactLevel toAffectedLevel(Map<Long, Integer> answerIdToIndexMap, QuestionImpact attributeImpact,
-                                                                      MaturityLevel maturityLevel) {
-        List<ImpactLevel.OptionValue> optionValues = attributeImpact.getOptionImpacts().stream()
-            .map(answer -> new ImpactLevel.OptionValue(answer.getOptionId(), answer.getValue()))
+    private Impact toImpact(QuestionImpact attributeImpact, MaturityLevel maturityLevel) {
+        List<Impact.OptionValue> optionValues = attributeImpact.getOptionImpacts().stream()
+            .map(answer -> new Impact.OptionValue(answer.getOptionId(), answer.getValue()))
             .toList();
 
-        return new ImpactLevel(
+        return new Impact(
             attributeImpact.getId(),
             attributeImpact.getWeight(),
-            new ImpactLevel.MaturityLevel(maturityLevel.getId(), maturityLevel.getTitle()),
+            new Impact.MaturityLevel(maturityLevel.getId(), maturityLevel.getTitle()),
             optionValues
         );
     }
