@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -38,6 +39,17 @@ public interface GetQuestionImpactsUseCase {
         }
     }
 
-    record Result(){
+    record Result(long questionId, List<Impact> attributes) {
+    }
+
+    record Impact(long id, String title, List<ImpactLevel> impacts) {
+    }
+
+    record ImpactLevel(long id, int weight, MaturityLevel maturityLevel, List<OptionValue> optionValues) {
+        public record MaturityLevel(long id, String title) {
+        }
+
+        public record OptionValue(long id, double value) {
+        }
     }
 }
