@@ -239,12 +239,16 @@ public class ErrorMessageKey {
 
     public static final String GET_LEVEL_COMPETENCES_KIT_VERSION_ID_NOT_NULL = "get-level-competences.kitVersionId.notNull";
 
-    public static final String UPDATE_SUBJECT_BY_WIZARD_KIT_ID_NOT_NULL = "update-subject-by-wizard.kitId.notNull";
-    public static final String UPDATE_SUBJECT_BY_WIZARD_SUBJECT_ID_NOT_NULL = "update-subject-by-wizard.subjectId.notNull";
-    public static final String UPDATE_SUBJECT_BY_WIZARD_INDEX_NOT_NULL = "update-subject-by-wizard.index.notNull";
-    public static final String UPDATE_SUBJECT_BY_WIZARD_TITLE_NOT_BLANK = "update-subject-by-wizard.title.notBlank";
-    public static final String UPDATE_SUBJECT_BY_WIZARD_DESCRIPTION_NOT_BLANK = "update-subject-by-wizard.description.notBlank";
-    public static final String UPDATE_SUBJECT_BY_WIZARD_WEIGHT_NOT_NULL = "update-subject-by-wizard.weight.notNull";
+    public static final String UPDATE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "update-subject.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_SUBJECT_ID_NOT_NULL = "update-subject.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_INDEX_NOT_NULL = "update-subject.index.notNull";
+    public static final String UPDATE_SUBJECT_TITLE_NOT_NULL = "update-subject.title.notNull";
+    public static final String UPDATE_SUBJECT_TITLE_SIZE_MIN = "update-subject.title.size.min";
+    public static final String UPDATE_SUBJECT_TITLE_SIZE_MAX = "update-subject.title.size.max";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_NOT_NULL = "update-subject.description.notNull";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MIN = "update-subject.description.size.min";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MAX = "update-subject.description.size.max";
+    public static final String UPDATE_SUBJECT_WEIGHT_NOT_NULL = "update-subject.weight.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

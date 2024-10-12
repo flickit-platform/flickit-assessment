@@ -1,10 +1,11 @@
 package org.flickit.assessment.kit.application.port.in.subject;
 
 import jakarta.validation.ConstraintViolationException;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -13,176 +14,85 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UpdateSubjectUseCaseParamTest {
 
-    private Long kitId;
-    private Long subjectId;
-    private Integer index;
-    private String title;
-    private String description;
-    private Integer weight;
-    private UUID currentUserId;
-
-    @BeforeEach
-    void setUp() {
-        kitId = 1L;
-        subjectId = 1L;
-        index = 2;
-        title = "team";
-        description = "about team";
-        weight = 3;
-        currentUserId = UUID.randomUUID();
+    @Test
+    void testUpdateSubjectUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_SUBJECT_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateSubjectByWizardUseCase_kitIdIsNull_ErrorMessage() {
-        kitId = null;
+    void testUpdateSubjectUseCaseParam_subjectIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("kitId: " + UPDATE_SUBJECT_BY_WIZARD_KIT_ID_NOT_NULL);
+            () -> createParam(b -> b.subjectId(null)));
+        assertThat(throwable).hasMessage("subjectId: " + UPDATE_SUBJECT_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateSubjectByWizardUseCase_subjectIdIsNull_ErrorMessage() {
-        subjectId = null;
+    void testUpdateSubjectUseCaseParam_indexParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("subjectId: " + UPDATE_SUBJECT_BY_WIZARD_SUBJECT_ID_NOT_NULL);
+            () -> createParam(b -> b.index(null)));
+        assertThat(throwable).hasMessage("index: " + UPDATE_SUBJECT_INDEX_NOT_NULL);
     }
 
     @Test
-    void testUpdateSubjectByWizardUseCase_indexIsNull_ErrorMessage() {
-        index = null;
+    void testUpdateSubjectUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("index: " + UPDATE_SUBJECT_BY_WIZARD_INDEX_NOT_NULL);
+            () -> createParam(b -> b.title(null)));
+        assertThat(throwable).hasMessage("title: " + UPDATE_SUBJECT_TITLE_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title("ab")));
+        assertThat(throwable).hasMessage("title: " + UPDATE_SUBJECT_TITLE_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.title(RandomStringUtils.randomAlphabetic(101))));
+        assertThat(throwable).hasMessage("title: " + UPDATE_SUBJECT_TITLE_SIZE_MAX);
     }
 
     @Test
-    void testUpdateSubjectByWizardUseCase_titleIsNull_ErrorMessage() {
-        title = null;
+    void testUpdateSubjectUseCaseParam_descriptionParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_SUBJECT_BY_WIZARD_TITLE_NOT_BLANK);
+            () -> createParam(b -> b.description(null)));
+        assertThat(throwable).hasMessage("description: " + UPDATE_SUBJECT_DESCRIPTION_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.description("ab")));
+        assertThat(throwable).hasMessage("description: " + UPDATE_SUBJECT_DESCRIPTION_SIZE_MIN);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.description(RandomStringUtils.randomAlphabetic(501))));
+        assertThat(throwable).hasMessage("description: " + UPDATE_SUBJECT_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
-    void testUpdateSubjectByWizardUseCase_titleIsBlank_ErrorMessage() {
-        title = " ";
+    void testUpdateSubjectUseCaseParam_weightParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_SUBJECT_BY_WIZARD_TITLE_NOT_BLANK);
+            () -> createParam(b -> b.weight(null)));
+        assertThat(throwable).hasMessage("weight: " + UPDATE_SUBJECT_WEIGHT_NOT_NULL);
     }
 
     @Test
-    void testUpdateSubjectByWizardUseCase_titleIsEmpty_ErrorMessage() {
-        title = "";
+    void testUpdateSubjectUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_SUBJECT_BY_WIZARD_TITLE_NOT_BLANK);
-    }
-
-    @Test
-    void testUpdateSubjectByWizardUseCase_descriptionIsNull_ErrorMessage() {
-        description = null;
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("description: " + UPDATE_SUBJECT_BY_WIZARD_DESCRIPTION_NOT_BLANK);
-    }
-
-    @Test
-    void testUpdateSubjectByWizardUseCase_descriptionIsBlank_ErrorMessage() {
-        description = " ";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("description: " + UPDATE_SUBJECT_BY_WIZARD_DESCRIPTION_NOT_BLANK);
-    }
-
-    @Test
-    void testUpdateSubjectByWizardUseCase_descriptionIsEmpty_ErrorMessage() {
-        description = "";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("description: " + UPDATE_SUBJECT_BY_WIZARD_DESCRIPTION_NOT_BLANK);
-    }
-
-    @Test
-    void testUpdateSubjectByWizardUseCase_weightIsNull_ErrorMessage() {
-        weight = null;
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
-        assertThat(throwable).hasMessage("weight: " + UPDATE_SUBJECT_BY_WIZARD_WEIGHT_NOT_NULL);
-    }
-
-    @Test
-    void testUpdateSubjectByWizardUseCase_currentUserIdIsNull_ErrorMessage() {
-        currentUserId = null;
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateSubjectUseCase.Param(kitId,
-                subjectId,
-                index,
-                title,
-                description,
-                weight,
-                currentUserId));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    private void createParam(Consumer<UpdateSubjectUseCase.Param.ParamBuilder> changer) {
+        var param = paramBuilder();
+        changer.accept(param);
+        param.build();
+    }
+
+    private UpdateSubjectUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateSubjectUseCase.Param.builder()
+            .kitVersionId(1L)
+            .subjectId(1L)
+            .index(1)
+            .title("subject title")
+            .description("subject description")
+            .weight(1)
+            .currentUserId(UUID.randomUUID());
     }
 }
