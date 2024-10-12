@@ -94,9 +94,9 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         createAnswerHistoryPort.persist(toAnswerHistory(loadedAnswerId, param, assessmentResult.getId(),
             answerOptionId, confidenceLevelId, UPDATE));
         if (!isCalculateValid)
-            invalidateAssessmentResultCalculatePort.invalidateCalculateById(assessmentResult.getId());
+            invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
         if (isConfidenceLevelChanged)
-            invalidateAssessmentResultConfidencePort.invalidateConfidenceById(assessmentResult.getId());
+            invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResult.getId());
 
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswerId);
         var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), hasProgressed(param, loadedAnswer.get()));
@@ -113,8 +113,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId, param, assessmentResultId, answerOptionId,
             confidenceLevelId, PERSIST));
         if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
-            invalidateAssessmentResultCalculatePort.invalidateCalculateById(assessmentResultId);
-            invalidateAssessmentResultConfidencePort.invalidateConfidenceById(assessmentResultId);
+            invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResultId);
+            invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResultId);
         }
         return savedAnswerId;
     }

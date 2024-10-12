@@ -34,12 +34,12 @@ public class AssessmentResultPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
-    public void invalidateCalculateById(UUID assessmentResultId) {
+    public void invalidateCalculate(UUID assessmentResultId) {
         repo.invalidateCalculateById(assessmentResultId);
     }
 
     @Override
-    public void invalidateConfidenceById(UUID assessmentResultId) {
+    public void invalidateConfidence(UUID assessmentResultId) {
         repo.invalidateConfidenceById(assessmentResultId);
     }
 
