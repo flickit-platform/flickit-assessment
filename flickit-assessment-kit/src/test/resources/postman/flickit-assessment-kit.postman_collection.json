@@ -1044,14 +1044,49 @@
 					},
 					"response": []
 				},
-				{
-					"name": "Update Subject",
+              {
+                "name": "Update Subject",
+                "request": {
+                  "method": "PUT",
+                  "header": [],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"title\": \"System Software\",\n    \"index\": 3,\n    \"description\": \"Software description\",    \n    \"weight\": 2\n  }",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/subjects/529",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "subjects",
+                      "529"
+                    ]
+                  }
+                },
+                "response": []
+              },{
+					"name": "Delete Subject",
 					"request": {
-						"method": "PUT",
-						"header": [],
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"System Software\",\n    \"index\": 3,\n    \"description\": \"Software description\",    \n    \"weight\": 2\n  }",
+							"raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1059,21 +1094,56 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/subjects/529",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/419/subjects/576",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"kit-versions",
-								"393",
+								"419",
 								"subjects",
-								"529"
+								"576"
 							]
 						}
 					},
 					"response": []
-				}
+				},{
+                "name": "Get Subject List",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/381/subjects?page=0&size=10",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "381",
+                      "subjects"
+                    ],
+                    "query": [
+                      {
+                        "key": "page",
+                        "value": "0"
+                      },
+                      {
+                        "key": "size",
+                        "value": "10"
+                      }
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		},
 		{
