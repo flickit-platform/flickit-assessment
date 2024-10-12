@@ -29,14 +29,75 @@
     </changeSet>
 
     <changeSet id="0.33-07" author="Mahdi Rezazadeh">
-        <dropUniqueConstraint tableName="fak_subject"
-                              constraintName="uq_fak_subject_index_kitversionid"/>
+        <addUniqueConstraint tableName="fak_level_competence"
+                             columnNames="affected_level_id, effective_level_id, kit_version_id"
+                             constraintName="uq_fak_levelcompetence_affectedlevel_effectivelevel_kitversion"/>
     </changeSet>
 
     <changeSet id="0.33-08" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_level_competence"
+                                 baseColumnNames="kit_version_id"
+                                 constraintName="fk_fak_levelcompetence_kitversion"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.33-09" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_level_competence"/>
+    </changeSet>
+
+    <changeSet id="0.33-10" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_level_competence"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_level_competence"/>
+    </changeSet>
+
+    <changeSet id="0.33-11" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="uq_fak_maturitylevel_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.33-12" author="Maziyar Gerami">
         <addUniqueConstraint columnNames="kit_version_id, index"
-                             constraintName="uq_fak_subject_index_kitversionid"
-                             tableName="fak_subject"
+                             constraintName="uq_fak_maturitylevel_index_kitversionid"
+                             tableName="fak_maturity_level"
                              initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.33-13" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_maturity_level"
+                              constraintName="uq_fak_maturitylevel_value_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.33-14" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, value"
+                             constraintName="uq_fak_maturitylevel_value_kitversionid"
+                             tableName="fak_maturity_level"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.33-15" author="Maziyar Gerami">
+        <modifyDataType tableName="fak_assessment_kit" columnName="code" newDataType="varchar(100)"/>
+    </changeSet>
+
+    <changeSet id="0.33-16" author="Maziyar Gerami">
+        <modifyDataType tableName="fak_assessment_kit" columnName="summary" newDataType="varchar(1000)"/>
+    </changeSet>
+
+    <changeSet id="0.33-17" author="Maziyar Gerami">
+        <modifyDataType tableName="fak_assessment_kit" columnName="about" newDataType="varchar(1000)"/>
+    </changeSet>
+
+    <changeSet id="0.33-18" author="Mahdi Rezazadeh">
+        <sql>
+            INSERT INTO fak_kit_user_access (kit_id, user_id)
+            SELECT
+                k.id         AS kit_id,
+                eg.owner_id AS user_id
+            FROM fak_assessment_kit k
+                INNER JOIN fau_expert_group eg ON k.expert_group_id = eg.id
+            ON CONFLICT (kit_id, user_id) DO NOTHING
+        </sql>
     </changeSet>
 </databaseChangeLog>

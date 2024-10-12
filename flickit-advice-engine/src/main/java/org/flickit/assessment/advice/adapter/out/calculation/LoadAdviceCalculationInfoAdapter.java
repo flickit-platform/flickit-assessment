@@ -39,19 +39,19 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     public Plan loadAdviceCalculationInfo(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         List<AttributeLevelScore> attributeLevelScores = new ArrayList<>();
         Map<Long, Question> idToQuestions = new HashMap<>();
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
 
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
             Long attributeId = attributeLevelTarget.getAttributeId();
             Long maturityLevelId = attributeLevelTarget.getMaturityLevelId();
 
             List<LevelCompetenceJpaEntity> levelCompetenceEntities =
-                levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);
+                levelCompetenceRepository.findByAffectedLevelIdAndKitVersionId(maturityLevelId, assessmentResult.getKitVersionId());
             for (LevelCompetenceJpaEntity levelCompetenceEntity : levelCompetenceEntities) {
                 Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevelId();
-                var assessmentResultJpaEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-                    .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
                 AttributeValueJpaEntity attributeValueEntity =
-                    attributeValueRepository.findByAttributeIdAndAssessmentResultId(attributeId, assessmentResultJpaEntity.getId());
+                    attributeValueRepository.findByAttributeIdAndAssessmentResultId(attributeId, assessmentResult.getId());
 
                 Double gainedScorePercentage = attributeMaturityScoreRepository
                     .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), effectiveLevelId)

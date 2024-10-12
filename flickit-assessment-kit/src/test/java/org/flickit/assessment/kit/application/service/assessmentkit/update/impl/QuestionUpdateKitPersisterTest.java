@@ -156,7 +156,7 @@ class QuestionUpdateKitPersisterTest {
         savedQuestion.setImpacts(List.of(savedImpact));
         savedQuestionnaire2.setQuestions(List.of(savedQuestion));
 
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getKitVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(savedQuestionnaire2);
@@ -260,7 +260,7 @@ class QuestionUpdateKitPersisterTest {
 
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getKitVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslMaturityLevelThree = MaturityLevelDslModelMother.domainToDslModel(levelThree());
@@ -555,7 +555,7 @@ class QuestionUpdateKitPersisterTest {
             .subjects(List.of(dslSubject))
             .build();
 
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getKitVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
