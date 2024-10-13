@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 class UpdateAnswerOptionOrdersServiceTest {
 
     @InjectMocks
-    private UpdateAnswerOptionOrdersUseCase service;
+    private UpdateAnswerOptionOrdersService service;
 
     @Mock
     private LoadKitVersionPort loadKitVersionPort;
@@ -77,7 +77,6 @@ class UpdateAnswerOptionOrdersServiceTest {
     private UpdateAnswerOptionOrdersUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateAnswerOptionOrdersUseCase.Param.builder()
             .kitVersionId(1L)
-            .answerOptionId(2L)
             .orders(List.of(
                 new UpdateAnswerOptionOrdersUseCase.AnswerOptionParam(123L, 3),
                 new UpdateAnswerOptionOrdersUseCase.AnswerOptionParam(124L, 2)))
