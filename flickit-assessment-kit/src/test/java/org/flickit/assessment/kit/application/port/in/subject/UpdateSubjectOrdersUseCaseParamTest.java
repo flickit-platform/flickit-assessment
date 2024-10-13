@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.application.port.in.subject;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectParam;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectOrdersUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectOrdersUseCase.SubjectParam;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,47 +14,47 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class UpdateSubjectsOrderUseCaseParamTest {
+class UpdateSubjectOrdersUseCaseParamTest {
 
     @Test
-    void testUpdateSubjectsOrderUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
+    void testUpdateSubjectOrdersUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
-        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_SUBJECTS_ORDER_KIT_VERSION_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_SUBJECT_ORDERS_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
     void testUpdateSubjectsOrderUseCaseParam_subjectsParamViolatesConstraints_ErrorMessage() {
         var throwableNullViolation = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjects(null)));
-        assertThat(throwableNullViolation).hasMessage("subjects: " + UPDATE_SUBJECTS_ORDER_SUBJECTS_NOT_NULL);
+        assertThat(throwableNullViolation).hasMessage("subjects: " + UPDATE_SUBJECT_ORDERS_SUBJECTS_NOT_NULL);
         var throwableMinViolation = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjects(List.of())));
-        assertThat(throwableMinViolation).hasMessage("subjects: " + UPDATE_SUBJECTS_ORDER_SUBJECTS_SIZE_MIN);
+        assertThat(throwableMinViolation).hasMessage("subjects: " + UPDATE_SUBJECT_ORDERS_SUBJECTS_SIZE_MIN);
     }
 
     @Test
-    void testUpdateSubjectsOrderUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
+    void testUpdateSubjectOrdersUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateSubjectsOrderUseCaseSubjectParam_subjectIdParamViolatesConstraints_ErrorMessage() {
+    void testUpdateSubjectOrdersUseCaseSubjectParam_subjectIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createSubjectParam(b -> b.id(null)));
-        assertThat(throwable).hasMessage("id: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("id: " + UPDATE_SUBJECT_ORDERS_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateSubjectsOrderUseCaseSubjectParam_indexParamViolatesConstraints_ErrorMessage() {
+    void testUpdateSubjectOrdersUseCaseSubjectParam_indexParamViolatesConstraints_ErrorMessage() {
         var throwableNullViolates = assertThrows(ConstraintViolationException.class,
             () -> createSubjectParam(b -> b.index(null)));
-        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_SUBJECTS_ORDER_INDEX_NOT_NULL);
+        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_SUBJECT_ORDERS_INDEX_NOT_NULL);
         var throwableMinViolates = assertThrows(ConstraintViolationException.class,
             () -> createSubjectParam(b -> b.index(0)));
-        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_SUBJECTS_ORDER_INDEX_MIN);
+        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_SUBJECT_ORDERS_INDEX_MIN);
     }
 
     private void createParam(Consumer<Param.ParamBuilder> changer) {

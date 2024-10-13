@@ -2,8 +2,8 @@ package org.flickit.assessment.kit.application.service.subject;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectsOrderUseCase.SubjectParam;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectOrdersUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectOrdersUseCase.SubjectParam;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectsIndexPort;
@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateSubjectsOrderServiceTest {
+class UpdateSubjectOrdersServiceTest {
 
     @InjectMocks
-    private UpdateSubjectsOrderService service;
+    private UpdateSubjectOrdersService service;
 
     @Mock
     private LoadKitVersionPort loadKitVersionPort;
@@ -39,7 +39,7 @@ class UpdateSubjectsOrderServiceTest {
     private UpdateSubjectsIndexPort updateSubjectsIndexPort;
 
     @Test
-    void testUpdateSubjectsOrder_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
+    void testUpdateSubjectOrders_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
         Param param = new Param(12L,
             List.of(new SubjectParam(5L, 2), new SubjectParam(6L, 1)),
             UUID.randomUUID());
@@ -48,14 +48,14 @@ class UpdateSubjectsOrderServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(UUID.randomUUID());
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.updateSubjectsOrder(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.updateSubjectOrders(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
         verifyNoInteractions(updateSubjectsIndexPort);
     }
 
     @Test
-    void testUpdateSubjectsOrder_ValidParam_UpdateSubjectsIndex() {
+    void testUpdateSubjectOrders_ValidParam_UpdateSubjectOrders() {
         Param param = new Param(12L,
             List.of(new SubjectParam(5L, 2), new SubjectParam(6L, 1)),
             UUID.randomUUID());
@@ -64,7 +64,7 @@ class UpdateSubjectsOrderServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
-        service.updateSubjectsOrder(param);
+        service.updateSubjectOrders(param);
         verify(updateSubjectsIndexPort, times(1)).updateIndexes(param.getKitVersionId(), param.getSubjects());
     }
 }

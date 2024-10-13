@@ -249,12 +249,12 @@ public class ErrorMessageKey {
     public static final String GET_SUBJECT_LIST_SIZE_MAX = "get-subject-list.size.max";
     public static final String GET_SUBJECT_LIST_PAGE_MIN = "get-subject-list.page.min";
 
-    public static final String UPDATE_SUBJECTS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-subjects-order.kitVersionId.notNull";
-    public static final String UPDATE_SUBJECTS_ORDER_SUBJECTS_NOT_NULL = "update-subjects-order.subjects.notNull";
-    public static final String UPDATE_SUBJECTS_ORDER_SUBJECTS_SIZE_MIN = "update-subjects-order.subjects.size.min";
-    public static final String UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL = "update-subjects-order.subjectId.notNull";
-    public static final String UPDATE_SUBJECTS_ORDER_INDEX_NOT_NULL = "update-subjects-order.index.notNull";
-    public static final String UPDATE_SUBJECTS_ORDER_INDEX_MIN = "update-subjects-order.index.min";
+    public static final String UPDATE_SUBJECT_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-subject-orders.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECTS_NOT_NULL = "update-subject-orders.subjects.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECTS_SIZE_MIN = "update-subject-orders.subjects.size.min";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECT_ID_NOT_NULL = "update-subject-orders.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_INDEX_NOT_NULL = "update-subject-orders.index.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_INDEX_MIN = "update-subject-orders.index.min";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
