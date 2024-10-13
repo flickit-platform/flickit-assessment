@@ -1048,7 +1048,13 @@
                 "name": "Update Subject",
                 "request": {
                   "method": "PUT",
-                  "header": [],
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
                   "body": {
                     "mode": "raw",
                     "raw": "{\n    \"title\": \"System Software\",\n    \"index\": 3,\n    \"description\": \"Software description\",    \n    \"weight\": 2\n  }",
