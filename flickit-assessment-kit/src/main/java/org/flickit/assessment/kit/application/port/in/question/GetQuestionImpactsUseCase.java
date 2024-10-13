@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTION_IMPACT_LIST_KIT_VERSION_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTION_IMPACT_LIST_QUESTION_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTION_IMPACTS_KIT_VERSION_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTION_IMPACTS_QUESTION_ID_NOT_NULL;
 
 public interface GetQuestionImpactsUseCase {
 
@@ -21,10 +21,10 @@ public interface GetQuestionImpactsUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_QUESTION_IMPACT_LIST_QUESTION_ID_NOT_NULL)
+        @NotNull(message = GET_QUESTION_IMPACTS_QUESTION_ID_NOT_NULL)
         Long questionId;
 
-        @NotNull(message = GET_QUESTION_IMPACT_LIST_KIT_VERSION_ID_NOT_NULL)
+        @NotNull(message = GET_QUESTION_IMPACTS_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
