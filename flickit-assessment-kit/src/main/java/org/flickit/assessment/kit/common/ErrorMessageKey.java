@@ -16,6 +16,7 @@ public class ErrorMessageKey {
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
+    public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -238,6 +239,15 @@ public class ErrorMessageKey {
     public static final String GET_KIT_MATURITY_LEVELS_PAGE_MIN = "get-kit-maturity-levels-page-min";
 
     public static final String GET_LEVEL_COMPETENCES_KIT_VERSION_ID_NOT_NULL = "get-level-competences.kitVersionId.notNull";
+
+    public static final String DELETE_SUBJECT_SUBJECT_ID_NOT_NULL = "delete-subject.id.notNull";
+    public static final String DELETE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "delete-subject.kitVersionId.notNull";
+    public static final String DELETE_SUBJECT_KIT_DELETION_UNSUPPORTED = "delete-subject.deletion.notAllowed";
+
+    public static final String GET_SUBJECT_LIST_KIT_VERSION_ID_NOT_NULL = "get-subject-list.kitVersionId.notNull";
+    public static final String GET_SUBJECT_LIST_SIZE_MIN = "get-subject-list.size.min";
+    public static final String GET_SUBJECT_LIST_SIZE_MAX = "get-subject-list.size.max";
+    public static final String GET_SUBJECT_LIST_PAGE_MIN = "get-subject-list.page.min";
 
     public static final String GET_ATTRIBUTES_KIT_VERSION_ID_NOT_NULL = "get-attributes.kitVersionId.notNull";
     public static final String GET_ATTRIBUTES_PAGE_MIN = "get-attributes.page.min";
