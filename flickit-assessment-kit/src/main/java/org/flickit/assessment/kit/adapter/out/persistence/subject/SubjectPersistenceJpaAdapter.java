@@ -9,7 +9,6 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectOrdersUseCase.SubjectParam;
 import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
-
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -33,8 +30,7 @@ public class SubjectPersistenceJpaAdapter implements
     LoadSubjectsPort,
     LoadSubjectPort,
     DeleteSubjectPort,
-    UpdateSubjectPort,
-    UpdateSubjectsIndexPort {
+    UpdateSubjectPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
@@ -119,12 +115,22 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateIndexes(long kitVersionId, List<SubjectParam> subjects) {
-        var ids = subjects.stream().map(SubjectParam::getId).collect(Collectors.toSet());
-        var subjectIdToIndexMap = subjects.stream()
-            .collect(Collectors.toMap(SubjectParam::getId, SubjectParam::getIndex));
-        var entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
-        entities.forEach(e -> e.setIndex(subjectIdToIndexMap.get(e.getId())));
+    public void updateOrders(UpdateOrderParam param) {
+        Map<SubjectJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
+            .collect(Collectors.toMap(
+                ml -> new SubjectJpaEntity.EntityId(ml.subjectId(), param.kitVersionId()),
+                UpdateOrderParam.SubjectOrder::index
+            ));
+        List<SubjectJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        if (entities.size() != param.orders().size())
+            throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            int newIndex = idToIndex.get(new SubjectJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            x.setIndex(newIndex);
+            x.setLastModificationTime(param.lastModificationTime());
+            x.setLastModifiedBy(param.lastModifiedBy());
+        });
         repository.saveAll(entities);
     }
 }

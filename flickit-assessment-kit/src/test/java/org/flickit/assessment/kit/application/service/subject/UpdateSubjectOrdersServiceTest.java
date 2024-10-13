@@ -6,11 +6,12 @@ import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectOrder
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectOrdersUseCase.SubjectParam;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectsIndexPort;
+import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,8 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +36,7 @@ class UpdateSubjectOrdersServiceTest {
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
-    private UpdateSubjectsIndexPort updateSubjectsIndexPort;
+    private UpdateSubjectPort updateSubjectPort;
 
     @Test
     void testUpdateSubjectOrders_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
@@ -51,7 +51,7 @@ class UpdateSubjectOrdersServiceTest {
         var exception = assertThrows(AccessDeniedException.class, () -> service.updateSubjectOrders(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
-        verifyNoInteractions(updateSubjectsIndexPort);
+        verifyNoInteractions(updateSubjectPort);
     }
 
     @Test
@@ -65,6 +65,17 @@ class UpdateSubjectOrdersServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         service.updateSubjectOrders(param);
-        verify(updateSubjectsIndexPort, times(1)).updateIndexes(param.getKitVersionId(), param.getSubjects());
+        ArgumentCaptor<UpdateSubjectPort.UpdateOrderParam> portParamCaptor = ArgumentCaptor.forClass(UpdateSubjectPort.UpdateOrderParam.class);
+        verify(updateSubjectPort, times(1)).updateOrders(portParamCaptor.capture());
+
+        assertEquals(param.getKitVersionId(), portParamCaptor.getValue().kitVersionId());
+        assertEquals(param.getCurrentUserId(), portParamCaptor.getValue().lastModifiedBy());
+        assertNotNull(portParamCaptor.getValue().lastModificationTime());
+        assertNotNull(portParamCaptor.getValue().orders());
+        assertEquals(param.getSubjects().size(), portParamCaptor.getValue().orders().size());
+        assertEquals(param.getSubjects().getFirst().getId(), portParamCaptor.getValue().orders().getFirst().subjectId());
+        assertEquals(param.getSubjects().getFirst().getIndex(), portParamCaptor.getValue().orders().getFirst().index());
+        assertEquals(param.getSubjects().getLast().getId(), portParamCaptor.getValue().orders().getLast().subjectId());
+        assertEquals(param.getSubjects().getLast().getIndex(), portParamCaptor.getValue().orders().getLast().index());
     }
 }
