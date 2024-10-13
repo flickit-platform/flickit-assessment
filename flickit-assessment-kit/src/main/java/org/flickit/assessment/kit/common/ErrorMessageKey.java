@@ -17,6 +17,7 @@ public class ErrorMessageKey {
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
     public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
+    public static final String ANSWER_OPTION_ID_NOT_FOUND = "answer-option.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -254,6 +255,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option-orders.answerOption.notNull";
     public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_INDEX_NOT_NULL = "update-answer-option-orders.answerOption.index.notNull";
     public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_INDEX_MIN = "update-answer-option-orders.answerOption.index.min";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_INDEX_DUPLICATE = "update-answer-option-orders.index.duplicate";
 
 
     public static String entityNameSingleFirst(String fieldName) {
