@@ -1325,6 +1325,46 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "AmswerOption",
+			"item": [
+				{
+					"name": "Update AnswerOption Order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orders\": [\n    {\n      \"id\": 93576,\n      \"index\": 2\n    },\n    {\n      \"id\": 93577,\n      \"index\": 1\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/402/answer-option-change-order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"402",
+								"answer-option-change-order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
