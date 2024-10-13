@@ -250,6 +250,17 @@ public class ErrorMessageKey {
     public static final String GET_SUBJECT_LIST_SIZE_MAX = "get-subject-list.size.max";
     public static final String GET_SUBJECT_LIST_PAGE_MIN = "get-subject-list.page.min";
 
+    public static final String UPDATE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "update-subject.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_SUBJECT_ID_NOT_NULL = "update-subject.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_INDEX_NOT_NULL = "update-subject.index.notNull";
+    public static final String UPDATE_SUBJECT_TITLE_NOT_NULL = "update-subject.title.notNull";
+    public static final String UPDATE_SUBJECT_TITLE_SIZE_MIN = "update-subject.title.size.min";
+    public static final String UPDATE_SUBJECT_TITLE_SIZE_MAX = "update-subject.title.size.max";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_NOT_NULL = "update-subject.description.notNull";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MIN = "update-subject.description.size.min";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MAX = "update-subject.description.size.max";
+    public static final String UPDATE_SUBJECT_WEIGHT_NOT_NULL = "update-subject.weight.notNull";
+
     public static final String UPDATE_ANSWER_OPTION_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-answer-option-orders.kitVersionId.notNull";
     public static final String UPDATE_ANSWER_OPTION_ORDERS_ORDERS_NOT_NULL = "update-answer-option-orders.orders.notNull";
     public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option-orders.answerOption.notNull";

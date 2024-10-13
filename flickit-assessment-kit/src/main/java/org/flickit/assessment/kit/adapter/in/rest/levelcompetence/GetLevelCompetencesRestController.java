@@ -21,7 +21,7 @@ public class GetLevelCompetencesRestController {
     private final GetLevelCompetencesUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/kit-versions/{kitVersionId}/competence-levels")
+    @GetMapping("/kit-versions/{kitVersionId}/level-competences")
     public ResponseEntity<GetLevelCompetencesResponseDto> getLevelCompetences(@PathVariable("kitVersionId") Long kitVersionId) {
         var currentUserId = userContext.getUser().id();
         var response = toResponse(useCase.getLevelCompetences(toParam(kitVersionId, currentUserId)));
