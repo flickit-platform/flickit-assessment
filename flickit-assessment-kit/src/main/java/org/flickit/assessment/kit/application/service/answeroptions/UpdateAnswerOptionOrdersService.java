@@ -24,7 +24,6 @@ public class UpdateAnswerOptionOrdersService implements UpdateAnswerOptionOrders
     @Override
     public void changeOrders(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
-
         var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
 
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()))

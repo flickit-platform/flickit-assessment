@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.port.in.answeroptions;
 
-
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
