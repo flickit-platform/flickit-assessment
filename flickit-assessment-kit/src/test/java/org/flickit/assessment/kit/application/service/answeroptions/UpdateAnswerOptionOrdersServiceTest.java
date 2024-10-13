@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.answeroptions;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.AnswerOptionOrder;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answeroptions.UpdateAnswerOptionOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
@@ -23,8 +24,7 @@ import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitM
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateAnswerOptionOrdersServiceTest {
@@ -66,6 +66,20 @@ class UpdateAnswerOptionOrdersServiceTest {
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(updateAnswerOptionPort);
+    }
+
+    @Test
+    void testUpdateAnswerOptionOrdersService_validParameters_shouldUpdateAnswerOptionOrders() {
+        var param = createParam(UpdateAnswerOptionOrdersUseCase.Param.ParamBuilder::build);
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
+
+        service.changeOrders(param);
+
+        var answerOptionOrder = List.of(new AnswerOptionOrder(123L, 3), new AnswerOptionOrder(124L, 2));
+
+        verify(updateAnswerOptionPort).updateOrders(answerOptionOrder, param.getKitVersionId(), param.getCurrentUserId());
     }
 
     private UpdateAnswerOptionOrdersUseCase.Param createParam(Consumer<UpdateAnswerOptionOrdersUseCase.Param.ParamBuilder> changer) {
