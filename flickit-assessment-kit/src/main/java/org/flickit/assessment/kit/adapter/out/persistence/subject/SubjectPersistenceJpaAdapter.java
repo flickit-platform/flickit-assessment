@@ -102,6 +102,9 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateSubjectPort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
+
         repository.update(param.id(),
             param.kitVersionId(),
             param.code(),
