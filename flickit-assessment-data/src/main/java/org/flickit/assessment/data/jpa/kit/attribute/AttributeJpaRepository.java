@@ -1,5 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.attribute;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -81,4 +83,14 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 AND qi.kitVersionId = :kitVersionId
         """)
     Integer countAttributeImpactfulQuestions(@Param("attributeId") long attributeId, @Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT at as attribute,
+                s as subject
+            FROM AttributeJpaEntity at
+            JOIN SubjectJpaEntity s ON at.subjectId = s.id AND at.kitVersionId = s.kitVersionId
+            WHERE at.kitVersionId = :kitVersionId
+            ORDER BY s.index, at.index
+        """)
+    Page<AttributeWithSubjectView> findAllByKitVersionId(long kitVersionId, Pageable pageable);
 }
