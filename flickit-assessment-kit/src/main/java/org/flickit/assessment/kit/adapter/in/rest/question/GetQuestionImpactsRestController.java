@@ -19,7 +19,7 @@ public class GetQuestionImpactsRestController {
     private final GetQuestionImpactsUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("kit-versions/{kitVersionId}/questions/{questionId}")
+    @GetMapping("kit-versions/{kitVersionId}/questions/{questionId}/impacts")
     public ResponseEntity<Result> getQuestionImpacts(@PathVariable Long kitVersionId,
                                                      @PathVariable Long questionId) {
         var currentUserId = userContext.getUser().id();
