@@ -79,7 +79,6 @@ class UpdateAnswerOptionOrdersUseCaseParamTest {
     private UpdateAnswerOptionOrdersUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateAnswerOptionOrdersUseCase.Param.builder()
             .kitVersionId(1L)
-            .answerOptionId(2L)
             .orders(List.of(
                 new UpdateAnswerOptionOrdersUseCase.AnswerOptionParam(123L, 3),
                 new UpdateAnswerOptionOrdersUseCase.AnswerOptionParam(124L, 2)))

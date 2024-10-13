@@ -22,9 +22,6 @@ public interface UpdateAnswerOptionOrdersUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_ID_NOT_NULL)
-        Long answerOptionId;
-
         @NotNull(message = UPDATE_ANSWER_OPTION_ORDERS_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
@@ -35,8 +32,7 @@ public interface UpdateAnswerOptionOrdersUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long answerOptionId, Long kitVersionId, List<AnswerOptionParam> orders, UUID currentUserId) {
-            this.answerOptionId = answerOptionId;
+        public Param(Long kitVersionId, List<AnswerOptionParam> orders, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.orders = orders;
             this.currentUserId = currentUserId;
