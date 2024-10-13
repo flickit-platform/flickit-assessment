@@ -249,6 +249,13 @@ public class ErrorMessageKey {
     public static final String GET_SUBJECT_LIST_SIZE_MAX = "get-subject-list.size.max";
     public static final String GET_SUBJECT_LIST_PAGE_MIN = "get-subject-list.page.min";
 
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-answer-option-orders.kitVersionId.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_ORDERS_NOT_NULL = "update-answer-option-orders.orders.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option-orders.answerOption.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_INDEX_NOT_NULL = "update-answer-option-orders.answerOption.index.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_INDEX_MIN = "update-answer-option-orders.answerOption.index.min";
+
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
