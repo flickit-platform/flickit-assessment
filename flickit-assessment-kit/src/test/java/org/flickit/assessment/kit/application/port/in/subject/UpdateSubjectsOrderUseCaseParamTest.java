@@ -40,6 +40,23 @@ class UpdateSubjectsOrderUseCaseParamTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
+    @Test
+    void testUpdateSubjectsOrderUseCaseSubjectParam_subjectIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createSubjectParam(b -> b.id(null)));
+        assertThat(throwable).hasMessage("id: " + UPDATE_SUBJECTS_ORDER_SUBJECT_ID_NOT_NULL);
+    }
+
+    @Test
+    void testUpdateSubjectsOrderUseCaseSubjectParam_indexParamViolatesConstraints_ErrorMessage() {
+        var throwableNullViolates = assertThrows(ConstraintViolationException.class,
+            () -> createSubjectParam(b -> b.index(null)));
+        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_SUBJECTS_ORDER_INDEX_NOT_NULL);
+        var throwableMinViolates = assertThrows(ConstraintViolationException.class,
+            () -> createSubjectParam(b -> b.index(0)));
+        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_SUBJECTS_ORDER_INDEX_MIN);
+    }
+
     private void createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
@@ -51,6 +68,18 @@ class UpdateSubjectsOrderUseCaseParamTest {
             .kitVersionId(1L)
             .subjects(List.of(new SubjectParam(2L, 5)))
             .currentUserId(UUID.randomUUID());
+    }
+
+    private void createSubjectParam(Consumer<SubjectParam.SubjectParamBuilder> changer) {
+        var paramBuilder = subjectParamBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private SubjectParam.SubjectParamBuilder subjectParamBuilder() {
+        return SubjectParam.builder()
+            .id(2L)
+            .index(3);
     }
 
 }
