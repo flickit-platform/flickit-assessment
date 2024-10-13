@@ -20,7 +20,7 @@ public class UpdateAnswerOptionOrdersRestController {
     private final UpdateAnswerOptionOrdersUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("kit-versions/{kitVersionId}/answer-option-change-order")
+    @PutMapping("kit-versions/{kitVersionId}/answer-options-change-order")
     public ResponseEntity<Void> updateAnswerOptionOrders(@PathVariable Long kitVersionId,
                                                          @RequestBody UpdateAnswerOptionOrdersRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
