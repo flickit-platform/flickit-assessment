@@ -4,6 +4,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
@@ -17,6 +19,8 @@ public interface GetAttributesUseCase {
 
     PaginatedResponse<SubjectListItem> getAttributes(Param param);
 
+    @Value
+    @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_ATTRIBUTES_KIT_VERSION_ID_NOT_NULL)
