@@ -22,7 +22,7 @@ class GetQuestionImpactsUseCaseParamTest {
     }
 
     @Test
-    void testGetQuestionImpactsUseCaseParam_kitVersionId_ErrorMessage() {
+    void testGetQuestionImpactsUseCaseParam_kitVersionIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + GET_QUESTION_IMPACTS_KIT_VERSION_ID_NOT_NULL);
