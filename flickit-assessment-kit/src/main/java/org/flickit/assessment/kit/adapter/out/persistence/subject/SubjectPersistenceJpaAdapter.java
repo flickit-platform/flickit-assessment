@@ -27,17 +27,18 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_F
 @Component
 @RequiredArgsConstructor
 public class SubjectPersistenceJpaAdapter implements
-    UpdateSubjectPort,
+    UpdateSubjectByDslPort,
     CreateSubjectPort,
     LoadSubjectsPort,
     LoadSubjectPort,
-    DeleteSubjectPort {
+    DeleteSubjectPort,
+    UpdateSubjectPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
 
     @Override
-    public void update(UpdateSubjectPort.Param param) {
+    public void update(UpdateSubjectByDslPort.Param param) {
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
@@ -97,5 +98,21 @@ public class SubjectPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(subjectId, kitVersionId);
+    }
+
+    @Override
+    public void update(UpdateSubjectPort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
+
+        repository.update(param.id(),
+            param.kitVersionId(),
+            param.code(),
+            param.title(),
+            param.index(),
+            param.description(),
+            param.weight(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
     }
 }
