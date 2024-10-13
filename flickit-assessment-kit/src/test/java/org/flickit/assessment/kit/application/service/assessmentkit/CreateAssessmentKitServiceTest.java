@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
@@ -87,7 +88,7 @@ class CreateAssessmentKitServiceTest {
 
         ArgumentCaptor<CreateAssessmentKitPort.Param> createKitPortParamCaptor = ArgumentCaptor.forClass(CreateAssessmentKitPort.Param.class);
         verify(createAssessmentKitPort).persist(createKitPortParamCaptor.capture());
-        assertEquals(AssessmentKit.generateSlugCode(param.getTitle()), createKitPortParamCaptor.getValue().code());
+        assertEquals(SlugCodeUtil.generateSlugCode(param.getTitle()), createKitPortParamCaptor.getValue().code());
         assertEquals(param.getTitle(), createKitPortParamCaptor.getValue().title());
         assertEquals(param.getSummary(), createKitPortParamCaptor.getValue().summary());
         assertEquals(param.getAbout(), createKitPortParamCaptor.getValue().about());

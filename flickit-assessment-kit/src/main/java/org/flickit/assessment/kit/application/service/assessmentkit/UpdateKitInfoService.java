@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -14,7 +15,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.application.domain.AssessmentKit.generateSlugCode;
 
 @Service
 @Transactional
@@ -52,7 +52,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
     private UpdateKitInfoPort.Param toPortParam(Param param) {
         return new UpdateKitInfoPort.Param(
             param.getKitId(),
-            param.getTitle() != null ? generateSlugCode(param.getTitle()) : null,
+            param.getTitle() != null ? SlugCodeUtil.generateSlugCode(param.getTitle()) : null,
             param.getTitle(),
             param.getSummary(),
             param.getPublished(),

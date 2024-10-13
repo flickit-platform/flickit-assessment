@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.subject;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.subject.CreateSubjectUseCase;
@@ -31,7 +32,7 @@ public class CreateSubjectService implements CreateSubjectUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        String code = Subject.generateSlugCode(param.getTitle());
+        String code = SlugCodeUtil.generateSlugCode(param.getTitle());
 
         return createSubjectPort.persist(new CreateSubjectPort.Param(code,
             param.getTitle(),

@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -32,7 +33,7 @@ public class UpdateMaturityLevelService implements UpdateMaturityLevelUseCase {
         if (!Objects.equals(expertGroupOwnerId, param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var maturityLevel = new MaturityLevel(param.getMaturityLevelId(), MaturityLevel.generateSlugCode(param.getTitle()),
+        var maturityLevel = new MaturityLevel(param.getMaturityLevelId(), SlugCodeUtil.generateSlugCode(param.getTitle()),
             param.getTitle(), param.getIndex(), param.getDescription(), param.getValue(), null);
         updateMaturityLevelPort.update(maturityLevel, param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
     }

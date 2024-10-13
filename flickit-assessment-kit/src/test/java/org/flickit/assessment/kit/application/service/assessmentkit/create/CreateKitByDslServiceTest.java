@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.create;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
@@ -27,7 +28,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
-import static org.flickit.assessment.kit.application.domain.AssessmentKit.generateSlugCode;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -105,7 +105,7 @@ class CreateKitByDslServiceTest {
 
         ArgumentCaptor<CreateAssessmentKitPort.Param> createKitPortParamCaptor = ArgumentCaptor.forClass(CreateAssessmentKitPort.Param.class);
         verify(createAssessmentKitPort).persist(createKitPortParamCaptor.capture());
-        assertEquals(generateSlugCode(param.getTitle()), createKitPortParamCaptor.getValue().code());
+        assertEquals(SlugCodeUtil.generateSlugCode(param.getTitle()), createKitPortParamCaptor.getValue().code());
         assertEquals(param.getTitle(), createKitPortParamCaptor.getValue().title());
         assertEquals(param.getSummary(), createKitPortParamCaptor.getValue().summary());
         assertEquals(param.getAbout(), createKitPortParamCaptor.getValue().about());

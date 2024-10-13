@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static org.flickit.assessment.users.application.domain.Space.generateSlugCode;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +30,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
     private Space buildSpace(String title, UUID currentUserId) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new Space(null,
-            generateSlugCode(title),
+            SlugCodeUtil.generateSlugCode(title),
             title,
             currentUserId,
             creationTime,

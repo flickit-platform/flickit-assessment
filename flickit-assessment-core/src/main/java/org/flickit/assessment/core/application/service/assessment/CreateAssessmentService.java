@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
@@ -28,7 +29,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_KIT_NOT_ALLOWED;
@@ -70,7 +70,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {
-        String code = generateSlugCode(param.getTitle());
+        String code = SlugCodeUtil.generateSlugCode(param.getTitle());
         LocalDateTime creationTime = LocalDateTime.now();
         return new CreateAssessmentPort.Param(
             code,

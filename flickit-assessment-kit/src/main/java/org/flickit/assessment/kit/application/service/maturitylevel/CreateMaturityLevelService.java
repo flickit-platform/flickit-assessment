@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.CreateMaturityLevelUseCase;
@@ -32,7 +33,7 @@ public class CreateMaturityLevelService implements CreateMaturityLevelUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         MaturityLevel maturityLevel = new MaturityLevel(null,
-            MaturityLevel.generateSlugCode(param.getTitle()),
+            SlugCodeUtil.generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),

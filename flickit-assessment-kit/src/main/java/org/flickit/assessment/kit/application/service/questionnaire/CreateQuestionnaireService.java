@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.in.questionnaire.CreateQuestionnaireUseCase;
@@ -33,7 +34,7 @@ public class CreateQuestionnaireService implements CreateQuestionnaireUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         Questionnaire questionnaire = new Questionnaire(null,
-            Questionnaire.generateSlugCode(param.getTitle()),
+            SlugCodeUtil.generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),
