@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.question;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.*;
-import org.flickit.assessment.kit.application.port.in.question.GetQuestionImpactsUseCase;
+import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;

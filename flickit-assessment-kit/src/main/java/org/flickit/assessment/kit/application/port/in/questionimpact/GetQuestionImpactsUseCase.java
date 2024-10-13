@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.in.question;
+package org.flickit.assessment.kit.application.port.in.questionimpact;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

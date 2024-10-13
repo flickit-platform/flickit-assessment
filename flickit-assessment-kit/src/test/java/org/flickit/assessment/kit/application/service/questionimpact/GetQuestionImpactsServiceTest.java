@@ -1,13 +1,14 @@
-package org.flickit.assessment.kit.application.service.question;
+package org.flickit.assessment.kit.application.service.questionimpact;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.in.question.GetQuestionImpactsUseCase;
+import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.kit.application.service.question.GetQuestionImpactsService;
 import org.flickit.assessment.kit.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
