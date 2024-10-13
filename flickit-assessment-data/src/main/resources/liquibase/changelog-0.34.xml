@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.34-01" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_answer_option"
+                              constraintName="uq_fak_answeroption_index_kitversionid_questionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-02" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index, question_id"
+                             constraintName="uq_fak_answeroption_index_kitversionid_questionid"
+                             tableName="fak_answer_option"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.34-03" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_answer_option"
+                              constraintName="uq_fak_answeroption_index_questionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-04" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="index, question_id"
+                             constraintName="uq_fak_answeroption_index_questionid"
+                             tableName="fak_answer_option"
+                             initiallyDeferred="true"/>
+    </changeSet>
+</databaseChangeLog>
