@@ -12,6 +12,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -87,7 +88,9 @@ public class AttributePersistenceJpaAdapter implements
 
         var items = subjectToAttributesMap.entrySet().stream()
             .map(x -> {
-                List<Attribute> attributes = x.getValue().stream().map(a -> mapToDomainModel(a.getAttribute())).toList();
+                List<Attribute> attributes = x.getValue().stream()
+                    .map(a -> mapToDomainModel(a.getAttribute()))
+                    .toList();
                 return SubjectMapper.mapToDomainModel(x.getKey(), attributes);
             })
             .toList();
