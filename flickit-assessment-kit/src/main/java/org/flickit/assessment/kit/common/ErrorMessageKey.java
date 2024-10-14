@@ -214,6 +214,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-maturity-level-orders.kitVersionId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL = "update-maturity-level-orders.orders.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_SIZE_MIN = "update-maturity-level-orders.size.min";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_ID_NOT_NULL = "update-maturity-level-orders.maturityLevelId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level-orders.maturityLevel.index.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
