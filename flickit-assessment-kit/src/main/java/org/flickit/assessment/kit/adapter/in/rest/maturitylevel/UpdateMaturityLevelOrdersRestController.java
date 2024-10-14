@@ -30,9 +30,9 @@ public class UpdateMaturityLevelOrdersRestController {
     }
 
     private Param toParam(Long kitVersionId, UpdateMaturityLevelOrdersRequestDto requestDto, UUID currentUserId) {
-        return new Param(kitVersionId,
-            requestDto.orders().stream().map(
-                request -> new MaturityLevelParam(request.id(), request.index())).toList(),
-            currentUserId);
+        var orders = requestDto.orders().stream()
+            .map(request -> new MaturityLevelParam(request.id(), request.index()))
+            .toList();
+        return new Param(kitVersionId, orders, currentUserId);
     }
 }
