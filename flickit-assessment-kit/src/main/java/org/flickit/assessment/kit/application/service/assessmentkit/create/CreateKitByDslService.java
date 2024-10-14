@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.assessmentkit.create;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
@@ -28,6 +27,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Slf4j
 @Service
@@ -85,7 +85,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     @NotNull
     private CreateAssessmentKitPort.Param toCreateKitParam(Param param) {
         return new CreateAssessmentKitPort.Param(
-            SlugCodeUtil.generateSlugCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getSummary(),
             param.getAbout(),

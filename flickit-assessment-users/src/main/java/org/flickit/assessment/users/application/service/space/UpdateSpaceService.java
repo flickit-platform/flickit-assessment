@@ -2,7 +2,6 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.space.UpdateSpacePort;
@@ -14,6 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
 @Transactional
@@ -29,7 +29,7 @@ public class UpdateSpaceService implements UpdateSpaceUseCase {
 
         var updateParam = new UpdateSpacePort.Param(param.getId(),
             param.getTitle(),
-            SlugCodeUtil.generateSlugCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             LocalDateTime.now(),
             param.getCurrentUserId());
         updateSpacePort.updateSpace(updateParam);

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroup.CreateExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.CreateExpertGroupPort;
@@ -18,6 +17,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Slf4j
 @Service
@@ -54,7 +54,7 @@ public class CreateExpertGroupService implements CreateExpertGroupUseCase {
 
     private CreateExpertGroupPort.Param toCreateExpertGroupParam(Param param, String pictureFilePath) {
         return new CreateExpertGroupPort.Param(
-            SlugCodeUtil.generateSlugCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getBio(),
             param.getAbout(),
