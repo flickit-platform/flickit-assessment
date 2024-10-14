@@ -2,15 +2,15 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase;
-import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributesIndexPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitVersionExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
+import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort.UpdateOrderParam;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -19,19 +19,24 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class UpdateAttributesOrderService implements UpdateAttributesOrderUseCase {
 
-    private final LoadKitVersionExpertGroupPort loadKitVersionExpertGroupPort;
-    private final UpdateAttributesIndexPort updateAttributesIndexPort;
+    private final LoadKitVersionPort loadKitVersionPort;
+    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final UpdateAttributePort updateAttributePort;
 
     @Override
     public void updateAttributesOrder(Param param) {
-        checkUserAccess(param.getKitVersionId(), param.getCurrentUserId());
-        updateAttributesIndexPort.updateIndexes(param.getKitVersionId(), param.getAttributes());
+        var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
+        if (!ownerId.equals(param.getCurrentUserId()))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        updateAttributePort.updateOrders(toUpdatePortParam(param));
     }
 
-    private void checkUserAccess(Long kitVersionId, UUID currentUserId) {
-        ExpertGroup expertGroup = loadKitVersionExpertGroupPort.loadKitVersionExpertGroup(kitVersionId);
-        if (!Objects.equals(currentUserId, expertGroup.getOwnerId())) {
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
+    private UpdateOrderParam toUpdatePortParam(Param param) {
+        var subjectOrders = param.getAttributes().stream()
+            .map(e -> new UpdateOrderParam.AttributeOrder(e.getId(), e.getIndex()))
+            .toList();
+        return new UpdateOrderParam(subjectOrders, param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
     }
 }

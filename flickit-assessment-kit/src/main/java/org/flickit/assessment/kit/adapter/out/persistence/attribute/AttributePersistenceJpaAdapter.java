@@ -2,21 +2,21 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase.AttributeParam;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -25,8 +25,7 @@ public class AttributePersistenceJpaAdapter implements
     CreateAttributePort,
     LoadAttributePort,
     CountAttributeImpactfulQuestionsPort,
-    LoadAllAttributesPort,
-    UpdateAttributesIndexPort {
+    LoadAllAttributesPort {
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -42,6 +41,26 @@ public class AttributePersistenceJpaAdapter implements
             param.lastModificationTime(),
             param.lastModifiedBy(),
             param.subjectId());
+    }
+
+    @Override
+    public void updateOrders(UpdateOrderParam param) {
+        Map<AttributeJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
+            .collect(Collectors.toMap(
+                ml -> new AttributeJpaEntity.EntityId(ml.attributeId(), param.kitVersionId()),
+                UpdateOrderParam.AttributeOrder::index
+            ));
+        List<AttributeJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        if (entities.size() != param.orders().size())
+            throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            int newIndex = idToIndex.get(new AttributeJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            x.setIndex(newIndex);
+            x.setLastModificationTime(param.lastModificationTime());
+            x.setLastModifiedBy(param.lastModifiedBy());
+        });
+        repository.saveAll(entities);
     }
 
     @Override
@@ -69,15 +88,5 @@ public class AttributePersistenceJpaAdapter implements
         return repository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId).stream()
             .map(AttributeMapper::mapToDomainModel)
             .toList();
-    }
-
-    @Override
-    public void updateIndexes(long kitVersionId, List<AttributeParam> attributes) {
-        var ids = attributes.stream().map(AttributeParam::getId).collect(Collectors.toSet());
-        var idToIndexMap = attributes.stream()
-            .collect(Collectors.toMap(AttributeParam::getId, AttributeParam::getIndex));
-        var entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
-        entities.forEach(e -> e.setIndex(idToIndexMap.get(e.getId())));
-        repository.saveAll(entities);
     }
 }
