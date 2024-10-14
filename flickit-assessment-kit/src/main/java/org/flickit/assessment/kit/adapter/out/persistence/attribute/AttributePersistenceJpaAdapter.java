@@ -70,9 +70,9 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public void delete(long kitVersionId, long attributeId) {
-        if (!repository.existsByIdAndKitVersionId(attributeId, kitVersionId)) {
+        if (!repository.existsByIdAndKitVersionId(attributeId, kitVersionId))
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
-        }
+
         repository.deleteByIdAndKitVersionId(attributeId, kitVersionId);
     }
 }
