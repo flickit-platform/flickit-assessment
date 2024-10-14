@@ -67,7 +67,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
         List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
-        setLevelCompetences(levels);
+        setLevelCompetences(levels, kitVersionId);
 
         List<Question> questions = questionRepository.findAllByKitVersionId(kitVersionId).stream()
             .map(QuestionMapper::mapToDomainModel)
@@ -94,13 +94,12 @@ public class LoadAssessmentKitFullInfoAdapter implements
             subjects,
             levels,
             questionnaires,
-            kitVersionId
-        );
+            kitVersionId);
     }
 
-    private void setLevelCompetences(List<MaturityLevel> levels) {
+    private void setLevelCompetences(List<MaturityLevel> levels, Long kitVersionId) {
         levels.forEach(level -> level.setCompetences(
-            levelCompetenceRepository.findByAffectedLevelId(level.getId()).stream()
+            levelCompetenceRepository.findByAffectedLevelIdAndKitVersionId(level.getId(), kitVersionId).stream()
                 .map(MaturityLevelCompetenceMapper::mapToDomainModel)
                 .toList()));
     }

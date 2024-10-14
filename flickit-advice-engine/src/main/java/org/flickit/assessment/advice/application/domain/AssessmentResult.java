@@ -10,4 +10,6 @@ import java.util.UUID;
 public class AssessmentResult {
 
     private final UUID id;
+
+    private final long kitVersionId;
 }

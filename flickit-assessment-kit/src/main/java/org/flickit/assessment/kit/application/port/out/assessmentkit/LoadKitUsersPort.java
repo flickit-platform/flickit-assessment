@@ -1,12 +1,19 @@
 package org.flickit.assessment.kit.application.port.out.assessmentkit;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitUserListUseCase;
+
+import java.util.UUID;
 
 public interface LoadKitUsersPort {
 
-    PaginatedResponse<GetKitUserListUseCase.UserListItem> loadKitUsers(Param param);
+    PaginatedResponse<KitUser> loadKitUsers(Param param);
 
     record Param(Long kitId, int page, int size) {
+    }
+
+    record KitUser(UUID id,
+                   String displayName,
+                   String email,
+                   String picturePath) {
     }
 }

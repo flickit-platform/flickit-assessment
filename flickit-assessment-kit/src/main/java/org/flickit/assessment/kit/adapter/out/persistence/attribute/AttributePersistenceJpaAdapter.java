@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND;
 
 @Component
@@ -44,7 +45,8 @@ public class AttributePersistenceJpaAdapter implements
     @Override
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
         var entityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
-        SubjectJpaEntity subjectJpaEntity = subjectRepository.getReferenceById(entityId);
+        SubjectJpaEntity subjectJpaEntity = subjectRepository.findById(entityId)
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND));
         return repository.save(mapToJpaEntity(attribute, subjectJpaEntity)).getId();
     }
 
