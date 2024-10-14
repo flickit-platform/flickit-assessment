@@ -81,5 +81,4 @@ class UpdateSubjectOrdersUseCaseParamTest {
             .id(2L)
             .index(3);
     }
-
 }
