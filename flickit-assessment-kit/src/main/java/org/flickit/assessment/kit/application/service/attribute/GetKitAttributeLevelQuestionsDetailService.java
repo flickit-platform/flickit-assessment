@@ -19,7 +19,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetKitKitAttributeLevelQuestionsDetailService implements GetKitAttributeLevelQuestionsDetailUseCase {
+public class GetKitAttributeLevelQuestionsDetailService implements GetKitAttributeLevelQuestionsDetailUseCase {
 
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
