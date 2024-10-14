@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.attribute.DeleteAttributeUseCase;
 import org.flickit.assessment.kit.application.port.out.attribute.DeleteAttributePort;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_ATTRIBUTE_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createActiveKitVersion;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
@@ -55,16 +57,16 @@ class DeleteAttributeServiceTest {
     }
 
     @Test
-    void testDeleteAttribute_WhenCurrentUserIsOwnerOfExpertGroupAndKitVersionStatusIsNotUpdating_ThenThrowAccessDeniedException() {
+    void testDeleteAttribute_WhenCurrentUserIsOwnerOfExpertGroupAndKitVersionStatusIsNotUpdating_ThenThrowValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
         KitVersion kitVersion = createActiveKitVersion(simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteAttribute(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.deleteAttribute(param));
 
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(DELETE_ATTRIBUTE_NOT_ALLOWED, throwable.getMessageKey());
         verifyNoInteractions(deleteAttributePort);
     }
 
@@ -74,11 +76,11 @@ class DeleteAttributeServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        doNothing().when(deleteAttributePort).delete(param.getKitVersionId(), param.getAttributeId());
+        doNothing().when(deleteAttributePort).delete(param.getAttributeId(), param.getKitVersionId());
 
         assertDoesNotThrow(() -> service.deleteAttribute(param));
 
-        verify(deleteAttributePort).delete(param.getKitVersionId(), param.getAttributeId());
+        verify(deleteAttributePort).delete(param.getAttributeId(), param.getKitVersionId());
     }
 
     private DeleteAttributeUseCase.Param createParam(Consumer<DeleteAttributeUseCase.Param.ParamBuilder> changer) {
