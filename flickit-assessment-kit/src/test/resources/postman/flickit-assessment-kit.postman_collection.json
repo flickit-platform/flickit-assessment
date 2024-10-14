@@ -1171,7 +1171,7 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects/change-orders",
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects-change-order",
                     "host": [
                       "{{base_url}}"
                     ],
@@ -1179,8 +1179,7 @@
                       "{{api_path}}",
                       "kit-versions",
                       "336",
-                      "subjects",
-                      "change-orders"
+                      "subjects-change-order"
                     ]
                   }
                 },
