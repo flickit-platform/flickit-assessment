@@ -58,13 +58,14 @@ class DeleteAttributeServiceTest {
     @Test
     void testDeleteAttribute_WhenCurrentUserIsOwnerOfExpertGroupAndKitVersionStatusIsNotUpdating_ThenThrowValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
+        var activeVersion = createActiveKitVersion(simpleKit());
 
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(activeVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteAttribute(param));
-
         assertEquals(DELETE_ATTRIBUTE_NOT_ALLOWED, throwable.getMessageKey());
+
         verifyNoInteractions(deleteAttributePort);
     }
 
