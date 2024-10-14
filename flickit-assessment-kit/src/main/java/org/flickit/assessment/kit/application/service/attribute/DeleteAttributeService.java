@@ -32,7 +32,6 @@ public class DeleteAttributeService implements DeleteAttributeUseCase {
         if (!Objects.equals(ownerId, param.getCurrentUserId()) ||
             !KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
-        deleteAttributePort.delete(param.getKitVersionId(), param.getAttributeId());
+        deleteAttributePort.delete(param.getAttributeId(), param.getKitVersionId());
     }
 }
