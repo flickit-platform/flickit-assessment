@@ -143,14 +143,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<FirstUnansweredQuestionView> findQuestionnairesFirstUnansweredQuestion(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Query("""
-            SELECT q as question
-            FROM QuestionJpaEntity q
-            LEFT JOIN KitVersionJpaEntity kv On kv.id = q.kitVersionId
-            WHERE q.id = :id AND kv.kit.id = :kitId
-        """)
-    Optional<QuestionJpaEntity> findByIdAndKitId(@Param("id") long id, @Param("kitId") long kitId);
-
-    @Query("""
             SELECT
                 qr as questionnaire,
                 qsn as question,
