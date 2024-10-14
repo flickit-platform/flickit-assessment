@@ -40,6 +40,23 @@ class UpdateAttributesOrderUseCaseParamTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
+    @Test
+    void testUpdateAttributesOrderUseCaseAttributeParam_attributeIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createAttributeParam(b -> b.id(null)));
+        assertThat(throwable).hasMessage("id: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTE_ID_NOT_NULL);
+    }
+
+    @Test
+    void testUpdateAttributesOrderUseCaseAttributeParam_indexParamViolatesConstraints_ErrorMessage() {
+        var throwableNullViolates = assertThrows(ConstraintViolationException.class,
+            () -> createAttributeParam(b -> b.index(null)));
+        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_ATTRIBUTES_ORDER_INDEX_NOT_NULL);
+        var throwableMinViolates = assertThrows(ConstraintViolationException.class,
+            () -> createAttributeParam(b -> b.index(0)));
+        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_ATTRIBUTES_ORDER_INDEX_MIN);
+    }
+
     private void createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
@@ -51,5 +68,17 @@ class UpdateAttributesOrderUseCaseParamTest {
             .kitVersionId(1L)
             .attributes(List.of(new AttributeParam(2L, 5), new AttributeParam(3L, 6)))
             .currentUserId(UUID.randomUUID());
+    }
+
+    private void createAttributeParam(Consumer<AttributeParam.AttributeParamBuilder> changer) {
+        var paramBuilder = attributeParamBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private AttributeParam.AttributeParamBuilder attributeParamBuilder() {
+        return AttributeParam.builder()
+            .id(2L)
+            .index(3);
     }
 }
