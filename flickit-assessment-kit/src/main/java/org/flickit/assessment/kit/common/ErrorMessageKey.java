@@ -260,6 +260,8 @@ public class ErrorMessageKey {
     public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MAX = "update-subject.description.size.max";
     public static final String UPDATE_SUBJECT_WEIGHT_NOT_NULL = "update-subject.weight.notNull";
 
+    public static final String DELETE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "delete-kit-version.kitVersionId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
