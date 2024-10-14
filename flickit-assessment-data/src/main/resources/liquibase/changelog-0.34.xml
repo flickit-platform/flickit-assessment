@@ -29,4 +29,15 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
+    <changeSet id="0.34-05" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint tableName="fak_subject"
+                              constraintName="uq_fak_subject_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-06" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_subject_index_kitversionid"
+                             tableName="fak_subject"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>
