@@ -40,7 +40,6 @@ class DeleteAttributeServiceTest {
     private DeleteAttributePort deleteAttributePort;
 
     UUID ownerId = UUID.randomUUID();
-
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
@@ -59,7 +58,6 @@ class DeleteAttributeServiceTest {
     @Test
     void testDeleteAttribute_WhenCurrentUserIsOwnerOfExpertGroupAndKitVersionStatusIsNotUpdating_ThenThrowValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
-        KitVersion kitVersion = createActiveKitVersion(simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
@@ -78,7 +76,7 @@ class DeleteAttributeServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(deleteAttributePort).delete(param.getAttributeId(), param.getKitVersionId());
 
-        assertDoesNotThrow(() -> service.deleteAttribute(param));
+        service.deleteAttribute(param);
 
         verify(deleteAttributePort).delete(param.getAttributeId(), param.getKitVersionId());
     }

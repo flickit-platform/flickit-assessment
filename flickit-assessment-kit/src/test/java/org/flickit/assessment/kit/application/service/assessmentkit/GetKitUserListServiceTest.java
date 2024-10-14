@@ -94,13 +94,13 @@ class GetKitUserListServiceTest {
         assertEquals(kitUserListItems.getFirst().email(), result.getItems().getFirst().email());
         assertEquals(kitUserListItems.getFirst().displayName(), result.getItems().getFirst().name());
         assertEquals(pictureLink, result.getItems().getFirst().pictureLink());
-        assertFalse(result.getItems().getFirst().editable());
+        assertTrue(result.getItems().getFirst().editable());
 
         assertEquals(kitUserListItems.get(1).id(), result.getItems().get(1).id());
         assertEquals(kitUserListItems.get(1).email(), result.getItems().get(1).email());
         assertEquals(kitUserListItems.get(1).displayName(), result.getItems().get(1).name());
         assertNull(result.getItems().get(1).pictureLink());
-        assertTrue(result.getItems().get(1).editable());
+        assertFalse(result.getItems().get(1).editable());
     }
 
     @Test

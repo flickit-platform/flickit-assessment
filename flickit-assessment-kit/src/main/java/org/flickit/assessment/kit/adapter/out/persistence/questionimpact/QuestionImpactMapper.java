@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionimpact;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
@@ -27,8 +26,8 @@ public class QuestionImpactMapper {
     public static QuestionImpactJpaEntity mapToJpaEntityToPersist(QuestionImpact impact) {
         return new QuestionImpactJpaEntity(
             null,
-            impact.getWeight(),
             impact.getKitVersionId(),
+            impact.getWeight(),
             impact.getQuestionId(),
             impact.getAttributeId(),
             impact.getMaturityLevelId(),

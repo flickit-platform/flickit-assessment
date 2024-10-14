@@ -72,7 +72,7 @@ public class AttributePersistenceJpaAdapter implements
     public void delete(long attributeId, long kitVersionId) {
         if (!repository.existsByIdAndKitVersionId(attributeId, kitVersionId)) {
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
-        }
+
         repository.deleteByIdAndKitVersionId(attributeId, kitVersionId);
     }
 }
