@@ -26,9 +26,8 @@ public class UpdateSubjectOrdersService implements UpdateSubjectOrdersUseCase {
     public void updateSubjectOrders(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
-        if (!ownerId.equals(param.getCurrentUserId())) {
+        if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
 
         updateSubjectPort.updateOrders(toUpdatePortParam(param));
     }

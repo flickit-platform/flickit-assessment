@@ -123,7 +123,7 @@ public class SubjectPersistenceJpaAdapter implements
             ));
         List<SubjectJpaEntity> entities = repository.findAllById(idToIndex.keySet());
         if (entities.size() != param.orders().size())
-            throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
+            throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
         entities.forEach(x -> {
             int newIndex = idToIndex.get(new SubjectJpaEntity.EntityId(x.getId(), param.kitVersionId()));
