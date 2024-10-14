@@ -25,10 +25,10 @@ public class AnswerOptionImpactMapper {
         LocalDateTime creationTime = LocalDateTime.now();
         return new AnswerOptionImpactJpaEntity(
             null,
+            param.kitVersionId(),
             param.optionId(),
             questionImpactEntity,
             param.value(),
-            param.kitVersionId(),
             creationTime,
             creationTime,
             param.createdBy(),
