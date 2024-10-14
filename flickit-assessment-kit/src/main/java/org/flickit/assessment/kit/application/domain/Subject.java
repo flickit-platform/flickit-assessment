@@ -26,11 +26,4 @@ public class Subject {
     private final UUID lastModifiedBy;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
-
-    public static String generateSlugCode(String title) {
-        return title
-            .toLowerCase()
-            .strip()
-            .replaceAll("\\s+", "-");
-    }
 }

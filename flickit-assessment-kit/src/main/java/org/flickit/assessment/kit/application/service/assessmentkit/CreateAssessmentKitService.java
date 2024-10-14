@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
@@ -18,6 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
 @Transactional
@@ -52,7 +52,7 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
 
     private CreateAssessmentKitPort.Param toPortParam(Param param) {
         return new CreateAssessmentKitPort.Param(
-            AssessmentKit.generateSlugCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getSummary(),
             param.getAbout(),
