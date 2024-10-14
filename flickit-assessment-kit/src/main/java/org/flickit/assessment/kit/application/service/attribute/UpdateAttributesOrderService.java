@@ -34,9 +34,9 @@ public class UpdateAttributesOrderService implements UpdateAttributesOrderUseCas
     }
 
     private UpdateOrderParam toUpdatePortParam(Param param) {
-        var subjectOrders = param.getAttributes().stream()
+        var attributeOrders = param.getAttributes().stream()
             .map(e -> new UpdateOrderParam.AttributeOrder(e.getId(), e.getIndex()))
             .toList();
-        return new UpdateOrderParam(subjectOrders, param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
+        return new UpdateOrderParam(attributeOrders, param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
     }
 }
