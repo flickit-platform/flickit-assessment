@@ -21,4 +21,15 @@ public class KitVersionMother {
             UUID.randomUUID(),
             UUID.randomUUID());
     }
+
+    public static KitVersion createActiveKitVersion(AssessmentKit kit) {
+        return new KitVersion(
+            id++,
+            kit,
+            KitVersionStatus.ACTIVE,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID());
+    }
 }

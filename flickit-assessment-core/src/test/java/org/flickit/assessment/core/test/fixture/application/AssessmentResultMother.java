@@ -44,6 +44,7 @@ public class AssessmentResultMother {
     public static AssessmentResult validResultWithJustAnId() {
         AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), 123L, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setIsConfidenceValid(true);
         return assessmentResult;
     }
 

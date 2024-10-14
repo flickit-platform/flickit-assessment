@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE;
+import static org.flickit.assessment.core.common.MessageKey.NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE;
 
 @Slf4j
 @Component
