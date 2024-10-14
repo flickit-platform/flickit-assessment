@@ -26,7 +26,7 @@ public interface UpdateAttributesOrderUseCase {
         Long kitVersionId;
 
         @NotNull(message = UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_NOT_NULL)
-        @Size(min = 1, message = UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_SIZE_MIN)
+        @Size(min = 2, message = UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_SIZE_MIN)
         List<AttributeParam> attributes;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

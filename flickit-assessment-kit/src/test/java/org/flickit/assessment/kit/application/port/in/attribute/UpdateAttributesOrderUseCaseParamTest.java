@@ -29,7 +29,7 @@ class UpdateAttributesOrderUseCaseParamTest {
             () -> createParam(b -> b.attributes(null)));
         assertThat(throwableNullViolation).hasMessage("attributes: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_NOT_NULL);
         var throwableMinViolation = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.attributes(List.of())));
+            () -> createParam(b -> b.attributes(List.of(new AttributeParam(2L, 5)))));
         assertThat(throwableMinViolation).hasMessage("attributes: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_SIZE_MIN);
     }
 
@@ -49,7 +49,7 @@ class UpdateAttributesOrderUseCaseParamTest {
     private Param.ParamBuilder paramBuilder() {
         return Param.builder()
             .kitVersionId(1L)
-            .attributes(List.of(new AttributeParam(2L, 5)))
+            .attributes(List.of(new AttributeParam(2L, 5), new AttributeParam(3L, 6)))
             .currentUserId(UUID.randomUUID());
     }
 }
