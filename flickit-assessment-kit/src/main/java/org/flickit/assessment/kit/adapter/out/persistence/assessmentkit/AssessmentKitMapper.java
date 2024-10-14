@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithDraftVersionIdView;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
@@ -69,5 +70,26 @@ public class AssessmentKitMapper {
             null,
             null,
             entity.getKitVersionId());
+    }
+
+    public static AssessmentKit mapToDomainModel(KitWithDraftVersionIdView view) {
+        AssessmentKitJpaEntity entity = view.getKit();
+        var kit = new AssessmentKit(
+            entity.getId(),
+            entity.getCode(),
+            entity.getTitle(),
+            entity.getSummary(),
+            entity.getAbout(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getPublished(),
+            entity.getIsPrivate(),
+            entity.getExpertGroupId(),
+            null,
+            null,
+            null,
+            entity.getKitVersionId());
+        kit.setDraftVersionId(view.getDraftVersionId());
+        return kit;
     }
 }

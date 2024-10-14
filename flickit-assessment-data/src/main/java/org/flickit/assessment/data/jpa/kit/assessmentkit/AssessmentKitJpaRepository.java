@@ -104,18 +104,22 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     long countAllKitAssessments(@Param("kitId") Long kitId);
 
     @Query("""
-            SELECT k
+            SELECT
+                k AS kit,
+                kv.id AS draftVersionId
             FROM AssessmentKitJpaEntity k
+            LEFT JOIN KitVersionJpaEntity kv ON kv.kit.id = k.id AND kv.status = :updatingStatusId
+            LEFT JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId AND kua.userId = :userId
             WHERE k.expertGroupId = :expertGroupId
                 AND (:includeUnpublished = TRUE OR k.published = TRUE)
-                AND (k.isPrivate = FALSE
-                    OR (k.isPrivate AND k.id IN (SELECT kua.kitId FROM KitUserAccessJpaEntity kua WHERE kua.userId = :userId)))
-            ORDER BY k.published desc, k.lastModificationTime desc
-        """)
-    Page<AssessmentKitJpaEntity> findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(
+                AND (k.isPrivate = FALSE OR kua.userId IS NOT NULL)
+            ORDER BY k.published DESC, k.lastModificationTime DESC
+    """)
+    Page<KitWithDraftVersionIdView> findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(
         @Param("expertGroupId") long expertGroupId,
         @Param("userId") UUID userId,
         @Param("includeUnpublished") boolean includeUnpublishedKits,
+        @Param("updatingStatusId") int updatingStatusId,
         PageRequest pageable);
 
     @Query("""
