@@ -29,7 +29,7 @@ class UpdateSubjectOrdersUseCaseParamTest {
             () -> createParam(b -> b.subjects(null)));
         assertThat(throwableNullViolation).hasMessage("subjects: " + UPDATE_SUBJECT_ORDERS_SUBJECTS_NOT_NULL);
         var throwableMinViolation = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.subjects(List.of())));
+            () -> createParam(b -> b.subjects(List.of(new SubjectParam(2L, 5)))));
         assertThat(throwableMinViolation).hasMessage("subjects: " + UPDATE_SUBJECT_ORDERS_SUBJECTS_SIZE_MIN);
     }
 
@@ -66,7 +66,7 @@ class UpdateSubjectOrdersUseCaseParamTest {
     private Param.ParamBuilder paramBuilder() {
         return Param.builder()
             .kitVersionId(1L)
-            .subjects(List.of(new SubjectParam(2L, 5)))
+            .subjects(List.of(new SubjectParam(2L, 5), new SubjectParam(1L, 6)))
             .currentUserId(UUID.randomUUID());
     }
 
