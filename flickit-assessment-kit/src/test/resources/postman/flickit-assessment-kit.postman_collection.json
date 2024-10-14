@@ -1044,7 +1044,42 @@
 					},
 					"response": []
 				},
-				{
+              {
+                "name": "Update Subject",
+                "request": {
+                  "method": "PUT",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"title\": \"System Software\",\n    \"index\": 3,\n    \"description\": \"Software description\",    \n    \"weight\": 2\n  }",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/subjects/529",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "subjects",
+                      "529"
+                    ]
+                  }
+                },
+                "response": []
+              },{
 					"name": "Delete Subject",
 					"request": {
 						"method": "DELETE",
@@ -1110,6 +1145,41 @@
                         "key": "size",
                         "value": "10"
                       }
+                    ]
+                  }
+                },
+                "response": []
+              },
+              {
+                "name": "Update Subject Orders",
+                "request": {
+                  "method": "PUT",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects-change-order",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "336",
+                      "subjects-change-order"
                     ]
                   }
                 },

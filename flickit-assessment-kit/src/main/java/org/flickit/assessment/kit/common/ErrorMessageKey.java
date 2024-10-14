@@ -214,6 +214,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-maturity-level-orders.kitVersionId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL = "update-maturity-level-orders.orders.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_SIZE_MIN = "update-maturity-level-orders.size.min";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_ID_NOT_NULL = "update-maturity-level-orders.maturityLevelId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level-orders.maturityLevel.index.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
@@ -248,6 +249,24 @@ public class ErrorMessageKey {
     public static final String GET_SUBJECT_LIST_SIZE_MIN = "get-subject-list.size.min";
     public static final String GET_SUBJECT_LIST_SIZE_MAX = "get-subject-list.size.max";
     public static final String GET_SUBJECT_LIST_PAGE_MIN = "get-subject-list.page.min";
+
+    public static final String UPDATE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "update-subject.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_SUBJECT_ID_NOT_NULL = "update-subject.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_INDEX_NOT_NULL = "update-subject.index.notNull";
+    public static final String UPDATE_SUBJECT_TITLE_NOT_NULL = "update-subject.title.notNull";
+    public static final String UPDATE_SUBJECT_TITLE_SIZE_MIN = "update-subject.title.size.min";
+    public static final String UPDATE_SUBJECT_TITLE_SIZE_MAX = "update-subject.title.size.max";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_NOT_NULL = "update-subject.description.notNull";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MIN = "update-subject.description.size.min";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MAX = "update-subject.description.size.max";
+    public static final String UPDATE_SUBJECT_WEIGHT_NOT_NULL = "update-subject.weight.notNull";
+
+    public static final String UPDATE_SUBJECT_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-subject-orders.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECTS_NOT_NULL = "update-subject-orders.subjects.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECTS_SIZE_MIN = "update-subject-orders.subjects.size.min";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECT_ID_NOT_NULL = "update-subject-orders.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_INDEX_NOT_NULL = "update-subject-orders.index.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_INDEX_MIN = "update-subject-orders.index.min";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
