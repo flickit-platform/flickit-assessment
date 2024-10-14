@@ -13,8 +13,7 @@ import java.util.List;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +22,8 @@ public class AttributePersistenceJpaAdapter implements
     CreateAttributePort,
     LoadAttributePort,
     CountAttributeImpactfulQuestionsPort,
-    LoadAllAttributesPort {
+    LoadAllAttributesPort,
+    DeleteAttributePort {
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -66,5 +66,13 @@ public class AttributePersistenceJpaAdapter implements
         return repository.findAllByIdInAndKitVersionId(attributeIds, kitVersionId).stream()
             .map(AttributeMapper::mapToDomainModel)
             .toList();
+    }
+
+    @Override
+    public void delete(long attributeId, long kitVersionId) {
+        if (!repository.existsByIdAndKitVersionId(attributeId, kitVersionId))
+            throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
+
+        repository.deleteByIdAndKitVersionId(attributeId, kitVersionId);
     }
 }

@@ -554,7 +554,34 @@
 						}
 					},
 					"response": []
-				}
+				},
+              {
+                "name": "Delete Attribute",
+                "request": {
+                  "method": "DELETE",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes/1961",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "attributes",
+                      "1961"
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		},
 		{

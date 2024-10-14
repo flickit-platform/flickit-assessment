@@ -268,6 +268,10 @@ public class ErrorMessageKey {
     public static final String UPDATE_SUBJECT_ORDERS_INDEX_NOT_NULL = "update-subject-orders.index.notNull";
     public static final String UPDATE_SUBJECT_ORDERS_INDEX_MIN = "update-subject-orders.index.min";
 
+    public static final String DELETE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "delete-attribute.kitVersionId.notNull";
+    public static final String DELETE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "delete-attribute.attributeId.notNull";
+    public static final String DELETE_ATTRIBUTE_NOT_ALLOWED = "delete-attribute.notAllowed";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
