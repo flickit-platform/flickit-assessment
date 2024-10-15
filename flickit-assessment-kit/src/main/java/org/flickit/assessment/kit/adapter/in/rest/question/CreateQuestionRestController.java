@@ -19,26 +19,24 @@ public class CreateQuestionRestController {
     private final CreateQuestionUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessment-kits/{kitId}/questionnaires/{questionnaireId}/questions")
-    public ResponseEntity<CreateQuestionResponseDto> createQuestion(@PathVariable("kitId") Long kitId,
-                                                                    @PathVariable("questionnaireId") Long questionnaireId,
-                                                                    @RequestBody CreateQuestionRequestDto dto) {
+    @PostMapping("/kit-versions/{kitVersionId}/questions")
+    public ResponseEntity<CreateQuestionResponseDto> createQuestion(@PathVariable("kitVersionId") Long kitVersionId,
+                                                                    @RequestBody CreateQuestionRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        long questionId = useCase.createQuestion(toParam(kitId, questionnaireId, currentUserId, dto));
+        long questionId = useCase.createQuestion(toParam(kitVersionId, currentUserId, requestDto));
         return new ResponseEntity<>(new CreateQuestionResponseDto(questionId), HttpStatus.CREATED);
     }
 
-    private static CreateQuestionUseCase.Param toParam(Long kitId,
-                                                       Long questionnaireId,
+    private static CreateQuestionUseCase.Param toParam(Long kitVersionId,
                                                        UUID currentUserId,
                                                        CreateQuestionRequestDto dto) {
-        return new CreateQuestionUseCase.Param(kitId,
+        return new CreateQuestionUseCase.Param(kitVersionId,
             dto.index(),
             dto.title(),
             dto.hint(),
             dto.mayNotBeApplicable(),
             dto.advisable(),
-            questionnaireId,
+            dto.questionnaireId(),
             currentUserId);
     }
 }
