@@ -13,7 +13,6 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepos
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
-import org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper;
@@ -23,7 +22,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.Question
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitByVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitFullInfoPort;
 import org.springframework.stereotype.Component;
 
@@ -36,8 +34,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 @Component
 @AllArgsConstructor
 public class LoadAssessmentKitFullInfoAdapter implements
-    LoadAssessmentKitFullInfoPort,
-    LoadAssessmentKitByVersionIdPort {
+    LoadAssessmentKitFullInfoPort {
 
     private final AssessmentKitJpaRepository repository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
@@ -129,12 +126,5 @@ public class LoadAssessmentKitFullInfoAdapter implements
     private void setQuestions(List<Questionnaire> questionnaires, List<Question> questions) {
         Map<Long, List<Question>> groupedQuestions = questions.stream().collect(Collectors.groupingBy(Question::getQuestionnaireId));
         questionnaires.forEach(q -> q.setQuestions(groupedQuestions.get(q.getId())));
-    }
-
-    @Override
-    public AssessmentKit loadByVersionId(Long kitVersionId) {
-        return repository.findByKitVersionId(kitVersionId)
-            .map(AssessmentKitMapper::mapToDomainModel)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
     }
 }

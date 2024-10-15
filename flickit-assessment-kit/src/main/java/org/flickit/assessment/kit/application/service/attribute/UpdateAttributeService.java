@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.common.util.SlugCodeUtil;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitByVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionStatusByIdPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionModificationInfoPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,17 +26,16 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_NOT_
 @RequiredArgsConstructor
 public class UpdateAttributeService implements UpdateAttributeUseCase {
 
-    private final LoadAssessmentKitByVersionIdPort loadAssessmentKitByVersionIdPort;
+    private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final LoadKitVersionStatusByIdPort loadKitVersionStatusByIdPort;
     private final UpdateAttributePort updateAttributePort;
     private final UpdateKitVersionModificationInfoPort updateKitVersionModificationInfoPort;
 
     @Override
     public void updateAttribute(Param param) {
-        var assessmentKit = loadAssessmentKitByVersionIdPort.loadByVersionId(param.getKitVersionId());
-        checkUserAccess(assessmentKit.getExpertGroupId(), param.getCurrentUserId());
-        checkKitVersionStatus(param);
+        var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        checkUserAccess(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId());
+        checkKitVersionStatus(kitVersion);
         updateAttributePort.update(toParam(param));
         updateKitVersionModificationInfoPort.updateModificationInfo(param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
     }
@@ -47,9 +46,8 @@ public class UpdateAttributeService implements UpdateAttributeUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private void checkKitVersionStatus(Param param) {
-        var status = loadKitVersionStatusByIdPort.loadStatusById(param.getKitVersionId());
-        if (!Objects.equals(status, KitVersionStatus.UPDATING)) {
+    private void checkKitVersionStatus(KitVersion kitVersion) {
+        if (!Objects.equals(kitVersion.getStatus(), KitVersionStatus.UPDATING)) {
             throw new ValidationException(KIT_VERSION_NOT_UPDATING_STATUS);
         }
     }
