@@ -20,7 +20,7 @@ public class UpdateKitAttributeRestController {
     private final UpdateKitAttributeUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessment-kits/{kitVersionId}/attributes/{attributeId}")
+    @PutMapping("/kit-versions/{kitVersionId}/attributes/{attributeId}")
     public ResponseEntity<Void> updateKitAttribute(
         @PathVariable("kitVersionId") Long kitVersionId,
         @PathVariable("attributeId") Long attributeId,

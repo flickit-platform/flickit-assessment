@@ -576,13 +576,13 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/attributes/10",
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/302/attributes/10",
                     "host": [
                       "{{base_url}}"
                     ],
                     "path": [
                       "{{api_path}}",
-                      "assessment-kits",
+                      "kit-versions",
                       "302",
                       "attributes",
                       "10"
