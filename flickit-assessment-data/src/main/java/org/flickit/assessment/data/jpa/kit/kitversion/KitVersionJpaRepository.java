@@ -5,9 +5,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEntity, Long> {
 
     @Modifying
@@ -17,15 +14,4 @@ public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEnti
             WHERE id = :id
         """)
     void updateStatus(@Param("id") long kitVersionId, @Param("status") int status);
-
-    @Modifying
-    @Query("""
-            UPDATE KitVersionJpaEntity kv
-            SET kv.lastModificationTime = :lastModificationTime,
-                kv.lastModifiedBy = :lastModifiedBy
-            WHERE kv.id = :id
-        """)
-    void updateModificationInfo(@Param("id") long id,
-                                @Param("lastModificationTime") LocalDateTime lastModificationTime,
-                                @Param("lastModifiedBy") UUID lastModifiedBy);
 }
