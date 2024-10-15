@@ -263,9 +263,6 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_KIT_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "update-kit-attribute.kitVersionId.notNull";
     public static final String UPDATE_KIT_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "update-kit-attribute.attributeId.notNull";
-    public static final String UPDATE_KIT_ATTRIBUTE_CODE_NOT_BLANK = "update-kit-attribute.code.notBlank";
-    public static final String UPDATE_KIT_ATTRIBUTE_CODE_SIZE_MIN = "update-kit-attribute.code.sizeMin";
-    public static final String UPDATE_KIT_ATTRIBUTE_CODE_SIZE_MAX = "update-kit-attribute.code.sizeMax";
     public static final String UPDATE_KIT_ATTRIBUTE_TITLE_NOT_BLANK = "update-kit-attribute.title.notBlank";
     public static final String UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MIN = "update-kit-attribute.title.sizeMin";
     public static final String UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MAX = "update-kit-attribute.title.sizeMax";

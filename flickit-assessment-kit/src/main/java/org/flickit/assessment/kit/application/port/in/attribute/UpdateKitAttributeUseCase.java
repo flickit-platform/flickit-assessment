@@ -27,11 +27,6 @@ public interface UpdateKitAttributeUseCase {
         @NotNull(message = UPDATE_KIT_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @NotBlank(message = UPDATE_KIT_ATTRIBUTE_CODE_NOT_BLANK)
-        @Size(min = 3, message = UPDATE_KIT_ATTRIBUTE_CODE_SIZE_MIN)
-        @Size(max = 50, message = UPDATE_KIT_ATTRIBUTE_CODE_SIZE_MAX)
-        String code;
-
         @NotBlank(message = UPDATE_KIT_ATTRIBUTE_TITLE_NOT_BLANK)
         @Size(min = 3, message = UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MIN)
         @Size(max = 100, message = UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MAX)
@@ -56,7 +51,6 @@ public interface UpdateKitAttributeUseCase {
 
         public Param(Long kitVersionId,
                      Long attributeId,
-                     String code,
                      String title,
                      String description,
                      Long subjectId,
@@ -65,7 +59,6 @@ public interface UpdateKitAttributeUseCase {
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.attributeId = attributeId;
-            this.code = code;
             this.title = title;
             this.description = description;
             this.subjectId = subjectId;

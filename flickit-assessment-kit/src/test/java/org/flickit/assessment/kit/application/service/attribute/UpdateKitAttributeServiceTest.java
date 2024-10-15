@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.attribute;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateKitAttributeUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitByVersionIdPort;
@@ -50,7 +51,6 @@ class UpdateKitAttributeServiceTest {
     void testUpdateKitAttribute_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
         Param param = new Param(12L,
             13L,
-            "code0",
             "Attribute",
             "simple description",
             14L,
@@ -73,7 +73,6 @@ class UpdateKitAttributeServiceTest {
     void testUpdateKitAttribute_KitIsOnActiveStatus_ThrowsException() {
         Param param = new Param(12L,
             13L,
-            "code0",
             "Attribute",
             "simple description",
             14L,
@@ -96,7 +95,6 @@ class UpdateKitAttributeServiceTest {
     void testUpdateKitAttribute_KitIsOnArchiveStatus_ThrowsException() {
         Param param = new Param(12L,
             13L,
-            "code0",
             "Attribute",
             "simple description",
             14L,
@@ -119,7 +117,6 @@ class UpdateKitAttributeServiceTest {
     void testUpdateKitAttribute_ValidParam_UpdateAttributeAndKitVersion() {
         Param param = new Param(12L,
             13L,
-            "code0",
             "Attribute",
             "simple description",
             14L,
@@ -140,7 +137,7 @@ class UpdateKitAttributeServiceTest {
 
         assertEquals(param.getKitVersionId(), attributeUpdateParam.getValue().kitVersionId());
         assertEquals(param.getAttributeId(), attributeUpdateParam.getValue().id());
-        assertEquals(param.getCode(), attributeUpdateParam.getValue().code());
+        assertEquals(Attribute.generateSlugCode(param.getTitle()), attributeUpdateParam.getValue().code());
         assertEquals(param.getTitle(), attributeUpdateParam.getValue().title());
         assertEquals(param.getDescription(), attributeUpdateParam.getValue().description());
         assertEquals(param.getSubjectId(), attributeUpdateParam.getValue().subjectId());

@@ -37,7 +37,6 @@ public class UpdateKitAttributeRestController {
                           UUID currentUserId) {
         return new Param(kitVersionId,
             attributeId,
-            requestDto.code(),
             requestDto.title(),
             requestDto.description(),
             requestDto.subjectId(),
