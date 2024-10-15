@@ -279,6 +279,11 @@ public class ErrorMessageKey {
     public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL = "update-attribute-orders.index.notNull";
     public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN = "update-attribute-orders.index.min";
 
+    public static final String GET_QUESTIONNAIRES_KIT_VERSION_ID_NOT_NULL = "get-questionnaires.kitVersionId.notNull";
+    public static final String GET_QUESTIONNAIRES_PAGE_MIN = "get-questionnaires.page.min";
+    public static final String GET_QUESTIONNAIRES_SIZE_MIN = "get-questionnaires.size.min";
+    public static final String GET_QUESTIONNAIRES_SIZE_MAX = "get-questionnaires.size.max";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
