@@ -49,12 +49,13 @@ class UpdateAttributeOrdersUseCaseParamTest {
 
     @Test
     void testUpdateAttributeOrdersUseCaseAttributeParam_indexParamViolatesConstraints_ErrorMessage() {
-        var throwableNullViolates = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createAttributeParam(b -> b.index(null)));
-        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL);
-        var throwableMinViolates = assertThrows(ConstraintViolationException.class,
+        assertThat(throwable).hasMessage("index: " + UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createAttributeParam(b -> b.index(0)));
-        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN);
+        assertThat(throwable).hasMessage("index: " + UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN);
     }
 
     private void createParam(Consumer<Param.ParamBuilder> changer) {

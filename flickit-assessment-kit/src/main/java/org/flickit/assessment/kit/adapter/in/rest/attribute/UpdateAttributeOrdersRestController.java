@@ -21,7 +21,7 @@ public class UpdateAttributeOrdersRestController {
     private final UpdateAttributeOrdersUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("kit-versions/{kitVersionId}/attributes-change-order")
+    @PutMapping("/kit-versions/{kitVersionId}/attributes-change-order")
     public ResponseEntity<Void> updateAttributeOrders(@PathVariable("kitVersionId") Long kitVersionId,
                                                       @RequestBody UpdateAttributeOrdersRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
