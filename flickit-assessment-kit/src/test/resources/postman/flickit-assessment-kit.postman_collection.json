@@ -1059,7 +1059,7 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/444/questionnaires-change-orders",
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/444/questionnaires-change-order",
                     "host": [
                       "{{base_url}}"
                     ],
@@ -1067,7 +1067,7 @@
                       "{{api_path}}",
                       "kit-versions",
                       "444",
-                      "questionnaires-change-orders"
+                      "questionnaires-change-order"
                     ]
                   }
                 },
