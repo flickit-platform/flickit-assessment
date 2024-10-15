@@ -74,9 +74,6 @@ class UpdateAttributeUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.weight(null)));
         assertThat(throwable).hasMessage("weight: " + UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL);
-        throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(a -> a.weight(0)));
-        assertThat(throwable).hasMessage("weight: " + UPDATE_ATTRIBUTE_WEIGHT_MIN);
     }
 
     @Test

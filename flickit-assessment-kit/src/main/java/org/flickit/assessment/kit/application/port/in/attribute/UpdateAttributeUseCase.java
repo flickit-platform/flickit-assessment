@@ -1,6 +1,5 @@
 package org.flickit.assessment.kit.application.port.in.attribute;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -42,7 +41,6 @@ public interface UpdateAttributeUseCase {
         String description;
 
         @NotNull(message = UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL)
-        @Min(value = 1, message = UPDATE_ATTRIBUTE_WEIGHT_MIN)
         Integer weight;
 
         @NotNull(message = UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL)
