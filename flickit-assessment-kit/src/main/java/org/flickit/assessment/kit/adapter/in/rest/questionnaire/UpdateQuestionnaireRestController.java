@@ -19,21 +19,21 @@ public class UpdateQuestionnaireRestController {
     private final UpdateQuestionnaireUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessment-kits/{kitId}/questionnaires/{questionnaireId}")
-    public ResponseEntity<Void> updateQuestionnaire(@PathVariable("kitId") Long kitId,
+    @PutMapping("/kit-versions/{kitVersionId}/questionnaires/{questionnaireId}")
+    public ResponseEntity<Void> updateQuestionnaire(@PathVariable("kitVersionId") Long kitVersionId,
                                                     @PathVariable("questionnaireId") Long questionnaireId,
                                                     @RequestParam UpdateQuestionnaireRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.updateQuestionnaire(toParam(kitId, questionnaireId, currentUserId, requestDto));
+        useCase.updateQuestionnaire(toParam(kitVersionId, questionnaireId, currentUserId, requestDto));
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateQuestionnaireUseCase.Param toParam(Long kitId,
+    private UpdateQuestionnaireUseCase.Param toParam(Long kitVersionId,
                                                      Long questionnaireId,
                                                      UUID currentUserId,
                                                      UpdateQuestionnaireRequestDto requestDto) {
-        return new UpdateQuestionnaireUseCase.Param(kitId,
+        return new UpdateQuestionnaireUseCase.Param(kitVersionId,
             questionnaireId,
             requestDto.index(),
             requestDto.title(),
