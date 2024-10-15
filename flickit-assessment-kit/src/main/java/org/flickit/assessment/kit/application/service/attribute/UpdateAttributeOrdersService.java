@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort.UpdateOrderParam;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -17,14 +17,14 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateAttributesOrderService implements UpdateAttributesOrderUseCase {
+public class UpdateAttributeOrdersService implements UpdateAttributeOrdersUseCase {
 
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final UpdateAttributePort updateAttributePort;
 
     @Override
-    public void updateAttributesOrder(Param param) {
+    public void updateAttributeOrders(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))

@@ -14,19 +14,19 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public interface UpdateAttributesOrderUseCase {
+public interface UpdateAttributeOrdersUseCase {
 
-    void updateAttributesOrder(Param param);
+    void updateAttributeOrders(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_ATTRIBUTES_ORDER_KIT_VERSION_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_ORDERS_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_NOT_NULL)
-        @Size(min = 2, message = UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_SIZE_MIN)
+        @NotNull(message = UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_NOT_NULL)
+        @Size(min = 2, message = UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_SIZE_MIN)
         List<AttributeParam> attributes;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -45,11 +45,11 @@ public interface UpdateAttributesOrderUseCase {
     @EqualsAndHashCode(callSuper = true)
     class AttributeParam extends SelfValidating<AttributeParam> {
 
-        @NotNull(message = UPDATE_ATTRIBUTES_ORDER_ATTRIBUTE_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTE_ID_NOT_NULL)
         Long id;
 
-        @NotNull(message = UPDATE_ATTRIBUTES_ORDER_INDEX_NOT_NULL)
-        @Min(value = 1, message = UPDATE_ATTRIBUTES_ORDER_INDEX_MIN)
+        @NotNull(message = UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL)
+        @Min(value = 1, message = UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN)
         Integer index;
 
         @Builder

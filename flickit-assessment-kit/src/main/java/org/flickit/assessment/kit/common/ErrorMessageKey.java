@@ -272,12 +272,12 @@ public class ErrorMessageKey {
     public static final String DELETE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "delete-attribute.attributeId.notNull";
     public static final String DELETE_ATTRIBUTE_NOT_ALLOWED = "delete-attribute.notAllowed";
 
-    public static final String UPDATE_ATTRIBUTES_ORDER_KIT_VERSION_ID_NOT_NULL = "update-attributes-order.kitVersionId.notNull";
-    public static final String UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_NOT_NULL = "update-attributes-order.attributes.notNull";
-    public static final String UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_SIZE_MIN = "update-attributes-order.attributes.size.min";
-    public static final String UPDATE_ATTRIBUTES_ORDER_ATTRIBUTE_ID_NOT_NULL = "update-attributes-order.attributeId.notNull";
-    public static final String UPDATE_ATTRIBUTES_ORDER_INDEX_NOT_NULL = "update-attributes-order.index.notNull";
-    public static final String UPDATE_ATTRIBUTES_ORDER_INDEX_MIN = "update-attributes-order.index.min";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-attribute-orders.kitVersionId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_NOT_NULL = "update-attribute-orders.attributes.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_SIZE_MIN = "update-attribute-orders.attributes.size.min";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTE_ID_NOT_NULL = "update-attribute-orders.attributeId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL = "update-attribute-orders.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN = "update-attribute-orders.index.min";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

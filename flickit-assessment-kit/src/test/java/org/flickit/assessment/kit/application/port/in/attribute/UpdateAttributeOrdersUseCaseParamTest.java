@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.application.port.in.attribute;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase.AttributeParam;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase.AttributeParam;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase.Param;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,47 +14,47 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class UpdateAttributesOrderUseCaseParamTest {
+class UpdateAttributeOrdersUseCaseParamTest {
 
     @Test
-    void testUpdateAttributesOrderUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
+    void testUpdateAttributeOrdersUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
-        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_ATTRIBUTES_ORDER_KIT_VERSION_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_ATTRIBUTE_ORDERS_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributesOrderUseCaseParam_attributesParamViolatesConstraints_ErrorMessage() {
+    void testUpdateAttributeOrdersUseCaseParam_attributesParamViolatesConstraints_ErrorMessage() {
         var throwableNullViolation = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributes(null)));
-        assertThat(throwableNullViolation).hasMessage("attributes: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_NOT_NULL);
+        assertThat(throwableNullViolation).hasMessage("attributes: " + UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_NOT_NULL);
         var throwableMinViolation = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributes(List.of(new AttributeParam(2L, 5)))));
-        assertThat(throwableMinViolation).hasMessage("attributes: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTES_SIZE_MIN);
+        assertThat(throwableMinViolation).hasMessage("attributes: " + UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_SIZE_MIN);
     }
 
     @Test
-    void testUpdateAttributesOrderUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
+    void testUpdateAttributeOrdersUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributesOrderUseCaseAttributeParam_attributeIdParamViolatesConstraints_ErrorMessage() {
+    void testUpdateAttributeOrdersUseCaseAttributeParam_attributeIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createAttributeParam(b -> b.id(null)));
-        assertThat(throwable).hasMessage("id: " + UPDATE_ATTRIBUTES_ORDER_ATTRIBUTE_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("id: " + UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributesOrderUseCaseAttributeParam_indexParamViolatesConstraints_ErrorMessage() {
+    void testUpdateAttributeOrdersUseCaseAttributeParam_indexParamViolatesConstraints_ErrorMessage() {
         var throwableNullViolates = assertThrows(ConstraintViolationException.class,
             () -> createAttributeParam(b -> b.index(null)));
-        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_ATTRIBUTES_ORDER_INDEX_NOT_NULL);
+        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL);
         var throwableMinViolates = assertThrows(ConstraintViolationException.class,
             () -> createAttributeParam(b -> b.index(0)));
-        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_ATTRIBUTES_ORDER_INDEX_MIN);
+        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN);
     }
 
     private void createParam(Consumer<Param.ParamBuilder> changer) {

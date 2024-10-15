@@ -2,9 +2,9 @@ package org.flickit.assessment.kit.adapter.in.rest.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase.AttributeParam;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase.AttributeParam;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,20 +16,20 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class UpdateAttributesOrderRestController {
+public class UpdateAttributeOrdersRestController {
 
-    private final UpdateAttributesOrderUseCase useCase;
+    private final UpdateAttributeOrdersUseCase useCase;
     private final UserContext userContext;
 
     @PutMapping("kit-versions/{kitVersionId}/attributes-change-order")
-    public ResponseEntity<Void> updateAttributesOrder(@PathVariable("kitVersionId") Long kitVersionId,
-                                                    @RequestBody UpdateAttributesOrderRequestDto requestDto) {
+    public ResponseEntity<Void> updateAttributeOrders(@PathVariable("kitVersionId") Long kitVersionId,
+                                                      @RequestBody UpdateAttributeOrdersRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.updateAttributesOrder(toParam(kitVersionId, requestDto, currentUserId));
+        useCase.updateAttributeOrders(toParam(kitVersionId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Long kitVersionId, UpdateAttributesOrderRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(Long kitVersionId, UpdateAttributeOrdersRequestDto requestDto, UUID currentUserId) {
         var orders = requestDto.attributes().stream()
             .map(s -> new AttributeParam(s.id(), s.index()))
             .toList();

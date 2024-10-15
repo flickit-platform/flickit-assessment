@@ -2,9 +2,9 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase.AttributeParam;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributesOrderUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase.AttributeParam;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeOrdersUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateAttributesOrderServiceTest {
+class UpdateAttributeOrdersServiceTest {
 
     @InjectMocks
-    private UpdateAttributesOrderService service;
+    private UpdateAttributeOrdersService service;
 
     @Mock
     private LoadKitVersionPort loadKitVersionPort;
@@ -44,26 +44,26 @@ class UpdateAttributesOrderServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testUpdateAttributesOrder_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
-        Param param = createParam(UpdateAttributesOrderUseCase.Param.ParamBuilder::build);
+    void testUpdateAttributeOrders_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
+        Param param = createParam(UpdateAttributeOrdersUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.updateAttributesOrder(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.updateAttributeOrders(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
         verifyNoInteractions(updateAttributePort);
     }
 
     @Test
-    void testUpdateAttributesOrder_ValidParam_UpdateAttributesIndex() {
+    void testUpdateAttributeOrders_ValidParam_UpdateAttributesIndex() {
         Param param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        service.updateAttributesOrder(param);
+        service.updateAttributeOrders(param);
         ArgumentCaptor<UpdateAttributePort.UpdateOrderParam> portParamCaptor = ArgumentCaptor.forClass(UpdateAttributePort.UpdateOrderParam.class);
         verify(updateAttributePort, times(1)).updateOrders(portParamCaptor.capture());
 
