@@ -37,6 +37,7 @@ public interface UpdateAttributeUseCase {
 
         @NotBlank(message = UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK)
         @Size(min = 3, message = UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN)
+        @Size(max = 500, message = UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX)
         String description;
 
         @NotNull(message = UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL)

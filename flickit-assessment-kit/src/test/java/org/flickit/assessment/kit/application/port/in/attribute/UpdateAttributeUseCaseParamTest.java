@@ -118,6 +118,21 @@ class UpdateAttributeUseCaseParamTest {
     }
 
     @Test
+    void testUpdateAttributeParam_descriptionSizeIsMoreThanMax_ErrorMessage() {
+        var kitVersionId = 16L;
+        var attributeId = 25L;
+        var title = "title";
+        var description = RandomStringUtils.randomAlphanumeric(501);
+        var subjectId = 18L;
+        var index = 2;
+        var weight = 1;
+        var currentUserId = UUID.randomUUID();
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> new Param(attributeId, kitVersionId, index, title, description, weight, subjectId, currentUserId));
+        assertThat(throwable).hasMessage("description: " + UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX);
+    }
+
+    @Test
     void testUpdateAttributeParam_subjectIdIsNull_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;

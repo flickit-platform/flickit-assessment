@@ -283,10 +283,11 @@ public class ErrorMessageKey {
     public static final String UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "update-attribute.kitVersionId.notNull";
     public static final String UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "update-attribute.attributeId.notNull";
     public static final String UPDATE_ATTRIBUTE_TITLE_NOT_BLANK = "update-attribute.title.notBlank";
-    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MIN = "update-attribute.title.sizeMin";
-    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MAX = "update-attribute.title.sizeMax";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MIN = "update-attribute.title.size.min";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MAX = "update-attribute.title.size.max";
     public static final String UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK = "update-attribute.description.notBlank";
-    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "update-attribute.description.sizeMin";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "update-attribute.description.size.min";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "update-attribute.description.size.max";
     public static final String UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "update-attribute.subjectId.notNull";
     public static final String UPDATE_ATTRIBUTE_INDEX_NOT_NULL = "update-attribute.index.notNull";
     public static final String UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL = "update-attribute.weight.notNull";
