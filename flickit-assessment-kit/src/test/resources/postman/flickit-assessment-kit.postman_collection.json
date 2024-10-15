@@ -45,6 +45,39 @@
 					"response": []
 				},
 				{
+					"name": "Create Assessment kit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"sample title\",\n    \"summary\":\"sample summary\",\n    \"about\":\"sample about\",\n    \"isPrivate\": false,\n    \"tagIds\":[1,2,3],\n    \"expertGroupId\":1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create Kit by Dsl",
 					"request": {
 						"method": "POST",
@@ -487,10 +520,72 @@
 					},
 					"response": []
 				},
+				{
+					"name": "Create Attribute",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"attributes"
+							]
+						}
+					},
+					"response": []
+				},
               {
-                "name": "Create Attribute",
+                "name": "Delete Attribute",
                 "request": {
-                  "method": "POST",
+                  "method": "DELETE",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes/1961",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "attributes",
+                      "1961"
+                    ]
+                  }
+                },
+                "response": []
+              },
+              {
+                "name": "Update Attribute Orders",
+                "request": {
+                  "method": "PUT",
                   "header": [
                     {
                       "key": "Authorization",
@@ -500,7 +595,7 @@
                   ],
                   "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
+                    "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
                     "options": {
                       "raw": {
                         "language": "json"
@@ -508,15 +603,15 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes",
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/attributes-change-order",
                     "host": [
                       "{{base_url}}"
                     ],
                     "path": [
                       "{{api_path}}",
                       "kit-versions",
-                      "393",
-                      "attributes"
+                      "336",
+                      "attributes-change-order"
                     ]
                   }
                 },
@@ -685,6 +780,37 @@
 			]
 		},
 		{
+			"name": "KitVersion",
+			"item": [
+				{
+					"name": "Activate Kit Version",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/516/activate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"516",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "levelcompetence",
 			"item": [
 				{
@@ -708,15 +834,41 @@
 							}
 						},
 						"url": {
-                          "raw": "{{base_url}}/{{api_path}}/kit-versions/303/level-competences",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/303/level-competences",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-                              "kit-versions",
+								"kit-versions",
 								"303",
 								"level-competences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Level Competences",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+                          "raw": "{{base_url}}/{{api_path}}/kit-versions/348/level-competences",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"348",
+                              "level-competences"
 							]
 						}
 					},
@@ -758,33 +910,33 @@
 					},
 					"response": []
 				},
-              {
-                "name": "Delete Level Competence",
-                "request": {
-                  "method": "DELETE",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/level-competences/1838",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "393",
-                      "level-competences",
-                      "1838"
-                    ]
-                  }
-                },
-                "response": []
-              }
+				{
+					"name": "Delete Level Competence",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/level-competences/1838",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"level-competences",
+								"1838"
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		},
 		{
@@ -851,41 +1003,42 @@
 					},
 					"response": []
 				},
-              {
-                "name": "Create Questionnaire",
-                "request": {
-                  "method": "POST",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
-                    "options": {
-                      "raw": {
-                        "language": "json"
-                      }
-                    }
-                  },
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "393",
-                      "questionnaires"
-                    ]
-                  }
-                },
-                "response": []
-              },
+				{
+					"name": "Create Questionnaire",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questionnaires"
+							]
+						}
+					},
+					"response": []
+				}
+            ,
               {
                 "name": "Get Questionnaires",
                 "request": {
@@ -955,10 +1108,45 @@
 					},
 					"response": []
 				},
+				{
+					"name": "Create Subject",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"336",
+								"subjects"
+							]
+						}
+					},
+					"response": []
+				},
               {
-                "name": "Create Subject",
+                "name": "Update Subject",
                 "request": {
-                  "method": "POST",
+                  "method": "PUT",
                   "header": [
                     {
                       "key": "Authorization",
@@ -968,7 +1156,7 @@
                   ],
                   "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
+                    "raw": "{\n    \"title\": \"System Software\",\n    \"index\": 3,\n    \"description\": \"Software description\",    \n    \"weight\": 2\n  }",
                     "options": {
                       "raw": {
                         "language": "json"
@@ -976,7 +1164,113 @@
                     }
                   },
                   "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects",
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/subjects/529",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "subjects",
+                      "529"
+                    ]
+                  }
+                },
+                "response": []
+              },{
+					"name": "Delete Subject",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/419/subjects/576",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"419",
+								"subjects",
+								"576"
+							]
+						}
+					},
+					"response": []
+				},{
+                "name": "Get Subject List",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/381/subjects?page=0&size=10",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "381",
+                      "subjects"
+                    ],
+                    "query": [
+                      {
+                        "key": "page",
+                        "value": "0"
+                      },
+                      {
+                        "key": "size",
+                        "value": "10"
+                      }
+                    ]
+                  }
+                },
+                "response": []
+              },
+              {
+                "name": "Update Subject Orders",
+                "request": {
+                  "method": "PUT",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects-change-order",
                     "host": [
                       "{{base_url}}"
                     ],
@@ -984,7 +1278,7 @@
                       "{{api_path}}",
                       "kit-versions",
                       "336",
-                      "subjects"
+                      "subjects-change-order"
                     ]
                   }
                 },
@@ -1123,6 +1417,42 @@
 								"kit-versions",
 								"444",
 								"maturity-levels-change-order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kit Maturity Levels",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels?page=0&size=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"maturity-levels"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								}
 							]
 						}
 					},

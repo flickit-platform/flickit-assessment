@@ -40,7 +40,7 @@ public class GetKitDetailService implements GetKitDetailUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         var kitVersionId = loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId());
 
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(kitVersionId);
+        var maturityLevels = loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId);
         var subjects = loadSubjectsPort.loadByKitVersionId(kitVersionId);
         var questionnaires = loadQuestionnairesPort.loadByKitId(param.getKitId());
 
