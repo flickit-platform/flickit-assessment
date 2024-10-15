@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_NOT_UPDATING_STATUS;
@@ -40,11 +41,7 @@ class UpdateAttributeServiceTest {
 
     @Test
     void testUpdateAttribute_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
-        Param param = new Param(13L, 12L,
-            10, "Attribute",
-            "simple description",
-            20, 14L,
-            UUID.randomUUID());
+        Param param = createParam(Param.ParamBuilder::build);
         var expertGroupOwnerId = UUID.randomUUID();
 
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
@@ -59,11 +56,7 @@ class UpdateAttributeServiceTest {
 
     @Test
     void testUpdateAttribute_KitIsOnActiveStatus_ThrowsException() {
-        Param param = new Param(13L, 12L,
-            10, "Attribute",
-            "simple description",
-            20, 14L,
-            UUID.randomUUID());
+        Param param = createParam(Param.ParamBuilder::build);
 
         var kitVersion = KitVersionMother.createActiveKitVersion(AssessmentKitMother.simpleKit());
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -77,11 +70,7 @@ class UpdateAttributeServiceTest {
 
     @Test
     void testUpdateAttribute_ValidParam_UpdateAttributeAndKitVersion() {
-        Param param = new Param(13L, 12L,
-            10, "Attribute",
-            "simple description",
-            20, 14L,
-            UUID.randomUUID());
+        Param param = createParam(Param.ParamBuilder::build);
 
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -102,5 +91,23 @@ class UpdateAttributeServiceTest {
         assertEquals(param.getWeight(), attributeUpdateParam.getValue().weight());
         assertEquals(param.getCurrentUserId(), attributeUpdateParam.getValue().lastModifiedBy());
         assertNotNull(attributeUpdateParam.getValue().lastModificationTime());
+    }
+
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .kitVersionId(16L)
+            .attributeId(25L)
+            .title("title")
+            .description("description")
+            .subjectId(18L)
+            .index(2)
+            .weight(1)
+            .currentUserId(UUID.randomUUID());
     }
 }
