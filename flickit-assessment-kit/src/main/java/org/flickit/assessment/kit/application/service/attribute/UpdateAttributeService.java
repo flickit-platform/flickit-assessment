@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.application.service.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitByVersionIdPort;
@@ -57,7 +57,7 @@ public class UpdateAttributeService implements UpdateAttributeUseCase {
     private UpdateAttributePort.Param toParam(Param param) {
         return new UpdateAttributePort.Param(param.getAttributeId(),
             param.getKitVersionId(),
-            Attribute.generateSlugCode(param.getTitle()),
+            SlugCodeUtil.generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),

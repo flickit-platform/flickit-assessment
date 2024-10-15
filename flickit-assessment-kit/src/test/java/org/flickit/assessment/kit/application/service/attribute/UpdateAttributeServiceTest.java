@@ -2,8 +2,8 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitByVersionIdPort;
@@ -137,7 +137,7 @@ class UpdateAttributeServiceTest {
 
         assertEquals(param.getKitVersionId(), attributeUpdateParam.getValue().kitVersionId());
         assertEquals(param.getAttributeId(), attributeUpdateParam.getValue().id());
-        assertEquals(Attribute.generateSlugCode(param.getTitle()), attributeUpdateParam.getValue().code());
+        assertEquals(SlugCodeUtil.generateSlugCode(param.getTitle()), attributeUpdateParam.getValue().code());
         assertEquals(param.getTitle(), attributeUpdateParam.getValue().title());
         assertEquals(param.getDescription(), attributeUpdateParam.getValue().description());
         assertEquals(param.getSubjectId(), attributeUpdateParam.getValue().subjectId());
