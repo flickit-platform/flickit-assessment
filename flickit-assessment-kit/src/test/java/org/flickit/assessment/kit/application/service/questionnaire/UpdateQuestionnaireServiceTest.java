@@ -1,12 +1,11 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,11 +13,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createActiveKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateQuestionnaireServiceTest {
@@ -30,47 +33,55 @@ class UpdateQuestionnaireServiceTest {
     private UpdateQuestionnairePort updateQuestionnairePort;
 
     @Mock
-    private LoadAssessmentKitPort loadAssessmentKitPort;
+    private LoadKitVersionPort loadKitVersionPort;
 
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
+    private final UUID ownerId = UUID.randomUUID();
+
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
+
     @Test
-    void testUpdateQuestionnaire_WhenCurrentUserIsNotOwner_ThenThrowAccessDeniedException() {
-        AssessmentKit kit = AssessmentKitMother.simpleKit();
-        long questionnaireId = 2L;
-        int index = 1;
-        String title = "title";
-        String description = "description";
-        UUID currentUserId = UUID.randomUUID();
-        UUID ownerId = UUID.randomUUID();
+    void testUpdateQuestionnaire_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
+        UpdateQuestionnaireUseCase.Param param = createParam(UpdateQuestionnaireUseCase.Param.ParamBuilder::build);
 
-        UpdateQuestionnaireUseCase.Param param =
-            new UpdateQuestionnaireUseCase.Param(kit.getId(), questionnaireId, index, title, description, currentUserId);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        when(loadAssessmentKitPort.load(kit.getId())).thenReturn(kit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
+        AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestionnaire(param));
 
-        assertThrows(AccessDeniedException.class, () -> service.updateQuestionnaire(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        verifyNoInteractions(updateQuestionnairePort);
     }
 
     @Test
-    void testUpdateQuestionnaire_WhenCurrentUserIsOwner_ThenUpdateQuestionnaire() {
-        AssessmentKit kit = AssessmentKitMother.simpleKit();
-        long questionnaireId = 2L;
-        int index = 1;
-        String title = "title";
-        String description = "description";
-        UUID currentUserId = UUID.randomUUID();
+    void testUpdateQuestionnaire_WhenCurrentUserIsExpertGroupOwner_ThenUpdateQuestionnaire() {
+        UpdateQuestionnaireUseCase.Param param = createParam(b -> b.currentUserId(ownerId));
+        KitVersion kitVersion = createActiveKitVersion(simpleKit());
 
-        UpdateQuestionnaireUseCase.Param param =
-            new UpdateQuestionnaireUseCase.Param(kit.getId(), questionnaireId, index, title, description, currentUserId);
-
-        when(loadAssessmentKitPort.load(kit.getId())).thenReturn(kit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(currentUserId);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        doNothing().when(updateQuestionnairePort).update(any(UpdateQuestionnairePort.Param.class));
 
         service.updateQuestionnaire(param);
 
         verify(updateQuestionnairePort).update(any(UpdateQuestionnairePort.Param.class));
+    }
+
+    private UpdateQuestionnaireUseCase.Param createParam(Consumer<UpdateQuestionnaireUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private UpdateQuestionnaireUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateQuestionnaireUseCase.Param.builder()
+            .kitVersionId(1L)
+            .questionnaireId(1L)
+            .title("abc")
+            .index(1)
+            .description("description")
+            .currentUserId(UUID.randomUUID());
     }
 }

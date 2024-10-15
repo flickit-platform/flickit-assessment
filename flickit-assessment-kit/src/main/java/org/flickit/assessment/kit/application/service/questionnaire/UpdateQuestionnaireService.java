@@ -2,11 +2,11 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.common.util.SlugCodeUtil;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,21 +22,19 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class UpdateQuestionnaireService implements UpdateQuestionnaireUseCase {
 
     private final UpdateQuestionnairePort updateQuestionnairePort;
-    private final LoadAssessmentKitPort loadAssessmentKitPort;
+    private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Override
     public void updateQuestionnaire(Param param) {
-        AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
-        Long kitVersionId = kit.getKitVersionId();
-        long expertGroupId = kit.getExpertGroupId();
-        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
+        KitVersion kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        String code = Questionnaire.generateSlugCode(param.getTitle());
+        String code = SlugCodeUtil.generateSlugCode(param.getTitle());
         updateQuestionnairePort.update(new UpdateQuestionnairePort.Param(param.getQuestionnaireId(),
-            kitVersionId,
+            param.getKitVersionId(),
             param.getTitle(),
             code,
             param.getIndex(),
