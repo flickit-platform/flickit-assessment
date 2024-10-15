@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateKitAttributeUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitByVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateKitAttributeServiceTest {
+class UpdateAttributeServiceTest {
 
     @InjectMocks
-    private UpdateKitAttributeService service;
+    private UpdateAttributeService service;
 
     @Mock
     private LoadAssessmentKitByVersionIdPort loadAssessmentKitByVersionIdPort;
@@ -48,7 +48,7 @@ class UpdateKitAttributeServiceTest {
     private UpdateKitVersionModificationInfoPort updateKitVersionModificationInfoPort;
 
     @Test
-    void testUpdateKitAttribute_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
+    void testUpdateAttribute_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
         Param param = new Param(12L,
             13L,
             "Attribute",
@@ -63,14 +63,14 @@ class UpdateKitAttributeServiceTest {
         when(loadAssessmentKitByVersionIdPort.loadByVersionId(param.getKitVersionId())).thenReturn(assessmentKit);
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(expertGroupOwnerId);
 
-        var exception = assertThrows(AccessDeniedException.class, () -> service.updateKitAttribute(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.updateAttribute(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
         verifyNoInteractions(loadKitVersionStatusByIdPort, updateAttributePort, updateKitVersionModificationInfoPort);
     }
 
     @Test
-    void testUpdateKitAttribute_KitIsOnActiveStatus_ThrowsException() {
+    void testUpdateAttribute_KitIsOnActiveStatus_ThrowsException() {
         Param param = new Param(12L,
             13L,
             "Attribute",
@@ -85,14 +85,14 @@ class UpdateKitAttributeServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
         when(loadKitVersionStatusByIdPort.loadStatusById(param.getKitVersionId())).thenReturn(KitVersionStatus.ACTIVE);
 
-        var exception = assertThrows(ValidationException.class, () -> service.updateKitAttribute(param));
+        var exception = assertThrows(ValidationException.class, () -> service.updateAttribute(param));
         assertEquals(KIT_VERSION_NOT_UPDATING_STATUS, exception.getMessageKey());
 
         verifyNoInteractions(updateAttributePort, updateKitVersionModificationInfoPort);
     }
 
     @Test
-    void testUpdateKitAttribute_KitIsOnArchiveStatus_ThrowsException() {
+    void testUpdateAttribute_KitIsOnArchiveStatus_ThrowsException() {
         Param param = new Param(12L,
             13L,
             "Attribute",
@@ -107,14 +107,14 @@ class UpdateKitAttributeServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
         when(loadKitVersionStatusByIdPort.loadStatusById(param.getKitVersionId())).thenReturn(KitVersionStatus.ARCHIVE);
 
-        var exception = assertThrows(ValidationException.class, () -> service.updateKitAttribute(param));
+        var exception = assertThrows(ValidationException.class, () -> service.updateAttribute(param));
         assertEquals(KIT_VERSION_NOT_UPDATING_STATUS, exception.getMessageKey());
 
         verifyNoInteractions(updateAttributePort, updateKitVersionModificationInfoPort);
     }
 
     @Test
-    void testUpdateKitAttribute_ValidParam_UpdateAttributeAndKitVersion() {
+    void testUpdateAttribute_ValidParam_UpdateAttributeAndKitVersion() {
         Param param = new Param(12L,
             13L,
             "Attribute",
@@ -130,7 +130,7 @@ class UpdateKitAttributeServiceTest {
         when(loadKitVersionStatusByIdPort.loadStatusById(param.getKitVersionId())).thenReturn(KitVersionStatus.UPDATING);
         doNothing().when(updateAttributePort).update(any());
         doNothing().when(updateKitVersionModificationInfoPort).updateModificationInfo(eq(param.getKitVersionId()), any(), eq(param.getCurrentUserId()));
-        service.updateKitAttribute(param);
+        service.updateAttribute(param);
 
         var attributeUpdateParam = ArgumentCaptor.forClass(UpdateAttributePort.Param.class);
         verify(updateAttributePort, times(1)).update(attributeUpdateParam.capture());

@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.port.in.attribute;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateKitAttributeUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase.Param;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -12,10 +12,10 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class UpdateKitAttributeUseCaseParamTest {
+class UpdateAttributeUseCaseParamTest {
 
     @Test
-    void testUpdateKitAttributeParam_kitVersionIdIsNull_ErrorMessage() {
+    void testUpdateAttributeParam_VersionIdIsNull_ErrorMessage() {
         var attributeId = 25L;
         var title = "title";
         var description = "description";
@@ -25,11 +25,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(null, attributeId, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_KIT_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateKitAttributeParam_attributeIdIsNull_ErrorMessage() {
+    void testUpdateAttributeParam_attributeIdIsNull_ErrorMessage() {
         var kitVersionId = 16L;
         var title = "title";
         var description = "description";
@@ -39,11 +39,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, null, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("attributeId: " + UPDATE_KIT_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("attributeId: " + UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateKitAttributeParam_titleIsBlank_ErrorMessage() {
+    void testUpdateAttributeParam_titleIsBlank_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = "     ";
@@ -54,11 +54,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_KIT_ATTRIBUTE_TITLE_NOT_BLANK);
+        assertThat(throwable).hasMessage("title: " + UPDATE_ATTRIBUTE_TITLE_NOT_BLANK);
     }
 
     @Test
-    void testUpdateKitAttributeParam_titleSizeIsLessThanMin_ErrorMessage() {
+    void testUpdateAttributeParam_titleSizeIsLessThanMin_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = RandomStringUtils.randomAlphanumeric(2);
@@ -69,11 +69,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MIN);
+        assertThat(throwable).hasMessage("title: " + UPDATE_ATTRIBUTE_TITLE_SIZE_MIN);
     }
 
     @Test
-    void testUpdateKitAttributeParam_titleSizeIsMoreThanMax_ErrorMessage() {
+    void testUpdateAttributeParam_titleSizeIsMoreThanMax_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = RandomStringUtils.randomAlphanumeric(101);
@@ -84,11 +84,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("title: " + UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MAX);
+        assertThat(throwable).hasMessage("title: " + UPDATE_ATTRIBUTE_TITLE_SIZE_MAX);
     }
 
     @Test
-    void testUpdateKitAttributeParam_descriptionIsBlank_ErrorMessage() {
+    void testUpdateAttributeParam_descriptionIsBlank_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = "title";
@@ -99,11 +99,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("description: " + UPDATE_KIT_ATTRIBUTE_DESCRIPTION_NOT_BLANK);
+        assertThat(throwable).hasMessage("description: " + UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK);
     }
 
     @Test
-    void testUpdateKitAttributeParam_descriptionSizeIsLessThanMin_ErrorMessage() {
+    void testUpdateAttributeParam_descriptionSizeIsLessThanMin_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = "title";
@@ -114,11 +114,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("description: " + UPDATE_KIT_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
+        assertThat(throwable).hasMessage("description: " + UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
     }
 
     @Test
-    void testUpdateKitAttributeParam_subjectIdIsNull_ErrorMessage() {
+    void testUpdateAttributeParam_subjectIdIsNull_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = "title";
@@ -128,11 +128,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, null, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("subjectId: " + UPDATE_KIT_ATTRIBUTE_SUBJECT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("subjectId: " + UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateKitAttributeParam_indexIsNull_ErrorMessage() {
+    void testUpdateAttributeParam_indexIsNull_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = "title";
@@ -142,11 +142,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, subjectId, null, weight, currentUserId));
-        assertThat(throwable).hasMessage("index: " + UPDATE_KIT_ATTRIBUTE_INDEX_NOT_NULL);
+        assertThat(throwable).hasMessage("index: " + UPDATE_ATTRIBUTE_INDEX_NOT_NULL);
     }
 
     @Test
-    void testUpdateKitAttributeParam_WeightIsNull_ErrorMessage() {
+    void testUpdateAttributeParam_WeightIsNull_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = "title";
@@ -156,11 +156,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, subjectId, index, null, currentUserId));
-        assertThat(throwable).hasMessage("weight: " + UPDATE_KIT_ATTRIBUTE_WEIGHT_NOT_NULL);
+        assertThat(throwable).hasMessage("weight: " + UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL);
     }
 
     @Test
-    void testUpdateKitAttributeParam_WeightIsLessThanMin_ErrorMessage() {
+    void testUpdateAttributeParam_WeightIsLessThanMin_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = "title";
@@ -171,11 +171,11 @@ class UpdateKitAttributeUseCaseParamTest {
         var currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new Param(kitVersionId, attributeId, title, description, subjectId, index, weight, currentUserId));
-        assertThat(throwable).hasMessage("weight: " + UPDATE_KIT_ATTRIBUTE_WEIGHT_MIN);
+        assertThat(throwable).hasMessage("weight: " + UPDATE_ATTRIBUTE_WEIGHT_MIN);
     }
 
     @Test
-    void testGetKitAttributeDetail_currentUserIdIsNull_ErrorMessage() {
+    void testUpdateAttributeParam_currentUserIdIsNull_ErrorMessage() {
         var kitVersionId = 16L;
         var attributeId = 25L;
         var title = "title";

@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateKitAttributeUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitByVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -24,7 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_NOT_
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateKitAttributeService implements UpdateKitAttributeUseCase {
+public class UpdateAttributeService implements UpdateAttributeUseCase {
 
     private final LoadAssessmentKitByVersionIdPort loadAssessmentKitByVersionIdPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
@@ -33,7 +33,7 @@ public class UpdateKitAttributeService implements UpdateKitAttributeUseCase {
     private final UpdateKitVersionModificationInfoPort updateKitVersionModificationInfoPort;
 
     @Override
-    public void updateKitAttribute(Param param) {
+    public void updateAttribute(Param param) {
         var assessmentKit = loadAssessmentKitByVersionIdPort.loadByVersionId(param.getKitVersionId());
         checkUserAccess(assessmentKit.getExpertGroupId(), param.getCurrentUserId());
         checkKitVersionStatus(param);

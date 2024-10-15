@@ -13,37 +13,37 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public interface UpdateKitAttributeUseCase {
+public interface UpdateAttributeUseCase {
 
-    void updateKitAttribute(Param param);
+    void updateAttribute(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_KIT_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = UPDATE_KIT_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @NotBlank(message = UPDATE_KIT_ATTRIBUTE_TITLE_NOT_BLANK)
-        @Size(min = 3, message = UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MIN)
-        @Size(max = 100, message = UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MAX)
+        @NotBlank(message = UPDATE_ATTRIBUTE_TITLE_NOT_BLANK)
+        @Size(min = 3, message = UPDATE_ATTRIBUTE_TITLE_SIZE_MIN)
+        @Size(max = 100, message = UPDATE_ATTRIBUTE_TITLE_SIZE_MAX)
         String title;
 
-        @NotBlank(message = UPDATE_KIT_ATTRIBUTE_DESCRIPTION_NOT_BLANK)
-        @Size(min = 3, message = UPDATE_KIT_ATTRIBUTE_DESCRIPTION_SIZE_MIN)
+        @NotBlank(message = UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK)
+        @Size(min = 3, message = UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN)
         String description;
 
-        @NotNull(message = UPDATE_KIT_ATTRIBUTE_SUBJECT_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL)
         Long subjectId;
 
-        @NotNull(message = UPDATE_KIT_ATTRIBUTE_INDEX_NOT_NULL)
+        @NotNull(message = UPDATE_ATTRIBUTE_INDEX_NOT_NULL)
         Integer index;
 
-        @NotNull(message = UPDATE_KIT_ATTRIBUTE_WEIGHT_NOT_NULL)
-        @Min(value = 1, message = UPDATE_KIT_ATTRIBUTE_WEIGHT_MIN)
+        @NotNull(message = UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL)
+        @Min(value = 1, message = UPDATE_ATTRIBUTE_WEIGHT_MIN)
         Integer weight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

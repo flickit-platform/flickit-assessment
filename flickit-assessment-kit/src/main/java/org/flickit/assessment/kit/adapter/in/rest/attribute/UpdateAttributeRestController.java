@@ -2,8 +2,8 @@ package org.flickit.assessment.kit.adapter.in.rest.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateKitAttributeUseCase;
-import org.flickit.assessment.kit.application.port.in.attribute.UpdateKitAttributeUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,25 +15,25 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class UpdateKitAttributeRestController {
+public class UpdateAttributeRestController {
 
-    private final UpdateKitAttributeUseCase useCase;
+    private final UpdateAttributeUseCase useCase;
     private final UserContext userContext;
 
     @PutMapping("/kit-versions/{kitVersionId}/attributes/{attributeId}")
-    public ResponseEntity<Void> updateKitAttribute(
+    public ResponseEntity<Void> updateAttribute(
         @PathVariable("kitVersionId") Long kitVersionId,
         @PathVariable("attributeId") Long attributeId,
-        @RequestBody UpdateKitAttributeRequestDto requestDto) {
+        @RequestBody UpdateAttributeRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         var param = toParam(kitVersionId, attributeId, requestDto, currentUserId);
-        useCase.updateKitAttribute(param);
+        useCase.updateAttribute(param);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private Param toParam(Long kitVersionId,
                           Long attributeId,
-                          UpdateKitAttributeRequestDto requestDto,
+                          UpdateAttributeRequestDto requestDto,
                           UUID currentUserId) {
         return new Param(kitVersionId,
             attributeId,

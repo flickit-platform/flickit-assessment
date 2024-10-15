@@ -261,17 +261,17 @@ public class ErrorMessageKey {
     public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MAX = "update-subject.description.size.max";
     public static final String UPDATE_SUBJECT_WEIGHT_NOT_NULL = "update-subject.weight.notNull";
 
-    public static final String UPDATE_KIT_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "update-kit-attribute.kitVersionId.notNull";
-    public static final String UPDATE_KIT_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "update-kit-attribute.attributeId.notNull";
-    public static final String UPDATE_KIT_ATTRIBUTE_TITLE_NOT_BLANK = "update-kit-attribute.title.notBlank";
-    public static final String UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MIN = "update-kit-attribute.title.sizeMin";
-    public static final String UPDATE_KIT_ATTRIBUTE_TITLE_SIZE_MAX = "update-kit-attribute.title.sizeMax";
-    public static final String UPDATE_KIT_ATTRIBUTE_DESCRIPTION_NOT_BLANK = "update-kit-attribute.description.notBlank";
-    public static final String UPDATE_KIT_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "update-kit-attribute.description.sizeMin";
-    public static final String UPDATE_KIT_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "update-kit-attribute.subjectId.notNull";
-    public static final String UPDATE_KIT_ATTRIBUTE_INDEX_NOT_NULL = "update-kit-attribute.index.notNull";
-    public static final String UPDATE_KIT_ATTRIBUTE_WEIGHT_NOT_NULL = "update-kit-attribute.weight.notNull";
-    public static final String UPDATE_KIT_ATTRIBUTE_WEIGHT_MIN = "update-kit-attribute.weight.min";
+    public static final String UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "update-attribute.kitVersionId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "update-attribute.attributeId.notNull";
+    public static final String UPDATE_ATTRIBUTE_TITLE_NOT_BLANK = "update-attribute.title.notBlank";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MIN = "update-attribute.title.sizeMin";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MAX = "update-attribute.title.sizeMax";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK = "update-attribute.description.notBlank";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "update-attribute.description.sizeMin";
+    public static final String UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "update-attribute.subjectId.notNull";
+    public static final String UPDATE_ATTRIBUTE_INDEX_NOT_NULL = "update-attribute.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL = "update-attribute.weight.notNull";
+    public static final String UPDATE_ATTRIBUTE_WEIGHT_MIN = "update-attribute.weight.min";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
