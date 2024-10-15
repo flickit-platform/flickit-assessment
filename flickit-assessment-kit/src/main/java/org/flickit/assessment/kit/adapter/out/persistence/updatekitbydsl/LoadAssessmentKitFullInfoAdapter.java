@@ -91,8 +91,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             subjects,
             levels,
             questionnaires,
-            kitVersionId
-        );
+            kitVersionId);
     }
 
     private void setLevelCompetences(List<MaturityLevel> levels, Long kitVersionId) {

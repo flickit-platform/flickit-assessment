@@ -19,8 +19,11 @@ public class SubjectMapper {
             entity.getCode(),
             entity.getTitle(),
             entity.getIndex(),
+            entity.getWeight(),
             entity.getDescription(),
             attributes,
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
