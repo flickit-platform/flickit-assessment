@@ -8,12 +8,8 @@ import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionModificationInfoPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
@@ -23,8 +19,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_N
 public class KitVersionPersistenceJpaAdapter implements
     LoadKitVersionPort,
     CreateKitVersionPort,
-    UpdateKitVersionStatusPort,
-    UpdateKitVersionModificationInfoPort {
+    UpdateKitVersionStatusPort {
 
     private final KitVersionJpaRepository repository;
     private final AssessmentKitJpaRepository kitRepository;
@@ -48,10 +43,5 @@ public class KitVersionPersistenceJpaAdapter implements
     @Override
     public void updateStatus(long kitVersionId, KitVersionStatus newStatus) {
         repository.updateStatus(kitVersionId, newStatus.getId());
-    }
-
-    @Override
-    public void updateModificationInfo(long id, LocalDateTime modificationTime, UUID modifiedBy) {
-        repository.updateModificationInfo(id, modificationTime, modifiedBy);
     }
 }

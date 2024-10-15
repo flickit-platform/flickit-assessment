@@ -7,7 +7,6 @@ import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeU
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionModificationInfoPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
@@ -39,9 +38,6 @@ class UpdateAttributeServiceTest {
     @Mock
     private UpdateAttributePort updateAttributePort;
 
-    @Mock
-    private UpdateKitVersionModificationInfoPort updateKitVersionModificationInfoPort;
-
     @Test
     void testUpdateAttribute_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
         Param param = new Param(13L, 12L,
@@ -58,7 +54,7 @@ class UpdateAttributeServiceTest {
         var exception = assertThrows(AccessDeniedException.class, () -> service.updateAttribute(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
-        verifyNoInteractions(updateAttributePort, updateKitVersionModificationInfoPort);
+        verifyNoInteractions(updateAttributePort);
     }
 
     @Test
@@ -76,7 +72,7 @@ class UpdateAttributeServiceTest {
         var exception = assertThrows(ValidationException.class, () -> service.updateAttribute(param));
         assertEquals(KIT_VERSION_NOT_UPDATING_STATUS, exception.getMessageKey());
 
-        verifyNoInteractions(updateAttributePort, updateKitVersionModificationInfoPort);
+        verifyNoInteractions(updateAttributePort);
     }
 
     @Test
@@ -91,7 +87,6 @@ class UpdateAttributeServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
         doNothing().when(updateAttributePort).update(any());
-        doNothing().when(updateKitVersionModificationInfoPort).updateModificationInfo(eq(param.getKitVersionId()), any(), eq(param.getCurrentUserId()));
         service.updateAttribute(param);
 
         var attributeUpdateParam = ArgumentCaptor.forClass(UpdateAttributePort.Param.class);
@@ -107,7 +102,5 @@ class UpdateAttributeServiceTest {
         assertEquals(param.getWeight(), attributeUpdateParam.getValue().weight());
         assertEquals(param.getCurrentUserId(), attributeUpdateParam.getValue().lastModifiedBy());
         assertNotNull(attributeUpdateParam.getValue().lastModificationTime());
-
-        verify(updateKitVersionModificationInfoPort, times(1)).updateModificationInfo(eq(param.getKitVersionId()), any(), eq(param.getCurrentUserId()));
     }
 }

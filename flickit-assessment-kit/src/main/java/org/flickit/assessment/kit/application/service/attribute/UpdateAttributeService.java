@@ -10,7 +10,6 @@ import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeU
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionModificationInfoPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,6 @@ public class UpdateAttributeService implements UpdateAttributeUseCase {
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final UpdateAttributePort updateAttributePort;
-    private final UpdateKitVersionModificationInfoPort updateKitVersionModificationInfoPort;
 
     @Override
     public void updateAttribute(Param param) {
@@ -37,7 +35,6 @@ public class UpdateAttributeService implements UpdateAttributeUseCase {
         checkUserAccess(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId());
         checkKitVersionStatus(kitVersion);
         updateAttributePort.update(toParam(param));
-        updateKitVersionModificationInfoPort.updateModificationInfo(param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
     }
 
     private void checkUserAccess(Long expertGroupId, UUID currentUserId) {
