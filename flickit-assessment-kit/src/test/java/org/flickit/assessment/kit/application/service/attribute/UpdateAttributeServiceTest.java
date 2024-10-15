@@ -49,13 +49,10 @@ class UpdateAttributeServiceTest {
 
     @Test
     void testUpdateAttribute_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
-        Param param = new Param(12L,
-            13L,
-            "Attribute",
+        Param param = new Param(13L, 12L,
+            10, "Attribute",
             "simple description",
-            14L,
-            10,
-            20,
+            20, 14L,
             UUID.randomUUID());
         var expertGroupOwnerId = UUID.randomUUID();
 
@@ -71,13 +68,10 @@ class UpdateAttributeServiceTest {
 
     @Test
     void testUpdateAttribute_KitIsOnActiveStatus_ThrowsException() {
-        Param param = new Param(12L,
-            13L,
-            "Attribute",
+        Param param = new Param(13L, 12L,
+            10, "Attribute",
             "simple description",
-            14L,
-            10,
-            20,
+            20, 14L,
             UUID.randomUUID());
 
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
@@ -93,13 +87,10 @@ class UpdateAttributeServiceTest {
 
     @Test
     void testUpdateAttribute_KitIsOnArchiveStatus_ThrowsException() {
-        Param param = new Param(12L,
-            13L,
-            "Attribute",
+        Param param = new Param(13L, 12L,
+            10, "Attribute",
             "simple description",
-            14L,
-            10,
-            20,
+            20, 14L,
             UUID.randomUUID());
 
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
@@ -115,13 +106,10 @@ class UpdateAttributeServiceTest {
 
     @Test
     void testUpdateAttribute_ValidParam_UpdateAttributeAndKitVersion() {
-        Param param = new Param(12L,
-            13L,
-            "Attribute",
+        Param param = new Param(13L, 12L,
+            10, "Attribute",
             "simple description",
-            14L,
-            10,
-            20,
+            20, 14L,
             UUID.randomUUID());
 
         AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();

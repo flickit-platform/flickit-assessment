@@ -1,8 +1,9 @@
 package org.flickit.assessment.kit.adapter.in.rest.attribute;
 
-public record UpdateAttributeRequestDto(String title,
+public record UpdateAttributeRequestDto(Integer index,
+                                        String title,
                                         String description,
-                                        Long subjectId,
-                                        Integer index,
-                                        Integer weight) {
+                                        Integer weight,
+                                        Long subjectId
+) {
 }

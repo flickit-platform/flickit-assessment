@@ -21,11 +21,14 @@ public interface UpdateAttributeUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
+        @NotNull(message = UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL)
+        Long attributeId;
+
         @NotNull(message = UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL)
-        Long attributeId;
+        @NotNull(message = UPDATE_ATTRIBUTE_INDEX_NOT_NULL)
+        Integer index;
 
         @NotBlank(message = UPDATE_ATTRIBUTE_TITLE_NOT_BLANK)
         @Size(min = 3, message = UPDATE_ATTRIBUTE_TITLE_SIZE_MIN)
@@ -36,34 +39,31 @@ public interface UpdateAttributeUseCase {
         @Size(min = 3, message = UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN)
         String description;
 
-        @NotNull(message = UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL)
-        Long subjectId;
-
-        @NotNull(message = UPDATE_ATTRIBUTE_INDEX_NOT_NULL)
-        Integer index;
-
         @NotNull(message = UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL)
         @Min(value = 1, message = UPDATE_ATTRIBUTE_WEIGHT_MIN)
         Integer weight;
 
+        @NotNull(message = UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL)
+        Long subjectId;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitVersionId,
-                     Long attributeId,
+        public Param(Long attributeId,
+                     Long kitVersionId,
+                     Integer index,
                      String title,
                      String description,
-                     Long subjectId,
-                     Integer index,
                      Integer weight,
+                     Long subjectId,
                      UUID currentUserId) {
-            this.kitVersionId = kitVersionId;
             this.attributeId = attributeId;
+            this.kitVersionId = kitVersionId;
+            this.index = index;
             this.title = title;
             this.description = description;
-            this.subjectId = subjectId;
-            this.index = index;
             this.weight = weight;
+            this.subjectId = subjectId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

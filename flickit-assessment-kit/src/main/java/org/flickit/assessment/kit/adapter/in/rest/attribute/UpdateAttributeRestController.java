@@ -26,22 +26,22 @@ public class UpdateAttributeRestController {
         @PathVariable("attributeId") Long attributeId,
         @RequestBody UpdateAttributeRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        var param = toParam(kitVersionId, attributeId, requestDto, currentUserId);
+        var param = toParam(attributeId, kitVersionId, requestDto, currentUserId);
         useCase.updateAttribute(param);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Long kitVersionId,
-                          Long attributeId,
+    private Param toParam(Long attributeId,
+                          Long kitVersionId,
                           UpdateAttributeRequestDto requestDto,
                           UUID currentUserId) {
-        return new Param(kitVersionId,
-            attributeId,
+        return new Param(attributeId,
+            kitVersionId,
+            requestDto.index(),
             requestDto.title(),
             requestDto.description(),
-            requestDto.subjectId(),
-            requestDto.index(),
             requestDto.weight(),
+            requestDto.subjectId(),
             currentUserId);
     }
 }
