@@ -1,7 +1,5 @@
 package org.flickit.assessment.kit.application.port.out.questionnaire;
 
-import org.flickit.assessment.kit.application.domain.QuestionnaireOrder;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -10,8 +8,6 @@ public interface UpdateQuestionnairePort {
 
     void update(Param param);
 
-    void updateOrders(List<QuestionnaireOrder> orders, Long kitVersionId, UUID lastModifiedBy);
-
     record Param(
         long id,
         long kitVersionId,
@@ -19,7 +15,16 @@ public interface UpdateQuestionnairePort {
         int index,
         String description,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy
-    ) {
+        UUID lastModifiedBy) {
+    }
+
+    void updateOrders(UpdateOrderParam param);
+
+    record UpdateOrderParam(List<QuestionnaireOrder> orders,
+                            long kitVersionId,
+                            LocalDateTime lastModificationTime,
+                            UUID lastModifiedBy) {
+        public record QuestionnaireOrder(long questionnaireId, int index) {
+        }
     }
 }

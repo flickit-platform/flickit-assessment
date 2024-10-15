@@ -3,13 +3,13 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.QuestionnaireOrder;
 import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,7 +24,6 @@ import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitM
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateQuestionnaireOrdersServiceTest {
@@ -76,13 +75,18 @@ class UpdateQuestionnaireOrdersServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         service.changeOrders(param);
+        ArgumentCaptor<UpdateQuestionnairePort.UpdateOrderParam> portParamCaptor = ArgumentCaptor.forClass(UpdateQuestionnairePort.UpdateOrderParam.class);
+        verify(updateQuestionnairePort, times(1)).updateOrders(portParamCaptor.capture());
 
-        var questionnaireOrders = List.of(
-            new QuestionnaireOrder(123L, 3),
-            new QuestionnaireOrder(124L, 2)
-        );
-        verify(updateQuestionnairePort, times(1))
-            .updateOrders(questionnaireOrders, param.getKitVersionId(), param.getCurrentUserId());
+        assertEquals(param.getKitVersionId(), portParamCaptor.getValue().kitVersionId());
+        assertEquals(param.getCurrentUserId(), portParamCaptor.getValue().lastModifiedBy());
+        assertNotNull(portParamCaptor.getValue().lastModificationTime());
+        assertNotNull(portParamCaptor.getValue().orders());
+        assertEquals(param.getOrders().size(), portParamCaptor.getValue().orders().size());
+        assertEquals(param.getOrders().getFirst().getId(), portParamCaptor.getValue().orders().getFirst().questionnaireId());
+        assertEquals(param.getOrders().getFirst().getIndex(), portParamCaptor.getValue().orders().getFirst().index());
+        assertEquals(param.getOrders().getLast().getId(), portParamCaptor.getValue().orders().getLast().questionnaireId());
+        assertEquals(param.getOrders().getLast().getIndex(), portParamCaptor.getValue().orders().getLast().index());
     }
 
     private UpdateQuestionnaireOrdersUseCase.Param createParam(Consumer<UpdateQuestionnaireOrdersUseCase.Param.ParamBuilder> changer) {
