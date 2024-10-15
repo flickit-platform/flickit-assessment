@@ -30,7 +30,7 @@ public class UpdateAttributeOrdersRestController {
     }
 
     private Param toParam(Long kitVersionId, UpdateAttributeOrdersRequestDto requestDto, UUID currentUserId) {
-        var orders = requestDto.attributes().stream()
+        var orders = requestDto.orders().stream()
             .map(s -> new AttributeParam(s.id(), s.index()))
             .toList();
         return new Param(kitVersionId, orders, currentUserId);

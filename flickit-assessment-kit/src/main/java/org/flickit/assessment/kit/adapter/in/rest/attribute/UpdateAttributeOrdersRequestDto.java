@@ -2,8 +2,8 @@ package org.flickit.assessment.kit.adapter.in.rest.attribute;
 
 import java.util.List;
 
-public record UpdateAttributeOrdersRequestDto(List<Attribute> attributes) {
+public record UpdateAttributeOrdersRequestDto(List<AttributeOrderDto> orders) {
 
-    record Attribute(Long id, Integer index){
+    record AttributeOrderDto(Long id, Integer index) {
     }
 }

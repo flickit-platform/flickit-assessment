@@ -583,7 +583,7 @@
                 "response": []
               },
               {
-                "name": "Update Attributes Orders",
+                "name": "Update Attribute Orders",
                 "request": {
                   "method": "PUT",
                   "header": [
@@ -595,7 +595,7 @@
                   ],
                   "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"attributes\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
+                    "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
                     "options": {
                       "raw": {
                         "language": "json"
