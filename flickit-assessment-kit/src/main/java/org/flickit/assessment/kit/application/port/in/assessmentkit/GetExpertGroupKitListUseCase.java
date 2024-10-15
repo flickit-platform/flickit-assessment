@@ -49,6 +49,7 @@ public interface GetExpertGroupKitListUseCase {
         String title,
         Boolean published,
         Boolean isPrivate,
-        LocalDateTime lastModificationTime) {
+        LocalDateTime lastModificationTime,
+        Long draftVersionId) {
     }
 }

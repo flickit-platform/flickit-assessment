@@ -78,14 +78,26 @@
     </changeSet>
 
     <changeSet id="0.33-15" author="Maziyar Gerami">
-        <dropUniqueConstraint tableName="fak_questionnaire"
-                              constraintName="uq_fak_questionnaire_index_kitversionid"/>
+        <modifyDataType tableName="fak_assessment_kit" columnName="code" newDataType="varchar(100)"/>
     </changeSet>
 
     <changeSet id="0.33-16" author="Maziyar Gerami">
-        <addUniqueConstraint columnNames="kit_version_id, index"
-                             constraintName="uq_fak_questionnaire_index_kitversionid"
-                             tableName="fak_questionnaire"
-                             initiallyDeferred="true"/>
+        <modifyDataType tableName="fak_assessment_kit" columnName="summary" newDataType="varchar(1000)"/>
+    </changeSet>
+
+    <changeSet id="0.33-17" author="Maziyar Gerami">
+        <modifyDataType tableName="fak_assessment_kit" columnName="about" newDataType="varchar(1000)"/>
+    </changeSet>
+
+    <changeSet id="0.33-18" author="Mahdi Rezazadeh">
+        <sql>
+            INSERT INTO fak_kit_user_access (kit_id, user_id)
+            SELECT
+                k.id         AS kit_id,
+                eg.owner_id AS user_id
+            FROM fak_assessment_kit k
+                INNER JOIN fau_expert_group eg ON k.expert_group_id = eg.id
+            ON CONFLICT (kit_id, user_id) DO NOTHING
+        </sql>
     </changeSet>
 </databaseChangeLog>
