@@ -127,5 +127,4 @@ public class LoadAssessmentKitFullInfoAdapter implements
         Map<Long, List<Question>> groupedQuestions = questions.stream().collect(Collectors.groupingBy(Question::getQuestionnaireId));
         questionnaires.forEach(q -> q.setQuestions(groupedQuestions.get(q.getId())));
     }
-
 }
