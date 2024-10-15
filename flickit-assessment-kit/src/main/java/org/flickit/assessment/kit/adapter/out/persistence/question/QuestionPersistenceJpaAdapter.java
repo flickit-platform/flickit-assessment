@@ -90,11 +90,10 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {
-        impact.setOptionImpacts(
-            answerOptionImpactRepository.findAllByQuestionImpactId(impact.getId()).stream()
-                .map(AnswerOptionImpactMapper::mapToDomainModel)
-                .toList()
-        );
+        var optionImpacts = answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId()).stream()
+            .map(AnswerOptionImpactMapper::mapToDomainModel)
+            .toList();
+        impact.setOptionImpacts(optionImpacts);
         return impact;
     }
 
