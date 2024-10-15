@@ -581,6 +581,41 @@
                   }
                 },
                 "response": []
+              },
+              {
+                "name": "Update Attribute Orders",
+                "request": {
+                  "method": "PUT",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/attributes-change-order",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "336",
+                      "attributes-change-order"
+                    ]
+                  }
+                },
+                "response": []
               }
 			]
 		},

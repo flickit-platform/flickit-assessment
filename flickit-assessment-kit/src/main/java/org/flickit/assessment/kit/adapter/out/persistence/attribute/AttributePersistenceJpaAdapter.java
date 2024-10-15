@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
@@ -10,6 +11,8 @@ import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
@@ -39,6 +42,26 @@ public class AttributePersistenceJpaAdapter implements
             param.lastModificationTime(),
             param.lastModifiedBy(),
             param.subjectId());
+    }
+
+    @Override
+    public void updateOrders(UpdateOrderParam param) {
+        Map<AttributeJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
+            .collect(Collectors.toMap(
+                ml -> new AttributeJpaEntity.EntityId(ml.attributeId(), param.kitVersionId()),
+                UpdateOrderParam.AttributeOrder::index
+            ));
+        List<AttributeJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        if (entities.size() != param.orders().size())
+            throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            int newIndex = idToIndex.get(new AttributeJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            x.setIndex(newIndex);
+            x.setLastModificationTime(param.lastModificationTime());
+            x.setLastModifiedBy(param.lastModifiedBy());
+        });
+        repository.saveAll(entities);
     }
 
     @Override
