@@ -28,14 +28,11 @@ public class UpdateAttributeService implements UpdateAttributeUseCase {
     @Override
     public void updateAttribute(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
-        checkUserAccess(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId());
-        updateAttributePort.update(toParam(param));
-    }
-
-    private void checkUserAccess(Long expertGroupId, UUID currentUserId) {
-        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
-        if (!Objects.equals(currentUserId, ownerId))
+        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
+        if (!Objects.equals(param.getCurrentUserId(), ownerId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        updateAttributePort.update(toParam(param));
     }
 
     private UpdateAttributePort.Param toParam(Param param) {

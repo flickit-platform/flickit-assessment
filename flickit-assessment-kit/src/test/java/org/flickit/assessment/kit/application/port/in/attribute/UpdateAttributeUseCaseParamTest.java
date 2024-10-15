@@ -16,68 +16,72 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateAttributeUseCaseParamTest {
 
     @Test
-    void testUpdateAttributeParam_kitVersionIdViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_kitVersionIdViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributeParam_attributeIdViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_attributeIdViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.attributeId(null)));
         assertThat(throwable).hasMessage("attributeId: " + UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributeParam_titleViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_titleViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.title("      ")));
         assertThat(throwable).hasMessage("title: " + UPDATE_ATTRIBUTE_TITLE_NOT_BLANK);
+
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.title("s")));
         assertThat(throwable).hasMessage("title: " + UPDATE_ATTRIBUTE_TITLE_SIZE_MIN);
+
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.title(RandomStringUtils.randomAlphabetic(101))));
         assertThat(throwable).hasMessage("title: " + UPDATE_ATTRIBUTE_TITLE_SIZE_MAX);
     }
 
     @Test
-    void testUpdateAttributeParam_descriptionViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_descriptionViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.description("      ")));
         assertThat(throwable).hasMessage("description: " + UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK);
+
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.description("a")));
         assertThat(throwable).hasMessage("description: " + UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN);
+
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.description(RandomStringUtils.randomAlphabetic(501))));
         assertThat(throwable).hasMessage("description: " + UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX);
     }
 
     @Test
-    void testUpdateAttributeParam_subjectIdViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_subjectIdViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.subjectId(null)));
         assertThat(throwable).hasMessage("subjectId: " + UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributeParam_indexViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_indexViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.index(null)));
         assertThat(throwable).hasMessage("index: " + UPDATE_ATTRIBUTE_INDEX_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributeParam_WeightViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_weightViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.weight(null)));
         assertThat(throwable).hasMessage("weight: " + UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL);
     }
 
     @Test
-    void testUpdateAttributeParam_currentUserIdViolations_ErrorMessage() {
+    void testUpdateAttributeUseCaseParam_currentUserIdViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(a -> a.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

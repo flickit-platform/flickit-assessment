@@ -1,13 +1,11 @@
 package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.util.SlugCodeUtil;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,6 +17,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -37,14 +38,15 @@ class UpdateAttributeServiceTest {
     @Mock
     private UpdateAttributePort updateAttributePort;
 
-    @Test
-    void testUpdateAttribute_CurrentUserIsNotOwnerOfKitExpertGroup_ThrowsException() {
-        Param param = createParam(Param.ParamBuilder::build);
-        var expertGroupOwnerId = UUID.randomUUID();
+    private final UUID ownerId = UUID.randomUUID();
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
 
-        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+    @Test
+    void testUpdateAttribute_CurrentUserIsNotOwnerOfExpertGroup_ThrowsException() {
+        Param param = createParam(Param.ParamBuilder::build);
+
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(expertGroupOwnerId);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.updateAttribute(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
@@ -54,11 +56,10 @@ class UpdateAttributeServiceTest {
 
     @Test
     void testUpdateAttribute_ValidParam_UpdateAttributeAndKitVersion() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam(b -> b.currentUserId(ownerId));
 
-        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(updateAttributePort).update(any());
         service.updateAttribute(param);
 
@@ -67,7 +68,7 @@ class UpdateAttributeServiceTest {
 
         assertEquals(param.getKitVersionId(), attributeUpdateParam.getValue().kitVersionId());
         assertEquals(param.getAttributeId(), attributeUpdateParam.getValue().id());
-        assertEquals(SlugCodeUtil.generateSlugCode(param.getTitle()), attributeUpdateParam.getValue().code());
+        assertEquals(generateSlugCode(param.getTitle()), attributeUpdateParam.getValue().code());
         assertEquals(param.getTitle(), attributeUpdateParam.getValue().title());
         assertEquals(param.getDescription(), attributeUpdateParam.getValue().description());
         assertEquals(param.getSubjectId(), attributeUpdateParam.getValue().subjectId());
