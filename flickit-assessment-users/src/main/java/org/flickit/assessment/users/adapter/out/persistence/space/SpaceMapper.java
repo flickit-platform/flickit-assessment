@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
 
+import static org.flickit.assessment.users.application.service.constant.SpaceConstants.NOT_DELETED_DELETION_TIME;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpaceMapper {
 
@@ -18,7 +20,8 @@ public class SpaceMapper {
             space.getLastModificationTime(),
             space.getCreatedBy(),
             space.getLastModifiedBy(),
-            false);
+            false,
+            NOT_DELETED_DELETION_TIME);
     }
 
     public static Space mapToDomain(SpaceJpaEntity entity) {

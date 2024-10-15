@@ -40,7 +40,10 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_USER_LIST("viewAssessmentUserList"),
     VIEW_ASSESSMENT_INVITEE_LIST("viewAssessmentInviteeList"),
     VIEW_EVIDENCE("viewEvidence"),
-    DELETE_ASSESSMENT_INVITE("deleteAssessmentInvite");
+    DELETE_ASSESSMENT_INVITE("deleteAssessmentInvite"),
+    CREATE_ASSESSMENT_INSIGHT("createAssessmentInsight"),
+    CREATE_SUBJECT_INSIGHT("createSubjectInsight"),
+    MANAGE_ADD_ON("manageAddOn");
 
     private final String code;
 }

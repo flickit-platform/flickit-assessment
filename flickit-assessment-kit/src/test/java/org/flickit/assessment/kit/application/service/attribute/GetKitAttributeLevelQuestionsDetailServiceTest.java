@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 class GetKitAttributeLevelQuestionsDetailServiceTest {
 
     @InjectMocks
-    private GetKitKitAttributeLevelQuestionsDetailService service;
+    private GetKitAttributeLevelQuestionsDetailService service;
 
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
@@ -160,7 +160,7 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
 
         assertNotNull(result);
         assertEquals(2, result.questionsCount());
-        var resultQuestion1 = result.questions().get(0);
+        var resultQuestion1 = result.questions().getFirst();
         assertNotNull(resultQuestion1);
         assertEquals(question1.getTitle(), resultQuestion1.title());
         assertEquals(question1.getIndex(), resultQuestion1.index());
@@ -168,17 +168,17 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         assertTrue(resultQuestion1.advisable());
         assertEquals(impact1.getWeight(), resultQuestion1.weight());
         assertEquals("title", resultQuestion1.questionnaire());
-        var question1AnswerOption = resultQuestion1.answerOptions().get(0);
+        var question1AnswerOption = resultQuestion1.answerOptions().getFirst();
         assertNotNull(question1AnswerOption);
         assertEquals(question1.getOptions().size(), resultQuestion1.answerOptions().size());
-        assertEquals(question1.getOptions().get(0).getTitle(), question1AnswerOption.title());
-        assertEquals(question1.getOptions().get(0).getIndex(), question1AnswerOption.index());
-        assertEquals(impact1.getOptionImpacts().get(0).getValue(), question1AnswerOption.value());
+        assertEquals(question1.getOptions().getFirst().getTitle(), question1AnswerOption.title());
+        assertEquals(question1.getOptions().getFirst().getIndex(), question1AnswerOption.index());
+        assertEquals(impact1.getOptionImpacts().getFirst().getValue(), question1AnswerOption.value());
     }
 
     private static List<AnswerOptionImpact> buildAnswerOptionImpacts(Question question) {
         return List.of(
-            createAnswerOptionImpact(question.getOptions().get(0).getId(), 0),
+            createAnswerOptionImpact(question.getOptions().getFirst().getId(), 0),
             createAnswerOptionImpact(question.getOptions().get(1).getId(), 0.5),
             createAnswerOptionImpact(question.getOptions().get(2).getId(), 1)
         );

@@ -30,6 +30,8 @@ public class AppSpecProperties {
     @NotBlank
     private String favIcon;
 
+    private String supportEmail;
+
     @Valid
     private Email email = new Email();
 

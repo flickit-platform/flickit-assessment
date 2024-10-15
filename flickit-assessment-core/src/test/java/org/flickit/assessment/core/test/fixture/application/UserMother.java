@@ -8,6 +8,8 @@ import java.util.UUID;
 public class UserMother {
 
     public static User createUser() {
-        return new User(UUID.randomUUID(), RandomStringUtils.random(10, true, false));
+        return new User(UUID.randomUUID(),
+            RandomStringUtils.random(10, true, false),
+            RandomStringUtils.random(15, true, false));
     }
 }

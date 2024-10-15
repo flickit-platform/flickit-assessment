@@ -85,7 +85,7 @@ class GetSpaceMembersServiceTest {
         assertEquals(page, result.getPage(), "'page' should be 0");
         assertEquals(size, result.getSize(), "'size' should be 10");
         assertEquals(2, result.getTotal(), "'total' should be 2");
-        assertTrue(result.getItems().get(0).isOwner());
+        assertTrue(result.getItems().getFirst().isOwner());
         assertFalse(result.getItems().get(1).isOwner());
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId,currentUserId);

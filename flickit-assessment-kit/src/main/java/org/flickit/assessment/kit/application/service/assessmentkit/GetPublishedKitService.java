@@ -44,7 +44,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
 
         var stats = countKitStatsPort.countKitStats(param.getKitId());
 
-        var subjects = loadSubjectsPort.loadByKitVersionId(kit.getKitVersionId()).stream()
+        var subjects = loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId()).stream()
             .map(this::toSubject)
             .toList();
 
@@ -52,7 +52,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
             .map(this::toQuestionnaire)
             .toList();
 
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(kit.getKitVersionId()).stream()
+        var maturityLevels = loadMaturityLevelsPort.loadAllByKitVersionId(kit.getActiveVersionId()).stream()
             .map(this::toMaturityLevel)
             .toList();
 
@@ -100,7 +100,7 @@ public class GetPublishedKitService implements GetPublishedKitUseCase {
     }
 
     private MinimalMaturityLevel toMaturityLevel(MaturityLevel level) {
-        return new MinimalMaturityLevel(level.getId(), level.getTitle(), level.getValue(), level.getIndex());
+        return new MinimalMaturityLevel(level.getId(), level.getTitle(), level.getDescription(), level.getValue(), level.getIndex());
     }
 
     private MinimalKitTag toKitTag(KitTag tag) {

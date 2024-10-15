@@ -68,7 +68,7 @@ class GetKitSubjectDetailServiceTest {
         assertEquals(subject.getDescription(), result.description());
         assertEquals(1, result.attributes().size());
 
-        var resultAttribute = result.attributes().get(0);
+        var resultAttribute = result.attributes().getFirst();
         assertEquals(attribute.getId(), resultAttribute.id());
         assertEquals(attribute.getTitle(), resultAttribute.title());
         assertEquals(attribute.getIndex(), resultAttribute.index());

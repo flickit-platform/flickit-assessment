@@ -42,6 +42,7 @@ public interface GetAssessmentUseCase {
 
     record Result(UUID id,
                   String title,
+                  String shortTitle,
                   Space space,
                   AssessmentKit kit,
                   LocalDateTime creationTime,
