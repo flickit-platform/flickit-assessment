@@ -70,7 +70,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND q.id IN (SELECT qs.id
                              FROM QuestionJpaEntity qs
                              LEFT JOIN AssessmentResultJpaEntity ar ON qs.kitVersionId = ar.kitVersionId
-                             LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId
+                             LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId AND qs.kitVersionId = qi.kitVersionId
                              WHERE qi.attributeId = :attributeId AND ar.assessment.id = :assessmentId)
             GROUP BY evd.description, evd.lastModificationTime, evd.id
         """)

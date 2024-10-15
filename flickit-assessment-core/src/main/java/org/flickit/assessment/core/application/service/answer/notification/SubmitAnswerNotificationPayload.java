@@ -9,10 +9,10 @@ import java.util.UUID;
 public record SubmitAnswerNotificationPayload(AssessmentModel assessment,
                                               UserModel assessor) implements NotificationPayload {
 
-    public record AssessmentModel(UUID id, String title) {
+    public record AssessmentModel(UUID id, String title, Long spaceId) {
 
         public AssessmentModel(Assessment assessment) {
-            this(assessment.getId(), assessment.getTitle());
+            this(assessment.getId(), assessment.getTitle(), assessment.getSpace().getId());
         }
     }
 

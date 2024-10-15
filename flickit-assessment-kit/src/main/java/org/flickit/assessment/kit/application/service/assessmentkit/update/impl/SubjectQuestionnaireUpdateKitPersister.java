@@ -46,11 +46,11 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
         var questionnaireIdToSubjectIdMap = extractQuestionnaireIdToSubjectIdMap(ctx, savedKit, dslKit);
-        var savedSubjectQuestionnaires = loadPort.loadByKitVersionId(savedKit.getKitVersionId());
+        var savedSubjectQuestionnaires = loadPort.loadByKitVersionId(savedKit.getActiveVersionId());
         var savedQuestionnaireIdToSubjectIdToIdMap =
             questionnaireIdToSubjectIdToIdMap(savedSubjectQuestionnaires);
 
-        updateSubjectQuestionnaires(savedQuestionnaireIdToSubjectIdToIdMap, questionnaireIdToSubjectIdMap, savedKit.getKitVersionId());
+        updateSubjectQuestionnaires(savedQuestionnaireIdToSubjectIdToIdMap, questionnaireIdToSubjectIdMap, savedKit.getActiveVersionId());
 
         return new UpdateKitPersisterResult(false);
     }

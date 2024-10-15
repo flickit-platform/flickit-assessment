@@ -408,6 +408,34 @@
 			]
 		},
 		{
+			"name": "Notification",
+			"item": [
+				{
+					"name": "Get Notification Platform Setting",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/notification-platform-settings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"notification-platform-settings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Space",
 			"item": [
 				{

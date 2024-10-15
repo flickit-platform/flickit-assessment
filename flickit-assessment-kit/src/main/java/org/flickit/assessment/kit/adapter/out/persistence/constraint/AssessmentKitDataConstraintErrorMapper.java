@@ -17,7 +17,24 @@ public class AssessmentKitDataConstraintErrorMapper implements DataConstraintErr
         entry("fk_fak_kit_user_access_account_user", GRANT_USER_ACCESS_TO_KIT_USER_ID_NOT_FOUND),
         entry("fk_fak_kit_user_access_assessmentkit", GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_FOUND),
         entry("fak_kit_user_access_pkey", GRANT_USER_ACCESS_TO_KIT_USER_ID_DUPLICATE),
-        entry("fk_fak_kittagrelation_tag", UPDATE_KIT_INFO_TAG_ID_NOT_FOUND));
+        entry("fk_fak_kittagrelation_tag", UPDATE_KIT_INFO_TAG_ID_NOT_FOUND),
+        entry("uq_fak_subject_index_kitversionid", CREATE_SUBJECT_INDEX_DUPLICATE),
+        entry("uq_fak_subject_title_kitversionid", CREATE_SUBJECT_TITLE_DUPLICATE),
+        entry("uq_fak_subject_code_kitversionid", CREATE_SUBJECT_CODE_DUPLICATE),
+        entry("uq_fak_attribute_code_subjectid", CREATE_ATTRIBUTE_CODE_DUPLICATE),
+        entry("uq_fak_attribute_index_subjectid", CREATE_ATTRIBUTE_INDEX_DUPLICATE),
+        entry("uq_fak_attribute_code_kitversionid", CREATE_ATTRIBUTE_CODE_DUPLICATE),
+        entry("uq_fak_maturitylevel_code_kitversionid", CREATE_MATURITY_LEVEL_CODE_DUPLICATE),
+        entry("uq_fak_maturitylevel_index_kitversionid", CREATE_MATURITY_LEVEL_INDEX_DUPLICATE),
+        entry("uq_fak_maturitylevel_title_kitversionid", CREATE_MATURITY_LEVEL_TITLE_DUPLICATE),
+        entry("uq_fak_maturitylevel_value_kitversionid", CREATE_MATURITY_LEVEL_VALUE_DUPLICATE),
+        entry("uq_fak_questionnaire_code_kitversionid", CREATE_QUESTIONNAIRE_TITLE_DUPLICATE),
+        entry("uq_fak_questionnaire_index_kitversionid", CREATE_QUESTIONNAIRE_INDEX_DUPLICATE),
+        entry("uq_fak_questionnaire_title_kitversionid", CREATE_QUESTIONNAIRE_TITLE_DUPLICATE),
+        entry("fk_fak_levelcompetence_maturitylevel_effectivelevelid", MATURITY_LEVEL_ID_NOT_FOUND),
+        entry("fk_fak_levelcompetence_maturitylevel_affectedlevelid", MATURITY_LEVEL_ID_NOT_FOUND),
+        entry("uq_fak_levelcompetence_affectedlevel_effectivelevel_kitversion", CREATE_LEVEL_COMPETENCE_DUPLICATE),
+        entry("fk_fak_levelcompetence_kitversion", KIT_VERSION_ID_NOT_FOUND));
 
     @Override
     public boolean contains(String constraintName) {

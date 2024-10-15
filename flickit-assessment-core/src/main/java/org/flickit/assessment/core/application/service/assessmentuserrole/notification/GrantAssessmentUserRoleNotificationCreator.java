@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE;
+import static org.flickit.assessment.core.common.MessageKey.NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE;
 
 @Slf4j
 @Component
@@ -35,16 +35,18 @@ public class GrantAssessmentUserRoleNotificationCreator
     public List<NotificationEnvelope> create(GrantAssessmentUserRoleNotificationCmd cmd) {
         Optional<Assessment> assessment = getAssessmentPort.getAssessmentById(cmd.assessmentId());
         Optional<User> user = loadUserPort.loadById(cmd.assignerUserId());
-        if (assessment.isEmpty() || user.isEmpty()) {
+        var targetUser = loadUserPort.loadById(cmd.targetUserId())
+            .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));
+        if (assessment.isEmpty() || user.isEmpty() || targetUser.isEmpty()) {
             log.warn("assessment or user not found");
             return List.of();
         }
         var title = MessageBundle.message(NOTIFICATION_TITLE_GRANT_ASSESSMENT_USER_ROLE);
         var payload = new GrantAssessmentUserRoleNotificationPayload(
-            new AssessmentModel(assessment.get().getId(), assessment.get().getTitle()),
+            new AssessmentModel(assessment.get()),
             new UserModel(user.get().getId(), user.get().getDisplayName()),
             new RoleModel(cmd.role().getTitle()));
-        return List.of(new NotificationEnvelope(cmd.targetUserId(), title, payload));
+        return List.of(new NotificationEnvelope(targetUser.get(), title, payload));
     }
 
     @Override

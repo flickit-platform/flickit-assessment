@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
@@ -56,10 +57,7 @@ class CreateAssessorAdviceNarrationServiceTest {
 
     @Test
     void testCreateAssessorAdviceNarration_WhenCurrentUserDoesNotHaveRequiredPermission_ThenThrowAccessDeniedException() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        String assessorNarration = RandomStringUtils.randomAlphabetic(100);
-        var param = new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration, currentUserId);
+        var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
 
@@ -69,13 +67,10 @@ class CreateAssessorAdviceNarrationServiceTest {
 
     @Test
     void testCreateAssessorAdviceNarration_WhenAssessmentResultDoesNotNotExist_ThenThrowResourceNotFoundException() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        String assessorNarration = RandomStringUtils.randomAlphabetic(100);
-        var param = new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration, currentUserId);
+        var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var resourceNotFoundException = assertThrows(ResourceNotFoundException.class, () -> service.createAssessorAdviceNarration(param));
         assertEquals(CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND, resourceNotFoundException.getMessage());
@@ -83,16 +78,13 @@ class CreateAssessorAdviceNarrationServiceTest {
 
     @Test
     void testCreateAssessorAdviceNarration_WhenAdviceNarrationDoesNotExist_ThenCreateNewOne() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        String assessorNarration = RandomStringUtils.randomAlphabetic(100);
-        var param = new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration, currentUserId);
+        var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
         UUID assessmentResultId = UUID.randomUUID();
-        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId);
+        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, 123L);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(assessmentId);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResultId)).thenReturn(Optional.empty());
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
 
@@ -103,28 +95,38 @@ class CreateAssessorAdviceNarrationServiceTest {
 
     @Test
     void testCreateAssessorAdviceNarration_WhenAdviceExists_ThenUpdateItsAssessorNarration() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        String assessorNarration = RandomStringUtils.randomAlphabetic(100);
-        var param = new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration, currentUserId);
+        var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
         UUID assessmentResultId = UUID.randomUUID();
-        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId);
+        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, 123L);
         AdviceNarration adviceNarration = new AdviceNarration(null,
             assessmentResultId,
             "aiNarration",
             null,
             LocalDateTime.now(),
             null,
-            currentUserId);
+            param.getCurrentUserId());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(assessmentId);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         doNothing().when(updateAdviceNarrationPort).updateAssessorNarration(any(AdviceNarration.class));
 
         service.createAssessorAdviceNarration(param);
 
         verifyNoInteractions(createAdviceNarrationPort);
+    }
+
+    private CreateAssessorAdviceNarrationUseCase.Param createParam(Consumer<CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateAssessorAdviceNarrationUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .assessorNarration(RandomStringUtils.randomAlphabetic(100))
+            .currentUserId(UUID.randomUUID());
     }
 }

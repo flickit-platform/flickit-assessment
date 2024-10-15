@@ -27,8 +27,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createWithAssessmentResultId;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithJustAnId;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -170,11 +169,11 @@ class GetAssessmentInsightServiceTest {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, currentUserId);
-        var assessmentResult = validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
+        var assessmentResult = validResultWithSubjectValuesAndMaturityLevelAndConfidenceValue(null, levelFive(), 93.2);
         var progress = new GetAssessmentProgressPort.Result(assessmentId, 8, 10);
         var defaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
             levelFive().getTitle(), progress.answersCount(), progress.questionsCount(),
-            assessmentResult.getConfidenceValue() != null ? assessmentResult.getConfidenceValue() : 0);
+            94);
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
