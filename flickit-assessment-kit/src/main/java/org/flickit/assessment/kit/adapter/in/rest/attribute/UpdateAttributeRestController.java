@@ -21,20 +21,16 @@ public class UpdateAttributeRestController {
     private final UserContext userContext;
 
     @PutMapping("/kit-versions/{kitVersionId}/attributes/{attributeId}")
-    public ResponseEntity<Void> updateAttribute(
-        @PathVariable("kitVersionId") Long kitVersionId,
-        @PathVariable("attributeId") Long attributeId,
-        @RequestBody UpdateAttributeRequestDto requestDto) {
+    public ResponseEntity<Void> updateAttribute(@PathVariable("kitVersionId") Long kitVersionId,
+                                                @PathVariable("attributeId") Long attributeId,
+                                                @RequestBody UpdateAttributeRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         var param = toParam(attributeId, kitVersionId, requestDto, currentUserId);
         useCase.updateAttribute(param);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(Long attributeId,
-                          Long kitVersionId,
-                          UpdateAttributeRequestDto requestDto,
-                          UUID currentUserId) {
+    private Param toParam(Long attributeId, Long kitVersionId, UpdateAttributeRequestDto requestDto, UUID currentUserId) {
         return new Param(attributeId,
             kitVersionId,
             requestDto.index(),

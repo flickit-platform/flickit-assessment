@@ -4,6 +4,5 @@ public record UpdateAttributeRequestDto(Integer index,
                                         String title,
                                         String description,
                                         Integer weight,
-                                        Long subjectId
-) {
+                                        Long subjectId) {
 }

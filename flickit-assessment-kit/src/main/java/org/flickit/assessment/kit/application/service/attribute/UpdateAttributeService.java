@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -15,6 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
 @Transactional
@@ -41,7 +41,7 @@ public class UpdateAttributeService implements UpdateAttributeUseCase {
     private UpdateAttributePort.Param toParam(Param param) {
         return new UpdateAttributePort.Param(param.getAttributeId(),
             param.getKitVersionId(),
-            SlugCodeUtil.generateSlugCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),
