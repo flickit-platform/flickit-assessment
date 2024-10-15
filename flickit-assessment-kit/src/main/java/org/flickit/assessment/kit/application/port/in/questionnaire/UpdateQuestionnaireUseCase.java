@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.in.questionnaire;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -19,8 +20,8 @@ public interface UpdateQuestionnaireUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_QUESTIONNAIRE_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = UPDATE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = UPDATE_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL)
         Long questionnaireId;
@@ -35,18 +36,20 @@ public interface UpdateQuestionnaireUseCase {
 
         @NotNull(message = UPDATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL)
         @Size(min = 3, message = UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN)
+        @Size(max = 500, message = UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX)
         String description;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitId,
+        @Builder
+        public Param(Long kitVersionId,
                      Long questionnaireId,
                      Integer index,
                      String title,
                      String description,
                      UUID currentUserId) {
-            this.kitId = kitId;
+            this.kitVersionId = kitVersionId;
             this.questionnaireId = questionnaireId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim(): null;

@@ -286,7 +286,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire-orders.questionnaireIndex.notNull";
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_MIN = "update-questionnaire-orders.questionnaireIndex.min";
 
-    public static final String UPDATE_QUESTIONNAIRE_KIT_ID_NOT_NULL = "update-questionnaire.kitId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "update-questionnaire.kitVersionId.notNull";
     public static final String UPDATE_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "update-questionnaire.questionnaireId.notNull";
     public static final String UPDATE_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire.index.notNull";
     public static final String UPDATE_QUESTIONNAIRE_TITLE_NOT_NULL = "update-questionnaire.title.notNull";
@@ -294,6 +294,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTIONNAIRE_TITLE_SIZE_MAX = "update-questionnaire.title.size.max";
     public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL = "update-questionnaire.description.notNull";
     public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "update-questionnaire.description.size.min";
+    public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "update-questionnaire.description.size.max";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
