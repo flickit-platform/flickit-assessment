@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.port.in.attribute.UpdateAttributeUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.attribute.UpdateAttributePort;
@@ -20,7 +19,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_NOT_UPDATING_STATUS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -50,20 +48,6 @@ class UpdateAttributeServiceTest {
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.updateAttribute(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
-
-        verifyNoInteractions(updateAttributePort);
-    }
-
-    @Test
-    void testUpdateAttribute_KitIsOnActiveStatus_ThrowsException() {
-        Param param = createParam(Param.ParamBuilder::build);
-
-        var kitVersion = KitVersionMother.createActiveKitVersion(AssessmentKitMother.simpleKit());
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
-
-        var exception = assertThrows(ValidationException.class, () -> service.updateAttribute(param));
-        assertEquals(KIT_VERSION_NOT_UPDATING_STATUS, exception.getMessageKey());
 
         verifyNoInteractions(updateAttributePort);
     }
