@@ -1095,13 +1095,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/393/questionnaire/3072",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaire/3072",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-								"assessment-kits",
+								"kit-versions",
 								"393",
 								"questionnaire",
 								"3072"
