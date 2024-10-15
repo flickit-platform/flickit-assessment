@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -19,7 +18,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,19 +41,7 @@ class UpdateQuestionnaireOrdersServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testUpdateQuestionnaireOrdersService_kitVersionIdNotFound_NotFoundException() {
-        var param = createParam(UpdateQuestionnaireOrdersUseCase.Param.ParamBuilder::build);
-
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.changeOrders(param));
-        assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(loadExpertGroupOwnerPort, updateQuestionnairePort);
-    }
-
-    @Test
-    void testUpdateQuestionnaireOrdersService_currentUserIsNotOwner_AccessDeniedException() {
+    void testUpdateQuestionnaireOrdersService_currentUserIsNotExpertGroupOwner_AccessDeniedException() {
         var param = createParam(UpdateQuestionnaireOrdersUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);

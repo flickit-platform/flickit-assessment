@@ -3,7 +3,8 @@ package org.flickit.assessment.kit.adapter.in.rest.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireOrdersUseCase;
-import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireOrdersUseCase.*;
+import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireOrdersUseCase.Param;
+import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireOrdersUseCase.QuestionnaireParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,9 +30,8 @@ public class UpdateQuestionnaireOrdersRestController {
     }
 
     private Param toParam(Long kitVersionId, UpdateQuestionnaireOrdersRequestDto requestDto, UUID currentUserId) {
-        return new Param(kitVersionId,
-            requestDto.orders().stream().map(
-                request -> new QuestionnaireParam(request.id(), request.index())).toList(),
-            currentUserId);
+        var orders = requestDto.orders().stream().map(
+            request -> new QuestionnaireParam(request.id(), request.index())).toList();
+        return new Param(kitVersionId, orders, currentUserId);
     }
 }
