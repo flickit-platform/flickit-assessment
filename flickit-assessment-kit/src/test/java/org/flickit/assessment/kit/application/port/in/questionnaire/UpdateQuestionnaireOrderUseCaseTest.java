@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.questionnaire;
 
 import jakarta.validation.ConstraintViolationException;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UpdateQuestionnaireOrderUseCaseTest {
 
@@ -26,6 +27,10 @@ class UpdateQuestionnaireOrderUseCaseTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.orders(null)));
         assertThat(throwable).hasMessage("orders: " + UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.orders(List.of(new UpdateQuestionnaireOrdersUseCase.QuestionnaireParam(2L, 5)))));
+        AssertionsForClassTypes.assertThat(throwable).hasMessage("orders: " + UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_SIZE_MIN);
     }
 
     @Test

@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.application.port.in.questionnaire;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -25,7 +25,8 @@ public interface UpdateQuestionnaireOrdersUseCase {
         @NotNull(message = UPDATE_QUESTIONNAIRE_ORDERS_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotEmpty(message = UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_NOT_NULL)
+        @NotNull(message = UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_NOT_NULL)
+        @Size(min = 2, message = UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_SIZE_MIN)
         List<QuestionnaireParam> orders;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
