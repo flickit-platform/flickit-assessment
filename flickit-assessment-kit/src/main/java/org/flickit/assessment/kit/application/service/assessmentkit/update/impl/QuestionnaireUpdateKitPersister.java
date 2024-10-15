@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
@@ -112,7 +113,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
                 savedQuestionnaire.getId(),
                 kitVersionId,
                 dslQuestionnaire.getTitle(),
-                Questionnaire.generateSlugCode(dslQuestionnaire.getTitle()),
+                SlugCodeUtil.generateSlugCode(dslQuestionnaire.getTitle()),
                 dslQuestionnaire.getIndex(),
                 dslQuestionnaire.getDescription(),
                 LocalDateTime.now(),

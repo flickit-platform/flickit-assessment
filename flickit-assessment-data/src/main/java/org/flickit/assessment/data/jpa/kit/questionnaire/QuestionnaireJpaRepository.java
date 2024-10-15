@@ -18,6 +18,8 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
 
     Optional<QuestionnaireJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 
+    boolean existsByIdAndKitVersionId(long id, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE QuestionnaireJpaEntity q
