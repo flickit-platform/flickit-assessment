@@ -19,17 +19,20 @@ public class UpdateQuestionRestController {
     private final UpdateQuestionUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessment-kits/{kitId}/questions/{questionId}")
-    public ResponseEntity<Void> updateQuestion(@PathVariable("kitId") Long kitId,
+    @PutMapping("/kit-versions/{kitVersionId}/questions/{questionId}")
+    public ResponseEntity<Void> updateQuestion(@PathVariable("kitVersionId") Long kitVersionId,
                                                @PathVariable("questionId") Long questionId,
                                                @RequestParam UpdateQuestionRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.updateQuestion(toParam(kitId, questionId, currentUserId, requestDto));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        useCase.updateQuestion(toParam(kitVersionId, questionId, currentUserId, requestDto));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateQuestionUseCase.Param toParam(Long kitId, Long questionId, UUID currentUserId, UpdateQuestionRequestDto requestDto) {
-        return new UpdateQuestionUseCase.Param(kitId,
+    private UpdateQuestionUseCase.Param toParam(Long kitVersionId,
+                                                Long questionId,
+                                                UUID currentUserId,
+                                                UpdateQuestionRequestDto requestDto) {
+        return new UpdateQuestionUseCase.Param(kitVersionId,
             questionId,
             requestDto.index(),
             requestDto.title(),
