@@ -120,12 +120,12 @@ public class AttributePersistenceJpaAdapter implements
             .map(AttributeJpaEntity::getSubjectId)
             .collect(Collectors.toSet());
 
-        var subjectIdToAttributeSubjectMap = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, kitVersionId).stream()
+        var subjectIdToSubjectMap = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, kitVersionId).stream()
             .map(x -> SubjectMapper.mapToDomainModel(x, null))
             .collect(Collectors.toMap(Subject::getId, Function.identity()));
 
         var items = pageResult.getContent().stream()
-            .map(x -> new AttributeWithSubject(mapToDomainModel(x), subjectIdToAttributeSubjectMap.get(x.getSubjectId())))
+            .map(x -> new AttributeWithSubject(mapToDomainModel(x), subjectIdToSubjectMap.get(x.getSubjectId())))
             .toList();
 
         return new PaginatedResponse<>(items,
