@@ -160,4 +160,22 @@ public class AssessmentKitMother {
             null,
             id++);
     }
+
+    public static AssessmentKit kitWithKitVersionId(Long activeVersionId) {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.FALSE,
+            EXPERT_GROUP_ID,
+            null,
+            null,
+            null,
+            activeVersionId);
+    }
 }

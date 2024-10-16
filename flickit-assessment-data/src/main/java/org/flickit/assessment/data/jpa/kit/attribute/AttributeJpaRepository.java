@@ -23,10 +23,13 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
+    void deleteByIdAndKitVersionId(long id, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AttributeJpaEntity a
-            SET a.title = :title,
+            SET a.code = :code,
+                a.title = :title,
                 a.index = :index,
                 a.description = :description,
                 a.weight = :weight,
@@ -37,6 +40,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
         """)
     void update(@Param("id") long id,
                 @Param("kitVersionId") long kitVersionId,
+                @Param("code") String code,
                 @Param("title") String title,
                 @Param("index") int index,
                 @Param("description") String description,
@@ -61,7 +65,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id and qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
-            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpact.id = qi.id and ov.optionId = ans.answerOptionId
+            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpactId = qi.id and ov.optionId = ans.answerOptionId AND ov.kitVersionId = qi.kitVersionId
                 AND ov.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
