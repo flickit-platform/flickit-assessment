@@ -85,12 +85,10 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     Integer countAttributeImpactfulQuestions(@Param("attributeId") long attributeId, @Param("kitVersionId") long kitVersionId);
 
     @Query("""
-            SELECT at as attribute,
-                s as subject
             FROM AttributeJpaEntity at
-            JOIN SubjectJpaEntity s ON at.subjectId = s.id AND at.kitVersionId = s.kitVersionId
+                JOIN SubjectJpaEntity s ON at.subjectId = s.id AND at.kitVersionId = s.kitVersionId
             WHERE at.kitVersionId = :kitVersionId
             ORDER BY s.index, at.index
         """)
-    Page<AttributeWithSubjectView> findAllByKitVersionId(long kitVersionId, Pageable pageable);
+    Page<AttributeJpaEntity> findAllByKitVersionId(long kitVersionId, Pageable pageable);
 }

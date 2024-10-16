@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase;
+import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.AttributeListItem;
 import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.Param;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.SubjectListItem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class GetAttributesRestController {
     private final UserContext userContext;
 
     @GetMapping("/kit-versions/{kitVersionId}/attributes")
-    public ResponseEntity<PaginatedResponse<SubjectListItem>> getAttributes(@PathVariable("kitVersionId") Long kitVersionId,
+    public ResponseEntity<PaginatedResponse<AttributeListItem>> getAttributes(@PathVariable("kitVersionId") Long kitVersionId,
                                                                               @RequestParam(defaultValue = "0") int page,
                                                                               @RequestParam(defaultValue = "20") int size) {
         UUID currentUserId = userContext.getUser().id();
@@ -34,5 +34,4 @@ public class GetAttributesRestController {
     private Param toParam(Long kitVersionId, int page, int size, UUID currentUserId) {
         return new Param(kitVersionId, page, size, currentUserId);
     }
-
 }

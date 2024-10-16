@@ -9,7 +9,6 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -17,7 +16,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetAttributesUseCase {
 
-    PaginatedResponse<SubjectListItem> getAttributes(Param param);
+    PaginatedResponse<AttributeListItem> getAttributes(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -46,9 +45,9 @@ public interface GetAttributesUseCase {
         }
     }
 
-    record SubjectListItem(long id, String title, List<AttributeListItem> attributes) {
+    record AttributeListItem(long id, int index, String title, String description, int weight, AttributeSubject subject) {
     }
 
-    record AttributeListItem(long id, int index, String title, String description, int weight) {
+    record AttributeSubject(long id, String title) {
     }
 }

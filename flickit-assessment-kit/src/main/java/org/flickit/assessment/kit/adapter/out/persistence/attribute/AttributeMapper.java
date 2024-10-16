@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.AttributeListItem;
+import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.AttributeSubject;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AttributeMapper {
@@ -38,5 +40,14 @@ public class AttributeMapper {
             attribute.getCreatedBy(),
             attribute.getLastModifiedBy(),
             subjectJpaEntity.getId());
+    }
+
+    public static AttributeListItem mapToListItem(AttributeJpaEntity entity, AttributeSubject attributeSubject) {
+        return new AttributeListItem(entity.getId(),
+            entity.getIndex(),
+            entity.getTitle(),
+            entity.getDescription(),
+            entity.getWeight(),
+            attributeSubject);
     }
 }

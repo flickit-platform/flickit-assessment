@@ -3,27 +3,24 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity.Fields;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeWithSubjectView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
-import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.AttributeListItem;
+import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.AttributeSubject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
+import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.*;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND;
 
@@ -81,24 +78,25 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<Subject> loadByKitVersionId(long kitVersionId, int size, int page) {
+    public PaginatedResponse<AttributeListItem> loadByKitVersionId(long kitVersionId, int size, int page) {
         var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
-        var subjectToAttributesMap = pageResult.getContent().stream()
-            .collect(groupingBy(AttributeWithSubjectView::getSubject, LinkedHashMap::new, toList()));
 
-        var items = subjectToAttributesMap.entrySet().stream()
-            .map(x -> {
-                List<Attribute> attributes = x.getValue().stream()
-                    .map(a -> mapToDomainModel(a.getAttribute()))
-                    .toList();
-                return SubjectMapper.mapToDomainModel(x.getKey(), attributes);
-            })
+        var subjectIds = pageResult.getContent().stream()
+            .map(AttributeJpaEntity::getSubjectId)
+            .collect(Collectors.toSet());
+
+        var subjectIdToAttributeSubjectMap = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, kitVersionId).stream()
+            .map(x -> new AttributeSubject(x.getId(), x.getTitle()))
+            .collect(Collectors.toMap(AttributeSubject::id, Function.identity()));
+
+        var items = pageResult.getContent().stream()
+            .map(x -> mapToListItem(x, subjectIdToAttributeSubjectMap.get(x.getSubjectId())))
             .toList();
 
         return new PaginatedResponse<>(items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            Fields.index.toLowerCase(),
+            Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
