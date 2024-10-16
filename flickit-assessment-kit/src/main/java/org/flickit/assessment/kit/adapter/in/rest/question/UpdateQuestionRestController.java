@@ -5,10 +5,7 @@ import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.question.UpdateQuestionUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -22,7 +19,7 @@ public class UpdateQuestionRestController {
     @PutMapping("/kit-versions/{kitVersionId}/questions/{questionId}")
     public ResponseEntity<Void> updateQuestion(@PathVariable("kitVersionId") Long kitVersionId,
                                                @PathVariable("questionId") Long questionId,
-                                               @RequestParam UpdateQuestionRequestDto requestDto) {
+                                               @RequestBody UpdateQuestionRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateQuestion(toParam(kitVersionId, questionId, currentUserId, requestDto));
         return new ResponseEntity<>(HttpStatus.OK);

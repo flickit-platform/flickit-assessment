@@ -185,4 +185,28 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             ORDER BY qsn.questionnaireId asc, qsn.index asc
         """)
     List<AttributeImpactfulQuestionsView> findByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE QuestionJpaEntity q
+            SET q.title = :title,
+                q.code = :code,
+                q.hint = :hint,
+                q.index = :index,
+                q.mayNotBeApplicable = :mayNotBeApplicable,
+                q.advisable = :advisable,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.id = :id AND q.kitVersionId = :kitVersionId
+        """)
+    void update(@Param("id") Long id,
+                @Param("kitVersionId") Long kitVersionId,
+                @Param("code") String code,
+                @Param("title") String title,
+                @Param("index") Integer index,
+                @Param("hint") String hint,
+                @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
+                @Param("advisable") Boolean advisable,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 }
