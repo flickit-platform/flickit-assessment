@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.maturitylevel;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.MaturityLevelOrder;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -10,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMatur
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -31,11 +31,16 @@ public class UpdateMaturityLevelOrdersService implements UpdateMaturityLevelOrde
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var maturityLevelOrders = param.getOrders().stream().map(this::toMaturityLevelOrderParam).toList();
-        updateMaturityLevelPort.updateOrders(maturityLevelOrders, param.getKitVersionId(), param.getCurrentUserId());
+        updateMaturityLevelPort.updateOrders(toUpdatePortParam(param));
     }
 
-    private MaturityLevelOrder toMaturityLevelOrderParam(MaturityLevelParam param) {
-        return new MaturityLevelOrder(param.getId(), param.getIndex(), param.getIndex());
+    private UpdateMaturityLevelPort.UpdateOrderParam toUpdatePortParam(UpdateMaturityLevelOrdersUseCase.Param param) {
+        var maturityLevelOrders = param.getOrders().stream()
+            .map(e -> new UpdateMaturityLevelPort.UpdateOrderParam.MaturityLevelOrder(e.getId(), e.getIndex(), e.getIndex()))
+            .toList();
+        return new UpdateMaturityLevelPort.UpdateOrderParam(maturityLevelOrders,
+            param.getKitVersionId(),
+            LocalDateTime.now(),
+            param.getCurrentUserId());
     }
 }

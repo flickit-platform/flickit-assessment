@@ -20,24 +20,23 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
-
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
 public class SubjectPersistenceJpaAdapter implements
-    UpdateSubjectPort,
+    UpdateSubjectByDslPort,
     CreateSubjectPort,
     LoadSubjectsPort,
     LoadSubjectPort,
-    DeleteSubjectPort {
+    DeleteSubjectPort,
+    UpdateSubjectPort {
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
 
     @Override
-    public void update(UpdateSubjectPort.Param param) {
+    public void update(UpdateSubjectByDslPort.Param param) {
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
@@ -97,5 +96,41 @@ public class SubjectPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(subjectId, kitVersionId);
+    }
+
+    @Override
+    public void update(UpdateSubjectPort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
+
+        repository.update(param.id(),
+            param.kitVersionId(),
+            param.code(),
+            param.title(),
+            param.index(),
+            param.description(),
+            param.weight(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
+
+    @Override
+    public void updateOrders(UpdateOrderParam param) {
+        Map<SubjectJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
+            .collect(Collectors.toMap(
+                ml -> new SubjectJpaEntity.EntityId(ml.subjectId(), param.kitVersionId()),
+                UpdateOrderParam.SubjectOrder::index
+            ));
+        List<SubjectJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        if (entities.size() != param.orders().size())
+            throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            int newIndex = idToIndex.get(new SubjectJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            x.setIndex(newIndex);
+            x.setLastModificationTime(param.lastModificationTime());
+            x.setLastModifiedBy(param.lastModifiedBy());
+        });
+        repository.saveAll(entities);
     }
 }

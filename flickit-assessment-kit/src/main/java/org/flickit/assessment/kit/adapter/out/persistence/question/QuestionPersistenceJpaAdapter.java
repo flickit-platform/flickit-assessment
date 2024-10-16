@@ -37,6 +37,7 @@ public class QuestionPersistenceJpaAdapter implements
     CountSubjectQuestionsPort,
     LoadQuestionPort,
     LoadAttributeLevelQuestionsPort,
+    DeleteQuestionPort,
     UpdateQuestionsOrderPort {
 
     private final QuestionJpaRepository repository;
@@ -90,11 +91,10 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {
-        impact.setOptionImpacts(
-            answerOptionImpactRepository.findAllByQuestionImpactId(impact.getId()).stream()
-                .map(AnswerOptionImpactMapper::mapToDomainModel)
-                .toList()
-        );
+        var optionImpacts = answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId()).stream()
+            .map(AnswerOptionImpactMapper::mapToDomainModel)
+            .toList();
+        impact.setOptionImpacts(optionImpacts);
         return impact;
     }
 
@@ -133,6 +133,14 @@ public class QuestionPersistenceJpaAdapter implements
 
                 return new Result(question, questionnaire);
             }).toList();
+    }
+
+    @Override
+    public void delete(long questionId, long kitVersionId) {
+        if (repository.existsByIdAndKitVersionId(questionId, kitVersionId))
+            repository.deleteByIdAndKitVersionId(questionId, kitVersionId);
+        else
+            throw new ResourceNotFoundException(DELETE_QUESTION_ID_NOT_FOUND);
     }
 
     @Override
