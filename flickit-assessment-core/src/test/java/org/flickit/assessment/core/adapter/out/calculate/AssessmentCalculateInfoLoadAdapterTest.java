@@ -291,9 +291,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, question5.getId(), null, null, null, null);
         List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
 
-        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, 1L, impact11.getId(), 1, kitVersionId, null, null, null, null);
-        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, 2L, impact21.getId(), 1, kitVersionId, null, null, null, null);
-        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, 5L, impact31.getId(), 1, kitVersionId, null, null, null, null);
+        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, kitVersionId, 1L, impact11.getId(), 1, null, null, null, null);
+        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, kitVersionId, 2L, impact21.getId(), 1, null, null, null, null);
+        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, kitVersionId, 5L, impact31.getId(), 1, null, null, null, null);
 
         var optionImpactToQuestionImpactMap = Map.of(answerImpact11, impact11,
             answerImpact21, impact21,
