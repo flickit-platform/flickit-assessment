@@ -34,11 +34,4 @@ public class AssessmentKit {
     @Setter
     @Nullable
     private Long draftVersionId;
-
-    public static String generateSlugCode(String title) {
-        return title
-            .toLowerCase()
-            .strip()
-            .replaceAll("\\s+", "-");
-    }
 }

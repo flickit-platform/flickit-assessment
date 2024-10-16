@@ -154,6 +154,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_CODE_DUPLICATE = "create-attribute.code.duplicate";
     public static final String CREATE_ATTRIBUTE_INDEX_DUPLICATE = "create-attribute.index.duplicate";
     public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND = "create-attribute.subjectId.notFound";
+    public static final String CREATE_ATTRIBUTE_SUBJECT_ID_INVALID = "create-attribute.subjectId.invalid";
 
     public static final String CREATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "create-maturity-level.kitVersionId.notNull";
     public static final String CREATE_MATURITY_LEVEL_INDEX_NOT_NULL = "create-maturity-level.index.notNull";
@@ -214,6 +215,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-maturity-level-orders.kitVersionId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL = "update-maturity-level-orders.orders.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_SIZE_MIN = "update-maturity-level-orders.size.min";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_ID_NOT_NULL = "update-maturity-level-orders.maturityLevelId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level-orders.maturityLevel.index.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
@@ -259,6 +261,48 @@ public class ErrorMessageKey {
     public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MIN = "update-subject.description.size.min";
     public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MAX = "update-subject.description.size.max";
     public static final String UPDATE_SUBJECT_WEIGHT_NOT_NULL = "update-subject.weight.notNull";
+
+    public static final String UPDATE_SUBJECT_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-subject-orders.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECTS_NOT_NULL = "update-subject-orders.subjects.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECTS_SIZE_MIN = "update-subject-orders.subjects.size.min";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECT_ID_NOT_NULL = "update-subject-orders.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_INDEX_NOT_NULL = "update-subject-orders.index.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_INDEX_MIN = "update-subject-orders.index.min";
+
+    public static final String DELETE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "delete-attribute.kitVersionId.notNull";
+    public static final String DELETE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "delete-attribute.attributeId.notNull";
+    public static final String DELETE_ATTRIBUTE_NOT_ALLOWED = "delete-attribute.notAllowed";
+
+    public static final String UPDATE_ATTRIBUTE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-attribute-orders.kitVersionId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_NOT_NULL = "update-attribute-orders.attributes.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_SIZE_MIN = "update-attribute-orders.attributes.size.min";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTE_ID_NOT_NULL = "update-attribute-orders.attributeId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL = "update-attribute-orders.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN = "update-attribute-orders.index.min";
+
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-questionnaire-orders.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_NOT_NULL = "update-questionnaire-orders.orders.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_SIZE_MIN = "update-questionnaire-orders.orders.size.min";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_ID_NOT_NULL = "update-questionnaire-orders.questionnaireId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire-orders.questionnaireIndex.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_MIN = "update-questionnaire-orders.questionnaireIndex.min";
+
+    public static final String UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "update-attribute.kitVersionId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "update-attribute.attributeId.notNull";
+    public static final String UPDATE_ATTRIBUTE_TITLE_NOT_BLANK = "update-attribute.title.notBlank";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MIN = "update-attribute.title.size.min";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MAX = "update-attribute.title.size.max";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK = "update-attribute.description.notBlank";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "update-attribute.description.size.min";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "update-attribute.description.size.max";
+    public static final String UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "update-attribute.subjectId.notNull";
+    public static final String UPDATE_ATTRIBUTE_INDEX_NOT_NULL = "update-attribute.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL = "update-attribute.weight.notNull";
+
+    public static final String DELETE_QUESTION_KIT_VERSION_ID_NOT_NULL = "delete-question.kitVersionId.notNull";
+    public static final String DELETE_QUESTION_QUESTION_ID_NOT_NULL = "delete-question.questionId.notNull";
+    public static final String DELETE_QUESTION_ID_NOT_FOUND = "delete-question.id.notFound";
+    public static final String DELETE_QUESTION_NOT_ALLOWED = "delete-question.notAllowed";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

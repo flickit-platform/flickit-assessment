@@ -29,4 +29,27 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
+    <changeSet id="0.34-05" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint tableName="fak_subject"
+                              constraintName="uq_fak_subject_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-06" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_subject_index_kitversionid"
+                             tableName="fak_subject"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.34-07" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_questionnaire"
+                              constraintName="uq_fak_questionnaire_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-08" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_questionnaire_index_kitversionid"
+                             tableName="fak_questionnaire"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>

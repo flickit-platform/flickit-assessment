@@ -31,7 +31,6 @@ public class QuestionImpactMapper {
             impact.getQuestionId(),
             impact.getAttributeId(),
             impact.getMaturityLevelId(),
-            null,
             impact.getCreationTime(),
             impact.getLastModificationTime(),
             impact.getCreatedBy(),

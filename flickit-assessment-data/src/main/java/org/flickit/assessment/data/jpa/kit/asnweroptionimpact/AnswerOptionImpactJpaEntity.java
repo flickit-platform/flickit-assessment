@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.asnweroptionimpact;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -33,9 +32,8 @@ public class AnswerOptionImpactJpaEntity {
     @Column(name = "option_id", nullable = false)
     private Long optionId;
 
-    @ManyToOne
-    @JoinColumn(name = "question_impact_id", referencedColumnName = "id")
-    private QuestionImpactJpaEntity questionImpact;
+    @Column(name = "question_impact_id", nullable = false)
+    private Long questionImpactId;
 
     @Column(name = "value", nullable = false)
     private double value;

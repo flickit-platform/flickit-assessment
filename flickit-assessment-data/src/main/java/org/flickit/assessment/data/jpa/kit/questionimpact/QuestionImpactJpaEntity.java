@@ -2,11 +2,9 @@ package org.flickit.assessment.data.jpa.kit.questionimpact;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +13,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class QuestionImpactJpaEntity {
 
@@ -42,9 +39,6 @@ public class QuestionImpactJpaEntity {
 
     @Column(name = "maturity_level_id", nullable = false)
     private Long maturityLevelId;
-
-    @OneToMany(mappedBy = "questionImpact", cascade = CascadeType.REMOVE)
-    private List<AnswerOptionImpactJpaEntity> answerOptionImpacts;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

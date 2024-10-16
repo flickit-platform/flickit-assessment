@@ -15,10 +15,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOpt
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.application.domain.*;
-import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.*;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +34,8 @@ public class QuestionPersistenceJpaAdapter implements
     CreateQuestionPort,
     CountSubjectQuestionsPort,
     LoadQuestionPort,
-    LoadAttributeLevelQuestionsPort {
+    LoadAttributeLevelQuestionsPort,
+    DeleteQuestionPort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -90,11 +88,10 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {
-        impact.setOptionImpacts(
-            answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId()).stream()
-                .map(AnswerOptionImpactMapper::mapToDomainModel)
-                .toList()
-        );
+        var optionImpacts = answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId()).stream()
+            .map(AnswerOptionImpactMapper::mapToDomainModel)
+            .toList();
+        impact.setOptionImpacts(optionImpacts);
         return impact;
     }
 
@@ -133,5 +130,13 @@ public class QuestionPersistenceJpaAdapter implements
 
                 return new Result(question, questionnaire);
             }).toList();
+    }
+
+    @Override
+    public void delete(long questionId, long kitVersionId) {
+        if (repository.existsByIdAndKitVersionId(questionId, kitVersionId))
+            repository.deleteByIdAndKitVersionId(questionId, kitVersionId);
+        else
+            throw new ResourceNotFoundException(DELETE_QUESTION_ID_NOT_FOUND);
     }
 }
