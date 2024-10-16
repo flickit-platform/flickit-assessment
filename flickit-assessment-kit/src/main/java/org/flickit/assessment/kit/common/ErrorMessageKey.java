@@ -286,10 +286,13 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire-orders.questionnaireIndex.notNull";
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_MIN = "update-questionnaire-orders.questionnaireIndex.min";
 
-    public static final String CREATE_QUESTION_KIT_ID_NOT_NULL = "create-question.kitId.notNull";
+    public static final String CREATE_QUESTION_KIT_VERSION_ID_NOT_NULL = "create-question.kitVersionId.notNull";
     public static final String CREATE_QUESTION_INDEX_NOT_NULL = "create-question.index.notNull";
-    public static final String CREATE_QUESTION_TITLE_NOT_BLANK = "create-question.title.notBlank";
-    public static final String CREATE_QUESTION_HINT_NOT_BLANK = "create-question.hint.notBlank";
+    public static final String CREATE_QUESTION_TITLE_NOT_NULL = "create-question.title.notNull";
+    public static final String CREATE_QUESTION_TITLE_SIZE_MIN = "create-question.title.size.min";
+    public static final String CREATE_QUESTION_TITLE_SIZE_MAX = "create-question.title.size.max";
+    public static final String CREATE_QUESTION_HINT_SIZE_MIN = "create-question.hint.size.min";
+    public static final String CREATE_QUESTION_HINT_SIZE_MAX = "create-question.hint.size.max";
     public static final String CREATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "create-question.mayNotBeApplicable.notNull";
     public static final String CREATE_QUESTION_ADVISABLE_NOT_NULL = "create-question.advisable.notNull";
     public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";

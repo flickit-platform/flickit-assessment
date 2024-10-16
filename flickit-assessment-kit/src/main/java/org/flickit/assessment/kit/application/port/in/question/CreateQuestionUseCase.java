@@ -1,7 +1,8 @@
 package org.flickit.assessment.kit.application.port.in.question;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -19,16 +20,19 @@ public interface CreateQuestionUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_QUESTION_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = CREATE_QUESTION_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = CREATE_QUESTION_INDEX_NOT_NULL)
         Integer index;
 
-        @NotBlank(message = CREATE_QUESTION_TITLE_NOT_BLANK)
+        @NotNull(message = CREATE_QUESTION_TITLE_NOT_NULL)
+        @Size(min = 3, message = CREATE_QUESTION_TITLE_SIZE_MIN)
+        @Size(max = 250, message = CREATE_QUESTION_TITLE_SIZE_MAX)
         String title;
 
-        @NotBlank(message = CREATE_QUESTION_HINT_NOT_BLANK)
+        @Size(min = 3, message = CREATE_QUESTION_HINT_SIZE_MIN)
+        @Size(max = 1000, message = CREATE_QUESTION_HINT_SIZE_MAX)
         String hint;
 
         @NotNull(message = CREATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL)
@@ -43,7 +47,8 @@ public interface CreateQuestionUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitId,
+        @Builder
+        public Param(Long kitVersionId,
                      Integer index,
                      String title,
                      String hint,
@@ -51,10 +56,10 @@ public interface CreateQuestionUseCase {
                      Boolean advisable,
                      Long questionnaireId,
                      UUID currentUserId) {
-            this.kitId = kitId;
+            this.kitVersionId = kitVersionId;
             this.index = index;
             this.title = title;
-            this.hint = hint;
+            this.hint = hint != null && !hint.isBlank() ? hint : null;
             this.mayNotBeApplicable = mayNotBeApplicable;
             this.advisable = advisable;
             this.questionnaireId = questionnaireId;
