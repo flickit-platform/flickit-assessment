@@ -10,10 +10,6 @@ import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUse
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
-import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
-import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +18,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithTitle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -43,10 +44,12 @@ class GetAttributesServiceTest {
     @Mock
     private LoadAttributesPort loadAttributesPort;
 
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
+
     @Test
     void testGetAttributes_UserHasNotAccess_ThrowsException() {
-        Param param = new Param(15L, 0, 15, UUID.randomUUID());
-        KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+        var param = createParam(Param.ParamBuilder::build);
+
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
 
@@ -57,11 +60,10 @@ class GetAttributesServiceTest {
 
     @Test
     void testGetAttributes_ValidParam_ReturnsAttributes() {
-        Param param = new Param(15L, 0, 15, UUID.randomUUID());
-        KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+        Param param = createParam(Param.ParamBuilder::build);
 
-        var subject = SubjectMother.subjectWithTitle("subject");
-        var attribute = AttributeMother.attributeWithTitle("attribute");
+        var subject = subjectWithTitle("subject");
+        var attribute = attributeWithTitle("attribute");
 
         PaginatedResponse<AttributeWithSubject> paginatedResponse = new PaginatedResponse<>(
             List.of(new AttributeWithSubject(attribute, subject)),
@@ -71,6 +73,7 @@ class GetAttributesServiceTest {
             "asc",
             1
         );
+
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAttributesPort.loadByKitVersionId(param.getKitVersionId(), param.getSize(), param.getPage())).thenReturn(paginatedResponse);
@@ -92,6 +95,19 @@ class GetAttributesServiceTest {
         GetAttributesUseCase.AttributeSubject attributeSubject = item.subject();
         assertEquals(subject.getId(), attributeSubject.id());
         assertEquals(subject.getTitle(), attributeSubject.title());
+    }
 
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .kitVersionId(1L)
+            .size(10)
+            .page(2)
+            .currentUserId(UUID.randomUUID());
     }
 }

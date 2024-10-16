@@ -59,5 +59,4 @@ class GetAttributesUseCaseParamTest {
             .page(2)
             .currentUserId(UUID.randomUUID());
     }
-
 }
