@@ -3,7 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.questionimpact;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.questionimpact.CreateQuestionImpactUseCase;
-import org.flickit.assessment.kit.application.port.in.questionimpact.CreateQuestionImpactUseCase.*;
+import org.flickit.assessment.kit.application.port.in.questionimpact.CreateQuestionImpactUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,8 +33,8 @@ public class CreateQuestionImpactRestController {
         return new Param(kitVersionId,
             requestDto.attributeId(),
             requestDto.maturityLevelId(),
-            requestDto.weight(),
             requestDto.questionId(),
+            requestDto.weight(),
             currentUserId);
     }
 }

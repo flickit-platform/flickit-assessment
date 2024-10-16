@@ -100,8 +100,8 @@ class CreateQuestionImpactServiceTest {
             .kitVersionId(1L)
             .attributeId(2L)
             .maturityLevelId(3L)
-            .weight(1)
             .questionId(4L)
+            .weight(1)
             .currentUserId(UUID.randomUUID());
     }
 }

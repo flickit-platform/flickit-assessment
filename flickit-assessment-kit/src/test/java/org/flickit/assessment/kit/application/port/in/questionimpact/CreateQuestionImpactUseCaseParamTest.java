@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateQuestionImpactUseCaseParamTest {
 
@@ -66,8 +66,8 @@ class CreateQuestionImpactUseCaseParamTest {
             .kitVersionId(1L)
             .attributeId(2L)
             .maturityLevelId(3L)
-            .weight(1)
             .questionId(4L)
+            .weight(1)
             .currentUserId(UUID.randomUUID());
     }
 }
