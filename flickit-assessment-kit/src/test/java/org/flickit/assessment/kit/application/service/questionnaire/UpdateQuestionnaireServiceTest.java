@@ -59,7 +59,6 @@ class UpdateQuestionnaireServiceTest {
     @Test
     void testUpdateQuestionnaire_WhenCurrentUserIsExpertGroupOwner_ThenUpdateQuestionnaire() {
         UpdateQuestionnaireUseCase.Param param = createParam(b -> b.currentUserId(ownerId));
-        KitVersion kitVersion = createActiveKitVersion(simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
