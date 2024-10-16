@@ -100,14 +100,4 @@
             ON CONFLICT (kit_id, user_id) DO NOTHING
         </sql>
     </changeSet>
-
-    <changeSet id="0.33-19" author="Mahdi Rezazadeh">
-        <dropPrimaryKey tableName="fak_answer_option_impact"/>
-    </changeSet>
-
-    <changeSet id="0.33-20" author="Mahdi Rezazadeh">
-        <addPrimaryKey tableName="fak_answer_option_impact"
-                       columnNames="id, kit_version_id"
-                       constraintName="pk_fak_answer_option_impact"/>
-    </changeSet>
 </databaseChangeLog>
