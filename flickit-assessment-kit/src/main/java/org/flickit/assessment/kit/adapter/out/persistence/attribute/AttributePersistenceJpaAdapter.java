@@ -11,7 +11,6 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
-import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
@@ -116,16 +114,8 @@ public class AttributePersistenceJpaAdapter implements
     public PaginatedResponse<AttributeWithSubject> loadByKitVersionId(long kitVersionId, int size, int page) {
         var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
 
-        var subjectIds = pageResult.getContent().stream()
-            .map(AttributeJpaEntity::getSubjectId)
-            .collect(Collectors.toSet());
-
-        var subjectIdToSubjectMap = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, kitVersionId).stream()
-            .map(x -> SubjectMapper.mapToDomainModel(x, null))
-            .collect(Collectors.toMap(Subject::getId, Function.identity()));
-
         var items = pageResult.getContent().stream()
-            .map(x -> new AttributeWithSubject(mapToDomainModel(x), subjectIdToSubjectMap.get(x.getSubjectId())))
+            .map(x -> new AttributeWithSubject(mapToDomainModel(x.getAttribute()), SubjectMapper.mapToDomainModel(x.getSubject(), null)))
             .toList();
 
         return new PaginatedResponse<>(items,
