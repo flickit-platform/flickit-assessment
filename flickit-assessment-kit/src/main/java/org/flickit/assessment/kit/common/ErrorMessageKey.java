@@ -154,7 +154,6 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_CODE_DUPLICATE = "create-attribute.code.duplicate";
     public static final String CREATE_ATTRIBUTE_INDEX_DUPLICATE = "create-attribute.index.duplicate";
     public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND = "create-attribute.subjectId.notFound";
-    public static final String CREATE_ATTRIBUTE_SUBJECT_ID_INVALID = "create-attribute.subjectId.invalid";
 
     public static final String CREATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "create-maturity-level.kitVersionId.notNull";
     public static final String CREATE_MATURITY_LEVEL_INDEX_NOT_NULL = "create-maturity-level.index.notNull";
@@ -331,9 +330,6 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "create-question-impact.maturityLevelId.notNull";
     public static final String CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "create-question-impact.weight.notNull";
     public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_NULL = "create-question-impact.questionId.notNull";
-    public static final String CREATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_FOUND = "create-question-impact.attributeId.notFound";
-    public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_FOUND = "create-question-impact.questionId.notFound";
-    public static final String CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_FOUND = "create-question-impact.maturityLevelId.notFound";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
