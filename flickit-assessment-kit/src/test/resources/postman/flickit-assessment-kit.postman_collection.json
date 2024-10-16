@@ -1095,7 +1095,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaire/3072",
+              "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires/3072",
               "host": [
                 "{{base_url}}"
               ],
@@ -1103,7 +1103,7 @@
                 "{{api_path}}",
                 "kit-versions",
                 "393",
-                "questionnaire",
+                "questionnaires",
                 "3072"
               ]
             }
