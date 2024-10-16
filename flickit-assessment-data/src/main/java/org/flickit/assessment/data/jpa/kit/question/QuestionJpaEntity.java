@@ -31,7 +31,7 @@ public class QuestionJpaEntity {
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
     private String code;
 
     @Column(name = "index", nullable = false)
