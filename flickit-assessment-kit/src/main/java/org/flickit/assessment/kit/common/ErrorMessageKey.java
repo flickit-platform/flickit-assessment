@@ -314,13 +314,14 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "update-questionnaire.description.size.min";
     public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "update-questionnaire.description.size.max";
 
-    public static final String UPDATE_QUESTION_KIT_ID_NOT_NULL = "update-question.kitId.notNull";
+    public static final String UPDATE_QUESTION_KIT_VERSION_ID_NOT_NULL = "update-question.kitVersionId.notNull";
     public static final String UPDATE_QUESTION_QUESTION_ID_NOT_NULL = "update-question.questionId.notNull";
     public static final String UPDATE_QUESTION_INDEX_NOT_NULL = "update-question.index.notNull";
     public static final String UPDATE_QUESTION_TITLE_NOT_NULL = "update-question.title.notNull";
     public static final String UPDATE_QUESTION_TITLE_SIZE_MIN = "update-question.title.size.min";
     public static final String UPDATE_QUESTION_TITLE_SIZE_MAX = "update-question.title.size.max";
     public static final String UPDATE_QUESTION_HINT_SIZE_MIN = "update-question.hint.size.min";
+    public static final String UPDATE_QUESTION_HINT_SIZE_MAX = "update-question.hint.size.max";
     public static final String UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "update-question.myNotBeApplicable.notNull";
     public static final String UPDATE_QUESTION_ADVISABLE_NOT_NULL = "update-question.advisable.notNull";
 

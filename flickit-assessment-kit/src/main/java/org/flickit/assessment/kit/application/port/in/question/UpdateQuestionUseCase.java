@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.port.in.question;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -19,8 +20,8 @@ public interface UpdateQuestionUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_QUESTION_KIT_ID_NOT_NULL)
-        Long kitId;
+        @NotNull(message = UPDATE_QUESTION_KIT_VERSION_ID_NOT_NULL)
+        Long kitVersionId;
 
         @NotNull(message = UPDATE_QUESTION_QUESTION_ID_NOT_NULL)
         Long questionId;
@@ -30,10 +31,11 @@ public interface UpdateQuestionUseCase {
 
         @NotNull(message = UPDATE_QUESTION_TITLE_NOT_NULL)
         @Size(min = 3, message = UPDATE_QUESTION_TITLE_SIZE_MIN)
-        @Size(max = 100, message = UPDATE_QUESTION_TITLE_SIZE_MAX)
+        @Size(max = 250, message = UPDATE_QUESTION_TITLE_SIZE_MAX)
         String title;
 
         @Size(min = 3, message = UPDATE_QUESTION_HINT_SIZE_MIN)
+        @Size(max = 1000, message = UPDATE_QUESTION_HINT_SIZE_MAX)
         String hint;
 
         @NotNull(message = UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL)
@@ -45,7 +47,8 @@ public interface UpdateQuestionUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Long kitId,
+        @Builder
+        public Param(Long kitVersionId,
                      Long questionId,
                      Integer index,
                      String title,
@@ -53,7 +56,7 @@ public interface UpdateQuestionUseCase {
                      Boolean mayNotBeApplicable,
                      Boolean advisable,
                      UUID currentUserId) {
-            this.kitId = kitId;
+            this.kitVersionId = kitVersionId;
             this.questionId = questionId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim(): null;
