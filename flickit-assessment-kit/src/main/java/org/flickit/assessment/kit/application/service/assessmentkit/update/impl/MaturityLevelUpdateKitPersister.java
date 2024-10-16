@@ -63,7 +63,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
         Map<String, MaturityLevel> codeToPersistedLevels = new HashMap<>();
 
-        deletedLevels.forEach(i -> deleteMaturityLevel(savedLevelCodesMap.get(i), savedKit.getKitVersionId()));
+        deletedLevels.forEach(i -> deleteMaturityLevel(savedLevelCodesMap.get(i), savedKit.getActiveVersionId()));
 
         boolean existingLevelValueUpdated = false;
         List<MaturityLevel> updatedLevels = new ArrayList<>();
@@ -82,15 +82,15 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
                 codeToPersistedLevels.put(existingLevel.getCode(), existingLevel);
             }
         }
-        updateMaturityLevelPort.update(updatedLevels, savedKit.getKitVersionId(), currentUserId);
+        updateMaturityLevelPort.updateAll(updatedLevels, savedKit.getActiveVersionId(), currentUserId);
 
         newLevels.forEach(code -> {
-            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getKitVersionId(), currentUserId);
+            MaturityLevel createdLevel = createMaturityLevel(dslLevelCodesMap.get(code), savedKit.getActiveVersionId(), currentUserId);
             codeToPersistedLevels.put(createdLevel.getCode(), createdLevel);
         });
 
         // update competences of existing levels
-        boolean isCompetencesChanged = updateCompetencesToExistingLevels(savedKit.getKitVersionId(),
+        boolean isCompetencesChanged = updateCompetencesToExistingLevels(savedKit.getActiveVersionId(),
             savedLevelCodesMap,
             dslLevelCodesMap,
             existingLevels,
@@ -107,7 +107,7 @@ public class MaturityLevelUpdateKitPersister implements UpdateKitPersister {
 
             dslLevelCompetenceCodes.forEach((key, value) -> {
                 Long effectiveLevelId = codeToPersistedLevels.get(key).getId();
-                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, savedKit.getKitVersionId(), currentUserId);
+                createLevelCompetence(affectedLevel.getId(), effectiveLevelId, value, savedKit.getActiveVersionId(), currentUserId);
             });
         });
 

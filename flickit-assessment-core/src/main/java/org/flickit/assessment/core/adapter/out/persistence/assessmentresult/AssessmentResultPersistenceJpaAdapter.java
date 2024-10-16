@@ -6,7 +6,8 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.Mat
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
@@ -23,7 +24,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSME
 @Component
 @RequiredArgsConstructor
 public class AssessmentResultPersistenceJpaAdapter implements
-    InvalidateAssessmentResultPort,
+    InvalidateAssessmentResultCalculatePort,
+    InvalidateAssessmentResultConfidencePort,
     CreateAssessmentResultPort,
     LoadAssessmentResultPort {
 
@@ -32,8 +34,13 @@ public class AssessmentResultPersistenceJpaAdapter implements
     private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
-    public void invalidateById(UUID assessmentResultId, Boolean isCalculateValid, Boolean isConfidenceValid) {
-        repo.invalidateById(assessmentResultId, isCalculateValid, isConfidenceValid);
+    public void invalidateCalculate(UUID assessmentResultId) {
+        repo.invalidateCalculateById(assessmentResultId);
+    }
+
+    @Override
+    public void invalidateConfidence(UUID assessmentResultId) {
+        repo.invalidateConfidenceById(assessmentResultId);
     }
 
     @Override
