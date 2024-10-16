@@ -619,6 +619,42 @@
           "response": []
         },
         {
+          "name": "Get Attributes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{authorization_header}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes?page=0&size=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "kit-versions",
+                "393",
+                "attributes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Update Attribute Orders",
           "request": {
             "method": "PUT",
@@ -1093,6 +1129,46 @@
                 "393",
                 "questions",
                 "22831"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Question Impact",
+      "item": [
+        {
+          "name": "Create Question Impact",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{authorization_header}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"attributeId\": 2116,\n    \"questionId\": 25916,\n    \"maturityLevelId\": 2214,\n    \"weight\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/kit-versions/412/question-impacts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "kit-versions",
+                "412",
+                "question-impacts"
               ]
             }
           },
