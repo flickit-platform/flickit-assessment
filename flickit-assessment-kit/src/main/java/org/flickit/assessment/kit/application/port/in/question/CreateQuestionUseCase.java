@@ -58,7 +58,7 @@ public interface CreateQuestionUseCase {
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.index = index;
-            this.title = title;
+            this.title = title != null && !title.isBlank() ? title : null;
             this.hint = hint != null && !hint.isBlank() ? hint : null;
             this.mayNotBeApplicable = mayNotBeApplicable;
             this.advisable = advisable;

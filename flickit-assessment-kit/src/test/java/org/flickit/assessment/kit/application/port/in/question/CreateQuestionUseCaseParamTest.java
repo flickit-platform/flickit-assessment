@@ -93,7 +93,6 @@ class CreateQuestionUseCaseParamTest {
             .kitVersionId(1L)
             .index(1)
             .title("abc")
-            .hint("new hint")
             .mayNotBeApplicable(true)
             .advisable(false)
             .questionnaireId(1L)

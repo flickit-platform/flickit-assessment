@@ -38,7 +38,6 @@ class CreateQuestionServiceTest {
     private LoadKitVersionPort loadKitVersionPort;
 
     private final UUID ownerId = UUID.randomUUID();
-
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
@@ -65,6 +64,7 @@ class CreateQuestionServiceTest {
         long actualQuestionId = createQuestionService.createQuestion(param);
 
         assertEquals(questionId, actualQuestionId);
+
         var outPortParam = ArgumentCaptor.forClass(CreateQuestionPort.Param.class);
         verify(createQuestionPort).persist(outPortParam.capture());
         assertNotNull(outPortParam.getValue());
