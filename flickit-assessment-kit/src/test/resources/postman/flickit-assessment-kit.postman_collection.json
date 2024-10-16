@@ -1007,6 +1007,41 @@
           "response": []
         },
         {
+          "name": "Create Question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{authorization_header}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"index\": 25,\n    \"title\": \"new question\",\n    \"hint\": \"question hint\",\n    \"mayNotBeApplicable\": false,\n    \"advisable\": true,\n    \"questionnaireId\": 3072\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "kit-versions",
+                "393",
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Update Question",
           "request": {
             "method": "PUT",
