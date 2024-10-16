@@ -68,8 +68,8 @@
     </changeSet>
 
     <changeSet id="0.34-12" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_question" columnNames="kit_version_id, index, questionnaire_id"
-                             constraintName="uq_fak_question_kitversionid_index_questionnaireid"
+        <addUniqueConstraint tableName="fak_question" columnNames="index, kit_version_id, questionnaire_id"
+                             constraintName="uq_fak_question_index_kitversionid_questionnaireid"
                              initiallyDeferred="true"/>
     </changeSet>
 </databaseChangeLog>
