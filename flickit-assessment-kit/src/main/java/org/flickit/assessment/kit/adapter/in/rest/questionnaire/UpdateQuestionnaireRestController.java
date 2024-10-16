@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -22,7 +22,7 @@ public class UpdateQuestionnaireRestController {
     @PutMapping("/kit-versions/{kitVersionId}/questionnaires/{questionnaireId}")
     public ResponseEntity<Void> updateQuestionnaire(@PathVariable("kitVersionId") Long kitVersionId,
                                                     @PathVariable("questionnaireId") Long questionnaireId,
-                                                    @RequestParam UpdateQuestionnaireRequestDto requestDto) {
+                                                    @RequestBody UpdateQuestionnaireRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.updateQuestionnaire(toParam(kitVersionId, questionnaireId, currentUserId, requestDto));
 
