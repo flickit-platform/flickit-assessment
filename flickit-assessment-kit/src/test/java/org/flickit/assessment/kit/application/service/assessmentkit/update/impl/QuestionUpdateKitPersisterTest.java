@@ -9,7 +9,7 @@ import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
-import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionByDslPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
@@ -54,7 +54,7 @@ class QuestionUpdateKitPersisterTest {
     private QuestionUpdateKitPersister persister;
 
     @Mock
-    private UpdateQuestionPort updateQuestionPort;
+    private UpdateQuestionByDslPort updateQuestionByDslPort;
 
     @Mock
     private CreateQuestionPort createQuestionPort;
@@ -123,7 +123,7 @@ class QuestionUpdateKitPersisterTest {
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
-            updateQuestionPort,
+            updateQuestionByDslPort,
             createQuestionImpactPort,
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
@@ -204,7 +204,7 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(attribute))), List.of(levelTwo), List.of(savedQuestionnaire));
 
-        doNothing().when(updateQuestionPort).update(any(UpdateQuestionPort.Param.class));
+        doNothing().when(updateQuestionByDslPort).update(any(UpdateQuestionByDslPort.Param.class));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
@@ -288,7 +288,7 @@ class QuestionUpdateKitPersisterTest {
         verifyNoInteractions(
             updateQuestionImpactPort,
             deleteQuestionImpactPort,
-            updateQuestionPort,
+            updateQuestionByDslPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
@@ -342,7 +342,7 @@ class QuestionUpdateKitPersisterTest {
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
-            updateQuestionPort,
+            updateQuestionByDslPort,
             createQuestionImpactPort,
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
@@ -394,7 +394,7 @@ class QuestionUpdateKitPersisterTest {
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
-            updateQuestionPort,
+            updateQuestionByDslPort,
             createQuestionImpactPort,
             deleteQuestionImpactPort,
             createAnswerOptionImpactPort,
@@ -447,7 +447,7 @@ class QuestionUpdateKitPersisterTest {
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
-            updateQuestionPort,
+            updateQuestionByDslPort,
             createQuestionImpactPort,
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
@@ -501,7 +501,7 @@ class QuestionUpdateKitPersisterTest {
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
-            updateQuestionPort,
+            updateQuestionByDslPort,
             createQuestionImpactPort,
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
@@ -565,7 +565,7 @@ class QuestionUpdateKitPersisterTest {
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
-            updateQuestionPort,
+            updateQuestionByDslPort,
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             updateAnswerOptionImpactPort,

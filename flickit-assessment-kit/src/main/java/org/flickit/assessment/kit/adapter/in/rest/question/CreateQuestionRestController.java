@@ -29,14 +29,14 @@ public class CreateQuestionRestController {
 
     private static CreateQuestionUseCase.Param toParam(Long kitVersionId,
                                                        UUID currentUserId,
-                                                       CreateQuestionRequestDto dto) {
+                                                       CreateQuestionRequestDto requestDto) {
         return new CreateQuestionUseCase.Param(kitVersionId,
-            dto.index(),
-            dto.title(),
-            dto.hint(),
-            dto.mayNotBeApplicable(),
-            dto.advisable(),
-            dto.questionnaireId(),
+            requestDto.index(),
+            requestDto.title(),
+            requestDto.hint(),
+            requestDto.mayNotBeApplicable(),
+            requestDto.advisable(),
+            requestDto.questionnaireId(),
             currentUserId);
     }
 }
