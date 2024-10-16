@@ -325,6 +325,11 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";
     public static final String CREATE_QUESTION_INDEX_DUPLICATE = "create-question.index.duplicate";
 
+    public static final String GET_ATTRIBUTES_KIT_VERSION_ID_NOT_NULL = "get-attributes.kitVersionId.notNull";
+    public static final String GET_ATTRIBUTES_PAGE_MIN = "get-attributes.page.min";
+    public static final String GET_ATTRIBUTES_SIZE_MIN = "get-attributes.size.min";
+    public static final String GET_ATTRIBUTES_SIZE_MAX = "get-attributes.size.max";
+
     public static final String CREATE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "create-question-impact.kitVersionId.notNull";
     public static final String CREATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL = "create-question-impact.attributeId.notNull";
     public static final String CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "create-question-impact.maturityLevelId.notNull";
