@@ -24,7 +24,8 @@ CREATE TABLE public.fau_space (
 	owner_id uuid NOT NULL,
 	created_by uuid NOT NULL,
 	last_modified_by uuid NOT NULL,
-	deleted bool DEFAULT false NOT NULL,
+    deleted bool DEFAULT false NOT NULL,
+    deletion_time int8 DEFAULT 0 NOT NULL,
 	CONSTRAINT pk_fau_space PRIMARY KEY (id),
 	CONSTRAINT uq_fau_space_code UNIQUE (code)
 );
