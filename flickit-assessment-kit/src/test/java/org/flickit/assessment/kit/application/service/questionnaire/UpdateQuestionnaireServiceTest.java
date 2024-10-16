@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -66,7 +67,16 @@ class UpdateQuestionnaireServiceTest {
 
         service.updateQuestionnaire(param);
 
-        verify(updateQuestionnairePort).update(any(UpdateQuestionnairePort.Param.class));
+        var outPortParam = ArgumentCaptor.forClass(UpdateQuestionnairePort.Param.class);
+        verify(updateQuestionnairePort).update(outPortParam.capture());
+        assertNotNull(outPortParam.getValue());
+        assertEquals(param.getQuestionnaireId(), outPortParam.getValue().id());
+        assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
+        assertEquals(param.getTitle(), outPortParam.getValue().title());
+        assertEquals(param.getIndex(), outPortParam.getValue().index());
+        assertEquals(param.getDescription(), outPortParam.getValue().description());
+        assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
+        assertNotNull(outPortParam.getValue().lastModificationTime());
     }
 
     private UpdateQuestionnaireUseCase.Param createParam(Consumer<UpdateQuestionnaireUseCase.Param.ParamBuilder> changer) {
