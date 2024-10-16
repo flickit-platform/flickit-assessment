@@ -46,9 +46,13 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateQuestionnairePort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
+
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
+            param.code(),
             param.index(),
             param.description(),
             param.lastModificationTime(),

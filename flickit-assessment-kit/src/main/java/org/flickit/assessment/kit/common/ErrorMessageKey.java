@@ -154,6 +154,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ATTRIBUTE_CODE_DUPLICATE = "create-attribute.code.duplicate";
     public static final String CREATE_ATTRIBUTE_INDEX_DUPLICATE = "create-attribute.index.duplicate";
     public static final String CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND = "create-attribute.subjectId.notFound";
+    public static final String CREATE_ATTRIBUTE_SUBJECT_ID_INVALID = "create-attribute.subjectId.invalid";
 
     public static final String CREATE_MATURITY_LEVEL_KIT_VERSION_ID_NOT_NULL = "create-maturity-level.kitVersionId.notNull";
     public static final String CREATE_MATURITY_LEVEL_INDEX_NOT_NULL = "create-maturity-level.index.notNull";
@@ -285,6 +286,33 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_ID_NOT_NULL = "update-questionnaire-orders.questionnaireId.notNull";
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire-orders.questionnaireIndex.notNull";
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_MIN = "update-questionnaire-orders.questionnaireIndex.min";
+
+    public static final String UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "update-attribute.kitVersionId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "update-attribute.attributeId.notNull";
+    public static final String UPDATE_ATTRIBUTE_TITLE_NOT_BLANK = "update-attribute.title.notBlank";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MIN = "update-attribute.title.size.min";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MAX = "update-attribute.title.size.max";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK = "update-attribute.description.notBlank";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "update-attribute.description.size.min";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "update-attribute.description.size.max";
+    public static final String UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "update-attribute.subjectId.notNull";
+    public static final String UPDATE_ATTRIBUTE_INDEX_NOT_NULL = "update-attribute.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL = "update-attribute.weight.notNull";
+
+    public static final String DELETE_QUESTION_KIT_VERSION_ID_NOT_NULL = "delete-question.kitVersionId.notNull";
+    public static final String DELETE_QUESTION_QUESTION_ID_NOT_NULL = "delete-question.questionId.notNull";
+    public static final String DELETE_QUESTION_ID_NOT_FOUND = "delete-question.id.notFound";
+    public static final String DELETE_QUESTION_NOT_ALLOWED = "delete-question.notAllowed";
+
+    public static final String UPDATE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "update-questionnaire.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "update-questionnaire.questionnaireId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire.index.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_TITLE_NOT_NULL = "update-questionnaire.title.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_TITLE_SIZE_MIN = "update-questionnaire.title.size.min";
+    public static final String UPDATE_QUESTIONNAIRE_TITLE_SIZE_MAX = "update-questionnaire.title.size.max";
+    public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL = "update-questionnaire.description.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "update-questionnaire.description.size.min";
+    public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "update-questionnaire.description.size.max";
 
     public static final String CREATE_QUESTION_KIT_VERSION_ID_NOT_NULL = "create-question.kitVersionId.notNull";
     public static final String CREATE_QUESTION_INDEX_NOT_NULL = "create-question.index.notNull";
