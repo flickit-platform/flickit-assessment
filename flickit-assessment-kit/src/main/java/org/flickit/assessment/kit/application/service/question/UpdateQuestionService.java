@@ -2,10 +2,10 @@ package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.question.UpdateQuestionUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,20 +21,18 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class UpdateQuestionService implements UpdateQuestionUseCase {
 
     private final UpdateQuestionPort updateQuestionPort;
-    private final LoadAssessmentKitPort loadAssessmentKitPort;
+    private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Override
     public void updateQuestion(Param param) {
-        AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
-        Long kitVersionId = kit.getKitVersionId();
-        long expertGroupId = kit.getExpertGroupId();
-        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
+        KitVersion kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         updateQuestionPort.update(new UpdateQuestionPort.Param(param.getQuestionId(),
-            kitVersionId,
+            param.getKitVersionId(),
             param.getTitle(),
             param.getIndex(),
             param.getHint(),
