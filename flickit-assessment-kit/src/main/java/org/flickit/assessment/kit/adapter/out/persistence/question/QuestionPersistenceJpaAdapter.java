@@ -46,6 +46,9 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateQuestionPort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
