@@ -8,9 +8,10 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity.Fields;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.AttributeListItem;
-import org.flickit.assessment.kit.application.port.in.attribute.GetAttributesUseCase.AttributeSubject;
+import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
+import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,7 +22,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.*;
+import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
+import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
@@ -111,7 +113,7 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AttributeListItem> loadByKitVersionId(long kitVersionId, int size, int page) {
+    public PaginatedResponse<AttributeWithSubject> loadByKitVersionId(long kitVersionId, int size, int page) {
         var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
 
         var subjectIds = pageResult.getContent().stream()
@@ -119,11 +121,11 @@ public class AttributePersistenceJpaAdapter implements
             .collect(Collectors.toSet());
 
         var subjectIdToAttributeSubjectMap = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, kitVersionId).stream()
-            .map(x -> new AttributeSubject(x.getId(), x.getTitle()))
-            .collect(Collectors.toMap(AttributeSubject::id, Function.identity()));
+            .map(x -> SubjectMapper.mapToDomainModel(x, null))
+            .collect(Collectors.toMap(Subject::getId, Function.identity()));
 
         var items = pageResult.getContent().stream()
-            .map(x -> mapToListItem(x, subjectIdToAttributeSubjectMap.get(x.getSubjectId())))
+            .map(x -> new AttributeWithSubject(mapToDomainModel(x), subjectIdToAttributeSubjectMap.get(x.getSubjectId())))
             .toList();
 
         return new PaginatedResponse<>(items,
