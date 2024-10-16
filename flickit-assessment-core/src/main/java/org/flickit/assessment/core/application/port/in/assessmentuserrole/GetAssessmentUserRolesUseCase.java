@@ -6,6 +6,6 @@ public interface GetAssessmentUserRolesUseCase {
 
     List<AssessmentUserRoleItem> getAssessmentUserRoles();
 
-    record AssessmentUserRoleItem(int id, String title) {
+    record AssessmentUserRoleItem(int id, String title, String description) {
     }
 }

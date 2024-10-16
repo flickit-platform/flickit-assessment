@@ -32,11 +32,11 @@ public class AssessmentJpaEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
+    @Column(name = "short_title", length = 20)
+    private String shortTitle;
+
     @Column(name = "assessment_kit_id", nullable = false)
     private Long assessmentKitId;
-
-    @Column(name = "color_id", nullable = false)
-    private Integer colorId;
 
     @Column(name = "space_id", nullable = false)
     private Long spaceId;

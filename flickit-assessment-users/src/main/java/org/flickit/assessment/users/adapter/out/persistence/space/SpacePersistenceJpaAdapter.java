@@ -40,6 +40,7 @@ public class SpacePersistenceJpaAdapter implements
         List<LoadSpaceListPort.Result> items = pageResult.getContent().stream()
             .map(entity -> new LoadSpaceListPort.Result(
                 mapToDomain(entity.getSpace()),
+                entity.getOwnerName(),
                 entity.getMembersCount(),
                 entity.getAssessmentsCount()))
             .toList();
@@ -88,14 +89,14 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteById(long spaceId) {
+    public void deleteById(long spaceId, long deletionTime) {
         if (!repository.existsByIdAndDeletedFalse(spaceId))
             throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
-        repository.delete(spaceId);
+        repository.delete(spaceId, deletionTime);
     }
 
     @Override
     public void updateSpace(Param param) {
-        repository.update(param.id(), param.title(), param.lastModificationTime(), param.lastModifiedBy());
+        repository.update(param.id(), param.title(), param.code(), param.lastModificationTime(), param.lastModifiedBy());
     }
 }

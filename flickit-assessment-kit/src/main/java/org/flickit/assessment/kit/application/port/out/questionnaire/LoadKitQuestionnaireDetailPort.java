@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LoadKitQuestionnaireDetailPort {
 
-    Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitId);
+    Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId);
 
     record Result(int questionsCount, List<String> relatedSubjects, String description, List<Question> questions) {}
 }

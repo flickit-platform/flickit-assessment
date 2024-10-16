@@ -27,7 +27,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
 @RequiredArgsConstructor
-public class QuestionnairePersistenceJpaAdapter implements LoadQuestionnairesByAssessmentIdPort {
+public class QuestionnairePersistenceJpaAdapter implements
+    LoadQuestionnairesByAssessmentIdPort {
 
     private final QuestionnaireJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -43,7 +44,7 @@ public class QuestionnairePersistenceJpaAdapter implements LoadQuestionnairesByA
         var pageResult = repository.findAllWithQuestionCountByKitVersionId(assessmentResult.getKitVersionId(), PageRequest.of(param.page(), param.size()));
         var ids = pageResult.getContent().stream().map(QuestionnaireListItemView::getId).toList();
 
-        var questionnaireIdToSubjectMap = subjectRepository.findAllWithQuestionnaireIdByKitVersionId(ids)
+        var questionnaireIdToSubjectMap = subjectRepository.findAllWithQuestionnaireIdByKitVersionId(ids, assessmentResult.getKitVersionId())
             .stream()
             .collect(Collectors.groupingBy(SubjectWithQuestionnaireIdView::getQuestionnaireId));
 

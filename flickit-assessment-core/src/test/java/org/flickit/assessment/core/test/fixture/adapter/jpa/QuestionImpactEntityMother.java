@@ -9,13 +9,14 @@ public class QuestionImpactEntityMother {
 
     private static long questionImpactId = 134L;
 
-    public static QuestionImpactJpaEntity questionImpactEntity(Long maturityLevelId, Long questionId, Long qualityAttributeId) {
+    public static QuestionImpactJpaEntity questionImpactEntity(Long maturityLevelId, Long questionId, Long attributeId) {
         return new QuestionImpactJpaEntity(
             questionImpactId++,
+            123L,
             1,
             questionId,
-            qualityAttributeId,
-            MaturityLevelJpaEntityMother.maturityLevelEntity(maturityLevelId),
+            attributeId,
+            maturityLevelId,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),

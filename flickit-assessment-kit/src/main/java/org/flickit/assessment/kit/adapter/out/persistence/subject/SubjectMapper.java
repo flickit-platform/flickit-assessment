@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubjectMapper {
@@ -20,8 +19,11 @@ public class SubjectMapper {
             entity.getCode(),
             entity.getTitle(),
             entity.getIndex(),
+            entity.getWeight(),
             entity.getDescription(),
             attributes,
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy(),
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
@@ -31,19 +33,16 @@ public class SubjectMapper {
         LocalDateTime creationTime = LocalDateTime.now();
         return new SubjectJpaEntity(
             null,
-            UUID.randomUUID(),
+            param.kitVersionId(),
             param.code(),
             param.index(),
             param.title(),
             param.description(),
             param.weight(),
-            param.kitVersionId(),
             creationTime,
             creationTime,
             param.createdBy(),
-            param.createdBy(),
-            null
-        );
+            param.createdBy());
     }
 }
 

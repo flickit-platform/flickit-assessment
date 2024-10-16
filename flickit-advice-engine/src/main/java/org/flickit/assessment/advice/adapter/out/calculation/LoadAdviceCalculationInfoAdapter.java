@@ -7,8 +7,8 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaEntity;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.ImprovableImpactfulQuestionView;
@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
+import static org.flickit.assessment.advice.application.service.advice.PlanConstraintProvider.SOFT_SCORE_FACTOR;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -28,7 +29,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     private final QuestionJpaRepository questionRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
     private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
-    private final QualityAttributeValueJpaRepository attributeValueRepository;
+    private final AttributeValueJpaRepository attributeValueRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     private static final double DEFAULT_ATTRIBUTE_MATURITY_SCORE = 0.0;
@@ -38,19 +39,19 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     public Plan loadAdviceCalculationInfo(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         List<AttributeLevelScore> attributeLevelScores = new ArrayList<>();
         Map<Long, Question> idToQuestions = new HashMap<>();
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
 
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
             Long attributeId = attributeLevelTarget.getAttributeId();
             Long maturityLevelId = attributeLevelTarget.getMaturityLevelId();
 
             List<LevelCompetenceJpaEntity> levelCompetenceEntities =
-                levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);
+                levelCompetenceRepository.findByAffectedLevelIdAndKitVersionId(maturityLevelId, assessmentResult.getKitVersionId());
             for (LevelCompetenceJpaEntity levelCompetenceEntity : levelCompetenceEntities) {
-                Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevel().getId();
-                var assessmentResultJpaEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-                    .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
-                QualityAttributeValueJpaEntity attributeValueEntity =
-                    attributeValueRepository.findByAttributeIdAndAssessmentResult_Id(attributeId, assessmentResultJpaEntity.getId());
+                Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevelId();
+                AttributeValueJpaEntity attributeValueEntity =
+                    attributeValueRepository.findByAttributeIdAndAssessmentResultId(attributeId, assessmentResult.getId());
 
                 Double gainedScorePercentage = attributeMaturityScoreRepository
                     .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), effectiveLevelId)
@@ -144,7 +145,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                                           List<ImpactfulQuestionOption> impactfulQuestionOptions,
                                           AttributeLevelScore attributeLevelScore) {
         List<Option> options = mapToOptions(impactfulQuestionOptions, attributeLevelScore);
-        return new Question(impactfulQuestionId, DEFAULT_QUESTION_COST, options, answeredOptionIndex);
+        return new Question(impactfulQuestionId, DEFAULT_QUESTION_COST * SOFT_SCORE_FACTOR, options, answeredOptionIndex);
     }
 
     private static List<Option> mapToOptions(List<ImpactfulQuestionOption> impactfulQuestionOptions,

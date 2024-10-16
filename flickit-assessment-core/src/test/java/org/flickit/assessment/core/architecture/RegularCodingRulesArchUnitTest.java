@@ -29,6 +29,10 @@ public class RegularCodingRulesArchUnitTest {
     private final ArchRule no_use_of_deprecated_api = DEPRECATED_API_SHOULD_NOT_BE_USED;
 
     @ArchTest
-    private final ArchRule test_classes_should_reside_in_same_package_with_implementation =
-        testClassesShouldResideInTheSamePackageAsImplementation();
+    private final ArchRule service_test_classes_should_reside_in_same_package_with_implementation =
+        testClassesShouldResideInTheSamePackageAsImplementation("ServiceTest");
+
+    @ArchTest
+    private final ArchRule use_case_param_test_classes_should_reside_in_same_package_with_implementation =
+        testClassesShouldResideInTheSamePackageAsImplementation("UseCaseParamTest");
 }

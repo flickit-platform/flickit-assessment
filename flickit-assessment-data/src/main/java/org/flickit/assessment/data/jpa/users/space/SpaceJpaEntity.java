@@ -45,5 +45,8 @@ public class SpaceJpaEntity {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
+
+    @Column(name = "deletion_time", nullable = false)
+    private long deletionTime;
 }
 

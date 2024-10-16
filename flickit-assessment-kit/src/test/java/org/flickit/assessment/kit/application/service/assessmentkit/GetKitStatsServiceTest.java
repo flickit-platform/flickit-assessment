@@ -30,6 +30,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,7 +81,7 @@ class GetKitStatsServiceTest {
 
         when(countKitStatsPort.countKitStats(assessmentKit.getId())).thenReturn(counts);
         when(loadAssessmentKitPort.load(assessmentKit.getId())).thenReturn(assessmentKit);
-        when(loadSubjectsPort.loadByKitId(assessmentKit.getKitVersionId())).thenReturn(subjects);
+        when(loadSubjectsPort.loadByKitVersionId(anyLong())).thenReturn(subjects);
 
         GetKitStatsUseCase.Result kitStats = service.getKitStats(param);
 

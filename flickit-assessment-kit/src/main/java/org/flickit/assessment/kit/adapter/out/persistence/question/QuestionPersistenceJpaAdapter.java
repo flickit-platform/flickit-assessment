@@ -15,10 +15,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOpt
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.application.domain.*;
-import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.*;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +34,8 @@ public class QuestionPersistenceJpaAdapter implements
     CreateQuestionPort,
     CountSubjectQuestionsPort,
     LoadQuestionPort,
-    LoadAttributeLevelQuestionsPort {
+    LoadAttributeLevelQuestionsPort,
+    DeleteQuestionPort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -49,6 +47,7 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public void update(UpdateQuestionPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.index(),
             param.hint(),
@@ -64,22 +63,22 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public int countBySubjectId(long subjectId) {
-        return repository.countDistinctBySubjectId(subjectId);
+    public int countBySubjectId(long subjectId, long kitVersionId) {
+        return repository.countDistinctBySubjectId(subjectId, kitVersionId);
     }
 
     @Override
-    public Question load(long id, long kitId) {
-        var questionEntity = repository.findByIdAndKitId(id, kitId)
+    public Question load(long id, long kitVersionId) {
+        var questionEntity = repository.findByIdAndKitVersionId(id, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
         Question question = QuestionMapper.mapToDomainModel(questionEntity);
 
-        var impacts = questionImpactRepository.findAllByQuestionId(id).stream()
+        var impacts = questionImpactRepository.findAllByQuestionIdAndKitVersionId(id, kitVersionId).stream()
             .map(QuestionImpactMapper::mapToDomainModel)
             .map(this::setOptionImpacts)
             .toList();
 
-        var options = answerOptionRepository.findByQuestionId(id).stream()
+        var options = answerOptionRepository.findByQuestionIdAndKitVersionId(id, kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
 
@@ -89,22 +88,21 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {
-        impact.setOptionImpacts(
-            answerOptionImpactRepository.findAllByQuestionImpactId(impact.getId()).stream()
-                .map(AnswerOptionImpactMapper::mapToDomainModel)
-                .toList()
-        );
+        var optionImpacts = answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId()).stream()
+            .map(AnswerOptionImpactMapper::mapToDomainModel)
+            .toList();
+        impact.setOptionImpacts(optionImpacts);
         return impact;
     }
 
     @Override
-    public List<LoadAttributeLevelQuestionsPort.Result> loadAttributeLevelQuestions(long kitId, long attributeId, long maturityLevelId) {
-        if (!attributeRepository.existsByIdAndKitId(attributeId, kitId))
+    public List<LoadAttributeLevelQuestionsPort.Result> loadAttributeLevelQuestions(long kitVersionId, long attributeId, long maturityLevelId) {
+        if (!attributeRepository.existsByIdAndKitVersionId(attributeId, kitVersionId))
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
-        if (!maturityLevelRepository.existsByIdAndKitId(maturityLevelId, kitId))
+        if (!maturityLevelRepository.existsByIdAndKitVersionId(maturityLevelId, kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
-        var views = repository.findByAttributeIdAndMaturityLevelId(attributeId, maturityLevelId);
+        var views = repository.findByAttributeIdAndMaturityLevelIdAndKitVersionId(attributeId, maturityLevelId, kitVersionId);
 
         Map<QuestionJpaEntity, List<AttributeLevelImpactfulQuestionsView>> myMap = views.stream()
             .collect(Collectors.groupingBy(AttributeLevelImpactfulQuestionsView::getQuestion));
@@ -112,9 +110,9 @@ public class QuestionPersistenceJpaAdapter implements
         return myMap.entrySet().stream()
             .map(entry -> {
                 Question question = QuestionMapper.mapToDomainModel(entry.getKey());
-                Questionnaire questionnaire = mapToDomainModel(entry.getValue().get(0).getQuestionnaire());
+                Questionnaire questionnaire = mapToDomainModel(entry.getValue().getFirst().getQuestionnaire());
 
-                QuestionImpact impact = QuestionImpactMapper.mapToDomainModel(entry.getValue().get(0).getQuestionImpact());
+                QuestionImpact impact = QuestionImpactMapper.mapToDomainModel(entry.getValue().getFirst().getQuestionImpact());
                 Map<Long, AnswerOptionImpactJpaEntity> optionMap = entry.getValue().stream()
                     .collect(Collectors.toMap(e -> e.getOptionImpact().getId(), AttributeLevelImpactfulQuestionsView::getOptionImpact,
                         (existing, replacement) -> existing));
@@ -132,5 +130,13 @@ public class QuestionPersistenceJpaAdapter implements
 
                 return new Result(question, questionnaire);
             }).toList();
+    }
+
+    @Override
+    public void delete(long questionId, long kitVersionId) {
+        if (repository.existsByIdAndKitVersionId(questionId, kitVersionId))
+            repository.deleteByIdAndKitVersionId(questionId, kitVersionId);
+        else
+            throw new ResourceNotFoundException(DELETE_QUESTION_ID_NOT_FOUND);
     }
 }

@@ -16,12 +16,14 @@ public class Question {
     private final String hint;
     private final Boolean mayNotBeApplicable;
     private final List<QuestionImpact> impacts;
+    private final Questionnaire questionnaire;
     @Setter
     private List<AnswerOption> options;
 
-    public QuestionImpact findImpactByMaturityLevel(MaturityLevel maturityLevel) {
+    public QuestionImpact findImpactByAttributeAndMaturityLevel(Attribute attribute, MaturityLevel maturityLevel) {
         return impacts.stream()
-            .filter(i -> i.getMaturityLevelId() == maturityLevel.getId())
+            .filter(i -> i.getAttributeId() == attribute.getId() &&
+                i.getMaturityLevelId() == maturityLevel.getId())
             .findAny()
             .orElse(null);
     }

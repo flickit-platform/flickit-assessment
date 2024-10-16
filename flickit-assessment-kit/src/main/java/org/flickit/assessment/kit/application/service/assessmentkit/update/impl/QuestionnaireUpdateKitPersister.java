@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
@@ -61,10 +62,11 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
 
         newQuestionnairesCodes.forEach(i ->
             finalQuestionnaires.add(createQuestionnaire(dslQuestionnaireCodesMap.get(i),
-                savedKit.getKitVersionId(),
+                savedKit.getActiveVersionId(),
                 currentUserId)));
         sameQuestionnairesCodes.forEach(i ->
-            finalQuestionnaires.add(updateQuestionnaire(savedQuestionnaireCodesMap.get(i),
+            finalQuestionnaires.add(updateQuestionnaire(savedKit.getActiveVersionId(),
+                savedQuestionnaireCodesMap.get(i),
                 dslQuestionnaireCodesMap.get(i),
                 currentUserId)));
 
@@ -100,7 +102,8 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private Questionnaire updateQuestionnaire(Questionnaire savedQuestionnaire,
+    private Questionnaire updateQuestionnaire(long kitVersionId,
+                                              Questionnaire savedQuestionnaire,
                                               QuestionnaireDslModel dslQuestionnaire,
                                               UUID currentUserId) {
         if (!savedQuestionnaire.getTitle().equals(dslQuestionnaire.getTitle()) ||
@@ -108,7 +111,9 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
             savedQuestionnaire.getIndex() != dslQuestionnaire.getIndex()) {
             var updateParam = new UpdateQuestionnairePort.Param(
                 savedQuestionnaire.getId(),
+                kitVersionId,
                 dslQuestionnaire.getTitle(),
+                SlugCodeUtil.generateSlugCode(dslQuestionnaire.getTitle()),
                 dslQuestionnaire.getIndex(),
                 dslQuestionnaire.getDescription(),
                 LocalDateTime.now(),

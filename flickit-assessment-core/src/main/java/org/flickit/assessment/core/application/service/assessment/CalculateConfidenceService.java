@@ -1,16 +1,15 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.error.ErrorMessageKey;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
-import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.springframework.stereotype.Service;
@@ -20,24 +19,27 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_CONFIDENCE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
     private final LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
-    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final UpdateCalculatedConfidencePort updateCalculatedConfidenceLevelResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final CreateSubjectValuePort createSubjectValuePort;
-    private final CreateQualityAttributeValuePort createAttributeValuePort;
+    private final CreateAttributeValuePort createAttributeValuePort;
 
     @Override
     public Result calculate(Param param) {
-        if (!checkUserAssessmentAccessPort.hasAccess(param.getAssessmentId(), param.getCurrentUserId()))
-            throw new AccessDeniedException(ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED);
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
 
@@ -73,14 +75,14 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
         Map<UUID, SubjectValue> idToSubjectValue = allSubjectValues.stream().collect(Collectors.toMap(SubjectValue::getId, a -> a));
 
-        Map<UUID, List<QualityAttributeValue>> subjectValueIdToAttrValues = createNewAttributeValues(allSubjects,
+        Map<UUID, List<AttributeValue>> subjectValueIdToAttrValues = createNewAttributeValues(allSubjects,
             allSubjectValues, assessmentResult.getId());
 
         subjectValueIdToAttrValues.forEach((svId, newAttValues) -> {
             SubjectValue subjectValue = idToSubjectValue.get(svId);
-            List<QualityAttributeValue> attrValues = new ArrayList<>(subjectValue.getQualityAttributeValues());
+            List<AttributeValue> attrValues = new ArrayList<>(subjectValue.getAttributeValues());
             attrValues.addAll(newAttValues);
-            subjectValue.setQualityAttributeValues(attrValues);
+            subjectValue.setAttributeValues(attrValues);
         });
 
         assessmentResult.setSubjectValues(allSubjectValues);
@@ -99,40 +101,40 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
         return createSubjectValuePort.persistAll(newSubjectIds, assessmentResultId);
     }
 
-    private Map<UUID, List<QualityAttributeValue>> createNewAttributeValues(List<Subject> kitSubjects, List<SubjectValue> subjectValues, UUID assessmentResultId) {
-        List<QualityAttribute> kitAttributes = kitSubjects.stream()
-            .flatMap(s -> s.getQualityAttributes().stream())
+    private Map<UUID, List<AttributeValue>> createNewAttributeValues(List<Subject> kitSubjects, List<SubjectValue> subjectValues, UUID assessmentResultId) {
+        List<Attribute> kitAttributes = kitSubjects.stream()
+            .flatMap(s -> s.getAttributes().stream())
             .toList();
 
-        List<QualityAttributeValue> attributeValues = subjectValues.stream()
-            .filter(s -> s.getQualityAttributeValues() != null)
-            .flatMap(s -> s.getQualityAttributeValues().stream())
+        List<AttributeValue> attributeValues = subjectValues.stream()
+            .filter(s -> s.getAttributeValues() != null)
+            .flatMap(s -> s.getAttributeValues().stream())
             .toList();
 
         var attributesWithValue = attributeValues.stream()
-            .map(q -> q.getQualityAttribute().getId())
+            .map(q -> q.getAttribute().getId())
             .collect(Collectors.toSet());
 
         var newAttributeIds = kitAttributes.stream()
-            .map(QualityAttribute::getId)
+            .map(Attribute::getId)
             .filter(a -> !attributesWithValue.contains(a))
             .toList();
 
         Map<Long, Long> attributeIdToSubjectId = new HashMap<>();
         for (Subject subject : kitSubjects) {
-            for (QualityAttribute attribute : subject.getQualityAttributes())
+            for (Attribute attribute : subject.getAttributes())
                 attributeIdToSubjectId.put(attribute.getId(), subject.getId());
         }
 
-        List<QualityAttributeValue> newAttributeValues = createAttributeValuePort.persistAll(newAttributeIds, assessmentResultId);
+        List<AttributeValue> newAttributeValues = createAttributeValuePort.persistAll(newAttributeIds, assessmentResultId);
         Map<Long, SubjectValue> subjectIdToSubjectValue = subjectValues.stream().collect(Collectors.toMap(a -> a.getSubject().getId(), a -> a));
 
-        Map<UUID, List<QualityAttributeValue>> results = new HashMap<>();
+        Map<UUID, List<AttributeValue>> results = new HashMap<>();
         newAttributeValues.forEach(attrValue -> {
-            Long subjId = attributeIdToSubjectId.get(attrValue.getQualityAttribute().getId());
+            Long subjId = attributeIdToSubjectId.get(attrValue.getAttribute().getId());
             SubjectValue subjectValue = subjectIdToSubjectValue.get(subjId);
             results.compute(subjectValue.getId(), (subjValueId, attrValues) -> {
-                List<QualityAttributeValue> list = attrValues != null ? attrValues : new ArrayList<>();
+                List<AttributeValue> list = attrValues != null ? attrValues : new ArrayList<>();
                 list.add(attrValue);
                 return list;
             });

@@ -41,23 +41,4 @@ public class AdaptersDependencyArchUnitTest {
                 ADAPTER_OUT_REPORT,
                 APPLICATION_SERVICE
             );
-
-    @ArchTest
-    static final ArchRule rest_out_adapters_should_not_depend_adapters_and_services_and_useCases =
-        noClasses()
-            .that()
-            .resideInAPackage(ADAPTER_OUT_REST)
-            .and()
-            .haveSimpleNameEndingWith(REST_ADAPTER_SUFFIX)
-            .should()
-            .dependOnClassesThat()
-            .resideInAnyPackage(
-                ADAPTER_IN_REST,
-                ADAPTER_OUT_PERSISTENCE,
-                ADAPTER_OUT_CALCULATE,
-                ADAPTER_OUT_REPORT,
-                APPLICATION_SERVICE,
-                APPLICATION_PORT_IN
-            );
-
 }

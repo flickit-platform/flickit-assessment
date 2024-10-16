@@ -8,6 +8,7 @@ public interface UpdateQuestionPort {
     void update(Param param);
 
     record Param(Long id,
+                 Long kitVersionId,
                  String title,
                  Integer index,
                  String hint,

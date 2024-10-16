@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.34-01" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fak_answer_option_impact" constraintName="fk_fak_answeroptionimpact_questionimpact" />
+    </changeSet>
+
+    <changeSet id="0.34-02" author="Maziyar Gerami">
+        <dropPrimaryKey tableName="fak_question_impact"/>
+    </changeSet>
+
+    <changeSet id="0.34-03" author="Maziyar Gerami">
+        <addPrimaryKey tableName="fak_question_impact"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_question_impact"/>
+    </changeSet>
+
+    <changeSet id="0.34-04" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_answer_option_impact"
+                                 baseColumnNames="question_impact_id, kit_version_id"
+                                 constraintName="fk_fak_answeroptionimpact_questionimpact"
+                                 referencedTableName="fak_question_impact"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.34-05" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint tableName="fak_subject"
+                              constraintName="uq_fak_subject_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-06" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_subject_index_kitversionid"
+                             tableName="fak_subject"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.34-07" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_questionnaire"
+                              constraintName="uq_fak_questionnaire_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-08" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_questionnaire_index_kitversionid"
+                             tableName="fak_questionnaire"
+                             initiallyDeferred="true"/>
+    </changeSet>
+</databaseChangeLog>

@@ -25,7 +25,7 @@ public class GrantUserAssessmentRoleRestController {
                                                         @RequestBody GrantUserAssessmentRoleRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.grantAssessmentUserRole(toParam(assessmentId, requestDto, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, GrantUserAssessmentRoleRequestDto requestDto, UUID currentUserId) {

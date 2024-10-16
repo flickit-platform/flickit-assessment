@@ -1,8 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.questionimpact;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -20,22 +18,21 @@ public class QuestionImpactPersistenceJpaAdapter implements
     UpdateQuestionImpactPort {
 
     private final QuestionImpactJpaRepository repository;
-    private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
     public Long persist(QuestionImpact impact) {
-        MaturityLevelJpaEntity maturityLevelJpaEntity = maturityLevelRepository.getReferenceById(impact.getMaturityLevelId());
-        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity)).getId();
+        return repository.save(mapToJpaEntityToPersist(impact)).getId();
     }
 
     @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void delete(Long questionImpactId, Long kitVersionId) {
+        repository.deleteByIdAndKitVersionId(questionImpactId, kitVersionId);
     }
 
     @Override
     public void update(UpdateQuestionImpactPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.weight(),
             param.questionId(),
             param.lastModificationTime(),

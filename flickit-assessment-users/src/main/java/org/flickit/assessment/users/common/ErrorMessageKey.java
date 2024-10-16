@@ -17,6 +17,8 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MIN = "get-expert-group-list.size.min";
     public static final String GET_EXPERT_GROUP_LIST_SIZE_MAX = "get-expert-group-list.size.max";
 
+    public static final String UPDATE_EXPERT_GROUP_LAST_SEEN_EXPERT_GROUP_ID_NOT_NULL = "update-expertGroup-lastSeen.expertGroupId.notNull";
+
     public static final String GET_EXPERT_GROUP_EXPERT_GROUP_NOT_FOUND = "get-expert-group.expert-group.notFound";
     public static final String GET_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "get-expert-group.expert-group-id.notNull";
 
@@ -79,10 +81,12 @@ public class ErrorMessageKey {
     public static final String CREATE_SPACE_TITLE_NOT_BLANK = "create-space.title.notBlank";
     public static final String CREATE_SPACE_TITLE_SIZE_MIN = "create-space.title.size.min";
     public static final String CREATE_SPACE_TITLE_SIZE_MAX = "create-space.title.size.max";
+    public static final String CREATE_SPACE_TITLE_DUPLICATE = "create-space.title.duplicate";
 
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_NULL = "delete-space-member.userId.notNull";
     public static final String DELETE_SPACE_MEMBER_SPACE_ID_NOT_NULL = "delete-space-member.spaceId.notNull";
     public static final String DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND = "delete-space-member.userId.notFound";
+    public static final String DELETE_SPACE_MEMBER_USER_IS_SPACE_OWNER = "delete-space-member.userId.isSpaceOwner";
 
     public static final String GET_SPACE_SPACE_ID_NOT_NULL = "get-space.spaceId.notNull";
 
@@ -107,4 +111,39 @@ public class ErrorMessageKey {
 
     public static final String LEAVE_SPACE_SPACE_ID_NOT_NULL = "leave-space.spaceId.notNull";
     public static final String LEAVE_SPACE_OWNER_NOT_ALLOWED = "leave-space.owner.notAllowed";
+
+    public static final String UPDATE_EXPERT_GROUP_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group.expertGroupId.notNull";
+    public static final String UPDATE_EXPERT_GROUP_TITLE_NOT_BLANK = "update-expert-group.title.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_TITLE_SIZE_MIN = "update-expert-group.title.size.min";
+    public static final String UPDATE_EXPERT_GROUP_TITLE_SIZE_MAX = "update-expert-group.title.size.max";
+    public static final String UPDATE_EXPERT_GROUP_BIO_NOT_BLANK = "update-expert-group.bio.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_BIO_SIZE_MIN = "update-expert-group.bio.size.min";
+    public static final String UPDATE_EXPERT_GROUP_BIO_SIZE_MAX = "update-expert-group.bio.size.max";
+    public static final String UPDATE_EXPERT_GROUP_ABOUT_NOT_BLANK = "update-expert-group.about.notBlank";
+    public static final String UPDATE_EXPERT_GROUP_ABOUT_SIZE_MIN = "update-expert-group.about.size.min";
+    public static final String UPDATE_EXPERT_GROUP_ABOUT_SIZE_MAX = "update-expert-group.about.size.max";
+    public static final String UPDATE_EXPERT_GROUP_WEBSITE_NOT_URL = "update-expert-group.website.notUrl";
+    public static final String UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MIN = "update-expert-group.website.size.min";
+    public static final String UPDATE_EXPERT_GROUP_WEBSITE_SIZE_MAX = "update-expert-group.website.size.max";
+
+    public static final String UPDATE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "update-expert-group-picture.expertGroupId.notNull";
+    public static final String UPDATE_EXPERT_GROUP_PICTURE_PICTURE_NOT_NULL = "update-expert-group-picture.picture.notNull";
+
+    public static final String DELETE_SPACE_INVITATION_INVITE_ID_NOT_NULL = "delete-space-invitation.inviteId.notNull";
+    public static final String DELETE_SPACE_INVITATION_INVITE_ID_NOT_FOUND = "delete-space-invitation.inviteId.notFound";
+
+    public static final String DELETE_EXPERT_GROUP_PICTURE_EXPERT_GROUP_ID_NOT_NULL = "delete-expert-group-picture.expertGroupId.notNull";
+
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_NOT_NULL = "update-user-profile.displayName.notNull";
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_SIZE_MIN = "update-user-profile.displayName.size.min";
+    public static final String UPDATE_USER_PROFILE_DISPLAY_NAME_SIZE_MAX = "update-user-profile.displayName.size.max";
+    public static final String UPDATE_USER_PROFILE_BIO_SIZE_MIN = "update-user-profile.bio.size.min";
+    public static final String UPDATE_USER_PROFILE_BIO_SIZE_MAX = "update-user-profile.bio.size.max";
+    public static final String UPDATE_USER_PROFILE_LINKEDIN_NOT_VALID = "update-user-profile.linkedin.notValid";
+
+    public static final String CREATE_USER_USER_ID_NOT_NULL = "create-user.userId.notNull";
+    public static final String CREATE_USER_EMAIL_NOT_NULL = "create-user.email.notNull";
+    public static final String CREATE_USER_DISPLAY_NAME_NOT_NULL = "create-user.displayName.notNull";
+    public static final String CREATE_USER_DISPLAY_NAME_SIZE_MIN = "create-user.displayName.size.min";
+    public static final String CREATE_USER_DISPLAY_NAME_SIZE_MAX = "create-user.displayName.size.max";
 }

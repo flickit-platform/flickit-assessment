@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersisterContext.KEY_MATURITY_LEVELS;
-import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.*;
+import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelOne;
+import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelTwo;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother.domainToDslModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -45,6 +46,7 @@ class MaturityLevelCreateKitPersisterTest {
 
     @Test
     void testPersist_ValidInputs_SaveMaturityLevelAndItsCompetences() {
+        Long kitVersionId = 1L;
         MaturityLevel levelOne = levelOne();
         MaturityLevelDslModel dslLevelOne = domainToDslModel(levelOne);
         MaturityLevel levelTwo = levelTwo();
@@ -57,12 +59,12 @@ class MaturityLevelCreateKitPersisterTest {
             .maturityLevels(dslLevels)
             .build();
 
-        MaturityLevel levelOneNoId = new MaturityLevel(null, levelOne.getCode(), levelOne.getTitle(), levelOne.getIndex(), levelOne.getValue(), null);
-        MaturityLevel levelTwoNoId = new MaturityLevel(null, levelTwo.getCode(), levelTwo.getTitle(), levelTwo.getIndex(), levelTwo.getValue(), null);
+        MaturityLevel levelOneNoId = new MaturityLevel(null, levelOne.getCode(), levelOne.getTitle(), levelOne.getIndex(), levelOne.getDescription(), levelOne.getValue(), null);
+        MaturityLevel levelTwoNoId = new MaturityLevel(null, levelTwo.getCode(), levelTwo.getTitle(), levelTwo.getIndex(), levelTwo.getDescription(), levelTwo.getValue(), null);
         when(createMaturityLevelPort.persist(levelOneNoId, KIT_ID, CURRENT_USER_ID)).thenReturn(levelOne.getId());
         when(createMaturityLevelPort.persist(levelTwoNoId, KIT_ID, CURRENT_USER_ID)).thenReturn(levelTwo.getId());
 
-        when(createLevelCompetencePort.persist(levelTwo.getId(), levelTwo.getId(), 60, CURRENT_USER_ID)).thenReturn(1L);
+        when(createLevelCompetencePort.persist(levelTwo.getId(), levelTwo.getId(), 60, kitVersionId, CURRENT_USER_ID)).thenReturn(1L);
 
         persister.persist(context, dslModel, KIT_ID, CURRENT_USER_ID);
 

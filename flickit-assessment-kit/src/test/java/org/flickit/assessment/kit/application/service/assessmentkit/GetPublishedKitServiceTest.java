@@ -122,9 +122,9 @@ class GetPublishedKitServiceTest {
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
-        when(loadSubjectsPort.loadByKitId(param.getKitId())).thenReturn(List.of(subject));
+        when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
-        when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
 
@@ -138,6 +138,7 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.isPrivate(), result.isPrivate());
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(kit.getExpertGroupId(), result.expertGroupId());
 
         assertEquals(counts.likes(), result.like().count());
         assertFalse(result.like().liked());
@@ -146,16 +147,16 @@ class GetPublishedKitServiceTest {
         assertEquals(counts.questionnairesCount(), result.questionnairesCount());
 
         assertEquals(1, result.subjects().size());
-        assertEquals(subject.getId(), result.subjects().get(0).id());
+        assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         assertEquals(1, result.questionnaires().size());
-        assertEquals(questionnaire.getId(), result.questionnaires().get(0).id());
+        assertEquals(questionnaire.getId(), result.questionnaires().getFirst().id());
 
         assertEquals(1, result.maturityLevels().size());
-        assertEquals(maturityLevel.getId(), result.maturityLevels().get(0).id());
+        assertEquals(maturityLevel.getId(), result.maturityLevels().getFirst().id());
 
         assertEquals(1, result.tags().size());
-        assertEquals(tag.getId(), result.tags().get(0).id());
+        assertEquals(tag.getId(), result.tags().getFirst().id());
     }
 
     @Test
@@ -172,9 +173,9 @@ class GetPublishedKitServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
-        when(loadSubjectsPort.loadByKitId(param.getKitId())).thenReturn(List.of(subject));
+        when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
-        when(loadMaturityLevelsPort.loadByKitId(param.getKitId())).thenReturn(List.of(maturityLevel));
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
 
@@ -188,6 +189,7 @@ class GetPublishedKitServiceTest {
         assertEquals(kit.isPrivate(), result.isPrivate());
         assertEquals(kit.getCreationTime(), result.creationTime());
         assertEquals(kit.getLastModificationTime(), result.lastModificationTime());
+        assertEquals(kit.getExpertGroupId(), result.expertGroupId());
 
         assertEquals(counts.likes(), result.like().count());
         assertTrue(result.like().liked());
@@ -196,16 +198,16 @@ class GetPublishedKitServiceTest {
         assertEquals(counts.questionnairesCount(), result.questionnairesCount());
 
         assertEquals(1, result.subjects().size());
-        assertEquals(subject.getId(), result.subjects().get(0).id());
+        assertEquals(subject.getId(), result.subjects().getFirst().id());
 
         assertEquals(1, result.questionnaires().size());
-        assertEquals(questionnaire.getId(), result.questionnaires().get(0).id());
+        assertEquals(questionnaire.getId(), result.questionnaires().getFirst().id());
 
         assertEquals(1, result.maturityLevels().size());
-        assertEquals(maturityLevel.getId(), result.maturityLevels().get(0).id());
+        assertEquals(maturityLevel.getId(), result.maturityLevels().getFirst().id());
 
         assertEquals(1, result.tags().size());
-        assertEquals(tag.getId(), result.tags().get(0).id());
+        assertEquals(tag.getId(), result.tags().getFirst().id());
 
         verifyNoInteractions(checkKitUserAccessPort);
     }

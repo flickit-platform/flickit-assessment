@@ -18,6 +18,7 @@ public class QuestionImpact {
     private final long attributeId;
     private final long maturityLevelId;
     private final int weight;
+    private final Long kitVersionId;
     private final Long questionId;
     @EqualsAndHashCode.Exclude private final LocalDateTime creationTime;
     @EqualsAndHashCode.Exclude private final LocalDateTime lastModificationTime;

@@ -25,4 +25,7 @@ public class SubjectQuestionnaireJpaEntity {
 
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
+
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 }

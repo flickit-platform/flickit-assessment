@@ -37,7 +37,7 @@ public class GetKitStatsService implements GetKitStatsUseCase {
 
         AssessmentKit assessmentKit = loadAssessmentKitPort.load(param.getKitId());
 
-        List<KitStatSubject> subjects = loadSubjectsPort.loadByKitId(assessmentKit.getKitVersionId()).stream()
+        List<KitStatSubject> subjects = loadSubjectsPort.loadByKitVersionId(assessmentKit.getActiveVersionId()).stream()
             .map(s -> new GetKitStatsUseCase.KitStatSubject(s.getTitle()))
             .toList();
 

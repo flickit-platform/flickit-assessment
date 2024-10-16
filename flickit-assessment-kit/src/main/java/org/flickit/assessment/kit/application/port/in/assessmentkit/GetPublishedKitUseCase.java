@@ -45,6 +45,7 @@ public interface GetPublishedKitUseCase {
                   Integer assessmentsCount,
                   Integer subjectsCount,
                   Integer questionnairesCount,
+                  long expertGroupId,
                   List<MinimalSubject> subjects,
                   List<MinimalQuestionnaire> questionnaires,
                   List<MinimalMaturityLevel> maturityLevels,
@@ -63,7 +64,7 @@ public interface GetPublishedKitUseCase {
     record MinimalQuestionnaire(Long id, String title, String description) {
     }
 
-    record MinimalMaturityLevel(Long id, String title, Integer value, Integer index) {
+    record MinimalMaturityLevel(Long id, String title, String description, Integer value, Integer index) {
     }
 
     record MinimalKitTag(Long id, String title) {

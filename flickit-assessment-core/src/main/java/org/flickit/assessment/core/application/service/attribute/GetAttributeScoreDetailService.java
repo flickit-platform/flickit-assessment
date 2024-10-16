@@ -1,9 +1,9 @@
 package org.flickit.assessment.core.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -19,7 +20,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUseCase {
 
     private final LoadAttributeScoreDetailPort loadAttributeScoreDetailPort;
-    private final CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
     public Result getAttributeScoreDetail(Param param) {
@@ -50,7 +51,7 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {
-        if (!checkUserAssessmentAccessPort.hasAccess(assessmentId, currentUserId))
+        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_SCORE_DETAIL))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }
