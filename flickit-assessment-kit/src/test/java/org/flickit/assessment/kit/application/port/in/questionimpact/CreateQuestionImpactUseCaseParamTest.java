@@ -14,42 +14,42 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateQuestionImpactUseCaseParamTest {
 
     @Test
-    void testCreateQuestionImpactUseCase_kitVersionIdViolatesConstraint_ErrorMessage() {
+    void testCreateQuestionImpactUseCaseParam_kitVersionIdViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + CREATE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateQuestionImpactUseCase_attributeIdViolatesConstraint_ErrorMessage() {
+    void testCreateQuestionImpactUseCaseParam_attributeIdViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributeId(null)));
         assertThat(throwable).hasMessage("attributeId: " + CREATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateQuestionImpactUseCase_maturityLevelIdViolatesConstraint_ErrorMessage() {
+    void testCreateQuestionImpactUseCaseParam_maturityLevelIdViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.maturityLevelId(null)));
         assertThat(throwable).hasMessage("maturityLevelId: " + CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateQuestionImpactUseCase_weightViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.weight(null)));
-        assertThat(throwable).hasMessage("weight: " + CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL);
-    }
-
-    @Test
-    void testCreateQuestionImpactUseCase_questionIdViolatesConstraint_ErrorMessage() {
+    void testCreateQuestionImpactUseCaseParam_questionIdViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.questionId(null)));
         assertThat(throwable).hasMessage("questionId: " + CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateQuestionImpactUseCase_currentUserIdViolatesConstraint_ErrorMessage() {
+    void testCreateQuestionImpactUseCaseParam_weightViolatesConstraint_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.weight(null)));
+        assertThat(throwable).hasMessage("weight: " + CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL);
+    }
+
+    @Test
+    void testCreateQuestionImpactUseCaseParam_currentUserIdViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

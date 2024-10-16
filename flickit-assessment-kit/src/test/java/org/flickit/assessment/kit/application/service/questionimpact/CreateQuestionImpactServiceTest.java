@@ -1,14 +1,12 @@
 package org.flickit.assessment.kit.application.service.questionimpact;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.questionimpact.CreateQuestionImpactUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -20,10 +18,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
+import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateQuestionImpactServiceTest {
@@ -40,53 +38,44 @@ class CreateQuestionImpactServiceTest {
     @Mock
     private CreateQuestionImpactPort createQuestionImpactPort;
 
-    @Test
-    void testCreateQuestionImpactServiceTest_kitVersionIdDoesNotExist_throwsResourceNotFoundException() {
-        var param = createParam(CreateQuestionImpactUseCase.Param.ParamBuilder::build);
-
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createQuestionImpact(param));
-
-        assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
-    }
+    private final UUID ownerId = UUID.randomUUID();
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testCreateQuestionImpactServiceTest_currentUserIsNotExpertGroupOwner_throwsResourceNotFoundException() {
+    void testCreateQuestionImpact_currentUserIsNotExpertGroupOwner_throwsResourceNotFoundException() {
         var param = createParam(CreateQuestionImpactUseCase.Param.ParamBuilder::build);
-        var assessmentKt = AssessmentKitMother.simpleKit();
 
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(KitVersionMother.createKitVersion(assessmentKt));
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKt.getExpertGroupId())).thenReturn(UUID.randomUUID());
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createQuestionImpact(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(createQuestionImpactPort);
     }
 
     @Test
-    void testCreateQuestionImpactServiceTest_validParams_successfulCreateQuestionImpact() {
-        var param = createParam(CreateQuestionImpactUseCase.Param.ParamBuilder::build);
-        var assessmentKt = AssessmentKitMother.simpleKit();
+    void testCreateQuestionImpact_validParams_successfulCreateQuestionImpact() {
+        var param = createParam(b -> b.currentUserId(ownerId));
 
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(KitVersionMother.createKitVersion(assessmentKt));
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKt.getExpertGroupId())).thenReturn(param.getCurrentUserId());
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+
+
+        service.createQuestionImpact(param);
 
         ArgumentCaptor<QuestionImpact> captor = ArgumentCaptor.forClass(QuestionImpact.class);
-
-        assertDoesNotThrow(() -> service.createQuestionImpact(param));
-
-        verify(loadKitVersionPort).load(param.getKitVersionId());
-        verify(loadExpertGroupOwnerPort).loadOwnerId(assessmentKt.getExpertGroupId());
         verify(createQuestionImpactPort).persist(captor.capture());
 
-        assertEquals(param.getQuestionId(), captor.getValue().getQuestionId());
         assertEquals(param.getKitVersionId(), captor.getValue().getKitVersionId());
-        assertEquals(param.getQuestionId(), captor.getValue().getQuestionId());
+        assertEquals(param.getAttributeId(), captor.getValue().getAttributeId());
         assertEquals(param.getMaturityLevelId(), captor.getValue().getMaturityLevelId());
+        assertEquals(param.getQuestionId(), captor.getValue().getQuestionId());
         assertEquals(param.getWeight(), captor.getValue().getWeight());
         assertEquals(param.getCurrentUserId(), captor.getValue().getCreatedBy());
         assertEquals(param.getCurrentUserId(), captor.getValue().getLastModifiedBy());
+        assertNotNull(captor.getValue().getCreationTime());
+        assertNotNull(captor.getValue().getLastModificationTime());
     }
 
     private CreateQuestionImpactUseCase.Param createParam(Consumer<CreateQuestionImpactUseCase.Param.ParamBuilder> changer) {
