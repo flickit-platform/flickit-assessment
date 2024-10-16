@@ -41,13 +41,4 @@ public class AttributeMapper {
             attribute.getLastModifiedBy(),
             subjectJpaEntity.getId());
     }
-
-    public static AttributeListItem mapToListItem(AttributeJpaEntity entity, AttributeSubject attributeSubject) {
-        return new AttributeListItem(entity.getId(),
-            entity.getIndex(),
-            entity.getTitle(),
-            entity.getDescription(),
-            entity.getWeight(),
-            attributeSubject);
-    }
 }
