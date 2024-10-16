@@ -133,7 +133,7 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteQuestion(long questionId, long kitVersionId) {
+    public void delete(long questionId, long kitVersionId) {
         if (repository.existsByIdAndKitVersionId(questionId, kitVersionId))
             repository.deleteByIdAndKitVersionId(questionId, kitVersionId);
         else

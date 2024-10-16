@@ -11,7 +11,6 @@ import org.flickit.assessment.kit.application.port.out.question.DeleteQuestionPo
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_QUESTION_NOT_ALLOWED;
 
@@ -28,14 +27,12 @@ public class DeleteQuestionService implements DeleteQuestionUseCase {
     public void deleteQuestion(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
-
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (!kitVersion.getStatus().equals(KitVersionStatus.UPDATING)) {
+        if (!kitVersion.getStatus().equals(KitVersionStatus.UPDATING))
             throw new ValidationException(DELETE_QUESTION_NOT_ALLOWED);
-        }
 
-        deleteQuestionPort.deleteQuestion(param.getQuestionId(), param.getKitVersionId());
+        deleteQuestionPort.delete(param.getQuestionId(), param.getKitVersionId());
     }
 }
