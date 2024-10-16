@@ -304,6 +304,11 @@ public class ErrorMessageKey {
     public static final String DELETE_QUESTION_ID_NOT_FOUND = "delete-question.id.notFound";
     public static final String DELETE_QUESTION_NOT_ALLOWED = "delete-question.notAllowed";
 
+    public static final String UPDATE_QUESTIONS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-questions-order.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL = "update-questions-order.orders.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_QUESTION_ID_NOT_NULL = "update-questions-order.questionId.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_INDEX_NOT_NULL = "update-questions-order.index.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }

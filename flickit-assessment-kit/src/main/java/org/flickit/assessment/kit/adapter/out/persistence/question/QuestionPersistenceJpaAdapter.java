@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper.mapToJpaEntity;
@@ -35,7 +37,8 @@ public class QuestionPersistenceJpaAdapter implements
     CountSubjectQuestionsPort,
     LoadQuestionPort,
     LoadAttributeLevelQuestionsPort,
-    DeleteQuestionPort {
+    DeleteQuestionPort,
+    UpdateQuestionsOrderPort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -138,5 +141,26 @@ public class QuestionPersistenceJpaAdapter implements
             repository.deleteByIdAndKitVersionId(questionId, kitVersionId);
         else
             throw new ResourceNotFoundException(DELETE_QUESTION_ID_NOT_FOUND);
+    }
+
+    @Override
+    public void updateQuestionsOrder(UpdateQuestionsOrderPort.Param param) {
+        List<Long> ids = param.orders().stream().map(UpdateQuestionsOrderPort.Param.QuestionOrder::questionId).toList();
+        Map<QuestionJpaEntity.EntityId, UpdateQuestionsOrderPort.Param.QuestionOrder> idToOrder = param.orders().stream()
+            .collect(Collectors.toMap(e ->
+                new QuestionJpaEntity.EntityId(e.questionId(), param.kitVersionId()), Function.identity()));
+        Set<QuestionJpaEntity.EntityId> entityIds = idToOrder.keySet();
+        List<QuestionJpaEntity> entities = repository.findAllById(entityIds);
+        if (entities.size() != ids.size())
+            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+
+        entities.forEach(e -> {
+            UpdateQuestionsOrderPort.Param.QuestionOrder newOrder =
+                idToOrder.get(new QuestionJpaEntity.EntityId(e.getId(), param.kitVersionId()));
+            e.setIndex(newOrder.index());
+            e.setLastModificationTime(param.lastModificationTime());
+            e.setLastModifiedBy(param.lastModifiedBy());
+        });
+        repository.saveAll(entities);
     }
 }
