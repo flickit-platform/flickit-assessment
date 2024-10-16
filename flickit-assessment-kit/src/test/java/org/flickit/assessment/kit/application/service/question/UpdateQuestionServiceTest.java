@@ -43,7 +43,7 @@ class UpdateQuestionServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testUpdateQuestionService_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
+    void testUpdateQuestion_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
         var param = createParam(UpdateQuestionUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -55,7 +55,7 @@ class UpdateQuestionServiceTest {
     }
 
     @Test
-    void testUpdateQuestionService_WhenCurrentUserIsOwner_ThenUpdateQuestion() {
+    void testUpdateQuestion_WhenCurrentUserIsOwner_ThenUpdateQuestion() {
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);

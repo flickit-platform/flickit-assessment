@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UpdateQuestionUseCaseParamTest {
 
@@ -57,22 +57,19 @@ class UpdateQuestionUseCaseParamTest {
 
     @Test
     void testUpdateQuestionUseCaseParam_mayNotBeApplicableParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable =
-            assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.mayNotBeApplicable(null)));
+        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.mayNotBeApplicable(null)));
         assertThat(throwable).hasMessage("mayNotBeApplicable: " + UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL);
     }
 
     @Test
     void testUpdateQuestionUseCaseParam_advisableParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable =
-            assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.advisable(null)));
+        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.advisable(null)));
         assertThat(throwable).hasMessage("advisable: " + UPDATE_QUESTION_ADVISABLE_NOT_NULL);
     }
 
     @Test
     void testUpdateQuestionUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
-        var throwable =
-            assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.currentUserId(null)));
+        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
