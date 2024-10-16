@@ -61,17 +61,20 @@ class CreateSpaceScenarioTest {
         String space = new JSONObject().put("title", title).toString();
         String authenticationToken = JwtTokenTestUtils.generateJwtToken(UUID.randomUUID());
 
-        ResponseEntity<String> response = whenCreateSpace(space, authenticationToken);
-
-        var conn = DriverManager
-            .getConnection(postgreSQLContainer.getJdbcUrl(), postgreSQLContainer.getUsername(), postgreSQLContainer.getPassword());
-        ResultSet resultSet =
-            conn.createStatement().executeQuery("SELECT * from public.fau_space");
-
-        then(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        var conn = DriverManager.getConnection(postgreSQLContainer.getJdbcUrl(),
+            postgreSQLContainer.getUsername(),
+            postgreSQLContainer.getPassword());
+        ResultSet resultSet = conn.createStatement().executeQuery("SELECT * from public.fau_space");
+        resultSet.next();
         int rowCount = resultSet.getRow();
         then(rowCount).isEqualTo(0);
-        whenCreateSpace(space, authenticationToken);
+        then(resultSet.next()).isEqualTo(false);
+
+        ResponseEntity<String> response = whenCreateSpace(space, authenticationToken);
+
+        then(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        resultSet = conn.createStatement().executeQuery("SELECT * from public.fau_space");
         resultSet.next();
         rowCount = resultSet.getRow();
         then(rowCount).isEqualTo(1);
