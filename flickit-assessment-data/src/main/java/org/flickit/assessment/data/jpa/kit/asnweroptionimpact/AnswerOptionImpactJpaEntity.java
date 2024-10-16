@@ -19,7 +19,7 @@ public class AnswerOptionImpactJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_answer_option_impact_id_seq")
+    @GeneratedValue(generator = "fak_answer_option_impact_id_seq")
     @SequenceGenerator(name = "fak_answer_option_impact_id_seq", sequenceName = "fak_answer_option_impact_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
