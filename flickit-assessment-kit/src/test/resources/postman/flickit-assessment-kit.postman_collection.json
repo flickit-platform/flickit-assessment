@@ -1,1438 +1,1636 @@
 {
-	"info": {
-		"_postman_id": "ced9fd61-142c-4259-9aae-0aac1e7c97b0",
-		"name": "flickit-assessment-kit",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "11099181"
-	},
-	"item": [
-		{
-			"name": "AssessmentKit",
-			"item": [
-				{
-					"name": "Update Kit By DSL",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"kitDslId\": 10\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/update-by-dsl",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"302",
-								"update-by-dsl"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Assessment kit",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\":\"sample title\",\n    \"summary\":\"sample summary\",\n    \"about\":\"sample about\",\n    \"isPrivate\": false,\n    \"tagIds\":[1,2,3],\n    \"expertGroupId\":1\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Kit by Dsl",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"kitDslId\": 578,\n    \"isPrivate\": false,\n    \"expertGroupId\": 1,\n    \"title\":\"sample 7\",\n    \"summary\":\"sample\",\n    \"about\":\"summary\",\n    \"tagIds\": [1,2]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/create-by-dsl",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"create-by-dsl"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Assessment Kit",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"302"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Kit User Access",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users/df92a05f-3b00-4bcf-86fc-e0960174b481",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"302",
-								"users",
-								"df92a05f-3b00-4bcf-86fc-e0960174b481"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Expert Group Kit List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/expert-groups/1/assessment-kits",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"expert-groups",
-								"1",
-								"assessment-kits"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit Editable Info",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/308/info",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"308",
-								"info"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit Minimal Info",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/min-info",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"302",
-								"min-info"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit Stats",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/308/stats",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"308",
-								"stats"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit User List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"302",
-								"users"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "10"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Published Kit",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/144",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"144"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Grant User Access to Kit",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"userId\": \"70c58eab-3d5f-48aa-9ffb-07802e5ea48f\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/1/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"1",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Search Kit Options",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/options/search?query=SD&page=0&size=5",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"options",
-								"search"
-							],
-							"query": [
-								{
-									"key": "query",
-									"value": "SD"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "5"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Toggle Kit Like",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/386/likes",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"386",
-								"likes"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Kit Info",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"New title\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/386",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"386"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "attribute",
-			"item": [
-				{
-					"name": "Get Kit Attribute Level Questions Detail",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/348/details/attributes/1654/maturity-levels/1929",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"348",
-								"details",
-								"attributes",
-								"1654",
-								"maturity-levels",
-								"1929"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Attribute Detail",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/details/attributes/5",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"144",
-								"details",
-								"attributes",
-								"5"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Attribute",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"393",
-								"attributes"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Attributes",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes?page=0&size=20",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"393",
-								"attributes"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "KitDsl",
-			"item": [
-				{
-					"name": "Get Kit Detail",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/details",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"302",
-								"details"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Dsl Download Link",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/dsl-download-link",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"144",
-								"dsl-download-link"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits"
-							],
-							"query": [
-								{
-									"key": "isPrivate",
-									"value": "true"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Upload Kit DSL",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "dslFile",
-									"type": "file",
-									"src": "/C:/Users/MHZ/Desktop/correct-kit.zip"
-								},
-								{
-									"key": "expertGroupId",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/upload-dsl",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"upload-dsl"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "KitTag",
-			"item": [
-				{
-					"name": "Get Kit Tag List",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kit-tags?page=0&size=20",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kit-tags"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "20"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "KitVersion",
-			"item": [
-				{
-					"name": "Activate Kit Version",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/516/activate",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"516",
-								"activate"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "levelcompetence",
-			"item": [
-				{
-					"name": "Create Level Competence",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"affectedLevelId\": 3,\n    \"effectiveLevelId\": 5,\n    \"value\": 60\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/303/level-competences",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"303",
-								"level-competences"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Level Competences",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-                          "raw": "{{base_url}}/{{api_path}}/kit-versions/348/level-competences",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"348",
-                              "level-competences"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Level Competence",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"value\": 0\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/424/level-competences/2027",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"424",
-								"level-competences",
-								"2027"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Level Competence",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/level-competences/1838",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"393",
-								"level-competences",
-								"1838"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Question",
-			"item": [
-				{
-					"name": "Get Kit Question Detail",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/381/details/questions/2914",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"381",
-								"details",
-								"questions",
-								"2914"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Questionnaire",
-			"item": [
-				{
-					"name": "Get Kit Questionnaire Detail",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/381/details/questionnaires/2914",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"381",
-								"details",
-								"questionnaires",
-								"2914"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Questionnaire",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"393",
-								"questionnaires"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Subject",
-			"item": [
-				{
-					"name": "Get Subject Detail",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/144/details/subjects/5",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"144",
-								"details",
-								"subjects",
-								"5"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Subject",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"336",
-								"subjects"
-							]
-						}
-					},
-					"response": []
-				},
-              {
-                "name": "Update Subject",
-                "request": {
-                  "method": "PUT",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"title\": \"System Software\",\n    \"index\": 3,\n    \"description\": \"Software description\",    \n    \"weight\": 2\n  }",
-                    "options": {
-                      "raw": {
-                        "language": "json"
-                      }
-                    }
-                  },
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/subjects/529",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "393",
-                      "subjects",
-                      "529"
-                    ]
-                  }
+    "info": {
+        "_postman_id": "ced9fd61-142c-4259-9aae-0aac1e7c97b0",
+        "name": "flickit-assessment-kit",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "11099181"
+    },
+    "item": [
+        {
+            "name": "AssessmentKit",
+            "item": [
+                {
+                    "name": "Update Kit By DSL",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"kitDslId\": 10\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/update-by-dsl",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "302",
+                                "update-by-dsl"
+                            ]
+                        }
+                    },
+                    "response": []
                 },
-                "response": []
-              },{
-					"name": "Delete Subject",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/419/subjects/576",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"419",
-								"subjects",
-								"576"
-							]
-						}
-					},
-					"response": []
-				},{
-                "name": "Get Subject List",
-                "request": {
-                  "method": "GET",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/381/subjects?page=0&size=10",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "381",
-                      "subjects"
-                    ],
-                    "query": [
-                      {
-                        "key": "page",
-                        "value": "0"
-                      },
-                      {
-                        "key": "size",
-                        "value": "10"
-                      }
-                    ]
-                  }
+                {
+                    "name": "Create Assessment kit",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\":\"sample title\",\n    \"summary\":\"sample summary\",\n    \"about\":\"sample about\",\n    \"isPrivate\": false,\n    \"tagIds\":[1,2,3],\n    \"expertGroupId\":1\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits"
+                            ]
+                        }
+                    },
+                    "response": []
                 },
-                "response": []
-              },
-              {
-                "name": "Update Subject Orders",
-                "request": {
-                  "method": "PUT",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "body": {
-                    "mode": "raw",
-                    "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
-                    "options": {
-                      "raw": {
-                        "language": "json"
-                      }
-                    }
-                  },
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects-change-order",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "336",
-                      "subjects-change-order"
-                    ]
-                  }
+                {
+                    "name": "Create Kit by Dsl",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"kitDslId\": 578,\n    \"isPrivate\": false,\n    \"expertGroupId\": 1,\n    \"title\":\"sample 7\",\n    \"summary\":\"sample\",\n    \"about\":\"summary\",\n    \"tagIds\": [1,2]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/create-by-dsl",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "create-by-dsl"
+                            ]
+                        }
+                    },
+                    "response": []
                 },
-                "response": []
-              }
-			]
-		},
-		{
-			"name": "Maturity Level",
-			"item": [
-				{
-					"name": "Create MaturityLevel",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"393",
-								"maturity-levels"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update MaturityLevel",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels/2227",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"393",
-								"maturity-levels",
-								"2227"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Maturity Level",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/447/maturity-levels/2350",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"447",
-								"maturity-levels",
-								"2350"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update MaturityLevels Order",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"orders\": [\n    {\n      \"id\": 2342,\n      \"index\": 1\n    },\n    {\n      \"id\": 2343,\n      \"index\": 1\n    }\n  ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/444/maturity-levels-change-order",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"444",
-								"maturity-levels-change-order"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit Maturity Levels",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels?page=0&size=5",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"393",
-								"maturity-levels"
-							],
-							"query": [
-								{
-									"key": "page",
-									"value": "0"
-								},
-								{
-									"key": "size",
-									"value": "5"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost:8098",
-			"type": "string"
-		},
-		{
-			"key": "api_path",
-			"value": "assessment-core/api",
-			"type": "string"
-		},
-		{
-			"key": "authorization_header",
-			"value": "",
-			"type": "string"
-		}
-	]
+                {
+                    "name": "Delete Assessment Kit",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "302"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Kit User Access",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users/df92a05f-3b00-4bcf-86fc-e0960174b481",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "302",
+                                "users",
+                                "df92a05f-3b00-4bcf-86fc-e0960174b481"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Expert Group Kit List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/expert-groups/1/assessment-kits",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "expert-groups",
+                                "1",
+                                "assessment-kits"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Kit Editable Info",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/308/info",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "308",
+                                "info"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Kit Minimal Info",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/min-info",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "302",
+                                "min-info"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Kit Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/308/stats",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "308",
+                                "stats"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Kit User List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/users?page=0&size=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "302",
+                                "users"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Published Kit",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/144",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "144"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Grant User Access to Kit",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"userId\": \"70c58eab-3d5f-48aa-9ffb-07802e5ea48f\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/1/users",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "1",
+                                "users"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Kit Options",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/options/search?query=SD&page=0&size=5",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "options",
+                                "search"
+                            ],
+                            "query": [
+                                {
+                                    "key": "query",
+                                    "value": "SD"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "5"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Toggle Kit Like",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/386/likes",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "386",
+                                "likes"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Kit Info",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"New title\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/386",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "386"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Attribute",
+            "item": [
+                {
+                    "name": "Get Kit Attribute Level Questions Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/348/details/attributes/1654/maturity-levels/1929",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "348",
+                                "details",
+                                "attributes",
+                                "1654",
+                                "maturity-levels",
+                                "1929"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Attribute Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/144/details/attributes/5",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "144",
+                                "details",
+                                "attributes",
+                                "5"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Attribute",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"index\": 3,\n    \"title\": \"Team Flexibility\",\n    \"description\": \"Team Flexibilty description\",\n    \"weight\": 1\n,    \"subjectId\": 529\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "attributes"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Attribute",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"title\": \"title\",\r\n    \"description\": \"description\",\r\n    \"subjectId\": \"3\",\r\n    \"index\": \"2\",\r\n    \"weight\": \"1\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/302/attributes/10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "302",
+                                "attributes",
+                                "10"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Attribute",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes/1961",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "attributes",
+                                "1961"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Attribute Orders",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/336/attributes-change-order",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "336",
+                                "attributes-change-order"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Attributes",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/attributes?page=0&size=20",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "attributes"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "KitDsl",
+            "item": [
+                {
+                    "name": "Get Kit Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/302/details",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "302",
+                                "details"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Dsl Download Link",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/144/dsl-download-link",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "144",
+                                "dsl-download-link"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Kit List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits"
+                            ],
+                            "query": [
+                                {
+                                    "key": "isPrivate",
+                                    "value": "true"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Upload Kit DSL",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "dslFile",
+                                    "type": "file",
+                                    "src": "/C:/Users/MHZ/Desktop/correct-kit.zip"
+                                },
+                                {
+                                    "key": "expertGroupId",
+                                    "value": "1",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/upload-dsl",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "upload-dsl"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "KitTag",
+            "item": [
+                {
+                    "name": "Get Kit Tag List",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kit-tags?page=0&size=20",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kit-tags"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "20"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "KitVersion",
+            "item": [
+                {
+                    "name": "Activate Kit Version",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/516/activate",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "516",
+                                "activate"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "levelcompetence",
+            "item": [
+                {
+                    "name": "Create Level Competence",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"affectedLevelId\": 3,\n    \"effectiveLevelId\": 5,\n    \"value\": 60\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/303/level-competences",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "303",
+                                "level-competences"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Level Competences",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/348/level-competences",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "348",
+                                "level-competences"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Level Competence",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"value\": 0\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/424/level-competences/2027",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "424",
+                                "level-competences",
+                                "2027"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Level Competence",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/level-competences/1838",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "level-competences",
+                                "1838"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Question",
+            "item": [
+                {
+                    "name": "Get Kit Question Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/381/details/questions/2914",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "381",
+                                "details",
+                                "questions",
+                                "2914"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Question",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/22831",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "questions",
+                                "22831"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Questionnaire",
+            "item": [
+                {
+                    "name": "Get Kit Questionnaire Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/381/details/questionnaires/2914",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "381",
+                                "details",
+                                "questionnaires",
+                                "2914"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Questionnaire",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"index\": 14,\n    \"title\": \"Test Quality\",\n    \"description\": \"Test Quality Description\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "questionnaires"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Questionnaire",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires/3072",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "questionnaires",
+                                "3072"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Questionnaire Orders",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"orders\": [\n    {\n      \"id\": 2342,\n      \"index\": 2\n    },\n    {\n      \"id\": 2343,\n      \"index\": 1\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/444/questionnaires-change-order",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "444",
+                                "questionnaires-change-order"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Subject",
+            "item": [
+                {
+                    "name": "Get Subject Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/assessment-kits/144/details/subjects/5",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "assessment-kits",
+                                "144",
+                                "details",
+                                "subjects",
+                                "5"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Subject",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "336",
+                                "subjects"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Subject",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"System Software\",\n    \"index\": 3,\n    \"description\": \"Software description\",    \n    \"weight\": 2\n  }",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/subjects/529",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "subjects",
+                                "529"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Subject",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"index\": 3,\n    \"title\": \"team\",\n    \"description\": \"about team\",\n    \"weight\": 1}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/419/subjects/576",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "419",
+                                "subjects",
+                                "576"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Subject List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/381/subjects?page=0&size=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "381",
+                                "subjects"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Subject Orders",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/336/subjects-change-order",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "336",
+                                "subjects-change-order"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Maturity Level",
+            "item": [
+                {
+                    "name": "Create MaturityLevel",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"index\": 6,\n    \"title\": \"Perfect\",\n    \"description\": \"description\",\n    \"value\": 6\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "maturity-levels"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update MaturityLevel",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"index\": 17,\r\n    \"title\": \"Perfectttt\",\r\n    \"description\": \"descrippption\",\r\n    \"value\": 166\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels/2227",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "maturity-levels",
+                                "2227"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Maturity Level",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/447/maturity-levels/2350",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "447",
+                                "maturity-levels",
+                                "2350"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update MaturityLevels Order",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"orders\": [\n    {\n      \"id\": 2342,\n      \"index\": 1\n    },\n    {\n      \"id\": 2343,\n      \"index\": 1\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/444/maturity-levels-change-order",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "444",
+                                "maturity-levels-change-order"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Kit Maturity Levels",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "{{authorization_header}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/kit-versions/393/maturity-levels?page=0&size=5",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "kit-versions",
+                                "393",
+                                "maturity-levels"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "size",
+                                    "value": "5"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8098",
+            "type": "string"
+        },
+        {
+            "key": "api_path",
+            "value": "assessment-core/api",
+            "type": "string"
+        },
+        {
+            "key": "authorization_header",
+            "value": "",
+            "type": "string"
+        }
+    ]
 }

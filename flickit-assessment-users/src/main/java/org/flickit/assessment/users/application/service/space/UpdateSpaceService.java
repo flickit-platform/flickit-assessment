@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.users.application.domain.Space.generateSlugCode;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
 @Transactional

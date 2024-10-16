@@ -17,7 +17,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
-import static org.flickit.assessment.users.application.domain.ExpertGroup.generateSlugCode;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Slf4j
 @Service
