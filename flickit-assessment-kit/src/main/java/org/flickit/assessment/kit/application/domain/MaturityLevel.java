@@ -18,12 +18,4 @@ public class MaturityLevel {
     private final int value;
     @Setter
     private List<MaturityLevelCompetence> competences;
-
-    public static String generateSlugCode(String title) {
-        return title
-            .toLowerCase()
-            .strip()
-            .replaceAll("\\s+", "-");
-    }
-
 }

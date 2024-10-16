@@ -7,21 +7,22 @@ import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
+import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KitVersionMapper {
 
-    public static KitVersionJpaEntity toJpaEntity(AssessmentKitJpaEntity kit, KitVersionStatus status) {
+    public static KitVersionJpaEntity createParamToJpaEntity(AssessmentKitJpaEntity kit, CreateKitVersionPort.Param param) {
         return new KitVersionJpaEntity(
             null,
             kit,
-            status.ordinal(),
+            param.status().getId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
-            kit.getCreatedBy(),
-            kit.getLastModifiedBy()
+            param.createdBy(),
+            param.createdBy()
         );
     }
 
