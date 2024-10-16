@@ -296,6 +296,7 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "create-question.mayNotBeApplicable.notNull";
     public static final String CREATE_QUESTION_ADVISABLE_NOT_NULL = "create-question.advisable.notNull";
     public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";
+    public static final String CREATE_QUESTION_INDEX_DUPLICATE = "create-question.index.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
