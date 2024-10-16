@@ -1102,6 +1102,42 @@
           "response": []
         },
         {
+          "name": "Update Questionnaire",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{authorization_header}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"index\": 1,\n    \"title\": \"new title\",\n    \"description\": \"sample desc\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires/3072",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "kit-versions",
+                "393",
+                "questionnaires",
+                "3072"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Update Questionnaire Orders",
           "request": {
             "method": "PUT",
