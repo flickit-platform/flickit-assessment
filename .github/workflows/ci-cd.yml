@@ -9,12 +9,6 @@ on:
     branches:
       - '*'
 env:
-  POSTGRES_USER: rootuser
-  POSTGRES_PASSWORD: changeme
-  POSTGRES_DB: assessment-core
-  SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/assessment-core
-  SPRING_DATASOURCE_USERNAME: rootuser
-  SPRING_DATASOURCE_PASSWORD: changeme
   SONAR_PROJECT_KEY: flickit-assessment-core
   REGISTRY: ghcr.io
   IMAGE_NAME: flickit-platform/flickit-assessment
@@ -42,17 +36,6 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -76,17 +59,6 @@ jobs:
   sonar:
     needs: [test]
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     outputs:
       project_version: ${{ steps.project.outputs.version }}
