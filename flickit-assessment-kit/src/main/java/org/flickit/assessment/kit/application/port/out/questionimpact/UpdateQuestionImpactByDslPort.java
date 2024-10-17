@@ -9,6 +9,7 @@ public interface UpdateQuestionImpactByDslPort {
 
     record Param(
         Long id,
+        Long kitVersionId,
         int weight,
         Long questionId,
         LocalDateTime lastModificationTime,

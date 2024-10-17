@@ -11,7 +11,8 @@ public interface UpdateQuestionImpactPort {
         Long id,
         Long kitVersionId,
         int weight,
-        Long questionId,
+        long attributeId,
+        long maturityLevelId,
         LocalDateTime lastModificationTime,
         UUID lastModifiedBy) {
     }

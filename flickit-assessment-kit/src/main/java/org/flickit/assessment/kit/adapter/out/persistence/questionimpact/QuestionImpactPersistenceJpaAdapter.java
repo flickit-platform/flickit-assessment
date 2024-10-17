@@ -45,10 +45,10 @@ public class QuestionImpactPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateQuestionImpactPort.Param param) {
-        if (!repository.existsByIdAndKitVersionId(param.questionImpactId(), param.kitVersionId()))
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(QUESTION_IMPACT_ID_NOT_FOUND);
 
-        repository.update(param.questionImpactId(),
+        repository.update(param.id(),
             param.kitVersionId(),
             param.weight(),
             param.attributeId(),
