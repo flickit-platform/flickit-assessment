@@ -3,17 +3,17 @@ package org.flickit.assessment.kit.application.port.out.questionimpact;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public interface UpdateQuestionImpactPort {
+public interface UpdateQuestionImpactByDslPort {
 
-    void update(Param param);
+    void updateByDsl(Param param);
 
     record Param(
         Long id,
         Long kitVersionId,
         int weight,
-        long attributeId,
-        long maturityLevelId,
+        Long questionId,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy) {
+        UUID lastModifiedBy
+    ) {
     }
 }

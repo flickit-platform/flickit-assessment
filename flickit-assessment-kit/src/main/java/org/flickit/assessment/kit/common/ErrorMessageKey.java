@@ -17,6 +17,7 @@ public class ErrorMessageKey {
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
     public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
+    public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -335,6 +336,12 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "create-question-impact.maturityLevelId.notNull";
     public static final String CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "create-question-impact.weight.notNull";
     public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_NULL = "create-question-impact.questionId.notNull";
+
+    public static final String UPDATE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "update-question-impact.kitVersionId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "update-question-impact.questionImpactId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "update-question-impact.weight.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL = "update-question-impact.attributeId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "update-question-impact.maturityLevelId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
