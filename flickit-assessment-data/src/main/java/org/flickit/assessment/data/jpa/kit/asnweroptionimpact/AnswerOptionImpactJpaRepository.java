@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOptionImpactJpaEntity, Long> {
+public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOptionImpactJpaEntity, AnswerOptionImpactJpaEntity.EntityId> {
 
     List<AnswerOptionImpactJpaEntity> findAllByQuestionImpactIdAndKitVersionId(long impactId, long kitVersionId);
 
@@ -28,9 +28,10 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
             SET a.value = :value,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
-            WHERE a.id = :id
+            WHERE a.id = :id AND a.kitVersionId = :kitVersionId
         """)
         void update(@Param("id") Long id,
+                    @Param("kitVersionId") Long kitVersionId,
                     @Param("value") Double value,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
                     @Param("lastModifiedBy") UUID lastModifiedBy);

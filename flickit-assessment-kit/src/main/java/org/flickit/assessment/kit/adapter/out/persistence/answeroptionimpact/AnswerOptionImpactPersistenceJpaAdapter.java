@@ -22,6 +22,7 @@ public class AnswerOptionImpactPersistenceJpaAdapter implements
     @Override
     public void update(UpdateAnswerOptionImpactPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.value(),
             param.lastModificationTime(),
             param.lastModifiedBy());
