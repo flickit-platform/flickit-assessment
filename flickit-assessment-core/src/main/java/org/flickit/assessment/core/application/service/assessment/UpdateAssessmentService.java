@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.UPDATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
 @Transactional
