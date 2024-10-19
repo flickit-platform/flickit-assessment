@@ -11,7 +11,7 @@ import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
-import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionByDslPort;
+import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
@@ -32,7 +32,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DS
 @RequiredArgsConstructor
 public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
-    private final UpdateQuestionByDslPort updateQuestionByDslPort;
+    private final UpdateQuestionPort updateQuestionPort;
     private final CreateQuestionPort createQuestionPort;
     private final CreateQuestionImpactPort createQuestionImpactPort;
     private final DeleteQuestionImpactPort deleteQuestionImpactPort;
@@ -246,10 +246,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             savedQuestion.getIndex() != dslQuestion.getIndex() ||
             !savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable()) ||
             !savedQuestion.getAdvisable().equals(dslQuestion.isAdvisable())) {
-            var updateParam = new UpdateQuestionByDslPort.Param(
+            var updateParam = new UpdateQuestionPort.Param(
                 savedQuestion.getId(),
                 kitVersionId,
                 dslQuestion.getTitle(),
+                dslQuestion.getCode(),
                 dslQuestion.getIndex(),
                 dslQuestion.getDescription(),
                 dslQuestion.isMayNotBeApplicable(),
@@ -257,7 +258,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 LocalDateTime.now(),
                 currentUserId
             );
-            updateQuestionByDslPort.update(updateParam);
+            updateQuestionPort.update(updateParam);
             log.debug("Question[id={}] updated.", savedQuestion.getId());
             if (!savedQuestion.getMayNotBeApplicable().equals(dslQuestion.isMayNotBeApplicable())) {
                 isMajorUpdate = true;

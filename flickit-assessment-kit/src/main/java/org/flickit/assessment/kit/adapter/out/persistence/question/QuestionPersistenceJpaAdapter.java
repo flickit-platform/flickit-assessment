@@ -30,13 +30,12 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 @Component
 @RequiredArgsConstructor
 public class QuestionPersistenceJpaAdapter implements
-    UpdateQuestionByDslPort,
+    UpdateQuestionPort,
     CreateQuestionPort,
     CountSubjectQuestionsPort,
     LoadQuestionPort,
     LoadAttributeLevelQuestionsPort,
-    DeleteQuestionPort,
-    UpdateQuestionPort {
+    DeleteQuestionPort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -46,13 +45,14 @@ public class QuestionPersistenceJpaAdapter implements
     private final AttributeJpaRepository attributeRepository;
 
     @Override
-    public void update(UpdateQuestionByDslPort.Param param) {
+    public void update(UpdateQuestionPort.Param param) {
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
             throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
 
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
+            param.code(),
             param.index(),
             param.hint(),
             param.mayNotBeApplicable(),
@@ -142,22 +142,5 @@ public class QuestionPersistenceJpaAdapter implements
             repository.deleteByIdAndKitVersionId(questionId, kitVersionId);
         else
             throw new ResourceNotFoundException(DELETE_QUESTION_ID_NOT_FOUND);
-    }
-
-    @Override
-    public void update(UpdateQuestionPort.Param param) {
-        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
-            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
-
-        repository.update(param.id(),
-            param.kitVersionId(),
-            param.code(),
-            param.title(),
-            param.index(),
-            param.hint(),
-            param.mayNotBeApplicable(),
-            param.advisable(),
-            param.lastModificationTime(),
-            param.lastModifiedBy());
     }
 }
