@@ -100,14 +100,10 @@ class GetKitStatsServiceTest {
 
     @Test
     void testGetKitStats_ExpertGroupNotFound_ErrorMessage() {
-        ExpertGroup expertGroup = createExpertGroup();
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-
-        when(countKitStatsPort.countKitStats(kitId)).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class,
             () -> service.getKitStats(param));
