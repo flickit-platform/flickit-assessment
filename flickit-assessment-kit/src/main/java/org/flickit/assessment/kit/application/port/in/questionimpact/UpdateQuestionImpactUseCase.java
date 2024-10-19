@@ -25,14 +25,14 @@ public interface UpdateQuestionImpactUseCase {
         @NotNull(message = UPDATE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL)
         Long questionImpactId;
 
-        @NotNull(message = UPDATE_QUESTION_IMPACT_WEIGHT_NOT_NULL)
-        Integer weight;
-
         @NotNull(message = UPDATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
         @NotNull(message = UPDATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL)
         Long maturityLevelId;
+
+        @NotNull(message = UPDATE_QUESTION_IMPACT_WEIGHT_NOT_NULL)
+        Integer weight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
@@ -46,9 +46,9 @@ public interface UpdateQuestionImpactUseCase {
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.questionImpactId = questionImpactId;
-            this.weight = weight;
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
+            this.weight = weight;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

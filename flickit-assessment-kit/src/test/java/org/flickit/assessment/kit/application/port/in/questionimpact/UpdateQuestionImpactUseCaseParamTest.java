@@ -28,13 +28,6 @@ class UpdateQuestionImpactUseCaseParamTest {
     }
 
     @Test
-    void testUpdateQuestionImpactUseCaseParam_weightParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.weight(null)));
-        assertThat(throwable).hasMessage("weight: " + UPDATE_QUESTION_IMPACT_WEIGHT_NOT_NULL);
-    }
-
-    @Test
     void testUpdateQuestionImpactUseCaseParam_attributeIdParamViolatesConstraints_ErrorMessage() {
         ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributeId(null)));
@@ -46,6 +39,13 @@ class UpdateQuestionImpactUseCaseParamTest {
         ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.maturityLevelId(null)));
         assertThat(throwable).hasMessage("maturityLevelId: " + UPDATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL);
+    }
+
+    @Test
+    void testUpdateQuestionImpactUseCaseParam_weightParamViolatesConstraints_ErrorMessage() {
+        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.weight(null)));
+        assertThat(throwable).hasMessage("weight: " + UPDATE_QUESTION_IMPACT_WEIGHT_NOT_NULL);
     }
 
     @Test
@@ -65,9 +65,9 @@ class UpdateQuestionImpactUseCaseParamTest {
         return UpdateQuestionImpactUseCase.Param.builder()
             .kitVersionId(1L)
             .questionImpactId(2L)
-            .weight(1)
             .attributeId(1L)
             .maturityLevelId(1L)
+            .weight(1)
             .currentUserId(UUID.randomUUID());
     }
 }
