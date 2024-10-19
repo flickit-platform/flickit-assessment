@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.questionnaire;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionnaire.DeleteQuestionnaireUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.DELETE_QUESTIONNAIRE_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createActiveKitVersion;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
@@ -55,16 +57,16 @@ class DeleteQuestionnaireServiceTest {
     }
 
     @Test
-    void testDeleteQuestionnaire_WhenCurrentUserIsExpertGroupOwnerAndKitVersionStatusIsNotUpdating_ThenThrowAccessDeniedException() {
+    void testDeleteQuestionnaire_WhenCurrentUserIsExpertGroupOwnerAndKitVersionStatusIsNotUpdating_ThenThrowValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
         KitVersion kitVersion = createActiveKitVersion(simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteQuestionnaire(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.deleteQuestionnaire(param));
 
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(DELETE_QUESTIONNAIRE_NOT_ALLOWED, throwable.getMessageKey());
         verifyNoInteractions(deleteQuestionnairePort);
     }
 
@@ -80,8 +82,6 @@ class DeleteQuestionnaireServiceTest {
 
         verify(deleteQuestionnairePort).delete(param.getKitVersionId(), param.getQuestionnaireId());
     }
-
-
 
     private DeleteQuestionnaireUseCase.Param createParam(Consumer<DeleteQuestionnaireUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();

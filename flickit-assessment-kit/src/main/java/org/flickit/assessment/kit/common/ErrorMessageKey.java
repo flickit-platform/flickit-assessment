@@ -281,6 +281,7 @@ public class ErrorMessageKey {
 
     public static final String DELETE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "delete-questionnaire.kitVersionId.notNull";
     public static final String DELETE_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "delete-questionnaire.questionnaireId.notNull";
+    public static final String DELETE_QUESTIONNAIRE_NOT_ALLOWED = "delete-questionnaire.notAllowed";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
