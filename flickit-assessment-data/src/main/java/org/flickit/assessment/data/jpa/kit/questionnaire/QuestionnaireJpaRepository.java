@@ -45,13 +45,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
 
     @Query("""
             SELECT
-                q.id as id,
-                q.code as code,
-                q.title as title,
-                q.description as description,
-                q.index as index,
-                q.creationTime as creationTime,
-                q.lastModificationTime as lastModificationTime,
+                q as questionnaire,
                 COUNT(DISTINCT question.id) as questionCount
             FROM QuestionnaireJpaEntity q
             JOIN QuestionJpaEntity question ON q.id = question.questionnaireId AND q.kitVersionId = question.kitVersionId

@@ -95,13 +95,8 @@ public class QuestionnairePersistenceJpaAdapter implements
     public PaginatedResponse<LoadQuestionnairesPort.Result> loadAllByKitVersionId(long kitVersionId, int page, int size) {
         var pageResult = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
-            .map(e -> new LoadQuestionnairesPort.Result(new Questionnaire(e.getId(),
-                e.getCode(),
-                e.getTitle(),
-                e.getIndex(),
-                e.getDescription(),
-                e.getCreationTime(),
-                e.getLastModificationTime()), e.getQuestionCount()))
+            .map(e -> new LoadQuestionnairesPort.Result(QuestionnaireMapper.mapToDomainModel(e.getQuestionnaire()),
+                e.getQuestionCount()))
             .toList();
 
         return new PaginatedResponse<>(
