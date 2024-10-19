@@ -1337,6 +1337,42 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Get Questionnaires",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{authorization_header}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires?page=0&size=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "kit-versions",
+                "393",
+                "questionnaires"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
