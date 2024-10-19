@@ -19,7 +19,7 @@ public class UpdateQuestionsOrderRestController {
     private final UpdateQuestionsOrderUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/kit-versions/{kitVersionsId}/questions-order")
+    @PutMapping("/kit-versions/{kitVersionsId}/questions-change-order")
     public ResponseEntity<Void> updateQuestionsOrder(@PathVariable("kitVersionsId") Long kitVersionsId,
                                                      @RequestBody UpdateQuestionsOrderRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
