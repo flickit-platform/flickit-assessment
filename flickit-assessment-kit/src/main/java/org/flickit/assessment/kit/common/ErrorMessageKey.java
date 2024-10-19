@@ -336,6 +336,13 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "create-question-impact.weight.notNull";
     public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_NULL = "create-question-impact.questionId.notNull";
 
+    public static final String GET_QUESTION_IMPACTS_QUESTION_ID_NOT_NULL = "get-question-impacts.questionId.notNull";
+    public static final String GET_QUESTION_IMPACTS_KIT_VERSION_ID_NOT_NULL = "get-question-impacts.kitVersionId.notNull";
+
+    public static final String DELETE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "delete-questionnaire.kitVersionId.notNull";
+    public static final String DELETE_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "delete-questionnaire.questionnaireId.notNull";
+    public static final String DELETE_QUESTIONNAIRE_NOT_ALLOWED = "delete-questionnaire.notAllowed";
+
     public static final String GET_QUESTIONNAIRES_KIT_VERSION_ID_NOT_NULL = "get-questionnaires.kitVersionId.notNull";
     public static final String GET_QUESTIONNAIRES_PAGE_MIN = "get-questionnaires.page.min";
     public static final String GET_QUESTIONNAIRES_SIZE_MIN = "get-questionnaires.size.min";

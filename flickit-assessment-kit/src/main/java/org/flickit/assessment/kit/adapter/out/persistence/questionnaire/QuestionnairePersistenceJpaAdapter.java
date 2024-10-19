@@ -19,6 +19,7 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestio
 import org.flickit.assessment.kit.application.port.out.questionnaire.UpdateQuestionnairePort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,7 +36,8 @@ public class QuestionnairePersistenceJpaAdapter implements
     CreateQuestionnairePort,
     UpdateQuestionnairePort,
     LoadQuestionnairesPort,
-    LoadKitQuestionnaireDetailPort {
+    LoadKitQuestionnaireDetailPort,
+    DeleteQuestionnairePort {
 
     private final QuestionnaireJpaRepository repository;
     private final AssessmentKitJpaRepository assessmentKitRepository;
@@ -137,5 +139,13 @@ public class QuestionnairePersistenceJpaAdapter implements
             relatedSubjects,
             questionnaireEntity.getDescription(),
             questions);
+    }
+
+    @Override
+    public void delete(long questionnaireId, long kitVersionId) {
+        if (!repository.existsByIdAndKitVersionId(questionnaireId, kitVersionId))
+            throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
+
+        repository.deleteByIdAndKitVersionId(questionnaireId, kitVersionId);
     }
 }
