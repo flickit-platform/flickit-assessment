@@ -56,10 +56,10 @@ class DeleteSubjectServiceTest {
     @Test
     void testDeleteSubjectService_CurrentUserIsNotExpertGroupOwner_throwsAccessDeniedException() {
         var param = createParam(DeleteSubjectUseCase.Param.ParamBuilder::build);
-        var kitVersion = createKitVersion(simpleKit());
+        var activeKitVersion = createKitVersion(simpleKit());
 
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(UUID.randomUUID());
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(activeKitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(activeKitVersion.getKit().getExpertGroupId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteSubject(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
