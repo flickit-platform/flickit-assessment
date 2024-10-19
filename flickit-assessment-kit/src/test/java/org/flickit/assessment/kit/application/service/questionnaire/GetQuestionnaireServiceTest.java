@@ -70,7 +70,7 @@ class GetQuestionnaireServiceTest {
             items,
             param.getPage(),
             param.getSize(),
-            QuestionnaireJpaEntity.Fields.INDEX,
+            QuestionnaireJpaEntity.Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
             items.size()
         );

@@ -41,7 +41,7 @@ public class GetQuestionnaireService implements GetQuestionnairesUseCase {
             items,
             pageResult.getPage(),
             pageResult.getSize(),
-            QuestionnaireJpaEntity.Fields.INDEX,
+            QuestionnaireJpaEntity.Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
             pageResult.getTotal()
         );

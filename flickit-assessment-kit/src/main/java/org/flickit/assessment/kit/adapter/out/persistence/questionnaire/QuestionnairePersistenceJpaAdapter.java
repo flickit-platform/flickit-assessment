@@ -103,7 +103,7 @@ public class QuestionnairePersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            QuestionnaireJpaEntity.Fields.INDEX,
+            QuestionnaireJpaEntity.Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
