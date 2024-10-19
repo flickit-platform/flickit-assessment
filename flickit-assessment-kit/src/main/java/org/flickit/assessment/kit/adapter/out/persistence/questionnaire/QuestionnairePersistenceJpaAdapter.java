@@ -72,12 +72,12 @@ public class QuestionnairePersistenceJpaAdapter implements
         var pageResult = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(e -> new LoadQuestionnairesPort.Result(new Questionnaire(e.getId(),
-                null,
+                e.getCode(),
                 e.getTitle(),
                 e.getIndex(),
                 e.getDescription(),
-                null,
-                null), e.getQuestionCount()))
+                e.getCreationTime(),
+                e.getLastModificationTime()), e.getQuestionCount()))
             .toList();
 
         return new PaginatedResponse<>(
@@ -107,6 +107,9 @@ public class QuestionnairePersistenceJpaAdapter implements
             .map(QuestionMapper::mapToDomainModel)
             .toList();
 
-        return new LoadKitQuestionnaireDetailPort.Result(questionEntities.size(), relatedSubjects, questionnaireEntity.getDescription(), questions);
+        return new LoadKitQuestionnaireDetailPort.Result(questionEntities.size(),
+            relatedSubjects,
+            questionnaireEntity.getDescription(),
+            questions);
     }
 }
