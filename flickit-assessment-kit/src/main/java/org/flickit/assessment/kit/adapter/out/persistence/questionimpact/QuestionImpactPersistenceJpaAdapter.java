@@ -28,15 +28,10 @@ public class QuestionImpactPersistenceJpaAdapter implements
 
     @Override
     public void delete(Long questionImpactId, Long kitVersionId) {
-        repository.deleteByIdAndKitVersionId(questionImpactId, kitVersionId);
-    }
-
-    @Override
-    public void deleteByIdAndKitVersionId(Long id, Long kitVersionId) {
-        if(!repository.existsByIdAndKitVersionId(id, kitVersionId))
+        if(!repository.existsByIdAndKitVersionId(questionImpactId, kitVersionId))
             throw new ResourceNotFoundException(QUESTION_IMPACT_ID_NOT_FOUND);
 
-        repository.deleteByIdAndKitVersionId(id, kitVersionId);
+        repository.deleteByIdAndKitVersionId(questionImpactId, kitVersionId);
     }
 
     @Override

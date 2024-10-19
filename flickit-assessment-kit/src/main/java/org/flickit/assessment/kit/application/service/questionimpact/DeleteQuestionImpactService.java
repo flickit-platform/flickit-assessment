@@ -28,6 +28,6 @@ public class DeleteQuestionImpactService implements DeleteQuestionImpactUseCase 
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        deleteQuestionImpactPort.deleteByIdAndKitVersionId(param.getQuestionImpactId(), param.getKitVersionId());
+        deleteQuestionImpactPort.delete(param.getQuestionImpactId(), param.getKitVersionId());
     }
 }

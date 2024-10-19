@@ -80,7 +80,7 @@ class DeleteQuestionImpactServiceTest {
 
         verify(loadKitVersionPort).load(param.getKitVersionId());
         verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
-        verify(deleteQuestionImpactPort).deleteByIdAndKitVersionId(param.getQuestionImpactId(), param.getKitVersionId());
+        verify(deleteQuestionImpactPort).delete(param.getQuestionImpactId(), param.getKitVersionId());
     }
 
     private DeleteQuestionImpactUseCase.Param createParam(Consumer<DeleteQuestionImpactUseCase.Param.ParamBuilder> changer) {
