@@ -25,4 +25,8 @@ public class Question {
     private final Long questionnaireId;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
+
+    public static String generateCode(int index) {
+        return "m" + index;
+    }
 }

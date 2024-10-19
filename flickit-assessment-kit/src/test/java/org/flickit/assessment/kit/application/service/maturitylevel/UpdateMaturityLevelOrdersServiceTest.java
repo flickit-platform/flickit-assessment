@@ -3,13 +3,13 @@ package org.flickit.assessment.kit.application.service.maturitylevel;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.MaturityLevelOrder;
 import org.flickit.assessment.kit.application.port.in.maturitylevel.UpdateMaturityLevelOrdersUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.UpdateMaturityLevelPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,8 +22,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,13 +75,18 @@ class UpdateMaturityLevelOrdersServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         service.changeOrders(param);
+        ArgumentCaptor<UpdateMaturityLevelPort.UpdateOrderParam> portParamCaptor = ArgumentCaptor.forClass(UpdateMaturityLevelPort.UpdateOrderParam.class);
+        verify(updateMaturityLevelPort, times(1)).updateOrders(portParamCaptor.capture());
 
-        var maturityLevelOrders = List.of(
-            new MaturityLevelOrder(123L, 3, 3),
-            new MaturityLevelOrder(124L, 2, 2)
-        );
-        verify(updateMaturityLevelPort, times(1))
-            .updateOrders(maturityLevelOrders, param.getKitVersionId(), param.getCurrentUserId());
+        assertEquals(param.getKitVersionId(), portParamCaptor.getValue().kitVersionId());
+        assertEquals(param.getCurrentUserId(), portParamCaptor.getValue().lastModifiedBy());
+        assertNotNull(portParamCaptor.getValue().lastModificationTime());
+        assertNotNull(portParamCaptor.getValue().orders());
+        assertEquals(param.getOrders().size(), portParamCaptor.getValue().orders().size());
+        assertEquals(param.getOrders().getFirst().getId(), portParamCaptor.getValue().orders().getFirst().maturityLevelId());
+        assertEquals(param.getOrders().getFirst().getIndex(), portParamCaptor.getValue().orders().getFirst().index());
+        assertEquals(param.getOrders().getLast().getId(), portParamCaptor.getValue().orders().getLast().maturityLevelId());
+        assertEquals(param.getOrders().getLast().getIndex(), portParamCaptor.getValue().orders().getLast().index());
     }
 
     private UpdateMaturityLevelOrdersUseCase.Param createParam(Consumer<UpdateMaturityLevelOrdersUseCase.Param.ParamBuilder> changer) {
