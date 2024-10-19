@@ -36,6 +36,6 @@ public class DeleteQuestionnaireService implements DeleteQuestionnaireUseCase {
         if (!KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
             throw new ValidationException(DELETE_QUESTIONNAIRE_NOT_ALLOWED);
 
-        deleteQuestionnairePort.delete(param.getKitVersionId(), param.getQuestionnaireId());
+        deleteQuestionnairePort.delete(param.getQuestionnaireId(), param.getKitVersionId());
     }
 }

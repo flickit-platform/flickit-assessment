@@ -76,11 +76,11 @@ class DeleteQuestionnaireServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        doNothing().when(deleteQuestionnairePort).delete(param.getKitVersionId(), param.getQuestionnaireId());
+        doNothing().when(deleteQuestionnairePort).delete(param.getQuestionnaireId(), param.getKitVersionId());
 
         assertDoesNotThrow(() -> service.deleteQuestionnaire(param));
 
-        verify(deleteQuestionnairePort).delete(param.getKitVersionId(), param.getQuestionnaireId());
+        verify(deleteQuestionnairePort).delete(param.getQuestionnaireId(), param.getKitVersionId());
     }
 
     private DeleteQuestionnaireUseCase.Param createParam(Consumer<DeleteQuestionnaireUseCase.Param.ParamBuilder> changer) {

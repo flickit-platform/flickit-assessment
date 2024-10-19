@@ -109,7 +109,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public void delete(long kitVersionId, long questionnaireId) {
+    public void delete(long questionnaireId, long kitVersionId) {
         if (!repository.existsByIdAndKitVersionId(questionnaireId, kitVersionId))
             throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
 
