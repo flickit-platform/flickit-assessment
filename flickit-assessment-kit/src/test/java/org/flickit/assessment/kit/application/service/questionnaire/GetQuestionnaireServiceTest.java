@@ -4,12 +4,10 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnairesUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
-import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +22,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -54,17 +53,19 @@ class GetQuestionnaireServiceTest {
             .thenReturn(false);
 
         AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaires(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(loadQuestionnairesPort);
     }
 
     @Test
     void testGetQuestionnaire_WhenCurrentUserIsMemberOfExpertGroup_ThenGetQuestionnaires() {
         var param = createParam(GetQuestionnairesUseCase.Param.ParamBuilder::build);
-        Questionnaire questionnaire1 = QuestionnaireMother.questionnaireWithTitle("title1");
-        Questionnaire questionnaire2 = QuestionnaireMother.questionnaireWithTitle("title2");
-        List<LoadQuestionnairesPort.Result> items = List.of(new LoadQuestionnairesPort.Result(questionnaire1, 4),
+
+        var questionnaire1 = questionnaireWithTitle("title1");
+        var questionnaire2 = questionnaireWithTitle("title2");
+
+        var items = List.of(new LoadQuestionnairesPort.Result(questionnaire1, 4),
             new LoadQuestionnairesPort.Result(questionnaire2, 5));
         PaginatedResponse<LoadQuestionnairesPort.Result> pageResult = new PaginatedResponse<>(
             items,
@@ -81,7 +82,8 @@ class GetQuestionnaireServiceTest {
         when(loadQuestionnairesPort.loadAllByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize()))
             .thenReturn(pageResult);
 
-        var paginatedResponse = assertDoesNotThrow(() -> service.getQuestionnaires(param));
+        var paginatedResponse = service.getQuestionnaires(param);
+
         assertNotNull(paginatedResponse);
         assertEquals(pageResult.getItems().size(), paginatedResponse.getItems().size());
         for (int i = 0; i < pageResult.getItems().size(); i++) {

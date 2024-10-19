@@ -3,13 +3,11 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionnaire.GetQuestionnairesUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +39,8 @@ public class GetQuestionnaireService implements GetQuestionnairesUseCase {
             items,
             pageResult.getPage(),
             pageResult.getSize(),
-            QuestionnaireJpaEntity.Fields.index,
-            Sort.Direction.ASC.name().toLowerCase(),
+            pageResult.getOrder(),
+            pageResult.getSort(),
             pageResult.getTotal()
         );
     }
