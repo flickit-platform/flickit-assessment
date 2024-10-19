@@ -2,7 +2,10 @@ package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.Question;
+import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -16,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.*;
-import static java.util.stream.Collectors.toList;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -43,7 +45,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
 
         var attributeImpacts = loadAttributeImpacts(param.getKitVersionId(), question, maturityLevelsMap);
 
-        return new Result(param.getQuestionId(), attributeImpacts);
+        return new Result(attributeImpacts);
     }
 
     private List<AttributeImpact> loadAttributeImpacts(long kitVersionId, Question question, Map<Long, MaturityLevel> maturityLevelsMap) {
