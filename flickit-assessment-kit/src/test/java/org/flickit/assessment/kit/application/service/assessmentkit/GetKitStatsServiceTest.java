@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.Subject;
@@ -25,8 +26,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -112,6 +112,21 @@ class GetKitStatsServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class,
             () -> service.getKitStats(param));
         assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
+    }
+
+    @Test
+    void testGetKitStats_WhenActiveKitNotExist_ThrowsException() {
+        ExpertGroup expertGroup = createExpertGroup();
+        AssessmentKit assessmentKit = AssessmentKitMother.kitWithKitVersionId(null);
+        Param param = new Param(assessmentKit.getId(), UUID.randomUUID());
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.getKitStats(param));
+
+        assertEquals(GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND, throwable.getMessageKey());
     }
 
     @Test

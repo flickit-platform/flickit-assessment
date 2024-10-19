@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,9 +35,12 @@ public class GetKitStatsService implements GetKitStatsUseCase {
         if (!checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var counts = countKitStatsPort.countKitStats(param.getKitId());
-
         AssessmentKit assessmentKit = loadAssessmentKitPort.load(param.getKitId());
+
+        if (assessmentKit.getActiveVersionId() == null)
+            throw new ValidationException(GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND);
+
+        var counts = countKitStatsPort.countKitStats(param.getKitId());
 
         List<KitStatSubject> subjects = loadSubjectsPort.loadByKitVersionId(assessmentKit.getActiveVersionId()).stream()
             .map(s -> new GetKitStatsUseCase.KitStatSubject(s.getTitle()))
