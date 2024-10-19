@@ -40,7 +40,6 @@ class DeleteQuestionnaireServiceTest {
     private DeleteQuestionnairePort deleteQuestionnairePort;
 
     UUID ownerId = UUID.randomUUID();
-
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
@@ -51,8 +50,8 @@ class DeleteQuestionnaireServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteQuestionnaire(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(deleteQuestionnairePort);
     }
 
@@ -65,8 +64,8 @@ class DeleteQuestionnaireServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(activeKitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteQuestionnaire(param));
-
         assertEquals(DELETE_QUESTIONNAIRE_NOT_ALLOWED, throwable.getMessageKey());
+
         verifyNoInteractions(deleteQuestionnairePort);
     }
 
@@ -78,7 +77,7 @@ class DeleteQuestionnaireServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(deleteQuestionnairePort).delete(param.getQuestionnaireId(), param.getKitVersionId());
 
-        assertDoesNotThrow(() -> service.deleteQuestionnaire(param));
+        service.deleteQuestionnaire(param);
 
         verify(deleteQuestionnairePort).delete(param.getQuestionnaireId(), param.getKitVersionId());
     }
