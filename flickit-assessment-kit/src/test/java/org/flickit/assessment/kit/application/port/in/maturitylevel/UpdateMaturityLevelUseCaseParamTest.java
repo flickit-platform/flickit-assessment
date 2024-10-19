@@ -73,7 +73,7 @@ class UpdateMaturityLevelUseCaseParamTest {
     }
 
     @Test
-    void testCreateSubjectUseCaseParam_CurrentUserIdIsNull_ErrorMessage() {
+    void testUpdateMaturityLevelUseCaseParam_CurrentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
