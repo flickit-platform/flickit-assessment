@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.question.UpdateQuestionsOrderUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -34,13 +35,24 @@ public class UpdateQuestionsOrderService implements UpdateQuestionsOrderUseCase 
 
         updateQuestionsOrderPort.updateQuestionsOrder(toParam(param.getKitVersionId(),
             param.getOrders(),
+            param.getQuestionnaireId(),
             param.getCurrentUserId()));
     }
 
-    private UpdateQuestionsOrderPort.Param toParam(long kitVersionId, List<Param.QuestionOrder> orders, UUID currentUserId) {
+    private UpdateQuestionsOrderPort.Param toParam(long kitVersionId,
+                                                   List<Param.QuestionOrder> orders,
+                                                   long questionnaireId,
+                                                   UUID currentUserId) {
         var outPortOrders = orders.stream()
-            .map(e -> new UpdateQuestionsOrderPort.Param.QuestionOrder(e.getQuestionId(), e.getIndex()))
+            .map(e -> new UpdateQuestionsOrderPort.Param.QuestionOrder(e.getQuestionId(),
+                e.getIndex(),
+                Question.generateCode(e.getIndex())))
             .toList();
-        return new UpdateQuestionsOrderPort.Param(kitVersionId, outPortOrders, LocalDateTime.now(), currentUserId);
+
+        return new UpdateQuestionsOrderPort.Param(kitVersionId,
+            outPortOrders,
+            questionnaireId,
+            LocalDateTime.now(),
+            currentUserId);
     }
 }

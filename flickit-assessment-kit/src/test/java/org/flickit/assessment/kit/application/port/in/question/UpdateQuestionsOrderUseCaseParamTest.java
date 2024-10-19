@@ -43,6 +43,13 @@ class UpdateQuestionsOrderUseCaseParamTest {
     }
 
     @Test
+    void testUpdateQuestionsOrderUseCaseParam_questionnaireIdParamViolatesConstraints_ErrorMessage() {
+        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.questionnaireId(null)));
+        assertThat(throwable).hasMessage("questionnaireId: " + UPDATE_QUESTIONS_ORDER_QUESTIONNAIRE_ID_NOT_NULL);
+    }
+
+    @Test
     void testUpdateQuestionsOrderUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createParam(b -> b.currentUserId(null)));
@@ -60,6 +67,7 @@ class UpdateQuestionsOrderUseCaseParamTest {
                 .kitVersionId(1L)
                 .orders(List.of(new UpdateQuestionsOrderUseCase.Param.QuestionOrder(1L, 1),
                         new UpdateQuestionsOrderUseCase.Param.QuestionOrder(2L, 2)))
+                .questionnaireId(1L)
                 .currentUserId(UUID.randomUUID());
     }
 

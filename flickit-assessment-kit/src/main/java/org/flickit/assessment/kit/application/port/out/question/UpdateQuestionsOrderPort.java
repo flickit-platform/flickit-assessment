@@ -8,8 +8,13 @@ public interface UpdateQuestionsOrderPort {
 
     void updateQuestionsOrder(Param param);
 
-    record Param(long kitVersionId, List<QuestionOrder> orders, LocalDateTime lastModificationTime, UUID lastModifiedBy) {
+    record Param(
+        long kitVersionId,
+        List<QuestionOrder> orders,
+        long questionnaireId,
+        LocalDateTime lastModificationTime,
+        UUID lastModifiedBy) {
 
-        public record QuestionOrder(long questionId, int index) {}
+        public record QuestionOrder(long questionId, int index, String code) {}
     }
 }

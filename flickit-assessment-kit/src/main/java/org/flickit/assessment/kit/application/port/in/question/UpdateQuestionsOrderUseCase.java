@@ -26,14 +26,18 @@ public interface UpdateQuestionsOrderUseCase {
         @NotNull(message = UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL)
         List<QuestionOrder> orders;
 
+        @NotNull(message = UPDATE_QUESTIONS_ORDER_QUESTIONNAIRE_ID_NOT_NULL)
+        Long questionnaireId;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitVersionId, List<QuestionOrder> orders, UUID currentUserId) {
+        public Param(Long kitVersionId, List<QuestionOrder> orders, Long questionnaireId, UUID currentUserId) {
 
             this.kitVersionId = kitVersionId;
             this.orders = orders;
+            this.questionnaireId = questionnaireId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionsOrderPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -64,7 +65,20 @@ class UpdateQuestionsOrderServiceTest {
 
         assertDoesNotThrow(() -> service.updateQuestionsOrder(param));
 
-        verify(updateQuestionsOrderPort).updateQuestionsOrder(any(UpdateQuestionsOrderPort.Param.class));
+        var outPortParam = ArgumentCaptor.forClass(UpdateQuestionsOrderPort.Param.class);
+        verify(updateQuestionsOrderPort).updateQuestionsOrder(outPortParam.capture());
+        assertNotNull(outPortParam.getValue());
+        assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
+        assertEquals(param.getQuestionnaireId(), outPortParam.getValue().questionnaireId());
+        assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
+        for (int i = 0; i < param.getOrders().size(); i++) {
+            var paramOrder = param.getOrders().get(i);
+            var outPortParamOrder = outPortParam.getValue().orders().get(i);
+            assertEquals(paramOrder.getIndex(), outPortParamOrder.index());
+            assertEquals(paramOrder.getQuestionId(), outPortParamOrder.questionId());
+            assertNotNull(outPortParamOrder.code());
+        }
+        assertNotNull(outPortParam.getValue().lastModificationTime());
     }
 
     private UpdateQuestionsOrderUseCase.Param createParam(Consumer<UpdateQuestionsOrderUseCase.Param.ParamBuilder> changer) {
@@ -78,6 +92,7 @@ class UpdateQuestionsOrderServiceTest {
             .kitVersionId(1L)
             .orders(List.of(new UpdateQuestionsOrderUseCase.Param.QuestionOrder(1L, 1),
                 new UpdateQuestionsOrderUseCase.Param.QuestionOrder(2L, 2)))
+            .questionnaireId(1L)
             .currentUserId(UUID.randomUUID());
     }
 }

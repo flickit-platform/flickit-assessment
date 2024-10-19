@@ -27,10 +27,15 @@ public class UpdateQuestionsOrderRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private UpdateQuestionsOrderUseCase.Param toParam(Long kitVersionsId, UpdateQuestionsOrderRequestDto requestDto, UUID currentUserId) {
+    private UpdateQuestionsOrderUseCase.Param toParam(Long kitVersionsId,
+                                                      UpdateQuestionsOrderRequestDto requestDto,
+                                                      UUID currentUserId) {
         var questionOrders = requestDto.questionOrders().stream()
             .map(e -> new UpdateQuestionsOrderUseCase.Param.QuestionOrder(e.questionId(), e.index()))
             .toList();
-        return new UpdateQuestionsOrderUseCase.Param(kitVersionsId, questionOrders, currentUserId);
+        return new UpdateQuestionsOrderUseCase.Param(kitVersionsId,
+            questionOrders,
+            requestDto.questionnaireId(),
+            currentUserId);
     }
 }
