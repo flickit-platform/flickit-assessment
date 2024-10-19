@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpactJpaEntity, Long> {
@@ -14,6 +15,8 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
     List<QuestionImpactJpaEntity> findAllByQuestionIdAndKitVersionId(long questionId, long kitVersionId);
 
     void deleteByIdAndKitVersionId(long questionImpactId, long kitVersionId);
+
+    Optional<QuestionImpactJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
     @Modifying
     @Query("""

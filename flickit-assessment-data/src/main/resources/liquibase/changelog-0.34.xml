@@ -40,4 +40,36 @@
                              tableName="fak_subject"
                              initiallyDeferred="true"/>
     </changeSet>
+
+    <changeSet id="0.34-07" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_questionnaire"
+                              constraintName="uq_fak_questionnaire_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-08" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_questionnaire_index_kitversionid"
+                             tableName="fak_questionnaire"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.34-09" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.34-10" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_answer_option_impact"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.34-11" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_question" constraintName="uq_fak_question_code_questionnaireid"/>
+    </changeSet>
+
+    <changeSet id="0.34-12" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_question" columnNames="index, kit_version_id, questionnaire_id"
+                             constraintName="uq_fak_question_index_kitversionid_questionnaireid"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>
