@@ -1310,6 +1310,33 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Delete Questionnaire",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{authorization_header}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires/3072",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "kit-versions",
+                "393",
+                "questionnaires",
+                "3072"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
