@@ -59,10 +59,10 @@ class DeleteQuestionnaireServiceTest {
     @Test
     void testDeleteQuestionnaire_WhenCurrentUserIsExpertGroupOwnerAndKitVersionStatusIsNotUpdating_ThenThrowValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
-        KitVersion kitVersion = createActiveKitVersion(simpleKit());
+        KitVersion activeKitVersion = createActiveKitVersion(simpleKit());
 
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(activeKitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(activeKitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(ValidationException.class, () -> service.deleteQuestionnaire(param));
 
