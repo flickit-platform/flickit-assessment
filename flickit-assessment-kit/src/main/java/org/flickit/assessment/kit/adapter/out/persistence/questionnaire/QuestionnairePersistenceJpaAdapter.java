@@ -16,7 +16,9 @@ import org.flickit.assessment.kit.application.port.out.questionnaire.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
@@ -42,13 +44,37 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateQuestionnairePort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
+
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
+            param.code(),
             param.index(),
             param.description(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public void updateOrders(UpdateQuestionnairePort.UpdateOrderParam param) {
+        Map<QuestionnaireJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
+            .collect(Collectors.toMap(
+                qs -> new QuestionnaireJpaEntity.EntityId(qs.questionnaireId(), param.kitVersionId()),
+                UpdateOrderParam.QuestionnaireOrder::index
+            ));
+        List<QuestionnaireJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        if (entities.size() != param.orders().size())
+            throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            int newIndex = idToIndex.get(new QuestionnaireJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            x.setIndex(newIndex);
+            x.setLastModificationTime(param.lastModificationTime());
+            x.setLastModifiedBy(param.lastModifiedBy());
+        });
+        repository.saveAll(entities);
     }
 
     @Override

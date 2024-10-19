@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 class GetKitAttributeLevelQuestionsDetailServiceTest {
 
     @InjectMocks
-    private GetKitKitAttributeLevelQuestionsDetailService service;
+    private GetKitAttributeLevelQuestionsDetailService service;
 
     @Mock
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;

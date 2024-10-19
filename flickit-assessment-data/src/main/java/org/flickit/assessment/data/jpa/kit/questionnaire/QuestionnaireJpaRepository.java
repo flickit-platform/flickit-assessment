@@ -26,6 +26,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
     @Query("""
             UPDATE QuestionnaireJpaEntity q
             SET q.title = :title,
+                q.code = :code,
                 q.index = :index,
                 q.description = :description,
                 q.lastModificationTime = :lastModificationTime,
@@ -35,6 +36,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
     void update(@Param(value = "id") long id,
                 @Param(value = "kitVersionId") long kitVersionId,
                 @Param(value = "title") String title,
+                @Param(value = "code") String code,
                 @Param(value = "index") int index,
                 @Param(value = "description") String description,
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,

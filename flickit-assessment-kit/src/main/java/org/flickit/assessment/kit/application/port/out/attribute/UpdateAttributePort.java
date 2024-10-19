@@ -11,14 +11,15 @@ public interface UpdateAttributePort {
     record Param(
         long id,
         long kitVersionId,
+        String code,
         String title,
         int index,
         String description,
         int weight,
         LocalDateTime lastModificationTime,
         UUID lastModifiedBy,
-        long subjectId
-    ) {}
+        long subjectId) {
+    }
 
     /**
      * Updates the order of attributes within a kit version based on the provided parameters.

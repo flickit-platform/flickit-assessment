@@ -1,13 +1,19 @@
 package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity.Fields;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,15 +32,20 @@ public class AttributePersistenceJpaAdapter implements
     LoadAttributePort,
     CountAttributeImpactfulQuestionsPort,
     LoadAllAttributesPort,
-    DeleteAttributePort {
+    DeleteAttributePort,
+    LoadAttributesPort {
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
 
     @Override
     public void update(UpdateAttributePort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
+
         repository.update(param.id(),
             param.kitVersionId(),
+            param.code(),
             param.title(),
             param.index(),
             param.description(),
@@ -97,5 +108,21 @@ public class AttributePersistenceJpaAdapter implements
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(attributeId, kitVersionId);
+    }
+
+    @Override
+    public PaginatedResponse<AttributeWithSubject> loadByKitVersionId(long kitVersionId, int size, int page) {
+        var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
+
+        var items = pageResult.getContent().stream()
+            .map(x -> new AttributeWithSubject(mapToDomainModel(x.getAttribute()), SubjectMapper.mapToDomainModel(x.getSubject(), null)))
+            .toList();
+
+        return new PaginatedResponse<>(items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements());
     }
 }
