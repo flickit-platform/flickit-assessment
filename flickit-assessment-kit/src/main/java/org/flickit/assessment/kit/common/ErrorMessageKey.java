@@ -16,6 +16,7 @@ public class ErrorMessageKey {
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
+    public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
     public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
@@ -97,7 +98,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_INFO_ABOUT_SIZE_MIN = "update-kit-info.about.size.min";
     public static final String UPDATE_KIT_INFO_ABOUT_SIZE_MAX = "update-kit-info.about.size.max";
     public static final String UPDATE_KIT_INFO_TAGS_SIZE_MIN = "update-kit-info.tags.size.min";
-    public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFount";
+    public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFound";
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 
@@ -214,6 +215,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-maturity-level-orders.kitVersionId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL = "update-maturity-level-orders.orders.notNull";
+    public static final String UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_SIZE_MIN = "update-maturity-level-orders.size.min";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_ID_NOT_NULL = "update-maturity-level-orders.maturityLevelId.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_NOT_NULL = "update-maturity-level-orders.maturityLevel.index.notNull";
     public static final String UPDATE_MATURITY_LEVEL_ORDERS_MATURITY_LEVEL_INDEX_MIN = "update-maturity-level-orders.maturityLevel.index.min";
@@ -229,11 +231,114 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_ABOUT_SIZE_MAX = "create-assessment-kit.about.size.max";
     public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
     public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
+
+    public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
+
+    public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notNull";
+    public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
+    public static final String GET_KIT_MATURITY_LEVELS_SIZE_MAX = "get-kit-maturity-levels-size-max";
+    public static final String GET_KIT_MATURITY_LEVELS_PAGE_MIN = "get-kit-maturity-levels-page-min";
+
+    public static final String GET_LEVEL_COMPETENCES_KIT_VERSION_ID_NOT_NULL = "get-level-competences.kitVersionId.notNull";
+
+    public static final String DELETE_SUBJECT_SUBJECT_ID_NOT_NULL = "delete-subject.id.notNull";
+    public static final String DELETE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "delete-subject.kitVersionId.notNull";
+    public static final String DELETE_SUBJECT_KIT_DELETION_UNSUPPORTED = "delete-subject.deletion.notAllowed";
+
+    public static final String GET_SUBJECT_LIST_KIT_VERSION_ID_NOT_NULL = "get-subject-list.kitVersionId.notNull";
+    public static final String GET_SUBJECT_LIST_SIZE_MIN = "get-subject-list.size.min";
+    public static final String GET_SUBJECT_LIST_SIZE_MAX = "get-subject-list.size.max";
+    public static final String GET_SUBJECT_LIST_PAGE_MIN = "get-subject-list.page.min";
+
+    public static final String UPDATE_SUBJECT_KIT_VERSION_ID_NOT_NULL = "update-subject.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_SUBJECT_ID_NOT_NULL = "update-subject.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_INDEX_NOT_NULL = "update-subject.index.notNull";
+    public static final String UPDATE_SUBJECT_TITLE_NOT_NULL = "update-subject.title.notNull";
+    public static final String UPDATE_SUBJECT_TITLE_SIZE_MIN = "update-subject.title.size.min";
+    public static final String UPDATE_SUBJECT_TITLE_SIZE_MAX = "update-subject.title.size.max";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_NOT_NULL = "update-subject.description.notNull";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MIN = "update-subject.description.size.min";
+    public static final String UPDATE_SUBJECT_DESCRIPTION_SIZE_MAX = "update-subject.description.size.max";
+    public static final String UPDATE_SUBJECT_WEIGHT_NOT_NULL = "update-subject.weight.notNull";
+
+    public static final String UPDATE_SUBJECT_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-subject-orders.kitVersionId.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECTS_NOT_NULL = "update-subject-orders.subjects.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECTS_SIZE_MIN = "update-subject-orders.subjects.size.min";
+    public static final String UPDATE_SUBJECT_ORDERS_SUBJECT_ID_NOT_NULL = "update-subject-orders.subjectId.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_INDEX_NOT_NULL = "update-subject-orders.index.notNull";
+    public static final String UPDATE_SUBJECT_ORDERS_INDEX_MIN = "update-subject-orders.index.min";
+
+    public static final String DELETE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "delete-attribute.kitVersionId.notNull";
+    public static final String DELETE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "delete-attribute.attributeId.notNull";
+    public static final String DELETE_ATTRIBUTE_NOT_ALLOWED = "delete-attribute.notAllowed";
+
+    public static final String UPDATE_ATTRIBUTE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-attribute-orders.kitVersionId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_NOT_NULL = "update-attribute-orders.attributes.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_SIZE_MIN = "update-attribute-orders.attributes.size.min";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTE_ID_NOT_NULL = "update-attribute-orders.attributeId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL = "update-attribute-orders.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN = "update-attribute-orders.index.min";
+
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-questionnaire-orders.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_NOT_NULL = "update-questionnaire-orders.orders.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_ORDERS_SIZE_MIN = "update-questionnaire-orders.orders.size.min";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_ID_NOT_NULL = "update-questionnaire-orders.questionnaireId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire-orders.questionnaireIndex.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_ORDERS_QUESTIONNAIRE_INDEX_MIN = "update-questionnaire-orders.questionnaireIndex.min";
+
+    public static final String UPDATE_ATTRIBUTE_KIT_VERSION_ID_NOT_NULL = "update-attribute.kitVersionId.notNull";
+    public static final String UPDATE_ATTRIBUTE_ATTRIBUTE_ID_NOT_NULL = "update-attribute.attributeId.notNull";
+    public static final String UPDATE_ATTRIBUTE_TITLE_NOT_BLANK = "update-attribute.title.notBlank";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MIN = "update-attribute.title.size.min";
+    public static final String UPDATE_ATTRIBUTE_TITLE_SIZE_MAX = "update-attribute.title.size.max";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_NOT_BLANK = "update-attribute.description.notBlank";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MIN = "update-attribute.description.size.min";
+    public static final String UPDATE_ATTRIBUTE_DESCRIPTION_SIZE_MAX = "update-attribute.description.size.max";
+    public static final String UPDATE_ATTRIBUTE_SUBJECT_ID_NOT_NULL = "update-attribute.subjectId.notNull";
+    public static final String UPDATE_ATTRIBUTE_INDEX_NOT_NULL = "update-attribute.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_WEIGHT_NOT_NULL = "update-attribute.weight.notNull";
+
+    public static final String DELETE_QUESTION_KIT_VERSION_ID_NOT_NULL = "delete-question.kitVersionId.notNull";
+    public static final String DELETE_QUESTION_QUESTION_ID_NOT_NULL = "delete-question.questionId.notNull";
+    public static final String DELETE_QUESTION_ID_NOT_FOUND = "delete-question.id.notFound";
+    public static final String DELETE_QUESTION_NOT_ALLOWED = "delete-question.notAllowed";
+
+    public static final String UPDATE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "update-questionnaire.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "update-questionnaire.questionnaireId.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_INDEX_NOT_NULL = "update-questionnaire.index.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_TITLE_NOT_NULL = "update-questionnaire.title.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_TITLE_SIZE_MIN = "update-questionnaire.title.size.min";
+    public static final String UPDATE_QUESTIONNAIRE_TITLE_SIZE_MAX = "update-questionnaire.title.size.max";
+    public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_NOT_NULL = "update-questionnaire.description.notNull";
+    public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MIN = "update-questionnaire.description.size.min";
+    public static final String UPDATE_QUESTIONNAIRE_DESCRIPTION_SIZE_MAX = "update-questionnaire.description.size.max";
+
+    public static final String CREATE_QUESTION_KIT_VERSION_ID_NOT_NULL = "create-question.kitVersionId.notNull";
+    public static final String CREATE_QUESTION_INDEX_NOT_NULL = "create-question.index.notNull";
+    public static final String CREATE_QUESTION_TITLE_NOT_NULL = "create-question.title.notNull";
+    public static final String CREATE_QUESTION_TITLE_SIZE_MIN = "create-question.title.size.min";
+    public static final String CREATE_QUESTION_TITLE_SIZE_MAX = "create-question.title.size.max";
+    public static final String CREATE_QUESTION_HINT_SIZE_MIN = "create-question.hint.size.min";
+    public static final String CREATE_QUESTION_HINT_SIZE_MAX = "create-question.hint.size.max";
+    public static final String CREATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "create-question.mayNotBeApplicable.notNull";
+    public static final String CREATE_QUESTION_ADVISABLE_NOT_NULL = "create-question.advisable.notNull";
+    public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";
+    public static final String CREATE_QUESTION_INDEX_DUPLICATE = "create-question.index.duplicate";
+
+    public static final String GET_ATTRIBUTES_KIT_VERSION_ID_NOT_NULL = "get-attributes.kitVersionId.notNull";
+    public static final String GET_ATTRIBUTES_PAGE_MIN = "get-attributes.page.min";
+    public static final String GET_ATTRIBUTES_SIZE_MIN = "get-attributes.size.min";
+    public static final String GET_ATTRIBUTES_SIZE_MAX = "get-attributes.size.max";
+
+    public static final String CREATE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "create-question-impact.kitVersionId.notNull";
+    public static final String CREATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL = "create-question-impact.attributeId.notNull";
+    public static final String CREATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "create-question-impact.maturityLevelId.notNull";
+    public static final String CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "create-question-impact.weight.notNull";
+    public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_NULL = "create-question-impact.questionId.notNull";
 
     public static final String DELETE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "delete-question-impact.questionImpactId.notNull";
     public static final String DELETE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "delete-question-impact.kitVersionId.notNull";
-
-    public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

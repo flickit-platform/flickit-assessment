@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -75,6 +76,17 @@ class CreateAssessmentKitUseCaseParamTest {
     }
 
     @Test
+    void testCreateAssessmentKitUseCaseParam_tagIdsViolateConstraints_ErrorMessage() {
+        var throwableNull = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.tagIds(null)));
+        assertThat(throwableNull).hasMessage("tagIds: " + CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL);
+
+        var throwableEmpty = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.tagIds(List.of())));
+        assertThat(throwableEmpty).hasMessage("tagIds: " + CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL);
+    }
+
+    @Test
     void testCreateAssessmentKitUseCaseParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
@@ -94,6 +106,7 @@ class CreateAssessmentKitUseCaseParamTest {
             .about("about")
             .isPrivate(true)
             .expertGroupId(123L)
+            .tagIds(List.of(1L, 2L, 3L))
             .currentUserId(UUID.randomUUID());
     }
 }

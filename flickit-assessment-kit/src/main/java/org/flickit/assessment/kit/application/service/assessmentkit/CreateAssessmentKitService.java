@@ -2,10 +2,10 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateKitTagRelationPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
 @Transactional
@@ -28,6 +29,7 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
     private final CreateKitVersionPort createKitVersionPort;
     private final LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
     private final GrantUserAccessToKitPort grantUserAccessToKitPort;
+    private final CreateKitTagRelationPort createKitTagRelationPort;
 
     @Override
     public Result createAssessmentKit(Param param) {
@@ -43,13 +45,14 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
             .map(LoadExpertGroupMemberIdsPort.Result::userId)
             .toList();
         grantUserAccessToKitPort.grantUsersAccess(kitId, expertGroupMemberIds);
+        createKitTagRelationPort.persist(param.getTagIds(), kitId);
 
         return new Result(kitId);
     }
 
     private CreateAssessmentKitPort.Param toPortParam(Param param) {
         return new CreateAssessmentKitPort.Param(
-            AssessmentKit.generateSlugCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getSummary(),
             param.getAbout(),

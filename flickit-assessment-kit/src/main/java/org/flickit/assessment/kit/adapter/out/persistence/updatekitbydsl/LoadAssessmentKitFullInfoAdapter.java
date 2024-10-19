@@ -116,7 +116,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {
         impact.setOptionImpacts(
-            answerOptionImpactRepository.findAllByQuestionImpactId(impact.getId()).stream()
+            answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId()).stream()
                 .map(AnswerOptionImpactMapper::mapToDomainModel)
                 .toList()
         );
@@ -127,5 +127,4 @@ public class LoadAssessmentKitFullInfoAdapter implements
         Map<Long, List<Question>> groupedQuestions = questions.stream().collect(Collectors.groupingBy(Question::getQuestionnaireId));
         questionnaires.forEach(q -> q.setQuestions(groupedQuestions.get(q.getId())));
     }
-
 }
