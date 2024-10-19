@@ -20,6 +20,8 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
+    void deleteByIdAndKitVersionId(long id, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE QuestionnaireJpaEntity q
@@ -43,10 +45,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
 
     @Query("""
             SELECT
-                q.id as id,
-                q.title as title,
-                q.description as description,
-                q.index as index,
+                q as questionnaire,
                 COUNT(DISTINCT question.id) as questionCount
             FROM QuestionnaireJpaEntity q
             JOIN QuestionJpaEntity question ON q.id = question.questionnaireId AND q.kitVersionId = question.kitVersionId

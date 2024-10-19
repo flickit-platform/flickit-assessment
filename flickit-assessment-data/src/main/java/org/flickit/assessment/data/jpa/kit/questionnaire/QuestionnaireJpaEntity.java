@@ -2,12 +2,11 @@ package org.flickit.assessment.data.jpa.kit.questionnaire;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @IdClass(QuestionnaireJpaEntity.EntityId.class)
@@ -16,6 +15,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class QuestionnaireJpaEntity {
 
@@ -62,10 +62,5 @@ public class QuestionnaireJpaEntity {
 
         private long id;
         private long kitVersionId;
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String INDEX = "index";
     }
 }
