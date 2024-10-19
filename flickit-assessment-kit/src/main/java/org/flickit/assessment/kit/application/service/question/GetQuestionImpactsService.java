@@ -75,10 +75,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
                 impact,
                 maturityLevelsMap.get(impact.getMaturityLevelId())))
             .toList();
-        return new AttributeImpact(attributeId,
-            attributeTitle,
-            impacts
-        );
+        return new AttributeImpact(attributeId, attributeTitle, impacts);
     }
 
     private Impact toImpact(QuestionImpact attributeImpact, MaturityLevel maturityLevel) {
