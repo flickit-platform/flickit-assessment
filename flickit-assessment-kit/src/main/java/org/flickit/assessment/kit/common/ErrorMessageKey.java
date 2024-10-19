@@ -336,6 +336,9 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "create-question-impact.weight.notNull";
     public static final String CREATE_QUESTION_IMPACT_QUESTION_ID_NOT_NULL = "create-question-impact.questionId.notNull";
 
+    public static final String GET_QUESTION_IMPACTS_QUESTION_ID_NOT_NULL = "get-question-impacts.questionId.notNull";
+    public static final String GET_QUESTION_IMPACTS_KIT_VERSION_ID_NOT_NULL = "get-question-impacts.kitVersionId.notNull";
+
     public static final String UPDATE_QUESTION_KIT_VERSION_ID_NOT_NULL = "update-question.kitVersionId.notNull";
     public static final String UPDATE_QUESTION_QUESTION_ID_NOT_NULL = "update-question.questionId.notNull";
     public static final String UPDATE_QUESTION_INDEX_NOT_NULL = "update-question.index.notNull";
