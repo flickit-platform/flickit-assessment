@@ -104,10 +104,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                    AND qi.attributeId = :attributeId)
                AND qi.maturityLevelId = :maturityLevelId
                AND q.kitVersionId = asmr.kitVersionId
+               AND q.advisable = TRUE
         """)
-    List<ImprovableImpactfulQuestionView> findImprovableImpactfulQuestions(@Param("assessmentId") UUID assessmentId,
-                                                                           @Param("attributeId") Long attributeId,
-                                                                           @Param("maturityLevelId") Long maturityLevelId);
+    List<ImprovableImpactfulQuestionView> findAdvisableImprovableImpactfulQuestions(@Param("assessmentId") UUID assessmentId,
+                                                                                    @Param("attributeId") Long attributeId,
+                                                                                    @Param("maturityLevelId") Long maturityLevelId);
 
     @Query("""
             SELECT
