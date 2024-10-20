@@ -359,6 +359,8 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "update-question.myNotBeApplicable.notNull";
     public static final String UPDATE_QUESTION_ADVISABLE_NOT_NULL = "update-question.advisable.notNull";
 
+    public static final String GET_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "get-kit-version.kitVersionId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
