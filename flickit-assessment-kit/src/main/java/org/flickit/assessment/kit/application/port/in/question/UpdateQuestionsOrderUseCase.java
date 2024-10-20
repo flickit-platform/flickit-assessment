@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.question;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -52,6 +53,7 @@ public interface UpdateQuestionsOrderUseCase {
             Long questionId;
 
             @NotNull(message = UPDATE_QUESTIONS_ORDER_INDEX_NOT_NULL)
+            @Min(value = 1, message = UPDATE_QUESTIONS_ORDERS_INDEX_MIN)
             Integer index;
 
             @Builder

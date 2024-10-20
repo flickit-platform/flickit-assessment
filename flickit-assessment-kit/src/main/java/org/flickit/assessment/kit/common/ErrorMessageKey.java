@@ -365,6 +365,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTIONS_ORDER_QUESTIONNAIRE_ID_NOT_NULL = "update-questions-order.questionnaireId.notNull";
     public static final String UPDATE_QUESTIONS_ORDER_QUESTION_ID_NOT_NULL = "update-questions-order.questionId.notNull";
     public static final String UPDATE_QUESTIONS_ORDER_INDEX_NOT_NULL = "update-questions-order.index.notNull";
+    public static final String UPDATE_QUESTIONS_ORDERS_INDEX_MIN = "update-questions-orders.index.min";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

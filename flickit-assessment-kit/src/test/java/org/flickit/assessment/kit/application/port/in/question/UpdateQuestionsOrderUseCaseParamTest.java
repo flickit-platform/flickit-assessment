@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.question;
 
 import jakarta.validation.ConstraintViolationException;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -41,9 +42,13 @@ class UpdateQuestionsOrderUseCaseParamTest {
 
     @Test
     void testUpdateQuestionsOrderUseCaseParam_indexParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createQuestionOrder(b -> b.index(null)));
         assertThat(throwable).hasMessage("index: " + UPDATE_QUESTIONS_ORDER_INDEX_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createQuestionOrder(b -> b.index(0)));
+        AssertionsForClassTypes.assertThat(throwable).hasMessage("index: " + UPDATE_QUESTIONS_ORDERS_INDEX_MIN);
     }
 
     @Test
