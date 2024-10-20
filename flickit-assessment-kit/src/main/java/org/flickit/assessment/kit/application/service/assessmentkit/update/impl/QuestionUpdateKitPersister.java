@@ -374,7 +374,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                  UUID currentUserId) {
         boolean isMajorUpdate = false;
         if (savedImpact.getWeight() != dslImpact.getWeight()) {
-            var updateParam = new UpdateQuestionImpactPort.Param(
+            var updateParam = new UpdateQuestionImpactPort.UpdateWeightParam(
                 savedImpact.getId(),
                 savedImpact.getKitVersionId(),
                 dslImpact.getWeight(),
@@ -382,7 +382,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 LocalDateTime.now(),
                 currentUserId
             );
-            updateQuestionImpactPort.update(updateParam);
+            updateQuestionImpactPort.updateWeight(updateParam);
             log.debug("QuestionImpact[id={}, questionId={}] updated.", savedImpact.getId(), savedQuestion.getId());
             isMajorUpdate = true;
         }

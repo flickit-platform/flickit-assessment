@@ -1242,6 +1242,42 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Update Question Impact",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{authorization_header}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"attributeId\": 1963,\n    \"maturityLevelId\": 2129,\n    \"weight\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/{{api_path}}/kit-versions/393/question-impacts/42279",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "{{api_path}}",
+                "kit-versions",
+                "393",
+                "question-impacts",
+                "42279"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
