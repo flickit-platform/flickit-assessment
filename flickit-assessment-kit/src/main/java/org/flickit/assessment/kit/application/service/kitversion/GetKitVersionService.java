@@ -37,7 +37,8 @@ public class GetKitVersionService implements GetKitVersionUseCase {
         var assessmentKit = kitVersion.getKit();
         return new Result(kitVersion.getId(),
             kitVersion.getCreationTime(),
-            new Result.AssessmentKit(assessmentKit.getId(), assessmentKit.getTitle(), new Result.ExpertGroup(expertGroup.getId(), expertGroup.getTitle()))
+            new Result.AssessmentKit(assessmentKit.getId(), assessmentKit.getTitle(),
+                new Result.ExpertGroup(expertGroup.getId(), expertGroup.getTitle()))
         );
     }
 }
