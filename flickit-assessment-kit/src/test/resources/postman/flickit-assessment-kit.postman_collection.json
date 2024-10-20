@@ -1185,7 +1185,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"weight\": 1,\n    \"attributeId\": 1963,\n    \"maturityLevelId\": 2129\n}",
+              "raw": "{\n    \"attributeId\": 1963,\n    \"maturityLevelId\": 2129,\n    \"weight\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
