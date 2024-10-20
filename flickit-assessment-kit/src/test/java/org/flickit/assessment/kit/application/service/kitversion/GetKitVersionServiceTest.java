@@ -22,10 +22,8 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetKitVersionServiceTest {
@@ -81,20 +79,25 @@ class GetKitVersionServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, ()-> service.getKitVersion(param));
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verify(checkExpertGroupAccessPort).checkIsMember(expertGroup.getId(), param.getCurrentUserId());
     }
 
     @Test
     void testGetKitVersionService_validParameters_ShouldReturnKitVersionId() {
+        Param param = createParam(GetKitVersionUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
         var expertGroup = ExpertGroupMother.createExpertGroup();
-        Param param = createParam(paramBuilder -> paramBuilder.currentUserId(expertGroup.getOwnerId()));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitVersion.getKit().getId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
 
-        var throwable = assertThrows(AccessDeniedException.class, ()-> service.getKitVersion(param));
+        var result = service.getKitVersion(param);
 
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(result.id(), kitVersion.getId());
+        assertEquals(result.creationTime(), kitVersion.getCreationTime());
+        assertEquals(result.assessmentKit().id(), kitVersion.getKit().getId());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
