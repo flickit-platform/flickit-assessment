@@ -348,6 +348,17 @@ public class ErrorMessageKey {
     public static final String GET_QUESTIONNAIRES_SIZE_MIN = "get-questionnaires.size.min";
     public static final String GET_QUESTIONNAIRES_SIZE_MAX = "get-questionnaires.size.max";
 
+    public static final String UPDATE_QUESTION_KIT_VERSION_ID_NOT_NULL = "update-question.kitVersionId.notNull";
+    public static final String UPDATE_QUESTION_QUESTION_ID_NOT_NULL = "update-question.questionId.notNull";
+    public static final String UPDATE_QUESTION_INDEX_NOT_NULL = "update-question.index.notNull";
+    public static final String UPDATE_QUESTION_TITLE_NOT_NULL = "update-question.title.notNull";
+    public static final String UPDATE_QUESTION_TITLE_SIZE_MIN = "update-question.title.size.min";
+    public static final String UPDATE_QUESTION_TITLE_SIZE_MAX = "update-question.title.size.max";
+    public static final String UPDATE_QUESTION_HINT_SIZE_MIN = "update-question.hint.size.min";
+    public static final String UPDATE_QUESTION_HINT_SIZE_MAX = "update-question.hint.size.max";
+    public static final String UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "update-question.myNotBeApplicable.notNull";
+    public static final String UPDATE_QUESTION_ADVISABLE_NOT_NULL = "update-question.advisable.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
