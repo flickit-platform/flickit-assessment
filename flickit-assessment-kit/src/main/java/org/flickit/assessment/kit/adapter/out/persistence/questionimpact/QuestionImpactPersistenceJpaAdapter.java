@@ -6,7 +6,6 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepos
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
-import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactByDslPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,6 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_IMPACT_
 public class QuestionImpactPersistenceJpaAdapter implements
     CreateQuestionImpactPort,
     DeleteQuestionImpactPort,
-    UpdateQuestionImpactByDslPort,
     UpdateQuestionImpactPort {
 
     private final QuestionImpactJpaRepository repository;
@@ -34,8 +32,8 @@ public class QuestionImpactPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateByDsl(UpdateQuestionImpactByDslPort.Param param) {
-        repository.update(param.id(),
+    public void updateWeight(UpdateWeightParam param) {
+        repository.updateWeight(param.id(),
             param.kitVersionId(),
             param.weight(),
             param.questionId(),

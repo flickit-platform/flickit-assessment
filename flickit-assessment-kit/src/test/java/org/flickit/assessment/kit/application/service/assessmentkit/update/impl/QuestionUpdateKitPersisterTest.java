@@ -12,7 +12,7 @@ import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPo
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
-import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactByDslPort;
+import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
@@ -66,7 +66,7 @@ class QuestionUpdateKitPersisterTest {
     private DeleteQuestionImpactPort deleteQuestionImpactPort;
 
     @Mock
-    private UpdateQuestionImpactByDslPort updateQuestionImpactByDslPort;
+    private UpdateQuestionImpactPort updateQuestionImpactPort;
 
     @Mock
     private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
@@ -126,7 +126,7 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionPort,
             createQuestionImpactPort,
             deleteQuestionImpactPort,
-            updateQuestionImpactByDslPort,
+            updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
@@ -181,7 +181,7 @@ class QuestionUpdateKitPersisterTest {
 
         verifyNoInteractions(
             deleteQuestionImpactPort,
-            updateQuestionImpactByDslPort,
+            updateQuestionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort
         );
@@ -230,7 +230,7 @@ class QuestionUpdateKitPersisterTest {
         verifyNoInteractions(
             createQuestionImpactPort,
             deleteQuestionImpactPort,
-            updateQuestionImpactByDslPort,
+            updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
@@ -286,7 +286,7 @@ class QuestionUpdateKitPersisterTest {
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verifyNoInteractions(
-            updateQuestionImpactByDslPort,
+            updateQuestionImpactPort,
             deleteQuestionImpactPort,
             updateQuestionPort,
             updateAnswerOptionImpactPort,
@@ -344,7 +344,7 @@ class QuestionUpdateKitPersisterTest {
         verifyNoInteractions(
             updateQuestionPort,
             createQuestionImpactPort,
-            updateQuestionImpactByDslPort,
+            updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
@@ -450,7 +450,7 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionPort,
             createQuestionImpactPort,
             deleteQuestionImpactPort,
-            updateQuestionImpactByDslPort,
+            updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
@@ -504,7 +504,7 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionPort,
             createQuestionImpactPort,
             deleteQuestionImpactPort,
-            updateQuestionImpactByDslPort,
+            updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             createQuestionPort,
@@ -567,7 +567,7 @@ class QuestionUpdateKitPersisterTest {
         verifyNoInteractions(
             updateQuestionPort,
             deleteQuestionImpactPort,
-            updateQuestionImpactByDslPort,
+            updateQuestionImpactPort,
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort
         );

@@ -28,7 +28,7 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
                 q.lastModifiedBy = :lastModifiedBy
             WHERE q.id = :id AND q.kitVersionId = :kitVersionId AND q.questionId = :questionId
         """)
-    void update(@Param("id") Long id,
+    void updateWeight(@Param("id") Long id,
                 @Param("kitVersionId") Long kitVersionId,
                 @Param("weight") int weight,
                 @Param("questionId") Long questionId,
