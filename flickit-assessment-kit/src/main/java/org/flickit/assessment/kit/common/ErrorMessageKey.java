@@ -375,6 +375,8 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL = "update-question-impact.attributeId.notNull";
     public static final String UPDATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "update-question-impact.maturityLevelId.notNull";
 
+    public static final String GET_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "get-kit-version.kitVersionId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
