@@ -34,7 +34,7 @@ public class UpdateQuestionImpactRestController {
                                                       UpdateQuestionImpactRequestDto requestDto) {
         return new UpdateQuestionImpactUseCase.Param(kitVersionId,
             questionImpactId,
-            requestDto.attributedId(),
+            requestDto.attributeId(),
             requestDto.maturityLevelId(),
             requestDto.weight(),
             currentUserId);
