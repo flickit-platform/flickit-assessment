@@ -17,6 +17,7 @@ public class ErrorMessageKey {
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
     public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
+    public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -358,6 +359,20 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTION_HINT_SIZE_MAX = "update-question.hint.size.max";
     public static final String UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "update-question.myNotBeApplicable.notNull";
     public static final String UPDATE_QUESTION_ADVISABLE_NOT_NULL = "update-question.advisable.notNull";
+
+    public static final String UPDATE_QUESTIONS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-questions-order.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL = "update-questions-order.orders.notNull";
+    public static final String UPDATE_QUESTIONS_ORDERS_ORDERS_SIZE_MIN = "update-questions-orders.orders.size.min";
+    public static final String UPDATE_QUESTIONS_ORDER_QUESTIONNAIRE_ID_NOT_NULL = "update-questions-order.questionnaireId.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_QUESTION_ID_NOT_NULL = "update-questions-order.questionId.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_INDEX_NOT_NULL = "update-questions-order.index.notNull";
+    public static final String UPDATE_QUESTIONS_ORDERS_INDEX_MIN = "update-questions-orders.index.min";
+
+    public static final String UPDATE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "update-question-impact.kitVersionId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "update-question-impact.questionImpactId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "update-question-impact.weight.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL = "update-question-impact.attributeId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "update-question-impact.maturityLevelId.notNull";
 
     public static final String GET_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "get-kit-version.kitVersionId.notNull";
 

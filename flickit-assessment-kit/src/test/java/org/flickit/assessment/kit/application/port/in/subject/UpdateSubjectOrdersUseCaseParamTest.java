@@ -25,12 +25,13 @@ class UpdateSubjectOrdersUseCaseParamTest {
 
     @Test
     void testUpdateSubjectsOrderUseCaseParam_subjectsParamViolatesConstraints_ErrorMessage() {
-        var throwableNullViolation = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjects(null)));
-        assertThat(throwableNullViolation).hasMessage("subjects: " + UPDATE_SUBJECT_ORDERS_SUBJECTS_NOT_NULL);
-        var throwableMinViolation = assertThrows(ConstraintViolationException.class,
+        assertThat(throwable).hasMessage("subjects: " + UPDATE_SUBJECT_ORDERS_SUBJECTS_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjects(List.of(new SubjectParam(2L, 5)))));
-        assertThat(throwableMinViolation).hasMessage("subjects: " + UPDATE_SUBJECT_ORDERS_SUBJECTS_SIZE_MIN);
+        assertThat(throwable).hasMessage("subjects: " + UPDATE_SUBJECT_ORDERS_SUBJECTS_SIZE_MIN);
     }
 
     @Test
@@ -49,12 +50,13 @@ class UpdateSubjectOrdersUseCaseParamTest {
 
     @Test
     void testUpdateSubjectOrdersUseCaseSubjectParam_indexParamViolatesConstraints_ErrorMessage() {
-        var throwableNullViolates = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createSubjectParam(b -> b.index(null)));
-        assertThat(throwableNullViolates).hasMessage("index: " + UPDATE_SUBJECT_ORDERS_INDEX_NOT_NULL);
-        var throwableMinViolates = assertThrows(ConstraintViolationException.class,
+        assertThat(throwable).hasMessage("index: " + UPDATE_SUBJECT_ORDERS_INDEX_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
             () -> createSubjectParam(b -> b.index(0)));
-        assertThat(throwableMinViolates).hasMessage("index: " + UPDATE_SUBJECT_ORDERS_INDEX_MIN);
+        assertThat(throwable).hasMessage("index: " + UPDATE_SUBJECT_ORDERS_INDEX_MIN);
     }
 
     private void createParam(Consumer<Param.ParamBuilder> changer) {
