@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,8 +37,7 @@ class UpdateQuestionImpactServiceTest {
     @Mock
     private UpdateQuestionImpactPort updateQuestionImpactPort;
 
-    UUID ownerId = UUID.randomUUID();
-
+    private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
@@ -49,6 +49,8 @@ class UpdateQuestionImpactServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestionImpact(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(updateQuestionImpactPort);
     }
 
     @Test
@@ -59,9 +61,17 @@ class UpdateQuestionImpactServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(updateQuestionImpactPort).update(any(UpdateQuestionImpactPort.Param.class));
 
-        assertDoesNotThrow(() -> service.updateQuestionImpact(param));
+        service.updateQuestionImpact(param);
 
-        verify(updateQuestionImpactPort).update(any(UpdateQuestionImpactPort.Param.class));
+        ArgumentCaptor<UpdateQuestionImpactPort.Param> outPortParamCaptor = ArgumentCaptor.forClass(UpdateQuestionImpactPort.Param.class);
+        verify(updateQuestionImpactPort).update(outPortParamCaptor.capture());
+        assertEquals(param.getQuestionImpactId(), outPortParamCaptor.getValue().id());
+        assertEquals(param.getKitVersionId(), outPortParamCaptor.getValue().kitVersionId());
+        assertEquals(param.getAttributeId(), outPortParamCaptor.getValue().attributeId());
+        assertEquals(param.getMaturityLevelId(), outPortParamCaptor.getValue().maturityLevelId());
+        assertEquals(param.getWeight(), outPortParamCaptor.getValue().weight());
+        assertEquals(param.getCurrentUserId(), outPortParamCaptor.getValue().lastModifiedBy());
+        assertNotNull(outPortParamCaptor.getValue().lastModificationTime());
     }
 
     private UpdateQuestionImpactUseCase.Param createParam(Consumer<UpdateQuestionImpactUseCase.Param.ParamBuilder> changer) {
