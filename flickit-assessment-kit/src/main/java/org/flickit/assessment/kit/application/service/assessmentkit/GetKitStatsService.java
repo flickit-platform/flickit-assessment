@@ -2,8 +2,8 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitStatsUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitStatsPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,7 +37,7 @@ public class GetKitStatsService implements GetKitStatsUseCase {
         AssessmentKit assessmentKit = loadAssessmentKitPort.load(param.getKitId());
 
         if (assessmentKit.getActiveVersionId() == null)
-            throw new ValidationException(GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND);
+            return handleNoActiveVersion(assessmentKit, expertGroup);
 
         var counts = countKitStatsPort.countKitStats(param.getKitId());
 
@@ -56,6 +55,21 @@ public class GetKitStatsService implements GetKitStatsUseCase {
             counts.likes(),
             counts.assessmentCounts(),
             subjects,
+            new GetKitStatsUseCase.KitStatExpertGroup(expertGroup.getId(), expertGroup.getTitle())
+        );
+    }
+
+    private GetKitStatsUseCase.Result handleNoActiveVersion(AssessmentKit kit, ExpertGroup expertGroup) {
+        return new GetKitStatsUseCase.Result(
+            kit.getCreationTime(),
+            kit.getLastModificationTime(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
             new GetKitStatsUseCase.KitStatExpertGroup(expertGroup.getId(), expertGroup.getTitle())
         );
     }

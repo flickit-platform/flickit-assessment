@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.Subject;
@@ -26,10 +25,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithKitVersionId;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -113,16 +113,26 @@ class GetKitStatsServiceTest {
     @Test
     void testGetKitStats_WhenActiveKitNotExist_ThrowsException() {
         ExpertGroup expertGroup = createExpertGroup();
-        AssessmentKit assessmentKit = AssessmentKitMother.kitWithKitVersionId(null);
+        AssessmentKit assessmentKit = kitWithKitVersionId(null);
         Param param = new Param(assessmentKit.getId(), UUID.randomUUID());
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
 
-        var throwable = assertThrows(ValidationException.class, () -> service.getKitStats(param));
+        var result = service.getKitStats(param);
 
-        assertEquals(GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND, throwable.getMessageKey());
+        assertEquals(assessmentKit.getCreationTime(), result.creationTime());
+        assertEquals(assessmentKit.getLastModificationTime(), result.lastModificationTime());
+        assertNull(result.questionnairesCount());
+        assertNull(result.attributesCount());
+        assertNull(result.questionsCount());
+        assertNull(result.maturityLevelsCount());
+        assertNull(result.likes());
+        assertNull(result.assessmentCounts());
+        assertNull(result.subjects());
+        assertEquals(expertGroup.getId(), result.expertGroup().id());
+        assertEquals(expertGroup.getTitle(), result.expertGroup().title());
     }
 
     @Test
