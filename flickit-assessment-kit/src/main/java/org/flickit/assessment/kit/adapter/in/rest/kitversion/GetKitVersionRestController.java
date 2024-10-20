@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class GetKitVersionIdRestController {
+public class GetKitVersionRestController {
 
     private final GetKitVersionUseCase getKitVersionUseCase;
     private final UserContext userContext;
