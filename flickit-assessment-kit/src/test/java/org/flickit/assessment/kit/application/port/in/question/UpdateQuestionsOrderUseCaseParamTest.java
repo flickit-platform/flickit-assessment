@@ -10,27 +10,31 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UpdateQuestionsOrderUseCaseParamTest {
 
     @Test
     void testUpdateQuestionsOrderUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_QUESTIONS_ORDER_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
     void testUpdateQuestionsOrderUseCaseParam_ordersParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createParam(b -> b.orders(null)));
         assertThat(throwable).hasMessage("orders: " + UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.orders(List.of(new UpdateQuestionsOrderUseCase.Param.QuestionOrder(2L, 5)))));
+        AssertionsForClassTypes.assertThat(throwable).hasMessage("orders: " + UPDATE_QUESTIONS_ORDERS_ORDERS_SIZE_MIN);
     }
 
     @Test
     void testUpdateQuestionsOrderUseCaseParam_questionIdParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createQuestionOrder(b -> b.questionId(null)));
         assertThat(throwable).hasMessage("questionId: " + UPDATE_QUESTIONS_ORDER_QUESTION_ID_NOT_NULL);
     }
@@ -44,7 +48,7 @@ class UpdateQuestionsOrderUseCaseParamTest {
 
     @Test
     void testUpdateQuestionsOrderUseCaseParam_questionnaireIdParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.questionnaireId(null)));
         assertThat(throwable).hasMessage("questionnaireId: " + UPDATE_QUESTIONS_ORDER_QUESTIONNAIRE_ID_NOT_NULL);
     }

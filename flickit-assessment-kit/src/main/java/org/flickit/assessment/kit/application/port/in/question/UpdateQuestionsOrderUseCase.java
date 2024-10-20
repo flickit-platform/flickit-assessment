@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.port.in.question;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -24,6 +25,7 @@ public interface UpdateQuestionsOrderUseCase {
         Long kitVersionId;
 
         @NotNull(message = UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL)
+        @Size(min = 2, message = UPDATE_QUESTIONS_ORDERS_ORDERS_SIZE_MIN)
         List<QuestionOrder> orders;
 
         @NotNull(message = UPDATE_QUESTIONS_ORDER_QUESTIONNAIRE_ID_NOT_NULL)

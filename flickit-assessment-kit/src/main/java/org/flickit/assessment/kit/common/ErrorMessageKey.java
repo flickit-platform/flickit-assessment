@@ -361,6 +361,7 @@ public class ErrorMessageKey {
 
     public static final String UPDATE_QUESTIONS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-questions-order.kitVersionId.notNull";
     public static final String UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL = "update-questions-order.orders.notNull";
+    public static final String UPDATE_QUESTIONS_ORDERS_ORDERS_SIZE_MIN = "update-questions-orders.orders.size.min";
     public static final String UPDATE_QUESTIONS_ORDER_QUESTIONNAIRE_ID_NOT_NULL = "update-questions-order.questionnaireId.notNull";
     public static final String UPDATE_QUESTIONS_ORDER_QUESTION_ID_NOT_NULL = "update-questions-order.questionId.notNull";
     public static final String UPDATE_QUESTIONS_ORDER_INDEX_NOT_NULL = "update-questions-order.index.notNull";
