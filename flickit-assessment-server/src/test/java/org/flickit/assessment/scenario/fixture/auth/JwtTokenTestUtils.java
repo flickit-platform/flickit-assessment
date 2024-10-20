@@ -1,4 +1,4 @@
-package org.flickit.assessment.helper.auth;
+package org.flickit.assessment.scenario.fixture.auth;
 
 import io.jsonwebtoken.Jwts;
 
