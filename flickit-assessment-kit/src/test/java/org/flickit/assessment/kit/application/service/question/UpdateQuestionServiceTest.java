@@ -39,7 +39,6 @@ class UpdateQuestionServiceTest {
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     private final UUID ownerId = UUID.randomUUID();
-
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
@@ -51,6 +50,7 @@ class UpdateQuestionServiceTest {
 
         AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(updateQuestionPort);
     }
 
