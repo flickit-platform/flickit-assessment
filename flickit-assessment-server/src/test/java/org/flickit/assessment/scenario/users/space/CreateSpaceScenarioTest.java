@@ -15,7 +15,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -39,7 +38,7 @@ class CreateSpaceScenarioTest {
 
     @Test
     @DisplayName("Creating space with valid parameters in the database should be done successfully.")
-    void testCreateSpace_validParameters_successful() throws JSONException, SQLException {
+    void testCreateSpace_validParameters_successful() throws JSONException {
         String title = "test";
         String space = new JSONObject().put("title", title).toString();
         String authenticationToken = JwtTokenTestUtils.generateJwtToken(UUID.randomUUID());
