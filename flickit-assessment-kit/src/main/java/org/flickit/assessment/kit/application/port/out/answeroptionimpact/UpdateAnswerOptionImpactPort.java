@@ -7,6 +7,6 @@ public interface UpdateAnswerOptionImpactPort {
 
     void update(Param param);
 
-    record Param(Long id, Double value, LocalDateTime lastModificationTime, UUID lastModifiedBy) {
+    record Param(long id, long kitVersionId, double value, LocalDateTime lastModificationTime, UUID lastModifiedBy) {
     }
 }

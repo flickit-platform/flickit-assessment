@@ -250,6 +250,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 savedQuestion.getId(),
                 kitVersionId,
                 dslQuestion.getTitle(),
+                dslQuestion.getCode(),
                 dslQuestion.getIndex(),
                 dslQuestion.getDescription(),
                 dslQuestion.isMayNotBeApplicable(),
@@ -410,7 +411,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             AnswerOptionImpact newOptionImpact = dslOptionImpactMap.get(entry.getKey());
 
             if (savedOptionImpact.getValue() != newOptionImpact.getValue()) {
-                updateAnswerOptionImpact(savedOptionImpact, newOptionImpact, currentUserId);
+                updateAnswerOptionImpact(savedImpact.getKitVersionId(), savedOptionImpact, newOptionImpact, currentUserId);
                 isMajorUpdate = true;
             }
         }
@@ -428,11 +429,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private void updateAnswerOptionImpact(AnswerOptionImpact savedOptionImpact,
+    private void updateAnswerOptionImpact(long kitVersionId,
+                                          AnswerOptionImpact savedOptionImpact,
                                           AnswerOptionImpact dslOptionImpact,
                                           UUID currentUserId) {
         var updateParam = new UpdateAnswerOptionImpactPort.Param(
             savedOptionImpact.getId(),
+            kitVersionId,
             dslOptionImpact.getValue(),
             LocalDateTime.now(),
             currentUserId
