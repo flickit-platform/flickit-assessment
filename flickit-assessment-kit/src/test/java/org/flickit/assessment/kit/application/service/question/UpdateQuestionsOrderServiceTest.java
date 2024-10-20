@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.question.UpdateQuestionsOrderUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionsOrderPort;
+import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -36,7 +36,7 @@ class UpdateQuestionsOrderServiceTest {
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
 
     @Mock
-    private UpdateQuestionsOrderPort updateQuestionsOrderPort;
+    private UpdateQuestionPort updateQuestionPort;
 
     private final UUID ownerId = UUID.randomUUID();
 
@@ -52,7 +52,7 @@ class UpdateQuestionsOrderServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestionsOrder(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(updateQuestionsOrderPort);
+        verifyNoInteractions(updateQuestionPort);
     }
 
     @Test
@@ -61,12 +61,12 @@ class UpdateQuestionsOrderServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        doNothing().when(updateQuestionsOrderPort).updateQuestionsOrder(any(UpdateQuestionsOrderPort.Param.class));
+        doNothing().when(updateQuestionPort).updateOrders(any(UpdateQuestionPort.UpdateOrderParam.class));
 
         assertDoesNotThrow(() -> service.updateQuestionsOrder(param));
 
-        var outPortParam = ArgumentCaptor.forClass(UpdateQuestionsOrderPort.Param.class);
-        verify(updateQuestionsOrderPort).updateQuestionsOrder(outPortParam.capture());
+        var outPortParam = ArgumentCaptor.forClass(UpdateQuestionPort.UpdateOrderParam.class);
+        verify(updateQuestionPort).updateOrders(outPortParam.capture());
         assertNotNull(outPortParam.getValue());
         assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
         assertEquals(param.getQuestionnaireId(), outPortParam.getValue().questionnaireId());

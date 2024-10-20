@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.question.UpdateQuestionsOrderUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionsOrderPort;
+import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +23,7 @@ public class UpdateQuestionsOrderService implements UpdateQuestionsOrderUseCase 
 
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final UpdateQuestionsOrderPort updateQuestionsOrderPort;
+    private final UpdateQuestionPort updateQuestionPort;
 
     @Override
     public void updateQuestionsOrder(Param param) {
@@ -33,23 +33,23 @@ public class UpdateQuestionsOrderService implements UpdateQuestionsOrderUseCase 
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        updateQuestionsOrderPort.updateQuestionsOrder(toParam(param.getKitVersionId(),
+        updateQuestionPort.updateOrders(toParam(param.getKitVersionId(),
             param.getOrders(),
             param.getQuestionnaireId(),
             param.getCurrentUserId()));
     }
 
-    private UpdateQuestionsOrderPort.Param toParam(long kitVersionId,
-                                                   List<Param.QuestionOrder> orders,
-                                                   long questionnaireId,
-                                                   UUID currentUserId) {
+    private UpdateQuestionPort.UpdateOrderParam toParam(long kitVersionId,
+                                                        List<Param.QuestionOrder> orders,
+                                                        long questionnaireId,
+                                                        UUID currentUserId) {
         var outPortOrders = orders.stream()
-            .map(e -> new UpdateQuestionsOrderPort.Param.QuestionOrder(e.getQuestionId(),
+            .map(e -> new UpdateQuestionPort.UpdateOrderParam.QuestionOrder(e.getQuestionId(),
                 e.getIndex(),
                 Question.generateCode(e.getIndex())))
             .toList();
 
-        return new UpdateQuestionsOrderPort.Param(kitVersionId,
+        return new UpdateQuestionPort.UpdateOrderParam(kitVersionId,
             outPortOrders,
             questionnaireId,
             LocalDateTime.now(),
