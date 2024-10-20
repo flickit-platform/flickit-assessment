@@ -42,7 +42,7 @@
 		<poi.version>5.3.0</poi.version>
 		<novu.version>1.6.0</novu.version>
         <spring-ai.version>1.0.0-M2</spring-ai.version>
-        <testcontainers.version>1.19.7</testcontainers.version>
+        <testcontainers.version>1.20.2</testcontainers.version>
 
 		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
