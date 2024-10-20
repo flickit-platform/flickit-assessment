@@ -250,6 +250,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 savedQuestion.getId(),
                 kitVersionId,
                 dslQuestion.getTitle(),
+                dslQuestion.getCode(),
                 dslQuestion.getIndex(),
                 dslQuestion.getDescription(),
                 dslQuestion.isMayNotBeApplicable(),
