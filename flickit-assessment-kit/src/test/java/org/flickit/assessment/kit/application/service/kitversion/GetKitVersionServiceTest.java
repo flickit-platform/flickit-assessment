@@ -41,7 +41,7 @@ class GetKitVersionServiceTest {
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Test
-    void testGetKitVersionService_kitVersionIdNotExist_ShouldReturnResourceNotFoundException() {
+    void testGetKitVersionService_WhenKitVersionIdDoesNotExist_ShouldThrowResourceNotFoundException() {
         Param param = createParam(GetKitVersionUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
@@ -54,7 +54,7 @@ class GetKitVersionServiceTest {
     }
 
     @Test
-    void testGetKitVersionService_kitIdNotExist_ShouldReturnResourceNotFoundException() {
+    void testGetKitVersionService_WhenKitIdDoesNotExist_ShouldThrowResourceNotFoundException() {
         Param param = createParam(GetKitVersionUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
@@ -68,7 +68,7 @@ class GetKitVersionServiceTest {
     }
 
     @Test
-    void testGetKitVersionService_currentUserDoesNotHaveExpertGroupAccess_ShouldReturnAccessDeniedException() {
+    void testGetKitVersionService_WhenCurrentUserLacksExpertGroupAccess_ShouldThrowAccessDeniedException() {
         Param param = createParam(GetKitVersionUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
         var expertGroup = ExpertGroupMother.createExpertGroup();
