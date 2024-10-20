@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AnswerOptionImpactJpaEntity {
+public class AnswerOptionImpactJpaEntity implements Cloneable {
 
     @Id
     @EqualsAndHashCode.Include
@@ -49,6 +49,16 @@ public class AnswerOptionImpactJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Override
+    public AnswerOptionImpactJpaEntity clone() {
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (AnswerOptionImpactJpaEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 
     @Data
     @NoArgsConstructor

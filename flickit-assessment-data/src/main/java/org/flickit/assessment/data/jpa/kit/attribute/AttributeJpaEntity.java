@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class AttributeJpaEntity {
+public class AttributeJpaEntity implements Cloneable {
 
     @Id
     @EqualsAndHashCode.Include
@@ -60,6 +60,16 @@ public class AttributeJpaEntity {
 
     @Column(name = "subject_id", nullable = false)
     private Long subjectId;
+
+    @Override
+    public AttributeJpaEntity clone() {
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (AttributeJpaEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 
     @Data
     @NoArgsConstructor

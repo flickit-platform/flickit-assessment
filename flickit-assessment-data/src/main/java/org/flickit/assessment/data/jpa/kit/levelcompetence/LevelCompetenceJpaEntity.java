@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class LevelCompetenceJpaEntity {
+public class LevelCompetenceJpaEntity implements Cloneable {
 
     @Id
     @EqualsAndHashCode.Include
@@ -48,6 +48,16 @@ public class LevelCompetenceJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Override
+    public LevelCompetenceJpaEntity clone() {
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (LevelCompetenceJpaEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 
     @Data
     @NoArgsConstructor

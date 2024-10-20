@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class QuestionnaireJpaEntity {
+public class QuestionnaireJpaEntity implements Cloneable {
 
     @Id
     @EqualsAndHashCode.Include
@@ -54,6 +54,15 @@ public class QuestionnaireJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Override
+    public QuestionnaireJpaEntity clone() {
+        try {
+            return (QuestionnaireJpaEntity) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 
     @Data
     @NoArgsConstructor
