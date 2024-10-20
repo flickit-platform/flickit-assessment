@@ -39,11 +39,10 @@ class UpdateQuestionsOrderServiceTest {
     private UpdateQuestionPort updateQuestionPort;
 
     private final UUID ownerId = UUID.randomUUID();
-
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testUpdateQuestionsOrderService_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
+    void testUpdateQuestionsOrder_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
         var param = createParam(UpdateQuestionsOrderUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -56,14 +55,14 @@ class UpdateQuestionsOrderServiceTest {
     }
 
     @Test
-    void testUpdateQuestionsOrderService_WhenCurrentUserIsExpertGroupOwner_ThenUpdateQuestionsOrder() {
+    void testUpdateQuestionsOrder_WhenCurrentUserIsExpertGroupOwner_ThenUpdateQuestionsOrder() {
         var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(updateQuestionPort).updateOrders(any(UpdateQuestionPort.UpdateOrderParam.class));
 
-        assertDoesNotThrow(() -> service.updateQuestionsOrder(param));
+        service.updateQuestionsOrder(param);
 
         var outPortParam = ArgumentCaptor.forClass(UpdateQuestionPort.UpdateOrderParam.class);
         verify(updateQuestionPort).updateOrders(outPortParam.capture());
