@@ -18,6 +18,8 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
 
     Optional<QuestionImpactJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
+    List<QuestionImpactJpaEntity> findAllByKitVersionId(long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE QuestionImpactJpaEntity q SET
