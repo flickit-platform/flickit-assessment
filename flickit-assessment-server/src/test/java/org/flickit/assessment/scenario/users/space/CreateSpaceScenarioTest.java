@@ -1,6 +1,8 @@
 package org.flickit.assessment.scenario.users.space;
 
-import org.flickit.assessment.helper.auth.JwtTokenTestUtils;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
+import org.flickit.assessment.scenario.data.config.PostgresTestContainerHolder;
+import org.flickit.assessment.scenario.fixture.auth.JwtTokenTestUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -11,47 +13,28 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
 import static org.assertj.core.api.BDDAssertions.then;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CreateSpaceScenarioTest {
 
+    private static final String ENDPOINT = "/spaces";
+
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    private static final String ENDPOINT = "/spaces";
-    @Container
-    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
-        .withDatabaseName("flickit")
-        .withUsername("flickit")
-        .withPassword("flickit")
-        .withInitScript("init.sql");
+    @Autowired
+    private SpaceJpaRepository spaceRepository;
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-        registry.add("spring.liquibase.enabled", () -> false);
-    }
-
-    @Test
-    @DisplayName("The application should connect to testContainers")
-    void testDatabaseConnection() {
-        String jdbcUrl = postgreSQLContainer.getJdbcUrl();
-        assertEquals("jdbc:postgresql://localhost:" + postgreSQLContainer.getMappedPort
-            (5432) + "/"+postgreSQLContainer.getDatabaseName()+"?loggerLevel=OFF", jdbcUrl);
+        PostgresTestContainerHolder.setProperties(registry);
     }
 
     @Test
@@ -61,24 +44,12 @@ class CreateSpaceScenarioTest {
         String space = new JSONObject().put("title", title).toString();
         String authenticationToken = JwtTokenTestUtils.generateJwtToken(UUID.randomUUID());
 
-        var conn = DriverManager.getConnection(postgreSQLContainer.getJdbcUrl(),
-            postgreSQLContainer.getUsername(),
-            postgreSQLContainer.getPassword());
-        ResultSet resultSet = conn.createStatement().executeQuery("SELECT * from public.fau_space");
-        resultSet.next();
-        int rowCount = resultSet.getRow();
-        then(rowCount).isEqualTo(0);
-        then(resultSet.next()).isEqualTo(false);
+        int spacesCount = spaceRepository.findAll().size();
 
         ResponseEntity<String> response = whenCreateSpace(space, authenticationToken);
 
         then(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-        resultSet = conn.createStatement().executeQuery("SELECT * from public.fau_space");
-        resultSet.next();
-        rowCount = resultSet.getRow();
-        then(rowCount).isEqualTo(1);
-        then(resultSet.next()).isEqualTo(false);
+        then(spaceRepository.findAll().size()).isEqualTo(spacesCount + 1);
     }
 
     @Test
