@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.QualityAttributeValueJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class AssessmentCalculateResultPersistAdapter implements
 
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
-    private final QualityAttributeValueJpaRepository attributeValueRepo;
+    private final AttributeValueJpaRepository attributeValueRepo;
     private final AttributeMaturityScorePersistenceJpaAdapter attributeMaturityScoreAdapter;
 
     @Override
@@ -36,7 +36,7 @@ public class AssessmentCalculateResultPersistAdapter implements
         subjectValues.forEach(s -> subjectValueRepo.updateMaturityLevelById(s.getId(), s.getMaturityLevel().getId()));
 
         subjectValues.stream()
-            .flatMap(x -> x.getQualityAttributeValues().stream())
+            .flatMap(x -> x.getAttributeValues().stream())
             .forEach(qav -> {
                 attributeValueRepo.updateMaturityLevelById(qav.getId(), qav.getMaturityLevel().getId());
                 qav.getMaturityScores().forEach(maturityScore ->
@@ -55,10 +55,10 @@ public class AssessmentCalculateResultPersistAdapter implements
             assessmentResult.getLastConfidenceCalculationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
-        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceValuelById(s.getId(), s.getConfidenceValue()));
+        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceValueById(s.getId(), s.getConfidenceValue()));
 
         subjectValues.stream()
-            .flatMap(x -> x.getQualityAttributeValues().stream())
+            .flatMap(x -> x.getAttributeValues().stream())
             .forEach(qav -> attributeValueRepo.updateConfidenceValueById(qav.getId(), qav.getConfidenceValue()));
     }
 }

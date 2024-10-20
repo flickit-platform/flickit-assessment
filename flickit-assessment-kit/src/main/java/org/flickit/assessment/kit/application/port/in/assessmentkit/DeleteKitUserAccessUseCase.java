@@ -17,7 +17,7 @@ public interface DeleteKitUserAccessUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<UpdateKitByDslUseCase.Param> {
+    class Param extends SelfValidating<DeleteKitUserAccessUseCase.Param> {
 
         @NotNull(message = DELETE_KIT_USER_ACCESS_KIT_ID_NOT_NULL)
         Long kitId;

@@ -19,5 +19,21 @@
     <include file="classpath:liquibase/changelog-0.13.xml"/>
     <include file="classpath:liquibase/changelog-0.14.xml"/>
     <include file="classpath:liquibase/changelog-0.15.xml"/>
-
+    <include file="classpath:liquibase/changelog-0.16.xml"/>
+    <include file="classpath:liquibase/changelog-0.17.xml"/>
+    <include file="classpath:liquibase/changelog-0.18.xml"/>
+    <include file="classpath:liquibase/changelog-0.19.xml"/>
+    <include file="classpath:liquibase/changelog-0.20.xml"/>
+    <include file="classpath:liquibase/changelog-0.21.xml"/>
+    <include file="classpath:liquibase/changelog-0.22.xml"/>
+    <include file="classpath:liquibase/changelog-0.23.xml"/>
+    <include file="classpath:liquibase/changelog-0.25.xml"/>
+    <include file="classpath:liquibase/changelog-0.26.xml"/>
+    <include file="classpath:liquibase/changelog-0.27.xml"/>
+    <include file="classpath:liquibase/changelog-0.28.xml"/>
+    <include file="classpath:liquibase/changelog-0.29.xml"/>
+    <include file="classpath:liquibase/changelog-0.31.xml"/>
+    <include file="classpath:liquibase/changelog-0.32.xml"/>
+    <include file="classpath:liquibase/changelog-0.33.xml"/>
+    <include file="classpath:liquibase/changelog-0.34.xml"/>
 </databaseChangeLog>

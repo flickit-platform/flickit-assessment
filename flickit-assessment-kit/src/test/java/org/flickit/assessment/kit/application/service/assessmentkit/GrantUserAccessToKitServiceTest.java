@@ -1,11 +1,11 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GrantUserAccessToKitUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
+import org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -13,11 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -29,9 +28,6 @@ class GrantUserAccessToKitServiceTest {
     private GrantUserAccessToKitService service;
 
     @Mock
-    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-
-    @Mock
     private LoadKitExpertGroupPort loadExpertGroupIdPort;
 
     @Mock
@@ -39,26 +35,21 @@ class GrantUserAccessToKitServiceTest {
 
     @Test
     void testGrantUserAccessToKit_ValidParams_AddUserSuccessfully() {
-        var currentUserId = UUID.randomUUID();
+        ExpertGroup expertGroup = createExpertGroup();
+
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
             UUID.randomUUID(),
-            currentUserId
+            expertGroup.getOwnerId()
         );
-        var expertGroupId = 3L;
-        when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(currentUserId));
+        when(loadExpertGroupIdPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         doNothing().when(grantUserAccessToKitPort).grantUserAccess(param.getKitId(), param.getUserId());
 
         service.grantUserAccessToKit(param);
 
         var LoadExpertGroupIdParam = ArgumentCaptor.forClass(Long.class);
-        verify(loadExpertGroupIdPort, times(1)).loadKitExpertGroupId(LoadExpertGroupIdParam.capture());
+        verify(loadExpertGroupIdPort, times(1)).loadKitExpertGroup(LoadExpertGroupIdParam.capture());
         assertEquals(param.getKitId(), LoadExpertGroupIdParam.getValue());
-
-        var LoadExpertGroupOwnerParam = ArgumentCaptor.forClass(Long.class);
-        verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(LoadExpertGroupOwnerParam.capture());
-        assertEquals(expertGroupId, LoadExpertGroupOwnerParam.getValue());
 
         var grantAccessKitIdParam = ArgumentCaptor.forClass(Long.class);
         var grantAccessUserIdParam = ArgumentCaptor.forClass(UUID.class);
@@ -71,40 +62,38 @@ class GrantUserAccessToKitServiceTest {
     @Test
     void testGrantUserAccessToKit_InvalidCurrentUser_ThrowsException() {
         var currentUserId = UUID.randomUUID();
+        ExpertGroup expertGroup = createExpertGroup();
+
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
             UUID.randomUUID(),
             currentUserId
         );
-        var expertGroupId = 3L;
-        when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        var expertGroupOwnerId = UUID.randomUUID();
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.of(expertGroupOwnerId));
+
+        when(loadExpertGroupIdPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.grantUserAccessToKit(param));
 
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
-        verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
         verify(grantUserAccessToKitPort, never()).grantUserAccess(any(), any());
     }
 
     @Test
     void testGrantUserAccessToKit_InvalidKitIdExpertGroupOwnerNull_ThrowsException() {
         var currentUserId = UUID.randomUUID();
+        ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
+
         GrantUserAccessToKitUseCase.Param param = new GrantUserAccessToKitUseCase.Param(
             1L,
             UUID.randomUUID(),
             currentUserId
         );
-        var expertGroupId = 3L;
-        when(loadExpertGroupIdPort.loadKitExpertGroupId(param.getKitId())).thenReturn(expertGroupId);
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(Optional.empty());
+        when(loadExpertGroupIdPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
 
-        var exception = assertThrows(ResourceNotFoundException.class, () -> service.grantUserAccessToKit(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.grantUserAccessToKit(param));
 
-        assertEquals(EXPERT_GROUP_ID_NOT_FOUND, exception.getMessage());
-        verify(loadExpertGroupIdPort, times(1)).loadKitExpertGroupId(any());
-        verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(any());
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+        verify(loadExpertGroupIdPort, times(1)).loadKitExpertGroup(any());
         verify(grantUserAccessToKitPort, never()).grantUserAccess(any(), any());
     }
 }

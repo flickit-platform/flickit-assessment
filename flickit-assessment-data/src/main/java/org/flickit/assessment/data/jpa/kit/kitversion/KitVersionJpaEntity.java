@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Entity
 @Table(name = "fak_kit_version")
 @Getter
@@ -27,5 +30,15 @@ public class KitVersionJpaEntity {
     @Column(name = "status", nullable = false)
     private int status;
 
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
 
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
 }

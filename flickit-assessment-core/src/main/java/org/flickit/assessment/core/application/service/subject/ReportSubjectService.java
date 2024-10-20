@@ -2,26 +2,22 @@ package org.flickit.assessment.core.application.service.subject;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.MaturityScore;
-import org.flickit.assessment.core.application.domain.QualityAttributeValue;
-import org.flickit.assessment.core.application.domain.SubjectValue;
-import org.flickit.assessment.core.application.domain.report.SubjectReport;
-import org.flickit.assessment.core.application.domain.report.SubjectReport.AttributeReportItem;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
+import org.flickit.assessment.core.application.domain.report.SubjectAttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.TopAttributeResolver;
 import org.flickit.assessment.core.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 
-import static java.util.stream.Collectors.toCollection;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_REPORT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.MaturityLevel.middleLevel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -31,57 +27,32 @@ public class ReportSubjectService implements ReportSubjectUseCase {
 
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadSubjectReportInfoPort loadSubjectReportInfoPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
-    public SubjectReport reportSubject(Param param) {
+    public Result reportSubject(Param param) {
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_SUBJECT_REPORT))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var assessmentResult = loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId());
+        var subjectReport = loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId());
 
-        var maturityLevels = assessmentResult.getAssessment().getAssessmentKit().getMaturityLevels();
+        var midLevelMaturity = middleLevel(subjectReport.maturityLevels());
+        List<SubjectAttributeReportItem> attributes = subjectReport.attributes();
 
-        var subjectValue = assessmentResult.getSubjectValues()
-            .stream()
-            .filter(s -> s.getSubject().getId() == param.getSubjectId())
-            .findAny()
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_SUBJECT_ASSESSMENT_SUBJECT_VALUE_NOT_FOUND));
-
-        var attributeValues = subjectValue.getQualityAttributeValues();
-
-        var subjectReportItem = buildSubject(subjectValue);
-        var attributeReportItems = buildAttributes(attributeValues);
-
-        var midLevelMaturity = middleLevel(maturityLevels);
-        TopAttributeResolver topAttributeResolver = new TopAttributeResolver(attributeValues, midLevelMaturity);
+        var topAttributes = attributes.stream()
+            .map(e -> new AttributeReportItem(e.id(), e.title(), e.description(), e.index(), e.confidenceValue(), e.maturityLevel()))
+            .toList();
+        TopAttributeResolver topAttributeResolver = new TopAttributeResolver(topAttributes, midLevelMaturity);
         var topStrengths = topAttributeResolver.getTopStrengths();
         var topWeaknesses = topAttributeResolver.getTopWeaknesses();
 
-        return new SubjectReport(
-            subjectReportItem,
+        return new Result(
+            subjectReport.subject(),
             topStrengths,
             topWeaknesses,
-            attributeReportItems);
-    }
-
-    private SubjectReport.SubjectReportItem buildSubject(SubjectValue subjectValue) {
-        return new SubjectReport.SubjectReportItem(
-            subjectValue.getSubject().getId(),
-            subjectValue.getMaturityLevel().getId(),
-            subjectValue.getConfidenceValue(),
-            true,
-            true);
-    }
-
-    private List<AttributeReportItem> buildAttributes(List<QualityAttributeValue> attributeValues) {
-        return attributeValues.stream()
-            .map(x -> new AttributeReportItem(
-                x.getQualityAttribute().getId(),
-                x.getMaturityLevel().getId(),
-                x.getMaturityScores().stream()
-                    .sorted(Comparator.comparingLong(MaturityScore::getMaturityLevelId))
-                    .collect(toCollection(LinkedHashSet::new)),
-                x.getConfidenceValue()
-            ))
-            .toList();
+            subjectReport.attributes(),
+            subjectReport.maturityLevels().size());
     }
 }

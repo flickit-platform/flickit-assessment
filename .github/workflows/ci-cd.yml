@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'releases-*'
   pull_request:
     branches:
       - '*'
@@ -28,10 +29,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: 21
           distribution: adopt
 
       - name: Build with Maven
@@ -56,10 +57,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: 21
           distribution: adopt
 
       - name: Run Tests
@@ -96,10 +97,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: 21
           distribution: adopt
 
       - name: Extract Maven project version
@@ -151,33 +152,47 @@ jobs:
           username: flickit-platform
           password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: 21
           distribution: adopt
 
-      - name: Build and push image
-        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" ${{ env.JIB_CMD }}
+      - name: Extract GitHub SHA
+        run: echo sha=${GITHUB_SHA:0:7} >> $GITHUB_OUTPUT
+        id: github_sha7
 
-  darkube-deploy-latest:
+      - name: Check output
+        env:
+          GITHUB_SHA_7: ${{ steps.github_sha7.outputs.sha }}
+        run: |
+          echo $GITHUB_SHA_7
+
+      - name: Build and push image
+        run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.github_sha7.outputs.sha }}" ${{ env.JIB_CMD }}
+
+  deploy-latest:
     needs: [build-and-push-latest-image]
-    name: darkube deploy latest
-    container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
+    name: deploy latest
+    container:
+      image: registry.hectora.cloud/hectora-public/darkube-cli:v1.1
+      env:
+        CONSOLE_API_BASE_URL: "https://api.hectora.cloud"
     runs-on: ubuntu-latest
 
     steps:
       - name: Run script
-        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "latest" --job-id "$GITHUB_RUN_ID" --stateless-app true
+        run: darkube deploy --ref main --token ${DEPLOY_TOKEN} --app-id ${APP_ID}  --image-tag "${GITHUB_SHA:0:7}" --job-id "$GITHUB_RUN_ID" --stateless-app true
         env:
-          DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
-          DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
+          DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
+          APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
 
   tag-and-release:
     needs: [sonar]
     name: tag and release
     runs-on: ubuntu-latest
-    if: ${{ ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) &&
+    if: ${{ ((github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/releases-'))) ||
+      github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true) &&
       !contains( needs.sonar.outputs.project_version , 'SNAPSHOT') }}
 
     permissions:
@@ -217,10 +232,10 @@ jobs:
           username: flickit-platform
           password: ${{ secrets.GH_PACKAGES_TOKEN }}
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: 21
           distribution: adopt
 
       - name: Extract Maven project version
@@ -237,15 +252,18 @@ jobs:
         if: v${{ steps.project.outputs.version }} == ${{ steps.vars.outputs.tag }}
         run: mvn ${{ env.JIB_OPT }} -Djib.to.image="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.project.outputs.version }}" ${{ env.JIB_CMD }}
 
-  darkube-deploy:
+  deploy:
     needs: [build-and-push-image]
-    name: darkube deploy
-    container: hamravesh.hamdocker.ir/public/darkube-cli:v1.1
+    name:  deploy
+    container:
+      image: registry.hectora.cloud/hectora-public/darkube-cli:v1.1
+      env:
+        CONSOLE_API_BASE_URL: "https://api.hectora.cloud"
     runs-on: ubuntu-latest
     steps:
       - name: Run script
-        run: darkube deploy --ref main --token ${DARKUBE_DEPLOY_TOKEN} --app-id ${DARKUBE_APP_ID}  --image-tag "${PROJECT_VERSION}" --job-id "$GITHUB_RUN_ID" --stateless-app true
+        run: darkube deploy --ref main --token ${DEPLOY_TOKEN} --app-id ${APP_ID}  --image-tag "${PROJECT_VERSION}" --job-id "$GITHUB_RUN_ID" --stateless-app true
         env:
-          DARKUBE_DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_PROD }}
-          DARKUBE_APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_PROD }}
+          DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_PROD }}
+          APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_PROD }}
           PROJECT_VERSION: ${{ needs.build-and-push-image.outputs.project_version }}

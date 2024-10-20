@@ -7,11 +7,10 @@ import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.port.out.expertgroup.UploadExpertGroupPicturePort;
+import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UploadKitDslToFileStoragePort;
 import org.flickit.assessment.kit.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
-import org.flickit.assessment.kit.config.MinioConfigProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,19 +21,18 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 import static org.flickit.assessment.kit.adapter.out.minio.MinioConstants.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
+
 
 @Component
 @AllArgsConstructor
 public class MinioAdapter implements
     UploadKitDslToFileStoragePort,
     LoadKitDSLJsonFilePort,
-    UploadExpertGroupPicturePort,
     CreateFileDownloadLinkPort {
 
     public static final String SLASH = "/";
-    public static final String DOT = ".";
     private final MinioClient minioClient;
     private final MinioConfigProperties properties;
 
@@ -86,21 +84,6 @@ public class MinioAdapter implements
                 .build());
 
         return new String(stream.readAllBytes(), UTF_8);
-    }
-
-    @SneakyThrows
-    @Override
-    public String uploadPicture(MultipartFile pictureFile) {
-        String bucketName = properties.getBucketNames().getAvatar();
-        UUID uniqueDir = UUID.randomUUID();
-
-        String extension = "";
-        if (pictureFile.getOriginalFilename() != null)
-            extension = pictureFile.getOriginalFilename().substring(pictureFile.getOriginalFilename().indexOf(DOT));
-
-        String objectName = uniqueDir + PIC_FILE_NAME + extension;
-        writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
-        return bucketName + SLASH + objectName;
     }
 
     @SneakyThrows

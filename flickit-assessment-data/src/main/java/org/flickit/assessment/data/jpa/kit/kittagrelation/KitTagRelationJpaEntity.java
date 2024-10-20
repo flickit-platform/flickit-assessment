@@ -2,26 +2,39 @@ package org.flickit.assessment.data.jpa.kit.kittagrelation;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.flickit.assessment.data.jpa.AbstractEntity;
+
 
 @Entity
-@Table(name = "baseinfo_assessmentkittag_assessmentkits")
+@Table(name = "fak_kit_tag_relation")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class KitTagRelationJpaEntity {
+@IdClass(KitTagRelationJpaEntity.KitTagRelationKey.class)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+public class KitTagRelationJpaEntity extends AbstractEntity<KitTagRelationJpaEntity.KitTagRelationKey> {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "baseinfo_profiletag_profiles_id_seq")
-    @SequenceGenerator(name = "baseinfo_profiletag_profiles_id_seq", sequenceName = "baseinfo_profiletag_profiles_id_seq", allocationSize = 1)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
-
-    @Column(name = "assessmentkittag_id")
+    @Column(name = "tag_id", nullable = false)
     private Long tagId;
 
-    @Column(name = "assessmentkit_id")
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_id", nullable = false)
     private Long kitId;
+
+    @Override
+    public KitTagRelationKey getId() {
+        return new KitTagRelationKey(tagId, kitId);
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class KitTagRelationKey {
+        private Long tagId;
+        private Long kitId;
+    }
 }

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.34-01" author="Maziyar Gerami">
+        <dropForeignKeyConstraint baseTableName="fak_answer_option_impact" constraintName="fk_fak_answeroptionimpact_questionimpact" />
+    </changeSet>
+
+    <changeSet id="0.34-02" author="Maziyar Gerami">
+        <dropPrimaryKey tableName="fak_question_impact"/>
+    </changeSet>
+
+    <changeSet id="0.34-03" author="Maziyar Gerami">
+        <addPrimaryKey tableName="fak_question_impact"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_question_impact"/>
+    </changeSet>
+
+    <changeSet id="0.34-04" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fak_answer_option_impact"
+                                 baseColumnNames="question_impact_id, kit_version_id"
+                                 constraintName="fk_fak_answeroptionimpact_questionimpact"
+                                 referencedTableName="fak_question_impact"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.34-05" author="Mahdi Rezazadeh">
+        <dropUniqueConstraint tableName="fak_subject"
+                              constraintName="uq_fak_subject_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-06" author="Mahdi Rezazadeh">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_subject_index_kitversionid"
+                             tableName="fak_subject"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.34-07" author="Maziyar Gerami">
+        <dropUniqueConstraint tableName="fak_questionnaire"
+                              constraintName="uq_fak_questionnaire_index_kitversionid"/>
+    </changeSet>
+
+    <changeSet id="0.34-08" author="Maziyar Gerami">
+        <addUniqueConstraint columnNames="kit_version_id, index"
+                             constraintName="uq_fak_questionnaire_index_kitversionid"
+                             tableName="fak_questionnaire"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.34-09" author="Mahdi Rezazadeh">
+        <dropPrimaryKey tableName="fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.34-10" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_answer_option_impact"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.34-11" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_question" constraintName="uq_fak_question_code_questionnaireid"/>
+    </changeSet>
+
+    <changeSet id="0.34-12" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_question" columnNames="index, kit_version_id, questionnaire_id"
+                             constraintName="uq_fak_question_index_kitversionid_questionnaireid"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.34-13" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_question" constraintName="uq_fak_question_code_kitversionid_questionnaireid"/>
+    </changeSet>
+
+    <changeSet id="0.34-14" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_question" columnNames="code, kit_version_id, questionnaire_id"
+                             constraintName="uq_fak_question_code_kitversionid_questionnaireid"
+                             initiallyDeferred="true"/>
+    </changeSet>
+</databaseChangeLog>

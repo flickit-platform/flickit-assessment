@@ -17,7 +17,7 @@ public interface GrantUserAccessToKitUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<UpdateKitByDslUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_NULL)
         Long kitId;

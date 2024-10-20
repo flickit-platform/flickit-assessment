@@ -2,8 +2,6 @@ package org.flickit.assessment.core.application.port.in.evidence;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -14,7 +12,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class UpdateEvidenceUseCaseParamTest {
 
     @Test
@@ -68,7 +65,7 @@ class UpdateEvidenceUseCaseParamTest {
     @Test
     void testUpdateEvidenceParam_DescriptionSizeIsGreaterThanMax_ErrorMessage() {
         var id = UUID.randomUUID();
-        var desc = randomAlphabetic(1001);
+        var desc = randomAlphabetic(201);
         UUID lastModifiedById = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateEvidenceUseCase.Param(id, desc, "POSITIVE", lastModifiedById));
@@ -79,7 +76,7 @@ class UpdateEvidenceUseCaseParamTest {
     void testUpdateEvidenceParam_DescriptionSizeIsEqualToMax_Success() {
         assertDoesNotThrow(() -> new UpdateEvidenceUseCase.Param(
             UUID.randomUUID(),
-            randomAlphabetic(1000),
+            randomAlphabetic(200),
             "NEGATIVE",
             UUID.randomUUID()
         ));
@@ -90,6 +87,6 @@ class UpdateEvidenceUseCaseParamTest {
         UUID id = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new UpdateEvidenceUseCase.Param(id,"new_description", "POSITIVE", null));
-        assertThat(throwable).hasMessage("lastModifiedById: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

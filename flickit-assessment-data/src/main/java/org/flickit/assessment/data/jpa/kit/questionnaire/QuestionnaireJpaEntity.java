@@ -2,16 +2,20 @@ package org.flickit.assessment.data.jpa.kit.questionnaire;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@IdClass(QuestionnaireJpaEntity.EntityId.class)
 @Table(name = "fak_questionnaire")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class QuestionnaireJpaEntity {
 
@@ -22,10 +26,12 @@ public class QuestionnaireJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
-    @Column(name = "code", length = 50, nullable = false)
+    @Column(name = "code", length = 100, nullable = false)
     private String code;
 
     @Column(name = "index", nullable = false)
@@ -34,11 +40,8 @@ public class QuestionnaireJpaEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", length = 500, nullable = false)
     private String description;
-
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
@@ -51,4 +54,13 @@ public class QuestionnaireJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private long id;
+        private long kitVersionId;
+    }
 }

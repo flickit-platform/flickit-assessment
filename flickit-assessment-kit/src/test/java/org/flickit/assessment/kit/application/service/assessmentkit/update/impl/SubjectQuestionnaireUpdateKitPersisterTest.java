@@ -58,7 +58,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
         );
 
         var subjectQuestionnaire = new SubjectQuestionnaire(1L, software.getId(), cleanArchitecture.getId());
-        when(loadPort.loadByKitVersionId(savedKit.getKitVersionId())).thenReturn(List.of(subjectQuestionnaire));
+        when(loadPort.loadByKitVersionId(savedKit.getActiveVersionId())).thenReturn(List.of(subjectQuestionnaire));
 
         var questionDslModel = QuestionDslModel.builder()
             .questionnaireCode(cleanArchitecture.getCode())
@@ -102,7 +102,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
 
         var subjectQuestionnaire1 = new SubjectQuestionnaire(1L, software.getId(), cleanArchitecture.getId());
         var subjectQuestionnaire2 = new SubjectQuestionnaire(2L, team.getId(), cleanArchitecture.getId());
-        when(loadPort.loadByKitVersionId(savedKit.getKitVersionId())).thenReturn(List.of(subjectQuestionnaire1, subjectQuestionnaire2));
+        when(loadPort.loadByKitVersionId(savedKit.getActiveVersionId())).thenReturn(List.of(subjectQuestionnaire1, subjectQuestionnaire2));
 
 //        question impacts on softwareReliability for software subject in cleanArchitecture questionnaire
         var questionDslModel = QuestionDslModel.builder()
@@ -139,8 +139,10 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
 
         var subjectIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
         var questionnaireIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
-        verify(createPort, times(1)).persist(subjectIdArgumentCaptor.capture(), questionnaireIdArgumentCaptor.capture());
+        var kitVersionIdArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(createPort, times(1)).persist(subjectIdArgumentCaptor.capture(), questionnaireIdArgumentCaptor.capture(), kitVersionIdArgumentCaptor.capture());
         assertEquals(team.getId(), subjectIdArgumentCaptor.getValue());
         assertEquals(teamLearning.getId(), questionnaireIdArgumentCaptor.getValue());
+        assertEquals(savedKit.getActiveVersionId(), kitVersionIdArgumentCaptor.getValue());
     }
 }

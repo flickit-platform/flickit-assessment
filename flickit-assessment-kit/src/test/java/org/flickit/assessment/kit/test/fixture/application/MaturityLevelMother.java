@@ -26,12 +26,17 @@ public class MaturityLevelMother {
         return idToMaturityLevel.get(id);
     }
 
+    public static List<MaturityLevel> allLevels() {
+        return List.of(levelOne(), levelTwo(), levelThree(), levelFour(), levelFive());
+    }
+
     public static MaturityLevel levelOne() {
         return new MaturityLevel(
             LEVEL_ONE_ID,
             LEVEL_ONE_CODE,
             LEVEL_ONE_CODE,
             1,
+            LEVEL_ONE_CODE,
             1,
             List.of());
     }
@@ -42,6 +47,7 @@ public class MaturityLevelMother {
             LEVEL_TWO_CODE,
             LEVEL_TWO_CODE,
             2,
+            LEVEL_TWO_CODE,
             2,
             levelCompetenceForLevelTwo());
     }
@@ -52,6 +58,7 @@ public class MaturityLevelMother {
             LEVEL_THREE_CODE,
             LEVEL_THREE_CODE,
             3,
+            LEVEL_THREE_CODE,
             3,
             levelCompetenceForLevelThree());
     }
@@ -62,6 +69,7 @@ public class MaturityLevelMother {
             LEVEL_FOUR_CODE,
             LEVEL_FOUR_CODE,
             4,
+            LEVEL_FOUR_CODE,
             4,
             levelCompetenceForLevelFour());
     }
@@ -72,6 +80,7 @@ public class MaturityLevelMother {
             LEVEL_FIVE_CODE,
             LEVEL_FIVE_CODE,
             5,
+            LEVEL_FIVE_CODE,
             5,
             levelCompetenceForLevelFive());
     }

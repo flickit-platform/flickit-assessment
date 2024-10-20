@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.domain.User;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.DeleteKitUserAccessUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadKitExpertGroupPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.kituseraccess.LoadKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
+import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.DeleteKitUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,34 +28,35 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 public class DeleteKitUserAccessService implements DeleteKitUserAccessUseCase {
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
-    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    private final LoadKitUserAccessPort loadKitUserAccessPort;
+    private final CheckKitUserAccessPort checkKitUserAccessPort;
     private final DeleteKitUserAccessPort deleteKitUserAccessPort;
     private final LoadUserPort loadUserPort;
 
     @Override
     public void delete(Param param) {
-        validateCurrentUser(param.getKitId(), param.getCurrentUserId());
+        ExpertGroup expertGroup = loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId());
+        validateCurrentUser(expertGroup.getOwnerId(), param.getCurrentUserId());
         checkAccessExistence(param);
+        checkAccessNotBelongsToExpertGroupOwner(expertGroup.getOwnerId(), param.getUserId());
 
         deleteKitUserAccessPort.delete(new DeleteKitUserAccessPort.Param(param.getKitId(), param.getUserId()));
         log.debug("User [{}] access to private kit [{}] is removed.", param.getCurrentUserId(), param.getCurrentUserId());
     }
 
-    private void validateCurrentUser(Long kitId, UUID currentUserId) {
-        Long expertGroupId = loadKitExpertGroupPort.loadKitExpertGroupId(kitId);
-        UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)
-            .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
-        if (!Objects.equals(expertGroupOwnerId, currentUserId)) {
+    private void validateCurrentUser(UUID expertGroupOwnerId, UUID currentUserId) {
+        if (!Objects.equals(expertGroupOwnerId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
     }
 
     private void checkAccessExistence(Param param) {
         User user = loadUserPort.loadById(param.getUserId()).orElseThrow(
             () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_USER_NOT_FOUND));
-        loadKitUserAccessPort.loadByKitIdAndUserId(param.getKitId(), user.getId()).orElseThrow(
-            () -> new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND)
-        );
+        if (!checkKitUserAccessPort.hasAccess(param.getKitId(), user.getId()))
+            throw new ResourceNotFoundException(DELETE_KIT_USER_ACCESS_KIT_USER_NOT_FOUND);
+    }
+
+    private void checkAccessNotBelongsToExpertGroupOwner(UUID expertGroupOwnerId, UUID userId) {
+        if (Objects.equals(expertGroupOwnerId, userId))
+            throw new ValidationException(DELETE_KIT_USER_ACCESS_USER_IS_EXPERT_GROUP_OWNER);
     }
 }

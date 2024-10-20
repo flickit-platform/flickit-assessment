@@ -53,9 +53,9 @@ public interface CreateKitByDslUseCase {
 
         public Param(String title, String summary, String about, Boolean isPrivate,
                      Long kitDslId, Long expertGroupId, List<Long> tagIds, UUID currentUserId) {
-            this.title = title;
-            this.summary = summary;
-            this.about = about;
+            this.title = title != null ? title.strip() : null;
+            this.summary = summary != null ? summary.strip() : null;
+            this.about = about != null ? about.strip() : null;
             this.isPrivate = isPrivate;
             this.kitDslId = kitDslId;
             this.expertGroupId = expertGroupId;

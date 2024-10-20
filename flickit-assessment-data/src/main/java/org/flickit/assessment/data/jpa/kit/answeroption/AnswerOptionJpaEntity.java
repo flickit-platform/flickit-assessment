@@ -3,10 +3,12 @@ package org.flickit.assessment.data.jpa.kit.answeroption;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@IdClass(AnswerOptionJpaEntity.EntityId.class)
 @Table(name = "fak_answer_option")
 @Getter
 @Setter
@@ -22,17 +24,16 @@ public class AnswerOptionJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "index", nullable = false)
     private Integer index;
 
     @Column(name = "title", nullable = false)
     private String title;
-
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
 
     @Column(name = "question_id", nullable = false)
     private Long questionId;
@@ -48,4 +49,13 @@ public class AnswerOptionJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private Long id;
+        private Long kitVersionId;
+    }
 }

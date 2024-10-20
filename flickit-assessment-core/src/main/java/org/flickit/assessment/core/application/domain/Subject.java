@@ -13,5 +13,5 @@ public class Subject {
 
     private final long id;
     private final String title;
-    private List<QualityAttribute> qualityAttributes;
+    private List<Attribute> attributes;
 }

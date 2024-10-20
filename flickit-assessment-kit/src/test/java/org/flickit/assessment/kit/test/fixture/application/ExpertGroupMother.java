@@ -6,17 +6,12 @@ import java.util.UUID;
 
 public class ExpertGroupMother {
 
-    private static Long id = 134L;
+    private static long id = 123L;
 
-    public static ExpertGroup createExpertGroup(String picturePath, UUID ownerId) {
-        return new ExpertGroup(
-            id++,
-            "Title" + id,
-            "Bio" + id,
-            "About" + id,
-            picturePath,
-            "Website" + id,
-            ownerId
-        );
+    public static ExpertGroup createExpertGroup() {
+        return new ExpertGroup(id++,
+            "title" + id,
+            "path/to/picture",
+            UUID.randomUUID());
     }
 }

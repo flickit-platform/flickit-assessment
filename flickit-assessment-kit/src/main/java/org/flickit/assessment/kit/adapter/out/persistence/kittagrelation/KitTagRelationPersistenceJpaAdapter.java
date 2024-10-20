@@ -17,7 +17,7 @@ public class KitTagRelationPersistenceJpaAdapter implements CreateKitTagRelation
     @Override
     public void persist(List<Long> tagIds, Long kitId) {
         List<KitTagRelationJpaEntity> entities = tagIds.stream()
-            .map(tagId -> new KitTagRelationJpaEntity(null, tagId, kitId))
+            .map(tagId -> new KitTagRelationJpaEntity(tagId, kitId))
             .toList();
         repository.saveAll(entities);
     }

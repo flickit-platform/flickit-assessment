@@ -22,14 +22,15 @@ public class AnswerOptionPersistenceJpaAdapter implements
     @Override
     public void update(UpdateAnswerOptionPort.Param param) {
         repository.update(param.id(),
+            param.kitVersionId(),
             param.title(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
 
     @Override
-    public List<AnswerOption> loadByQuestionId(Long questionId) {
-        return repository.findByQuestionId(questionId).stream()
+    public List<AnswerOption> loadByQuestionId(Long questionId, Long kitVersionId) {
+        return repository.findByQuestionIdAndKitVersionId(questionId, kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }
@@ -38,5 +39,4 @@ public class AnswerOptionPersistenceJpaAdapter implements
     public Long persist(CreateAnswerOptionPort.Param param) {
         return repository.save(AnswerOptionMapper.mapToJpaEntity(param)).getId();
     }
-
 }

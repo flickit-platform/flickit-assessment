@@ -2,7 +2,10 @@ package org.flickit.assessment.kit.application.service.assessmentkit.update.impl
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
@@ -43,11 +46,11 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
         var questionnaireIdToSubjectIdMap = extractQuestionnaireIdToSubjectIdMap(ctx, savedKit, dslKit);
-        var savedSubjectQuestionnaires = loadPort.loadByKitVersionId(savedKit.getKitVersionId());
+        var savedSubjectQuestionnaires = loadPort.loadByKitVersionId(savedKit.getActiveVersionId());
         var savedQuestionnaireIdToSubjectIdToIdMap =
             questionnaireIdToSubjectIdToIdMap(savedSubjectQuestionnaires);
 
-        updateSubjectQuestionnaires(savedQuestionnaireIdToSubjectIdToIdMap, questionnaireIdToSubjectIdMap);
+        updateSubjectQuestionnaires(savedQuestionnaireIdToSubjectIdToIdMap, questionnaireIdToSubjectIdMap, savedKit.getActiveVersionId());
 
         return new UpdateKitPersisterResult(false);
     }
@@ -99,7 +102,7 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
     }
 
     private void updateSubjectQuestionnaires(Map<Long, HashMap<Long, Long>> savedQuestionnaireIdToSubjectIdMap,
-                                             Map<Long, Set<Long>> questionnaireIdToSubjectIdMap) {
+                                             Map<Long, Set<Long>> questionnaireIdToSubjectIdMap, Long kitVersionId) {
         for (Map.Entry<Long, Set<Long>> entry : questionnaireIdToSubjectIdMap.entrySet()) {
             Long questionnaireId = entry.getKey();
             var savedSubjectIdToIdMap = savedQuestionnaireIdToSubjectIdMap.getOrDefault(questionnaireId, new HashMap<>());
@@ -120,7 +123,7 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
             });
 
             addedSubjectIds.forEach(subjectId -> {
-                long subjectQuestionnaireId = createPort.persist(subjectId, questionnaireId);
+                long subjectQuestionnaireId = createPort.persist(subjectId, questionnaireId, kitVersionId);
                 log.debug("SubjectQuestionnaire[id={}, subjectId={}, questionnaireId={}] created.",
                     subjectQuestionnaireId, subjectId, questionnaireId);
             });

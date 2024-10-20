@@ -10,6 +10,9 @@
     </parent>
 
     <artifactId>flickit-assessment-server</artifactId>
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
 
     <dependencies>
         <dependency>
@@ -26,11 +29,15 @@
         </dependency>
         <dependency>
             <groupId>org.flickit</groupId>
-            <artifactId>flickit-assessment-common</artifactId>
+            <artifactId>flickit-advice-engine</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flickit</groupId>
-            <artifactId>flickit-advice-engine</artifactId>
+            <artifactId>flickit-assessment-users</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flickit</groupId>
+            <artifactId>flickit-assessment-common</artifactId>
         </dependency>
     </dependencies>
 

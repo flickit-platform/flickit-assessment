@@ -12,6 +12,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetEvidenceListUseCase {
@@ -38,20 +39,31 @@ public interface GetEvidenceListUseCase {
         @Min(value = 0, message = GET_EVIDENCE_LIST_PAGE_MIN)
         int page;
 
-        public Param(Long questionId, UUID assessmentId, int size, int page) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(Long questionId, UUID assessmentId, int size, int page, UUID currentUserId) {
             this.questionId = questionId;
             this.assessmentId = assessmentId;
             this.size = size;
             this.page = page;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record EvidenceListItem(
-        UUID id,
-        String description,
-        UUID createdById,
-        UUID assessmentId,
-        String type,
-        LocalDateTime lastModificationTime){}
+    record EvidenceListItem(UUID id,
+                            String description,
+                            String type,
+                            LocalDateTime lastModificationTime,
+                            Integer attachmentsCount,
+                            User createdBy,
+                            Boolean editable,
+                            Boolean deletable) {
+    }
+
+    record User(UUID id,
+                String displayName,
+                String pictureLink) {
+    }
 }

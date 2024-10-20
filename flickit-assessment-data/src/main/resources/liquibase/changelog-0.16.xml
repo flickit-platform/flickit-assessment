@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+
+    <changeSet id="0.16-01" author="Maziyar Gerami">
+        <renameTable oldTableName="baseinfo_expertgroup" newTableName="fau_expert_group"/>
+    </changeSet>
+
+    <changeSet id="0.16-02" author="Maziyar Gerami">
+        <renameSequence oldSequenceName="baseinfo_expertgroup_id_seq" newSequenceName="fau_expert_group_id_seq"/>
+    </changeSet>
+
+    <changeSet id="0.16-03" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="created_by" type="uuid" valueComputed="owner_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-04" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_expert_group"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.16-05" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="last_modified_by" type="uuid" valueComputed="owner_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-06" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_expert_group"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.16-07" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-08" author="Maziyar Gerami">
+        <renameColumn tableName="fau_expert_group"
+                      oldColumnName="name"
+                      newColumnName="title"/>
+    </changeSet>
+
+    <changeSet id="0.16-09" author="Maziyar Gerami">
+        <sql>alter table fau_expert_group rename constraint baseinfo_expertgroup_pkey to pk_fau_expert_group;</sql>
+    </changeSet>
+
+    <changeSet id="0.16-10" author="Maziyar Gerami">
+        <sql>alter table fau_expert_group rename constraint baseinfo_expertgroup_name_key to uq_fac_expertgroup_title;</sql>
+    </changeSet>
+
+    <changeSet id="0.16-11" author="Mahnaz Khorsandi">
+        <dropForeignKeyConstraint baseTableName="fau_expert_group"
+                                  constraintName="baseinfo_expertgroup_owner_id_84de2f0a_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.16-12" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fau_expert_group"
+                                 baseColumnNames="owner_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_owner"/>
+    </changeSet>
+
+    <changeSet id="0.16-13" author="Maziyar Gerami">
+        <dropColumn tableName="baseinfo_expertgroupaccess" columnName="id"/>
+    </changeSet>
+
+    <changeSet id="0.16-14" author="Maziyar Gerami">
+        <renameTable oldTableName="baseinfo_expertgroupaccess" newTableName="fau_expert_group_user_access"/>
+    </changeSet>
+
+    <changeSet id="0.16-15" author="Maziyar Gerami">
+        <addPrimaryKey tableName="fau_expert_group_user_access"
+                       columnNames="expert_group_id, user_id"
+                       constraintName="pk_fau_expert_group_user_access"
+                       validate="true"/>
+    </changeSet>
+
+    <changeSet id="0.16-16" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="created_by" type="uuid"
+                    valueComputed="fau_expert_group.owner_id FROM fau_expert_group WHERE fau_expert_group.id = expert_group_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-17" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_access_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.16-18" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="last_modified_by" type="uuid"
+                    valueComputed="fau_expert_group.owner_id FROM fau_expert_group WHERE fau_expert_group.id = expert_group_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-19" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_access_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.16-20" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-21" author="Mahnaz Khorsandi">
+        <dropForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                  constraintName="baseinfo_expertgroup_expert_group_id_2839af9e_fk_baseinfo_"/>
+    </changeSet>
+
+    <changeSet id="0.16-22" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                 baseColumnNames="expert_group_id"
+                                 referencedTableName="fau_expert_group"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_access_expertgroup"/>
+    </changeSet>
+
+    <changeSet id="0.16-23" author="Mahnaz Khorsandi">
+        <dropForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                  constraintName="baseinfo_expertgroupaccess_user_id_3c79acf7_fk_account_user_id"/>
+    </changeSet>
+
+    <changeSet id="0.16-24" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fau_expert_group_user_access"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fau_expertgroup_user_access_user"/>
+    </changeSet>
+
+    <changeSet id="0.16-25" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="fak_assessment_kit.creation_time FROM fak_assessment_kit
+                                    WHERE fak_kit_version.kit_id = fak_assessment_kit.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-26" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="fak_assessment_kit.last_modification_time FROM fak_assessment_kit
+                                    WHERE fak_kit_version.kit_id = fak_assessment_kit.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16.27" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="created_by" type="uuid"
+                    valueComputed="fak_assessment_kit.created_by FROM fak_assessment_kit
+                                    WHERE fak_kit_version.kit_id = fak_assessment_kit.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-28" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_version"
+                                 baseColumnNames="created_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitversion_user_createdby"/>
+    </changeSet>
+
+    <changeSet id="0.16-29" author="Ali Sedaghat">
+        <addColumn tableName="fak_kit_version">
+            <column name="last_modified_by" type="uuid"
+                    valueComputed="fak_assessment_kit.last_modified_by FROM fak_assessment_kit
+                                    WHERE fak_kit_version.kit_id = fak_assessment_kit.id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-30" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_version"
+                                 baseColumnNames="last_modified_by"
+                                 referencedTableName="account_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fak_kitversion_user_lastmodifiedby"/>
+    </changeSet>
+
+    <changeSet id="0.16-31" author="Maziyar Gerami">
+        <dropColumn tableName="fau_expert_group_user_access"
+                    columnName="invite_email">
+        </dropColumn>
+    </changeSet>
+
+    <changeSet id="0.16-32" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="status" type="tinyint" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-33" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="invite_token" type="uuid" defaultValue="null">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-34" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fau_expert_group_user_access" columnNames="expert_group_id,user_id"
+                             constraintName="uq_fau_expertgroupaccess_expertgroupid_userid"/>
+    </changeSet>
+
+    <changeSet id="0.16-35" author="Mayizar Gerami">
+        <addColumn tableName="fau_expert_group_user_access">
+            <column name="invite_date" type="${datetime_with_time_zone_type}" defaultValue="null">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.16-36" author="MKouhestani">
+        <dropNotNullConstraint tableName="fac_quality_attribute_value" columnName="quality_attribute_id"/>
+    </changeSet>
+
+    <changeSet id="0.16-37" author="Maziyar Gerami">
+        <addColumn tableName="fau_expert_group">
+            <column name="deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

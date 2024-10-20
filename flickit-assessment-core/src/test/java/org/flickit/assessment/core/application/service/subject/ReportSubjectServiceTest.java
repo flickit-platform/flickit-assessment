@@ -1,10 +1,10 @@
 package org.flickit.assessment.core.application.service.subject;
 
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.QualityAttribute;
-import org.flickit.assessment.core.application.domain.QualityAttributeValue;
-import org.flickit.assessment.core.application.domain.SubjectValue;
-import org.flickit.assessment.core.application.domain.report.SubjectReport;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.domain.report.SubjectAttributeReportItem;
+import org.flickit.assessment.core.application.domain.report.SubjectReportItem;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.subject.ReportSubjectUseCase;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
@@ -16,14 +16,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.UUID;
 
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
-import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
-import static org.flickit.assessment.core.test.fixture.application.QualityAttributeMother.simpleAttribute;
-import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.withAttributeAndMaturityLevel;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndMaturityLevelAndSubjectWithQAs;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_REPORT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -39,56 +36,69 @@ class ReportSubjectServiceTest {
     @Mock
     private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
 
+    @Mock
+    private AssessmentAccessChecker assessmentAccessChecker;
+
+    @Test
+    void testReportSubject_WhenCurrentUserDoesntHaveAssessmentAccess_ThenThrowsAccessDeniedException() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID assessmentId = UUID.randomUUID();
+        long subjectId = 1;
+        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(assessmentId, subjectId, currentUserId);
+
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.reportSubject(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
     @Test
     void testReportSubject_ValidResult() {
-        QualityAttribute attribute1 = simpleAttribute();
-        QualityAttribute attribute2 = simpleAttribute();
-        QualityAttribute attribute3 = simpleAttribute();
-        QualityAttribute attribute4 = simpleAttribute();
-        QualityAttribute attribute5 = simpleAttribute();
-        List<QualityAttribute> attributes = List.of(
-            attribute1,
-            attribute2,
-            attribute3,
-            attribute4,
-            attribute5
-        );
-        List<QualityAttributeValue> qaValues = List.of(
-            withAttributeAndMaturityLevel(attribute1, levelOne()),
-            withAttributeAndMaturityLevel(attribute2, levelTwo()),
-            withAttributeAndMaturityLevel(attribute3, levelThree()),
-            withAttributeAndMaturityLevel(attribute4, levelFour()),
-            withAttributeAndMaturityLevel(attribute5, levelFive())
-        );
-        SubjectValue subjectValue = withQAValuesAndMaturityLevelAndSubjectWithQAs
-            (qaValues, MaturityLevelMother.levelThree(), attributes);
-        AssessmentResult assessmentResult = validResultWithSubjectValuesAndMaturityLevel(
-            List.of(subjectValue), levelTwo());
+        UUID currentUserId = UUID.randomUUID();
+        UUID assessmentId = UUID.randomUUID();
+        long subjectId = 1;
+        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(assessmentId, subjectId, currentUserId);
 
-        ReportSubjectUseCase.Param param = new ReportSubjectUseCase.Param(
-            assessmentResult.getAssessment().getId(),
-            subjectValue.getSubject().getId());
+        MaturityLevel maturityLevel1 = MaturityLevelMother.levelTwo();
+        MaturityLevel maturityLevel2 = MaturityLevelMother.levelFive();
+        var subjectReportItem = new SubjectReportItem(2L, "software", "description", maturityLevel1,
+            100.0, true, true);
+        var maturityScore1 = new SubjectAttributeReportItem.MaturityScore(maturityLevel1, 23.1);
+        var maturityScore2 = new SubjectAttributeReportItem.MaturityScore(maturityLevel2, 53.2);
 
-        when(loadSubjectReportInfoPort.load(assessmentResult.getAssessment().getId(), subjectValue.getSubject().getId()))
-            .thenReturn(assessmentResult);
-        doNothing().when(validateAssessmentResult).validate(assessmentResult.getAssessment().getId());
+        var subjectAttributeReportItem1 = new SubjectAttributeReportItem(3L,
+            4,
+            "scalability",
+            "desc1",
+            maturityLevel1,
+            List.of(maturityScore1, maturityScore2),
+            100.0);
 
-        SubjectReport subjectReport = service.reportSubject(param);
+        var subjectAttributeReportItem2 = new SubjectAttributeReportItem(4L,
+            4,
+            "flexibility",
+            "desc2",
+            maturityLevel2,
+            List.of(maturityScore1, maturityScore2),
+            90.0);
 
-        assertNotNull(subjectReport);
-        assertNotNull(subjectReport.subject());
-        assertEquals(subjectValue.getSubject().getId(), subjectReport.subject().id());
-        assertEquals(subjectValue.getMaturityLevel().getId(), subjectReport.subject().maturityLevelId());
-        assertEquals(assessmentResult.getIsCalculateValid(), subjectReport.subject().isCalculateValid());
+        LoadSubjectReportInfoPort.Result subjectReport = new LoadSubjectReportInfoPort.Result(subjectReportItem,
+            List.of(maturityLevel1, maturityLevel2),
+            List.of(subjectAttributeReportItem1, subjectAttributeReportItem2));
 
-        assertEquals(qaValues.size(), subjectReport.attributes().size());
-        for (SubjectReport.AttributeReportItem attribute : subjectReport.attributes())
-            assertEquals(allLevels().size(), attribute.maturityScores().size());
+        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
+        doNothing().when(validateAssessmentResult).validate(assessmentId);
+        when(loadSubjectReportInfoPort.load(assessmentId, subjectId)).thenReturn(subjectReport);
 
-        assertNotNull(subjectReport.topStrengths());
-        assertEquals(3, subjectReport.topStrengths().size());
+        ReportSubjectUseCase.Result result = service.reportSubject(param);
 
-        assertNotNull(subjectReport.topWeaknesses());
-        assertEquals(2, subjectReport.topWeaknesses().size());
+        assertNotNull(result);
+        assertEquals(subjectReport.subject(), result.subject());
+        assertEquals(subjectReport.attributes(), result.attributes());
+        assertEquals(subjectReport.maturityLevels().size(), result.maturityLevelsCount());
+        assertNotNull(result.topStrengths());
+        assertEquals(1, result.topStrengths().size());
+        assertNotNull(result.topWeaknesses());
+        assertEquals(1, result.topWeaknesses().size());
     }
 }

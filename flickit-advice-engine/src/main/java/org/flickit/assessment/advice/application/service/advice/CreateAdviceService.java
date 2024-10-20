@@ -8,14 +8,14 @@ import org.flickit.assessment.advice.application.domain.Plan;
 import org.flickit.assessment.advice.application.domain.Question;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.exception.FinalSolutionNotFoundException;
-import org.flickit.assessment.advice.application.port.in.CreateAdviceUseCase;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentSpacePort;
+import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentKitVersionIdPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
-import org.flickit.assessment.advice.application.port.out.space.CheckSpaceAccessPort;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -32,6 +32,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Slf4j
@@ -40,14 +41,14 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class CreateAdviceService implements CreateAdviceUseCase {
 
-    private final LoadAssessmentSpacePort loadAssessmentSpacePort;
-    private final CheckSpaceAccessPort checkSpaceAccessPort;
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadSelectedAttributeIdsRelatedToAssessmentPort loadSelectedAttributeIdsRelatedToAssessmentPort;
     private final LoadSelectedLevelIdsRelatedToAssessmentPort loadSelectedLevelIdsRelatedToAssessmentPort;
     private final LoadAttributeCurrentAndTargetLevelIndexPort loadAttributeCurrentAndTargetLevelIndexPort;
     private final LoadAdviceCalculationInfoPort loadAdviceCalculationInfoPort;
     private final SolverManager<Plan, UUID> solverManager;
+    private final LoadAssessmentKitVersionIdPort loadAssessmentKitVersionIdPort;
     private final LoadCreatedAdviceDetailsPort loadCreatedAdviceDetailsPort;
 
     @Override
@@ -76,14 +77,12 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             log.error("Error occurred while calculating best solution for assessment {}", assessmentId, e.getCause());
             throw new FinalSolutionNotFoundException(CREATE_ADVICE_FINDING_BEST_SOLUTION_EXCEPTION);
         }
-        return mapToResult(plan);
+        var kitVersionId = loadAssessmentKitVersionIdPort.loadKitVersionIdById(assessmentId);
+        return mapToResult(plan, kitVersionId);
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
-        var spaceId = loadAssessmentSpacePort.loadAssessmentSpaceId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_NOT_FOUND));
-
-        if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
+        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ADVICE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
@@ -121,12 +120,12 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             .toList();
     }
 
-    private Result mapToResult(Plan solution) {
+    private Result mapToResult(Plan solution, Long kitVersionId) {
         var questionIdsMap = solution.getQuestions().stream()
             .filter(Question::isRecommended)
             .collect(Collectors.toMap(Question::getId, Function.identity()));
 
-        var adviceQuestionDetails = loadCreatedAdviceDetailsPort.loadAdviceDetails(questionIdsMap.keySet().stream().toList());
+        var adviceQuestionDetails = loadCreatedAdviceDetailsPort.loadAdviceDetails(questionIdsMap.keySet().stream().toList(), kitVersionId);
 
         var adviceListItems = adviceQuestionDetails.stream().map(adv -> {
                 var question = questionIdsMap.get(adv.question().id());

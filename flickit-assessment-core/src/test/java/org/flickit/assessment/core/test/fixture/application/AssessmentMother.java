@@ -1,10 +1,11 @@
 package org.flickit.assessment.core.test.fixture.application;
 
 import org.flickit.assessment.core.application.domain.Assessment;
-import org.flickit.assessment.core.application.domain.AssessmentColor;
-import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentListUseCase.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.AssessmentListItem;
+import org.flickit.assessment.core.application.domain.Space;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 public class AssessmentMother {
@@ -17,29 +18,14 @@ public class AssessmentMother {
             UUID.randomUUID(),
             "my-assessment-" + counter,
             "My Assessment " + counter,
+            "Short title" + counter,
             AssessmentKitMother.kit(),
-            AssessmentColor.BLUE.getId(),
-            1L,
+            new Space(123L, "title"),
             LocalDateTime.now(),
             LocalDateTime.now(),
             0L,
-            false
-        );
-    }
-
-    public static Assessment assessmentWithKitId(long kitId) {
-        counter++;
-        return new Assessment(
-            UUID.randomUUID(),
-            "my-assessment-" + counter,
-            "My Assessment " + counter,
-            AssessmentKitMother.kitWithId(kitId),
-            AssessmentColor.BLUE.getId(),
-            1L,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            0L,
-            false
+            false,
+            UUID.randomUUID()
         );
     }
 
@@ -48,13 +34,15 @@ public class AssessmentMother {
         return new AssessmentListItem(
             UUID.randomUUID(),
             "my-assessment-" + counter,
-            kitId,
-            spaceId,
-            AssessmentColor.BLUE,
+            new AssessmentListItem.Kit(kitId, "kitTitle"+kitId, 2),
+            new AssessmentListItem.Space(spaceId, "spaceTitle"),
             LocalDateTime.now(),
-            1L,
+            new AssessmentListItem.MaturityLevel(counter, "levelTitle" + counter, 1, 2),
+            new Random().nextDouble() * 100,
             Boolean.TRUE,
-            Boolean.TRUE
+            Boolean.TRUE,
+            Boolean.FALSE,
+            true
         );
     }
 }

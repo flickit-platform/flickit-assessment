@@ -118,7 +118,7 @@ class AttributeUpdateKitPersisterTest {
 
         Mockito.verify(updateAttributePort, Mockito.times(2)).update(captor.capture());
         List<UpdateAttributePort.Param> params = captor.getAllValues();
-        UpdateAttributePort.Param firstAttr = params.get(0);
+        UpdateAttributePort.Param firstAttr = params.getFirst();
         UpdateAttributePort.Param secondAttr = params.get(1);
 
         assertEquals(attrOne.getId(), firstAttr.id());
@@ -180,7 +180,7 @@ class AttributeUpdateKitPersisterTest {
 
         Mockito.verify(updateAttributePort, Mockito.times(2)).update(captor.capture());
         List<UpdateAttributePort.Param> params = captor.getAllValues();
-        UpdateAttributePort.Param firstAttr = params.get(0);
+        UpdateAttributePort.Param firstAttr = params.getFirst();
         UpdateAttributePort.Param secondAttr = params.get(1);
 
         assertEquals(attrOne.getId(), firstAttr.id());
@@ -227,7 +227,7 @@ class AttributeUpdateKitPersisterTest {
             .attributes(List.of(dslAttrOne, dslAttrTwo, dslAttrThree))
             .build();
 
-        when(createAttributePort.persist(any(), eq(subject.getId()), eq(savedKit.getKitVersionId()))).thenReturn(attrThree.getId());
+        when(createAttributePort.persist(any(), eq(subject.getId()), eq(savedKit.getActiveVersionId()))).thenReturn(attrThree.getId());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         Map<String, Long> subjectsCodeToIdMap = Stream.of(subject).collect(toMap(Subject::getCode, Subject::getId));
@@ -245,7 +245,7 @@ class AttributeUpdateKitPersisterTest {
         assertEquals(attrThree.getDescription(), attributeCaptor.getValue().getDescription());
         assertEquals(attrThree.getWeight(), attributeCaptor.getValue().getWeight());
         assertEquals(subject.getId(), subjectIdCaptor.getValue());
-        assertEquals(savedKit.getKitVersionId(), kitIdCaptor.getValue());
+        assertEquals(savedKit.getActiveVersionId(), kitIdCaptor.getValue());
         assertTrue(result.isMajorUpdate());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ATTRIBUTES);

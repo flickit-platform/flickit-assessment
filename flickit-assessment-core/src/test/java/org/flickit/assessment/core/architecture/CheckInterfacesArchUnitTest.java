@@ -65,7 +65,7 @@ public class CheckInterfacesArchUnitTest {
             }
 
             private String describe(JavaClass port) {
-                return String.format("%s is implemented by %s",
+                return "%s is implemented by %s".formatted(
                     port.getSimpleName(), joinNamesOf(port.getAllSubclasses()));
             }
 

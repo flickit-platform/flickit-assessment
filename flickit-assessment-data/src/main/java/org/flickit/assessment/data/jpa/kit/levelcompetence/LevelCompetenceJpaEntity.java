@@ -2,12 +2,12 @@ package org.flickit.assessment.data.jpa.kit.levelcompetence;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@IdClass(LevelCompetenceJpaEntity.EntityId.class)
 @Table(name = "fak_level_competence")
 @Getter
 @Setter
@@ -18,18 +18,21 @@ public class LevelCompetenceJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_level_competence_id_seq")
+    @GeneratedValue(generator = "fak_level_competence_id_seq")
     @SequenceGenerator(name = "fak_level_competence_id_seq", sequenceName = "fak_level_competence_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "affected_level_id", referencedColumnName = "id", nullable = false)
-    private MaturityLevelJpaEntity affectedLevel;
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
-    @ManyToOne
-    @JoinColumn(name = "effective_level_id", referencedColumnName = "id", nullable = false)
-    private MaturityLevelJpaEntity effectiveLevel;
+    @Column(name = "affected_level_id", nullable = false)
+    private Long affectedLevelId;
+
+    @Column(name = "effective_level_id", nullable = false)
+    private Long effectiveLevelId;
 
     @Column(name = "value", nullable = false)
     private Integer value;
@@ -45,4 +48,13 @@ public class LevelCompetenceJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId {
+
+        private Long id;
+        private Long kitVersionId;
+    }
 }

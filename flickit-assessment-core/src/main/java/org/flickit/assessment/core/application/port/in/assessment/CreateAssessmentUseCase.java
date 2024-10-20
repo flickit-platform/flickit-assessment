@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
+import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 
 import java.util.UUID;
 
@@ -25,28 +27,29 @@ public interface CreateAssessmentUseCase {
         @Size(max = 100, message = CREATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
+        @Size(min = 3, message = CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN)
+        @Size(max = 20, message = CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX)
+        String shortTitle;
+
         @NotNull(message = CREATE_ASSESSMENT_SPACE_ID_NOT_NULL)
         Long spaceId;
 
         @NotNull(message = CREATE_ASSESSMENT_ASSESSMENT_KIT_ID_NOT_NULL)
-        Long assessmentKitId;
-
-        @NotNull(message = CREATE_ASSESSMENT_COLOR_ID_NOT_NULL)
-        Integer colorId;
+        Long kitId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID createdBy;
+        UUID currentUserId;
 
-        public Param(Long spaceId, String title, Long assessmentKitId, Integer colorId, UUID createdBy) {
+        public Param(Long spaceId, String title, String shortTitle, Long kitId, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
+            this.shortTitle = shortTitle != null && !shortTitle.isBlank() ? shortTitle.strip() : null;
             this.spaceId = spaceId;
-            this.assessmentKitId = assessmentKitId;
-            this.colorId = colorId;
-            this.createdBy = createdBy;
+            this.kitId = kitId;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record Result(UUID id){
+    record Result(UUID id, CreateAssessmentNotificationCmd notificationCmd) implements HasNotificationCmd {
     }
 }

@@ -2,33 +2,35 @@ package org.flickit.assessment.kit.application.service.assessmentkit.create;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitActiveVersionPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkittag.CreateKitTagRelationPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupMemberIdsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.UpdateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.GrantUserAccessToKitPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.minio.LoadKitDSLJsonFilePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +42,6 @@ class CreateKitByDslServiceTest {
     private static final UUID DSL_JSON_VERSION_ID = UUID.randomUUID();
     private static final String DSL_JSON = "sample/json/file/path/" + DSL_JSON_VERSION_ID;
     private static final Long KIT_ID = 1L;
-    private static final Long KIT_VERSION_ID = 1L;
     private static final String TITLE = "title";
     private static final String SUMMARY = "summary";
     private static final String ABOUT = "about";
@@ -66,10 +67,15 @@ class CreateKitByDslServiceTest {
     private GrantUserAccessToKitPort grantUserAccessToKitPort;
     @Mock
     private LoadExpertGroupMemberIdsPort loadExpertGroupMemberIdsPort;
+    @Mock
+    private CreateKitVersionPort createKitVersionPort;
+    @Mock
+    private UpdateKitActiveVersionPort updateKitActiveVersionPort;
 
     @Test
     void testCreateKitByDsl_ValidInputs_CreateAndSaveKit() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
+        long kitVersionId = 123L;
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(EXPERT_GROUP_OWNER_ID);
 
         when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenReturn(DSL_JSON);
 
@@ -77,19 +83,11 @@ class CreateKitByDslServiceTest {
         when(loadKitDSLJsonFilePort.loadDslJson(DSL_JSON)).thenReturn(dslContent);
 
         UUID currentUserId = EXPERT_GROUP_OWNER_ID;
-        var kitCreateParam = new CreateAssessmentKitPort.Param(
-            TITLE,
-            TITLE,
-            SUMMARY,
-            ABOUT,
-            Boolean.FALSE,
-            Boolean.FALSE,
-            EXPERT_GROUP_ID,
-            currentUserId);
-        when(createAssessmentKitPort.persist(kitCreateParam)).thenReturn(new CreateAssessmentKitPort.Result(KIT_ID, KIT_VERSION_ID));
 
-        doNothing().when(persister).persist(any(), eq(KIT_ID), eq(currentUserId));
-
+        when(createAssessmentKitPort.persist(any())).thenReturn(KIT_ID);
+        when(createKitVersionPort.persist(any())).thenReturn(kitVersionId);
+        doNothing().when(updateKitActiveVersionPort).updateActiveVersion(KIT_ID, kitVersionId);
+        doNothing().when(persister).persist(any(), anyLong(), any());
         doNothing().when(updateKitDslPort).update(anyLong(), anyLong(), any(), any());
 
         UUID expertGroupMemberId = UUID.randomUUID();
@@ -101,16 +99,33 @@ class CreateKitByDslServiceTest {
         doNothing().when(grantUserAccessToKitPort).grantUsersAccess(KIT_ID, expertGroupMemberIds);
 
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
-        Long savedKitId = service.create(param);
 
+        Long savedKitId = service.create(param);
         assertEquals(KIT_ID, savedKitId);
+
+        ArgumentCaptor<CreateAssessmentKitPort.Param> createKitPortParamCaptor = ArgumentCaptor.forClass(CreateAssessmentKitPort.Param.class);
+        verify(createAssessmentKitPort).persist(createKitPortParamCaptor.capture());
+        assertEquals(generateSlugCode(param.getTitle()), createKitPortParamCaptor.getValue().code());
+        assertEquals(param.getTitle(), createKitPortParamCaptor.getValue().title());
+        assertEquals(param.getSummary(), createKitPortParamCaptor.getValue().summary());
+        assertEquals(param.getAbout(), createKitPortParamCaptor.getValue().about());
+        assertFalse(createKitPortParamCaptor.getValue().published());
+        assertEquals(param.getIsPrivate(), createKitPortParamCaptor.getValue().isPrivate());
+        assertEquals(param.getExpertGroupId(), createKitPortParamCaptor.getValue().expertGroupId());
+        assertEquals(param.getCurrentUserId(), createKitPortParamCaptor.getValue().createdBy());
+
+        ArgumentCaptor<CreateKitVersionPort.Param> createVersionPortParamCaptor = ArgumentCaptor.forClass(CreateKitVersionPort.Param.class);
+        verify(createKitVersionPort).persist(createVersionPortParamCaptor.capture());
+        assertEquals(KIT_ID, createVersionPortParamCaptor.getValue().kitId());
+        assertEquals(KitVersionStatus.ACTIVE, createVersionPortParamCaptor.getValue().status());
+        assertEquals(param.getCurrentUserId(), createVersionPortParamCaptor.getValue().createdBy());
 
         verify(createKitTagRelationPort, times(1)).persist(List.of(TAG_ID), KIT_ID);
     }
 
     @Test
     void testCreateKitByDsl_CurrentUserIsNotExpertGroupOwner_ThrowException() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(EXPERT_GROUP_OWNER_ID);
 
         UUID currentUserId = UUID.randomUUID();
         var param = new CreateKitByDslUseCase.Param(TITLE, SUMMARY, ABOUT, Boolean.FALSE, KIT_DSL_ID, EXPERT_GROUP_ID, List.of(1L), currentUserId);
@@ -121,7 +136,7 @@ class CreateKitByDslServiceTest {
 
     @Test
     void testCreateKitByDsl_KitDslDoesNotExist_ThrowException() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(EXPERT_GROUP_OWNER_ID);
 
         when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenThrow(new ResourceNotFoundException(CREATE_KIT_BY_DSL_KIT_DSL_NOT_FOUND));
 
@@ -141,7 +156,7 @@ class CreateKitByDslServiceTest {
 
     @Test
     void testCreateKitByDsl_JsonFileIsNotUploaded_ThrowException() {
-        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(Optional.of(EXPERT_GROUP_OWNER_ID));
+        when(loadExpertGroupOwnerPort.loadOwnerId(EXPERT_GROUP_ID)).thenReturn(EXPERT_GROUP_OWNER_ID);
 
         when(loadDslJsonPathPort.loadJsonPath(KIT_DSL_ID)).thenReturn(DSL_JSON);
 

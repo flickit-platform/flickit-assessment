@@ -1,8 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.questionimpact;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -11,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQues
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper.mapToJpaEntityToPersist;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_IMPACT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -20,26 +20,38 @@ public class QuestionImpactPersistenceJpaAdapter implements
     UpdateQuestionImpactPort {
 
     private final QuestionImpactJpaRepository repository;
-    private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
     public Long persist(QuestionImpact impact) {
-        MaturityLevelJpaEntity maturityLevelJpaEntity = maturityLevelRepository.getReferenceById(impact.getMaturityLevelId());
-        return repository.save(mapToJpaEntityToPersist(impact, maturityLevelJpaEntity)).getId();
+        return repository.save(mapToJpaEntityToPersist(impact)).getId();
     }
 
     @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void delete(Long questionImpactId, Long kitVersionId) {
+        repository.deleteByIdAndKitVersionId(questionImpactId, kitVersionId);
     }
 
     @Override
-    public void update(UpdateQuestionImpactPort.Param param) {
-        repository.update(param.id(),
+    public void updateWeight(UpdateWeightParam param) {
+        repository.updateWeight(param.id(),
+            param.kitVersionId(),
             param.weight(),
             param.questionId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
 
+    @Override
+    public void update(UpdateQuestionImpactPort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(QUESTION_IMPACT_ID_NOT_FOUND);
+
+        repository.update(param.id(),
+            param.kitVersionId(),
+            param.weight(),
+            param.attributeId(),
+            param.maturityLevelId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
 }

@@ -28,8 +28,8 @@ public class LoadCreatedAdviceDetailsAdapter implements
     private final QuestionJpaRepository repository;
 
     @Override
-    public List<Result> loadAdviceDetails(List<Long> questionIds) {
-        var questionViews = repository.findAdviceQuestionsDetail(questionIds);
+    public List<Result> loadAdviceDetails(List<Long> questionIds, Long kitVersionId) {
+        var questionViews = repository.findAdviceQuestionsDetail(questionIds, kitVersionId);
 
         return questionViews.stream()
             .collect(groupingBy(QuestionAdviceView::getId))
@@ -39,7 +39,7 @@ public class LoadCreatedAdviceDetailsAdapter implements
     }
 
     private LoadCreatedAdviceDetailsPort.Result mapToAdviceListItem(List<QuestionAdviceView> questionAdviceViews) {
-        var view = questionAdviceViews.get(0);
+        var view = questionAdviceViews.getFirst();
         AdviceQuestion question = new AdviceQuestion(view.getId(), view.getTitle(), view.getIndex());
 
         var options = questionAdviceViews.stream()

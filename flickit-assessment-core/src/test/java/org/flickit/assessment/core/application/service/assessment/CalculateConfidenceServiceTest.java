@@ -1,5 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Param;
@@ -8,7 +10,7 @@ import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessm
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
-import org.flickit.assessment.core.application.port.out.qualityattributevalue.CreateQualityAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
@@ -21,12 +23,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_CONFIDENCE;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
-import static org.flickit.assessment.core.test.fixture.application.QualityAttributeValueMother.toBeCalcAsConfidenceLevelWithWeight;
+import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsConfidenceLevelWithWeight;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -35,6 +39,9 @@ class CalculateConfidenceServiceTest {
 
     @InjectMocks
     private CalculateConfidenceService service;
+
+    @Mock
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     private LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
@@ -55,33 +62,58 @@ class CalculateConfidenceServiceTest {
     private CreateSubjectValuePort createSubjectValuePort;
 
     @Mock
-    private CreateQualityAttributeValuePort createAttributeValuePort;
+    private CreateAttributeValuePort createAttributeValuePort;
+
+    @Test
+    void testCalculateConfidenceLevel_UserHasNotAccess_ThrowsException() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+
+        Param param = new Param(assessmentId, currentUserId);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.calculate(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadConfidenceLevelCalculateInfoPort,
+            updateCalculatedConfidenceLevelResultPort,
+            updateAssessmentPort,
+            loadKitLastMajorModificationTimePort,
+            loadSubjectsPort,
+            createSubjectValuePort,
+            createAttributeValuePort
+        );
+    }
 
     @Test
     void testCalculateConfidenceLevel_ValidInput_ValidResults() {
-        List<QualityAttributeValue> s1AttributeValues = List.of(
-            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId())
+        UUID currentUserId = UUID.randomUUID();
+
+        List<AttributeValue> s1AttributeValues = List.of(
+            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()), //6 questions with 5 answers with cl=1, attrCl=5/30
+            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()), //6 questions with 5 answers with cl=5, attrCl = 25/30
+            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()), //6 questions with 5 answers with cl=3, attrCl = 15/30
+            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId()) //6 questions with 5 answers with cl=5, attrCl = 25/30
         );
 
-        List<QualityAttributeValue> s2AttributeValues = List.of(
-            toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_SURE.getId())
+        List<AttributeValue> s2AttributeValues = List.of(
+            toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()), //6 questions with 5 answers with cl=3, attrCl = 15/30
+            toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_SURE.getId()) //6 questions with 5 answers with cl=5, attrCl = 25/30
         );
 
         List<SubjectValue> subjectValues = List.of(
-            SubjectValueMother.withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList()),
-            SubjectValueMother.withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList())
+            SubjectValueMother.withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
+            SubjectValueMother.withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
 
-        Param param = new Param(assessmentResult.getAssessment().getId());
+        Param param = new Param(assessmentResult.getAssessment().getId(), currentUserId);
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(true);
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
 
@@ -93,33 +125,35 @@ class CalculateConfidenceServiceTest {
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
         assertNotNull(result);
-        double maxPossibleSumConfidence = 75;
-        double gainedSumConfidence = 53;
+        double maxPossibleSumConfidence = (100 * 2) + (100 * 2) + (100 * 3) + (100 * 3) + (100 * 4) + (100 * 1); //1500
+        double gainedSumConfidence = (((5.0 / 30.0) * 2) + ((25.0 / 30.0) * 2) + ((15.0 / 30.0) * 3) + ((25.0 / 30.0) * 3) + ((15.0 / 30.0) * 4) + ((25.0 / 30.0) * 1)) * 100;
         double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
-        assertEquals(confidenceValue, result.confidenceValue());
+        assertEquals(confidenceValue, result.confidenceValue(), 0.01);
     }
 
     @Test
     void testCalculateMaturityLevel_KitChanged_CreatesNewAttributeAnSubjectValuesAndCalculates() {
-        List<QualityAttributeValue> s1AttributeValues = List.of(
-            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
-            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId())
+        UUID currentUserId = UUID.randomUUID();
+
+        List<AttributeValue> s1AttributeValues = List.of(
+            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_UNSURE.getId()), //6 questions with 5 answers with cl=1, attrCl=5/30,
+            toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.COMPLETELY_SURE.getId()), //6 questions with 5 answers with cl=5, attrCl = 25/30
+            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()), //6 questions with 5 answers with cl=3, attrCl = 15/30
+            toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.COMPLETELY_SURE.getId()) //6 questions with 5 answers with cl=5, attrCl = 25/30
         );
 
-        List<QualityAttributeValue> s2AttributeValues = List.of(
+        List<AttributeValue> s2AttributeValues = List.of(
             toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_SURE.getId())
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList()),
-            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(QualityAttributeValue::getQualityAttribute).toList())
+            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
+            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
         );
 
-        var newAttributeValue = toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId());
-        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(), List.of(newAttributeValue.getQualityAttribute()));
+        var newAttributeValue = toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()); //6 questions with 5 answers with cl=3, attrCl = 15/30
+        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(), List.of(newAttributeValue.getAttribute()));
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
         subjects.add(newSubjectValue.getSubject());
@@ -127,8 +161,9 @@ class CalculateConfidenceServiceTest {
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
 
-        CalculateConfidenceUseCase.Param param = new CalculateConfidenceUseCase.Param(assessmentResult.getAssessment().getId());
+        CalculateConfidenceUseCase.Param param = new CalculateConfidenceUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(true);
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
@@ -142,9 +177,10 @@ class CalculateConfidenceServiceTest {
         assertNotNull(result);
         assertNotNull(result.confidenceValue());
 
-        double maxPossibleSumConfidence = 95;
-        double gainedSumConfidence = 65;
+        double maxPossibleSumConfidence = (100 * 2) + (100 * 2) + (100 * 3) + (100 * 3) + (100 * 4) + (100 * 1) + (100 * 4);
+        double gainedSumConfidence = (((5.0 / 30.0) * 2) + ((25.0 / 30.0) * 2) + ((15.0 / 30.0) * 3) +
+            ((25.0 / 30.0) * 3) + ((15.0 / 30.0) * 4) + ((25.0 / 30.0) * 1) + (15.0 / 30.0) * 4) * 100;
         double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
-        assertEquals(confidenceValue, result.confidenceValue());
+        assertEquals(confidenceValue, result.confidenceValue(), 0.01);
     }
 }

@@ -3,10 +3,14 @@ package org.flickit.assessment.data.jpa.kit.question;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Entity
+@IdClass(QuestionJpaEntity.EntityId.class)
 @Table(name = "fak_question")
 @Getter
 @Setter
@@ -22,10 +26,12 @@ public class QuestionJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
     private String code;
 
     @Column(name = "index", nullable = false)
@@ -43,9 +49,6 @@ public class QuestionJpaEntity {
     @Column(name = "advisable", nullable = false)
     private Boolean advisable;
 
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
-
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
 
@@ -60,4 +63,19 @@ public class QuestionJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private long id;
+        private long kitVersionId;
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class Fields {
+
+        public static final String INDEX = "index";
+    }
 }
