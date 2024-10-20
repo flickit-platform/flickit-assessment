@@ -10,10 +10,6 @@ import static java.lang.System.currentTimeMillis;
 
 public class JwtTokenTestUtils {
 
-    public static String generateJwtTokenAsAuthHeader(UUID userId) {
-        return "Bearer " + generateJwtToken(userId);
-    }
-
     public static String generateJwtToken(UUID userId) {
         return generateJwtToken(Map.of("sub", userId.toString()));
     }
