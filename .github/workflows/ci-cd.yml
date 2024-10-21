@@ -47,7 +47,7 @@ jobs:
           distribution: adopt
 
       - name: Run Tests
-        run: mvn test
+        run: mvn test -Dspring.profiles.active=test
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
