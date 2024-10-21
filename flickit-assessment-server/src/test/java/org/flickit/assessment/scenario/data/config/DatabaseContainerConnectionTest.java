@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
-class TestDatabaseContainerConnectionTest {
+class DatabaseContainerConnectionTest {
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
