@@ -17,7 +17,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class QuestionJpaEntity implements Cloneable {
+public class QuestionJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -64,14 +64,20 @@ public class QuestionJpaEntity implements Cloneable {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Override
-    public QuestionJpaEntity clone() {
-        try {
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return (QuestionJpaEntity) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+    public QuestionJpaEntity(QuestionJpaEntity entity) {
+        this.id = entity.getId();
+        this.kitVersionId = entity.getKitVersionId();
+        this.code = entity.getCode();
+        this.index = entity.getIndex();
+        this.title = entity.getTitle();
+        this.hint = entity.getHint();
+        this.mayNotBeApplicable = entity.getMayNotBeApplicable();
+        this.advisable = entity.getAdvisable();
+        this.questionnaireId = entity.getQuestionnaireId();
+        this.creationTime = entity.getCreationTime();
+        this.lastModificationTime = entity.getLastModificationTime();
+        this.createdBy = entity.getCreatedBy();
+        this.lastModifiedBy = entity.getLastModifiedBy();
     }
 
     @Data

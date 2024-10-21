@@ -1,6 +1,9 @@
 package org.flickit.assessment.kit.adapter.out.persistence.kitclone;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
@@ -28,6 +31,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
 public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
@@ -43,12 +49,44 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
     private final SubjectQuestionnaireJpaRepository subjectQuestionnaireRepository;
 
+    @PersistenceContext
+    EntityManager entityManager;
+
     @Override
     public void cloneKit(long activeKitVersionId, long updatingKitVersionId, UUID currentUserId) {
 
-        List<QuestionnaireJpaEntity> clonedQuestionnaireEntities =
+        QuestionnaireJpaEntity questionnaireJpaEntity = questionnaireRepository.findByIdAndKitVersionId(3075L, activeKitVersionId)
+                .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
+
+        long id = questionnaireRepository.setNextVal(questionnaireJpaEntity.getId() - 1);
+        QuestionnaireJpaEntity clonedQuestionnaireEntity = new QuestionnaireJpaEntity(questionnaireJpaEntity);
+        clonedQuestionnaireEntity.setKitVersionId(updatingKitVersionId);
+        clonedQuestionnaireEntity.setId(id);
+        clonedQuestionnaireEntity.setLastModificationTime(LocalDateTime.now());
+        clonedQuestionnaireEntity.setLastModifiedBy(currentUserId);
+
+        entityManager.persist(clonedQuestionnaireEntity);
+
+        QuestionJpaEntity questionJpaEntity = questionRepository.findByIdAndKitVersionId(22831, activeKitVersionId)
+                .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
+
+        QuestionJpaEntity clonedQuestionEntity = new QuestionJpaEntity(questionJpaEntity);
+
+        long questionId = questionRepository.setNextVal(questionJpaEntity.getId() - 1);
+        clonedQuestionEntity.setKitVersionId(updatingKitVersionId);
+        clonedQuestionEntity.setQuestionnaireId(clonedQuestionnaireEntity.getId());
+        clonedQuestionEntity.setId(questionId);
+        clonedQuestionEntity.setLastModificationTime(LocalDateTime.now());
+        clonedQuestionEntity.setLastModifiedBy(currentUserId);
+
+        questionRepository.save(clonedQuestionEntity);
+
+
+
+        /*List<QuestionnaireJpaEntity> clonedQuestionnaireEntities =
             questionnaireRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     QuestionnaireJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -59,6 +97,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<QuestionJpaEntity> clonedQuestionEntities =
             questionRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     QuestionJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -69,6 +108,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<MaturityLevelJpaEntity> clonedMaturityLevelEntities =
             maturityLevelRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     MaturityLevelJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -79,6 +119,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<SubjectJpaEntity> clonedSubjectEntities =
             subjectRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     SubjectJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -89,6 +130,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<AttributeJpaEntity> clonedAttributeEntities =
             attributeRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     AttributeJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -100,6 +142,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<AnswerOptionJpaEntity> clonedAnswerOptionEntities =
             answerOptionRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     AnswerOptionJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -110,6 +153,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<AnswerOptionImpactJpaEntity> clonedAnswerOptionImpactEntities =
             answerOptionImpactRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     AnswerOptionImpactJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -120,6 +164,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<QuestionImpactJpaEntity> clonedQuestionImpactEntities =
             questionImpactRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     QuestionImpactJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -130,6 +175,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<LevelCompetenceJpaEntity> clonedLevelCompetenceEntities =
             levelCompetenceRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     LevelCompetenceJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     cloned.setLastModificationTime(LocalDateTime.now());
@@ -140,6 +186,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         List<SubjectQuestionnaireJpaEntity> clonedSubjectQuestionnaireEntities =
             subjectQuestionnaireRepository.findAllByKitVersionId(activeKitVersionId).stream()
                 .map(e -> {
+                    entityManager.detach(e);
                     SubjectQuestionnaireJpaEntity cloned = e.clone();
                     cloned.setKitVersionId(updatingKitVersionId);
                     return cloned;
@@ -154,6 +201,6 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         answerOptionImpactRepository.saveAll(clonedAnswerOptionImpactEntities);
         questionImpactRepository.saveAll(clonedQuestionImpactEntities);
         levelCompetenceRepository.saveAll(clonedLevelCompetenceEntities);
-        subjectQuestionnaireRepository.saveAll(clonedSubjectQuestionnaireEntities);
+        subjectQuestionnaireRepository.saveAll(clonedSubjectQuestionnaireEntities);*/
     }
 }

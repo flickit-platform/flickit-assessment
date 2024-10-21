@@ -27,6 +27,9 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
 
+    @Query(value = "SELECT setval('fak_question_id_seq',:id)", nativeQuery = true)
+    long setNextVal(@Param("id") long id);
+
     @Modifying
     @Query("""
             UPDATE QuestionJpaEntity q

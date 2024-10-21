@@ -24,6 +24,10 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
 
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
 
+
+    @Query(value = "SELECT setval('fak_questionnaire_id_seq',:id)", nativeQuery = true)
+    long setNextVal(@Param("id") long id);
+
     @Modifying
     @Query("""
             UPDATE QuestionnaireJpaEntity q
