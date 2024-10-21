@@ -82,4 +82,10 @@
                              constraintName="uq_fak_question_code_kitversionid_questionnaireid"
                              initiallyDeferred="true"/>
     </changeSet>
+
+    <changeSet id="0.34-15" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_question_impact" columnNames="question_id, attribute_id, maturity_level_id, kit_version_id"
+                             constraintName="uq_fak_question_impact_question_attribute_level_kitversion"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>
