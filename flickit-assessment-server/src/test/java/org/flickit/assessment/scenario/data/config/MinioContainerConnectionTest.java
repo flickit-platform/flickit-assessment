@@ -2,7 +2,6 @@ package org.flickit.assessment.scenario.data.config;
 
 import io.minio.MinioClient;
 import io.minio.messages.Bucket;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,9 +17,8 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @Testcontainers
-@RequiredArgsConstructor
 class MinioContainerConnectionTest {
 
     @Autowired
