@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.subjectquestionnaire;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireJpaRepository;
 import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
@@ -24,6 +25,7 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
     CreateSubjectQuestionnairePort {
 
     private final SubjectQuestionnaireJpaRepository repository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public List<SubjectQuestionnaire> loadByKitVersionId(long kitVersionId) {
@@ -38,14 +40,20 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
 
     @Override
     public long persist(long subjectId, long questionnaireId, Long kitVersionId) {
-        return repository.save(mapToJpaEntity(subjectId, questionnaireId, kitVersionId)).getId();
+        var entity = mapToJpaEntity(subjectId, questionnaireId, kitVersionId);
+        entity.setId(sequenceGenerators.generateSubjectQuestionnaireId());
+        return repository.save(entity).getId();
     }
 
     @Override
     public void persistAll(Map<Long, Set<Long>> questionnaireIdToSubjectIdsMap, Long kitVersionId) {
         List<SubjectQuestionnaireJpaEntity> entities = questionnaireIdToSubjectIdsMap.keySet().stream()
             .flatMap(questionnaireId -> questionnaireIdToSubjectIdsMap.get(questionnaireId).stream()
-                .map(subjectId -> mapToJpaEntity(subjectId, questionnaireId, kitVersionId)))
+                .map(subjectId -> {
+                    var entity = mapToJpaEntity(subjectId, questionnaireId, kitVersionId);
+                    entity.setId(sequenceGenerators.generateSubjectQuestionnaireId());
+                    return entity;
+                }))
             .toList();
         repository.saveAll(entities);
     }
