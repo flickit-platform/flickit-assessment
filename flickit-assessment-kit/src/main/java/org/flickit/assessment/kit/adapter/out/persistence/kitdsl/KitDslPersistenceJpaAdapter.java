@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.port.out.kitdsl.CreateKitDslPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslFilePathPort;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadDslJsonPathPort;
@@ -26,10 +27,13 @@ public class KitDslPersistenceJpaAdapter implements
     LoadDslFilePathPort {
 
     private final KitDslJpaRepository repository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public Long create(String dslFilePath, String jsonFilePath, UUID createdBy) {
-        return repository.save(toJpaEntity(dslFilePath, jsonFilePath, createdBy)).getId();
+        var entity = toJpaEntity(dslFilePath, jsonFilePath, createdBy);
+        entity.setId(sequenceGenerators.generateKitDslId());
+        return repository.save(entity).getId();
     }
 
     @Override
