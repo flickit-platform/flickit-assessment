@@ -249,8 +249,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             var updateParam = new UpdateQuestionPort.Param(
                 savedQuestion.getId(),
                 kitVersionId,
-                dslQuestion.getTitle(),
                 dslQuestion.getCode(),
+                dslQuestion.getTitle(),
                 dslQuestion.getIndex(),
                 dslQuestion.getDescription(),
                 dslQuestion.isMayNotBeApplicable(),
