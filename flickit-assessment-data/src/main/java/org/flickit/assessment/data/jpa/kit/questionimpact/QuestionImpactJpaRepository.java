@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.questionimpact;
 
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpactJpaEntity, Long> {
+public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpactJpaEntity, QuestionnaireJpaEntity.EntityId> {
 
     List<QuestionImpactJpaEntity> findAllByQuestionIdAndKitVersionId(long questionId, long kitVersionId);
 
