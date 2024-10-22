@@ -58,28 +58,28 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         QuestionnaireJpaEntity questionnaireJpaEntity = questionnaireRepository.findByIdAndKitVersionId(3075L, activeKitVersionId)
                 .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
-        long id = questionnaireRepository.setNextVal(questionnaireJpaEntity.getId() - 1);
+        //long id = questionnaireRepository.setNextVal(questionnaireJpaEntity.getId() - 1);
         QuestionnaireJpaEntity clonedQuestionnaireEntity = new QuestionnaireJpaEntity(questionnaireJpaEntity);
         clonedQuestionnaireEntity.setKitVersionId(updatingKitVersionId);
-        clonedQuestionnaireEntity.setId(id);
+        clonedQuestionnaireEntity.setId(3075L);
         clonedQuestionnaireEntity.setLastModificationTime(LocalDateTime.now());
         clonedQuestionnaireEntity.setLastModifiedBy(currentUserId);
 
-        entityManager.persist(clonedQuestionnaireEntity);
+        questionnaireRepository.persistAndFlush(clonedQuestionnaireEntity);
 
         QuestionJpaEntity questionJpaEntity = questionRepository.findByIdAndKitVersionId(22831, activeKitVersionId)
                 .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
         QuestionJpaEntity clonedQuestionEntity = new QuestionJpaEntity(questionJpaEntity);
 
-        long questionId = questionRepository.setNextVal(questionJpaEntity.getId() - 1);
+        //long questionId = questionRepository.setNextVal(questionJpaEntity.getId() - 1);
         clonedQuestionEntity.setKitVersionId(updatingKitVersionId);
         clonedQuestionEntity.setQuestionnaireId(clonedQuestionnaireEntity.getId());
-        clonedQuestionEntity.setId(questionId);
+        clonedQuestionEntity.setId(22831L);
         clonedQuestionEntity.setLastModificationTime(LocalDateTime.now());
         clonedQuestionEntity.setLastModifiedBy(currentUserId);
 
-        questionRepository.save(clonedQuestionEntity);
+        questionRepository.persistAndFlush(clonedQuestionEntity);
 
 
 
