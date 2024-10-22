@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
@@ -20,7 +21,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class SubjectPersistenceJpaAdapter implements
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public void update(UpdateSubjectByDslPort.Param param) {
@@ -49,7 +52,9 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateSubjectPort.Param param) {
-        return repository.save(SubjectMapper.mapToJpaEntity(param)).getId();
+        var entity = SubjectMapper.mapToJpaEntity(param);
+        entity.setId(sequenceGenerators.generateSubjectId());
+        return repository.save(entity).getId();
     }
 
     @Override
