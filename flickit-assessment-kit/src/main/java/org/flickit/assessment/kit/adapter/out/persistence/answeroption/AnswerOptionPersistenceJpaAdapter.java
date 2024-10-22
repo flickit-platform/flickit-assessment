@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.answeroption;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
@@ -18,6 +19,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
     CreateAnswerOptionPort {
 
     private final AnswerOptionJpaRepository repository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public void update(UpdateAnswerOptionPort.Param param) {
@@ -37,6 +39,8 @@ public class AnswerOptionPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateAnswerOptionPort.Param param) {
-        return repository.save(AnswerOptionMapper.mapToJpaEntity(param)).getId();
+        var entity = AnswerOptionMapper.mapToJpaEntity(param);
+        entity.setId(sequenceGenerators.generateAnswerOptionId());
+        return repository.save(entity).getId();
     }
 }
