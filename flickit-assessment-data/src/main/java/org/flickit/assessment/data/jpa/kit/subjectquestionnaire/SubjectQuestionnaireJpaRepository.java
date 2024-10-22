@@ -7,4 +7,6 @@ import java.util.List;
 public interface SubjectQuestionnaireJpaRepository extends JpaRepository<SubjectQuestionnaireJpaEntity, Long> {
 
     List<SubjectQuestionnaireJpaEntity> findAllByKitVersionId(Long kitVersionId);
+
+    void deleteByKitVersionId(long kitVersionId);
 }
