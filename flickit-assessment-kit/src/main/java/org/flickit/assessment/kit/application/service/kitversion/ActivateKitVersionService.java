@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.kitversion;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.ACTIVATE_KIT_VERSION_STATUS_INVALID;
 
 @Service
 @Transactional
@@ -32,7 +34,11 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
 
     @Override
     public void activateKitVersion(Param param) {
-        var kit = loadKitVersionPort.load(param.getKitVersionId()).getKit();
+        var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
+        if (!KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
+            throw new ValidationException(ACTIVATE_KIT_VERSION_STATUS_INVALID);
+
+        var kit = kitVersion.getKit();
         var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);

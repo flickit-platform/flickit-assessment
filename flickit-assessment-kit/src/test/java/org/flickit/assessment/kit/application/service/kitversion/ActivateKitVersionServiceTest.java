@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.kitversion;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
@@ -12,6 +13,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.CreateSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.LoadSubjectQuestionnairePort;
+import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,6 +28,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.ACTIVATE_KIT_VERSION_STATUS_INVALID;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithKitVersionId;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
@@ -63,6 +66,19 @@ class ActivateKitVersionServiceTest {
         new SubjectQuestionnaire(null, 21L, 123L),
         new SubjectQuestionnaire(null, 31L, 456L)
     );
+
+    @Test
+    void testActivateKitVersion_kitVersionIsNotInUpdatingStatus_ThrowsValidationException() {
+        kitVersion = KitVersionMother.createActiveKitVersion(simpleKit());
+        var param = createParam(ActivateKitVersionUseCase.Param.ParamBuilder::build);
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+
+        var exception = assertThrows(ValidationException.class, () -> service.activateKitVersion(param));
+        assertEquals(ACTIVATE_KIT_VERSION_STATUS_INVALID, exception.getMessageKey());
+
+        verifyNoInteractions(loadExpertGroupOwnerPort, updateKitVersionStatusPort, updateKitActiveVersionPort, createSubjectQuestionnairePort);
+    }
 
     @Test
     void testActivateKitVersion_userHasNotAccess_ThrowsAccessDeniedException() {
