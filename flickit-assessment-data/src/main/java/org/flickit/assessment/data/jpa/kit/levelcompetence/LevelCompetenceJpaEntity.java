@@ -18,8 +18,6 @@ public class LevelCompetenceJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "fak_level_competence_id_seq")
-    @SequenceGenerator(name = "fak_level_competence_id_seq", sequenceName = "fak_level_competence_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
