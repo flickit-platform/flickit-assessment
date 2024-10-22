@@ -15,8 +15,7 @@ import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.Load
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
-
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ACTIVATE_KIT_VERSION_STATUS_INVALID;
 
@@ -48,11 +47,11 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
 
         updateKitVersionStatusPort.updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         updateKitActiveVersionPort.updateActiveVersion(kit.getId(), param.getKitVersionId());
-        var subjectQuestionnaires = loadSubjectQuestionnairePort.extractPairs(param.getKitVersionId())
-            .stream()
-            .collect(Collectors.groupingBy(
+
+        var subjectQuestionnaires = loadSubjectQuestionnairePort.extractPairs(param.getKitVersionId()).stream()
+            .collect(groupingBy(
                 SubjectQuestionnaire::getQuestionnaireId,
-                Collectors.mapping(SubjectQuestionnaire::getSubjectId, Collectors.toSet())));
+                mapping(SubjectQuestionnaire::getSubjectId, toSet())));
 
         createSubjectQuestionnairePort.persistAll(subjectQuestionnaires, param.getKitVersionId());
     }

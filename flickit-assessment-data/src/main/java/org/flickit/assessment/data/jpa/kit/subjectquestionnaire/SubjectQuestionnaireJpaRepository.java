@@ -12,13 +12,13 @@ public interface SubjectQuestionnaireJpaRepository extends JpaRepository<Subject
 
     @Query("""
             SELECT DISTINCT
-                fqr.id As questionnaireId,
-                fa.subjectId AS subjectId
-            FROM QuestionnaireJpaEntity fqr
-            JOIN QuestionJpaEntity fq ON fqr.id = fq.questionnaireId
-            JOIN QuestionImpactJpaEntity fqi ON fqi.questionId = fq.id
-            JOIN AttributeJpaEntity fa ON fa.id = fqi.attributeId
-            WHERE fqr.kitVersionId = :kitVersionId
+                qr.id As questionnaireId,
+                a.subjectId AS subjectId
+            FROM QuestionnaireJpaEntity qr
+            JOIN QuestionJpaEntity q ON qr.id = q.questionnaireId
+            JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id
+            JOIN AttributeJpaEntity a ON a.id = qi.attributeId
+            WHERE qr.kitVersionId = :kitVersionId
         """)
     List<SubjectQuestionnaireView> findSubjectQuestionnairePairs(@Param("kitVersionId") long kitVersionId);
 }
