@@ -11,7 +11,9 @@ public interface SubjectQuestionnaireJpaRepository extends JpaRepository<Subject
     List<SubjectQuestionnaireJpaEntity> findAllByKitVersionId(Long kitVersionId);
 
     @Query("""
-            SELECT DISTINCT fqr.id As questionnaireId, fa.subjectId AS subjectId
+            SELECT DISTINCT
+                fqr.id As questionnaireId,
+                fa.subjectId AS subjectId
             FROM QuestionnaireJpaEntity fqr
             JOIN QuestionJpaEntity fq ON fqr.id = fq.questionnaireId
             JOIN QuestionImpactJpaEntity fqi ON fqi.questionId = fq.id

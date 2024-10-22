@@ -34,7 +34,8 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
     @Override
     public List<SubjectQuestionnaire> extractPairs(long kitVersionId) {
         return repository.findSubjectQuestionnairePairs(kitVersionId)
-            .stream().map(SubjectQuestionnaireMapper::mapSubjectQuestionnaireViewToDomainModel)
+            .stream()
+            .map(SubjectQuestionnaireMapper::mapSubjectQuestionnaireViewToDomainModel)
             .toList();
     }
 
