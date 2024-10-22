@@ -14,7 +14,6 @@ public class SubjectQuestionnaireJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_subject_questionnaire_id_seq")
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
