@@ -44,11 +44,6 @@ public class SubjectQuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteByKitVersionId(long kitVersionId) {
-        repository.deleteByKitVersionId(kitVersionId);
-    }
-
-    @Override
     public long persist(long subjectId, long questionnaireId, Long kitVersionId) {
         return repository.save(mapToJpaEntity(subjectId, questionnaireId, kitVersionId)).getId();
     }
