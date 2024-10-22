@@ -59,4 +59,16 @@ public class AssessmentResultMother {
         assessmentResult.setLastConfidenceCalculationTime(lastConfCalculationTime);
         return assessmentResult;
     }
+
+    public static AssessmentResult resultWithDeprecatedKitVersion(Boolean isCalculateValid, Boolean isConfCalculationValid,
+                                                                  LocalDateTime lastCalculationTime, LocalDateTime lastConfCalculationTime) {
+        Assessment assessment = AssessmentMother.assessment();
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), assessment, assessment.getAssessmentKit().getKitVersion() - 1,
+            List.of(), LocalDateTime.now(), LocalDateTime.now());
+        assessmentResult.setIsCalculateValid(isCalculateValid);
+        assessmentResult.setIsConfidenceValid(isConfCalculationValid);
+        assessmentResult.setLastCalculationTime(lastCalculationTime);
+        assessmentResult.setLastConfidenceCalculationTime(lastConfCalculationTime);
+        return assessmentResult;
+    }
 }

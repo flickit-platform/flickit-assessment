@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.internal;
 
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
+import org.flickit.assessment.common.exception.DeprecatedVersionException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
@@ -17,8 +18,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -120,5 +121,15 @@ class ValidateAssessmentResultTest {
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(lastKitMajorModificationTime);
 
         assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+    }
+
+    @Test
+    void testValidate_assessmentResultKitVersionIsDeprecated_isNotValid() {
+        UUID assessmentId = UUID.randomUUID();
+        AssessmentResult assessmentResult = AssessmentResultMother.resultWithDeprecatedKitVersion(Boolean.TRUE, Boolean.TRUE, LocalDateTime.now(), LocalDateTime.now());
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+
+        var exception = assertThrows(DeprecatedVersionException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_KIT_VERSION_DEPRECATED, exception.getMessage());
     }
 }
