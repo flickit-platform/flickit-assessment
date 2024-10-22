@@ -8,6 +8,7 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
@@ -39,10 +40,13 @@ public class QuestionnairePersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository assessmentKitRepository;
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public Long persist(Questionnaire questionnaire, long kitVersionId, UUID createdBy) {
-        return repository.save(QuestionnaireMapper.mapToJpaEntityToPersist(questionnaire, kitVersionId, createdBy)).getId();
+        var entity = QuestionnaireMapper.mapToJpaEntityToPersist(questionnaire, kitVersionId, createdBy);
+        entity.setId(sequenceGenerators.generateQuestionnaireId());
+        return repository.save(entity).getId();
     }
 
     @Override
