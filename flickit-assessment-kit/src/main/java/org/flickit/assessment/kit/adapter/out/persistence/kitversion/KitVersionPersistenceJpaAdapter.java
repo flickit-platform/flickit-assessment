@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
@@ -23,6 +24,7 @@ public class KitVersionPersistenceJpaAdapter implements
 
     private final KitVersionJpaRepository repository;
     private final AssessmentKitJpaRepository kitRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public KitVersion load(long kitVersionId) {
@@ -37,6 +39,7 @@ public class KitVersionPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
         var versionEntity = KitVersionMapper.createParamToJpaEntity(kitEntity, param);
+        versionEntity.setId(sequenceGenerators.generateKitVersionId());
         return repository.save(versionEntity).getId();
     }
 
