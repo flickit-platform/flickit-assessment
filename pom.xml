@@ -203,11 +203,6 @@
 			<artifactId>novu-java</artifactId>
 			<version>${novu.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-63</artifactId>
-            <version>3.8.3</version>
-        </dependency>
 	</dependencies>
 
 	<build>

@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.adapter.out.persistence.kitclone;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
@@ -31,8 +30,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -47,160 +44,102 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
     private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
-    private final SubjectQuestionnaireJpaRepository subjectQuestionnaireRepository;
 
     @PersistenceContext
     EntityManager entityManager;
 
     @Override
     public void cloneKit(long activeKitVersionId, long updatingKitVersionId, UUID currentUserId) {
+        List<QuestionnaireJpaEntity> questionnaireEntities =
+            questionnaireRepository.findAllByKitVersionId(activeKitVersionId);
 
-        QuestionnaireJpaEntity questionnaireJpaEntity = questionnaireRepository.findByIdAndKitVersionId(3075L, activeKitVersionId)
-                .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
+        for (QuestionnaireJpaEntity entity : questionnaireEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
-        //long id = questionnaireRepository.setNextVal(questionnaireJpaEntity.getId() - 1);
-        QuestionnaireJpaEntity clonedQuestionnaireEntity = new QuestionnaireJpaEntity(questionnaireJpaEntity);
-        clonedQuestionnaireEntity.setKitVersionId(updatingKitVersionId);
-        clonedQuestionnaireEntity.setId(3075L);
-        clonedQuestionnaireEntity.setLastModificationTime(LocalDateTime.now());
-        clonedQuestionnaireEntity.setLastModifiedBy(currentUserId);
+        List<QuestionJpaEntity> questionEntities =
+            questionRepository.findAllByKitVersionId(activeKitVersionId);
+        for (QuestionJpaEntity entity : questionEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
-        questionnaireRepository.persistAndFlush(clonedQuestionnaireEntity);
+        List<MaturityLevelJpaEntity> maturityLevelEntities =
+            maturityLevelRepository.findAllByKitVersionId(activeKitVersionId);
+        for (MaturityLevelJpaEntity entity : maturityLevelEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
-        QuestionJpaEntity questionJpaEntity = questionRepository.findByIdAndKitVersionId(22831, activeKitVersionId)
-                .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
+        List<SubjectJpaEntity> subjectEntities =
+            subjectRepository.findAllByKitVersionId(activeKitVersionId);
+        for (SubjectJpaEntity entity : subjectEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
-        QuestionJpaEntity clonedQuestionEntity = new QuestionJpaEntity(questionJpaEntity);
+        List<AttributeJpaEntity> attributeEntities =
+            attributeRepository.findAllByKitVersionId(activeKitVersionId);
+        for (AttributeJpaEntity entity : attributeEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
-        //long questionId = questionRepository.setNextVal(questionJpaEntity.getId() - 1);
-        clonedQuestionEntity.setKitVersionId(updatingKitVersionId);
-        clonedQuestionEntity.setQuestionnaireId(clonedQuestionnaireEntity.getId());
-        clonedQuestionEntity.setId(22831L);
-        clonedQuestionEntity.setLastModificationTime(LocalDateTime.now());
-        clonedQuestionEntity.setLastModifiedBy(currentUserId);
+        List<AnswerOptionJpaEntity> answerOptionEntities =
+            answerOptionRepository.findAllByKitVersionId(activeKitVersionId);
+        for (AnswerOptionJpaEntity entity : answerOptionEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
-        questionRepository.persistAndFlush(clonedQuestionEntity);
+        List<AnswerOptionImpactJpaEntity> answerOptionImpactEntities =
+            answerOptionImpactRepository.findAllByKitVersionId(activeKitVersionId);
+        for (AnswerOptionImpactJpaEntity entity : answerOptionImpactEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
+        List<QuestionImpactJpaEntity> questionImpactEntities =
+            questionImpactRepository.findAllByKitVersionId(activeKitVersionId);
+        for (QuestionImpactJpaEntity entity : questionImpactEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
+        List<LevelCompetenceJpaEntity> levelCompetenceEntities =
+            levelCompetenceRepository.findAllByKitVersionId(activeKitVersionId);
+        for (LevelCompetenceJpaEntity entity : levelCompetenceEntities) {
+            entityManager.detach(entity);
+            entity.setKitVersionId(updatingKitVersionId);
+            entity.setLastModificationTime(LocalDateTime.now());
+            entity.setLastModifiedBy(currentUserId);
+        }
 
-        /*List<QuestionnaireJpaEntity> clonedQuestionnaireEntities =
-            questionnaireRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    QuestionnaireJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-        List<QuestionJpaEntity> clonedQuestionEntities =
-            questionRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    QuestionJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-        List<MaturityLevelJpaEntity> clonedMaturityLevelEntities =
-            maturityLevelRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    MaturityLevelJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-        List<SubjectJpaEntity> clonedSubjectEntities =
-            subjectRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    SubjectJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-        List<AttributeJpaEntity> clonedAttributeEntities =
-            attributeRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    AttributeJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-
-        List<AnswerOptionJpaEntity> clonedAnswerOptionEntities =
-            answerOptionRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    AnswerOptionJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-        List<AnswerOptionImpactJpaEntity> clonedAnswerOptionImpactEntities =
-            answerOptionImpactRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    AnswerOptionImpactJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-        List<QuestionImpactJpaEntity> clonedQuestionImpactEntities =
-            questionImpactRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    QuestionImpactJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-        List<LevelCompetenceJpaEntity> clonedLevelCompetenceEntities =
-            levelCompetenceRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    LevelCompetenceJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    cloned.setLastModificationTime(LocalDateTime.now());
-                    cloned.setLastModifiedBy(currentUserId);
-                    return cloned;
-                }).toList();
-
-        List<SubjectQuestionnaireJpaEntity> clonedSubjectQuestionnaireEntities =
-            subjectQuestionnaireRepository.findAllByKitVersionId(activeKitVersionId).stream()
-                .map(e -> {
-                    entityManager.detach(e);
-                    SubjectQuestionnaireJpaEntity cloned = e.clone();
-                    cloned.setKitVersionId(updatingKitVersionId);
-                    return cloned;
-                }).toList();
-
-        questionnaireRepository.saveAll(clonedQuestionnaireEntities);
-        questionRepository.saveAll(clonedQuestionEntities);
-        maturityLevelRepository.saveAll(clonedMaturityLevelEntities);
-        subjectRepository.saveAll(clonedSubjectEntities);
-        attributeRepository.saveAll(clonedAttributeEntities);
-        answerOptionRepository.saveAll(clonedAnswerOptionEntities);
-        answerOptionImpactRepository.saveAll(clonedAnswerOptionImpactEntities);
-        questionImpactRepository.saveAll(clonedQuestionImpactEntities);
-        levelCompetenceRepository.saveAll(clonedLevelCompetenceEntities);
-        subjectQuestionnaireRepository.saveAll(clonedSubjectQuestionnaireEntities);*/
+        questionnaireRepository.saveAll(questionnaireEntities);
+        questionRepository.saveAll(questionEntities);
+        maturityLevelRepository.saveAll(maturityLevelEntities);
+        subjectRepository.saveAll(subjectEntities);
+        attributeRepository.saveAll(attributeEntities);
+        answerOptionRepository.saveAll(answerOptionEntities);
+        questionImpactRepository.saveAll(questionImpactEntities);
+        answerOptionImpactRepository.saveAll(answerOptionImpactEntities);
+        levelCompetenceRepository.saveAll(levelCompetenceEntities);
     }
 }

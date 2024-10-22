@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class MaturityLevelJpaEntity implements Cloneable {
+public class MaturityLevelJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -61,16 +61,6 @@ public class MaturityLevelJpaEntity implements Cloneable {
     public MaturityLevelJpaEntity(Long id, Long kitVersionId) {
         this.id = id;
         this.kitVersionId = kitVersionId;
-    }
-
-    @Override
-    public MaturityLevelJpaEntity clone() {
-        try {
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return (MaturityLevelJpaEntity) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
     }
 
     @Data

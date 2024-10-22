@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class SubjectQuestionnaireJpaEntity implements Cloneable {
+public class SubjectQuestionnaireJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -28,14 +28,4 @@ public class SubjectQuestionnaireJpaEntity implements Cloneable {
 
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
-
-    @Override
-    public SubjectQuestionnaireJpaEntity clone() {
-        try {
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return (SubjectQuestionnaireJpaEntity) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-    }
 }

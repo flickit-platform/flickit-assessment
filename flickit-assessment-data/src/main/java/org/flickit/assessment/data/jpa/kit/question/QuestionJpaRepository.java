@@ -1,6 +1,5 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
-import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.advice.QuestionAdviceView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId>, BaseJpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId> {
+public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, QuestionJpaEntity.EntityId> {
 
     List<QuestionJpaEntity> findAllByKitVersionId(long kitVersionId);
 
@@ -27,9 +26,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
 
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
-
-    @Query(value = "SELECT setval('fak_question_id_seq',:id)", nativeQuery = true)
-    long setNextVal(@Param("id") long id);
 
     @Modifying
     @Query("""

@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class SubjectJpaEntity implements Cloneable {
+public class SubjectJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -57,16 +57,6 @@ public class SubjectJpaEntity implements Cloneable {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Override
-    public SubjectJpaEntity clone() {
-        try {
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return (SubjectJpaEntity) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-    }
 
     @Data
     @NoArgsConstructor

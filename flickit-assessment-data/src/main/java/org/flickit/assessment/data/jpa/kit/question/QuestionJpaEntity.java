@@ -64,22 +64,6 @@ public class QuestionJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    public QuestionJpaEntity(QuestionJpaEntity entity) {
-        this.id = entity.getId();
-        this.kitVersionId = entity.getKitVersionId();
-        this.code = entity.getCode();
-        this.index = entity.getIndex();
-        this.title = entity.getTitle();
-        this.hint = entity.getHint();
-        this.mayNotBeApplicable = entity.getMayNotBeApplicable();
-        this.advisable = entity.getAdvisable();
-        this.questionnaireId = entity.getQuestionnaireId();
-        this.creationTime = entity.getCreationTime();
-        this.lastModificationTime = entity.getLastModificationTime();
-        this.createdBy = entity.getCreatedBy();
-        this.lastModifiedBy = entity.getLastModifiedBy();
-    }
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
