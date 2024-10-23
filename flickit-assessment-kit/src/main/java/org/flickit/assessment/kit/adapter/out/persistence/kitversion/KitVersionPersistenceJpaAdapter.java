@@ -8,19 +8,20 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.ExistKitVersionByKitIdAndStatusPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
 import org.springframework.stereotype.Component;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
 public class KitVersionPersistenceJpaAdapter implements
     LoadKitVersionPort,
     CreateKitVersionPort,
-    UpdateKitVersionStatusPort {
+    UpdateKitVersionStatusPort,
+    ExistKitVersionByKitIdAndStatusPort {
 
     private final KitVersionJpaRepository repository;
     private final AssessmentKitJpaRepository kitRepository;
@@ -46,5 +47,10 @@ public class KitVersionPersistenceJpaAdapter implements
     @Override
     public void updateStatus(long kitVersionId, KitVersionStatus newStatus) {
         repository.updateStatus(kitVersionId, newStatus.getId());
+    }
+
+    @Override
+    public boolean exists(long kitId, int status) {
+        return repository.existsByKitIdAndStatus(kitId, status);
     }
 }
