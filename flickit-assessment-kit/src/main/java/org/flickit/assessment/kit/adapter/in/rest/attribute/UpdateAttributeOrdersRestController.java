@@ -33,6 +33,6 @@ public class UpdateAttributeOrdersRestController {
         var orders = requestDto.orders().stream()
             .map(s -> new AttributeParam(s.id(), s.index()))
             .toList();
-        return new Param(kitVersionId, orders, currentUserId);
+        return new Param(kitVersionId, orders, requestDto.subjectId(), currentUserId);
     }
 }

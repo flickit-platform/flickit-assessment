@@ -88,6 +88,7 @@ class UpdateAttributeOrdersServiceTest {
         return Param.builder()
             .kitVersionId(1L)
             .attributes(List.of(new AttributeParam(2L, 5), new AttributeParam(3L, 6)))
+            .subjectId(2L)
             .currentUserId(UUID.randomUUID());
     }
 }

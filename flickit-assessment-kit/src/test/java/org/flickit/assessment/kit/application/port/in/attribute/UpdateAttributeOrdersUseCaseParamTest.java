@@ -35,6 +35,13 @@ class UpdateAttributeOrdersUseCaseParamTest {
     }
 
     @Test
+    void testUpdateAttributeOrdersUseCaseParam_subjectIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.subjectId(null)));
+        assertThat(throwable).hasMessage("subjectId: " + UPDATE_ATTRIBUTE_ORDERS_SUBJECT_ID_NOT_NULL);
+    }
+
+    @Test
     void testUpdateAttributeOrdersUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
@@ -69,6 +76,7 @@ class UpdateAttributeOrdersUseCaseParamTest {
         return Param.builder()
             .kitVersionId(1L)
             .attributes(List.of(new AttributeParam(2L, 5), new AttributeParam(3L, 6)))
+            .subjectId(2L)
             .currentUserId(UUID.randomUUID());
     }
 

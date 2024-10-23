@@ -37,6 +37,10 @@ public class UpdateAttributeOrdersService implements UpdateAttributeOrdersUseCas
         var attributeOrders = param.getAttributes().stream()
             .map(e -> new UpdateOrderParam.AttributeOrder(e.getId(), e.getIndex()))
             .toList();
-        return new UpdateOrderParam(attributeOrders, param.getKitVersionId(), LocalDateTime.now(), param.getCurrentUserId());
+        return new UpdateOrderParam(attributeOrders,
+            param.getKitVersionId(),
+            param.getSubjectId(),
+            LocalDateTime.now(),
+            param.getCurrentUserId());
     }
 }

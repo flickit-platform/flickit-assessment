@@ -31,6 +31,7 @@ public interface UpdateAttributePort {
 
     record UpdateOrderParam(List<AttributeOrder> orders,
                             long kitVersionId,
+                            long subjectId,
                             LocalDateTime lastModificationTime,
                             UUID lastModifiedBy) {
         public record AttributeOrder(long attributeId, int index) {

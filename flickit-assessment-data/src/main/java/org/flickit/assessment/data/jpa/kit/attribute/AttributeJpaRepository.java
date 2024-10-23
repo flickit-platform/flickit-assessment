@@ -29,6 +29,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
 
+    List<AttributeJpaEntity> findAllByIdInAndKitVersionIdAndSubjectId(List<Long> ids, long kitVersionId, long subjectId);
+
     @Modifying
     @Query("""
             UPDATE AttributeJpaEntity a
