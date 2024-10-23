@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessmentresult;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.AssessmentKitMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
@@ -13,12 +14,14 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_KIT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND;
 
 @Component
@@ -32,6 +35,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
     private final MaturityLevelJpaRepository maturityLevelRepository;
+    private final AssessmentKitJpaRepository kitRepository;
 
     @Override
     public void invalidateCalculate(UUID assessmentResultId) {
@@ -65,7 +69,11 @@ public class AssessmentResultPersistenceJpaAdapter implements
             maturityLevel = maturityLevelEntity.map(maturityLevelJpaEntity ->
                 MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, null)).orElse(null);
         }
-        return Optional.of(AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevel));
+        var kit = kitRepository.findById(entity.get().getAssessment().getAssessmentKitId())
+            .map(x -> AssessmentKitMapper.mapToDomainModel(x, null))
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_KIT_NOT_FOUND));
+
+        return Optional.of(AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevel, kit));
     }
 }
 
