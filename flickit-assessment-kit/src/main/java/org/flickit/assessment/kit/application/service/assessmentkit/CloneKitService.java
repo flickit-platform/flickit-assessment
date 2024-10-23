@@ -15,6 +15,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.CheckKitVersio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -46,14 +47,18 @@ public class CloneKitService implements CloneKitUseCase {
             throw new ValidationException(CLONE_KIT_NOT_ALLOWED);
         }
 
-        long updatingVersionId = createKitVersionPort.persist(toOutPortParam(param));
-        cloneKitPort.cloneKit(activeVersionId, updatingVersionId, param.getCurrentUserId());
+        long updatingVersionId = createKitVersionPort.persist(toCreateKitVersionPortParam(param));
+        cloneKitPort.cloneKit(toCloneKitPortParam(activeVersionId, updatingVersionId, param.getCurrentUserId()));
         return updatingVersionId;
     }
 
-    private CreateKitVersionPort.Param toOutPortParam(Param param) {
+    private CreateKitVersionPort.Param toCreateKitVersionPortParam(Param param) {
         return new CreateKitVersionPort.Param(param.getKitId(),
             KitVersionStatus.UPDATING,
             param.getCurrentUserId());
+    }
+
+    private CloneKitPort.Param toCloneKitPortParam(Long activeVersionId, Long updatingVersionId, UUID clonedBy) {
+        return new CloneKitPort.Param(activeVersionId, updatingVersionId, clonedBy, LocalDateTime.now());
     }
 }
