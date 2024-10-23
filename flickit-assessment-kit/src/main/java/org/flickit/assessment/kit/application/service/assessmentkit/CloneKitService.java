@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
@@ -10,7 +11,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.CloneKitPor
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.ExistKitVersionByKitIdAndStatusPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CheckKitVersionExistencePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +23,13 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.CLONE_KIT_NOT_AL
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class CloneKitService implements CloneKitUseCase {
 
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CreateKitVersionPort createKitVersionPort;
-    private final ExistKitVersionByKitIdAndStatusPort existKitVersionByKitIdAndStatusPort;
+    private final CheckKitVersionExistencePort checkKitVersionExistencePort;
     private final CloneKitPort cloneKitPort;
 
     @Override
@@ -39,9 +41,10 @@ public class CloneKitService implements CloneKitUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        int updating = KitVersionStatus.UPDATING.getId();
-        if (existKitVersionByKitIdAndStatusPort.exists(kit.getId(), updating))
+        if (checkKitVersionExistencePort.exists(kit.getId(), KitVersionStatus.UPDATING)) {
+            log.warn("KitVersion with kitId {} and updating status already exists", kit.getId());
             throw new ValidationException(CLONE_KIT_NOT_ALLOWED);
+        }
 
         long updatingVersionId = createKitVersionPort.persist(toOutPortParam(param));
         cloneKitPort.cloneKit(activeVersionId, updatingVersionId, param.getCurrentUserId());

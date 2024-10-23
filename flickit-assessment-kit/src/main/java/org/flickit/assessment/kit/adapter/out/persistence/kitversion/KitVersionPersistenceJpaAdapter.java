@@ -8,7 +8,7 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.ExistKitVersionByKitIdAndStatusPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CheckKitVersionExistencePort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class KitVersionPersistenceJpaAdapter implements
     LoadKitVersionPort,
     CreateKitVersionPort,
     UpdateKitVersionStatusPort,
-    ExistKitVersionByKitIdAndStatusPort {
+    CheckKitVersionExistencePort {
 
     private final KitVersionJpaRepository repository;
     private final AssessmentKitJpaRepository kitRepository;
@@ -50,7 +50,8 @@ public class KitVersionPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean exists(long kitId, int status) {
-        return repository.existsByKitIdAndStatus(kitId, status);
+    public boolean exists(long kitId, KitVersionStatus status) {
+        int updating = status.getId();
+        return repository.existsByKitIdAndStatus(kitId, updating);
     }
 }

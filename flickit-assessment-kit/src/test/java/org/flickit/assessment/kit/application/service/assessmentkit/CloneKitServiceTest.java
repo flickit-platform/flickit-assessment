@@ -9,7 +9,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.CloneKitPor
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.ExistKitVersionByKitIdAndStatusPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CheckKitVersionExistencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,7 +42,7 @@ class CloneKitServiceTest {
     private CreateKitVersionPort createKitVersionPort;
 
     @Mock
-    private ExistKitVersionByKitIdAndStatusPort existKitVersionByKitIdAndStatusPort;
+    private CheckKitVersionExistencePort checkKitVersionExistencePort;
 
     @Mock
     private CloneKitPort cloneKitPort;
@@ -69,7 +69,7 @@ class CloneKitServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
-        when(existKitVersionByKitIdAndStatusPort.exists(kit.getId(), updating)).thenReturn(true);
+        when(checkKitVersionExistencePort.exists(kit.getId(), KitVersionStatus.UPDATING)).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.cloneKitUseCase(param));
         assertEquals(CLONE_KIT_NOT_ALLOWED, throwable.getMessageKey());
@@ -86,7 +86,7 @@ class CloneKitServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
-        when(existKitVersionByKitIdAndStatusPort.exists(kit.getId(), updating)).thenReturn(false);
+        when(checkKitVersionExistencePort.exists(kit.getId(), KitVersionStatus.UPDATING)).thenReturn(false);
         when(createKitVersionPort.persist(outPortParam)).thenReturn(updatingKitVersionId);
         doNothing().when(cloneKitPort).cloneKit(kit.getActiveVersionId(), updatingKitVersionId, param.getCurrentUserId());
 
