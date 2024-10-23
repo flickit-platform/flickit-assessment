@@ -10,8 +10,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.CloneKitUseC
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CloneKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CheckKitVersionExistencePort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,12 +42,12 @@ public class CloneKitService implements CloneKitUseCase {
 
         Long activeVersionId = kit.getActiveVersionId();
         if (activeVersionId == null) {
-            log.warn("Kit with id {}, doesn't have any active version", param.getKitId());
+            log.warn("Kit [id={}], does not have any active version", param.getKitId());
             throw new ValidationException(CLONE_KIT_NOT_ALLOWED);
         }
 
         if (checkKitVersionExistencePort.exists(kit.getId(), KitVersionStatus.UPDATING)) {
-            log.warn("KitVersion with kitId {} and updating status already exists", kit.getId());
+            log.warn("KitVersion of the kit [id={}] and updating status already exists", kit.getId());
             throw new ValidationException(CLONE_KIT_NOT_ALLOWED);
         }
 

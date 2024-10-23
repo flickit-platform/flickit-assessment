@@ -7,13 +7,14 @@ import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
-import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CheckKitVersionExistencePort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
 import org.springframework.stereotype.Component;
 
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -51,7 +52,6 @@ public class KitVersionPersistenceJpaAdapter implements
 
     @Override
     public boolean exists(long kitId, KitVersionStatus status) {
-        int updating = status.getId();
-        return repository.existsByKitIdAndStatus(kitId, updating);
+        return repository.existsByKitIdAndStatus(kitId, status.getId());
     }
 }
