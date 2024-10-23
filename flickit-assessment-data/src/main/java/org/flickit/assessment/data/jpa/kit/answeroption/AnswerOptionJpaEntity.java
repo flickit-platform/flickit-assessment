@@ -56,4 +56,12 @@ public class AnswerOptionJpaEntity {
         private Long id;
         private Long kitVersionId;
     }
+
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
+    }
 }
