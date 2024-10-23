@@ -274,7 +274,8 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(attribute))), List.of(levelTwo, levelThree), List.of(savedQuestionnaire));
 
-        when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
+        var expectedQuestionImpactId = 413591L;
+        when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(expectedQuestionImpactId);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
@@ -299,7 +300,42 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo, levelThree).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
+        persister.persist(ctx, savedKit, dslKit, currentUserId);
+
+        var questionImpactParam = ArgumentCaptor.forClass(QuestionImpact.class);
+        verify(createQuestionImpactPort, times(1)).persist(questionImpactParam.capture());
+
+        assertNull(questionImpactParam.getValue().getId());
+        assertEquals(attribute.getId(), questionImpactParam.getValue().getAttributeId());
+        assertEquals(levelThree.getId(), questionImpactParam.getValue().getMaturityLevelId());
+        assertEquals(dslImpact2.getWeight(), questionImpactParam.getValue().getWeight());
+        assertEquals(savedKit.getActiveVersionId(), questionImpactParam.getValue().getKitVersionId());
+        assertEquals(savedQuestion.getId(), questionImpactParam.getValue().getQuestionId());
+        assertNotNull(questionImpactParam.getValue().getCreationTime());
+        assertNotNull(questionImpactParam.getValue().getLastModificationTime());
+        assertEquals(currentUserId, questionImpactParam.getValue().getCreatedBy());
+        assertEquals(currentUserId, questionImpactParam.getValue().getLastModifiedBy());
+
+        var optionImpactParam = ArgumentCaptor.forClass(CreateAnswerOptionImpactPort.Param.class);
+        verify(createAnswerOptionImpactPort, times(2)).persist(optionImpactParam.capture());
+        CreateAnswerOptionImpactPort.Param firstOptionImpactParam = optionImpactParam.getAllValues().stream()
+            .filter(x -> x.value() == 0D)
+            .findFirst().get();
+        assertEquals(expectedQuestionImpactId, firstOptionImpactParam.questionImpactId());
+        assertEquals(answerOption1.getId(), firstOptionImpactParam.optionId());
+        assertEquals(0D, firstOptionImpactParam.value());
+        assertEquals(savedKit.getActiveVersionId(), firstOptionImpactParam.kitVersionId());
+        assertEquals(currentUserId, firstOptionImpactParam.createdBy());
+
+        CreateAnswerOptionImpactPort.Param secondOptionImpactParam = optionImpactParam.getAllValues().stream()
+            .filter(x -> x.value() == 1D)
+            .findFirst().get();
+        assertEquals(expectedQuestionImpactId, secondOptionImpactParam.questionImpactId());
+        assertEquals(answerOption2.getId(), secondOptionImpactParam.optionId());
+        assertEquals(1D, secondOptionImpactParam.value());
+        assertEquals(savedKit.getActiveVersionId(), secondOptionImpactParam.kitVersionId());
+        assertEquals(currentUserId, secondOptionImpactParam.createdBy());
 
         verifyNoInteractions(
             updateQuestionImpactPort,
