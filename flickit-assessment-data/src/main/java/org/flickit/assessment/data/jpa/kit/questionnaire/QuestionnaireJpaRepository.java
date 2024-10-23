@@ -16,6 +16,8 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
 
     List<QuestionnaireJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
+    List<QuestionnaireJpaEntity> findAllByKitVersionId(long kitVersionId);
+
     Optional<QuestionnaireJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);

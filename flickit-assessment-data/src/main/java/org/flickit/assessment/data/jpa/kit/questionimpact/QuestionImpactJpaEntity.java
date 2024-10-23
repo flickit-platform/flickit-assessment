@@ -18,8 +18,6 @@ public class QuestionImpactJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "fak_question_impact_id_seq")
-    @SequenceGenerator(name = "fak_question_impact_id_seq", sequenceName = "fak_question_impact_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -81,5 +79,13 @@ public class QuestionImpactJpaEntity {
 
         private Long id;
         private Long kitVersionId;
+    }
+
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
     }
 }

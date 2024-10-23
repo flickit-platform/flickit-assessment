@@ -13,6 +13,8 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
 
     List<AnswerOptionImpactJpaEntity> findAllByQuestionImpactIdAndKitVersionId(long impactId, long kitVersionId);
 
+    List<AnswerOptionImpactJpaEntity> findAllByKitVersionId(long kitVersonId);
+
     @Query("""
             SELECT oi as optionImpact,
                 qi as questionImpact

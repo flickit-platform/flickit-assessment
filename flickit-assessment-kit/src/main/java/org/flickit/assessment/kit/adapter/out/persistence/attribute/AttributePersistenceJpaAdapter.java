@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity.Fields;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
@@ -37,6 +38,7 @@ public class AttributePersistenceJpaAdapter implements
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public void update(UpdateAttributePort.Param param) {
@@ -77,10 +79,13 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
-        var entityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
-        SubjectJpaEntity subjectJpaEntity = subjectRepository.findById(entityId)
+        var subjectEntityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
+        SubjectJpaEntity subjectJpaEntity = subjectRepository.findById(subjectEntityId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND));
-        return repository.save(mapToJpaEntity(attribute, subjectJpaEntity)).getId();
+
+        var entity = mapToJpaEntity(attribute, subjectJpaEntity);
+        entity.setId(sequenceGenerators.generateAttributeId());
+        return repository.save(entity).getId();
     }
 
     @Override
