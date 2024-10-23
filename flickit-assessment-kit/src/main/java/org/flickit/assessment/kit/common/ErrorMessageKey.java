@@ -379,6 +379,9 @@ public class ErrorMessageKey {
 
     public static final String GET_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "get-kit-version.kitVersionId.notNull";
 
+    public static final String CLONE_KIT_KIT_ID_NOT_NULL = "clone-kit.kitId.notNull";
+    public static final String CLONE_KIT_NOT_ALLOWED = "clone-kit.notAllowed";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }

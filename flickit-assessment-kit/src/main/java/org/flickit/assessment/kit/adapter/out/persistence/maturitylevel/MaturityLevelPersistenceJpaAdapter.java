@@ -7,6 +7,7 @@ import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRep
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.data.domain.PageRequest;
@@ -36,10 +37,13 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public Long persist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
-        return repository.save(mapToJpaEntityToPersist(level, kitVersionId, createdBy)).getId();
+        var entity = mapToJpaEntityToPersist(level, kitVersionId, createdBy);
+        entity.setId(sequenceGenerators.generateMaturityLevelId());
+        return repository.save(entity).getId();
     }
 
     @Override

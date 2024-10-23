@@ -23,6 +23,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     Optional<AttributeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
+    List<AttributeJpaEntity> findAllByKitVersionId(long kitVersionId);
+
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
