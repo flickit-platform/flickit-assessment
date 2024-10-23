@@ -17,6 +17,7 @@ public class ErrorMessageKey {
     public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
     public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
+    public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -85,6 +86,7 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
+    public static final String GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND = "get-kit-stats.activeVersion.notFound";
 
     public static final String GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL = "get-kit-editable-info.kitId.notNull";
 
@@ -233,6 +235,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
+    public static final String ACTIVATE_KIT_VERSION_STATUS_INVALID = "activate-kit-version.status.invalid";
 
     public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notNull";
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
@@ -324,6 +327,7 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_ADVISABLE_NOT_NULL = "create-question.advisable.notNull";
     public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";
     public static final String CREATE_QUESTION_INDEX_DUPLICATE = "create-question.index.duplicate";
+    public static final String CREATE_QUESTION_IMPACT_DUPLICATE = "create-question-impact.duplicate";
 
     public static final String GET_ATTRIBUTES_KIT_VERSION_ID_NOT_NULL = "get-attributes.kitVersionId.notNull";
     public static final String GET_ATTRIBUTES_PAGE_MIN = "get-attributes.page.min";
@@ -366,6 +370,14 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTIONS_ORDER_QUESTION_ID_NOT_NULL = "update-questions-order.questionId.notNull";
     public static final String UPDATE_QUESTIONS_ORDER_INDEX_NOT_NULL = "update-questions-order.index.notNull";
     public static final String UPDATE_QUESTIONS_ORDERS_INDEX_MIN = "update-questions-orders.index.min";
+
+    public static final String UPDATE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "update-question-impact.kitVersionId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "update-question-impact.questionImpactId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "update-question-impact.weight.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL = "update-question-impact.attributeId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "update-question-impact.maturityLevelId.notNull";
+
+    public static final String GET_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "get-kit-version.kitVersionId.notNull";
 
     public static final String CLONE_KIT_KIT_ID_NOT_NULL = "clone-kit.kitId.notNull";
     public static final String CLONE_KIT_NOT_ALLOWED = "clone-kit.notAllowed";

@@ -275,7 +275,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
     @Override
     public long loadKitVersionId(long kitId) {
         return repository.loadKitVersionId(kitId)
-            .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
     }
 
     @Override

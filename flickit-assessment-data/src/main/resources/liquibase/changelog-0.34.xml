@@ -83,25 +83,31 @@
                              initiallyDeferred="true"/>
     </changeSet>
 
-    <changeSet id="0.34-15" author="Ali Sedaghat">
-        <dropUniqueConstraint tableName="fak_attribute" constraintName="uq_fak_attribute_code_subjectid"/>
+    <changeSet id="0.34-15" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_question_impact" columnNames="question_id, attribute_id, maturity_level_id, kit_version_id"
+                             constraintName="uq_fak_question_impact_question_attribute_level_kitversion"
+                             initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.34-16" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_attribute" constraintName="uq_fak_attribute_code_subjectid"/>
+    </changeSet>
+
+    <changeSet id="0.34-17" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,code,subject_id"
                              constraintName="uq_fak_attribute_kitversionid_code_subjectid"/>
     </changeSet>
 
-    <changeSet id="0.34-17" author="Ali Sedaghat">
+    <changeSet id="0.34-18" author="Ali Sedaghat">
         <dropUniqueConstraint tableName="fak_attribute" constraintName="uq_fak_attribute_index_subjectid"/>
     </changeSet>
 
-    <changeSet id="0.34-18" author="Ali Sedaghat">
+    <changeSet id="0.34-19" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,index,subject_id"
                              constraintName="uq_fak_attribute_kitversionid_index_subjectid"/>
     </changeSet>
 
-    <changeSet id="0.34-19" author="Ali Sedaghat">
+    <changeSet id="0.34-20" author="Ali Sedaghat">
         <dropUniqueConstraint tableName="fak_answer_option" constraintName="uq_fak_answeroption_index_questionid"/>
     </changeSet>
 </databaseChangeLog>
