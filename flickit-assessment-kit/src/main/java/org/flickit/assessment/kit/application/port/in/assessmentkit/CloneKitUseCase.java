@@ -29,6 +29,7 @@ public interface CloneKitUseCase {
         public Param(Long kitId, UUID currentUserId) {
             this.kitId = kitId;
             this.currentUserId = currentUserId;
+            this.validateSelf();
         }
     }
 }
