@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -20,16 +19,15 @@ public class MigrateAssessmentResultKitVersionRestController {
     private final MigrateAssessmentResultKitVersionUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessment/{assessmentId}/migrate-kit-version")
-    public ResponseEntity<Void> migrateAssessmentResultKitVersion(@PathVariable("assessmentId") UUID assessmentId,
-                                                                  @RequestBody MigrateAssessmentResultKitVersionRequestDto requestDto) {
+    @PutMapping("/assessments/{assessmentId}/migrate-kit-version")
+    public ResponseEntity<Void> migrateAssessmentResultKitVersion(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
-        useCase.migrateKitVersion(toParam(assessmentId, requestDto, currentUserId));
+        useCase.migrateKitVersion(toParam(assessmentId, currentUserId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, MigrateAssessmentResultKitVersionRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.kitVersionId(), currentUserId);
+    private Param toParam(UUID assessmentId, UUID currentUserId) {
+        return new Param(assessmentId, currentUserId);
     }
 }
