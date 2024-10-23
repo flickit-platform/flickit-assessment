@@ -36,11 +36,15 @@ public class CloneKitService implements CloneKitUseCase {
     @Override
     public long cloneKitUseCase(Param param) {
         AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
-        Long activeVersionId = kit.getActiveVersionId();
-
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        Long activeVersionId = kit.getActiveVersionId();
+        if (activeVersionId == null) {
+            log.warn("Kit with id {}, doesn't have any active version", param.getKitId());
+            throw new ValidationException(CLONE_KIT_NOT_ALLOWED);
+        }
 
         if (checkKitVersionExistencePort.exists(kit.getId(), KitVersionStatus.UPDATING)) {
             log.warn("KitVersion with kitId {} and updating status already exists", kit.getId());

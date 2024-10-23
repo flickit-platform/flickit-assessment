@@ -10,13 +10,13 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CheckKitVersionExistencePort;
+import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -62,6 +62,18 @@ class CloneKitServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.cloneKitUseCase(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
+    void testCloneKit_WhenCurrentUserIsExpertGroupOwnerAndKitDoesntHaveAnyActiveVersion_ThenThrowValidationException() {
+        CloneKitUseCase.Param param = createParam(b -> b.currentUserId(ownerId));
+        AssessmentKit assessmentKit = AssessmentKitMother.kitWithKitVersionId(null);
+
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
+        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(ownerId);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.cloneKitUseCase(param));
+        assertEquals(CLONE_KIT_NOT_ALLOWED, throwable.getMessageKey());
     }
 
     @Test
