@@ -368,6 +368,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTIONS_ORDERS_INDEX_MIN = "update-questions-orders.index.min";
 
     public static final String CLONE_KIT_KIT_ID_NOT_NULL = "clone-kit.kitId.notNull";
+    public static final String CLONE_KIT_NOT_ALLOWED = "clone-kit.notAllowed";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
