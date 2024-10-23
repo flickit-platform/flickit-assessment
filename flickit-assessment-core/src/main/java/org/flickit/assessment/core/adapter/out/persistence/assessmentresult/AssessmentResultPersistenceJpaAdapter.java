@@ -5,10 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.port.out.assessmentresult.CreateAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultConfidencePort;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.*;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -27,7 +24,8 @@ public class AssessmentResultPersistenceJpaAdapter implements
     InvalidateAssessmentResultCalculatePort,
     InvalidateAssessmentResultConfidencePort,
     CreateAssessmentResultPort,
-    LoadAssessmentResultPort {
+    LoadAssessmentResultPort,
+    UpdateAssessmentResultPort {
 
     private final AssessmentResultJpaRepository repo;
     private final AssessmentJpaRepository assessmentRepo;
@@ -66,6 +64,11 @@ public class AssessmentResultPersistenceJpaAdapter implements
                 MaturityLevelMapper.mapToDomainModel(maturityLevelJpaEntity, null)).orElse(null);
         }
         return Optional.of(AssessmentResultMapper.mapToDomainModel(entity.get(), maturityLevel));
+    }
+
+    @Override
+    public void updateKitVersionId(UUID assessmentResultId, Long kitVersionId) {
+        repo.updateKitVersionId(assessmentResultId, kitVersionId);
     }
 }
 

@@ -59,6 +59,11 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
                                         @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                                         @Param(value = "lastConfidenceCalculationTime") LocalDateTime lastConfidenceCalculationTime);
 
-
-
+    @Modifying
+    @Query("""
+        UPDATE AssessmentResultJpaEntity a SET
+            a.kitVersionId = :kitVersionId
+        WHERE a.id = :id
+        """)
+    void updateKitVersionId(@Param("id") UUID id, @Param("kitVersionId") long kitVersionId);
 }
