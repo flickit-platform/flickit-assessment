@@ -7,11 +7,9 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.MigrateAssessmentResultKitVersionUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.InvalidateAssessmentResultCalculatePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateAssessmentResultPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,9 +37,6 @@ class MigrateAssessmentResultKitVersionServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private GetAssessmentPort getAssessmentPort;
-
-    @Mock
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
@@ -51,27 +46,9 @@ class MigrateAssessmentResultKitVersionServiceTest {
     private UpdateAssessmentResultPort updateAssessmentResultPort;
 
     @Test
-    void testMigrateAssessmentResultKitVersionService_AssessmentIdNotExist_ShouldThrowResourceNotFoundException() {
-        var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
-
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.empty());
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.migrateKitVersion(param));
-
-        assertEquals(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
-
-        verify(getAssessmentPort, times(1))
-            .getAssessmentById(param.getAssessmentId());
-
-        verifyNoInteractions(assessmentAccessChecker, loadAssessmentResultPort, loadAssessmentResultPort,
-            invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
-    }
-
-    @Test
     void testMigrateAssessmentResultKitVersionService_CurrentUserDoesNotHaveAccess_ShouldThrowAccessDeniedException() {
         var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
 
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(AssessmentMother.assessment()));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION))
             .thenReturn(false);
 
@@ -81,20 +58,16 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
         verify(assessmentAccessChecker, times(1))
             .isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION);
-        verifyNoInteractions(loadAssessmentResultPort, loadAssessmentResultPort,
-            invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
+        verifyNoInteractions(loadAssessmentResultPort, loadAssessmentResultPort, invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
     }
 
     @Test
     void testMigrateAssessmentResultKitVersionService_AssessmentResultNotExist_ShouldThrowResourceNotFoundException() {
         var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
-        var assessment = AssessmentMother.assessment();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION))
             .thenReturn(true);
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessment));
-        when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.migrateKitVersion(param));
@@ -103,10 +76,8 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
         verify(assessmentAccessChecker, times(1))
             .isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION);
-        verify(getAssessmentPort, times(1))
-            .getAssessmentById(param.getAssessmentId());
         verify(loadAssessmentResultPort, times(1))
-            .loadByAssessmentId(assessment.getId());
+            .loadByAssessmentId(param.getAssessmentId());
 
         verifyNoInteractions(invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
     }
@@ -114,17 +85,12 @@ class MigrateAssessmentResultKitVersionServiceTest {
     @Test
     void testMigrateAssessmentResultKitVersionService_ActiveKitVersionNotExist_ShouldThrowValidationException() {
         var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
-        var assessment = AssessmentMother.assessmentWithoutActiveVersion();
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResultWithoutActiveVersion();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION))
             .thenReturn(true);
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessment));
-        when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId()))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        doNothing().when(invalidateAssessmentResultCalculatePort).invalidateCalculate(assessmentResult.getId());
-        doNothing().when(updateAssessmentResultPort).updateKitVersionId(assessmentResult.getId(), assessment.getAssessmentKit().getKitVersion());
 
         var throwable = assertThrows(ValidationException.class, () -> service.migrateKitVersion(param));
 
@@ -132,35 +98,28 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
         verify(assessmentAccessChecker, times(1))
             .isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION);
-        verify(getAssessmentPort, times(1))
-            .getAssessmentById(param.getAssessmentId());
         verify(loadAssessmentResultPort, times(1))
-            .loadByAssessmentId(assessment.getId());
+            .loadByAssessmentId(param.getAssessmentId());
     }
 
     @Test
     void testMigrateAssessmentResultKitVersionService_ValidParameters_SuccessfulUpdate() {
-        var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
-        var assessment = AssessmentMother.assessment();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION))
             .thenReturn(true);
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessment));
-        when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId()))
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId()))
             .thenReturn(Optional.of(assessmentResult));
 
         service.migrateKitVersion(param);
 
         verify(assessmentAccessChecker, times(1))
             .isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION);
-        verify(getAssessmentPort, times(1))
-            .getAssessmentById(param.getAssessmentId());
         verify(loadAssessmentResultPort, times(1))
-            .loadByAssessmentId(assessment.getId());
+            .loadByAssessmentId(assessmentResult.getAssessment().getId());
         verify(updateAssessmentResultPort, times(1))
-            .updateKitVersionId(assessmentResult.getId(), assessment.getAssessmentKit().getKitVersion());
+            .updateKitVersionId(assessmentResult.getId(), assessmentResult.getAssessment().getAssessmentKit().getKitVersion());
         verify(invalidateAssessmentResultCalculatePort, times(1))
             .invalidateCalculate(assessmentResult.getId());
     }

@@ -48,6 +48,13 @@ public class AssessmentResultMother {
         return assessmentResult;
     }
 
+    public static AssessmentResult validResultWithoutActiveVersion() {
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessmentWithoutActiveVersion(), 123L, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setIsConfidenceValid(true);
+        return assessmentResult;
+    }
+
     public static AssessmentResult resultWithValidations(Boolean isCalculateValid, Boolean isConfCalculationValid,
                                                          LocalDateTime lastCalculationTime, LocalDateTime lastConfCalculationTime) {
         Assessment assessment = AssessmentMother.assessment();
