@@ -50,11 +50,28 @@ class MigrateAssessmentResultKitVersionServiceTest {
     @Mock
     private UpdateAssessmentResultPort updateAssessmentResultPort;
 
+    @Test
+    void testMigrateAssessmentResultKitVersionService_AssessmentIdNotExist_ShouldThrowResourceNotFoundException() {
+        var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
+
+        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.empty());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.migrateKitVersion(param));
+
+        assertEquals(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
+
+        verify(getAssessmentPort, times(1))
+            .getAssessmentById(param.getAssessmentId());
+
+        verifyNoInteractions(assessmentAccessChecker, loadAssessmentResultPort, loadAssessmentResultPort,
+            invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
+    }
 
     @Test
     void testMigrateAssessmentResultKitVersionService_CurrentUserDoesNotHaveAccess_ShouldThrowAccessDeniedException() {
         var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
 
+        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(AssessmentMother.assessment()));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION))
             .thenReturn(false);
 
@@ -64,26 +81,6 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
         verify(assessmentAccessChecker, times(1))
             .isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION);
-        verifyNoInteractions(getAssessmentPort, loadAssessmentResultPort, loadAssessmentResultPort,
-            invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
-    }
-
-    @Test
-    void testMigrateAssessmentResultKitVersionService_AssessmentIdNotExist_ShouldThrowResourceNotFoundException() {
-        var param = createParam(MigrateAssessmentResultKitVersionUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION))
-            .thenReturn(true);
-        when(getAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.empty());
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.migrateKitVersion(param));
-
-        assertEquals(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
-
-        verify(assessmentAccessChecker, times(1))
-            .isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MIGRATE_KIT_VERSION);
-        verify(getAssessmentPort, times(1))
-            .getAssessmentById(param.getAssessmentId());
         verifyNoInteractions(loadAssessmentResultPort, loadAssessmentResultPort,
             invalidateAssessmentResultCalculatePort, updateAssessmentResultPort);
     }

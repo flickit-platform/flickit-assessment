@@ -30,11 +30,11 @@ public class MigrateAssessmentResultKitVersionService implements MigrateAssessme
 
     @Override
     public void migrateKitVersion(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
         var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_ID_NOT_FOUND));
+
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MIGRATE_KIT_VERSION))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessment.getId())
             .orElseThrow(() -> new ResourceNotFoundException(MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND));
