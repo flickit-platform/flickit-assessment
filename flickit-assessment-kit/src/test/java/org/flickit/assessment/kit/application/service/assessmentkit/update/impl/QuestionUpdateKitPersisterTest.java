@@ -21,6 +21,7 @@ import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,6 +46,7 @@ import static org.flickit.assessment.kit.test.fixture.application.QuestionMother
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithAttributes;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.AnswerOptionDslModelMother.answerOptionDslModel;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -225,7 +227,21 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
+        persister.persist(ctx, savedKit, dslKit, currentUserId);
+        var updatePortParam = ArgumentCaptor.forClass(UpdateQuestionPort.Param.class);
+        verify(updateQuestionPort, times(1)).update(updatePortParam.capture());
+
+        assertEquals(savedQuestion.getId(), updatePortParam.getValue().id());
+        assertEquals(savedKit.getActiveVersionId(), updatePortParam.getValue().kitVersionId());
+        assertEquals(dslQuestion.getCode(), updatePortParam.getValue().code());
+        assertEquals(dslQuestion.getTitle(), updatePortParam.getValue().title());
+        assertEquals(dslQuestion.getIndex(), updatePortParam.getValue().index());
+        assertEquals(dslQuestion.getDescription(), updatePortParam.getValue().hint());
+        assertEquals(dslQuestion.isMayNotBeApplicable(), updatePortParam.getValue().mayNotBeApplicable());
+        assertEquals(dslQuestion.isAdvisable(), updatePortParam.getValue().advisable());
+        assertNotNull(updatePortParam.getValue().lastModificationTime());
+        assertEquals(currentUserId, updatePortParam.getValue().lastModifiedBy());
 
         verifyNoInteractions(
             createQuestionImpactPort,
