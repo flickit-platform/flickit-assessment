@@ -21,8 +21,6 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
-import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireJpaEntity;
-import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireJpaRepository;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CloneKitPort;
 import org.springframework.stereotype.Component;
 
@@ -56,6 +54,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (QuestionnaireJpaEntity entity : questionnaireEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreationTime(LocalDateTime.now());
+            entity.setCreatedBy(currentUserId);
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
@@ -65,6 +65,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (QuestionJpaEntity entity : questionEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreatedBy(currentUserId);
+            entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
@@ -74,6 +76,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (MaturityLevelJpaEntity entity : maturityLevelEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreatedBy(currentUserId);
+            entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
@@ -83,6 +87,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (SubjectJpaEntity entity : subjectEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreatedBy(currentUserId);
+            entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
@@ -92,6 +98,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (AttributeJpaEntity entity : attributeEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreatedBy(currentUserId);
+            entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
@@ -101,6 +109,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (AnswerOptionJpaEntity entity : answerOptionEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreatedBy(currentUserId);
+            entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
@@ -110,6 +120,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (AnswerOptionImpactJpaEntity entity : answerOptionImpactEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreatedBy(currentUserId);
+            entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
@@ -119,6 +131,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (QuestionImpactJpaEntity entity : questionImpactEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreatedBy(currentUserId);
+            entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
@@ -128,6 +142,8 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         for (LevelCompetenceJpaEntity entity : levelCompetenceEntities) {
             entityManager.detach(entity);
             entity.setKitVersionId(updatingKitVersionId);
+            entity.setCreatedBy(currentUserId);
+            entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModificationTime(LocalDateTime.now());
             entity.setLastModifiedBy(currentUserId);
         }
