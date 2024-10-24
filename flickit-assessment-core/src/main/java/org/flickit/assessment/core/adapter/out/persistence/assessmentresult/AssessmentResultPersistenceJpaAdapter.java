@@ -30,19 +30,19 @@ public class AssessmentResultPersistenceJpaAdapter implements
     LoadAssessmentResultPort,
     UpdateAssessmentResultPort {
 
-    private final AssessmentResultJpaRepository repo;
+    private final AssessmentResultJpaRepository repository;
     private final AssessmentJpaRepository assessmentRepo;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AssessmentKitJpaRepository kitRepository;
 
     @Override
     public void invalidateCalculate(UUID assessmentResultId) {
-        repo.invalidateCalculateById(assessmentResultId);
+        repository.invalidateCalculateById(assessmentResultId);
     }
 
     @Override
     public void invalidateConfidence(UUID assessmentResultId) {
-        repo.invalidateConfidenceById(assessmentResultId);
+        repository.invalidateConfidenceById(assessmentResultId);
     }
 
     @Override
@@ -51,13 +51,13 @@ public class AssessmentResultPersistenceJpaAdapter implements
         AssessmentJpaEntity assessment = assessmentRepo.findById(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND));
         entity.setAssessment(assessment);
-        AssessmentResultJpaEntity savedEntity = repo.save(entity);
+        AssessmentResultJpaEntity savedEntity = repository.save(entity);
         return savedEntity.getId();
     }
 
     @Override
     public Optional<AssessmentResult> loadByAssessmentId(UUID assessmentId) {
-        var entity = repo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
+        var entity = repository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId);
         if (entity.isEmpty())
             return Optional.empty();
         MaturityLevel maturityLevel = null;
@@ -76,7 +76,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
 
     @Override
     public void updateKitVersionId(UUID assessmentResultId, Long kitVersionId) {
-        repo.updateKitVersionId(assessmentResultId, kitVersionId);
+        repository.updateKitVersionId(assessmentResultId, kitVersionId);
     }
 }
 
