@@ -22,6 +22,7 @@ class AssessmentPermissionTest {
             Map.entry(VIEW_ASSESSMENT_PROGRESS, "viewAssessmentProgress"),
             Map.entry(VIEW_ASSESSMENT_REPORT, "viewAssessmentReport"),
             Map.entry(CALCULATE_ASSESSMENT, "calculateAssessment"),
+            Map.entry(MIGRATE_KIT_VERSION, "migrateKitVersion"),
             Map.entry(CALCULATE_CONFIDENCE, "calculateConfidence"),
             Map.entry(VIEW_ATTRIBUTE_SCORE_DETAIL, "viewAttributeScoreDetail"),
             Map.entry(VIEW_SUBJECT_PROGRESS, "viewSubjectProgress"),
@@ -56,6 +57,6 @@ class AssessmentPermissionTest {
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
             assertTrue(permissionCodesMap.containsValue(e.getCode()))
         );
-        assertEquals(37, AssessmentPermission.values().length);
+        assertEquals(38, AssessmentPermission.values().length);
     }
 }

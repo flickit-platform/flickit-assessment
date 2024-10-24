@@ -29,6 +29,23 @@ public class AssessmentMother {
         );
     }
 
+    public static Assessment assessmentWithoutActiveVersion() {
+        counter++;
+        return new Assessment(
+            UUID.randomUUID(),
+            "my-assessment-" + counter,
+            "My Assessment " + counter,
+            "Short title" + counter,
+            AssessmentKitMother.AssessmentKitWithoutActiveKitVersion(),
+            new Space(123L, "title"),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            0L,
+            false,
+            UUID.randomUUID()
+        );
+    }
+
     public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId) {
         counter++;
         return new AssessmentListItem(

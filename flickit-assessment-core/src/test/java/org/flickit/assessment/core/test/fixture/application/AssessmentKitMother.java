@@ -12,4 +12,11 @@ public class AssessmentKitMother {
             id,
             MaturityLevelMother.allLevels());
     }
+
+    public static AssessmentKit AssessmentKitWithoutActiveKitVersion() {
+        return new AssessmentKit(id++,
+            "title" + id,
+            null,
+            MaturityLevelMother.allLevels());
+    }
 }
