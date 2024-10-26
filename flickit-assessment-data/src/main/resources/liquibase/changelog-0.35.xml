@@ -25,4 +25,40 @@
         <dropUniqueConstraint tableName="fak_answer_option" constraintName="uq_fak_answeroption_index_questionid"/>
     </changeSet>
 
+    <changeSet id="0.35-06" author="Maziyar Gerami">
+        <createTable tableName="fak_answer_range">
+            <column name="id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="kit_version_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_answer_range_kit_version"
+                             referencedTableName="fak_kit_version"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="title" type="varchar(100)"/>
+            <column name="reusable" type="boolean">
+                    <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.35-07" author="Maziyar Gerami">
+        <addPrimaryKey tableName="fak_answer_range"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_answer_range"/>
+    </changeSet>
+
 </databaseChangeLog>
