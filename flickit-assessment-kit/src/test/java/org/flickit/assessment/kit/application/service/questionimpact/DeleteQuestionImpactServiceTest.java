@@ -16,8 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +37,7 @@ class DeleteQuestionImpactServiceTest {
     private DeleteQuestionImpactPort deleteQuestionImpactPort;
 
     @Test
-    void testDeleteQuestionImpactService_currentUserNotExpertGroupOwner_ShouldThrowAccessDeniedException() {
+    void testDeleteQuestionImpact_currentUserIsNotExpertGroupOwner_ShouldThrowAccessDeniedException() {
         var param = createParam(DeleteQuestionImpactUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
@@ -50,7 +51,7 @@ class DeleteQuestionImpactServiceTest {
     }
 
     @Test
-    void testDeleteQuestionImpactService_validParams_ShouldDeleteQuestionImpact() {
+    void testDeleteQuestionImpact_validParams_ShouldDeleteQuestionImpact() {
         var param = createParam(DeleteQuestionImpactUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
