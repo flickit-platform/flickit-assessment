@@ -59,12 +59,17 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public void updateOrders(UpdateOrderParam param) {
+        List<Long> ids = param.orders().stream()
+            .map(UpdateOrderParam.AttributeOrder::attributeId)
+            .toList();
+
         Map<AttributeJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
             .collect(Collectors.toMap(
                 ml -> new AttributeJpaEntity.EntityId(ml.attributeId(), param.kitVersionId()),
                 UpdateOrderParam.AttributeOrder::index
             ));
-        List<AttributeJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        List<AttributeJpaEntity> entities =
+            repository.findAllByIdInAndKitVersionIdAndSubjectId(ids, param.kitVersionId(), param.subjectId());
         if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
