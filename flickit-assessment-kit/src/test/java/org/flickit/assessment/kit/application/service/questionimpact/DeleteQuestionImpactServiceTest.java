@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.questionimpact;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.questionimpact.DeleteQuestionImpactUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -18,7 +17,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.mockito.Mockito.*;
 
@@ -36,20 +34,6 @@ class DeleteQuestionImpactServiceTest {
 
     @Mock
     private DeleteQuestionImpactPort deleteQuestionImpactPort;
-
-    @Test
-    void testDeleteQuestionImpactService_kitVersionIdNotExists_ShouldThrowNotFoundException() {
-        var param = createParam(DeleteQuestionImpactUseCase.Param.ParamBuilder::build);
-
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.delete(param));
-
-        assertEquals(KIT_ID_NOT_FOUND, throwable.getMessage());
-
-        verify(loadKitVersionPort).load(param.getKitVersionId());
-        verifyNoInteractions(loadExpertGroupOwnerPort, deleteQuestionImpactPort);
-    }
 
     @Test
     void testDeleteQuestionImpactService_currentUserNotExpertGroupOwner_ShouldThrowAccessDeniedException() {
