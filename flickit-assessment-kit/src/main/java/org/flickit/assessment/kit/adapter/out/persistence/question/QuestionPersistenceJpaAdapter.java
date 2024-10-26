@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuest
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
@@ -45,6 +46,7 @@ public class QuestionPersistenceJpaAdapter implements
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public void update(UpdateQuestionPort.Param param) {
@@ -65,7 +67,9 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateQuestionPort.Param param) {
-        return repository.save(mapToJpaEntity(param)).getId();
+        var entity = mapToJpaEntity(param);
+        entity.setId(sequenceGenerators.generateQuestionId());
+        return repository.save(entity).getId();
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionimpact;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
@@ -20,10 +21,13 @@ public class QuestionImpactPersistenceJpaAdapter implements
     UpdateQuestionImpactPort {
 
     private final QuestionImpactJpaRepository repository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public Long persist(QuestionImpact impact) {
-        return repository.save(mapToJpaEntityToPersist(impact)).getId();
+        var entity = mapToJpaEntityToPersist(impact);
+        entity.setId(sequenceGenerators.generateQuestionImpactId());
+        return repository.save(entity).getId();
     }
 
     @Override

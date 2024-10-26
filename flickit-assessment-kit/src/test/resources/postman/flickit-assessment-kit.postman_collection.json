@@ -456,7 +456,33 @@
 						}
 					},
 					"response": []
-				}
+				},
+                {
+                  "name": "Clone Kit",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "{{authorization_header}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/{{api_path}}/assessment-kits/393/clone",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "{{api_path}}",
+                        "assessment-kits",
+                        "393",
+                        "clone"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
 			]
 		},
 		{
