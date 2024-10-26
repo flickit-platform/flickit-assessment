@@ -667,7 +667,6 @@ class QuestionUpdateKitPersisterTest {
         );
     }
 
-
     @Test
     void testQuestionUpdateKitPersister_dslHasOneNewQuestion_SaveQuestionWithItsImpactsAndOptions() {
         var levelTwo = levelTwo();
@@ -709,14 +708,83 @@ class QuestionUpdateKitPersisterTest {
             .subjects(List.of(dslSubject))
             .build();
 
+        var expectedQuestionId = 251L;
+        var expectedQuestionImpactId = 56115L;
+        when(createQuestionPort.persist(any())).thenReturn(expectedQuestionId);
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
+        when(createQuestionImpactPort.persist(any())).thenReturn(expectedQuestionImpactId);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(questionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         ctx.put(KEY_SUBJECTS, Stream.of(subject).collect(toMap(Subject::getCode, Subject::getId)));
-        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
+        persister.persist(ctx, savedKit, dslKit, currentUserId);
+
+        var createPortParam = ArgumentCaptor.forClass(CreateQuestionPort.Param.class);
+        verify(createQuestionPort, times(1)).persist(createPortParam.capture());
+
+        assertEquals(dslQuestion.getCode(), createPortParam.getValue().code());
+        assertEquals(dslQuestion.getTitle(), createPortParam.getValue().title());
+        assertEquals(dslQuestion.getIndex(), createPortParam.getValue().index());
+        assertEquals(dslQuestion.getDescription(), createPortParam.getValue().hint());
+        assertEquals(dslQuestion.isMayNotBeApplicable(), createPortParam.getValue().mayNotBeApplicable());
+        assertEquals(dslQuestion.isAdvisable(), createPortParam.getValue().advisable());
+        assertEquals(savedKit.getActiveVersionId(), createPortParam.getValue().kitVersionId());
+        assertEquals(questionnaire.getId(), createPortParam.getValue().questionnaireId());
+        assertEquals(currentUserId, createPortParam.getValue().createdBy());
+
+        var createAnswerOptionParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
+        verify(createAnswerOptionPort, times(2)).persist(createAnswerOptionParam.capture());
+        var firstAnswerOptionParam = createAnswerOptionParam.getAllValues().getFirst();
+        assertEquals(dslAnswerOption1.getCaption(), firstAnswerOptionParam.title());
+        assertEquals(dslAnswerOption1.getIndex(), firstAnswerOptionParam.index());
+        assertEquals(expectedQuestionId, firstAnswerOptionParam.questionId());
+        assertEquals(savedKit.getActiveVersionId(), firstAnswerOptionParam.kitVersionId());
+        assertEquals(currentUserId, firstAnswerOptionParam.createdBy());
+
+        var secondAnswerOptionParam = createAnswerOptionParam.getAllValues().get(1);
+        assertEquals(dslAnswerOption2.getCaption(), secondAnswerOptionParam.title());
+        assertEquals(dslAnswerOption2.getIndex(), secondAnswerOptionParam.index());
+        assertEquals(expectedQuestionId, secondAnswerOptionParam.questionId());
+        assertEquals(savedKit.getActiveVersionId(), secondAnswerOptionParam.kitVersionId());
+        assertEquals(currentUserId, secondAnswerOptionParam.createdBy());
+
+        var questionImpactParam = ArgumentCaptor.forClass(QuestionImpact.class);
+        verify(createQuestionImpactPort, times(1)).persist(questionImpactParam.capture());
+        assertNull(questionImpactParam.getValue().getId());
+        assertEquals(attribute.getId(), questionImpactParam.getValue().getAttributeId());
+        assertEquals(levelTwo.getId(), questionImpactParam.getValue().getMaturityLevelId());
+        assertEquals(dslImpact.getWeight(), questionImpactParam.getValue().getWeight());
+        assertEquals(savedKit.getActiveVersionId(), questionImpactParam.getValue().getKitVersionId());
+        assertEquals(expectedQuestionId, questionImpactParam.getValue().getQuestionId());
+        assertNotNull(questionImpactParam.getValue().getCreationTime());
+        assertNotNull(questionImpactParam.getValue().getLastModificationTime());
+        assertEquals(currentUserId, questionImpactParam.getValue().getCreatedBy());
+        assertEquals(currentUserId, questionImpactParam.getValue().getLastModifiedBy());
+
+        var optionImpactParam = ArgumentCaptor.forClass(CreateAnswerOptionImpactPort.Param.class);
+        verify(createAnswerOptionImpactPort, times(2)).persist(optionImpactParam.capture());
+        var firstOptionImpactParam = optionImpactParam.getAllValues().stream()
+            .filter(x -> x.value() == 0D)
+            .findFirst()
+            .orElseThrow(AssertionError::new);
+        assertEquals(expectedQuestionImpactId, firstOptionImpactParam.questionImpactId());
+        assertEquals(answerOption1.getId(), firstOptionImpactParam.optionId());
+        assertEquals(0D, firstOptionImpactParam.value());
+        assertEquals(savedKit.getActiveVersionId(), firstOptionImpactParam.kitVersionId());
+        assertEquals(currentUserId, firstOptionImpactParam.createdBy());
+
+        var secondOptionImpactParam = optionImpactParam.getAllValues().stream()
+            .filter(x -> x.value() == 1D)
+            .findFirst()
+            .orElseThrow(AssertionError::new);
+        assertEquals(expectedQuestionImpactId, secondOptionImpactParam.questionImpactId());
+        assertEquals(answerOption2.getId(), secondOptionImpactParam.optionId());
+        assertEquals(1D, secondOptionImpactParam.value());
+        assertEquals(savedKit.getActiveVersionId(), secondOptionImpactParam.kitVersionId());
+        assertEquals(currentUserId, secondOptionImpactParam.createdBy());
 
         verifyNoInteractions(
             updateQuestionPort,
