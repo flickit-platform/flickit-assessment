@@ -61,4 +61,10 @@
                        constraintName="pk_fak_answer_range"/>
     </changeSet>
 
+    <changeSet id="0.35-08" author="Maziyar Gerami">
+        <createSequence sequenceName="fak_answer_range_id_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
 </databaseChangeLog>
