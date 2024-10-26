@@ -1329,7 +1329,34 @@
 						}
 					},
 					"response": []
-				}
+				},
+              {
+                "name": "Delete Question Impact",
+                "request": {
+                  "method": "DELETE",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/412/question-impacts/50014",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "412",
+                      "question-impacts",
+                      "50014"
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		},
 		{
