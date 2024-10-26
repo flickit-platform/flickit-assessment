@@ -517,7 +517,17 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute1).collect(toMap(Attribute::getCode, Attribute::getId)));
-        persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
+        UUID currentUserId = UUID.randomUUID();
+        persister.persist(ctx, savedKit, dslKit, currentUserId);
+
+        var updateWeightParam = ArgumentCaptor.forClass(UpdateQuestionImpactPort.UpdateWeightParam.class);
+        verify(updateQuestionImpactPort, times(1)).updateWeight(updateWeightParam.capture());
+        assertEquals(savedImpact.getId(), updateWeightParam.getValue().id());
+        assertEquals(savedImpact.getKitVersionId(), updateWeightParam.getValue().kitVersionId());
+        assertEquals(dslImpact.getWeight(), updateWeightParam.getValue().weight());
+        assertEquals(savedImpact.getQuestionId(), updateWeightParam.getValue().questionId());
+        assertNotNull(updateWeightParam.getValue().lastModificationTime());
+        assertEquals(currentUserId, updateWeightParam.getValue().lastModifiedBy());
 
         verifyNoInteractions(
             updateQuestionPort,
