@@ -9,7 +9,8 @@
 
     <changeSet id="0.35-02" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,code,subject_id"
-                             constraintName="uq_fak_attribute_kitversionid_code_subjectid"/>
+                             constraintName="uq_fak_attribute_kitversionid_code_subjectid"
+                             deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.35-03" author="Ali Sedaghat">
@@ -18,7 +19,8 @@
 
     <changeSet id="0.35-04" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,index,subject_id"
-                             constraintName="uq_fak_attribute_kitversionid_index_subjectid"/>
+                             constraintName="uq_fak_attribute_kitversionid_index_subjectid"
+                             deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.35-05" author="Ali Sedaghat">

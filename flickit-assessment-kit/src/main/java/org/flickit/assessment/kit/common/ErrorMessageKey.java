@@ -280,6 +280,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_SIZE_MIN = "update-attribute-orders.attributes.size.min";
     public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTE_ID_NOT_NULL = "update-attribute-orders.attributeId.notNull";
     public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL = "update-attribute-orders.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_SUBJECT_ID_NOT_NULL = "update-attribute-orders.subjectId.notNull";
     public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN = "update-attribute-orders.index.min";
 
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-questionnaire-orders.kitVersionId.notNull";

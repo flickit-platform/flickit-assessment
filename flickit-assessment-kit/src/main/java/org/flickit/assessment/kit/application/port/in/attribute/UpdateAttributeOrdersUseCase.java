@@ -29,13 +29,17 @@ public interface UpdateAttributeOrdersUseCase {
         @Size(min = 2, message = UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_SIZE_MIN)
         List<AttributeParam> attributes;
 
+        @NotNull(message = UPDATE_ATTRIBUTE_ORDERS_SUBJECT_ID_NOT_NULL)
+        Long subjectId;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitVersionId, List<AttributeParam> attributes, UUID currentUserId) {
+        public Param(Long kitVersionId, List<AttributeParam> attributes, Long subjectId, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.attributes = attributes;
+            this.subjectId = subjectId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
