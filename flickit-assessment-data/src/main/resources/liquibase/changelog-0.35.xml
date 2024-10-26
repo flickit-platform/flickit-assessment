@@ -33,10 +33,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="kit_version_id" type="bigint">
-                <constraints nullable="false"
-                             foreignKeyName="fk_answer_range_kit_version"
-                             referencedTableName="fak_kit_version"
-                             referencedColumnNames="id"/>
+                <constraints nullable="false"/>
             </column>
             <column name="title" type="varchar(100)"/>
             <column name="reusable" type="boolean">
@@ -67,6 +64,15 @@
         <createSequence sequenceName="fak_answer_range_id_seq"
                         dataType="bigint"
                         startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.35-09" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fak_answer_range"
+                                 baseColumnNames="kit_version_id"
+                                 constraintName="fk_fak_answerrange_kitversion"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
     </changeSet>
 
 </databaseChangeLog>
