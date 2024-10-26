@@ -19,8 +19,8 @@ public class DeleteQuestionImpactRestController {
     private final DeleteQuestionImpactUseCase useCase;
     private final UserContext userContext;
 
-    @DeleteMapping("kit-versions/{kitId}/question-impacts/{questionImpactId}")
-    public ResponseEntity<Void> deleteQuestionImpact(@PathVariable("kitId") Long kitVersionId, @PathVariable("questionImpactId") long questionImpactId) {
+    @DeleteMapping("kit-versions/{kitVersionId}/question-impacts/{questionImpactId}")
+    public ResponseEntity<Void> deleteQuestionImpact(@PathVariable("kitVersionId") Long kitVersionId, @PathVariable("questionImpactId") long questionImpactId) {
         var currentUserId = userContext.getUser().id();
         useCase.delete(toParam(kitVersionId, questionImpactId, currentUserId));
 
