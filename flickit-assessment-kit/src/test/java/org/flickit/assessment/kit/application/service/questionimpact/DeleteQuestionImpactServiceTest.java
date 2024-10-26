@@ -44,11 +44,8 @@ class DeleteQuestionImpactServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(UUID.randomUUID());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.delete(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(loadKitVersionPort).load(param.getKitVersionId());
-        verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
         verifyNoInteractions(deleteQuestionImpactPort);
     }
 
@@ -60,10 +57,8 @@ class DeleteQuestionImpactServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
-        assertDoesNotThrow(() -> service.delete(param));
+        service.delete(param);
 
-        verify(loadKitVersionPort).load(param.getKitVersionId());
-        verify(loadExpertGroupOwnerPort).loadOwnerId(kitVersion.getKit().getExpertGroupId());
         verify(deleteQuestionImpactPort).delete(param.getQuestionImpactId(), param.getKitVersionId());
     }
 
