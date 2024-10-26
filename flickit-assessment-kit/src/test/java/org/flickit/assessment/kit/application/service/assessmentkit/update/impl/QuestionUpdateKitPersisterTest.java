@@ -465,6 +465,8 @@ class QuestionUpdateKitPersisterTest {
         ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
+        verify(deleteQuestionImpactPort, times(1)).delete(savedImpact2.getId(), savedImpact2.getKitVersionId());
+
         verifyNoInteractions(
             updateQuestionPort,
             createQuestionImpactPort,
