@@ -86,6 +86,7 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
+    public static final String GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND = "get-kit-stats.activeVersion.notFound";
 
     public static final String GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL = "get-kit-editable-info.kitId.notNull";
 
@@ -234,6 +235,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
+    public static final String ACTIVATE_KIT_VERSION_STATUS_INVALID = "activate-kit-version.status.invalid";
 
     public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notNull";
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
@@ -325,6 +327,7 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_ADVISABLE_NOT_NULL = "create-question.advisable.notNull";
     public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";
     public static final String CREATE_QUESTION_INDEX_DUPLICATE = "create-question.index.duplicate";
+    public static final String CREATE_QUESTION_IMPACT_DUPLICATE = "create-question-impact.duplicate";
 
     public static final String GET_ATTRIBUTES_KIT_VERSION_ID_NOT_NULL = "get-attributes.kitVersionId.notNull";
     public static final String GET_ATTRIBUTES_PAGE_MIN = "get-attributes.page.min";
@@ -343,6 +346,41 @@ public class ErrorMessageKey {
     public static final String DELETE_QUESTIONNAIRE_KIT_VERSION_ID_NOT_NULL = "delete-questionnaire.kitVersionId.notNull";
     public static final String DELETE_QUESTIONNAIRE_QUESTIONNAIRE_ID_NOT_NULL = "delete-questionnaire.questionnaireId.notNull";
     public static final String DELETE_QUESTIONNAIRE_NOT_ALLOWED = "delete-questionnaire.notAllowed";
+
+    public static final String GET_QUESTIONNAIRES_KIT_VERSION_ID_NOT_NULL = "get-questionnaires.kitVersionId.notNull";
+    public static final String GET_QUESTIONNAIRES_PAGE_MIN = "get-questionnaires.page.min";
+    public static final String GET_QUESTIONNAIRES_SIZE_MIN = "get-questionnaires.size.min";
+    public static final String GET_QUESTIONNAIRES_SIZE_MAX = "get-questionnaires.size.max";
+
+    public static final String UPDATE_QUESTION_KIT_VERSION_ID_NOT_NULL = "update-question.kitVersionId.notNull";
+    public static final String UPDATE_QUESTION_QUESTION_ID_NOT_NULL = "update-question.questionId.notNull";
+    public static final String UPDATE_QUESTION_INDEX_NOT_NULL = "update-question.index.notNull";
+    public static final String UPDATE_QUESTION_TITLE_NOT_NULL = "update-question.title.notNull";
+    public static final String UPDATE_QUESTION_TITLE_SIZE_MIN = "update-question.title.size.min";
+    public static final String UPDATE_QUESTION_TITLE_SIZE_MAX = "update-question.title.size.max";
+    public static final String UPDATE_QUESTION_HINT_SIZE_MIN = "update-question.hint.size.min";
+    public static final String UPDATE_QUESTION_HINT_SIZE_MAX = "update-question.hint.size.max";
+    public static final String UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "update-question.myNotBeApplicable.notNull";
+    public static final String UPDATE_QUESTION_ADVISABLE_NOT_NULL = "update-question.advisable.notNull";
+
+    public static final String UPDATE_QUESTIONS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-questions-order.kitVersionId.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL = "update-questions-order.orders.notNull";
+    public static final String UPDATE_QUESTIONS_ORDERS_ORDERS_SIZE_MIN = "update-questions-orders.orders.size.min";
+    public static final String UPDATE_QUESTIONS_ORDER_QUESTIONNAIRE_ID_NOT_NULL = "update-questions-order.questionnaireId.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_QUESTION_ID_NOT_NULL = "update-questions-order.questionId.notNull";
+    public static final String UPDATE_QUESTIONS_ORDER_INDEX_NOT_NULL = "update-questions-order.index.notNull";
+    public static final String UPDATE_QUESTIONS_ORDERS_INDEX_MIN = "update-questions-orders.index.min";
+
+    public static final String UPDATE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "update-question-impact.kitVersionId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "update-question-impact.questionImpactId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_WEIGHT_NOT_NULL = "update-question-impact.weight.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_ATTRIBUTE_ID_NOT_NULL = "update-question-impact.attributeId.notNull";
+    public static final String UPDATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "update-question-impact.maturityLevelId.notNull";
+
+    public static final String GET_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "get-kit-version.kitVersionId.notNull";
+
+    public static final String CLONE_KIT_KIT_ID_NOT_NULL = "clone-kit.kitId.notNull";
+    public static final String CLONE_KIT_NOT_ALLOWED = "clone-kit.notAllowed";
 
     public static final String DELETE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "delete-question-impact.questionImpactId.notNull";
     public static final String DELETE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "delete-question-impact.kitVersionId.notNull";

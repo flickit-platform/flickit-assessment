@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ced9fd61-142c-4259-9aae-0aac1e7c97b0",
+		"_postman_id": "ced9fd61",
 		"name": "flickit-assessment-kit",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "11099181"
@@ -456,7 +456,33 @@
 						}
 					},
 					"response": []
-				}
+				},
+                {
+                  "name": "Clone Kit",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "{{authorization_header}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/{{api_path}}/assessment-kits/393/clone",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "{{api_path}}",
+                        "assessment-kits",
+                        "393",
+                        "clone"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
 			]
 		},
 		{
@@ -879,6 +905,31 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get KitVersion",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/404",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"404"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1078,6 +1129,42 @@
 					"response": []
 				},
 				{
+					"name": "Update Question",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/22777",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questions",
+								"22777"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete Question",
 					"request": {
 						"method": "DELETE",
@@ -1099,6 +1186,41 @@
 								"393",
 								"questions",
 								"22831"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Questions Order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"questionOrders\": [\n        {\n            \"questionId\": 22869,\n            \"index\": 13\n        },\n        {\n            \"questionId\": 22880,\n            \"index\": 1\n        }\n    ],\n    \"questionnaireId\": 3082\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions-change-order",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questions-change-order"
 							]
 						}
 					},
@@ -1173,9 +1295,9 @@
 					"response": []
 				},
 				{
-					"name": "Delete Question Impact",
+					"name": "Update Question Impact",
 					"request": {
-						"method": "DELETE",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
@@ -1183,22 +1305,58 @@
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attributeId\": 1963,\n    \"maturityLevelId\": 2129,\n    \"weight\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/412/question-impacts/50014",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/question-impacts/42279",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"kit-versions",
-								"412",
+								"393",
 								"question-impacts",
-								"50014"
+								"42279"
 							]
 						}
 					},
 					"response": []
-				}
+				},
+              {
+                "name": "Delete Question Impact",
+                "request": {
+                  "method": "DELETE",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/412/question-impacts/50014",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "412",
+                      "question-impacts",
+                      "50014"
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		},
 		{
@@ -1360,6 +1518,42 @@
 								"393",
 								"questionnaires",
 								"3072"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Questionnaires",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires?page=0&size=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questionnaires"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
 							]
 						}
 					},

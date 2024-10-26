@@ -1,18 +1,22 @@
 package org.flickit.assessment.kit.adapter.out.persistence.questionnaire;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.questionnaire.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -36,10 +40,13 @@ public class QuestionnairePersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository assessmentKitRepository;
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public Long persist(Questionnaire questionnaire, long kitVersionId, UUID createdBy) {
-        return repository.save(QuestionnaireMapper.mapToJpaEntityToPersist(questionnaire, kitVersionId, createdBy)).getId();
+        var entity = QuestionnaireMapper.mapToJpaEntityToPersist(questionnaire, kitVersionId, createdBy);
+        entity.setId(sequenceGenerators.generateQuestionnaireId());
+        return repository.save(entity).getId();
     }
 
     @Override
@@ -89,7 +96,25 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
+    public PaginatedResponse<LoadQuestionnairesPort.Result> loadAllByKitVersionId(long kitVersionId, int page, int size) {
+        var pageResult = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        var items = pageResult.getContent().stream()
+            .map(e -> new LoadQuestionnairesPort.Result(QuestionnaireMapper.mapToDomainModel(e.getQuestionnaire()),
+                e.getQuestionCount()))
+            .toList();
+
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            QuestionnaireJpaEntity.Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+    }
+
+    @Override
+    public LoadKitQuestionnaireDetailPort.Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
         QuestionnaireJpaEntity questionnaireEntity = repository.findByIdAndKitVersionId(questionnaireId, kitVersionId)
             .orElseThrow(() ->  new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
 
@@ -105,7 +130,10 @@ public class QuestionnairePersistenceJpaAdapter implements
             .map(QuestionMapper::mapToDomainModel)
             .toList();
 
-        return new Result(questionEntities.size(), relatedSubjects, questionnaireEntity.getDescription(), questions);
+        return new LoadKitQuestionnaireDetailPort.Result(questionEntities.size(),
+            relatedSubjects,
+            questionnaireEntity.getDescription(),
+            questions);
     }
 
     @Override

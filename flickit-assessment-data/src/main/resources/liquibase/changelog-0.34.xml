@@ -72,4 +72,20 @@
                              constraintName="uq_fak_question_index_kitversionid_questionnaireid"
                              initiallyDeferred="true"/>
     </changeSet>
+
+    <changeSet id="0.34-13" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_question" constraintName="uq_fak_question_code_kitversionid_questionnaireid"/>
+    </changeSet>
+
+    <changeSet id="0.34-14" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_question" columnNames="code, kit_version_id, questionnaire_id"
+                             constraintName="uq_fak_question_code_kitversionid_questionnaireid"
+                             initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.34-15" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_question_impact" columnNames="question_id, attribute_id, maturity_level_id, kit_version_id"
+                             constraintName="uq_fak_question_impact_question_attribute_level_kitversion"
+                             initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>
