@@ -46,6 +46,8 @@ import static org.flickit.assessment.kit.test.fixture.application.QuestionMother
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithAttributes;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.AnswerOptionDslModelMother.answerOptionDslModel;
+import static org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother.questionDslModel;
+import static org.flickit.assessment.kit.test.fixture.application.dsl.QuestionImpactDslModelMother.questionImpactDslModel;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -88,7 +90,7 @@ class QuestionUpdateKitPersisterTest {
     @Test
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
         var levelTwo = levelTwo();
-        var savedQuestionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        var savedQuestionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
@@ -102,7 +104,6 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(attribute))), List.of(levelTwo), List.of(savedQuestionnaire));
 
-
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
         var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
@@ -111,8 +112,9 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null,
+            "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -172,8 +174,8 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -261,8 +263,8 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -349,8 +351,8 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.FALSE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.FALSE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -421,9 +423,9 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact1 = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslImpact2 = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelThree, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact1, dslImpact2), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact1 = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslImpact2 = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelThree, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact1, dslImpact2), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -515,8 +517,8 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -569,8 +571,8 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 2);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 2);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -632,8 +634,8 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 0.75D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -695,8 +697,8 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaire))
             .questions(List.of(dslQuestion))
@@ -756,7 +758,7 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
         var dslSubject = SubjectDslModelMother.domainToDslModel(subject, b -> b.questionnaireCodes(List.of(questionnaire.getCode())));
 
         var dslQuestion = QuestionDslModelMother.domainToDslModel(question, q -> q
@@ -852,7 +854,7 @@ class QuestionUpdateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
         var dslSubject = SubjectDslModelMother.domainToDslModel(subject, b -> b.questionnaireCodes(List.of(questionnaire.getCode())));
 
         var dslQuestion = QuestionDslModelMother.domainToDslModel(question, q -> q
