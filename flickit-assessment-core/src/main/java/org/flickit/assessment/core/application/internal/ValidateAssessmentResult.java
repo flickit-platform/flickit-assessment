@@ -5,17 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
+import org.flickit.assessment.common.exception.DeprecatedVersionException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 
 @Slf4j
 @Service
@@ -29,8 +31,15 @@ public class ValidateAssessmentResult implements ValidateAssessmentResultPort {
     public void validate(UUID assessmentId) {
         AssessmentResult assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        long kitId = assessmentResult.getAssessment().getAssessmentKit().getId();
-        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kitId);
+        AssessmentKit kit = assessmentResult.getAssessment().getAssessmentKit();
+
+        if (!Objects.equals(kit.getKitVersion(), assessmentResult.getKitVersionId())) {
+            log.warn("The result's kit version is deprecated for [assessmentId={}, resultId={}, kitId={}].",
+                assessmentId, assessmentResult.getId(), kit.getId());
+            throw new DeprecatedVersionException(COMMON_ASSESSMENT_RESULT_KIT_VERSION_DEPRECATED);
+        }
+
+        LocalDateTime kitLastMajorModificationTime = loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(kit.getId());
 
         if (!Boolean.TRUE.equals(assessmentResult.getIsCalculateValid()) ||
             !isCalculationTimeValid(assessmentResult.getLastCalculationTime(), kitLastMajorModificationTime)) {

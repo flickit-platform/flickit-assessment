@@ -21,8 +21,6 @@ public class QuestionJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_question_id_seq")
-    @SequenceGenerator(name = "fak_question_id_seq", sequenceName = "fak_question_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -31,7 +29,7 @@ public class QuestionJpaEntity {
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false)
     private String code;
 
     @Column(name = "index", nullable = false)
@@ -77,5 +75,13 @@ public class QuestionJpaEntity {
     public static class Fields {
 
         public static final String INDEX = "index";
+    }
+
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
     }
 }

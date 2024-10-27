@@ -1,6 +1,9 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkitdsl;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,8 +20,6 @@ public class KitDslJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_kit_dsl_id_seq")
-    @SequenceGenerator(name = "fak_kit_dsl_id_seq", sequenceName = "fak_kit_dsl_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
