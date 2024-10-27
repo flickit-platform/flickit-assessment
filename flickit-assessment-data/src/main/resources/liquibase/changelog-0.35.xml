@@ -9,7 +9,8 @@
 
     <changeSet id="0.35-02" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,code,subject_id"
-                             constraintName="uq_fak_attribute_kitversionid_code_subjectid"/>
+                             constraintName="uq_fak_attribute_kitversionid_code_subjectid"
+                             deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.35-03" author="Ali Sedaghat">
@@ -18,7 +19,8 @@
 
     <changeSet id="0.35-04" author="Ali Sedaghat">
         <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,index,subject_id"
-                             constraintName="uq_fak_attribute_kitversionid_index_subjectid"/>
+                             constraintName="uq_fak_attribute_kitversionid_index_subjectid"
+                             deferrable="true" initiallyDeferred="true"/>
     </changeSet>
 
     <changeSet id="0.35-05" author="Ali Sedaghat">
@@ -31,10 +33,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="kit_version_id" type="bigint">
-                <constraints nullable="false"
-                             foreignKeyName="fk_answer_range_kit_version"
-                             referencedTableName="fak_kit_version"
-                             referencedColumnNames="id"/>
+                <constraints nullable="false"/>
             </column>
             <column name="title" type="varchar(100)"/>
             <column name="reusable" type="boolean">
@@ -67,7 +66,16 @@
                         startValue="1"/>
     </changeSet>
 
-    <changeSet id="0.35-09" author="Ali Sedaghat">
+    <changeSet id="0.35-09" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fak_answer_range"
+                                 baseColumnNames="kit_version_id"
+                                 constraintName="fk_fak_answerrange_kitversion"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.35-10" author="Ali Sedaghat">
         <addColumn tableName="fak_question">
             <column name="answer_range_id" type="bigint">
                 <constraints nullable="true"/>
@@ -75,7 +83,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.35-10" author="Ali Sedaghat">
+    <changeSet id="0.35-11" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_question"
                                  baseColumnNames="answer_range_id,kit_version_id"
                                  constraintName="fk_fak_question_answerrange"
