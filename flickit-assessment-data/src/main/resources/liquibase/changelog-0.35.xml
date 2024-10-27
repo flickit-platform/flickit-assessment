@@ -29,7 +29,7 @@
 
     <changeSet id="0.35-06" author="Maziyar Gerami">
         <createTable tableName="fak_answer_range">
-            <column name="id" type="bigint">
+            <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="kit_version_id" type="bigint">
@@ -92,6 +92,59 @@
                                  deferrable="true"
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.35-12" author="Ali Sedaghat">
+        <addColumn tableName="fak_answer_option">
+            <column name="answer_range_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.35-13" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_answer_option"
+                                 baseColumnNames="answer_range_id,kit_version_id"
+                                 constraintName="fk_fak_answeroption_answerrange"
+                                 referencedTableName="fak_answer_range"
+                                 referencedColumnNames="id,kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.35-14" author="Ali Sedaghat">
+        <addColumn tableName="fak_answer_range">
+            <column name="temp_question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.35-15" author="Ali Sedaghat">
+        <sql>
+            insert into fak_answer_range(kit_version_id, reusable, creation_time, last_modification_time, created_by, last_modified_by, temp_question_id)
+            select q.kit_version_id, 'false', q.creation_time, q.last_modification_time, q.created_by, q.last_modified_by, q.id
+            from fak_question q
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.35-16" author="Ali Sedaghat">
+        <update tableName="fak_question">
+            <column name="answer_range_id" valueComputed="fak_answer_range.id FROM fak_answer_range WHERE
+            fak_answer_range.temp_question_id = fak_question.id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.35-17" author="Ali Sedaghat">
+       <update tableName="fak_answer_option">
+           <column name="answer_range_id" valueComputed="fak_answer_range.id FROM fak_answer_range WHERE
+           fak_answer_range.temp_question_id = question_id"/>
+       </update>
+    </changeSet>
+
+    <changeSet id="0.35-18" author="Ali Sedaghat">
+        <dropColumn tableName="fak_answer_range" columnName="temp_question_id"/>
     </changeSet>
 
 </databaseChangeLog>
