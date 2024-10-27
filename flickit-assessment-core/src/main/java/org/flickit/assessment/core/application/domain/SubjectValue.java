@@ -109,9 +109,8 @@ public class SubjectValue {
 
         for (LevelCompetence levelCompetence : levelCompetences) {
             Long mlId = levelCompetence.getEffectiveLevelId();
-            if (percentScores.containsKey(mlId) && percentScores.get(mlId) < levelCompetence.getValue()) {
+            if (percentScores.containsKey(mlId) && percentScores.get(mlId) < levelCompetence.getValue())
                 return false;
-            }
         }
         return true;
     }
