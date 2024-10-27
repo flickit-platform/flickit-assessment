@@ -62,9 +62,6 @@ public class QuestionJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @Column(name = "answer_range_id")
-    private Long answerRangeId;
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
