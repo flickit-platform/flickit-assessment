@@ -168,4 +168,17 @@ public class AttributeValue {
     public Double getWeightedConfidenceValue() {
         return confidenceValue * attribute.getWeight();
     }
+
+    public Map<Long, Double> getWeightedScore() {
+        Map<Long, Double> weightedScores = new HashMap<>();
+
+        for (MaturityScore maturityScore : maturityScores) {
+            Long maturityLevelId = maturityScore.getMaturityLevelId();
+            double score = maturityScore.getScore() == null ? 0 : maturityScore.getScore();
+            double weightedScore = score * (attribute.getWeight());
+            weightedScores.put(maturityLevelId, weightedScore);
+        }
+
+        return weightedScores;
+    }
 }
