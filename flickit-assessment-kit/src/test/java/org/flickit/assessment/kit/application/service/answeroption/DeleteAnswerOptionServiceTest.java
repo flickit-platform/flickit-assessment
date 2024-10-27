@@ -78,9 +78,7 @@ class DeleteAnswerOptionServiceTest {
 
         assertDoesNotThrow(() -> service.delete(param));
 
-        verify(loadKitVersionPort, times(1)).load(param.getKitVersionId());
-        verify(loadExpertGroupOwnerPort, times(1)).loadOwnerId(kitVersion.getKit().getExpertGroupId());
-        verify(deleteAnswerOptionPort, times(1)).deleteByIdAndKitVersionId(param.getAnswerOptionId(), param.getKitVersionId());
+        verify(deleteAnswerOptionPort, times(1)).delete(param.getAnswerOptionId(), param.getKitVersionId());
     }
 
     private DeleteAnswerOptionUseCase.Param createParam(Consumer<DeleteAnswerOptionUseCase.Param.ParamBuilder> changer) {

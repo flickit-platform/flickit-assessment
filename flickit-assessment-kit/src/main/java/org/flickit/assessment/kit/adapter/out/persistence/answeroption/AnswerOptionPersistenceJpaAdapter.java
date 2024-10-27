@@ -5,7 +5,10 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
-import org.flickit.assessment.kit.application.port.out.answeroption.*;
+import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.DeleteAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -47,7 +50,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteByIdAndKitVersionId(Long answerOptionId, Long kitVersionId) {
+    public void delete(Long answerOptionId, Long kitVersionId) {
         if(!repository.existsByIdAndKitVersionId(answerOptionId, kitVersionId))
             throw new ResourceNotFoundException(ANSWER_OPTION_ID_NOT_FOUND);
 

@@ -28,6 +28,6 @@ public class DeleteAnswerOptionService implements DeleteAnswerOptionUseCase {
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()))
             throw  new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        deleteAnswerOptionPort.deleteByIdAndKitVersionId(param.getAnswerOptionId(), param.getKitVersionId());
+        deleteAnswerOptionPort.delete(param.getAnswerOptionId(), param.getKitVersionId());
     }
 }
