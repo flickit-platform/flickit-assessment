@@ -40,19 +40,19 @@ public class SubjectValue {
 
     private Map<Long, Double> calculateWeightedMeanScoresOfAttributeValues(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> weightedSum = new HashMap<>();
-        Map<Long, Double> totalWeight = new HashMap<>();
+        int totalWeight = 0;
 
         for (AttributeValue attributeValue : attributeValues) {
             Map<Long, Double> attributeWeightedScores = attributeValue.getWeightedScore();
+            int attributeWeight = attributeValue.getAttribute().getWeight();
+            totalWeight += attributeWeight;
 
             for (MaturityLevel ml : maturityLevels) {
                 Long maturityLevelId = ml.getId();
                 Double weightedScore = attributeWeightedScores.get(maturityLevelId);
 
-                if (weightedScore != null) {
-                    weightedSum.merge(maturityLevelId, weightedScore, Double::sum);
-                    totalWeight.merge(maturityLevelId, (double) attributeValue.getAttribute().getWeight(), Double::sum);
-                }
+                if (weightedScore != null)
+                    weightedSum.merge(maturityLevelId, weightedScore * attributeWeight, Double::sum);
             }
         }
 
@@ -60,11 +60,9 @@ public class SubjectValue {
         for (Map.Entry<Long, Double> entry : weightedSum.entrySet()) {
             Long maturityLevelId = entry.getKey();
             Double sumScores = entry.getValue();
-            Double sumWeights = totalWeight.get(maturityLevelId);
 
-            if (sumWeights != null && sumWeights > 0)
-                weightedMeanScores.put(maturityLevelId, sumScores / sumWeights);
-
+            if (totalWeight > 0)
+                weightedMeanScores.put(maturityLevelId, sumScores / totalWeight);
             else
                 weightedMeanScores.put(maturityLevelId, 0.0);
         }
