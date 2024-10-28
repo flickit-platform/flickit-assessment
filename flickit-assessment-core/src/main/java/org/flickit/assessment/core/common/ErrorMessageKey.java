@@ -255,4 +255,6 @@ public class ErrorMessageKey {
     public static final String MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_ID_NOT_NULL = "migrate-assessment-result-kit-version.assessmentId.notNull";
     public static final String MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND = "migrate-assessment-result-kit-version.assessmentResultId.notFound";
     public static final String MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND = "migrate-assessment-result-kit-version.activeVersion.notFound";
+
+    public static final String GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL = "get-answer-range-list.kitVersionId.notNull";
 }
