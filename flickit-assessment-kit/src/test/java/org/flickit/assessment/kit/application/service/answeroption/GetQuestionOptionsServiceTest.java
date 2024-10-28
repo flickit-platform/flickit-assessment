@@ -7,7 +7,6 @@ import org.flickit.assessment.kit.application.port.in.answeroption.GetQuestionOp
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +18,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,23 +44,23 @@ class GetQuestionOptionsServiceTest {
 
     @Test
     void testGetQuestionOptions_WhenCurrentUserIsNotExpertGroupMember_ThenThrowAccessDeniedException() {
-        GetQuestionOptionsUseCase.Param param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
+        var param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             .thenReturn(false);
 
         AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionOptions(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(loadAnswerOptionsByQuestionPort);
     }
 
     @Test
     void testGetQuestionOptions_WhenCurrentUserIsExpertGroupMember_ThenGetQuestionOptions() {
-        GetQuestionOptionsUseCase.Param param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
-        AnswerOption answerOptionA = AnswerOptionMother.createAnswerOption(param.getQuestionId(), "titleA", 1);
-        AnswerOption answerOptionB = AnswerOptionMother.createAnswerOption(param.getQuestionId(), "titleB", 2);
+        var param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
+        var answerOptionA = createAnswerOption(param.getQuestionId(), "titleA", 1);
+        var answerOptionB = createAnswerOption(param.getQuestionId(), "titleB", 2);
         List<AnswerOption> expectedAnswerOptions = List.of(answerOptionA, answerOptionB);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -69,8 +69,7 @@ class GetQuestionOptionsServiceTest {
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(param.getQuestionId(), param.getKitVersionId()))
             .thenReturn(expectedAnswerOptions);
 
-        GetQuestionOptionsUseCase.Result result = assertDoesNotThrow(() -> service.getQuestionOptions(param));
-
+        GetQuestionOptionsUseCase.Result result = service.getQuestionOptions(param);
         assertNotNull(result);
         assertEquals(expectedAnswerOptions, result.answerOptions());
     }

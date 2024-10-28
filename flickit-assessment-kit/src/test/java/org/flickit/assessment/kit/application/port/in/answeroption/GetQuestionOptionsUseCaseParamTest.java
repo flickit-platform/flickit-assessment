@@ -47,5 +47,4 @@ class GetQuestionOptionsUseCaseParamTest {
             .questionId(2L)
             .currentUserId(UUID.randomUUID());
     }
-
 }
