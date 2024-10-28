@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.kit.application.domain.AnswerRange;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -15,7 +15,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ANSWER_RANGE
 
 public interface GetAnswerRangeListUseCase {
 
-    PaginatedResponse<AnswerRangeListItem> getAnswerRangeList(Param param);
+    PaginatedResponse<AnswerRange> getAnswerRangeList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -32,11 +32,6 @@ public interface GetAnswerRangeListUseCase {
             this.kitVersionId = kitVersionId;
             this.currentUserId = currentUserId;
             this.validateSelf();
-        }
-    }
-
-    record AnswerRangeListItem(long id, String title, List<AnswerOption> AnswerOption){
-        public record AnswerOption(long id, String title, int index) {
         }
     }
 }
