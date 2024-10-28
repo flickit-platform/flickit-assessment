@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.answerrange;
+package org.flickit.assessment.kit.application.port.in.answerrange;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GetAnswerRangeListUseCaseTest {

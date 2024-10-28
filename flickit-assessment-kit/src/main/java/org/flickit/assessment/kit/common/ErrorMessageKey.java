@@ -390,6 +390,8 @@ public class ErrorMessageKey {
     public static final String DELETE_ANSWER_OPTION_ANSWER_OPTION_ID_NOT_NULL = "delete-answer-option.answerOptionId.notNull";
     public static final String DELETE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "delete-answer-option.kitVersionId.notNull";
 
+    public static final String GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL = "get-answer-range-list.kitVersionId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }

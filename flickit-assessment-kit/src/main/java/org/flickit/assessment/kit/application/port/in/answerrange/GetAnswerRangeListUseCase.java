@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.answerrange;
+package org.flickit.assessment.kit.application.port.in.answerrange;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL;
 
 public interface GetAnswerRangeListUseCase {
 
