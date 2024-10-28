@@ -7,12 +7,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEntity, Long> {
 
+    boolean existsByKitIdAndStatus(long kitId, int status);
+
     @Modifying
     @Query("""
             UPDATE KitVersionJpaEntity k
             SET k.status = :status
-            WHERE id = :id
+            WHERE k.id = :id
         """)
     void updateStatus(@Param("id") long kitVersionId, @Param("status") int status);
-
 }

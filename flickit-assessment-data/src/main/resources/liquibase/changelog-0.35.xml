@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+    <changeSet id="0.35-01" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_attribute" constraintName="uq_fak_attribute_code_subjectid"/>
+    </changeSet>
+
+    <changeSet id="0.35-02" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,code,subject_id"
+                             constraintName="uq_fak_attribute_kitversionid_code_subjectid"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.35-03" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_attribute" constraintName="uq_fak_attribute_index_subjectid"/>
+    </changeSet>
+
+    <changeSet id="0.35-04" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,index,subject_id"
+                             constraintName="uq_fak_attribute_kitversionid_index_subjectid"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.35-05" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_answer_option" constraintName="uq_fak_answeroption_index_questionid"/>
+    </changeSet>
+
+    <changeSet id="0.35-06" author="Maziyar Gerami">
+        <createTable tableName="fak_answer_range">
+            <column name="id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="kit_version_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)"/>
+            <column name="reusable" type="boolean">
+                    <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.35-07" author="Maziyar Gerami">
+        <addPrimaryKey tableName="fak_answer_range"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_answer_range"/>
+    </changeSet>
+
+    <changeSet id="0.35-08" author="Maziyar Gerami">
+        <createSequence sequenceName="fak_answer_range_id_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.35-09" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fak_answer_range"
+                                 baseColumnNames="kit_version_id"
+                                 constraintName="fk_fak_answerrange_kitversion"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

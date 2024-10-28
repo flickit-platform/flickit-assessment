@@ -11,21 +11,21 @@ import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuest
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.application.domain.*;
-import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadAttributeLevelQuestionsPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.*;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper.mapToJpaEntity;
 import static org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -37,7 +37,8 @@ public class QuestionPersistenceJpaAdapter implements
     CreateQuestionPort,
     CountSubjectQuestionsPort,
     LoadQuestionPort,
-    LoadAttributeLevelQuestionsPort {
+    LoadAttributeLevelQuestionsPort,
+    DeleteQuestionPort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -45,12 +46,17 @@ public class QuestionPersistenceJpaAdapter implements
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public void update(UpdateQuestionPort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId()))
+            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+
         repository.update(param.id(),
             param.kitVersionId(),
             param.title(),
+            param.code(),
             param.index(),
             param.hint(),
             param.mayNotBeApplicable(),
@@ -61,7 +67,9 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateQuestionPort.Param param) {
-        return repository.save(mapToJpaEntity(param)).getId();
+        var entity = mapToJpaEntity(param);
+        entity.setId(sequenceGenerators.generateQuestionId());
+        return repository.save(entity).getId();
     }
 
     @Override
@@ -90,11 +98,10 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact) {
-        impact.setOptionImpacts(
-            answerOptionImpactRepository.findAllByQuestionImpactId(impact.getId()).stream()
-                .map(AnswerOptionImpactMapper::mapToDomainModel)
-                .toList()
-        );
+        var optionImpacts = answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId()).stream()
+            .map(AnswerOptionImpactMapper::mapToDomainModel)
+            .toList();
+        impact.setOptionImpacts(optionImpacts);
         return impact;
     }
 
@@ -117,7 +124,7 @@ public class QuestionPersistenceJpaAdapter implements
 
                 QuestionImpact impact = QuestionImpactMapper.mapToDomainModel(entry.getValue().getFirst().getQuestionImpact());
                 Map<Long, AnswerOptionImpactJpaEntity> optionMap = entry.getValue().stream()
-                    .collect(Collectors.toMap(e -> e.getOptionImpact().getId(), AttributeLevelImpactfulQuestionsView::getOptionImpact,
+                    .collect(toMap(e -> e.getOptionImpact().getId(), AttributeLevelImpactfulQuestionsView::getOptionImpact,
                         (existing, replacement) -> existing));
                 List<AnswerOptionImpact> optionImpacts = optionMap.values()
                     .stream().map(AnswerOptionImpactMapper::mapToDomainModel).toList();
@@ -125,7 +132,7 @@ public class QuestionPersistenceJpaAdapter implements
                 question.setImpacts(List.of(impact));
 
                 List<AnswerOption> options = entry.getValue().stream()
-                    .collect(Collectors.toMap(e -> e.getAnswerOption().getId(), AttributeLevelImpactfulQuestionsView::getAnswerOption,
+                    .collect(toMap(e -> e.getAnswerOption().getId(), AttributeLevelImpactfulQuestionsView::getAnswerOption,
                         (existing, replacement) -> existing))
                     .values()
                     .stream().map(AnswerOptionMapper::mapToDomainModel).toList();
@@ -133,5 +140,40 @@ public class QuestionPersistenceJpaAdapter implements
 
                 return new Result(question, questionnaire);
             }).toList();
+    }
+
+    @Override
+    public void delete(long questionId, long kitVersionId) {
+        if (repository.existsByIdAndKitVersionId(questionId, kitVersionId))
+            repository.deleteByIdAndKitVersionId(questionId, kitVersionId);
+        else
+            throw new ResourceNotFoundException(DELETE_QUESTION_ID_NOT_FOUND);
+    }
+
+    @Override
+    public void updateOrders(UpdateOrderParam param) {
+        List<Long> ids = param.orders().stream()
+            .map(UpdateOrderParam.QuestionOrder::questionId)
+            .toList();
+
+        Map<QuestionJpaEntity.EntityId, UpdateOrderParam.QuestionOrder> idToOrder = param.orders().stream()
+            .collect(toMap(e ->
+                new QuestionJpaEntity.EntityId(e.questionId(), param.kitVersionId()), Function.identity()));
+
+        List<QuestionJpaEntity> entities = repository.findAllByIdInAndKitVersionIdAndQuestionnaireId(ids,
+            param.kitVersionId(),
+            param.questionnaireId());
+        if (entities.size() != ids.size())
+            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+
+        entities.forEach(e -> {
+            UpdateOrderParam.QuestionOrder newOrder =
+                idToOrder.get(new QuestionJpaEntity.EntityId(e.getId(), param.kitVersionId()));
+            e.setIndex(newOrder.index());
+            e.setCode(newOrder.code());
+            e.setLastModificationTime(param.lastModificationTime());
+            e.setLastModifiedBy(param.lastModifiedBy());
+        });
+        repository.saveAll(entities);
     }
 }
