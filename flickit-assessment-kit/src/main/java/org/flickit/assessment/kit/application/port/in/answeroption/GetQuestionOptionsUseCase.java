@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.kit.application.domain.AnswerOption;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,5 +39,8 @@ public interface GetQuestionOptionsUseCase {
         }
     }
 
-    record Result(List<AnswerOption> answerOptions) {}
+    record Result(List<Option> answerOptions) {
+
+        public record Option(long id, String title, int index) {}
+    }
 }

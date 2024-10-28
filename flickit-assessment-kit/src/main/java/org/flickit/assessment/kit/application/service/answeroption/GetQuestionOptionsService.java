@@ -33,6 +33,10 @@ public class GetQuestionOptionsService implements GetQuestionOptionsUseCase {
         List<AnswerOption> answerOptions = loadAnswerOptionsByQuestionPort.loadByQuestionId(param.getQuestionId(),
             param.getKitVersionId());
 
-        return new Result(answerOptions);
+        List<Result.Option> options = answerOptions.stream()
+            .map(e -> new Result.Option(e.getId(), e.getTitle(), e.getIndex()))
+            .toList();
+
+        return new Result(options);
     }
 }

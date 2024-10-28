@@ -71,7 +71,12 @@ class GetQuestionOptionsServiceTest {
 
         GetQuestionOptionsUseCase.Result result = service.getQuestionOptions(param);
         assertNotNull(result);
-        assertEquals(expectedAnswerOptions, result.answerOptions());
+        assertEquals(expectedAnswerOptions.size(), result.answerOptions().size());
+        for (int i = 0; i < result.answerOptions().size(); i++) {
+            assertEquals(expectedAnswerOptions.get(i).getId(), result.answerOptions().get(i).id());
+            assertEquals(expectedAnswerOptions.get(i).getIndex(), result.answerOptions().get(i).index());
+            assertEquals(expectedAnswerOptions.get(i).getTitle(), result.answerOptions().get(i).title());
+        }
     }
 
     private GetQuestionOptionsUseCase.Param createParam(Consumer<GetQuestionOptionsUseCase.Param.ParamBuilder> changer) {
