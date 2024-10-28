@@ -41,7 +41,7 @@ class SubjectValueTest {
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(MaturityLevelMother.allLevels());
 
-        assertEquals(MaturityLevelMother.levelThree().getValue(), subjectMaturityLevel.getValue());
+        assertEquals(MaturityLevelMother.levelFour().getValue(), subjectMaturityLevel.getValue());
     }
 
     @Test
