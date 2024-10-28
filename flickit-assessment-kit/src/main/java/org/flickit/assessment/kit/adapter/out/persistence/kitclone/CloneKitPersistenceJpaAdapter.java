@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
@@ -28,6 +29,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
     private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
+    private final AnswerRangeJpaRepository answerRangeRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -88,6 +90,12 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
             entity.prepareForClone(param.updatingKitVersionId(), param.clonedBy(), param.cloneTime());
         });
 
+        var answerRangeEntities = answerRangeRepository.findAllByKitVersionId(param.activeKitVersionId());
+        answerRangeEntities.forEach(entity -> {
+            entityManager.detach(entity);
+            entity.prepareForClone(param.updatingKitVersionId(), param.clonedBy(), param.cloneTime());
+        });
+
         questionnaireRepository.saveAll(questionnaireEntities);
         questionRepository.saveAll(questionEntities);
         maturityLevelRepository.saveAll(maturityLevelEntities);
@@ -97,5 +105,6 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         questionImpactRepository.saveAll(questionImpactEntities);
         answerOptionImpactRepository.saveAll(answerOptionImpactEntities);
         levelCompetenceRepository.saveAll(levelCompetenceEntities);
+        answerRangeRepository.saveAll(answerRangeEntities);
     }
 }
