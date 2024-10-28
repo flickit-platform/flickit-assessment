@@ -15,7 +15,6 @@ import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQues
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
@@ -432,25 +431,15 @@ class QuestionUpdateKitPersisterTest {
 
     @Test
     void testQuestionUpdateKitPersister_QuestionImpactDeleted_DeleteFromDatabase() {
-        var levelTwo = levelTwo();
+        KitContext kitContext = createKitContext();
         var levelThree = levelThree();
-        var savedQuestionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
-        var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
-        var savedImpact1 = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
-        var savedImpact2 = createQuestionImpact(attribute.getId(), levelThree.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(savedQuestion.getId(), OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(savedQuestion.getId(), OPTION_TITLE, OPTION_INDEX2);
-        var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
-        var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
-        var savedOptionImpact3 = createAnswerOptionImpact(answerOption1.getId(), 0.5);
-        var savedOptionImpact4 = createAnswerOptionImpact(answerOption2.getId(), 0.75);
-        savedImpact1.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
+        var savedImpact2 = createQuestionImpact(kitContext.attribute().getId(), levelThree.getId(), 1, kitContext.question().getId());
+        var savedOptionImpact3 = createAnswerOptionImpact(kitContext.answerOption1().getId(), 0.5);
+        var savedOptionImpact4 = createAnswerOptionImpact(kitContext.answerOption2().getId(), 0.75);
         savedImpact2.setOptionImpacts(List.of(savedOptionImpact3, savedOptionImpact4));
-        savedQuestion.setOptions(List.of(answerOption1, answerOption2));
-        savedQuestion.setImpacts(List.of(savedImpact1, savedImpact2));
-        savedQuestionnaire.setQuestions(List.of(savedQuestion));
-        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(attribute))), List.of(levelTwo, levelThree), List.of(savedQuestionnaire));
+        kitContext.question().setImpacts(List.of(kitContext.impact(), savedImpact2));
+        kitContext.questionnaire().setQuestions(List.of(kitContext.question()));
+        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level(), levelThree), List.of(kitContext.questionnaire()));
 
         doNothing().when(deleteQuestionImpactPort).delete(savedImpact2.getId(), savedImpact2.getKitVersionId());
 
@@ -470,9 +459,9 @@ class QuestionUpdateKitPersisterTest {
             .build();
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
-        ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo, levelThree).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
-        ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
-        ctx.put(KEY_ATTRIBUTES, Stream.of(attribute).collect(toMap(Attribute::getCode, Attribute::getId)));
+        ctx.put(KEY_MATURITY_LEVELS, Stream.of(kitContext.level(), levelThree).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
+        ctx.put(KEY_QUESTIONNAIRES, Stream.of(kitContext.questionnaire()).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_ATTRIBUTES, Stream.of(kitContext.attribute()).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
         verify(deleteQuestionImpactPort, times(1)).delete(savedImpact2.getId(), savedImpact2.getKitVersionId());
