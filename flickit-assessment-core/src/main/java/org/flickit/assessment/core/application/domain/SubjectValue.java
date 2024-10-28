@@ -32,27 +32,10 @@ public class SubjectValue {
     }
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
-            attributeValues.forEach(attributeValue -> attributeValue.calculate(maturityLevels));
-            Map<Long, Double> weightedMeanScores = calculateWeightedMeanScoresOfAttributeValues(maturityLevels);
+        attributeValues.forEach(attributeValue -> attributeValue.calculate(maturityLevels));
+        Map<Long, Double> weightedMeanScores = calculateWeightedMeanScoresOfAttributeValues(maturityLevels);
 
-            return findGainedMaturityLevel(weightedMeanScores, maturityLevels);
-    }
-
-    public Double calculateConfidenceValue() {
-        attributeValues.forEach(AttributeValue::calculateConfidenceValue);
-        return calculateWeightedMeanOfAttributeConfidenceValues();
-    }
-
-    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
-        MutableDouble weightedSum = new MutableDouble();
-        MutableDouble sum = new MutableDouble();
-        for (AttributeValue qav : attributeValues) {
-            if (qav.getConfidenceValue() != null) {
-                weightedSum.add(qav.getWeightedConfidenceValue());
-                sum.add(qav.getAttribute().getWeight());
-            }
-        }
-        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
+        return findGainedMaturityLevel(weightedMeanScores, maturityLevels);
     }
 
     private Map<Long, Double> calculateWeightedMeanScoresOfAttributeValues(List<MaturityLevel> maturityLevels) {
@@ -113,5 +96,22 @@ public class SubjectValue {
                 return false;
         }
         return true;
+    }
+
+    public Double calculateConfidenceValue() {
+        attributeValues.forEach(AttributeValue::calculateConfidenceValue);
+        return calculateWeightedMeanOfAttributeConfidenceValues();
+    }
+
+    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
+        MutableDouble weightedSum = new MutableDouble();
+        MutableDouble sum = new MutableDouble();
+        for (AttributeValue qav : attributeValues) {
+            if (qav.getConfidenceValue() != null) {
+                weightedSum.add(qav.getWeightedConfidenceValue());
+                sum.add(qav.getAttribute().getWeight());
+            }
+        }
+        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
     }
 }
