@@ -14,22 +14,22 @@ public class Constants {
     public static final String LEVEL_FIVE_CODE = "Great";
 
 
-    public static String QUESTIONNAIRE_TITLE1 = "Clean Architecture";
-    public static String QUESTIONNAIRE_TITLE2 = "Clean Architecture2";
+    public static final String QUESTIONNAIRE_TITLE1 = "Clean Architecture";
+    public static final String QUESTIONNAIRE_TITLE2 = "Clean Architecture2";
 
-    public static String QUESTION_CODE1 = "m1";
-    public static String QUESTION_CODE2 = "m2";
-    public static String QUESTION_TITLE1 = "Question Title 1?";
-    public static String QUESTION_TITLE2 = "Question Title 2?";
-    public static String QUESTION_NEW_TITLE1 = "New Question Title 1?";
+    public static final String QUESTION_CODE1 = "m1";
+    public static final String QUESTION_CODE2 = "m2";
+    public static final String QUESTION_TITLE1 = "Question Title 1?";
+    public static final String QUESTION_TITLE2 = "Question Title 2?";
+    public static final String QUESTION_NEW_TITLE1 = "New Question Title 1?";
 
-    public static String ATTRIBUTE_CODE1 = "SoftwareMaintainability";
-    public static String ATTRIBUTE_TITLE1 = "SoftwareMaintainability";
+    public static final String ATTRIBUTE_CODE1 = "SoftwareMaintainability";
+    public static final String ATTRIBUTE_TITLE1 = "SoftwareMaintainability";
 
-    public static String NEW_OPTION_TITLE = "New Title";
-    public static String OPTION_TITLE = "Title";
-    public static Integer OPTION_INDEX1 = 1;
-    public static Integer OPTION_INDEX2 = 2;
-    public static Integer OPTION_INDEX3 = 3;
-    public static Integer OPTION_INDEX4 = 4;
+    public static final String NEW_OPTION_TITLE = "New Title";
+    public static final String OPTION_TITLE = "Title";
+    public static final Integer OPTION_INDEX1 = 1;
+    public static final Integer OPTION_INDEX2 = 2;
+    public static final Integer OPTION_INDEX3 = 3;
+    public static final Integer OPTION_INDEX4 = 4;
 }
