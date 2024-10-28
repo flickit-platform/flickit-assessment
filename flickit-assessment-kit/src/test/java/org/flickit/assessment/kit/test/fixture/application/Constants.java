@@ -30,6 +30,4 @@ public class Constants {
     public static final String OPTION_TITLE = "Title";
     public static final Integer OPTION_INDEX1 = 1;
     public static final Integer OPTION_INDEX2 = 2;
-    public static final Integer OPTION_INDEX3 = 3;
-    public static final Integer OPTION_INDEX4 = 4;
 }
