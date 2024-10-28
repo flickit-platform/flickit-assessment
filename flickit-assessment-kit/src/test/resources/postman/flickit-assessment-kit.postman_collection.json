@@ -1945,6 +1945,38 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "AnswerOption",
+			"item": [
+				{
+					"name": "Delete Answer Option",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/348/answer-options/57736",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"348",
+								"answer-options",
+								"57736"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
