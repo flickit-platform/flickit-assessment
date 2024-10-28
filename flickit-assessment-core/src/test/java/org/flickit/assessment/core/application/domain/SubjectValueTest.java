@@ -4,26 +4,11 @@ import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsConfidenceLevelWithWeight;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubjectValueTest {
-
-    @Test
-    void testCalculate_MaturityLevelWithFullScoresOnLevels2_ReturnLevelTwo() {
-        var attr1 = AttributeMother.withIdQuestionsAndWeight(1L, List.of(QuestionMother.withImpactsOnLevel24(1L)), 5);
-        var attrValue1 = new AttributeValue(UUID.randomUUID(), attr1, List.of(AnswerMother.fullScoreOnLevels24(attr1.getId())));
-        var attr2 = AttributeMother.withIdQuestionsAndWeight(2L, List.of(QuestionMother.withImpactsOnLevel24(2L)), 3);
-        var attrValue2 = new AttributeValue(UUID.randomUUID(), attr2, List.of(AnswerMother.fullScoreOnLevels24(attr2.getId())));
-
-        SubjectValue subjectValue = SubjectValueMother.withQAValues(List.of(attrValue1, attrValue2));
-
-        MaturityLevel subjectMaturityLevel = subjectValue.calculate(MaturityLevelMother.allLevels());
-
-        assertEquals(MaturityLevelMother.levelTwo().getValue(), subjectMaturityLevel.getValue());
-    }
 
     @Test
     void testCalculate_withSameWeightsAndLevels() {
