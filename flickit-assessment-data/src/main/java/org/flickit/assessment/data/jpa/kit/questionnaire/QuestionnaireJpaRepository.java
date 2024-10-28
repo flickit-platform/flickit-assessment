@@ -50,7 +50,7 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
                 q as questionnaire,
                 COUNT(DISTINCT question.id) as questionCount
             FROM QuestionnaireJpaEntity q
-            JOIN QuestionJpaEntity question ON q.id = question.questionnaireId AND q.kitVersionId = question.kitVersionId
+            LEFT JOIN QuestionJpaEntity question ON q.id = question.questionnaireId AND q.kitVersionId = question.kitVersionId
             WHERE q.kitVersionId = :kitVersionId
             GROUP BY q.id, q.kitVersionId, q.index
             ORDER BY q.index
