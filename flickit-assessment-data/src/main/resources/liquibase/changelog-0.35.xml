@@ -75,4 +75,11 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
+    <changeSet id="0.35-10" author="mahdi Rezazadeh">
+        <addColumn tableName="fak_answer_option">
+            <column name="value" type="double" valueComputed="index">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
