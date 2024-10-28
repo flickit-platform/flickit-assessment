@@ -21,12 +21,12 @@ public class Constants {
     public static String QUESTION_CODE2 = "m2";
     public static String QUESTION_TITLE1 = "Question Title 1?";
     public static String QUESTION_TITLE2 = "Question Title 2?";
-    public static String QUESTION_OLD_TITLE1 = "Old Question Title 1?";
+    public static String QUESTION_NEW_TITLE1 = "New Question Title 1?";
 
     public static String ATTRIBUTE_CODE1 = "SoftwareMaintainability";
     public static String ATTRIBUTE_TITLE1 = "SoftwareMaintainability";
 
-    public static String OLD_OPTION_TITLE = "Old Title";
+    public static String NEW_OPTION_TITLE = "New Title";
     public static String OPTION_TITLE = "Title";
     public static Integer OPTION_INDEX1 = 1;
     public static Integer OPTION_INDEX2 = 2;
