@@ -20,6 +20,10 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     List<AnswerOptionJpaEntity> findAllByKitVersionId(long kitVersionId);
 
+    boolean existsByIdAndKitVersionId(Long answerOptionId, Long kitVersionId);
+
+    void deleteByIdAndKitVersionId(Long answerOptionId, Long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AnswerOptionJpaEntity a
