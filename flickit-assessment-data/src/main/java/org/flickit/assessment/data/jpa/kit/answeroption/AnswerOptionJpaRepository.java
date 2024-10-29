@@ -24,6 +24,8 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     void deleteByIdAndKitVersionId(Long answerOptionId, Long kitVersionId);
 
+    List<AnswerOptionJpaEntity> findByKitVersionId(Long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AnswerOptionJpaEntity a

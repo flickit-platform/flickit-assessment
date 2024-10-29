@@ -5,10 +5,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
-import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.DeleteAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,7 +18,8 @@ public class AnswerOptionPersistenceJpaAdapter implements
     UpdateAnswerOptionPort,
     LoadAnswerOptionsByQuestionPort,
     CreateAnswerOptionPort,
-    DeleteAnswerOptionPort {
+    DeleteAnswerOptionPort,
+    LoadAnswerOptionPort {
 
     private final AnswerOptionJpaRepository repository;
     private final KitDbSequenceGenerators sequenceGenerators;
@@ -55,5 +53,12 @@ public class AnswerOptionPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(ANSWER_OPTION_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(answerOptionId, kitVersionId);
+    }
+
+    @Override
+    public List<AnswerOption> loadByKitVersionId(Long kitVersionId) {
+        return repository.findByKitVersionId(kitVersionId).stream()
+            .map(AnswerOptionMapper::mapToDomainModel)
+            .toList();
     }
 }
