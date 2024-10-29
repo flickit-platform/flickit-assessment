@@ -12,5 +12,7 @@ public interface ImprovableImpactfulQuestionView {
 
     Integer getQuestionImpactWeight();
 
-    double getOptionImpactValue();
+    Double getOptionImpactValue();
+
+    double getOptionValue();
 }

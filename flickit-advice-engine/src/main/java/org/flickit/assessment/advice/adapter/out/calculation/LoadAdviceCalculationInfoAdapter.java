@@ -103,7 +103,8 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                     impactfulQuestion -> new ImpactfulQuestionOption(
                         impactfulQuestion.getOptionId(),
                         impactfulQuestion.getOptionIndex(),
-                        impactfulQuestion.getOptionImpactValue()
+                        impactfulQuestion.getOptionImpactValue() != null ?
+                            impactfulQuestion.getOptionImpactValue() : impactfulQuestion.getOptionValue()
                     ),
                     toList()
                 )));
