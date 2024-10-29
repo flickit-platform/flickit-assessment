@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.answerrange;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
@@ -16,7 +15,7 @@ public class AnswerRangePersistenceJpaAdapter implements CreateAnswerRangePort {
 
     @Override
     public long persist(Param param) {
-        AnswerRangeJpaEntity entity = AnswerRangeMapper.toJpaEntity(param);
+        var entity = AnswerRangeMapper.toJpaEntity(param);
         entity.setId(sequenceGenerators.generateAnswerRangeId());
         return repository.save(entity).getId();
     }

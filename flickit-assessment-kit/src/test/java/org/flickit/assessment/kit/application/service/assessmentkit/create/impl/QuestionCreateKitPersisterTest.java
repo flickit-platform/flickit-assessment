@@ -104,10 +104,7 @@ class QuestionCreateKitPersisterTest {
             currentUserId
         );
 
-        var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId,
-             null,
-            false,
-            currentUserId);
+        var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, false, currentUserId);
 
         when(createAnswerRangePort.persist(createAnswerRangeParam)).thenReturn(answerRangeId);
         when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
