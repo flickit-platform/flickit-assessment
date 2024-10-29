@@ -85,10 +85,10 @@
 
     <changeSet id="0.35-11" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_question"
-                                 baseColumnNames="answer_range_id,kit_version_id"
+                                 baseColumnNames="answer_range_id, kit_version_id"
                                  constraintName="fk_fak_question_answerrange"
                                  referencedTableName="fak_answer_range"
-                                 referencedColumnNames="id,kit_version_id"
+                                 referencedColumnNames="id, kit_version_id"
                                  deferrable="true"
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
@@ -104,10 +104,10 @@
 
     <changeSet id="0.35-13" author="Ali Sedaghat">
         <addForeignKeyConstraint baseTableName="fak_answer_option"
-                                 baseColumnNames="answer_range_id,kit_version_id"
+                                 baseColumnNames="answer_range_id, kit_version_id"
                                  constraintName="fk_fak_answeroption_answerrange"
                                  referencedTableName="fak_answer_range"
-                                 referencedColumnNames="id,kit_version_id"
+                                 referencedColumnNames="id, kit_version_id"
                                  deferrable="true"
                                  initiallyDeferred="true"
                                  onDelete="CASCADE"/>
@@ -132,14 +132,14 @@
     <changeSet id="0.35-16" author="Ali Sedaghat">
         <update tableName="fak_question">
             <column name="answer_range_id" valueComputed="fak_answer_range.id FROM fak_answer_range WHERE
-            fak_answer_range.temp_question_id = fak_question.id"/>
+            fak_answer_range.temp_question_id = fak_question.id and fak_answer_range.kit_version_id = fak_question.kit_version_id"/>
         </update>
     </changeSet>
 
     <changeSet id="0.35-17" author="Ali Sedaghat">
        <update tableName="fak_answer_option">
            <column name="answer_range_id" valueComputed="fak_answer_range.id FROM fak_answer_range WHERE
-           fak_answer_range.temp_question_id = question_id"/>
+           fak_answer_range.temp_question_id = question_id and fak_answer_range.kit_version_id = fak_answer_option.kit_version_id"/>
        </update>
     </changeSet>
 

@@ -12,12 +12,13 @@ import java.time.LocalDateTime;
 public class AnswerRangeMapper {
 
     public static AnswerRangeJpaEntity toJpaEntity(CreateAnswerRangePort.Param param) {
+        var creationTime = LocalDateTime.now();
         return new AnswerRangeJpaEntity(null,
             param.kitVersionId(),
             param.title(),
             param.reusable(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            creationTime,
+            creationTime,
             param.createdBy(),
             param.createdBy());
     }
