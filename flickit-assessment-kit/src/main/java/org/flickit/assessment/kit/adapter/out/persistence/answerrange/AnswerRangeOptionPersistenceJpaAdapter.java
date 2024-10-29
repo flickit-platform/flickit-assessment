@@ -16,6 +16,9 @@ public class AnswerRangeOptionPersistenceJpaAdapter implements LoadAnswerRangePo
 
     @Override
     public List<AnswerRange> loadByKitVersionId(long kitVersionId) {
-        return List.of();
+        return repository.findReusableByKitVersionId(kitVersionId)
+            .stream()
+            .map(AnswerRangeMapper::toDomainModel)
+            .toList();
     }
 }
