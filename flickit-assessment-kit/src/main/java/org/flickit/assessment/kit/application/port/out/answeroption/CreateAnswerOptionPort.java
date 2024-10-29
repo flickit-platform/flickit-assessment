@@ -6,5 +6,11 @@ public interface CreateAnswerOptionPort {
 
     Long persist(Param param);
 
-    record Param(String title, Integer index, Long questionId, Long kitVersionId, UUID createdBy) {}
+    record Param(
+        String title,
+        Integer index,
+        Long questionId,
+        Long answerRangeId,
+        Long kitVersionId,
+        UUID createdBy) {}
 }
