@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeP
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.ImpactFullQuestionsView;
@@ -20,7 +21,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component("coreAttributePersistenceJpaAdapter")
 @RequiredArgsConstructor
@@ -48,11 +50,11 @@ public class AttributePersistenceJpaAdapter implements
                         view.getQuestionIndex(),
                         view.getQuestionTitle(),
                         view.getQuestionImpact().getWeight(),
-                        view.getOptionIndex(),
-                        view.getOptionTitle(),
+                        view.getOption().getIndex(),
+                        view.getOption().getTitle(),
                         view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
-                        getScore(view.getAnswer(), view.getOptionImpact()),
-                        view.getOptionImpact() == null ? 0 : view.getOptionImpact().getValue() * view.getQuestionImpact().getWeight()
+                        getScore(view.getAnswer(), view.getOptionImpact(), view.getOption()),
+                        view.getOptionImpact() == null ? 0 : getValue(view.getOption(), view.getOptionImpact()) * view.getQuestionImpact().getWeight()
                     ))
                     .sorted(Comparator.comparingInt(QuestionScore::questionIndex))
                     .toList();
@@ -62,14 +64,14 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
-    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact) {
+    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, AnswerOptionJpaEntity option) {
         if (answer == null) // if no answer is submitted for the question
             return 0.0;
         if(Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
             return null;
         if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
             return 0.0;
-        return optionImpact.getValue();
+        return getValue(option, optionImpact);
     }
 
     @Override
@@ -77,5 +79,9 @@ public class AttributePersistenceJpaAdapter implements
         var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
         return mapToDomainModel(attribute);
+    }
+
+    private Double getValue(AnswerOptionJpaEntity option, AnswerOptionImpactJpaEntity optionImpact) {
+        return optionImpact.getValue() != null ? optionImpact.getValue() : option.getValue();
     }
 }
