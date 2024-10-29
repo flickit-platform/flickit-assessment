@@ -1949,7 +1949,35 @@
 		{
 			"name": "AnswerOption",
 			"item": [
-				{
+              {
+                "name": "Get Question Options",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/22799/options",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "questions",
+                      "22799",
+                      "options"
+                    ]
+                  }
+                },
+                "response": []
+              },
+              {
 					"name": "Delete Answer Option",
 					"request": {
 						"method": "DELETE",

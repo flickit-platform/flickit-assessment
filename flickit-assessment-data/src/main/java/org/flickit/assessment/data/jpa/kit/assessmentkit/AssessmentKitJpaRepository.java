@@ -12,11 +12,18 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
-    List<AssessmentKitJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
+    @Query("""
+            SELECT k
+            FROM AssessmentKitJpaEntity k
+            JOIN KitVersionJpaEntity kv ON k.id = kv.kit.id
+            WHERE kv.id IN :kitVersionIds
+        """)
+    List<AssessmentKitJpaEntity> findByKitVersionIds(Set<Long> kitVersionIds);
 
     @Query("""
             SELECT u
