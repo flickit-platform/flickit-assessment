@@ -141,7 +141,7 @@ public class AttributeValuePersistenceJpaAdapter implements
                     var answerOptionEntity = optionIdToOptionEntityMap.get(answerEntity.getAnswerOptionId());
                     var optionImpactEntity = optionIdToImpactMap.get(answerOptionEntity.getId());
                     var optionImpacts = optionImpactEntity.stream()
-                        .map(e -> AnswerOptionImpactMapper.mapToDomainModel(e.getOptionImpact(), e.getQuestionImpact()))
+                        .map(e -> AnswerOptionImpactMapper.mapToDomainModel(e.getOptionImpact(), e.getQuestionImpact(), answerOptionEntity.getValue()))
                         .toList();
                     answerOption = AnswerOptionMapper.mapToDomainModel(answerOptionEntity, optionImpacts);
                 }
