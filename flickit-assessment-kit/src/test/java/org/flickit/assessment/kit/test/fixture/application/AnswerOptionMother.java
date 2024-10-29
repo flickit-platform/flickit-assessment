@@ -5,6 +5,7 @@ import org.flickit.assessment.kit.application.domain.AnswerOption;
 public class AnswerOptionMother {
 
     private static Long id = 1L;
+    private static int index = 1;
     private static Long answerRangeId = 123L;
 
     public static AnswerOption createAnswerOption(Long questionId, String title, int index) {
@@ -15,5 +16,13 @@ public class AnswerOptionMother {
             questionId,
             answerRangeId++
         );
+    }
+
+    public static AnswerOption createAnswerOptionWithAnswerRangeId(long answerRangeId) {
+        return new AnswerOption(id++,
+            "title" + id,
+            index++,
+            null,
+            answerRangeId);
     }
 }
