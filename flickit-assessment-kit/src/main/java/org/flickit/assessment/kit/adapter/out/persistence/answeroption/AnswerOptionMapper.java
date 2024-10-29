@@ -16,7 +16,8 @@ public class AnswerOptionMapper {
             entity.getId(),
             entity.getTitle(),
             entity.getIndex(),
-            entity.getQuestionId()
+            entity.getQuestionId(),
+            entity.getAnswerRangeId()
             );
     }
 
