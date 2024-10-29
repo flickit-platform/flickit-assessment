@@ -82,4 +82,8 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.35-11" author="mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fak_answer_option_impact" columnName="value"/>
+    </changeSet>
 </databaseChangeLog>
