@@ -87,8 +87,8 @@ class GetAnswerRangeListServiceTest {
 
         assertEquals(paginatedAnswerRanges.getItems().size(), result.getItems().size());
         assertFalse(result.getItems().isEmpty());
-        assertEquals(2, result.getItems().get(0).getAnswerOptions().size());
-        assertEquals(1, result.getItems().get(1).getAnswerOptions().size());
+        assertEquals(2, result.getItems().get(0).answerOptions().size());
+        assertEquals(1, result.getItems().get(1).answerOptions().size());
         assertEquals(size, paginatedAnswerRanges.getSize());
         assertEquals(page, paginatedAnswerRanges.getPage());
         assertEquals(2, paginatedAnswerRanges.getTotal());

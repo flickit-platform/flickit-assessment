@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.adapter.in.rest.answerrange;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase.*;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ public class GetAnswerRageListRestController {
     private final UserContext userContext;
 
     @GetMapping("/kit-versions/{kitVersionId}/answer-ranges")
-    public ResponseEntity<PaginatedResponse<AnswerRange>> getAnswerRageList(@PathVariable("kitVersionId") Long kitVersionId,
+    public ResponseEntity<PaginatedResponse<AnswerRangeItemList>> getAnswerRageList(@PathVariable("kitVersionId") Long kitVersionId,
                                                                             @RequestParam(defaultValue = "0") int page,
                                                                             @RequestParam(defaultValue = "20") int size) {
         var currentUserId = userContext.getUser().id();

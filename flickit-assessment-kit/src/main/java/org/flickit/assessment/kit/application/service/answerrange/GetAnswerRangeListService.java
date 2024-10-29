@@ -28,7 +28,7 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
     private final LoadAnswerOptionPort loadAnswerOptionPort;
 
     @Override
-    public PaginatedResponse<AnswerRange> getAnswerRangeList(Param param) {
+    public PaginatedResponse<AnswerRangeItemList> getAnswerRangeList(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         if (!checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -36,13 +36,14 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
         var paginatedAnswerRanges = loadAnswerRangePort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize());
 
         List<AnswerRange> ranges = new ArrayList<>();
-        if(!paginatedAnswerRanges.getItems().isEmpty()) {
+        if (!paginatedAnswerRanges.getItems().isEmpty()) {
             var answerRanges = paginatedAnswerRanges.getItems();
             var answerOptions = loadAnswerOptionPort.loadByKitVersionId(param.getKitVersionId());
             ranges = getAnswerRangesWithAnswerOptions(answerRanges, answerOptions);
         }
 
-        return new PaginatedResponse<>(ranges,
+        return new PaginatedResponse<>(ranges.stream().map(e -> new AnswerRangeItemList(e.getId(), e.getTitle(),
+                e.getAnswerOptions().stream().map(a -> new AnswerRangeItemList.AnswerOptionListItem(a.getId(), a.getTitle(), a.getIndex())).toList())).toList(),
             paginatedAnswerRanges.getPage(),
             paginatedAnswerRanges.getSize(),
             paginatedAnswerRanges.getSort(),

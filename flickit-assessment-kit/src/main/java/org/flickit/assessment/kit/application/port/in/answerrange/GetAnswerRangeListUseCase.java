@@ -8,8 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.kit.application.domain.AnswerRange;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -18,13 +18,13 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ANSWER_RANGE
 
 public interface GetAnswerRangeListUseCase {
 
-    PaginatedResponse<AnswerRange> getAnswerRangeList(Param param);
+    PaginatedResponse<AnswerRangeItemList> getAnswerRangeList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL )
+        @NotNull(message = GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
         @Min(value = 0, message = GET_ANSWER_RANGE_LIST_PAGE_MIN)
@@ -44,6 +44,12 @@ public interface GetAnswerRangeListUseCase {
             this.size = size;
             this.currentUserId = currentUserId;
             this.validateSelf();
+        }
+    }
+
+    record AnswerRangeItemList(Long id, String title, List<AnswerOptionListItem> answerOptions) {
+
+        public record AnswerOptionListItem(long id, String title, int index) {
         }
     }
 }
