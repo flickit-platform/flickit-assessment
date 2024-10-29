@@ -49,6 +49,8 @@ class GetAnswerRangeListServiceTest {
     private GetAnswerRangeListUseCase.Param.ParamBuilder paramBuilder() {
         return GetAnswerRangeListUseCase.Param.builder()
             .kitVersionId(1L)
+            .page(0)
+            .size(10)
             .currentUserId(UUID.randomUUID());
     }
 }

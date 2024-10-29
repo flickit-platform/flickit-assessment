@@ -394,6 +394,9 @@ public class ErrorMessageKey {
     public static final String GET_QUESTION_OPTIONS_QUESTION_ID_NOT_NULL = "get-question-options.questionId.notNull";
 
     public static final String GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL = "get-answer-range-list.kitVersionId.notNull";
+    public static final String GET_ANSWER_RANGE_LIST_PAGE_MIN = "get-answer-range-list.page.min";
+    public static final String GET_ANSWER_RANGE_LIST_SIZE_MIN = "get-answer-range-list.size.min";
+    public static final String GET_ANSWER_RANGE_LIST_SIZE_MAX = "get-answer-range-list.size.max";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
