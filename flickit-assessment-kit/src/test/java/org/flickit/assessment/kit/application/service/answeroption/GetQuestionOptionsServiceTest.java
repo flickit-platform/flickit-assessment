@@ -69,7 +69,7 @@ class GetQuestionOptionsServiceTest {
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(param.getQuestionId(), param.getKitVersionId()))
             .thenReturn(expectedAnswerOptions);
 
-        GetQuestionOptionsUseCase.Result result = service.getQuestionOptions(param);
+        var result = service.getQuestionOptions(param);
         assertNotNull(result);
         assertEquals(expectedAnswerOptions.size(), result.answerOptions().size());
         for (int i = 0; i < result.answerOptions().size(); i++) {
