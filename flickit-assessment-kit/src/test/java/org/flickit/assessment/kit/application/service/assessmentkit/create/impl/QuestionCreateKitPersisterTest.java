@@ -76,8 +76,8 @@ class QuestionCreateKitPersisterTest {
 
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -101,8 +101,8 @@ class QuestionCreateKitPersisterTest {
         );
         when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
 
-        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), kitId, currentUserId);
-        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), kitId, currentUserId);
+        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), OPTION_VALUE1, kitId, currentUserId);
+        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), OPTION_VALUE2, kitId, currentUserId);
         when(createAnswerOptionPort.persist(createOption1Param)).thenReturn(answerOption1.getId());
         when(createAnswerOptionPort.persist(createOption2Param)).thenReturn(answerOption2.getId());
 

@@ -43,7 +43,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
-    public Long persist(CreateAnswerOptionPort.Param param) {
+    public long persist(CreateAnswerOptionPort.Param param) {
         var entity = AnswerOptionMapper.mapToJpaEntity(param);
         entity.setId(sequenceGenerators.generateAnswerOptionId());
         return repository.save(entity).getId();

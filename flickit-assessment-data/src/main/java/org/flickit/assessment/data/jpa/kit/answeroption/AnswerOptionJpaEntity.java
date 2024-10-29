@@ -36,6 +36,9 @@ public class AnswerOptionJpaEntity {
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
+    @Column(name = "value", nullable = false)
+    private Double value;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

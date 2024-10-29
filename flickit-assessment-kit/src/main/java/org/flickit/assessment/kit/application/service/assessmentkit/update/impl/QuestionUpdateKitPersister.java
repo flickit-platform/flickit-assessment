@@ -186,7 +186,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private void createAnswerOption(AnswerOptionDslModel option, Long questionId, long kitVersionId, UUID currentUserId) {
         var createOptionParam =
-            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, kitVersionId, currentUserId);
+            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, option.getValue(), kitVersionId, currentUserId);
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
             optionId, option.getIndex(), option.getCaption(), questionId);

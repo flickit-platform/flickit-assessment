@@ -118,7 +118,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     }
 
     private AnswerOption createAnswerOption(AnswerOptionDslModel option, Long questionId, Long kitVersionId, UUID currentUserId) {
-        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, kitVersionId, currentUserId);
+        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, option.getValue(), kitVersionId, currentUserId);
 
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
