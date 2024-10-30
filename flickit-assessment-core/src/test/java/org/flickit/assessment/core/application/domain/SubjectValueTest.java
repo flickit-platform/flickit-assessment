@@ -47,6 +47,33 @@ class SubjectValueTest {
     }
 
     @Test
+    void testCalculate_withDifferentWeightsAndScores_differentResultWithWeightedMeanLevelAndWeightedMeanScoreAlgorithms() {
+        var av1 = hasFullScoreOnLevel23WithWeight(1);
+        var av2 = hasFullScoreOnLevel23WithWeight(1);
+        var av3 = hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(10);
+
+        var attributeValues = List.of(av1, av2, av3);
+
+        SubjectValue subjectValue = withAttributeValues(attributeValues);
+
+        MaturityLevel subjectMaturityLevel = subjectValue.calculate(allLevels());
+        assertEquals(levelThree().getValue(), av1.getMaturityLevel().getValue());
+        assertEquals(levelThree().getValue(), av2.getMaturityLevel().getValue());
+        assertEquals(levelTwo().getValue(), av3.getMaturityLevel().getValue());
+
+        // WeightedMeanLevel is equal to level two
+        assertEquals(levelTwo().getValue(), Math.round((double) ((av1.getWeightedLevel() + av2.getWeightedLevel() + av3.getWeightedLevel()) / 12)));
+        Map<UUID, Double> map = Map.of(
+            av1.getId(), av1.getWeightedScore().get(levelTwo().getId()),
+            av2.getId(), av2.getWeightedScore().get(levelTwo().getId()),
+            av3.getId(), av3.getWeightedScore().get(levelTwo().getId()));
+
+        // WeightedMeanScore of attributes on level two is 75 which passes the competence of level three
+        assertEquals(75.0, (map.get(av1.getId()) + map.get(av2.getId()) + map.get(av3.getId())) / 12);
+        assertEquals(MaturityLevelMother.levelThree().getValue(), subjectMaturityLevel.getValue());
+    }
+
+    @Test
     void testCalculateConfidenceLevel_withSameWeightsAndConfidenceLevels() {
         List<AttributeValue> attributeValues = List.of(
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()), //6 questions with 5 answers with cl=4, attrCl=20/30
