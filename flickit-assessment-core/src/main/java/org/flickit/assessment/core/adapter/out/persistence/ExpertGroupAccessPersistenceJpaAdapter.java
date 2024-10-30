@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.port.out.expertgroup.LoadExpertGroupMembersPort;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
+import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExpertGroupAccessPersistenceJpaAdapter implements LoadExpertGroupMembersPort {
 
-    private final ExpertGroupJpaRepository repository;
+    private final ExpertGroupAccessJpaRepository repository;
 
     @Override
     public List<Member> loadExpertGroupMembers(long expertGroupId) {

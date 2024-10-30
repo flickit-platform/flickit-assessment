@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.users.expertgroup;
+package org.flickit.assessment.data.jpa.users.expertgroupaccess;
 
 import java.util.UUID;
 

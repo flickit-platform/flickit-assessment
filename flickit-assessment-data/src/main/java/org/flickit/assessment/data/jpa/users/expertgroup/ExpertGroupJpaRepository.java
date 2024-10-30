@@ -128,16 +128,4 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE e.id = :id
         """)
     void updatePicture(@Param("id") long expertGroupId, @Param("picture") String picture);
-
-    @Query("""
-            SELECT
-                u.id as id,
-                u.email as email,
-                u.displayName as displayName
-            FROM ExpertGroupAccessJpaEntity e
-                LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
-                LEFT JOIN UserJpaEntity u on e.userId = u.id
-            WHERE e.expertGroupId = :id AND g.deleted = FALSE AND e.status = 1
-        """)
-    List<ExpertGroupActiveMemberView> findActiveMembers(@Param("id") long id);
 }
