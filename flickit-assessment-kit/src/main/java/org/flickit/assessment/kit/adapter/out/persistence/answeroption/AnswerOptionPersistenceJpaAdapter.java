@@ -63,7 +63,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
 
     @Override
     public List<AnswerOption> loadByKitVersionId(long kitVersionId) {
-        return repository.findByKitVersionId(kitVersionId).stream()
+        return repository.findAllByKitVersionId(kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }
