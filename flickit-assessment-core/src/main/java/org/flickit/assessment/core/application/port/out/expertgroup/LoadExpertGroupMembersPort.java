@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface LoadExpertGroupMembersPort {
 
-    List<Member> loadExpertGroupMembers(long expertGroupId, int status);
+    List<Member> loadExpertGroupMembers(long expertGroupId);
 
     record Member(UUID id, String email, String displayName) {}
 }

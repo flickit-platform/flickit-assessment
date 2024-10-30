@@ -41,10 +41,9 @@ public class CreateAssessmentNotificationCreator implements NotificationCreator<
             displayName = userOptional.get().getDisplayName();
 
         try {
-            int activeStatus = 1;
             var title = MessageBundle.message(NOTIFICATION_TITLE_CREATE_ASSESSMENT);
             var kitInfo = loadKitInfoPort.loadKitInfo(cmd.kitId());
-            var members = loadExpertGroupMembersPort.loadExpertGroupMembers(kitInfo.expertGroupId(), activeStatus);
+            var members = loadExpertGroupMembersPort.loadExpertGroupMembers(kitInfo.expertGroupId());
 
             KitModel kitModel = new KitModel(cmd.kitId(), kitInfo.title());
             UserModel userModel = new UserModel(displayName);

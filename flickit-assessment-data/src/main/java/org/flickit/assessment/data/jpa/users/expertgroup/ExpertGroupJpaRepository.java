@@ -14,6 +14,10 @@ import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
 
+    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
+
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
+
     @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id and deleted=false")
     Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
@@ -96,10 +100,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
         """)
     KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
 
-    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
-
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
-
     @Modifying
     @Query("""
             UPDATE ExpertGroupJpaEntity e
@@ -128,4 +128,16 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE e.id = :id
         """)
     void updatePicture(@Param("id") long expertGroupId, @Param("picture") String picture);
+
+    @Query("""
+            SELECT
+                u.id as id,
+                u.email as email,
+                u.displayName as displayName
+            FROM ExpertGroupAccessJpaEntity e
+                LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
+                LEFT JOIN UserJpaEntity u on e.userId = u.id
+            WHERE e.expertGroupId = :id AND g.deleted = FALSE AND e.status = 1
+        """)
+    List<ExpertGroupActiveMemberView> findActiveMembers(@Param("id") long id);
 }
