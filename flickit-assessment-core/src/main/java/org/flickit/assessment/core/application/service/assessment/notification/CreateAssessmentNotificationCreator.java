@@ -9,7 +9,10 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.notification.CreateAssessmentNotificationCmd;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitInfoPort;
+import org.flickit.assessment.core.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
+import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.application.service.assessment.notification.CreateAssessmentNotificationPayload.KitModel;
+import org.flickit.assessment.core.application.service.assessment.notification.CreateAssessmentNotificationPayload.UserModel;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,15 +27,29 @@ import static org.flickit.assessment.core.common.MessageKey.NOTIFICATION_TITLE_C
 public class CreateAssessmentNotificationCreator implements NotificationCreator<CreateAssessmentNotificationCmd> {
 
     private final LoadKitInfoPort loadKitInfoPort;
+    private final LoadExpertGroupMembersPort loadExpertGroupMembersPort;
+    private final LoadUserPort loadUserPort;
 
     @Override
     public List<NotificationEnvelope> create(CreateAssessmentNotificationCmd cmd) {
+        var userOptional = loadUserPort.loadById(cmd.creatorId());
+        if (userOptional.isEmpty()) {
+            log.warn("user not found");
+            return List.of();
+        }
+        String assessmentCreatorName = userOptional.get().getDisplayName();
+
         try {
             var title = MessageBundle.message(NOTIFICATION_TITLE_CREATE_ASSESSMENT);
             var kitInfo = loadKitInfoPort.loadKitInfo(cmd.kitId());
+            var members = loadExpertGroupMembersPort.loadExpertGroupMembers(kitInfo.expertGroupId());
+
             KitModel kitModel = new KitModel(cmd.kitId(), kitInfo.title());
-            var payload = new CreateAssessmentNotificationPayload(kitModel);
-            return List.of(new NotificationEnvelope(new User(kitInfo.createdBy(), null), title, payload));
+            UserModel userModel = new UserModel(assessmentCreatorName);
+            var payload = new CreateAssessmentNotificationPayload(kitModel, userModel);
+            return members.stream()
+                .map(e -> new NotificationEnvelope(new User(e.id(), null), title, payload))
+                .toList();
         } catch (ResourceNotFoundException e) {
             log.warn("kit not found");
             return List.of();

@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.questionnaire;
+package org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
