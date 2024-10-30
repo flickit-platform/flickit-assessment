@@ -24,6 +24,17 @@ public class AnswerMother {
             Boolean.FALSE);
     }
 
+    public static Answer partialScoreOnLevel2AndFullScoreOnLevel3(long attributeId) {
+        AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
+            AnswerOptionImpactMother.onLevelTwoOfAttributeId(0.7, attributeId),
+            AnswerOptionImpactMother.onLevelThreeOfAttributeId(1, attributeId)));
+        return new Answer(UUID.randomUUID(),
+            selectedOption,
+            selectedOption.getQuestionId(),
+            ConfidenceLevel.COMPLETELY_UNSURE.getId(),
+            Boolean.FALSE);
+    }
+
     public static Answer fullScoreOnLevels24(long attributeId) {
         AnswerOption selectedOption = AnswerOptionMother.withImpacts(List.of(
             AnswerOptionImpactMother.onLevelTwoOfAttributeId(1, attributeId),
