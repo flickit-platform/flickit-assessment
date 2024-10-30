@@ -54,7 +54,7 @@ public class AttributePersistenceJpaAdapter implements
                         view.getOption().getTitle(),
                         view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
                         getScore(view.getAnswer(), view.getOptionImpact(), view.getOption()),
-                        view.getOptionImpact() == null ? 0 : getValue(view.getOption(), view.getOptionImpact()) * view.getQuestionImpact().getWeight()
+                        view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOption()) * view.getQuestionImpact().getWeight()
                     ))
                     .sorted(Comparator.comparingInt(QuestionScore::questionIndex))
                     .toList();
@@ -71,7 +71,7 @@ public class AttributePersistenceJpaAdapter implements
             return null;
         if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
             return 0.0;
-        return getValue(option, optionImpact);
+        return getValue(optionImpact, option);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class AttributePersistenceJpaAdapter implements
         return mapToDomainModel(attribute);
     }
 
-    private Double getValue(AnswerOptionJpaEntity option, AnswerOptionImpactJpaEntity optionImpact) {
+    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, AnswerOptionJpaEntity option) {
         return optionImpact.getValue() != null ? optionImpact.getValue() : option.getValue();
     }
 }
