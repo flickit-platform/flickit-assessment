@@ -23,10 +23,9 @@ public class GetAnswerRageListRestController {
 
     @GetMapping("/kit-versions/{kitVersionId}/answer-ranges")
     public ResponseEntity<PaginatedResponse<AnswerRangeItemList>> getAnswerRageList(@PathVariable("kitVersionId") Long kitVersionId,
-                                                                            @RequestParam(defaultValue = "0") int page,
-                                                                            @RequestParam(defaultValue = "20") int size) {
+                                                                                    @RequestParam(defaultValue = "0") int page,
+                                                                                    @RequestParam(defaultValue = "20") int size) {
         var currentUserId = userContext.getUser().id();
-
         var answerRangeList = useCase.getAnswerRangeList(toParam(kitVersionId, page, size, currentUserId));
 
         return new ResponseEntity<>(answerRangeList, HttpStatus.OK);

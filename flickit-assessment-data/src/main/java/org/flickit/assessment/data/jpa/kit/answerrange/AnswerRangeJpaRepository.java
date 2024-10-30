@@ -13,9 +13,9 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
     List<AnswerRangeJpaEntity> findAllByKitVersionId(long kitVersionId);
 
     @Query("""
-        SELECT ar
-        FROM AnswerRangeJpaEntity ar
-        WHERE ar.kitVersionId = :kitVersionId AND ar.reusable = true
+            SELECT ar
+            FROM AnswerRangeJpaEntity ar
+            WHERE ar.kitVersionId = :kitVersionId AND ar.reusable = true
         """)
     Page<AnswerRangeJpaEntity> findReusableByKitVersionId(@Param("kitVersionId") long kitVersionId, Pageable pageable);
 }

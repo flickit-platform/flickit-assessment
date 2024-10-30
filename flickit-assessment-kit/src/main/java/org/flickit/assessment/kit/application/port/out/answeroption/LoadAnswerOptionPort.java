@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface LoadAnswerOptionPort {
 
-    List<AnswerOption> loadByKitVersionId(Long kitVersionId);
+    List<AnswerOption> loadByKitVersionId(long kitVersionId);
 }
