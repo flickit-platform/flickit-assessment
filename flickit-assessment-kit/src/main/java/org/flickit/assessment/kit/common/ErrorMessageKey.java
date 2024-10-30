@@ -393,6 +393,12 @@ public class ErrorMessageKey {
     public static final String GET_QUESTION_OPTIONS_KIT_VERSION_ID_NOT_NULL = "get-question-options.kitVersionId.notNull";
     public static final String GET_QUESTION_OPTIONS_QUESTION_ID_NOT_NULL = "get-question-options.questionId.notNull";
 
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_KIT_VERSION_ID_NOT_NULL = "get-questionnaire-questions-kitVersionId.notNull";
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_QUESTIONNAIRE_ID_NOT_NULL = "get-questionnaire-questions-questionnaireId.notNull";
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_PAGE_MIN = "get-questionnaire-questions.page.min";
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_SIZE_MIN = "get-questionnaire-questions.size.min";
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_SIZE_MAX = "get-questionnaire-questions.size.max";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
