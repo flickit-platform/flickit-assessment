@@ -64,7 +64,9 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ans as answer,
                 qi as questionImpact,
                 ov as optionImpact,
-                ao as option
+                ao.index as optionIndex,
+                ao.title as optionTitle,
+                ao.value as optionValue
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId

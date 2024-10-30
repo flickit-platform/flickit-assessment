@@ -9,7 +9,6 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeP
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.ImpactFullQuestionsView;
@@ -50,11 +49,11 @@ public class AttributePersistenceJpaAdapter implements
                         view.getQuestionIndex(),
                         view.getQuestionTitle(),
                         view.getQuestionImpact().getWeight(),
-                        view.getOption().getIndex(),
-                        view.getOption().getTitle(),
+                        view.getOptionIndex(),
+                        view.getOptionTitle(),
                         view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
-                        getScore(view.getAnswer(), view.getOptionImpact(), view.getOption()),
-                        view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOption()) * view.getQuestionImpact().getWeight()
+                        getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
+                        view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOptionValue()) * view.getQuestionImpact().getWeight()
                     ))
                     .sorted(Comparator.comparingInt(QuestionScore::questionIndex))
                     .toList();
@@ -64,14 +63,14 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
-    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, AnswerOptionJpaEntity option) {
+    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
         if (answer == null) // if no answer is submitted for the question
             return 0.0;
         if(Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
             return null;
         if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
             return 0.0;
-        return getValue(optionImpact, option);
+        return getValue(optionImpact, optionValue);
     }
 
     @Override
@@ -81,7 +80,9 @@ public class AttributePersistenceJpaAdapter implements
         return mapToDomainModel(attribute);
     }
 
-    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, AnswerOptionJpaEntity option) {
-        return optionImpact.getValue() != null ? optionImpact.getValue() : option.getValue();
+    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
+        if (optionImpact.getValue() != null)
+            return optionImpact.getValue();
+        return optionValue != null ? optionValue : 0.0;
     }
 }
