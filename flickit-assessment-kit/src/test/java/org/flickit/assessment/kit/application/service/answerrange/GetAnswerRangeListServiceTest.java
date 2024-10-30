@@ -95,7 +95,7 @@ class GetAnswerRangeListServiceTest {
     }
 
     @Test
-    void testGetAnswerRangeListService_ValidParamsWithoutAnswerRange_ReturnsPaginatedAnswerRangeWithOptions() {
+    void testGetAnswerRangeListService_ValidParamsWithoutAnswerRanges_ReturnsPaginatedEmptyResponse() {
         int page = 0;
         int size = 10;
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
