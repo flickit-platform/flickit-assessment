@@ -5,6 +5,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.create.CreateKitPersisterContext;
@@ -49,6 +50,8 @@ class QuestionCreateKitPersisterTest {
     private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
+    @Mock
+    private CreateAnswerRangePort createAnswerRangePort;
 
     @Test
     void testOrder() {
@@ -57,7 +60,8 @@ class QuestionCreateKitPersisterTest {
 
     @Test
     void testPersist_ValidInputs_SaveQuestionAndItsRelatedEntities() {
-        Long kitId = 1L;
+        Long kitVersionId = 1L;
+        long answerRangeId = 1L;
         UUID currentUserId = UUID.randomUUID();
 
         var levelTwo = levelTwo();
@@ -73,7 +77,6 @@ class QuestionCreateKitPersisterTest {
         question.setOptions(List.of(answerOption1, answerOption2));
         question.setImpacts(List.of(impact));
         questionnaire.setQuestions(List.of(question));
-
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
@@ -95,14 +98,18 @@ class QuestionCreateKitPersisterTest {
             dslQuestion.getDescription(),
             dslQuestion.isMayNotBeApplicable(),
             dslQuestion.isAdvisable(),
-            kitId,
+            kitVersionId,
             questionnaire.getId(),
+            answerRangeId,
             currentUserId
         );
-        when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
 
-        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), kitId, currentUserId);
-        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), kitId, currentUserId);
+        var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, false, currentUserId);
+
+        when(createAnswerRangePort.persist(createAnswerRangeParam)).thenReturn(answerRangeId);
+        when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
+        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), answerRangeId, kitVersionId, currentUserId);
+        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), answerRangeId, kitVersionId, currentUserId);
         when(createAnswerOptionPort.persist(createOption1Param)).thenReturn(answerOption1.getId());
         when(createAnswerOptionPort.persist(createOption2Param)).thenReturn(answerOption2.getId());
 
@@ -111,7 +118,7 @@ class QuestionCreateKitPersisterTest {
             attribute.getId(),
             levelTwo.getId(),
             dslImpact.getWeight(),
-            kitId,
+            kitVersionId,
             question.getId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
@@ -120,8 +127,8 @@ class QuestionCreateKitPersisterTest {
         );
         when(createQuestionImpactPort.persist(createImpact)).thenReturn(impact.getId());
 
-        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), kitId, currentUserId);
-        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), kitId, currentUserId);
+        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), kitVersionId, currentUserId);
+        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), kitVersionId, currentUserId);
         when(createAnswerOptionImpactPort.persist(createOptionImpact1Param)).thenReturn(optionImpact1.getId());
         when(createAnswerOptionImpactPort.persist(createOptionImpact2Param)).thenReturn(optionImpact2.getId());
 
@@ -130,7 +137,7 @@ class QuestionCreateKitPersisterTest {
         context.put(KEY_ATTRIBUTES, Map.of(attribute.getCode(), attribute.getId()));
         context.put(KEY_MATURITY_LEVELS, Map.of(levelTwo.getCode(), levelTwo.getId()));
 
-        persister.persist(context, dslModel, kitId, currentUserId);
+        persister.persist(context, dslModel, kitVersionId, currentUserId);
 
         // TODO: assert?
     }

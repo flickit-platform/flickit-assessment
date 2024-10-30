@@ -21,6 +21,7 @@ public class QuestionJpaEntityMother {
             mayNotBeApplicable,
             advisable,
             questionnaireId,
+            null,
             creationTime,
             creationTime,
             UUID.randomUUID(),
