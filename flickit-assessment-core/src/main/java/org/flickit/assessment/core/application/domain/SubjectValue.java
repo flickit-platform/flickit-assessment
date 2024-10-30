@@ -52,7 +52,7 @@ public class SubjectValue {
                 Double weightedScore = attributeWeightedScores.get(maturityLevelId);
 
                 if (weightedScore != null)
-                    weightedSum.merge(maturityLevelId, weightedScore * attributeWeight, Double::sum);
+                    weightedSum.merge(maturityLevelId, weightedScore, Double::sum);
             }
         }
 
