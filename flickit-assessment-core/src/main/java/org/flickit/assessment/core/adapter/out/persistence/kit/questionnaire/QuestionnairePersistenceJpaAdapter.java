@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.questionnaire;
+package org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.core.adapter.out.persistence.questionnaire.QuestionnaireMapper.mapToListItem;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
@@ -55,7 +54,7 @@ public class QuestionnairePersistenceJpaAdapter implements
             .collect(Collectors.toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
 
         var items = pageResult.getContent().stream()
-            .map(q -> mapToListItem(q,
+            .map(q -> QuestionnaireMapper.mapToListItem(q,
                 questionnaireIdToSubjectMap.get(q.getQuestionnaire().getId()),
                 questionnairesProgress.getOrDefault(q.getQuestionnaire().getId(), 0),
                 questionnaireToNextQuestionMap.getOrDefault(q.getQuestionnaire().getId(), 1)))
