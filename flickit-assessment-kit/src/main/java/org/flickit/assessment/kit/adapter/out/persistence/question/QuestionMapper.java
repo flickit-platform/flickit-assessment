@@ -37,6 +37,7 @@ public class QuestionMapper {
             param.mayNotBeApplicable(),
             param.advisable(),
             param.questionnaireId(),
+            param.answerRangeId(),
             creationTime,
             creationTime,
             param.createdBy(),

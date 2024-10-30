@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOp
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -83,6 +84,9 @@ class QuestionUpdateKitPersisterTest {
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
 
+    @Mock
+    private CreateAnswerRangePort createAnswerRangePort;
+
     @Test
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
         var levelTwo = levelTwo();
@@ -131,6 +135,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -235,6 +240,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -292,6 +298,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             createAnswerOptionPort
         );
     }
@@ -349,6 +356,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -401,6 +409,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -454,6 +463,7 @@ class QuestionUpdateKitPersisterTest {
             createAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -508,6 +518,7 @@ class QuestionUpdateKitPersisterTest {
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );

@@ -38,6 +38,9 @@ public class AnswerOptionJpaEntity {
     @Column(name = "question_id", nullable = false)
     private Long questionId;
 
+    @Column(name = "answer_range_id", nullable = false)
+    private Long answerRangeId;
+
     @Column(name = "value", nullable = false)
     private Double value;
 

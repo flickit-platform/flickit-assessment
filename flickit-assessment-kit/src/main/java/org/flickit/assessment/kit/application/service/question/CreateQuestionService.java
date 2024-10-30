@@ -43,6 +43,7 @@ public class CreateQuestionService implements CreateQuestionUseCase {
             param.getAdvisable(),
             param.getKitVersionId(),
             param.getQuestionnaireId(),
+            null,
             param.getCurrentUserId());
     }
 }

@@ -5,9 +5,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+import java.util.Set;
+
 public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEntity, Long> {
 
     boolean existsByKitIdAndStatus(long kitId, int status);
+
+    List<KitVersionJpaEntity> findAllByIdIn(Set<Long> ids);
 
     @Modifying
     @Query("""

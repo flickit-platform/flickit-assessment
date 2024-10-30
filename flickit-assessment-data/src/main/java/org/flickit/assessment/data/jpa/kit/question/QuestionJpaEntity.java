@@ -50,6 +50,9 @@ public class QuestionJpaEntity {
     @Column(name = "questionnaire_id", nullable = false)
     private Long questionnaireId;
 
+    @Column(name = "answer_range_id")
+    private Long answerRangeId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
