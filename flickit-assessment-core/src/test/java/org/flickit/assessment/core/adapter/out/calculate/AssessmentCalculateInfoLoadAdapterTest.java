@@ -286,9 +286,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         List<AnswerJpaEntity> answerEntities = new ArrayList<>(List.of(answerQ1, answerQ2, answerQ4, answerQ5, answerQ6, answerQ9, answerQ10));
 
-        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, question1.getId(), null, null, null, null, null);
-        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, question2.getId(), null, null, null, null, null);
-        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, question5.getId(), null, null, null, null, null);
+        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, question1.getId(), null, null, null, null, null, null);
+        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, question2.getId(), null, null, null, null, null, null);
+        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, question5.getId(), null, null, null, null, null, null);
         List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
 
         var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, kitVersionId, 1L, impact11.getId(), 1D, null, null, null, null);
