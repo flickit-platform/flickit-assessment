@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcWithQAAndAnswers;
+import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcWithAttributeAndAnswers;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.flickit.assessment.core.test.fixture.application.QuestionMother.withImpactsOnLevel45;
@@ -34,7 +34,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevels45(attributeId),
             AnswerMother.fullScoreOnLevels45(attributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculate(allLevels());
@@ -61,7 +61,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevels23(attributeId),
             AnswerMother.noScoreOnLevel4(attributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculate(allLevels());
@@ -86,7 +86,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevels45(attributeId),
             AnswerMother.fullScoreOnLevels45(attributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculate(allLevels());
@@ -120,7 +120,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevels24(attributeId),
             AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5(attributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculate(allLevels());
@@ -147,7 +147,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevels24(attributeId),
             AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5(attributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculate(allLevels());
@@ -172,7 +172,7 @@ class AttributeValueTest {
             AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q4.getId(), attributeId),
             AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q5.getId(), attributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculateConfidenceValue();
@@ -195,7 +195,7 @@ class AttributeValueTest {
             AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.SOMEWHAT_UNSURE.getId(), q2.getId(), attributeId),
             AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId(), q3.getId(), attributeId));
 
-        AttributeValue qav = toBeCalcWithQAAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        AttributeValue qav = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculateConfidenceValue();
 
@@ -218,7 +218,7 @@ class AttributeValueTest {
 
         List<Answer> answers = List.of();
 
-        AttributeValue qav = toBeCalcWithQAAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        AttributeValue qav = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculateConfidenceValue();
 
@@ -238,7 +238,7 @@ class AttributeValueTest {
 
         List<Answer> answers = List.of();
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         Map<Long, Double> totalScore = ReflectionTestUtils.invokeMethod(qav, "calcTotalScore", allLevels());
@@ -260,7 +260,7 @@ class AttributeValueTest {
 
         List<Answer> answers = List.of();
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         Map<Long, Double> totalScore = ReflectionTestUtils.invokeMethod(qav, "calcTotalScore", allLevels());
@@ -282,7 +282,7 @@ class AttributeValueTest {
         List<Answer> answers = List.of(
             AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         Map<Long, Double> gainedScore = ReflectionTestUtils.invokeMethod(qav, "calcGainedScore", allLevels());
@@ -307,7 +307,7 @@ class AttributeValueTest {
             AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId),
             AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         Map<Long, Double> gainedScore = ReflectionTestUtils.invokeMethod(qav, "calcGainedScore", allLevels());
@@ -329,7 +329,7 @@ class AttributeValueTest {
 
         List<Answer> answers = List.of();
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculate(allLevels());
@@ -361,7 +361,7 @@ class AttributeValueTest {
             AnswerMother.noScoreOnLevel3AndFullScoreOnAnotherAttributeLevel4(attributeId, anotherAttributeId),
             AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithQAAndAnswers(
+        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
             AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
         qav.calculate(allLevels());
