@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 
+import java.util.List;
 
 public class AnswerRangeMother {
 
@@ -11,7 +12,7 @@ public class AnswerRangeMother {
         return new AnswerRange(
             id++,
             "title" + id,
-            null
+            List.of(AnswerOptionMother.createSimpleAnswerOption())
         );
     }
 }

@@ -6,10 +6,8 @@ import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase;
 import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
@@ -25,7 +23,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,9 +39,6 @@ class GetAnswerRangeListServiceTest {
 
     @Mock
     LoadAnswerRangePort loadAnswerRangePort;
-
-    @Mock
-    LoadAnswerOptionPort loadAnswerOptionPort;
 
     @Test
     void testGetAnswerRangeListService_CurrentUserDoesNotHaveAccess_ThrowsAccessDeniedException() {
@@ -73,21 +67,15 @@ class GetAnswerRangeListServiceTest {
             Sort.Direction.ASC.name().toLowerCase(),
             2);
 
-        var answerOptions = List.of(AnswerOptionMother.createAnswerOptionWithAnswerRangeId(answerRange1.getId()),
-            AnswerOptionMother.createAnswerOptionWithAnswerRangeId(answerRange1.getId()),
-            AnswerOptionMother.createAnswerOptionWithAnswerRangeId(answerRange2.getId()));
-        AnswerOptionMother.createAnswerOptionWithAnswerRangeId(100);
-
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadAnswerRangePort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize())).thenReturn(paginatedAnswerRanges);
-        when(loadAnswerOptionPort.loadByKitVersionId(param.getKitVersionId())).thenReturn(answerOptions);
 
         var result = service.getAnswerRangeList(param);
 
         assertEquals(paginatedAnswerRanges.getItems().size(), result.getItems().size());
         assertFalse(result.getItems().isEmpty());
-        assertEquals(2, result.getItems().get(0).answerOptions().size());
+        assertEquals(1, result.getItems().get(0).answerOptions().size());
         assertEquals(1, result.getItems().get(1).answerOptions().size());
         assertEquals(size, paginatedAnswerRanges.getSize());
         assertEquals(page, paginatedAnswerRanges.getPage());
@@ -120,8 +108,6 @@ class GetAnswerRangeListServiceTest {
         assertEquals(size, paginatedAnswerRanges.getSize());
         assertEquals(page, paginatedAnswerRanges.getPage());
         assertEquals(0, paginatedAnswerRanges.getTotal());
-
-        verifyNoInteractions(loadAnswerOptionPort);
     }
 
     private GetAnswerRangeListUseCase.Param createParam(Consumer<GetAnswerRangeListUseCase.Param.ParamBuilder> changer) {
