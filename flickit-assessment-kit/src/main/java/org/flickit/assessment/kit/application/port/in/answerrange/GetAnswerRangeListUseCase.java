@@ -18,7 +18,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_ANSWER_RANGE
 
 public interface GetAnswerRangeListUseCase {
 
-    PaginatedResponse<AnswerRangeItemList> getAnswerRangeList(Param param);
+    PaginatedResponse<AnswerRangeListItem> getAnswerRangeList(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -47,7 +47,7 @@ public interface GetAnswerRangeListUseCase {
         }
     }
 
-    record AnswerRangeItemList(Long id, String title, List<AnswerOptionListItem> answerOptions) {
+    record AnswerRangeListItem(Long id, String title, List<AnswerOptionListItem> answerOptions) {
 
         public record AnswerOptionListItem(long id, String title, int index) {
         }

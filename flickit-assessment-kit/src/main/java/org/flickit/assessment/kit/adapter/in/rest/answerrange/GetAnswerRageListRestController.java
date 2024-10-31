@@ -22,7 +22,7 @@ public class GetAnswerRageListRestController {
     private final UserContext userContext;
 
     @GetMapping("/kit-versions/{kitVersionId}/answer-ranges")
-    public ResponseEntity<PaginatedResponse<AnswerRangeItemList>> getAnswerRageList(@PathVariable("kitVersionId") Long kitVersionId,
+    public ResponseEntity<PaginatedResponse<AnswerRangeListItem>> getAnswerRageList(@PathVariable("kitVersionId") Long kitVersionId,
                                                                                     @RequestParam(defaultValue = "0") int page,
                                                                                     @RequestParam(defaultValue = "20") int size) {
         var currentUserId = userContext.getUser().id();

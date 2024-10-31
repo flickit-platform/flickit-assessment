@@ -28,7 +28,7 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
     private final LoadAnswerOptionPort loadAnswerOptionPort;
 
     @Override
-    public PaginatedResponse<AnswerRangeItemList> getAnswerRangeList(Param param) {
+    public PaginatedResponse<AnswerRangeListItem> getAnswerRangeList(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         if (!checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
