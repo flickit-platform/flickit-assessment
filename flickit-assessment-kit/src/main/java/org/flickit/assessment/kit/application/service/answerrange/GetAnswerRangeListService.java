@@ -28,7 +28,6 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var paginatedResponse = loadAnswerRangePort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize());
-
         List<AnswerRangeListItem> items = paginatedResponse.getItems().stream()
             .map(e -> new AnswerRangeListItem(e.getId(), e.getTitle(),
                 e.getAnswerOptions().stream().map(
