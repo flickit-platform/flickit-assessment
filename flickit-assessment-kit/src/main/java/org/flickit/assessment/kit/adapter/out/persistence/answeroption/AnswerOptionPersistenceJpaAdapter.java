@@ -20,8 +20,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
     UpdateAnswerOptionPort,
     LoadAnswerOptionsByQuestionPort,
     CreateAnswerOptionPort,
-    DeleteAnswerOptionPort,
-    LoadAnswerOptionPort {
+    DeleteAnswerOptionPort {
 
     private final AnswerOptionJpaRepository repository;
     private final QuestionJpaRepository questionRepository;
@@ -59,12 +58,5 @@ public class AnswerOptionPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(ANSWER_OPTION_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(answerOptionId, kitVersionId);
-    }
-
-    @Override
-    public List<AnswerOption> loadByKitVersionId(long kitVersionId) {
-        return repository.findAllByKitVersionId(kitVersionId).stream()
-            .map(AnswerOptionMapper::mapToDomainModel)
-            .toList();
     }
 }
