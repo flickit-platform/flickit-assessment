@@ -28,7 +28,7 @@ public class AnswerRangeOptionPersistenceJpaAdapter implements LoadAnswerRangePo
 
     @Override
     public PaginatedResponse<AnswerRange> loadByKitVersionId(long kitVersionId, int page, int size) {
-        Page<AnswerRangeJpaEntity> pageResult = repository.findReusableByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        Page<AnswerRangeJpaEntity> pageResult = repository.findByKitVersionIdAndReusableTrue(kitVersionId, PageRequest.of(page, size));
         var answerRanges = pageResult
             .getContent()
             .stream()
