@@ -7,8 +7,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -16,7 +16,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetQuestionnaireQuestionsUseCase {
 
-    List<Result> getQuestionnaireQuestions(Param param);
+    PaginatedResponse<QuestionListItem> getQuestionnaireQuestions(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -27,7 +27,6 @@ public interface GetQuestionnaireQuestionsUseCase {
 
         @NotNull(message = GET_QUESTIONNAIRE_QUESTIONS_QUESTIONNAIRE_ID_NOT_NULL)
         Long questionnaireId;
-
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
@@ -50,14 +49,10 @@ public interface GetQuestionnaireQuestionsUseCase {
         }
     }
 
-    record Result(List<QuestionnaireQuestion> questions) {
-
-        public record QuestionnaireQuestion(
-            long id,
-            String title,
-            int index,
-            String hint,
-            boolean mayNotBeApplicable,
-            boolean advisable) {}
-    }
+    record QuestionListItem(long id,
+                            String title,
+                            int index,
+                            String hint,
+                            boolean mayNotBeApplicable,
+                            boolean advisable) {}
 }

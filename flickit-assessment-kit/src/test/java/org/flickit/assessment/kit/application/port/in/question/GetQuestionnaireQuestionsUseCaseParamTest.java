@@ -66,5 +66,4 @@ class GetQuestionnaireQuestionsUseCaseParamTest {
             .page(0)
             .size(20);
     }
-
 }
