@@ -31,7 +31,8 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
         List<AnswerRangeListItem> items = paginatedResponse.getItems().stream()
             .map(e -> new AnswerRangeListItem(e.getId(), e.getTitle(),
                 e.getAnswerOptions().stream().map(
-                    a -> new AnswerRangeListItem.AnswerOptionListItem(a.getId(), a.getTitle(), a.getIndex())).toList())).toList();
+                    a -> new AnswerRangeListItem.AnswerOptionListItem(a.getId(), a.getTitle(), a.getIndex())).toList()))
+            .toList();
 
         return new PaginatedResponse<>(items,
             paginatedResponse.getPage(),
