@@ -20,9 +20,9 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @RequiredArgsConstructor
 public class GetQuestionnaireQuestionsService implements GetQuestionnaireQuestionsUseCase {
 
-    private final LoadQuestionnaireQuestionsPort loadQuestionnaireQuestionsPort;
-    private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadKitVersionPort loadKitVersionPort;
+    private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
+    private final LoadQuestionnaireQuestionsPort loadQuestionnaireQuestionsPort;
 
     @Override
     public PaginatedResponse<QuestionListItem> getQuestionnaireQuestions(Param param) {

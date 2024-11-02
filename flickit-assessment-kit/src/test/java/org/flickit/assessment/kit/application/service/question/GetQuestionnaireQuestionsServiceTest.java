@@ -44,12 +44,12 @@ class GetQuestionnaireQuestionsServiceTest {
     private LoadQuestionnaireQuestionsPort loadQuestionnaireQuestionsPort;
 
     private final UUID ownerId = UUID.randomUUID();
-
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
     void testGetQuestionnaireQuestions_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
         var param = createParam(GetQuestionnaireQuestionsUseCase.Param.ParamBuilder::build);
+
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             .thenReturn(false);

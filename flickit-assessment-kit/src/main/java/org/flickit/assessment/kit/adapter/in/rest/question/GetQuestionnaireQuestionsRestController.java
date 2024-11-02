@@ -28,12 +28,8 @@ public class GetQuestionnaireQuestionsRestController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size) {
         UUID currentUserId = userContext.getUser().id();
-        var questionnaireQuestions = useCase.getQuestionnaireQuestions(toParam(kitVersionId,
-            questionnaireId,
-            currentUserId,
-            page,
-            size));
-        return new ResponseEntity<>(questionnaireQuestions, HttpStatus.OK);
+        var response = useCase.getQuestionnaireQuestions(toParam(kitVersionId, questionnaireId, currentUserId, page, size));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private GetQuestionnaireQuestionsUseCase.Param toParam(Long kitVersionId,
