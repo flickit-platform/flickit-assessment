@@ -182,12 +182,10 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<Question> loadQuestionnaireQuestions(long questionnaireId,
-                                                                  long kitVersionId,
-                                                                  int page,
-                                                                  int size) {
-        var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId, kitVersionId,
-            PageRequest.of(page, size));
+    public PaginatedResponse<Question> loadQuestionnaireQuestions(LoadQuestionnaireQuestionsPort.Param param) {
+        var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(param.questionnaireId(),
+            param.kitVersionId(),
+            PageRequest.of(param.page(), param.size()));
         List<Question> items = pageResult.getContent().stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();

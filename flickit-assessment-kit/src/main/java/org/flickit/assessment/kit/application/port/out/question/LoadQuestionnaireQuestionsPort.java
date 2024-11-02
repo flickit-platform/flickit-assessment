@@ -5,5 +5,7 @@ import org.flickit.assessment.kit.application.domain.Question;
 
 public interface LoadQuestionnaireQuestionsPort {
 
-    PaginatedResponse<Question> loadQuestionnaireQuestions(long questionnaireId, long kitVersionId, int page, int size);
+    PaginatedResponse<Question> loadQuestionnaireQuestions(Param param);
+
+    record Param(long questionnaireId, long kitVersionId, int page, int size) {}
 }
