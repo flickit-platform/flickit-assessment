@@ -4,11 +4,11 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase;
 import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
 import org.junit.jupiter.api.Test;
@@ -23,6 +23,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithFourOptions;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithTwoOptions;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -41,10 +43,11 @@ class GetAnswerRangeListServiceTest {
     @Mock
     private LoadAnswerRangesPort loadAnswerRangesPort;
 
+    private final KitVersion kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
+
     @Test
     void testGetAnswerRangeList_CurrentUserDoesNotHaveAccess_ThrowsAccessDeniedException() {
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
-        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
@@ -55,8 +58,6 @@ class GetAnswerRangeListServiceTest {
 
     @Test
     void testGetAnswerRangeList_ValidParams_ReturnsPaginatedAnswerRangeWithOptions() {
-        int page = 0;
-        int size = 10;
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
         var answerRange1 = createAnswerRangeWithTwoOptions();
         var answerRange2 = createAnswerRangeWithFourOptions();
@@ -86,10 +87,7 @@ class GetAnswerRangeListServiceTest {
 
     @Test
     void testGetAnswerRangeList_ValidParamsWithoutAnswerRanges_ReturnsPaginatedEmptyResponse() {
-        int page = 0;
-        int size = 10;
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
-        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
         PaginatedResponse<AnswerRange> paginatedAnswerRanges = new PaginatedResponse<>(
             List.of(),
@@ -107,8 +105,8 @@ class GetAnswerRangeListServiceTest {
 
         assertEquals(paginatedAnswerRanges.getItems().size(), result.getItems().size());
         assertTrue(result.getItems().isEmpty());
-        assertEquals(size, paginatedAnswerRanges.getSize());
-        assertEquals(page, paginatedAnswerRanges.getPage());
+        assertEquals(param.getSize(), paginatedAnswerRanges.getSize());
+        assertEquals(param.getPage(), paginatedAnswerRanges.getPage());
         assertEquals(0, paginatedAnswerRanges.getTotal());
     }
 
@@ -120,7 +118,7 @@ class GetAnswerRangeListServiceTest {
 
     private GetAnswerRangeListUseCase.Param.ParamBuilder paramBuilder() {
         return GetAnswerRangeListUseCase.Param.builder()
-            .kitVersionId(1L)
+            .kitVersionId(kitVersion.getId())
             .page(0)
             .size(10)
             .currentUserId(UUID.randomUUID());

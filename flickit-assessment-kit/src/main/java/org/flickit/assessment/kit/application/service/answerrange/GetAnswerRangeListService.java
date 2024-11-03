@@ -30,8 +30,9 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
         var paginatedResponse = loadAnswerRangesPort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize());
         List<AnswerRangeListItem> items = paginatedResponse.getItems().stream()
             .map(e -> new AnswerRangeListItem(e.getId(), e.getTitle(),
-                e.getAnswerOptions().stream().map(
-                    a -> new AnswerRangeListItem.AnswerOptionListItem(a.getId(), a.getTitle(), a.getIndex())).toList()))
+                e.getAnswerOptions().stream()
+                    .map(a -> new AnswerRangeListItem.AnswerOptionListItem(a.getId(), a.getTitle(), a.getIndex()))
+                    .toList()))
             .toList();
 
         return new PaginatedResponse<>(items,
