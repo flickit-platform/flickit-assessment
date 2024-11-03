@@ -207,7 +207,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                 if (option != null) {
                     var impactsEntities = context.optionIdToAnswerOptionImpactsMap.get(option.getId());
                     var optionImpacts = impactsEntities.stream()
-                        .map(e -> AnswerOptionImpactMapper.mapToDomainModel(e.getOptionImpact(), e.getQuestionImpact()))
+                        .map(e -> AnswerOptionImpactMapper.mapToDomainModel(e.getOptionImpact(), e.getQuestionImpact(), option.getValue()))
                         .toList();
                     answerOption = AnswerOptionMapper.mapToDomainModel(option, optionImpacts);
                 }
