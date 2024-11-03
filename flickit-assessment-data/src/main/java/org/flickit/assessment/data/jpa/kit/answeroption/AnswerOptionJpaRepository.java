@@ -47,4 +47,6 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
         """)
     List<AnswerOptionJpaEntity> findAllByQuestionIdInAndKitVersionIdOrderByQuestionIdIndex(@Param("questionIds") List<Long> questionIds,
                                                                                            @Param("kitVersionId") Long kitVersionId);
+
+    List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(List<Long> answerRangeEntityIds, long kitVersionId);
 }
