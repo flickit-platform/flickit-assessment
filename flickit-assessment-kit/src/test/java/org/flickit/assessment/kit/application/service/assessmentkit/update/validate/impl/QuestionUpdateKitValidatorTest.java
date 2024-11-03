@@ -99,7 +99,7 @@ class QuestionUpdateKitValidatorTest {
         var newAnswerOption = AnswerOptionDslModel.builder()
             .caption(OPTION_TITLE)
             .index(1)
-            .value(1)
+            .value(1D)
             .build();
         var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
             .answerOptions(List.of(newAnswerOption))

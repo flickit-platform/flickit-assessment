@@ -134,6 +134,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             option.getIndex(),
             questionId,
             answerRangeId,
+            option.getValue(),
             kitVersionId,
             currentUserId);
 
@@ -141,7 +142,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
             optionId, option.getIndex(), option.getCaption(), questionId);
 
-        return new AnswerOption(optionId, option.getCaption(), option.getIndex(), questionId);
+        return new AnswerOption(optionId, option.getCaption(), option.getIndex(), questionId, null);
     }
 
     private void createImpact(QuestionImpactDslModel dslQuestionImpact,

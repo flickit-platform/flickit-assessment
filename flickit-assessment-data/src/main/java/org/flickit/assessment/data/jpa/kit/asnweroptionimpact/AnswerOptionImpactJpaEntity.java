@@ -33,8 +33,8 @@ public class AnswerOptionImpactJpaEntity {
     @Column(name = "question_impact_id", nullable = false)
     private Long questionImpactId;
 
-    @Column(name = "value", nullable = false)
-    private double value;
+    @Column(name = "value")
+    private Double value;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

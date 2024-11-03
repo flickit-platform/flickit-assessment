@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.answeroption;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AnswerOptionJpaEntity {
 
@@ -38,6 +40,9 @@ public class AnswerOptionJpaEntity {
 
     @Column(name = "answer_range_id", nullable = false)
     private Long answerRangeId;
+
+    @Column(name = "value", nullable = false)
+    private Double value;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

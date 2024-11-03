@@ -457,32 +457,32 @@
 					},
 					"response": []
 				},
-                {
-                  "name": "Clone Kit",
-                  "request": {
-                    "method": "POST",
-                    "header": [
-                      {
-                        "key": "Authorization",
-                        "value": "{{authorization_header}}",
-                        "type": "text"
-                      }
-                    ],
-                    "url": {
-                      "raw": "{{base_url}}/{{api_path}}/assessment-kits/393/clone",
-                      "host": [
-                        "{{base_url}}"
-                      ],
-                      "path": [
-                        "{{api_path}}",
-                        "assessment-kits",
-                        "393",
-                        "clone"
-                      ]
-                    }
-                  },
-                  "response": []
-                }
+				{
+					"name": "Clone Kit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/393/clone",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"393",
+								"clone"
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		},
 		{
@@ -1225,6 +1225,34 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Questionnaire Questions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires/3072/questions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questionnaires",
+								"3072",
+								"questions"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1330,33 +1358,33 @@
 					},
 					"response": []
 				},
-              {
-                "name": "Delete Question Impact",
-                "request": {
-                  "method": "DELETE",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/412/question-impacts/50014",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "412",
-                      "question-impacts",
-                      "50014"
-                    ]
-                  }
-                },
-                "response": []
-              }
+				{
+					"name": "Delete Question Impact",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/412/question-impacts/50014",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"412",
+								"question-impacts",
+								"50014"
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		},
 		{
@@ -1949,35 +1977,35 @@
 		{
 			"name": "AnswerOption",
 			"item": [
-              {
-                "name": "Get Question Options",
-                "request": {
-                  "method": "GET",
-                  "header": [
-                    {
-                      "key": "Authorization",
-                      "value": "{{authorization_header}}",
-                      "type": "text"
-                    }
-                  ],
-                  "url": {
-                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/22799/options",
-                    "host": [
-                      "{{base_url}}"
-                    ],
-                    "path": [
-                      "{{api_path}}",
-                      "kit-versions",
-                      "393",
-                      "questions",
-                      "22799",
-                      "options"
-                    ]
-                  }
-                },
-                "response": []
-              },
-              {
+				{
+					"name": "Get Question Options",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/22799/options",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questions",
+								"22799",
+								"options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete Answer Option",
 					"request": {
 						"method": "DELETE",
@@ -2010,9 +2038,9 @@
 			"name": "Answer Range",
 			"item": [
 				{
-					"name": "Update Answer Range",
+					"name": "Load Answer Range List",
 					"request": {
-						"method": "PUT",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
@@ -2020,31 +2048,67 @@
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"alpha\",\n    \"reusable\": true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-ranges/3345",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/348/answer-ranges?page=0&size=10",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"kit-versions",
-								"393",
-								"answer-ranges",
-								"3345"
+								"348",
+								"answer-ranges"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
 							]
 						}
 					},
 					"response": []
-				}
+				},
+              {
+                "name": "Update Answer Range",
+                "request": {
+                  "method": "PUT",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"title\": \"alpha\",\n    \"reusable\": true\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-ranges/3345",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "answer-ranges",
+                      "3345"
+                    ]
+                  }
+                },
+                "response": []
+              }
 			]
 		}
 	],
