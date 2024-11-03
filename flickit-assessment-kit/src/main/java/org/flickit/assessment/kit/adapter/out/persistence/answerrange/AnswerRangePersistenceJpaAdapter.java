@@ -9,7 +9,7 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +25,7 @@ import static java.util.stream.Collectors.groupingBy;
 @RequiredArgsConstructor
 public class AnswerRangePersistenceJpaAdapter implements
     CreateAnswerRangePort,
-    LoadAnswerRangePort {
+    LoadAnswerRangesPort {
 
     private final AnswerRangeJpaRepository repository;
     private final KitDbSequenceGenerators sequenceGenerators;

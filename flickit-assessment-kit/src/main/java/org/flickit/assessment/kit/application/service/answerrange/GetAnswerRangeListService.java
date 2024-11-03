@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
 
     private final LoadKitVersionPort loadKitVersionPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
-    private final LoadAnswerRangePort loadAnswerRangePort;
+    private final LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Override
     public PaginatedResponse<AnswerRangeListItem> getAnswerRangeList(Param param) {
@@ -27,7 +27,7 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
         if (!checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var paginatedResponse = loadAnswerRangePort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize());
+        var paginatedResponse = loadAnswerRangesPort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize());
         List<AnswerRangeListItem> items = paginatedResponse.getItems().stream()
             .map(e -> new AnswerRangeListItem(e.getId(), e.getTitle(),
                 e.getAnswerOptions().stream().map(

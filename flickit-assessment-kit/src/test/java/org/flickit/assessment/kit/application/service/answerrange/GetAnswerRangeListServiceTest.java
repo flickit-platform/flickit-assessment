@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
@@ -38,7 +38,7 @@ class GetAnswerRangeListServiceTest {
     CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
-    LoadAnswerRangePort loadAnswerRangePort;
+    LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Test
     void testGetAnswerRangeListService_CurrentUserDoesNotHaveAccess_ThrowsAccessDeniedException() {
@@ -69,7 +69,7 @@ class GetAnswerRangeListServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadAnswerRangePort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize())).thenReturn(paginatedAnswerRanges);
+        when(loadAnswerRangesPort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize())).thenReturn(paginatedAnswerRanges);
 
         var result = service.getAnswerRangeList(param);
 
@@ -99,7 +99,7 @@ class GetAnswerRangeListServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadAnswerRangePort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize())).thenReturn(paginatedAnswerRanges);
+        when(loadAnswerRangesPort.loadByKitVersionId(param.getKitVersionId(), param.getPage(), param.getSize())).thenReturn(paginatedAnswerRanges);
 
         var result = service.getAnswerRangeList(param);
 
