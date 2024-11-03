@@ -94,8 +94,8 @@ class GetAnswerRangeListServiceTest {
 
         PaginatedResponse<AnswerRange> paginatedAnswerRanges = new PaginatedResponse<>(
             List.of(),
-            page,
-            size,
+            param.getPage(),
+            param.getSize(),
             AnswerRangeJpaEntity.Fields.creationTime,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
