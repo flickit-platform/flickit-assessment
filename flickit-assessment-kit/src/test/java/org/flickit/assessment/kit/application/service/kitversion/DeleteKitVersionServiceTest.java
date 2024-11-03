@@ -74,11 +74,11 @@ class DeleteKitVersionServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        doNothing().when(deleteKitVersionPort).deleteKitVersion(param.getKitVersionId());
+        doNothing().when(deleteKitVersionPort).delete(param.getKitVersionId());
 
         assertDoesNotThrow(() -> service.deleteKitVersion(param));
 
-        verify(deleteKitVersionPort).deleteKitVersion(param.getKitVersionId());
+        verify(deleteKitVersionPort).delete(param.getKitVersionId());
     }
 
     private DeleteKitVersionUseCase.Param createParam(Consumer<DeleteKitVersionUseCase.Param.ParamBuilder> changer) {

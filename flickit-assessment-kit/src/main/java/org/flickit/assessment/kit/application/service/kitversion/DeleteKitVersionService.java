@@ -29,6 +29,6 @@ public class DeleteKitVersionService implements DeleteKitVersionUseCase {
             !KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        deleteKitVersionPort.deleteKitVersion(param.getKitVersionId());
+        deleteKitVersionPort.delete(param.getKitVersionId());
     }
 }

@@ -7,11 +7,7 @@ import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
-import org.flickit.assessment.kit.application.port.out.kitversion.CheckKitVersionExistencePort;
-import org.flickit.assessment.kit.application.port.out.kitversion.CreateKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.DeleteKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.*;
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
@@ -58,7 +54,7 @@ public class KitVersionPersistenceJpaAdapter implements
     }
 
     @Override
-    public void deleteKitVersion(long kitVersionId) {
+    public void delete(long kitVersionId) {
         repository.deleteById(kitVersionId);
     }
 }
