@@ -22,8 +22,7 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
     @Modifying
     @Query("""
             UPDATE AnswerRangeJpaEntity a
-            SET
-                a.title = :title,
+        SET a.title = :title,
                 a.reusable = :reusable,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy

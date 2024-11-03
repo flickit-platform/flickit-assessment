@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
 import static org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRangeMapper.toDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_RANGE_ID_NOT_FOUND;
 
@@ -67,9 +69,7 @@ public class AnswerRangePersistenceJpaAdapter implements
         Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToAnswerOptionsMap = answerOptionEntities.stream()
             .collect(Collectors.groupingBy(
                 AnswerOptionJpaEntity::getAnswerRangeId,
-                Collectors.collectingAndThen(
-                    Collectors.toList(),
-                    list -> list.stream()
+                collectingAndThen(toList(), list -> list.stream()
                         .sorted(Comparator.comparingInt(AnswerOptionJpaEntity::getIndex))
                         .toList())
             ));
