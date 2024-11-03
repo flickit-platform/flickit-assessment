@@ -2,32 +2,34 @@ package org.flickit.assessment.data.jpa.kit.subject;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import lombok.experimental.FieldNameConstants;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
+@IdClass(SubjectJpaEntity.EntityId.class)
 @Table(name = "fak_subject")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@FieldNameConstants
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class SubjectJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_subject_id_seq")
-    @SequenceGenerator(name = "fak_subject_id_seq", sequenceName = "fak_subject_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "ref_num", nullable = false)
-    private UUID refNum;
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
-    @Column(name = "code", length = 50, nullable = false)
+    @Column(name = "code", length = 100, nullable = false)
     private String code;
 
     @Column(name = "index", nullable = false)
@@ -42,9 +44,6 @@ public class SubjectJpaEntity {
     @Column(name = "weight", nullable = false)
     private Integer weight = 1;
 
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
-
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
@@ -57,6 +56,20 @@ public class SubjectJpaEntity {
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
 
-    @OneToMany(mappedBy = "subject")
-    private List<AttributeJpaEntity> attributes;
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId implements Serializable {
+
+        private long id;
+        private long kitVersionId;
+    }
+
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
+    }
 }

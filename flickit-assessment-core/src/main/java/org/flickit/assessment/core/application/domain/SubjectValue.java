@@ -7,8 +7,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.springframework.util.Assert;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor
@@ -19,7 +18,7 @@ public class SubjectValue {
     private final Subject subject;
 
     @Setter
-    private List<QualityAttributeValue> qualityAttributeValues;
+    private List<AttributeValue> attributeValues;
 
     @Setter
     MaturityLevel maturityLevel;
@@ -27,20 +26,17 @@ public class SubjectValue {
     @Setter
     Double confidenceValue;
 
-    public SubjectValue(UUID id, Subject subject, List<QualityAttributeValue> qavList) {
+    public SubjectValue(UUID id, Subject subject, List<AttributeValue> qavList) {
         this.id = id;
         this.subject = subject;
-        this.qualityAttributeValues = qavList;
+        this.attributeValues = qavList;
     }
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
-        qualityAttributeValues.forEach(x -> x.calculate(maturityLevels));
+        attributeValues.forEach(attributeValue -> attributeValue.calculate(maturityLevels));
+        Map<Long, Double> weightedMeanScores = calculateWeightedMeanScoresOfAttributeValues(maturityLevels);
 
-        int weightedMeanLevel = calculateWeightedMeanOfAttributeValues();
-        return maturityLevels.stream()
-            .filter(m -> m.getValue() == weightedMeanLevel)
-            .findAny()
-            .orElseThrow(IllegalStateException::new);
+        return findGainedMaturityLevel(weightedMeanScores, maturityLevels);
     }
 
     public int getWeightedLevel() {
@@ -48,31 +44,78 @@ public class SubjectValue {
         return maturityLevel.getValue() * subject.getWeight();
     }
 
-    private int calculateWeightedMeanOfAttributeValues() {
-        int weightedSum = 0;
-        int sum = 0;
-        for (QualityAttributeValue qav : qualityAttributeValues) {
-            weightedSum += qav.getWeightedLevel();
-            sum += qav.getQualityAttribute().getWeight();
+    private Map<Long, Double> calculateWeightedMeanScoresOfAttributeValues(List<MaturityLevel> maturityLevels) {
+        Map<Long, Double> weightedSum = new HashMap<>();
+        int totalWeight = 0;
+
+        for (AttributeValue attributeValue : attributeValues) {
+            Map<Long, Double> attributeWeightedScores = attributeValue.getWeightedScore();
+            int attributeWeight = attributeValue.getAttribute().getWeight();
+            totalWeight += attributeWeight;
+
+            for (MaturityLevel ml : maturityLevels) {
+                Long maturityLevelId = ml.getId();
+                Double weightedScore = attributeWeightedScores.get(maturityLevelId);
+
+                if (weightedScore != null)
+                    weightedSum.merge(maturityLevelId, weightedScore, Double::sum);
+            }
         }
-        return sum != 0 ? (int) Math.round((double) weightedSum / sum) : 0;
+
+        Map<Long, Double> weightedMeanScores = new HashMap<>();
+        for (Map.Entry<Long, Double> entry : weightedSum.entrySet()) {
+            Long maturityLevelId = entry.getKey();
+            Double sumScores = entry.getValue();
+
+            if (totalWeight > 0)
+                weightedMeanScores.put(maturityLevelId, sumScores / totalWeight);
+            else
+                weightedMeanScores.put(maturityLevelId, 0.0);
+        }
+
+        return weightedMeanScores;
+    }
+
+    private MaturityLevel findGainedMaturityLevel(Map<Long, Double> percentScores, List<MaturityLevel> maturityLevels) {
+        List<MaturityLevel> sortedMaturityLevels = maturityLevels.stream()
+            .sorted(Comparator.comparingInt(MaturityLevel::getIndex))
+            .toList();
+
+        MaturityLevel result = null;
+        for (MaturityLevel ml : sortedMaturityLevels) {
+            if (!passLevel(percentScores, ml))
+                break;
+
+            result = ml;
+        }
+        return result;
+    }
+
+    private boolean passLevel(Map<Long, Double> percentScores, MaturityLevel ml) {
+        List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
+
+        for (LevelCompetence levelCompetence : levelCompetences) {
+            Long mlId = levelCompetence.getEffectiveLevelId();
+            if (percentScores.containsKey(mlId) && percentScores.get(mlId) < levelCompetence.getValue())
+                return false;
+        }
+        return true;
     }
 
     public Double calculateConfidenceValue() {
-        qualityAttributeValues.forEach(QualityAttributeValue::calculateConfidenceValue);
+        attributeValues.forEach(AttributeValue::calculateConfidenceValue);
         return calculateWeightedMeanOfAttributeConfidenceValues();
     }
 
     private Double calculateWeightedMeanOfAttributeConfidenceValues() {
         MutableDouble weightedSum = new MutableDouble();
         MutableDouble sum = new MutableDouble();
-        for (QualityAttributeValue qav : qualityAttributeValues) {
+        for (AttributeValue qav : attributeValues) {
             if (qav.getConfidenceValue() != null) {
                 weightedSum.add(qav.getWeightedConfidenceValue());
-                sum.add(qav.getQualityAttribute().getWeight());
+                sum.add(qav.getAttribute().getWeight());
             }
         }
         return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
     }
-
 }

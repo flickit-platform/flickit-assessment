@@ -8,10 +8,17 @@ import java.util.List;
 
 public interface SubjectQuestionnaireJpaRepository extends JpaRepository<SubjectQuestionnaireJpaEntity, Long> {
 
+    List<SubjectQuestionnaireJpaEntity> findAllByKitVersionId(Long kitVersionId);
+
     @Query("""
-            FROM SubjectQuestionnaireJpaEntity sq
-            where sq.subjectId in
-                (SELECT s.id FROM SubjectJpaEntity s WHERE s.kitVersionId = :kitVersionId)
+            SELECT DISTINCT
+                qr.id As questionnaireId,
+                a.subjectId AS subjectId
+            FROM QuestionnaireJpaEntity qr
+            JOIN QuestionJpaEntity q ON qr.id = q.questionnaireId
+            JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id
+            JOIN AttributeJpaEntity a ON a.id = qi.attributeId
+            WHERE qr.kitVersionId = :kitVersionId
         """)
-    List<SubjectQuestionnaireJpaEntity> findAllByKitVersionId(@Param(value = "kitVersionId") Long kitVersionId);
+    List<SubjectQuestionnaireView> findSubjectQuestionnairePairs(@Param("kitVersionId") long kitVersionId);
 }

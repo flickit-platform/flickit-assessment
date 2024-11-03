@@ -36,7 +36,7 @@ public class GetSpaceListService implements GetSpaceListUseCase {
             .map(item -> new GetSpaceListUseCase.SpaceListItem(
                 item.space().getId(),
                 item.space().getTitle(),
-                item.space().getOwnerId().equals(currentUserId),
+                new SpaceListItem.Owner(item.space().getOwnerId(), item.ownerName(), item.space().getOwnerId().equals(currentUserId)),
                 item.space().getLastModificationTime(),
                 item.membersCount(),
                 item.assessmentsCount()

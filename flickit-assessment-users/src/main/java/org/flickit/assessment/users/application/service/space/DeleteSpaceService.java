@@ -32,7 +32,7 @@ public class DeleteSpaceService implements DeleteSpaceUseCase {
         if (countSpaceAssessmentPort.countAssessments(param.getId()) > 0)
             throw new ValidationException(DELETE_SPACE_ASSESSMENT_EXIST);
 
-        deleteSpacePort.deleteById(param.getId());
+        deleteSpacePort.deleteById(param.getId(), System.currentTimeMillis());
     }
 
     private void validateCurrentUser(Long spaceId, UUID currentUserId) {

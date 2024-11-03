@@ -8,14 +8,13 @@ import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListU
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
+import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithAttachmentsCountView;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
-
-import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
 
-    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param, UUID questionRefNum) {
+    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param) {
         return new EvidenceJpaEntity(
             null,
             param.description(),
@@ -25,19 +24,21 @@ public class EvidenceMapper {
             param.createdById(),
             param.assessmentId(),
             param.questionId(),
-            questionRefNum,
             param.type(),
             false
         );
     }
 
-    public static EvidenceListItem toEvidenceListItem(EvidenceJpaEntity entity, UserJpaEntity user) {
+    public static EvidenceListItem toEvidenceListItem(EvidenceWithAttachmentsCountView view, UserJpaEntity user) {
         return new EvidenceListItem(
-            entity.getId(),
-            entity.getDescription(),
-            entity.getType() != null ? EvidenceType.values()[entity.getType()].getTitle() : null,
-            entity.getLastModificationTime(),
-            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName())
+            view.getId(),
+            view.getDescription(),
+            view.getType() != null ? EvidenceType.values()[view.getType()].getTitle() : null,
+            view.getLastModificationTime(),
+            view.getAttachmentsCount(),
+            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName(), user.getPicture()),
+            null,
+            null
         );
     }
 

@@ -8,5 +8,5 @@ public interface LoadQuestionMayNotBeApplicablePort {
      * @throws ResourceNotFoundException if the question with given ID is not found.
      */
 
-    boolean loadMayNotBeApplicableById(Long id);
+    boolean loadMayNotBeApplicableById(Long id, long kitVersionId);
 }

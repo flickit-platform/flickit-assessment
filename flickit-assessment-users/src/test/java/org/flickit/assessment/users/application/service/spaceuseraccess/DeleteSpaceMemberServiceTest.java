@@ -2,7 +2,9 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.DeleteSpaceMemberUseCase.Param;
+import org.flickit.assessment.users.application.port.out.assessmentuserrole.DeleteSpaceAssessmentUserRolesPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
@@ -17,8 +19,8 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_MEMBER_USER_ID_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_SPACE_MEMBER_USER_IS_SPACE_OWNER;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +37,9 @@ class DeleteSpaceMemberServiceTest {
 
     @Mock
     DeleteSpaceMemberPort deleteSpaceMemberPort;
+
+    @Mock
+    DeleteSpaceAssessmentUserRolesPort deleteSpaceAssessmentUserRolesPort;
 
     @Test
     @DisplayName("Deleting a member from space, should be done by owner")
@@ -54,14 +59,16 @@ class DeleteSpaceMemberServiceTest {
 
     @Test
     @DisplayName("Owner might not remove himself/herself from the space")
-    void testDeleteSpaceMember_ownerDelete_accessDenied(){
+    void testDeleteSpaceMember_ownerDelete_accessDenied() {
         long spaceId = 0L;
         var currentUserId = UUID.randomUUID();
         Param param = new Param(spaceId, currentUserId, currentUserId);
 
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
 
-        assertThrows(AccessDeniedException.class, ()-> service.deleteMember(param), COMMON_CURRENT_USER_NOT_ALLOWED);
+        var throwable = assertThrows(ValidationException.class, () -> service.deleteMember(param));
+        assertEquals(DELETE_SPACE_MEMBER_USER_IS_SPACE_OWNER, throwable.getMessageKey());
+
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
         verifyNoInteractions(checkSpaceAccessPort);
         verifyNoInteractions(deleteSpaceMemberPort);
@@ -99,6 +106,7 @@ class DeleteSpaceMemberServiceTest {
         assertDoesNotThrow(() -> service.deleteMember(param));
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
         verify(checkSpaceAccessPort).checkIsMember(spaceId, userId);
+        verify(deleteSpaceAssessmentUserRolesPort).delete(userId, spaceId);
         verify(deleteSpaceMemberPort).delete(spaceId, userId);
     }
 }

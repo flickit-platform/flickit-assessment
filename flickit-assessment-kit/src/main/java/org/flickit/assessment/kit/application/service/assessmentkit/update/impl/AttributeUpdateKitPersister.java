@@ -59,7 +59,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
                     savedAttribute.getWeight() != dslAttribute.getWeight()
                 ) {
                     Long newSubjectId = subjectCodeToSubjectId.get(dslAttribute.getSubjectCode());
-                    updateAttribute(savedAttribute, newSubjectId, dslAttribute, currentUserId);
+                    updateAttribute(savedAttribute, newSubjectId, savedKit.getActiveVersionId(), dslAttribute, currentUserId);
                 }
 
                 if (!subjectCode.equals(dslAttribute.getSubjectCode()) ||
@@ -79,7 +79,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
         Map<String, Long> savedNewAttrCodeToIdMap = new HashMap<>();
         addedAttributeCodes.forEach(code -> {
             Long subjectId = subjectCodeToSubjectId.get(attrCodeToAttrDslModel.get(code).getSubjectCode());
-            Long persistedAttributeId = createAttribute(attrCodeToAttrDslModel.get(code), subjectId, savedKit.getKitVersionId(), currentUserId);
+            Long persistedAttributeId = createAttribute(attrCodeToAttrDslModel.get(code), subjectId, savedKit.getActiveVersionId(), currentUserId);
             savedNewAttrCodeToIdMap.put(code, persistedAttributeId);
         });
 
@@ -97,9 +97,12 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
 
     private void updateAttribute(Attribute savedAttribute,
                                  Long subjectId,
+                                 long kitVersionId,
                                  AttributeDslModel dslAttribute,
                                  UUID updatedBy) {
         UpdateAttributePort.Param param = new UpdateAttributePort.Param(savedAttribute.getId(),
+            kitVersionId,
+            savedAttribute.getCode(),
             dslAttribute.getTitle(),
             dslAttribute.getIndex(),
             dslAttribute.getDescription(),

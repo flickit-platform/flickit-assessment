@@ -36,6 +36,10 @@ public interface ReportAssessmentUseCase {
 
     record Result(
         AssessmentReportItem assessment,
-        List<AssessmentSubjectReportItem> subjects) {
+        List<AssessmentSubjectReportItem> subjects,
+        Permissions assessmentPermissions) {
+    }
+
+    record Permissions(boolean manageable, boolean exportable) {
     }
 }

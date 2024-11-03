@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.question;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase.Param;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -53,9 +54,13 @@ class GetKitQuestionDetailServiceTest {
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
+    @Mock
+    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
+
     @Test
     void testGetKitQuestionDetail_WhenQuestionExist_shouldReturnQuestionDetails() {
         long kitId = 123L;
+        long kitVersionId = 456L;
         var expertGroup = ExpertGroupMother.createExpertGroup();
         var attr1 = AttributeMother.attributeWithTitle("attr1");
         var attr2 = AttributeMother.attributeWithTitle("attr2");
@@ -94,21 +99,22 @@ class GetKitQuestionDetailServiceTest {
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadQuestionPort.load(question.getId(), kitId)).thenReturn(question);
-        when(loadAllAttributesPort.loadAllByIds(List.of(attr1.getId(), attr2.getId()))).thenReturn(List.of(attr1, attr2));
-        when(loadMaturityLevelsPort.loadByKitId(kitId)).thenReturn(maturityLevels);
+        when(loadQuestionPort.load(question.getId(), kitVersionId)).thenReturn(question);
+        when(loadAllAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId)).thenReturn(List.of(attr1, attr2));
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
+        when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var result = service.getKitQuestionDetail(param);
 
         assertEquals(answerOptions.size(), result.options().size());
         assertEquals(2, result.attributeImpacts().size());
 
-        var attributeImpact1 = result.attributeImpacts().get(0);
+        var attributeImpact1 = result.attributeImpacts().getFirst();
         assertEquals(attr1.getId(), attributeImpact1.id());
         assertEquals(attr1.getTitle(), attributeImpact1.title());
         assertEquals(2, attributeImpact1.affectedLevels().size());
 
-        var attr1AffectedLevel1 = attributeImpact1.affectedLevels().get(0);
+        var attr1AffectedLevel1 = attributeImpact1.affectedLevels().getFirst();
         assertEquals(impact1.getAttributeId(), attributeImpact1.id());
         assertEquals(impact1.getMaturityLevelId(), attr1AffectedLevel1.maturityLevel().id());
         assertEquals(optionImpacts.size(), attr1AffectedLevel1.optionValues().size());
@@ -119,7 +125,7 @@ class GetKitQuestionDetailServiceTest {
         assertEquals(optionImpacts.size(), attr1AffectedLevel2.optionValues().size());
 
         var attributeImpact2 = result.attributeImpacts().get(1);
-        var attr2AffectedLevel1 = attributeImpact1.affectedLevels().get(0);
+        var attr2AffectedLevel1 = attributeImpact1.affectedLevels().getFirst();
         assertEquals(impact3.getAttributeId(), attributeImpact2.id());
         assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().id());
         assertEquals(optionImpacts.size(), attr2AffectedLevel1.optionValues().size());
@@ -135,6 +141,7 @@ class GetKitQuestionDetailServiceTest {
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(KIT_ID_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(
+            loadActiveKitVersionIdPort,
             checkExpertGroupAccessPort,
             loadAllAttributesPort
         );
@@ -143,13 +150,15 @@ class GetKitQuestionDetailServiceTest {
     @Test
     void testGetKitQuestionDetail_WhenQuestionDoesNotExist_ThrowsException() {
         long kitId = 123L;
+        long kitVersionId = 153L;
         long questionId = 2L;
         var param = new Param(kitId, questionId, UUID.randomUUID());
         var expertGroup = ExpertGroupMother.createExpertGroup();
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadQuestionPort.load(questionId, kitId)).thenThrow(new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
+        when(loadActiveKitVersionIdPort.loadKitVersionId(param.getKitId())).thenReturn(kitVersionId);
+        when(loadQuestionPort.load(questionId, kitVersionId)).thenThrow(new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(QUESTION_ID_NOT_FOUND, exception.getMessage());

@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOp
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -83,6 +84,9 @@ class QuestionUpdateKitPersisterTest {
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
 
+    @Mock
+    private CreateAnswerRangePort createAnswerRangePort;
+
     @Test
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
         var levelTwo = levelTwo();
@@ -103,8 +107,8 @@ class QuestionUpdateKitPersisterTest {
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -131,6 +135,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -156,12 +161,12 @@ class QuestionUpdateKitPersisterTest {
         savedQuestion.setImpacts(List.of(savedImpact));
         savedQuestionnaire2.setQuestions(List.of(savedQuestion));
 
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any())).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(savedQuestionnaire2);
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -208,8 +213,8 @@ class QuestionUpdateKitPersisterTest {
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -235,6 +240,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -260,13 +266,13 @@ class QuestionUpdateKitPersisterTest {
 
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any())).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslMaturityLevelThree = MaturityLevelDslModelMother.domainToDslModel(levelThree());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -292,6 +298,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             createAnswerOptionPort
         );
     }
@@ -318,12 +325,12 @@ class QuestionUpdateKitPersisterTest {
         savedQuestionnaire.setQuestions(List.of(savedQuestion));
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(attribute))), List.of(levelTwo, levelThree), List.of(savedQuestionnaire));
 
-        doNothing().when(deleteQuestionImpactPort).delete(savedImpact2.getId());
+        doNothing().when(deleteQuestionImpactPort).delete(savedImpact2.getId(), savedImpact2.getKitVersionId());
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -349,6 +356,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -374,8 +382,8 @@ class QuestionUpdateKitPersisterTest {
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -401,6 +409,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -427,8 +436,8 @@ class QuestionUpdateKitPersisterTest {
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -454,6 +463,7 @@ class QuestionUpdateKitPersisterTest {
             createAnswerOptionImpactPort,
             updateAnswerOptionPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -481,8 +491,8 @@ class QuestionUpdateKitPersisterTest {
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -508,6 +518,7 @@ class QuestionUpdateKitPersisterTest {
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
             createQuestionPort,
+            createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
             createAnswerOptionPort
         );
@@ -534,8 +545,8 @@ class QuestionUpdateKitPersisterTest {
         question.setImpacts(List.of(impact));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -555,7 +566,7 @@ class QuestionUpdateKitPersisterTest {
             .subjects(List.of(dslSubject))
             .build();
 
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any())).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));

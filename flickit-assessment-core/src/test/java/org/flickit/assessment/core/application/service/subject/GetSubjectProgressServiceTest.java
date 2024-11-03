@@ -1,9 +1,10 @@
 package org.flickit.assessment.core.application.service.subject;
 
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.subject.GetSubjectProgressUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersByQuestionIdsPort;
-import org.flickit.assessment.core.application.port.out.assessment.CheckUserAssessmentAccessPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
@@ -18,8 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_PROGRESS;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +31,7 @@ class GetSubjectProgressServiceTest {
     private GetSubjectProgressService service;
 
     @Mock
-    private CheckUserAssessmentAccessPort checkUserAssessmentAccessPort;
+    private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
     private LoadQuestionsBySubjectPort loadQuestionsBySubjectPort;
@@ -54,13 +56,13 @@ class GetSubjectProgressServiceTest {
         var questionIds = questions.stream()
             .map(Question::getId)
             .toList();
-        var qav = QualityAttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
-        var subjectValue = SubjectValueMother.withQAValues(List.of(qav));
+        var qav = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1);
+        var subjectValue = SubjectValueMother.withAttributeValues(List.of(qav));
         var result = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(
             List.of(subjectValue), MaturityLevelMother.levelTwo());
 
-        when(checkUserAssessmentAccessPort.hasAccess(result.getAssessment().getId(), currentUserId)).thenReturn(true);
-        when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId())).
+        when(assessmentAccessChecker.isAuthorized(result.getAssessment().getId(), currentUserId, VIEW_SUBJECT_PROGRESS)).thenReturn(true);
+        when(loadQuestionsBySubjectPort.loadQuestionsBySubject(subjectValue.getSubject().getId(), result.getKitVersionId())).
             thenReturn(questions);
         when(loadSubjectPort.loadByIdAndKitVersionId(subjectValue.getSubject().getId(), result.getKitVersionId())).
             thenReturn(Optional.of(subjectValue.getSubject()));
@@ -74,5 +76,18 @@ class GetSubjectProgressServiceTest {
         assertFalse(subjectProgress.title().isBlank());
         assertEquals(2, subjectProgress.answerCount());
         assertEquals(3, subjectProgress.questionCount());
+    }
+
+    @Test
+    void testGetSubjectProgress_UserIsNotAuthorized_ThrowsException() {
+        UUID currentUserId = UUID.randomUUID();
+        UUID assessmentId = UUID.randomUUID();
+        GetSubjectProgressUseCase.Param param = new GetSubjectProgressUseCase.Param(
+            assessmentId, 1L, currentUserId);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_PROGRESS)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getSubjectProgress(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 }

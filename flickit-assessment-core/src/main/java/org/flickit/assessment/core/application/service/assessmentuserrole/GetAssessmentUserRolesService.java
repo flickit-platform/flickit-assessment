@@ -15,8 +15,8 @@ public class GetAssessmentUserRolesService implements GetAssessmentUserRolesUseC
     @Override
     public List<AssessmentUserRoleItem> getAssessmentUserRoles() {
         return Arrays.stream(AssessmentUserRole.values())
+            .sorted(comparing(AssessmentUserRole::getIndex))
             .map(cl -> new GetAssessmentUserRolesUseCase.AssessmentUserRoleItem(cl.getId(), cl.getTitle(), cl.getDescription()))
-            .sorted(comparing(GetAssessmentUserRolesUseCase.AssessmentUserRoleItem::id))
             .toList();
     }
 }

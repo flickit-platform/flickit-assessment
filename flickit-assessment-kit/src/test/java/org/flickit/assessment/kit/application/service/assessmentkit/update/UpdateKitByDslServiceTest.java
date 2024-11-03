@@ -22,7 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -65,7 +65,7 @@ class UpdateKitByDslServiceTest {
     void testUpdate_ValidChanges_NoNeedToUpdateKitMajorModificationTime() {
         Long kitId = 1L;
         Long kitDslId = 12L;
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        String dslContent = new String(Files.readAllBytes(Path.of(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
         UUID currentUserId = UUID.randomUUID();
@@ -85,7 +85,7 @@ class UpdateKitByDslServiceTest {
     @Test
     @SneakyThrows
     void testUpdate_ValidChanges_NeedsToUpdateKitEffectiveModificationTime() {
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        String dslContent = new String(Files.readAllBytes(Path.of(FILE)));
         Long kitDslId = 12L;
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
@@ -109,7 +109,7 @@ class UpdateKitByDslServiceTest {
     void testUpdate_InvalidChanges_ThrowException() {
         Long kitId = 1L;
         Long kitDslId = 12L;
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        String dslContent = new String(Files.readAllBytes(Path.of(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
         UUID currentUserId = UUID.randomUUID();
@@ -144,7 +144,7 @@ class UpdateKitByDslServiceTest {
     void testUpdate_UserIsNotExpertGroupOwner_ThrowException() {
         Long kitId = 1L;
         Long kitDslId = 12L;
-        String dslContent = new String(Files.readAllBytes(Paths.get(FILE)));
+        String dslContent = new String(Files.readAllBytes(Path.of(FILE)));
         String jsonPath = "jsonPath";
         AssessmentKit savedKit = simpleKit();
         UUID ownerId = UUID.randomUUID();

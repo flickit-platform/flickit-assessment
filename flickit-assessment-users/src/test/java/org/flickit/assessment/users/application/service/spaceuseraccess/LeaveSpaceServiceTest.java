@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.spaceuseraccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.LeaveSpaceUseCase;
+import org.flickit.assessment.users.application.port.out.assessmentuserrole.DeleteSpaceAssessmentUserRolesPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.DeleteSpaceMemberPort;
@@ -35,6 +36,9 @@ class LeaveSpaceServiceTest {
     @Mock
     LoadSpaceOwnerPort loadSpaceOwnerPort;
 
+    @Mock
+    DeleteSpaceAssessmentUserRolesPort deleteSpaceAssessmentUserRolesPort;
+
     @Test
     @DisplayName("If current user is not a member of the space, service should throw AccessDeniedException")
     void testLeaveSpace_currentUserIsNotSpaceMember_accessDeniedError(){
@@ -62,7 +66,7 @@ class LeaveSpaceServiceTest {
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
 
         var throwable = assertThrows(ValidationException.class, ()-> service.leaveSpace(param));
-        assertEquals(LEAVE_SPACE_OWNER_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(LEAVE_SPACE_OWNER_NOT_ALLOWED, throwable.getMessageKey());
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
@@ -82,6 +86,7 @@ class LeaveSpaceServiceTest {
 
         verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
         verify(loadSpaceOwnerPort).loadOwnerId(spaceId);
+        verify(deleteSpaceAssessmentUserRolesPort).delete(currentUserId, spaceId);
         verify(spaceMemberPort).delete(param.getId(), param.getCurrentUserId());
     }
 }

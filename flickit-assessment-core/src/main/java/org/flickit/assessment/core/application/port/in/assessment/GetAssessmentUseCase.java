@@ -5,9 +5,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentKit;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.domain.Space;
+import org.flickit.assessment.core.application.domain.User;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL;
 
 public interface GetAssessmentUseCase {
@@ -24,12 +30,27 @@ public interface GetAssessmentUseCase {
         @NotNull(message = GET_ASSESSMENT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        public Param(UUID assessmentId) {
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
+        UUID currentUserId;
+
+        public Param(UUID assessmentId, UUID currentUserId) {
             this.assessmentId = assessmentId;
+            this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    record Result(UUID assessmentId, String assessmentTitle, Long spaceId, Long kitId) {
+    record Result(UUID id,
+                  String title,
+                  String shortTitle,
+                  Space space,
+                  AssessmentKit kit,
+                  LocalDateTime creationTime,
+                  LocalDateTime lastModificationTime,
+                  User createdBy,
+                  MaturityLevel maturityLevel,
+                  boolean isCalculateValid,
+                  boolean manageable,
+                  boolean viewable) {
     }
 }

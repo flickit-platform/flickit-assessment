@@ -4,7 +4,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
-import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectPort;
+import org.flickit.assessment.kit.application.port.out.subject.UpdateSubjectByDslPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterResult;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class SubjectUpdateKitPersisterTest {
     private SubjectUpdateKitPersister persister;
 
     @Mock
-    private UpdateSubjectPort updateSubjectPort;
+    private UpdateSubjectByDslPort updateSubjectByDslPort;
 
     @Test
     void testOrder() {
@@ -55,25 +55,27 @@ class SubjectUpdateKitPersisterTest {
             .subjects(List.of(dslSubjectOne, dslSubjectTwo))
             .build();
 
-        doNothing().when(updateSubjectPort).update(any());
+        doNothing().when(updateSubjectByDslPort).update(any());
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        ArgumentCaptor<UpdateSubjectPort.Param> param = ArgumentCaptor.forClass(UpdateSubjectPort.Param.class);
-        verify(updateSubjectPort, times(2)).update(param.capture());
+        ArgumentCaptor<UpdateSubjectByDslPort.Param> param = ArgumentCaptor.forClass(UpdateSubjectByDslPort.Param.class);
+        verify(updateSubjectByDslPort, times(2)).update(param.capture());
 
-        List<UpdateSubjectPort.Param> paramList = param.getAllValues();
-        UpdateSubjectPort.Param softwareSubject = paramList.get(0);
-        UpdateSubjectPort.Param teamSubject = paramList.get(1);
+        List<UpdateSubjectByDslPort.Param> paramList = param.getAllValues();
+        UpdateSubjectByDslPort.Param softwareSubject = paramList.getFirst();
+        UpdateSubjectByDslPort.Param teamSubject = paramList.get(1);
 
         assertEquals(subjectOne.getId(), softwareSubject.id());
         assertEquals(dslSubjectOne.getTitle(), softwareSubject.title());
+        assertEquals(savedKit.getActiveVersionId(), softwareSubject.kitVersionId());
         assertEquals(dslSubjectOne.getDescription(), softwareSubject.description());
         assertEquals(dslSubjectOne.getIndex(), softwareSubject.index());
         assertThat(softwareSubject.lastModificationTime(), lessThanOrEqualTo(LocalDateTime.now()));
 
         assertEquals(subjectTwo.getId(), teamSubject.id());
+        assertEquals(savedKit.getActiveVersionId(), teamSubject.kitVersionId());
         assertEquals(dslSubjectTwo.getTitle(), teamSubject.title());
         assertEquals(dslSubjectTwo.getDescription(), teamSubject.description());
         assertEquals(dslSubjectTwo.getIndex(), teamSubject.index());

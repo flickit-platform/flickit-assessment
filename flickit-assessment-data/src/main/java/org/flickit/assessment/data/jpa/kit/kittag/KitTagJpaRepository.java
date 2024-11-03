@@ -17,7 +17,8 @@ public interface KitTagJpaRepository extends JpaRepository<KitTagJpaEntity, Long
     List<KitTagJpaEntity> findAllByKitId(long kitId);
 
     @Query("""
-            SELECT t AS kitTag, r.kitId AS kitId
+            SELECT t AS kitTag,
+                r.kitId AS kitId
             FROM KitTagJpaEntity t
             JOIN KitTagRelationJpaEntity r ON t.id = r.tagId
             WHERE r.kitId IN :kitIds

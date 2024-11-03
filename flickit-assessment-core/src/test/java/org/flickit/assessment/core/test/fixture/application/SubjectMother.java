@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
-import org.flickit.assessment.core.application.domain.QualityAttribute;
+import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Subject;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class SubjectMother {
         return new Subject(id++, "subject" + id, 1, null);
     }
 
-    public static Subject withAttributes(List<QualityAttribute> attributes) {
+    public static Subject withAttributes(List<Attribute> attributes) {
         return new Subject(id++, "subject" + id, 1, attributes);
     }
 

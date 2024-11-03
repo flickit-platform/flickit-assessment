@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.subjectquestionnaire;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireView;
 import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -15,11 +16,19 @@ public class SubjectQuestionnaireMapper {
             entity.getQuestionnaireId());
     }
 
-    public static SubjectQuestionnaireJpaEntity mapToJpaEntity(Long subjectId, Long questionnaireId) {
+    public static SubjectQuestionnaireJpaEntity mapToJpaEntity(Long subjectId, Long questionnaireId, Long kitVersionId) {
         return new SubjectQuestionnaireJpaEntity(
             null,
             subjectId,
-            questionnaireId
+            questionnaireId,
+            kitVersionId
         );
+    }
+
+    public static SubjectQuestionnaire mapSubjectQuestionnaireViewToDomainModel(SubjectQuestionnaireView view) {
+        return new SubjectQuestionnaire(
+            null,
+            view.getSubjectId(),
+            view.getQuestionnaireId());
     }
 }
