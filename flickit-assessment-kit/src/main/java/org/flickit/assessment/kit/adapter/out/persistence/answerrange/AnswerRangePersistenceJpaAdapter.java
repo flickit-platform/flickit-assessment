@@ -44,7 +44,7 @@ public class AnswerRangePersistenceJpaAdapter implements
         var answerRanges = pageResult
             .getContent()
             .stream()
-            .map(AnswerRangeMapper::toDomainModel)
+            .map(e -> AnswerRangeMapper.toDomainModel(e, null))
             .toList();
 
         var answerOptions = answerOptionJpaRepository.findAllByKitVersionId(kitVersionId)
