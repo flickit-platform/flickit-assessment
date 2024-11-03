@@ -58,9 +58,8 @@ class GetAnswerRangeListServiceTest {
         int page = 0;
         int size = 10;
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
-        var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
-        var answerRange1 = AnswerRangeMother.createAnswerRange();
-        var answerRange2 = AnswerRangeMother.createAnswerRange();
+        var answerRange1 = createAnswerRangeWithTwoOptions();
+        var answerRange2 = createAnswerRangeWithFourOptions();
 
         PaginatedResponse<AnswerRange> paginatedAnswerRanges = new PaginatedResponse<>(
             List.of(answerRange1, answerRange2),
@@ -78,10 +77,10 @@ class GetAnswerRangeListServiceTest {
 
         assertEquals(paginatedAnswerRanges.getItems().size(), result.getItems().size());
         assertFalse(result.getItems().isEmpty());
-        assertEquals(1, result.getItems().get(0).answerOptions().size());
-        assertEquals(1, result.getItems().get(1).answerOptions().size());
-        assertEquals(size, paginatedAnswerRanges.getSize());
-        assertEquals(page, paginatedAnswerRanges.getPage());
+        assertEquals(2, result.getItems().get(0).answerOptions().size());
+        assertEquals(4, result.getItems().get(1).answerOptions().size());
+        assertEquals(param.getSize(), paginatedAnswerRanges.getSize());
+        assertEquals(param.getPage(), paginatedAnswerRanges.getPage());
         assertEquals(2, paginatedAnswerRanges.getTotal());
     }
 
