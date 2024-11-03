@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.adapter.out.persistence.answerrange;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
@@ -17,10 +17,7 @@ import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerR
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
 import org.springframework.stereotype.Component;
-
-import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_RANGE_ID_NOT_FOUND;
 
 import java.util.Comparator;
 import java.util.List;
@@ -28,6 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRangeMapper.toDomainModel;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_RANGE_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
