@@ -1225,6 +1225,34 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Questionnaire Questions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires/3072/questions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questionnaires",
+								"3072",
+								"questions"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

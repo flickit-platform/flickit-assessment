@@ -84,7 +84,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 qanso.id AS optionId,
                 qanso.index AS optionIndex,
                 qi.weight AS questionImpactWeight,
-                ansoi.value AS optionImpactValue
+                ansoi.value AS optionImpactValue,
+                qanso.value AS optionValue
            FROM QuestionJpaEntity q
            JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id AND q.kitVersionId = qn.kitVersionId
            JOIN AssessmentResultJpaEntity asmr ON asmr.assessment.id = :assessmentId

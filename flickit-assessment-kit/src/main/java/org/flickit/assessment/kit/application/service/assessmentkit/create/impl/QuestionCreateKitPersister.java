@@ -134,6 +134,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             option.getIndex(),
             questionId,
             answerRangeId,
+            option.getValue(),
             kitVersionId,
             currentUserId);
 

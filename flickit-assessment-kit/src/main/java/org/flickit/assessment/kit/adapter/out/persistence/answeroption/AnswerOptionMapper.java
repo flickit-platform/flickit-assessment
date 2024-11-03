@@ -30,6 +30,7 @@ public class AnswerOptionMapper {
             param.title(),
             param.questionId(),
             param.answerRangeId(),
+            param.value(),
             creationTime,
             creationTime,
             param.createdBy(),

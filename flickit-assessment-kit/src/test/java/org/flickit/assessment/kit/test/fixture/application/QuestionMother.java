@@ -21,6 +21,7 @@ public class QuestionMother {
             hint,
             mayNotBeApplicable,
             advisable,
+            153L,
             questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now()
@@ -36,6 +37,7 @@ public class QuestionMother {
             "hint",
             true,
             true,
+            25L,
             1L,
             LocalDateTime.now(),
             LocalDateTime.now()
@@ -51,6 +53,7 @@ public class QuestionMother {
             "hint",
             true,
             true,
+            27L,
             1L,
             LocalDateTime.now(),
             LocalDateTime.now()
