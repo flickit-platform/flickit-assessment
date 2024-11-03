@@ -14,21 +14,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class GetAnswerRangeListUseCaseTest {
 
     @Test
-    void testGetAnswerRangeListParam_kitVersionIdIsNull_ErrorMessage() {
+    void testGetAnswerRangeListUseCaseParam_kitVersionIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
-    void testGetAnswerRangeListParam_PageIsLessThanMin_ErrorMessage() {
+    void testGetAnswerRangeListUseCaseParam_PageIsLessThanMin_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.page(-1)));
         assertThat(throwable).hasMessage("page: " + GET_ANSWER_RANGE_LIST_PAGE_MIN);
     }
 
     @Test
-    void testGetAnswerRangeListParam_SizeParamViolatesConstraint_ErrorMessage() {
+    void testGetAnswerRangeListUseCaseParam_SizeParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.size(-1)));
         assertThat(throwable).hasMessage("size: " + GET_ANSWER_RANGE_LIST_SIZE_MIN);
@@ -39,7 +39,7 @@ class GetAnswerRangeListUseCaseTest {
     }
 
     @Test
-    void testGetAnswerRangeListParam_currentUserIdIsNull_ErrorMessage() {
+    void testGetAnswerRangeListUseCaseParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

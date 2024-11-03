@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -29,29 +30,31 @@ import static org.mockito.Mockito.when;
 class GetAnswerRangeListServiceTest {
 
     @InjectMocks
-    GetAnswerRangeListService service;
+    private GetAnswerRangeListService service;
 
     @Mock
-    LoadKitVersionPort loadKitVersionPort;
+    private LoadKitVersionPort loadKitVersionPort;
 
     @Mock
-    CheckExpertGroupAccessPort checkExpertGroupAccessPort;
+    private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
-    LoadAnswerRangesPort loadAnswerRangesPort;
+    private LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Test
-    void testGetAnswerRangeListService_CurrentUserDoesNotHaveAccess_ThrowsAccessDeniedException() {
+    void testGetAnswerRangeList_CurrentUserDoesNotHaveAccess_ThrowsAccessDeniedException() {
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
         var kitVersion = KitVersionMother.createKitVersion(AssessmentKitMother.simpleKit());
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
-        assertThrows(AccessDeniedException.class, () -> service.getAnswerRangeList(param));
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAnswerRangeList(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
-    void testGetAnswerRangeListService_ValidParams_ReturnsPaginatedAnswerRangeWithOptions() {
+    void testGetAnswerRangeList_ValidParams_ReturnsPaginatedAnswerRangeWithOptions() {
         int page = 0;
         int size = 10;
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
@@ -61,8 +64,8 @@ class GetAnswerRangeListServiceTest {
 
         PaginatedResponse<AnswerRange> paginatedAnswerRanges = new PaginatedResponse<>(
             List.of(answerRange1, answerRange2),
-            page,
-            size,
+            param.getPage(),
+            param.getSize(),
             AnswerRangeJpaEntity.Fields.creationTime,
             Sort.Direction.ASC.name().toLowerCase(),
             2);
@@ -83,7 +86,7 @@ class GetAnswerRangeListServiceTest {
     }
 
     @Test
-    void testGetAnswerRangeListService_ValidParamsWithoutAnswerRanges_ReturnsPaginatedEmptyResponse() {
+    void testGetAnswerRangeList_ValidParamsWithoutAnswerRanges_ReturnsPaginatedEmptyResponse() {
         int page = 0;
         int size = 10;
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
