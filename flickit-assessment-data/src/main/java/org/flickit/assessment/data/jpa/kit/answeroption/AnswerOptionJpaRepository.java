@@ -27,6 +27,8 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     void deleteByIdAndKitVersionId(Long answerOptionId, Long kitVersionId);
 
+    List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(List<Long> answerRangeIds, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AnswerOptionJpaEntity a
@@ -50,6 +52,4 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
         """)
     List<AnswerOptionJpaEntity> findAllByQuestionIdInAndKitVersionIdOrderByQuestionIdIndex(@Param("questionIds") List<Long> questionIds,
                                                                                            @Param("kitVersionId") Long kitVersionId);
-
-    List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(List<Long> answerRangeEntityIds, long kitVersionId);
 }
