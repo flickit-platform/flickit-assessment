@@ -75,12 +75,12 @@ public class LoadAssessmentKitFullInfoAdapter implements
             .map(QuestionMapper::mapToDomainModel)
             .toList();
 
-        Map<Long, List<AnswerOptionJpaEntity>> questionIdToAnswerOptionsMap = answerOptionRepository
-            .findAllByKitVersionId(kitVersionId, Sort.by(AnswerOptionJpaEntity.Fields.questionId).and(Sort.by(AnswerOptionJpaEntity.Fields.index))).stream()
-            .collect(Collectors.groupingBy(AnswerOptionJpaEntity::getQuestionId, LinkedHashMap::new, Collectors.toList()));
+        Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToAnswerOptionsMap = answerOptionRepository
+            .findAllByKitVersionId(kitVersionId, Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
+            .collect(Collectors.groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, LinkedHashMap::new, Collectors.toList()));
 
-        setQuestionImpacts(questions, kitVersionId, questionIdToAnswerOptionsMap);
-        setQuestionOptions(questions, questionIdToAnswerOptionsMap);
+        setQuestionImpacts(questions, kitVersionId, answerRangeIdToAnswerOptionsMap);
+        setQuestionOptions(questions, answerRangeIdToAnswerOptionsMap);
 
         List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
@@ -111,17 +111,17 @@ public class LoadAssessmentKitFullInfoAdapter implements
                 .toList()));
     }
 
-    private void setQuestionImpacts(List<Question> questions, long kitVersionId, Map<Long, List<AnswerOptionJpaEntity>> questionIdToAnswerOptionsMap) {
+    private void setQuestionImpacts(List<Question> questions, long kitVersionId, Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToAnswerOptionsMap) {
         questions.forEach(question -> question.setImpacts(
             questionImpactRepository.findAllByQuestionIdAndKitVersionId(question.getId(), kitVersionId).stream()
                 .map(QuestionImpactMapper::mapToDomainModel)
-                .map(impact -> setOptionImpacts(impact, questionIdToAnswerOptionsMap.get(question.getId())))
+                .map(impact -> setOptionImpacts(impact, answerRangeIdToAnswerOptionsMap.get(question.getAnswerRangeId())))
                 .toList()
         ));
     }
 
-    private void setQuestionOptions(List<Question> questions, Map<Long, List<AnswerOptionJpaEntity>> questionIdToAnswerOptionsMap) {
-        questions.forEach(q -> q.setOptions(questionIdToAnswerOptionsMap.get(q.getId()).stream()
+    private void setQuestionOptions(List<Question> questions, Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToAnswerOptionsMap) {
+        questions.forEach(q -> q.setOptions(answerRangeIdToAnswerOptionsMap.get(q.getAnswerRangeId()).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList()));
     }

@@ -20,6 +20,7 @@ public class Question {
     private final Boolean advisable;
     @Setter
     private List<QuestionImpact> impacts;
+    private final Long answerRangeId;
     @Setter
     private List<AnswerOption> options;
     private final Long questionnaireId;
