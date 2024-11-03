@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.subject;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.subject.UpdateSubjectUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -18,6 +17,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +70,7 @@ class UpdateSubjectServiceTest {
         assertEquals(param.getSubjectId(), updateParamCaptor.getValue().id());
         assertEquals(param.getKitVersionId(), updateParamCaptor.getValue().kitVersionId());
         assertEquals(param.getTitle(), updateParamCaptor.getValue().title());
-        assertEquals(Subject.generateSlugCode(param.getTitle()), updateParamCaptor.getValue().code());
+        assertEquals(generateSlugCode(param.getTitle()), updateParamCaptor.getValue().code());
         assertEquals(param.getIndex(), updateParamCaptor.getValue().index());
         assertEquals(param.getDescription(), updateParamCaptor.getValue().description());
         assertEquals(param.getWeight(), updateParamCaptor.getValue().weight());

@@ -7,8 +7,8 @@ import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRep
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.MaturityLevelOrder;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -37,10 +37,13 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     private final MaturityLevelJpaRepository repository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public Long persist(MaturityLevel level, Long kitVersionId, UUID createdBy) {
-        return repository.save(mapToJpaEntityToPersist(level, kitVersionId, createdBy)).getId();
+        var entity = mapToJpaEntityToPersist(level, kitVersionId, createdBy);
+        entity.setId(sequenceGenerators.generateMaturityLevelId());
+        return repository.save(entity).getId();
     }
 
     @Override
@@ -81,22 +84,22 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateOrders(List<MaturityLevelOrder> maturityLevelOrders, Long kitVersionId, UUID lastModifiedBy) {
-        Map<EntityId, MaturityLevelOrder> idToModel = maturityLevelOrders.stream()
+    public void updateOrders(UpdateOrderParam param) {
+        Map<EntityId, UpdateOrderParam.MaturityLevelOrder> idToIndex = param.orders().stream()
             .collect(Collectors.toMap(
-                ml -> new EntityId(ml.getId(), kitVersionId),
+                ml -> new EntityId(ml.maturityLevelId(), param.kitVersionId()),
                 ml -> ml
             ));
-        List<MaturityLevelJpaEntity> entities = repository.findAllById(idToModel.keySet());
-        if (entities.size() != maturityLevelOrders.size())
+        List<MaturityLevelJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
         entities.forEach(x -> {
-            MaturityLevelOrder newLevel = idToModel.get(new EntityId(x.getId(), kitVersionId));
-            x.setIndex(newLevel.getIndex());
-            x.setValue(newLevel.getValue());
-            x.setLastModificationTime(LocalDateTime.now());
-            x.setLastModifiedBy(lastModifiedBy);
+            UpdateOrderParam.MaturityLevelOrder newLevel = idToIndex.get(new EntityId(x.getId(), param.kitVersionId()));
+            x.setIndex(newLevel.index());
+            x.setValue(newLevel.value());
+            x.setLastModificationTime(param.lastModificationTime());
+            x.setLastModifiedBy(param.lastModifiedBy());
         });
         repository.saveAll(entities);
     }

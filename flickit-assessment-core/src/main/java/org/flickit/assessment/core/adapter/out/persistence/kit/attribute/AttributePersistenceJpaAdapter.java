@@ -20,7 +20,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component("coreAttributePersistenceJpaAdapter")
 @RequiredArgsConstructor
@@ -51,8 +52,8 @@ public class AttributePersistenceJpaAdapter implements
                         view.getOptionIndex(),
                         view.getOptionTitle(),
                         view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
-                        getScore(view.getAnswer(), view.getOptionImpact()),
-                        view.getOptionImpact() == null ? 0 : view.getOptionImpact().getValue() * view.getQuestionImpact().getWeight()
+                        getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
+                        view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOptionValue()) * view.getQuestionImpact().getWeight()
                     ))
                     .sorted(Comparator.comparingInt(QuestionScore::questionIndex))
                     .toList();
@@ -62,14 +63,14 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
-    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact) {
+    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
         if (answer == null) // if no answer is submitted for the question
             return 0.0;
         if(Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
             return null;
         if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
             return 0.0;
-        return optionImpact.getValue();
+        return getValue(optionImpact, optionValue);
     }
 
     @Override
@@ -77,5 +78,11 @@ public class AttributePersistenceJpaAdapter implements
         var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
         return mapToDomainModel(attribute);
+    }
+
+    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
+        if (optionImpact.getValue() != null)
+            return optionImpact.getValue();
+        return optionValue != null ? optionValue : 0.0;
     }
 }

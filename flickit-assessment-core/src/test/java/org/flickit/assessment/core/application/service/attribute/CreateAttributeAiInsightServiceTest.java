@@ -194,7 +194,7 @@ class CreateAttributeAiInsightServiceTest {
         Param param = new Param(UUID.randomUUID(), attribute.getId(), currentUserId);
         String fileContent = "file content";
         var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
-        AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
+        AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1);
         var fileReportPath = "path/to/file";
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         var aiReport = "Report Content";
@@ -232,7 +232,7 @@ class CreateAttributeAiInsightServiceTest {
         Param param = new Param(UUID.randomUUID(), attribute.getId(), currentUserId);
         String fileContent = "file content";
         var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
-        AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
+        AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         var aiReport = "Report Content";
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
@@ -266,7 +266,7 @@ class CreateAttributeAiInsightServiceTest {
         var attribute = AttributeMother.simpleAttribute();
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         Param param = new Param(UUID.randomUUID(), attribute.getId(), currentUserId);
-        AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
+        AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
@@ -323,7 +323,7 @@ class CreateAttributeAiInsightServiceTest {
         String fileContent = "file content";
         var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
         var fileReportPath = "path/to/file";
-        AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
+        AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
         var prompt = new Prompt("AI prompt");
@@ -359,7 +359,7 @@ class CreateAttributeAiInsightServiceTest {
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
         String fileContent = "file content";
         var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
-        AttributeValue attributeValue = AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1);
+        AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
         var prompt = new Prompt("AI prompt");

@@ -65,6 +65,7 @@ public enum AssessmentUserRole {
         VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_REPORT,
             CALCULATE_ASSESSMENT,
+            MIGRATE_KIT_VERSION,
             CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,

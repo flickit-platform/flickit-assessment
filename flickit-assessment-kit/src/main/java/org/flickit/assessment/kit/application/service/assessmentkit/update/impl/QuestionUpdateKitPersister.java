@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOp
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -42,6 +43,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
     private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
+    private final CreateAnswerRangePort createAnswerRangePort;
 
     @Override
     public int order() {
@@ -83,7 +85,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         // Assuming that new questionnaires have been created in QuestionnairePersister
         newQuestionnaireCodes.forEach(code -> createQuestions(dslQuestionnaireToQuestionsMap.get(code),
-            postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, savedKit.getActiveVersionId(), currentUserId));
+            postUpdateQuestionnaires,
+            postUpdateAttributes,
+            postUpdateMaturityLevels,
+            savedKit.getActiveVersionId(),
+            currentUserId));
 
         boolean isMajorUpdate = false;
 
@@ -139,7 +145,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 .filter(e -> !savedQuestions.containsKey(e.getKey()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            createQuestions(newDslQuestionsMap, postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, kitVersionId, currentUserId);
+            createQuestions(newDslQuestionsMap,
+                postUpdateQuestionnaires,
+                postUpdateAttributes,
+                postUpdateMaturityLevels,
+                kitVersionId,
+                currentUserId);
 
             if (!newDslQuestionsMap.isEmpty())
                 questionAddition = true;
@@ -158,20 +169,31 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         dslQuestions.values().forEach(dslQuestion -> {
             Long questionnaireId = questionnaires.get(dslQuestion.getQuestionnaireCode());
-            var createParam = toCreateQuestionParam(kitVersionId, questionnaireId, currentUserId, dslQuestion);
+            var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, false, currentUserId);
+            long answerRangeId = createAnswerRangePort.persist(createAnswerRangeParam);
 
+            var createParam = toCreateQuestionParam(kitVersionId, questionnaireId, answerRangeId, currentUserId, dslQuestion);
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
                 questionId, dslQuestion.getCode(), questionnaires.get(dslQuestion.getQuestionnaireCode()));
 
-            dslQuestion.getAnswerOptions().forEach(option -> createAnswerOption(option, questionId, kitVersionId, currentUserId));
+            dslQuestion.getAnswerOptions().forEach(option ->
+                createAnswerOption(option,
+                    questionId,
+                    answerRangeId,
+                    kitVersionId,
+                    currentUserId));
 
             dslQuestion.getQuestionImpacts().forEach(impact ->
                 createImpact(impact, kitVersionId, questionId, attributes, maturityLevels, currentUserId));
         });
     }
 
-    private CreateQuestionPort.Param toCreateQuestionParam(Long kitVersionId, Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion) {
+    private CreateQuestionPort.Param toCreateQuestionParam(Long kitVersionId,
+                                                           Long questionnaireId,
+                                                           Long answerRangeId,
+                                                           UUID currentUserId,
+                                                           QuestionDslModel dslQuestion) {
         return new CreateQuestionPort.Param(
             dslQuestion.getCode(),
             dslQuestion.getTitle(),
@@ -181,12 +203,23 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestion.isAdvisable(),
             kitVersionId,
             questionnaireId,
+            answerRangeId,
             currentUserId);
     }
 
-    private void createAnswerOption(AnswerOptionDslModel option, Long questionId, long kitVersionId, UUID currentUserId) {
-        var createOptionParam =
-            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, kitVersionId, currentUserId);
+    private void createAnswerOption(AnswerOptionDslModel option,
+                                    Long questionId,
+                                    long answerRangeId,
+                                    long kitVersionId,
+                                    UUID currentUserId) {
+        var createOptionParam = new CreateAnswerOptionPort.Param(
+            option.getCaption(),
+            option.getIndex(),
+            questionId,
+            answerRangeId,
+            option.getValue(),
+            kitVersionId,
+            currentUserId);
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
             optionId, option.getIndex(), option.getCaption(), questionId);
@@ -249,6 +282,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             var updateParam = new UpdateQuestionPort.Param(
                 savedQuestion.getId(),
                 kitVersionId,
+                dslQuestion.getCode(),
                 dslQuestion.getTitle(),
                 dslQuestion.getIndex(),
                 dslQuestion.getDescription(),
@@ -363,7 +397,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void deleteImpact(QuestionImpact impact, Long questionId) {
-        deleteQuestionImpactPort.delete(impact.getId());
+        deleteQuestionImpactPort.delete(impact.getId(), impact.getKitVersionId());
         log.debug("QuestionImpact[id={}, questionId={}] deleted.", impact.getId(), questionId);
     }
 
@@ -373,14 +407,15 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                  UUID currentUserId) {
         boolean isMajorUpdate = false;
         if (savedImpact.getWeight() != dslImpact.getWeight()) {
-            var updateParam = new UpdateQuestionImpactPort.Param(
+            var updateParam = new UpdateQuestionImpactPort.UpdateWeightParam(
                 savedImpact.getId(),
+                savedImpact.getKitVersionId(),
                 dslImpact.getWeight(),
                 savedImpact.getQuestionId(),
                 LocalDateTime.now(),
                 currentUserId
             );
-            updateQuestionImpactPort.update(updateParam);
+            updateQuestionImpactPort.updateWeight(updateParam);
             log.debug("QuestionImpact[id={}, questionId={}] updated.", savedImpact.getId(), savedQuestion.getId());
             isMajorUpdate = true;
         }
@@ -409,7 +444,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             AnswerOptionImpact newOptionImpact = dslOptionImpactMap.get(entry.getKey());
 
             if (savedOptionImpact.getValue() != newOptionImpact.getValue()) {
-                updateAnswerOptionImpact(savedOptionImpact, newOptionImpact, currentUserId);
+                updateAnswerOptionImpact(savedImpact.getKitVersionId(), savedOptionImpact, newOptionImpact, currentUserId);
                 isMajorUpdate = true;
             }
         }
@@ -427,11 +462,13 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private void updateAnswerOptionImpact(AnswerOptionImpact savedOptionImpact,
+    private void updateAnswerOptionImpact(long kitVersionId,
+                                          AnswerOptionImpact savedOptionImpact,
                                           AnswerOptionImpact dslOptionImpact,
                                           UUID currentUserId) {
         var updateParam = new UpdateAnswerOptionImpactPort.Param(
             savedOptionImpact.getId(),
+            kitVersionId,
             dslOptionImpact.getValue(),
             LocalDateTime.now(),
             currentUserId

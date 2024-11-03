@@ -28,9 +28,9 @@ import java.util.UUID;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
-import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsLevelFourWithWeight;
-import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsLevelThreeWithWeight;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValues;
+import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel23WithWeight;
+import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel24WithWeight;
+import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValues;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,20 +71,20 @@ class CalculateAssessmentServiceTest {
         LocalDateTime kitLastMajorModificationTime = LocalDateTime.now();
 
         List<AttributeValue> s1AttributeValues = List.of(
-            toBeCalcAsLevelFourWithWeight(2),
-            toBeCalcAsLevelFourWithWeight(2),
-            toBeCalcAsLevelThreeWithWeight(3),
-            toBeCalcAsLevelThreeWithWeight(3)
+            hasFullScoreOnLevel24WithWeight(2),
+            hasFullScoreOnLevel24WithWeight(2),
+            hasFullScoreOnLevel23WithWeight(3),
+            hasFullScoreOnLevel23WithWeight(3)
         );
 
         List<AttributeValue> s2AttributeValues = List.of(
-            toBeCalcAsLevelFourWithWeight(4),
-            toBeCalcAsLevelThreeWithWeight(1)
+            hasFullScoreOnLevel24WithWeight(4),
+            hasFullScoreOnLevel23WithWeight(1)
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withQAValues(s1AttributeValues),
-            withQAValues(s2AttributeValues)
+            withAttributeValues(s1AttributeValues),
+            withAttributeValues(s2AttributeValues)
         );
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
@@ -109,15 +109,15 @@ class CalculateAssessmentServiceTest {
     @Test
     void testCalculateMaturityLevel_KitChanged_CreatesNewAttributeAnSubjectValuesAndCalculates() {
         List<AttributeValue> s1AttributeValues = List.of(
-            toBeCalcAsLevelFourWithWeight(2),
-            toBeCalcAsLevelFourWithWeight(2),
-            toBeCalcAsLevelThreeWithWeight(3),
-            toBeCalcAsLevelThreeWithWeight(3)
+            hasFullScoreOnLevel24WithWeight(2),
+            hasFullScoreOnLevel24WithWeight(2),
+            hasFullScoreOnLevel23WithWeight(3),
+            hasFullScoreOnLevel23WithWeight(3)
         );
 
         List<AttributeValue> s2AttributeValues = List.of(
-            toBeCalcAsLevelFourWithWeight(4),
-            toBeCalcAsLevelThreeWithWeight(1)
+            hasFullScoreOnLevel24WithWeight(4),
+            hasFullScoreOnLevel23WithWeight(1)
         );
 
         List<SubjectValue> subjectValues = List.of(
@@ -126,7 +126,7 @@ class CalculateAssessmentServiceTest {
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
-        var newAttributeValue = toBeCalcAsLevelFourWithWeight(4);
+        var newAttributeValue = hasFullScoreOnLevel24WithWeight(4);
         var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(newAttributeValue), List.of(newAttributeValue.getAttribute()));
         subjects.add(newSubjectValue.getSubject());
 

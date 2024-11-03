@@ -16,6 +16,7 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
+import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.OptionImpactWithQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
@@ -285,15 +286,19 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         List<AnswerJpaEntity> answerEntities = new ArrayList<>(List.of(answerQ1, answerQ2, answerQ4, answerQ5, answerQ6, answerQ9, answerQ10));
 
-        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, question1.getId(), null, null, null, null);
-        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, question2.getId(), null, null, null, null);
-        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, question5.getId(), null, null, null, null);
+        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, question1.getId(), null, null, null, null, null, null);
+        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, question2.getId(), null, null, null, null, null, null);
+        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, question5.getId(), null, null, null, null, null, null);
         List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
 
-        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, 1L, impact11, 1, kitVersionId, null, null, null, null);
-        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, 2L, impact21, 1, kitVersionId, null, null, null, null);
-        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, 5L, impact31, 1, kitVersionId, null, null, null, null);
-        List<AnswerOptionImpactJpaEntity> answerOptionImpactEntities = new ArrayList<>(List.of(answerImpact11, answerImpact21, answerImpact31));
+        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, kitVersionId, 1L, impact11.getId(), 1D, null, null, null, null);
+        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, kitVersionId, 2L, impact21.getId(), 1D, null, null, null, null);
+        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, kitVersionId, 5L, impact31.getId(), 1D, null, null, null, null);
+
+        var optionImpactToQuestionImpactMap = Map.of(answerImpact11, impact11,
+            answerImpact21, impact21,
+            answerImpact31, impact31);
+        List<OptionImpactWithQuestionImpactView> answerOptionImpactEntities = optionImpactWithQuestionImpactView(optionImpactToQuestionImpactMap);
 
         return new Context(
             assessmentResultEntity,
@@ -353,6 +358,24 @@ class AssessmentCalculateInfoLoadAdapterTest {
             }).toList();
     }
 
+    private static List<OptionImpactWithQuestionImpactView> optionImpactWithQuestionImpactView(Map<AnswerOptionImpactJpaEntity, QuestionImpactJpaEntity> optionImpactToQuestionImpactMap) {
+        return optionImpactToQuestionImpactMap.entrySet().stream()
+            .map(x -> {
+                OptionImpactWithQuestionImpactView view = new OptionImpactWithQuestionImpactView() {
+                    @Override
+                    public AnswerOptionImpactJpaEntity getOptionImpact() {
+                        return x.getKey();
+                    }
+
+                    @Override
+                    public QuestionImpactJpaEntity getQuestionImpact() {
+                        return x.getValue();
+                    }
+                };
+                return view;
+            }).toList();
+    }
+
     record Context(
         AssessmentResultJpaEntity assessmentResultEntity,
         List<SubjectValueJpaEntity> subjectValues,
@@ -363,6 +386,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,
         List<AnswerJpaEntity> answerEntities,
         List<AnswerOptionJpaEntity> answerOptionEntities,
-        List<AnswerOptionImpactJpaEntity> answerOptionImpactEntities) {
+        List<OptionImpactWithQuestionImpactView> answerOptionImpactEntities) {
     }
 }

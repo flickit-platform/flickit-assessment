@@ -6,5 +6,5 @@ public interface LoadKitInfoPort {
 
     Result loadKitInfo(long id);
 
-    record Result(String title, UUID createdBy) {}
+    record Result(String title, UUID createdBy, long expertGroupId) {}
 }

@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
@@ -15,14 +16,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
-
 
 @Component
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class SubjectPersistenceJpaAdapter implements
 
     private final SubjectJpaRepository repository;
     private final AttributeJpaRepository attributeRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public void update(UpdateSubjectByDslPort.Param param) {
@@ -51,7 +54,9 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public Long persist(CreateSubjectPort.Param param) {
-        return repository.save(SubjectMapper.mapToJpaEntity(param)).getId();
+        var entity = SubjectMapper.mapToJpaEntity(param);
+        entity.setId(sequenceGenerators.generateSubjectId());
+        return repository.save(entity).getId();
     }
 
     @Override
@@ -64,7 +69,8 @@ public class SubjectPersistenceJpaAdapter implements
 
         return subjectEntities.stream()
             .map(e -> SubjectMapper.mapToDomainModel(e,
-                subjectIdToAttrEntities.get(e.getId()).stream()
+                Optional.ofNullable(subjectIdToAttrEntities.get(e.getId()))
+                    .orElse(Collections.emptyList()).stream()
                     .map(AttributeMapper::mapToDomainModel)
                     .toList()))
             .toList();
@@ -114,5 +120,25 @@ public class SubjectPersistenceJpaAdapter implements
             param.weight(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public void updateOrders(UpdateOrderParam param) {
+        Map<SubjectJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
+            .collect(Collectors.toMap(
+                ml -> new SubjectJpaEntity.EntityId(ml.subjectId(), param.kitVersionId()),
+                UpdateOrderParam.SubjectOrder::index
+            ));
+        List<SubjectJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        if (entities.size() != param.orders().size())
+            throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            int newIndex = idToIndex.get(new SubjectJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            x.setIndex(newIndex);
+            x.setLastModificationTime(param.lastModificationTime());
+            x.setLastModifiedBy(param.lastModifiedBy());
+        });
+        repository.saveAll(entities);
     }
 }

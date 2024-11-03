@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.port.out.maturitylevel;
 
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.MaturityLevelOrder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,5 +12,13 @@ public interface UpdateMaturityLevelPort {
 
     void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy);
 
-    void updateOrders(List<MaturityLevelOrder> maturityLevelOrders, Long kitVersionId, UUID lastModifiedBy);
+    void updateOrders(UpdateOrderParam param);
+
+    record UpdateOrderParam(List<UpdateOrderParam.MaturityLevelOrder> orders,
+                            long kitVersionId,
+                            LocalDateTime lastModificationTime,
+                            UUID lastModifiedBy) {
+        public record MaturityLevelOrder(long maturityLevelId, int index, int value) {
+        }
+    }
 }
