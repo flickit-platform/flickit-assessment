@@ -23,4 +23,6 @@ public interface ImpactFullQuestionsView {
     Integer getOptionIndex();
 
     String getOptionTitle();
+
+    Double getOptionValue();
 }

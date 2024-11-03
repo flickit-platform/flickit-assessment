@@ -1,13 +1,20 @@
 package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity.Fields;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
+import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,10 +33,12 @@ public class AttributePersistenceJpaAdapter implements
     LoadAttributePort,
     CountAttributeImpactfulQuestionsPort,
     LoadAllAttributesPort,
-    DeleteAttributePort {
+    DeleteAttributePort,
+    LoadAttributesPort {
 
     private final AttributeJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
+    private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
     public void update(UpdateAttributePort.Param param) {
@@ -50,12 +59,17 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public void updateOrders(UpdateOrderParam param) {
+        List<Long> ids = param.orders().stream()
+            .map(UpdateOrderParam.AttributeOrder::attributeId)
+            .toList();
+
         Map<AttributeJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
             .collect(Collectors.toMap(
                 ml -> new AttributeJpaEntity.EntityId(ml.attributeId(), param.kitVersionId()),
                 UpdateOrderParam.AttributeOrder::index
             ));
-        List<AttributeJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        List<AttributeJpaEntity> entities =
+            repository.findAllByIdInAndKitVersionIdAndSubjectId(ids, param.kitVersionId(), param.subjectId());
         if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
@@ -70,10 +84,13 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public Long persist(Attribute attribute, Long subjectId, Long kitVersionId) {
-        var entityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
-        SubjectJpaEntity subjectJpaEntity = subjectRepository.findById(entityId)
+        var subjectEntityId = new SubjectJpaEntity.EntityId(subjectId, kitVersionId);
+        SubjectJpaEntity subjectJpaEntity = subjectRepository.findById(subjectEntityId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_SUBJECT_ID_NOT_FOUND));
-        return repository.save(mapToJpaEntity(attribute, subjectJpaEntity)).getId();
+
+        var entity = mapToJpaEntity(attribute, subjectJpaEntity);
+        entity.setId(sequenceGenerators.generateAttributeId());
+        return repository.save(entity).getId();
     }
 
     @Override
@@ -101,5 +118,21 @@ public class AttributePersistenceJpaAdapter implements
             throw new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(attributeId, kitVersionId);
+    }
+
+    @Override
+    public PaginatedResponse<AttributeWithSubject> loadByKitVersionId(long kitVersionId, int size, int page) {
+        var pageResult = repository.findAllByKitVersionId(kitVersionId, PageRequest.of(page, size));
+
+        var items = pageResult.getContent().stream()
+            .map(x -> new AttributeWithSubject(mapToDomainModel(x.getAttribute()), SubjectMapper.mapToDomainModel(x.getSubject(), null)))
+            .toList();
+
+        return new PaginatedResponse<>(items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements());
     }
 }

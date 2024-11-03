@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.questionnaire;
+package org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
@@ -13,7 +13,6 @@ import org.flickit.assessment.data.jpa.kit.question.FirstUnansweredQuestionView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
-import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectWithQuestionnaireIdView;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.core.adapter.out.persistence.questionnaire.QuestionnaireMapper.mapToListItem;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
 @Component(value = "coreQuestionnairePersistenceJpaAdapter")
@@ -42,7 +40,7 @@ public class QuestionnairePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
         var pageResult = repository.findAllWithQuestionCountByKitVersionId(assessmentResult.getKitVersionId(), PageRequest.of(param.page(), param.size()));
-        var ids = pageResult.getContent().stream().map(QuestionnaireListItemView::getId).toList();
+        var ids = pageResult.getContent().stream().map(v -> v.getQuestionnaire().getId()).toList();
 
         var questionnaireIdToSubjectMap = subjectRepository.findAllWithQuestionnaireIdByKitVersionId(ids, assessmentResult.getKitVersionId())
             .stream()
@@ -56,17 +54,17 @@ public class QuestionnairePersistenceJpaAdapter implements
             .collect(Collectors.toMap(FirstUnansweredQuestionView::getQuestionnaireId, FirstUnansweredQuestionView::getIndex));
 
         var items = pageResult.getContent().stream()
-            .map(q -> mapToListItem(q,
-                questionnaireIdToSubjectMap.get(q.getId()),
-                questionnairesProgress.getOrDefault(q.getId(), 0),
-                questionnaireToNextQuestionMap.getOrDefault(q.getId(), 1)))
+            .map(q -> QuestionnaireMapper.mapToListItem(q,
+                questionnaireIdToSubjectMap.get(q.getQuestionnaire().getId()),
+                questionnairesProgress.getOrDefault(q.getQuestionnaire().getId(), 0),
+                questionnaireToNextQuestionMap.getOrDefault(q.getQuestionnaire().getId(), 1)))
             .toList();
 
         return new PaginatedResponse<>(
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            QuestionnaireJpaEntity.Fields.INDEX,
+            QuestionnaireJpaEntity.Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );

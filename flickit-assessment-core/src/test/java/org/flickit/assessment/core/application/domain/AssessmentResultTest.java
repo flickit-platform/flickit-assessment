@@ -17,12 +17,12 @@ class AssessmentResultTest {
     @Test
     void testCalculate_withSameWeightsAndLevels() {
         List<SubjectValue> subjectValues = new ArrayList<>();
-        subjectValues.add(SubjectValueMother.withQAValues(List.of(
-            AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
-            AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
-            AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
-            AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1),
-            AttributeValueMother.toBeCalcAsLevelThreeWithWeight(1)
+        subjectValues.add(SubjectValueMother.withAttributeValues(List.of(
+            AttributeValueMother.hasFullScoreOnLevel23WithWeight(1),
+            AttributeValueMother.hasFullScoreOnLevel23WithWeight(1),
+            AttributeValueMother.hasFullScoreOnLevel23WithWeight(1),
+            AttributeValueMother.hasFullScoreOnLevel23WithWeight(1),
+            AttributeValueMother.hasFullScoreOnLevel23WithWeight(1)
         )));
 
 
@@ -36,12 +36,12 @@ class AssessmentResultTest {
     @Test
     void testCalculate_withDifferentWeightsAndLevels() {
         List<SubjectValue> subjectValues = new ArrayList<>();
-        subjectValues.add(SubjectValueMother.withQAValues(List.of(
-            AttributeValueMother.toBeCalcAsLevelFourWithWeight(1),
-            AttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
-            AttributeValueMother.toBeCalcAsLevelThreeWithWeight(10),
-            AttributeValueMother.toBeCalcAsLevelFourWithWeight(2),
-            AttributeValueMother.toBeCalcAsLevelFourWithWeight(1)
+        subjectValues.add(SubjectValueMother.withAttributeValues(List.of(
+            AttributeValueMother.hasFullScoreOnLevel24WithWeight(1),
+            AttributeValueMother.hasFullScoreOnLevel24WithWeight(2),
+            AttributeValueMother.hasFullScoreOnLevel23WithWeight(10),
+            AttributeValueMother.hasFullScoreOnLevel24WithWeight(2),
+            AttributeValueMother.hasFullScoreOnLevel24WithWeight(1)
         )));
 
 
@@ -55,7 +55,7 @@ class AssessmentResultTest {
     @Test
     void testCalculateConfidenceLevel_withSameWeightsAndConfidenceLevels() {
         List<SubjectValue> subjectValues = new ArrayList<>();
-        subjectValues.add(SubjectValueMother.withQAValues(List.of(
+        subjectValues.add(SubjectValueMother.withAttributeValues(List.of(
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),//6 questions with 5 answers with cl=4, attrCl=20/30
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),//6 questions with 5 answers with cl=4, attrCl=20/30
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()),//6 questions with 5 answers with cl=4, attrCl=20/30
@@ -76,7 +76,7 @@ class AssessmentResultTest {
     @Test
     void testCalculateConfidenceLevel_withDifferentWeightsAndConfidenceLevels() {
         List<SubjectValue> subjectValues = new ArrayList<>();
-        subjectValues.add(SubjectValueMother.withQAValues(List.of(
+        subjectValues.add(SubjectValueMother.withAttributeValues(List.of(
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.COMPLETELY_UNSURE.getId()),//6 questions with 5 answers with cl=1, attrCl=5/30
             toBeCalcAsConfidenceLevelWithWeight(2, ConfidenceLevel.FAIRLY_UNSURE.getId()),//6 questions with 5 answers with cl=2, attrCl = 10/30
             toBeCalcAsConfidenceLevelWithWeight(3, ConfidenceLevel.SOMEWHAT_UNSURE.getId()),//6 questions with 5 answers with cl=3, attrCl = 15/30

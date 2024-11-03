@@ -9,10 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, MaturityLevelJpaEntity.EntityId> {
@@ -25,11 +22,13 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
-    List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(Set<Long> kitVersionIds);
 
     void deleteByIdAndKitVersionId(Long id, Long kitVersionId);
 
     Optional<MaturityLevelJpaEntity> findByIdAndKitVersionId(Long id, long kitVersionId);
+
+    List<MaturityLevelJpaEntity> findAllByKitVersionId(long kitVersionId);
 
     @Query("""
             SELECT l as maturityLevel,

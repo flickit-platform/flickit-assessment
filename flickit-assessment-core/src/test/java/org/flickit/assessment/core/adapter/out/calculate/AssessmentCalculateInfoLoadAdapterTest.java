@@ -286,14 +286,14 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         List<AnswerJpaEntity> answerEntities = new ArrayList<>(List.of(answerQ1, answerQ2, answerQ4, answerQ5, answerQ6, answerQ9, answerQ10));
 
-        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, question1.getId(), null, null, null, null);
-        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, question2.getId(), null, null, null, null);
-        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, question5.getId(), null, null, null, null);
+        var answerOptionEntity1 = new AnswerOptionJpaEntity(1L, null, null, null, question1.getId(), null, null, null, null, null, null);
+        var answerOptionEntity2 = new AnswerOptionJpaEntity(2L, null, null, null, question2.getId(), null, null, null, null, null, null);
+        var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, question5.getId(), null, null, null, null, null, null);
         List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
 
-        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, 1L, impact11.getId(), 1, kitVersionId, null, null, null, null);
-        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, 2L, impact21.getId(), 1, kitVersionId, null, null, null, null);
-        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, 5L, impact31.getId(), 1, kitVersionId, null, null, null, null);
+        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, kitVersionId, 1L, impact11.getId(), 1D, null, null, null, null);
+        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, kitVersionId, 2L, impact21.getId(), 1D, null, null, null, null);
+        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, kitVersionId, 5L, impact31.getId(), 1D, null, null, null, null);
 
         var optionImpactToQuestionImpactMap = Map.of(answerImpact11, impact11,
             answerImpact21, impact21,

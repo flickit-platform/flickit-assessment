@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.answeroption;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,13 +15,12 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AnswerOptionJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_answer_option_id_seq")
-    @SequenceGenerator(name = "fak_answer_option_id_seq", sequenceName = "fak_answer_option_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -37,6 +37,12 @@ public class AnswerOptionJpaEntity {
 
     @Column(name = "question_id", nullable = false)
     private Long questionId;
+
+    @Column(name = "answer_range_id", nullable = false)
+    private Long answerRangeId;
+
+    @Column(name = "value", nullable = false)
+    private Double value;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
@@ -57,5 +63,13 @@ public class AnswerOptionJpaEntity {
 
         private Long id;
         private Long kitVersionId;
+    }
+
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
     }
 }

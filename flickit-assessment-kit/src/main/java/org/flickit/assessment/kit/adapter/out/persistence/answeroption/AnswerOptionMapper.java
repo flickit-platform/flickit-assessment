@@ -28,6 +28,8 @@ public class AnswerOptionMapper {
             param.index(),
             param.title(),
             param.questionId(),
+            param.answerRangeId(),
+            param.value(),
             creationTime,
             creationTime,
             param.createdBy(),

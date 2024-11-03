@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.answeroption;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +18,14 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
     Optional<AnswerOptionJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 
     List<AnswerOptionJpaEntity> findAllByIdInAndKitVersionId(List<Long> allAnswerOptionIds, long kitVersionId);
+
+    List<AnswerOptionJpaEntity> findAllByKitVersionId(long kitVersionId);
+
+    List<AnswerOptionJpaEntity> findAllByKitVersionId(long kitVersionId, Sort sort);
+
+    boolean existsByIdAndKitVersionId(Long answerOptionId, Long kitVersionId);
+
+    void deleteByIdAndKitVersionId(Long answerOptionId, Long kitVersionId);
 
     @Modifying
     @Query("""

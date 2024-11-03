@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.adapter.out.persistence.questionnaire;
+package org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -17,16 +17,17 @@ public class QuestionnaireMapper {
                                                       List<SubjectWithQuestionnaireIdView> subjectsView,
                                                       int answerCount,
                                                       int nextQuestion){
+        var questionnaireEntity = questionnaireView.getQuestionnaire();
         var subjects = subjectsView.stream()
             .map(s -> new QuestionnaireListItem.Subject(s.getId(), s.getTitle()))
             .toList();
         int progress = (int) Math.floor(((double) answerCount / questionnaireView.getQuestionCount()) * 100);
 
         return new QuestionnaireListItem(
-            questionnaireView.getId(),
-            questionnaireView.getTitle(),
-            questionnaireView.getDescription(),
-            questionnaireView.getIndex(),
+            questionnaireEntity.getId(),
+            questionnaireEntity.getTitle(),
+            questionnaireEntity.getDescription(),
+            questionnaireEntity.getIndex(),
             questionnaireView.getQuestionCount(),
             answerCount,
             nextQuestion,
