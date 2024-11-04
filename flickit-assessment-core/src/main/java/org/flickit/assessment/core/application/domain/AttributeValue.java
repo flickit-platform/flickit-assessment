@@ -110,7 +110,7 @@ public class AttributeValue {
 
         for (MaturityScore maturityScore : maturityScores) {
             Long maturityLevelId = maturityScore.getMaturityLevelId();
-            double score = maturityScore.getScore() == null ? 0 : maturityScore.getScore();
+            double score = maturityScore.getScore() == null ? 0 : maturityScore.getScore(); //todo:redundant nullability check,because of line 71
             double weightedScore = score * (attribute.getWeight());
             weightedScores.put(maturityLevelId, weightedScore);
         }

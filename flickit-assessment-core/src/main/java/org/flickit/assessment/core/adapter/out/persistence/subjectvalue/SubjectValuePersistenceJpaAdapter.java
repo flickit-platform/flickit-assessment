@@ -8,6 +8,8 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,6 +23,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     CreateSubjectValuePort {
 
     private final SubjectValueJpaRepository repository;
+    private final SubjectJpaRepository subjectRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
@@ -37,7 +40,11 @@ public class SubjectValuePersistenceJpaAdapter implements
         var persistedEntities = repository.saveAll(entities);
 
         return persistedEntities.stream()
-            .map(SubjectValueMapper::mapToDomainModel)
+            .map(s -> {
+                var entityId = new SubjectJpaEntity.EntityId(s.getSubjectId(), assessmentResult.getKitVersionId());
+                var subjectEntity = subjectRepository.getReferenceById(entityId);
+                return SubjectValueMapper.mapToDomainModel(s, subjectEntity);
+            })
             .toList();
     }
 }

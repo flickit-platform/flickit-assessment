@@ -26,6 +26,8 @@ public class SubjectValue {
     @Setter
     Double confidenceValue;
 
+    Map<Long, Double> weightedMeanScores = new HashMap<>();
+
     public SubjectValue(UUID id, Subject subject, List<AttributeValue> qavList) {
         this.id = id;
         this.subject = subject;
@@ -34,7 +36,7 @@ public class SubjectValue {
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
         attributeValues.forEach(attributeValue -> attributeValue.calculate(maturityLevels));
-        Map<Long, Double> weightedMeanScores = calculateWeightedMeanScoresOfAttributeValues(maturityLevels);
+        weightedMeanScores = calculateWeightedMeanScoresOfAttributeValues(maturityLevels);
 
         return findGainedMaturityLevel(weightedMeanScores, maturityLevels);
     }
@@ -42,6 +44,15 @@ public class SubjectValue {
     public int getWeightedLevel() {
         Assert.notNull(maturityLevel, () -> "maturityLevel should not be null");
         return maturityLevel.getValue() * subject.getWeight();
+    }
+
+    public Map<Long, Double> getWeightedScore() {
+        Map<Long, Double> weightedScores = new HashMap<>();
+        weightedMeanScores.forEach((mLevelId, weightedScore) -> {
+            weightedScores.put(mLevelId, weightedScore * subject.getWeight());
+        });
+
+        return weightedScores;
     }
 
     private Map<Long, Double> calculateWeightedMeanScoresOfAttributeValues(List<MaturityLevel> maturityLevels) {
@@ -57,12 +68,11 @@ public class SubjectValue {
                 Long maturityLevelId = ml.getId();
                 Double weightedScore = attributeWeightedScores.get(maturityLevelId);
 
-                if (weightedScore != null)
+                if (weightedScore != null) //todo: redundant nullability check
                     weightedSum.merge(maturityLevelId, weightedScore, Double::sum);
             }
         }
 
-        Map<Long, Double> weightedMeanScores = new HashMap<>();
         for (Map.Entry<Long, Double> entry : weightedSum.entrySet()) {
             Long maturityLevelId = entry.getKey();
             Double sumScores = entry.getValue();

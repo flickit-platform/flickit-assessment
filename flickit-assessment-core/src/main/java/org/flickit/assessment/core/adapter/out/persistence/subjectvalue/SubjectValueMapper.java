@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ public class SubjectValueMapper {
         );
     }
 
-    public static SubjectValue mapToDomainModel(SubjectValueJpaEntity entity) {
+    public static SubjectValue mapToDomainModel(SubjectValueJpaEntity entity, SubjectJpaEntity subjectEntity) {
         var subject = new Subject(entity.getSubjectId(), null, subjectEntity.getWeight());
         return new SubjectValue(
             entity.getId(),
