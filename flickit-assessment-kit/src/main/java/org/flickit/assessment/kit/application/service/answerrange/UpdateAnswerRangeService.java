@@ -33,7 +33,7 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (param.getReusable() && param.getTitle() == null)
+        if (Boolean.TRUE.equals(param.getReusable()) && param.getTitle() == null)
             throw new ValidationException(UPDATE_ANSWER_RANGE_TITLE_NOT_NULL);
 
         updateAnswerRangePort.update(toParam(param));
