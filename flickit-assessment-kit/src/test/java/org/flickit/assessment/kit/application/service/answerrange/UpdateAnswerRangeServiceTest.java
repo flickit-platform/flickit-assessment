@@ -39,7 +39,7 @@ class UpdateAnswerRangeServiceTest {
     @Mock
     private UpdateAnswerRangePort updateAnswerRangePort;
 
-    UUID ownerId = UUID.randomUUID();
+    private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
@@ -57,10 +57,7 @@ class UpdateAnswerRangeServiceTest {
 
     @Test
     void testUpdateAnswerRange_WhenCurrentUserIsExpertGroupOwnerAndReusableAnswerRangeTitleIsNull_ThenThrowValidationException() {
-        var param = createParam(b -> {
-            b.currentUserId(ownerId);
-            b.title(null);
-        });
+        var param = createParam(b -> b.currentUserId(ownerId).title(null));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
