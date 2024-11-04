@@ -53,52 +53,54 @@ public class AssessmentResult {
         this.lastConfidenceCalculationTime = lastConfidenceCalculationTime;
     }
 
-
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();
-        var weightedMeanLevel = calculateWeightedMeanOfSubjectValues(maturityLevels);
+        setMaturityLevelOfSubjects(maturityLevels);
+        var mLevelIdToWeightedMeanScore = calculateSubjectLevelScoreWeightedMean(maturityLevels);
 
-        return findGainedMaturitryLevel(weightedMeanLevel, maturityLevels);
+        return findGainedMaturityLevel(mLevelIdToWeightedMeanScore, maturityLevels);
     }
 
-    private Map<Long, Double> calculateWeightedMeanOfSubjectValues(List<MaturityLevel> maturityLevels) {
-        subjectValues.forEach(x -> {
-            MaturityLevel calcResult = x.calculate(maturityLevels);
-            x.setMaturityLevel(calcResult);
+    private void setMaturityLevelOfSubjects(List<MaturityLevel> maturityLevels) {
+        subjectValues.forEach(e -> {
+            MaturityLevel calcResult = e.calculate(maturityLevels);
+            e.setMaturityLevel(calcResult);
         });
+    }
 
-        Map<Long, Double> weightedSum = new HashMap<>();
-        MutableInt weightsSum = new MutableInt();
+    private Map<Long, Double> calculateSubjectLevelScoreWeightedMean(List<MaturityLevel> maturityLevels) {
+        Map<Long, Double> levelIdToSubjectsWeightedScoreSum = new HashMap<>();
+        MutableInt subjectsTotalWeight = new MutableInt();
 
         subjectValues.forEach(e -> {
-            Map<Long, Double> maturityLevelWeightedScore = e.getWeightedScore();
+            Map<Long, Double> maturityLevelWeightedScore = e.getSubjectLevelWeightedScore();
             int weight = e.getSubject().getWeight();
-            weightsSum.add(weight);
+            subjectsTotalWeight.add(weight);
             maturityLevels.forEach(x -> {
                 long mLevelId = x.getId();
                 double weightedScore = maturityLevelWeightedScore.get(mLevelId);
-                weightedSum.merge(mLevelId, weightedScore, Double::sum);
+                levelIdToSubjectsWeightedScoreSum.merge(mLevelId, weightedScore, Double::sum);
             });
         });
 
-        Map<Long, Double> weightedMeanScores = new HashMap<>();
-        weightedSum.forEach((mLevelId, scoresWeightedSum) -> {
-            if (weightsSum.intValue() > 0)
-                weightedMeanScores.put(mLevelId, scoresWeightedSum/ weightsSum.intValue());
+        Map<Long, Double> mLevelIdToScoreWeightedMean = new HashMap<>();
+        levelIdToSubjectsWeightedScoreSum.forEach((mLevelId, weightedScoreSum) -> {
+            if (subjectsTotalWeight.intValue() > 0)
+                mLevelIdToScoreWeightedMean.put(mLevelId, weightedScoreSum/ subjectsTotalWeight.intValue());
             else
-                weightedMeanScores.put(mLevelId, 0d);
+                mLevelIdToScoreWeightedMean.put(mLevelId, 0d);
         });
-        return weightedMeanScores;
+        return mLevelIdToScoreWeightedMean;
     }
 
-    private MaturityLevel findGainedMaturitryLevel(Map<Long, Double> percentScores, List<MaturityLevel> maturityLevels) {
+    private MaturityLevel findGainedMaturityLevel(Map<Long, Double> mLevelIdToWeightedMeanScore, List<MaturityLevel> maturityLevels) {
         List<MaturityLevel> sortedMaturityLevels = maturityLevels.stream()
             .sorted(Comparator.comparingInt(MaturityLevel::getIndex))
             .toList();
 
         MaturityLevel result = null;
         for (MaturityLevel ml : sortedMaturityLevels) {
-            if (!passLevel(percentScores, ml))
+            if (!passLevel(mLevelIdToWeightedMeanScore, ml))
                 break;
 
             result = ml;
@@ -141,5 +143,4 @@ public class AssessmentResult {
             });
         return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
     }
-
 }
