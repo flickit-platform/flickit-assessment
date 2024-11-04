@@ -405,6 +405,7 @@ public class ErrorMessageKey {
     public static final String GET_ANSWER_RANGE_LIST_SIZE_MAX = "get-answer-range-list.size.max";
 
     public static final String DELETE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "delete-kit-version.kitVersionId.notNull";
+    public static final String DELETE_KIT_VERSION_NOT_ALLOWED = "delete.kitVersion.notAllowed";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
