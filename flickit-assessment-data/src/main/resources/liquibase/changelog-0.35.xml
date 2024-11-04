@@ -158,4 +158,11 @@
     <changeSet id="0.35-20" author="mahdi Rezazadeh">
         <dropNotNullConstraint tableName="fak_answer_option_impact" columnName="value"/>
     </changeSet>
+
+    <changeSet id="0.35-21" author="Ali Sedaghat">
+        <update tableName="fak_subject">
+            <column name="weight" value="1"/>
+            <where>weight=0</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>

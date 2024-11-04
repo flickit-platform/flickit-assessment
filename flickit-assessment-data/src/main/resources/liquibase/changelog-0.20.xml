@@ -33,11 +33,4 @@
                                  deferrable="true" initiallyDeferred="true" onDelete="CASCADE"
                                  validate="true"/>
     </changeSet>
-
-    <changeSet id="0.20-04" author="Ali Sedaghat">
-        <update tableName="fak_subject">
-            <column name="weight" value="1"/>
-            <where>weight=0</where>
-        </update>
-    </changeSet>
 </databaseChangeLog>
