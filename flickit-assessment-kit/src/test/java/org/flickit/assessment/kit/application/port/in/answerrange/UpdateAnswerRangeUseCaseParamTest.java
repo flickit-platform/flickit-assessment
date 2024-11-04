@@ -16,21 +16,21 @@ class UpdateAnswerRangeUseCaseParamTest {
 
     @Test
     void testUpdateAnswerRangeUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createParam(b -> b.kitVersionId(null)));
         assertThat(throwable).hasMessage("kitVersionId: " + UPDATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL);
     }
 
     @Test
     void testUpdateAnswerRangeUseCaseParam_answerRangeIdParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createParam(b -> b.answerRangeId(null)));
         assertThat(throwable).hasMessage("answerRangeId: " + UPDATE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_NULL);
     }
 
     @Test
     void testUpdateAnswerRangeUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createParam(b -> b.title("ab")));
         assertThat(throwable).hasMessage("title: " + UPDATE_ANSWER_RANGE_TITLE_SIZE_MIN);
 
@@ -41,7 +41,7 @@ class UpdateAnswerRangeUseCaseParamTest {
 
     @Test
     void testUpdateAnswerRangeUseCaseParam_reusableParamViolatesConstraints_ErrorMessage() {
-        ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
+        var throwable = assertThrows(ConstraintViolationException.class,
                 () -> createParam(b -> b.reusable(null)));
         assertThat(throwable).hasMessage("reusable: " + UPDATE_ANSWER_RANGE_REUSABLE_NOT_NULL);
     }
