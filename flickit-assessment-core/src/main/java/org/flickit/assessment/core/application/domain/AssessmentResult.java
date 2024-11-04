@@ -56,9 +56,9 @@ public class AssessmentResult {
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();
         setMaturityLevelOfSubjects(maturityLevels);
-        var mLevelIdToWeightedMeanScore = calculateSubjectLevelScoreWeightedMean(maturityLevels);
+        var mLevelIdToScoreWeightedMean = calculateSubjectLevelScoreWeightedMean(maturityLevels);
 
-        return findGainedMaturityLevel(mLevelIdToWeightedMeanScore, maturityLevels);
+        return findGainedMaturityLevel(mLevelIdToScoreWeightedMean, maturityLevels);
     }
 
     private void setMaturityLevelOfSubjects(List<MaturityLevel> maturityLevels) {
