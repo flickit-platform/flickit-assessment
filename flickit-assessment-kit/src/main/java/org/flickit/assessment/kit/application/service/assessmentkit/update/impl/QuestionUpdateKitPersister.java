@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOp
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -42,6 +43,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
     private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
+    private final CreateAnswerRangePort createAnswerRangePort;
 
     @Override
     public int order() {
@@ -83,7 +85,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         // Assuming that new questionnaires have been created in QuestionnairePersister
         newQuestionnaireCodes.forEach(code -> createQuestions(dslQuestionnaireToQuestionsMap.get(code),
-            postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, savedKit.getActiveVersionId(), currentUserId));
+            postUpdateQuestionnaires,
+            postUpdateAttributes,
+            postUpdateMaturityLevels,
+            savedKit.getActiveVersionId(),
+            currentUserId));
 
         boolean isMajorUpdate = false;
 
@@ -139,7 +145,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 .filter(e -> !savedQuestions.containsKey(e.getKey()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            createQuestions(newDslQuestionsMap, postUpdateQuestionnaires, postUpdateAttributes, postUpdateMaturityLevels, kitVersionId, currentUserId);
+            createQuestions(newDslQuestionsMap,
+                postUpdateQuestionnaires,
+                postUpdateAttributes,
+                postUpdateMaturityLevels,
+                kitVersionId,
+                currentUserId);
 
             if (!newDslQuestionsMap.isEmpty())
                 questionAddition = true;
@@ -158,20 +169,31 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         dslQuestions.values().forEach(dslQuestion -> {
             Long questionnaireId = questionnaires.get(dslQuestion.getQuestionnaireCode());
-            var createParam = toCreateQuestionParam(kitVersionId, questionnaireId, currentUserId, dslQuestion);
+            var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, false, currentUserId);
+            long answerRangeId = createAnswerRangePort.persist(createAnswerRangeParam);
 
+            var createParam = toCreateQuestionParam(kitVersionId, questionnaireId, answerRangeId, currentUserId, dslQuestion);
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
                 questionId, dslQuestion.getCode(), questionnaires.get(dslQuestion.getQuestionnaireCode()));
 
-            dslQuestion.getAnswerOptions().forEach(option -> createAnswerOption(option, questionId, kitVersionId, currentUserId));
+            dslQuestion.getAnswerOptions().forEach(option ->
+                createAnswerOption(option,
+                    questionId,
+                    answerRangeId,
+                    kitVersionId,
+                    currentUserId));
 
             dslQuestion.getQuestionImpacts().forEach(impact ->
                 createImpact(impact, kitVersionId, questionId, attributes, maturityLevels, currentUserId));
         });
     }
 
-    private CreateQuestionPort.Param toCreateQuestionParam(Long kitVersionId, Long questionnaireId, UUID currentUserId, QuestionDslModel dslQuestion) {
+    private CreateQuestionPort.Param toCreateQuestionParam(Long kitVersionId,
+                                                           Long questionnaireId,
+                                                           Long answerRangeId,
+                                                           UUID currentUserId,
+                                                           QuestionDslModel dslQuestion) {
         return new CreateQuestionPort.Param(
             dslQuestion.getCode(),
             dslQuestion.getTitle(),
@@ -181,12 +203,22 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestion.isAdvisable(),
             kitVersionId,
             questionnaireId,
+            answerRangeId,
             currentUserId);
     }
 
-    private void createAnswerOption(AnswerOptionDslModel option, Long questionId, long kitVersionId, UUID currentUserId) {
-        var createOptionParam =
-            new CreateAnswerOptionPort.Param(option.getCaption(), option.getIndex(), questionId, kitVersionId, currentUserId);
+    private void createAnswerOption(AnswerOptionDslModel option,
+                                    Long questionId,
+                                    long answerRangeId,
+                                    long kitVersionId,
+                                    UUID currentUserId) {
+        var createOptionParam = new CreateAnswerOptionPort.Param(
+            option.getCaption(),
+            option.getIndex(),
+            answerRangeId,
+            option.getValue(),
+            kitVersionId,
+            currentUserId);
         var optionId = createAnswerOptionPort.persist(createOptionParam);
         log.debug("AnswerOption[Id={}, index={}, title={}, questionId={}] created.",
             optionId, option.getIndex(), option.getCaption(), questionId);

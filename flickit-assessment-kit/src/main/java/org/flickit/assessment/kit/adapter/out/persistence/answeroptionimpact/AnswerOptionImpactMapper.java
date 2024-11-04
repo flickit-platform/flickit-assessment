@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerOptionImpactMapper {
 
-    public static AnswerOptionImpact mapToDomainModel(AnswerOptionImpactJpaEntity entity) {
+    public static AnswerOptionImpact mapToDomainModel(AnswerOptionImpactJpaEntity entity, double optionValue) {
         return new AnswerOptionImpact(
             entity.getId(),
             entity.getOptionId(),
-            entity.getValue()
+            entity.getValue() != null ? entity.getValue() : optionValue
         );
     }
 

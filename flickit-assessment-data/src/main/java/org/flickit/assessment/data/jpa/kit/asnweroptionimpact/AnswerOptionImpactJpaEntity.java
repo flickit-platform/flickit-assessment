@@ -19,8 +19,6 @@ public class AnswerOptionImpactJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "fak_answer_option_impact_id_seq")
-    @SequenceGenerator(name = "fak_answer_option_impact_id_seq", sequenceName = "fak_answer_option_impact_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -35,8 +33,8 @@ public class AnswerOptionImpactJpaEntity {
     @Column(name = "question_impact_id", nullable = false)
     private Long questionImpactId;
 
-    @Column(name = "value", nullable = false)
-    private double value;
+    @Column(name = "value")
+    private Double value;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
@@ -57,5 +55,13 @@ public class AnswerOptionImpactJpaEntity {
 
         private long id;
         private long kitVersionId;
+    }
+
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
     }
 }

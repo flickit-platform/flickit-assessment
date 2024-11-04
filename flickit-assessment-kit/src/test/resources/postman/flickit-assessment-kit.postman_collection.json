@@ -456,6 +456,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Clone Kit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/393/clone",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"393",
+								"clone"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -667,7 +693,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"orders\": [\n        {\"id\": 323,\n        \"index\": 2\n        },\n        {\"id\": 325,\n        \"index\": 1\n        }\n    ]\n}",
+							"raw": "{\n    \"orders\": [\n        {\"id\": 1599,\n        \"index\": 3\n        },\n        {\"id\": 1601,\n        \"index\": 1\n        }\n    ],\n    \"subjectId\": 414\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1199,6 +1225,34 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Questionnaire Questions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questionnaires/3072/questions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questionnaires",
+								"3072",
+								"questions"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1299,6 +1353,33 @@
 								"393",
 								"question-impacts",
 								"42279"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Question Impact",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/412/question-impacts/50014",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"412",
+								"question-impacts",
+								"50014"
 							]
 						}
 					},
@@ -1885,6 +1966,107 @@
 								{
 									"key": "size",
 									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AnswerOption",
+			"item": [
+				{
+					"name": "Get Question Options",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/22799/options",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"questions",
+								"22799",
+								"options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Answer Option",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/348/answer-options/57736",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"348",
+								"answer-options",
+								"57736"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Answer Range",
+			"item": [
+				{
+					"name": "Load Answer Range List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/348/answer-ranges?page=0&size=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"348",
+								"answer-ranges"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
 								}
 							]
 						}

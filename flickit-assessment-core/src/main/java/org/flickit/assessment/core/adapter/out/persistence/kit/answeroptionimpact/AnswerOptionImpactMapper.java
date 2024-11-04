@@ -10,9 +10,9 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntit
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerOptionImpactMapper {
 
-    public static AnswerOptionImpact mapToDomainModel(AnswerOptionImpactJpaEntity entity, QuestionImpactJpaEntity impactEntity) {
+    public static AnswerOptionImpact mapToDomainModel(AnswerOptionImpactJpaEntity entity, QuestionImpactJpaEntity impactEntity, Double optionValue) {
         return new AnswerOptionImpact(entity.getId(),
-            entity.getValue(),
+            entity.getValue() != null ? entity.getValue() : optionValue,
             QuestionImpactMapper.mapToDomainModel(impactEntity));
     }
 }

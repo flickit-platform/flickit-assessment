@@ -21,8 +21,6 @@ public class AssessmentKitJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_assessment_kit_id_seq")
-    @SequenceGenerator(name = "fak_assessment_kit_id_seq", sequenceName = "fak_assessment_kit_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 

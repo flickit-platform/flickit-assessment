@@ -26,6 +26,8 @@ public class Constants {
     public static final String ATTRIBUTE_CODE1 = "SoftwareMaintainability";
     public static final String ATTRIBUTE_TITLE1 = "SoftwareMaintainability";
 
+    public static final double OPTION_VALUE1 = 0;
+    public static final double OPTION_VALUE2 = 1;
     public static final String NEW_OPTION_TITLE = "New Title";
     public static final String OPTION_TITLE = "Title";
     public static final Integer OPTION_INDEX1 = 1;

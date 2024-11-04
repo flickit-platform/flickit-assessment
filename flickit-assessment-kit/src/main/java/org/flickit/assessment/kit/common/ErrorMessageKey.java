@@ -18,6 +18,7 @@ public class ErrorMessageKey {
     public static final String LEVEL_COMPETENCE_ID_NOT_FOUND = "level-competence.id.notFound";
     public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
     public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
+    public static final String ANSWER_OPTION_ID_NOT_FOUND = "answer-option.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -280,6 +281,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTES_SIZE_MIN = "update-attribute-orders.attributes.size.min";
     public static final String UPDATE_ATTRIBUTE_ORDERS_ATTRIBUTE_ID_NOT_NULL = "update-attribute-orders.attributeId.notNull";
     public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_NOT_NULL = "update-attribute-orders.index.notNull";
+    public static final String UPDATE_ATTRIBUTE_ORDERS_SUBJECT_ID_NOT_NULL = "update-attribute-orders.subjectId.notNull";
     public static final String UPDATE_ATTRIBUTE_ORDERS_INDEX_MIN = "update-attribute-orders.index.min";
 
     public static final String UPDATE_QUESTIONNAIRE_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-questionnaire-orders.kitVersionId.notNull";
@@ -328,6 +330,7 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";
     public static final String CREATE_QUESTION_INDEX_DUPLICATE = "create-question.index.duplicate";
     public static final String CREATE_QUESTION_IMPACT_DUPLICATE = "create-question-impact.duplicate";
+    public static final String CREATE_ANSWER_OPTION_DUPLICATE = "create-answer-option.duplicate";
 
     public static final String GET_ATTRIBUTES_KIT_VERSION_ID_NOT_NULL = "get-attributes.kitVersionId.notNull";
     public static final String GET_ATTRIBUTES_PAGE_MIN = "get-attributes.page.min";
@@ -378,6 +381,29 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTION_IMPACT_MATURITY_LEVEL_ID_NOT_NULL = "update-question-impact.maturityLevelId.notNull";
 
     public static final String GET_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "get-kit-version.kitVersionId.notNull";
+
+    public static final String CLONE_KIT_KIT_ID_NOT_NULL = "clone-kit.kitId.notNull";
+    public static final String CLONE_KIT_NOT_ALLOWED = "clone-kit.notAllowed";
+
+    public static final String DELETE_QUESTION_IMPACT_QUESTION_IMPACT_ID_NOT_NULL = "delete-question-impact.questionImpactId.notNull";
+    public static final String DELETE_QUESTION_IMPACT_KIT_VERSION_ID_NOT_NULL = "delete-question-impact.kitVersionId.notNull";
+
+    public static final String DELETE_ANSWER_OPTION_ANSWER_OPTION_ID_NOT_NULL = "delete-answer-option.answerOptionId.notNull";
+    public static final String DELETE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "delete-answer-option.kitVersionId.notNull";
+
+    public static final String GET_QUESTION_OPTIONS_KIT_VERSION_ID_NOT_NULL = "get-question-options.kitVersionId.notNull";
+    public static final String GET_QUESTION_OPTIONS_QUESTION_ID_NOT_NULL = "get-question-options.questionId.notNull";
+
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_KIT_VERSION_ID_NOT_NULL = "get-questionnaire-questions-kitVersionId.notNull";
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_QUESTIONNAIRE_ID_NOT_NULL = "get-questionnaire-questions-questionnaireId.notNull";
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_PAGE_MIN = "get-questionnaire-questions.page.min";
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_SIZE_MIN = "get-questionnaire-questions.size.min";
+    public static final String GET_QUESTIONNAIRE_QUESTIONS_SIZE_MAX = "get-questionnaire-questions.size.max";
+
+    public static final String GET_ANSWER_RANGE_LIST_KIT_VERSION_ID_NOT_NULL = "get-answer-range-list.kitVersionId.notNull";
+    public static final String GET_ANSWER_RANGE_LIST_PAGE_MIN = "get-answer-range-list.page.min";
+    public static final String GET_ANSWER_RANGE_LIST_SIZE_MIN = "get-answer-range-list.size.min";
+    public static final String GET_ANSWER_RANGE_LIST_SIZE_MAX = "get-answer-range-list.size.max";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

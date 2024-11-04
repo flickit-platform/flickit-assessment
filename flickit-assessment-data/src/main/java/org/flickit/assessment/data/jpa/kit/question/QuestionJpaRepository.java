@@ -84,20 +84,21 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 qanso.id AS optionId,
                 qanso.index AS optionIndex,
                 qi.weight AS questionImpactWeight,
-                ansoi.value AS optionImpactValue
+                ansoi.value AS optionImpactValue,
+                qanso.value AS optionValue
            FROM QuestionJpaEntity q
            JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id AND q.kitVersionId = qn.kitVersionId
            JOIN AssessmentResultJpaEntity asmr ON asmr.assessment.id = :assessmentId
            JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
-           JOIN AnswerOptionJpaEntity qanso ON q.id = qanso.questionId AND q.kitVersionId = qanso.kitVersionId
+           JOIN AnswerOptionJpaEntity qanso ON q.answerRangeId = qanso.answerRangeId AND q.kitVersionId = qanso.kitVersionId
            LEFT JOIN  AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId and qi.id = ansoi.questionImpactId AND qi.kitVersionId = ansoi.kitVersionId
            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
-           LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.id = anso.questionId AND q.kitVersionId = anso.kitVersionId
+           LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.answerRangeId = anso.answerRangeId AND q.kitVersionId = anso.kitVersionId
            WHERE q.advisable = TRUE
                AND (asmr.assessment.id = :assessmentId
                AND anso.index NOT IN (SELECT MAX(sq_ans.index)
                                   FROM AnswerOptionJpaEntity sq_ans
-                                  WHERE sq_ans.questionId = q.id)
+                                  WHERE sq_ans.answerRangeId = q.id)
                AND qi.attributeId = :attributeId
                AND qi.maturityLevelId = :maturityLevelId)
                OR (asmr.assessment.id = :assessmentId
@@ -119,7 +120,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 atr AS attribute,
                 questionnaire AS questionnaire
             FROM QuestionJpaEntity q
-            JOIN AnswerOptionJpaEntity ao ON q.id = ao.questionId AND q.kitVersionId = ao.kitVersionId
+            JOIN AnswerOptionJpaEntity ao ON q.answerRangeId = ao.answerRangeId AND q.kitVersionId = ao.kitVersionId
             JOIN QuestionnaireJpaEntity questionnaire ON q.questionnaireId = questionnaire.id AND q.kitVersionId = questionnaire.kitVersionId
             JOIN AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId AND ao.kitVersionId = impact.kitVersionId
             JOIN QuestionImpactJpaEntity qi ON qi.id = impact.questionImpactId AND qi.kitVersionId = impact.kitVersionId
@@ -159,7 +160,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 ov as optionImpact,
                 ao as answerOption
             FROM QuestionJpaEntity qsn
-            LEFT JOIN AnswerOptionJpaEntity ao on qsn.id = ao.questionId AND qsn.kitVersionId = ao.kitVersionId
+            LEFT JOIN AnswerOptionJpaEntity ao on qsn.answerRangeId = ao.answerRangeId AND qsn.kitVersionId = ao.kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id AND qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpactId = qi.id AND ov.kitVersionId = qi.kitVersionId

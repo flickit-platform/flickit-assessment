@@ -66,7 +66,7 @@ class GetAnswerHistoryListServiceTest {
         var param = new GetAnswerHistoryListUseCase.Param(assessmentId, questionId, currentUserId, size, page);
 
         AnswerHistory history1 = history(answerWithNotApplicableTrue(optionOne()));
-        AnswerHistory history2 = history(answerWithQuestionIdAndNotApplicableTrue(optionOne().getQuestionId()));
+        AnswerHistory history2 = history(answerWithQuestionIdAndNotApplicableTrue(questionId));
 
         var expected = new PaginatedResponse<>(List.of(history2, history1), page, size, "desc", "creationTime", 2);
 

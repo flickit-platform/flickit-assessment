@@ -27,6 +27,8 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
 
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
 
+    List<SubjectJpaEntity> findAllByKitVersionId(long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE SubjectJpaEntity s
