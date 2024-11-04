@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
@@ -38,11 +40,13 @@ public class SubjectValuePersistenceJpaAdapter implements
         }).toList();
 
         var persistedEntities = repository.saveAll(entities);
+        Long kitVersionId = assessmentResult.getKitVersionId();
+        var idToSubjectEntity = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, kitVersionId).stream()
+            .collect(Collectors.toMap(SubjectJpaEntity::getId, Function.identity()));
 
         return persistedEntities.stream()
             .map(s -> {
-                var entityId = new SubjectJpaEntity.EntityId(s.getSubjectId(), assessmentResult.getKitVersionId());
-                var subjectEntity = subjectRepository.getReferenceById(entityId);
+                SubjectJpaEntity subjectEntity = idToSubjectEntity.get(s.getSubjectId());
                 return SubjectValueMapper.mapToDomainModel(s, subjectEntity);
             })
             .toList();
