@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.question;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
@@ -22,6 +23,8 @@ import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
 import org.flickit.assessment.kit.application.port.out.question.*;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -42,7 +45,8 @@ public class QuestionPersistenceJpaAdapter implements
     CountSubjectQuestionsPort,
     LoadQuestionPort,
     LoadAttributeLevelQuestionsPort,
-    DeleteQuestionPort {
+    DeleteQuestionPort,
+    LoadQuestionnaireQuestionsPort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -186,5 +190,22 @@ public class QuestionPersistenceJpaAdapter implements
             e.setLastModifiedBy(param.lastModifiedBy());
         });
         repository.saveAll(entities);
+    }
+
+    @Override
+    public PaginatedResponse<Question> loadQuestionnaireQuestions(LoadQuestionnaireQuestionsPort.Param param) {
+        var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(param.questionnaireId(),
+            param.kitVersionId(),
+            PageRequest.of(param.page(), param.size()));
+        List<Question> items = pageResult.getContent().stream()
+            .map(QuestionMapper::mapToDomainModel)
+            .toList();
+
+        return new PaginatedResponse<>(items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            QuestionJpaEntity.Fields.INDEX,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResult.getTotalElements());
     }
 }

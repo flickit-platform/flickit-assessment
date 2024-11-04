@@ -16,8 +16,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
@@ -67,7 +69,8 @@ public class SubjectPersistenceJpaAdapter implements
 
         return subjectEntities.stream()
             .map(e -> SubjectMapper.mapToDomainModel(e,
-                subjectIdToAttrEntities.get(e.getId()).stream()
+                Optional.ofNullable(subjectIdToAttrEntities.get(e.getId()))
+                    .orElse(Collections.emptyList()).stream()
                     .map(AttributeMapper::mapToDomainModel)
                     .toList()))
             .toList();

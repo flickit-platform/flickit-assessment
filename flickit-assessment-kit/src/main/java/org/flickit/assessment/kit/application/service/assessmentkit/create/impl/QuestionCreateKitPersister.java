@@ -139,7 +139,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         log.debug("AnswerOption[Id={}, index={}, title={}, answerRangeId={}] created.",
             optionId, option.getIndex(), option.getCaption(), answerRangeId);
 
-        return new AnswerOption(optionId, option.getCaption(), option.getIndex());
+        return new AnswerOption(optionId, option.getCaption(), option.getIndex(), null);
     }
 
     private void createImpact(QuestionImpactDslModel dslQuestionImpact,
