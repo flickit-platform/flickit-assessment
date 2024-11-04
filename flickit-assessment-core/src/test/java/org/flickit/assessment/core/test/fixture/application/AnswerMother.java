@@ -30,7 +30,7 @@ public class AnswerMother {
             AnswerOptionImpactMother.onLevelThreeOfAttributeId(1, attributeId)));
         return new Answer(UUID.randomUUID(),
             selectedOption,
-            selectedOption.getQuestionId(),
+            1L,
             ConfidenceLevel.COMPLETELY_UNSURE.getId(),
             Boolean.FALSE);
     }
