@@ -6,12 +6,11 @@ public class AnswerOptionMother {
 
     private static Long id = 1L;
 
-    public static AnswerOption createAnswerOption(Long questionId, String title, int index) {
+    public static AnswerOption createAnswerOption(String title, int index) {
         return new AnswerOption(
             id++,
             title,
-            index,
-            questionId
+            index
         );
     }
 }

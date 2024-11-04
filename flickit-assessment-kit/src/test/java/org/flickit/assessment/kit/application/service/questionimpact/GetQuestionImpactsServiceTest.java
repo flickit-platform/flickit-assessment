@@ -105,9 +105,9 @@ class GetQuestionImpactsServiceTest {
         var maturityLevels = allLevels();
         var question = createQuestion();
 
-        var answerOption1 = createAnswerOption(question.getId(), "1st option", 0);
-        var answerOption2 = createAnswerOption(question.getId(), "2nd option", 1);
-        var answerOption3 = createAnswerOption(question.getId(), "3rd option", 2);
+        var answerOption1 = createAnswerOption("1st option", 0);
+        var answerOption2 = createAnswerOption("2nd option", 1);
+        var answerOption3 = createAnswerOption("3rd option", 2);
 
         var answerOptions = List.of(answerOption1, answerOption2, answerOption3);
 

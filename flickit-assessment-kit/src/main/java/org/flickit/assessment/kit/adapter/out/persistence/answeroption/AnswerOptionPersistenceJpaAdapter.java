@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.answeroption;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
@@ -40,10 +41,10 @@ public class AnswerOptionPersistenceJpaAdapter implements
 
     @Override
     public List<AnswerOption> loadByQuestionId(Long questionId, Long kitVersionId) {
-        if (!questionRepository.existsByIdAndKitVersionId(questionId, kitVersionId))
-            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+        QuestionJpaEntity question = questionRepository.findByIdAndKitVersionId(questionId, kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
-        return repository.findByQuestionIdAndKitVersionId(questionId, kitVersionId).stream()
+        return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(question.getAnswerRangeId(), kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }

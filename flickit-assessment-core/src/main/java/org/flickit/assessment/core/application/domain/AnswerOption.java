@@ -12,6 +12,5 @@ public class AnswerOption {
     private final Long id;
     private final Integer index;
     private final String title;
-    private final long questionId;
     private final List<AnswerOptionImpact> impacts;
 }

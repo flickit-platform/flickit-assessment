@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpaEntity, AnswerOptionJpaEntity.EntityId> {
 
-    List<AnswerOptionJpaEntity> findByQuestionIdAndKitVersionId(Long questionId, Long kitVersionId);
+    List<AnswerOptionJpaEntity> findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(long answerRangeId, long kitVersionId);
 
     Optional<AnswerOptionJpaEntity> findByIdAndKitVersionId(Long id, Long kitVersionId);
 
@@ -41,13 +41,5 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
-    @Query("""
-            SELECT a
-            FROM AnswerOptionJpaEntity a
-            JOIN QuestionJpaEntity q ON a.questionId = q.id AND a.kitVersionId = q.kitVersionId
-            WHERE a.questionId IN :questionIds AND a.kitVersionId = :kitVersionId
-            ORDER BY q.index, a.index
-        """)
-    List<AnswerOptionJpaEntity> findAllByQuestionIdInAndKitVersionIdOrderByQuestionIdIndex(@Param("questionIds") List<Long> questionIds,
-                                                                                           @Param("kitVersionId") Long kitVersionId);
+    List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(List<Long> answerRangeIds, Long kitVersionId, Sort sort);
 }
