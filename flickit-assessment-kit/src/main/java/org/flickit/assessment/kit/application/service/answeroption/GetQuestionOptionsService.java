@@ -34,7 +34,7 @@ public class GetQuestionOptionsService implements GetQuestionOptionsUseCase {
             param.getKitVersionId());
 
         List<Result.Option> options = answerOptions.stream()
-            .map(e -> new Result.Option(e.getId(), e.getTitle(), e.getIndex()))
+            .map(e -> new Result.Option(e.getId(), e.getTitle(), e.getIndex(), e.getValue()))
             .toList();
 
         return new Result(options);

@@ -12,4 +12,5 @@ public class AnswerOption {
     private final int index;
     private final Long questionId;
     private final Long answerRangeId;
+    private final double value;
 }
