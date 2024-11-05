@@ -2,8 +2,8 @@ package org.flickit.assessment.kit.adapter.in.rest.answeroption;
 
 import java.util.List;
 
-public record UpdateAnswerOptionOrdersRequestDto(List<MaturityLevelOrdersDto> orders) {
+public record UpdateAnswerOptionOrdersRequestDto(List<AnswerOptionOrdersDto> orders) {
 
-    record MaturityLevelOrdersDto(Long id, Integer index) {
+    record AnswerOptionOrdersDto(Long id, Integer index) {
     }
 }
