@@ -10,11 +10,11 @@ import java.util.UUID;
 
 public class AttributeValueMother {
 
-    public static AttributeValue toBeCalcWithQAAndAnswers(Attribute attribute, List<Answer> answers) {
+    public static AttributeValue toBeCalcWithAttributeAndAnswers(Attribute attribute, List<Answer> answers) {
         return new AttributeValue(UUID.randomUUID(), attribute, answers);
     }
 
-    public static AttributeValue toBeCalcAsLevelThreeWithWeight(int weight) {
+    public static AttributeValue hasFullScoreOnLevel23WithWeight(int weight) {
         long attributeId = 1533;
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel23(attributeId),
@@ -37,7 +37,30 @@ public class AttributeValueMother {
             answers);
     }
 
-    public static AttributeValue toBeCalcAsLevelFourWithWeight(int weight) {
+    public static AttributeValue hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(int weight) {
+        long attributeId = 1533;
+        List<Question> questions = List.of(
+            QuestionMother.withImpactsOnLevel23(attributeId),
+            QuestionMother.withImpactsOnLevel23(attributeId),
+            QuestionMother.withImpactsOnLevel23(attributeId),
+            QuestionMother.withImpactsOnLevel23(attributeId),
+            QuestionMother.withImpactsOnLevel23(attributeId),
+            QuestionMother.withImpactsOnLevel45(attributeId));
+
+        List<Answer> answers = List.of(
+            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
+            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
+            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
+            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
+            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
+            AnswerMother.noScoreOnLevel4(attributeId));
+
+        return new AttributeValue(UUID.randomUUID(),
+            AttributeMother.withIdQuestionsAndWeight(attributeId, questions, weight),
+            answers);
+    }
+
+    public static AttributeValue hasFullScoreOnLevel24WithWeight(int weight) {
         long attributeId = 1533;
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel24(attributeId),

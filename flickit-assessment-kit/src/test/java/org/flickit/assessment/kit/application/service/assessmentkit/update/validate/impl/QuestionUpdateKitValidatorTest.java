@@ -99,7 +99,7 @@ class QuestionUpdateKitValidatorTest {
         var newAnswerOption = AnswerOptionDslModel.builder()
             .caption(OPTION_TITLE)
             .index(1)
-            .value(1)
+            .value(1D)
             .build();
         var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
             .answerOptions(List.of(newAnswerOption))
@@ -125,7 +125,7 @@ class QuestionUpdateKitValidatorTest {
     @Test
     void testValidator_dslHasOneNewAnswerOptionLessThanDb_Invalid() {
         var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 1L);
-        var deletedAnswerOption = AnswerOptionMother.createAnswerOption(questionOne.getId(), OPTION_TITLE, 1);
+        var deletedAnswerOption = AnswerOptionMother.createAnswerOption(questionOne.getAnswerRangeId(), OPTION_TITLE, 1);
         questionOne.setOptions(List.of(deletedAnswerOption));
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne));

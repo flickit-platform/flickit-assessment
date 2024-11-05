@@ -28,8 +28,8 @@ class UpdateMaturityLevelOrdersUseCaseParamTest {
         assertThat(throwable).hasMessage("orders: " + UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.orders(List.of())));
-        assertThat(throwable).hasMessage("orders: " + UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_NOT_NULL);
+            () -> createParam(b -> b.orders(List.of(new UpdateMaturityLevelOrdersUseCase.MaturityLevelParam(123L, 3)))));
+        assertThat(throwable).hasMessage("orders: " + UPDATE_MATURITY_LEVEL_ORDERS_ORDERS_SIZE_MIN);
     }
 
     @Test

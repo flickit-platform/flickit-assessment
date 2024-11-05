@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ASSESSMENT_KIT_NOT_ALLOWED;
@@ -66,7 +66,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         grantAssessmentAccesses(param, id);
 
-        return new Result(id, new CreateAssessmentNotificationCmd(param.getKitId()));
+        return new Result(id, new CreateAssessmentNotificationCmd(param.getKitId(), param.getCurrentUserId()));
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {
