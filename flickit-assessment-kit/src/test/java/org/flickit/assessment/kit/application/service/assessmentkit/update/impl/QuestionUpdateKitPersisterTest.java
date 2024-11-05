@@ -730,14 +730,21 @@ class QuestionUpdateKitPersisterTest {
         return new KitContext(levelTwo, questionnaire, question, attribute, impact, answerOption1, answerOption2, optionImpact2);
     }
 
-    private void assertCreateAnswerRangeParam(AssessmentKit savedKit, ArgumentCaptor<CreateAnswerRangePort.Param> createAnswerRangePortParam, UUID currentUserId) {
+    private void assertCreateAnswerRangeParam(AssessmentKit savedKit,
+                                              ArgumentCaptor<CreateAnswerRangePort.Param> createAnswerRangePortParam,
+                                              UUID currentUserId) {
         assertEquals(savedKit.getActiveVersionId(), createAnswerRangePortParam.getValue().kitVersionId());
         assertNull(createAnswerRangePortParam.getValue().title());
         assertFalse(createAnswerRangePortParam.getValue().reusable());
         assertEquals(currentUserId, createAnswerRangePortParam.getValue().createdBy());
     }
 
-    private void assertCreateQuestionParam(QuestionDslModel dslQuestion, CreateQuestionPort.Param createPortParam, AssessmentKit savedKit, KitContext kitContext, long answerRangeId, UUID currentUserId) {
+    private void assertCreateQuestionParam(QuestionDslModel dslQuestion,
+                                           CreateQuestionPort.Param createPortParam,
+                                           AssessmentKit savedKit,
+                                           KitContext kitContext,
+                                           long answerRangeId,
+                                           UUID currentUserId) {
         assertEquals(dslQuestion.getCode(), createPortParam.code());
         assertEquals(dslQuestion.getTitle(), createPortParam.title());
         assertEquals(dslQuestion.getIndex(), createPortParam.index());
@@ -750,7 +757,13 @@ class QuestionUpdateKitPersisterTest {
         assertEquals(currentUserId, createPortParam.createdBy());
     }
 
-    private void assertCreateQuestionImpactParam(QuestionImpact questionImpactParam, Attribute attribute, MaturityLevel level, QuestionImpactDslModel dslImpact, AssessmentKit savedKit, long expectedQuestionId, UUID currentUserId) {
+    private void assertCreateQuestionImpactParam(QuestionImpact questionImpactParam,
+                                                 Attribute attribute,
+                                                 MaturityLevel level,
+                                                 QuestionImpactDslModel dslImpact,
+                                                 AssessmentKit savedKit,
+                                                 long expectedQuestionId,
+                                                 UUID currentUserId) {
         assertNull(questionImpactParam.getId());
         assertEquals(attribute.getId(), questionImpactParam.getAttributeId());
         assertEquals(level.getId(), questionImpactParam.getMaturityLevelId());
@@ -763,7 +776,11 @@ class QuestionUpdateKitPersisterTest {
         assertEquals(currentUserId, questionImpactParam.getLastModifiedBy());
     }
 
-    private void assertCreateAnswerOptionParam(CreateAnswerOptionPort.Param createAnswerOptionParam, AnswerOptionDslModel dslAnswerOption1, AssessmentKit savedKit, long answerRangeId, UUID currentUserId) {
+    private void assertCreateAnswerOptionParam(CreateAnswerOptionPort.Param createAnswerOptionParam,
+                                               AnswerOptionDslModel dslAnswerOption1,
+                                               AssessmentKit savedKit,
+                                               long answerRangeId,
+                                               UUID currentUserId) {
         assertEquals(dslAnswerOption1.getCaption(), createAnswerOptionParam.title());
         assertEquals(answerRangeId, createAnswerOptionParam.answerRangeId());
         assertEquals(dslAnswerOption1.getIndex(), createAnswerOptionParam.index());
@@ -771,7 +788,12 @@ class QuestionUpdateKitPersisterTest {
         assertEquals(currentUserId, createAnswerOptionParam.createdBy());
     }
 
-    private void assertCreateAnswerOptionImpactParam(long expectedQuestionImpactId, ArgumentCaptor<CreateAnswerOptionImpactPort.Param> optionImpactParams, AnswerOption answerOption, double value, AssessmentKit savedKit, UUID currentUserId) {
+    private void assertCreateAnswerOptionImpactParam(long expectedQuestionImpactId,
+                                                     ArgumentCaptor<CreateAnswerOptionImpactPort.Param> optionImpactParams,
+                                                     AnswerOption answerOption,
+                                                     double value,
+                                                     AssessmentKit savedKit,
+                                                     UUID currentUserId) {
         var optionImpactParam = optionImpactParams.getAllValues().stream()
             .filter(x -> x.value() == value)
             .findFirst()
