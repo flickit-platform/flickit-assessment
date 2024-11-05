@@ -88,7 +88,6 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
-    public static final String GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND = "get-kit-stats.activeVersion.notFound";
 
     public static final String GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL = "get-kit-editable-info.kitId.notNull";
 
@@ -416,6 +415,12 @@ public class ErrorMessageKey {
     public static final String UPDATE_ANSWER_RANGE_TITLE_SIZE_MAX = "update-answer-range.title.size.max";
     public static final String UPDATE_ANSWER_RANGE_REUSABLE_NOT_NULL = "update-answer-range.reusable.notNull";
     public static final String UPDATE_ANSWER_RANGE_TITLE_NOT_NULL = "update-answer-range.title.notNull";
+
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_KIT_VERSION_ID_NOT_NULL = "update-answer-option-orders.kitVersionId.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_ORDERS_NOT_NULL = "update-answer-option-orders.orders.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option-orders.answerOption.id.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_INDEX_NOT_NULL = "update-answer-option-orders.answerOption.index.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_INDEX_MIN = "update-answer-option-orders.answerOption.index.min";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
