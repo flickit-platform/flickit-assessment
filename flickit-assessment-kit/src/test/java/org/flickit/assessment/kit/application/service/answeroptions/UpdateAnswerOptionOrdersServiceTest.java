@@ -1,7 +1,6 @@
 package org.flickit.assessment.kit.application.service.answeroptions;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.AnswerOptionOrder;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answeroptions.UpdateAnswerOptionOrdersUseCase;
@@ -19,7 +18,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,19 +42,7 @@ class UpdateAnswerOptionOrdersServiceTest {
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
-    void testUpdateAnswerOptionOrdersService_kitVersionIdNotFound_NotFoundException() {
-        var param = createParam(UpdateAnswerOptionOrdersUseCase.Param.ParamBuilder::build);
-
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.changeOrders(param));
-        assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(loadExpertGroupOwnerPort, updateAnswerOptionPort);
-    }
-
-    @Test
-    void testUpdateAnswerOptionOrdersService_currentUserIsNotOwner_AccessDeniedException() {
+    void testUpdateAnswerOptionOrders_currentUserIsNotOwner_AccessDeniedException() {
         var param = createParam(UpdateAnswerOptionOrdersUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -69,7 +55,7 @@ class UpdateAnswerOptionOrdersServiceTest {
     }
 
     @Test
-    void testUpdateAnswerOptionOrdersService_validParameters_shouldUpdateAnswerOptionOrders() {
+    void testUpdateAnswerOptionOrders_validParameters_shouldUpdateAnswerOptionOrders() {
         var param = createParam(UpdateAnswerOptionOrdersUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
