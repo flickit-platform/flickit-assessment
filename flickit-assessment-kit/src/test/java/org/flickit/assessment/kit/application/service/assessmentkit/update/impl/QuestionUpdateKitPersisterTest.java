@@ -94,8 +94,8 @@ class QuestionUpdateKitPersisterTest {
         var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
@@ -152,8 +152,8 @@ class QuestionUpdateKitPersisterTest {
         var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_OLD_TITLE1, 1, null, false, true, savedQuestionnaire2.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
@@ -199,8 +199,8 @@ class QuestionUpdateKitPersisterTest {
         var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_OLD_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
@@ -254,8 +254,8 @@ class QuestionUpdateKitPersisterTest {
         var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
@@ -312,8 +312,8 @@ class QuestionUpdateKitPersisterTest {
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact1 = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var savedImpact2 = createQuestionImpact(attribute.getId(), levelThree.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         var savedOptionImpact3 = createAnswerOptionImpact(answerOption1.getId(), 0.5);
@@ -369,8 +369,8 @@ class QuestionUpdateKitPersisterTest {
         var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
         var attribute1 = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute1.getId(), levelTwo.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
@@ -422,8 +422,8 @@ class QuestionUpdateKitPersisterTest {
         var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
@@ -476,8 +476,8 @@ class QuestionUpdateKitPersisterTest {
         var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
-        var answerOption1 = createAnswerOption(OLD_OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OLD_OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var savedOptionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var savedOptionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         savedImpact.setOptionImpacts(List.of(savedOptionImpact1, savedOptionImpact2));
@@ -536,8 +536,8 @@ class QuestionUpdateKitPersisterTest {
 
         var question = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 1L);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var optionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var optionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         impact.setOptionImpacts(List.of(optionImpact1, optionImpact2));

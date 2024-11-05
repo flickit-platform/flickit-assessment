@@ -58,9 +58,9 @@ public class QuestionMother {
             LocalDateTime.now(),
             LocalDateTime.now()
         );
-        var answerOption1 = createAnswerOption("1st option", 0);
-        var answerOption2 = createAnswerOption("2nd option", 1);
-        var answerOption3 = createAnswerOption("3rd option", 2);
+        var answerOption1 = createAnswerOption(question.getAnswerRangeId(), "1st option", 0);
+        var answerOption2 = createAnswerOption(question.getAnswerRangeId(), "2nd option", 1);
+        var answerOption3 = createAnswerOption(question.getAnswerRangeId(), "3rd option", 2);
 
         question.setOptions(List.of(
             answerOption1,

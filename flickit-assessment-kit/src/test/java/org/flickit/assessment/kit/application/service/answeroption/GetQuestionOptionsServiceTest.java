@@ -59,8 +59,9 @@ class GetQuestionOptionsServiceTest {
     @Test
     void testGetQuestionOptions_WhenCurrentUserIsExpertGroupMember_ThenGetQuestionOptions() {
         var param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
-        var answerOptionA = createAnswerOption("titleA", 1);
-        var answerOptionB = createAnswerOption("titleB", 2);
+        var answerRangeId = 8329L;
+        var answerOptionA = createAnswerOption(answerRangeId, "titleA", 1);
+        var answerOptionB = createAnswerOption(answerRangeId, "titleB", 2);
         List<AnswerOption> expectedAnswerOptions = List.of(answerOptionA, answerOptionB);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
