@@ -215,7 +215,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         var createOptionParam = new CreateAnswerOptionPort.Param(
             option.getCaption(),
             option.getIndex(),
-            questionId,
             answerRangeId,
             option.getValue(),
             kitVersionId,

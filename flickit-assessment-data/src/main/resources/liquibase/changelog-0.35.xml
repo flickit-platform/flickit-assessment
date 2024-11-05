@@ -158,4 +158,23 @@
     <changeSet id="0.35-20" author="mahdi Rezazadeh">
         <dropNotNullConstraint tableName="fak_answer_option_impact" columnName="value"/>
     </changeSet>
+
+    <changeSet id="0.35-21" author="Mahdi Rezazadeh">
+        <dropColumn tableName="fak_answer_option" columnName="question_id"/>
+    </changeSet>
+
+    <changeSet id="0.35-22" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <uniqueConstraintExists tableName="fak_answer_option"
+                                    constraintName="uq_fak_answeroption_index_kitversionid_questionid"/>
+        </preConditions>
+        <dropUniqueConstraint tableName="fak_answer_option"
+                              constraintName="uq_fak_answeroption_index_kitversionid_questionid"/>
+    </changeSet>
+
+    <changeSet id="0.35-23" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_answer_option"
+                             columnNames="kit_version_id, index, answer_range_id"
+                             constraintName="uq_fak_answeroption_index_kitversionid_answerrangeid"/>
+    </changeSet>
 </databaseChangeLog>
