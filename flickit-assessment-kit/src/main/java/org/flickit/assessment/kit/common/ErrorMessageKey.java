@@ -413,7 +413,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option-orders.answerOption.notNull";
     public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_INDEX_NOT_NULL = "update-answer-option-orders.answerOption.index.notNull";
     public static final String UPDATE_ANSWER_OPTION_ORDERS_ANSWER_OPTION_INDEX_MIN = "update-answer-option-orders.answerOption.index.min";
-    public static final String UPDATE_ANSWER_OPTION_ORDERS_INDEX_DUPLICATE = "update-answer-option-orders.index.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
