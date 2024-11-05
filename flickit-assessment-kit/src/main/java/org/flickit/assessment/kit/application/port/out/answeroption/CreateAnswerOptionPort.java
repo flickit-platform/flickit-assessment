@@ -9,7 +9,6 @@ public interface CreateAnswerOptionPort {
     record Param(
         String title,
         Integer index,
-        Long questionId,
         Long answerRangeId,
         double value,
         Long kitVersionId,
