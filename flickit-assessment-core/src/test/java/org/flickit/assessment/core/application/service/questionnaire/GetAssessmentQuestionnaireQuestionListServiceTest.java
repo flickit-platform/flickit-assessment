@@ -101,7 +101,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         );
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
-            null, question.getId(), null), question.getId(), 1, Boolean.FALSE);
+            null, null), question.getId(), 1, Boolean.FALSE);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -141,7 +141,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
-        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2, null, question.getId(), null), question.getId(), 1, Boolean.TRUE);
+        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2, null, null), question.getId(), 1, Boolean.TRUE);
         var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))

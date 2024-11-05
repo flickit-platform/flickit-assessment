@@ -17,7 +17,6 @@ public class AnswerOptionMapper {
             answerOption.getId(),
             answerOption.getIndex(),
             answerOption.getTitle(),
-            answerOption.getQuestionId(),
             answerOptionImpacts);
     }
 
@@ -25,7 +24,6 @@ public class AnswerOptionMapper {
         return new AnswerOption(entity.getId(),
             entity.getIndex(),
             entity.getTitle(),
-            entity.getQuestionId(),
             null);
     }
 }
