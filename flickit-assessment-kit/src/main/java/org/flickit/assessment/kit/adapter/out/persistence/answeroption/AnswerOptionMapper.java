@@ -16,7 +16,6 @@ public class AnswerOptionMapper {
             entity.getId(),
             entity.getTitle(),
             entity.getIndex(),
-            entity.getQuestionId(),
             entity.getAnswerRangeId(),
             entity.getValue()
             );
@@ -29,7 +28,6 @@ public class AnswerOptionMapper {
             param.kitVersionId(),
             param.index(),
             param.title(),
-            param.questionId(),
             param.answerRangeId(),
             param.value(),
             creationTime,

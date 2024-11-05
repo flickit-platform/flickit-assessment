@@ -10,7 +10,6 @@ public class AnswerOption {
     private final long id;
     private final String title;
     private final int index;
-    private final Long questionId;
     private final Long answerRangeId;
     private final double value;
 }

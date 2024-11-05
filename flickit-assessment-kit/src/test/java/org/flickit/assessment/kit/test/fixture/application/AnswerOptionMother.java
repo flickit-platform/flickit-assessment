@@ -13,19 +13,16 @@ public class AnswerOptionMother {
         return new AnswerOption(id++,
             "title" + id,
             index++,
-            null,
             answerRangeId++,
             value++);
     }
 
-    public static AnswerOption createAnswerOption(Long questionId, String title, int index) {
+    public static AnswerOption createAnswerOption(long answerRangeId, String title, int index) {
         return new AnswerOption(
             id++,
             title,
             index,
-            questionId,
             answerRangeId++,
-            value++
-        );
+            value++);
     }
 }

@@ -184,7 +184,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .map(entity -> {
                 AnswerOption answerOption = null;
                 if (entity.getAnswerOptionId() != null) {
-                    answerOption = new AnswerOption(entity.getAnswerOptionId(), null, null, entity.getQuestionId(), null);
+                    answerOption = new AnswerOption(entity.getAnswerOptionId(), null, null, null);
                 }
                 return new Answer(
                     entity.getId(),
