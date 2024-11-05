@@ -125,7 +125,7 @@ class QuestionUpdateKitValidatorTest {
     @Test
     void testValidator_dslHasOneNewAnswerOptionLessThanDb_Invalid() {
         var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 1L);
-        var deletedAnswerOption = AnswerOptionMother.createAnswerOption(OPTION_TITLE, 1);
+        var deletedAnswerOption = AnswerOptionMother.createAnswerOption(questionOne.getAnswerRangeId(), OPTION_TITLE, 1);
         questionOne.setOptions(List.of(deletedAnswerOption));
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne));

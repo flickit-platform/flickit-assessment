@@ -69,8 +69,8 @@ class QuestionCreateKitPersisterTest {
         var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, questionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
-        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var optionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var optionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         impact.setOptionImpacts(List.of(optionImpact1, optionImpact2));
