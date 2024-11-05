@@ -121,7 +121,7 @@ class QuestionUpdateKitPersisterTest {
     }
 
     @Test
-    void testQuestionUpdateKitPersister_QuestionAdded_AddQuestionAndOptionsToDatabase() {
+    void testQuestionUpdateKitPersister_QuestionAddedWithNewQuestionnaire_AddQuestionAndOptionsToDatabase() {
         var savedQuestionnaire1 = questionnaireWithTitle(QUESTIONNAIRE_TITLE2);
         savedQuestionnaire1.setQuestions(List.of());
         AssessmentKit savedKit = completeKit(List.of(), List.of(), List.of(savedQuestionnaire1));
@@ -173,7 +173,7 @@ class QuestionUpdateKitPersisterTest {
     }
 
     @Test
-    void testQuestionUpdateKitPersister_QuestionAdded_AddImpactsToDatabase() {
+    void testQuestionUpdateKitPersister_QuestionAddedWithNewQuestionnaire_AddImpactsToDatabase() {
         var savedQuestionnaire2 = questionnaireWithTitle(QUESTIONNAIRE_TITLE2);
         savedQuestionnaire2.setQuestions(List.of());
         AssessmentKit savedKit = completeKit(List.of(), List.of(), List.of(savedQuestionnaire2));
@@ -475,7 +475,7 @@ class QuestionUpdateKitPersisterTest {
     }
 
     @Test
-    void testQuestionUpdateKitPersister_dslHasOneNewQuestion_SaveQuestionWithItsOptions() {
+    void testQuestionUpdateKitPersister_QuestionAddedWithOldQuestionnaire_SaveQuestionWithItsOptions() {
         KitContext kitContext = createKitContext();
         kitContext.questionnaire().setQuestions(List.of());
         var savedKit = AssessmentKitMother.completeKit(List.of(), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
@@ -524,7 +524,7 @@ class QuestionUpdateKitPersisterTest {
     }
 
     @Test
-    void testQuestionUpdateKitPersister_dslHasOneNewQuestion_SaveQuestionImpactsAndOptionImpacts() {
+    void testQuestionUpdateKitPersister_QuestionAddedWithOldQuestionnaire_SaveQuestionImpactsAndOptionImpacts() {
         KitContext kitContext = createKitContext();
         kitContext.questionnaire().setQuestions(List.of());
         var savedKit = AssessmentKitMother.completeKit(List.of(), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
