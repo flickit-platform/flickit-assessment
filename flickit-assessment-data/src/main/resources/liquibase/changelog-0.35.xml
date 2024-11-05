@@ -37,7 +37,7 @@
             </column>
             <column name="title" type="varchar(100)"/>
             <column name="reusable" type="boolean">
-                    <constraints nullable="false"/>
+                <constraints nullable="false"/>
             </column>
             <column name="created_by" type="uuid">
                 <constraints nullable="false"/>
