@@ -1166,7 +1166,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false\n}",
+							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false,\n    \"answerRangeId\": 1618\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1174,16 +1174,16 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/22777",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/223/questions/4859",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"kit-versions",
-								"393",
+								"223",
 								"questions",
-								"22777"
+								"4859"
 							]
 						}
 					},
