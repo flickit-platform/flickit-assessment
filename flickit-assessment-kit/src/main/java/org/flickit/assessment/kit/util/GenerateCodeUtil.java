@@ -9,7 +9,7 @@ public class GenerateCodeUtil {
 
     private static final String PREFIX = "C";
 
-    public String generateCode(String title) {
+    public static String generateCode(String title) {
         return PREFIX + generateSlugCode(title).hashCode();
     }
 }
