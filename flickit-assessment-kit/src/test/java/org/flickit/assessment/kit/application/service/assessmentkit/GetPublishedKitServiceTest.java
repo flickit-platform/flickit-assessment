@@ -124,7 +124,7 @@ class GetPublishedKitServiceTest {
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
-        when(loadMaturityLevelsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
 
@@ -175,7 +175,7 @@ class GetPublishedKitServiceTest {
         when(countKitStatsPort.countKitStats(param.getKitId())).thenReturn(counts);
         when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
         when(loadQuestionnairesPort.loadByKitId(param.getKitId())).thenReturn(List.of(questionnaire));
-        when(loadMaturityLevelsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(maturityLevel));
         when(loadKitTagListPort.loadByKitId(param.getKitId())).thenReturn(List.of(tag));
         when(checkKitLikeExistencePort.exist(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
 

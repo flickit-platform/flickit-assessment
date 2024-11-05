@@ -9,11 +9,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOptionImpactJpaEntity, Long> {
+public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOptionImpactJpaEntity, AnswerOptionImpactJpaEntity.EntityId> {
 
-    List<AnswerOptionImpactJpaEntity> findAllByQuestionImpactId(Long impactId);
+    List<AnswerOptionImpactJpaEntity> findAllByQuestionImpactIdAndKitVersionId(long impactId, long kitVersionId);
 
-    List<AnswerOptionImpactJpaEntity> findAllByOptionIdInAndKitVersionId(List<Long> optionIds, long kitVersionId);
+    List<AnswerOptionImpactJpaEntity> findAllByKitVersionId(long kitVersonId);
+
+    @Query("""
+            SELECT oi as optionImpact,
+                qi as questionImpact
+            FROM AnswerOptionImpactJpaEntity oi
+            JOIN QuestionImpactJpaEntity qi ON oi.questionImpactId = qi.id AND oi.kitVersionId = qi.kitVersionId
+            WHERE oi.kitVersionId = :kitVersionId AND oi.optionId IN :optionIds
+        """)
+    List<OptionImpactWithQuestionImpactView> findAllByOptionIdInAndKitVersionId(List<Long> optionIds, long kitVersionId);
 
     @Modifying
     @Query("""
@@ -21,9 +30,10 @@ public interface AnswerOptionImpactJpaRepository extends JpaRepository<AnswerOpt
             SET a.value = :value,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
-            WHERE a.id = :id
+            WHERE a.id = :id AND a.kitVersionId = :kitVersionId
         """)
         void update(@Param("id") Long id,
+                    @Param("kitVersionId") Long kitVersionId,
                     @Param("value") Double value,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
                     @Param("lastModifiedBy") UUID lastModifiedBy);

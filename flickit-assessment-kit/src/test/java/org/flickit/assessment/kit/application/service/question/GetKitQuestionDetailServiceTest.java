@@ -67,9 +67,9 @@ class GetKitQuestionDetailServiceTest {
         var maturityLevels = MaturityLevelMother.allLevels();
         var question = QuestionMother.createQuestion();
 
-        var answerOption1 = createAnswerOption(question.getId(), "1st option", 0);
-        var answerOption2 = createAnswerOption(question.getId(), "2nd option", 1);
-        var answerOption3 = createAnswerOption(question.getId(), "3rd option", 2);
+        var answerOption1 = createAnswerOption(question.getAnswerRangeId(), "1st option", 0);
+        var answerOption2 = createAnswerOption(question.getAnswerRangeId(), "2nd option", 1);
+        var answerOption3 = createAnswerOption(question.getAnswerRangeId(), "3rd option", 2);
 
         var answerOptions = List.of(
             answerOption1,
@@ -101,7 +101,7 @@ class GetKitQuestionDetailServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(question.getId(), kitVersionId)).thenReturn(question);
         when(loadAllAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId)).thenReturn(List.of(attr1, attr2));
-        when(loadMaturityLevelsPort.loadByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
+        when(loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var result = service.getKitQuestionDetail(param);

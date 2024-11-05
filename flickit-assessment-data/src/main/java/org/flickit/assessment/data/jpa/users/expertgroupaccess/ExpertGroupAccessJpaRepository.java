@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -81,4 +82,16 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
     void updateLastSeen(@Param("expertGroupId") long expertGroupId,
                         @Param("userId") UUID userId,
                         @Param("currentTime") LocalDateTime currentTime);
+
+    @Query("""
+            SELECT
+                u.id as id,
+                u.email as email,
+                u.displayName as displayName
+            FROM ExpertGroupAccessJpaEntity e
+            LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
+            LEFT JOIN UserJpaEntity u on e.userId = u.id
+            WHERE e.expertGroupId = :id AND g.deleted = FALSE AND e.status = 1
+        """)
+    List<ExpertGroupActiveMemberView> findActiveMembers(@Param("id") long id);
 }

@@ -1,5 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.maturitylevel;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -7,22 +9,26 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJpaEntity, MaturityLevelJpaEntity.EntityId> {
 
     List<MaturityLevelJpaEntity> findAllByKitVersionIdOrderByIndex(Long kitVersionId);
 
+    Page<MaturityLevelJpaEntity> findByKitVersionId(Long kitVersionId, Pageable pageable);
+
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdAndIdIn(long kitVersionId, Collection<Long> ids);
+
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
-    List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(List<Long> kitVersionIds);
+    List<MaturityLevelJpaEntity> findAllByKitVersionIdIn(Set<Long> kitVersionIds);
 
     void deleteByIdAndKitVersionId(Long id, Long kitVersionId);
 
     Optional<MaturityLevelJpaEntity> findByIdAndKitVersionId(Long id, long kitVersionId);
+
+    List<MaturityLevelJpaEntity> findAllByKitVersionId(long kitVersionId);
 
     @Query("""
             SELECT l as maturityLevel,
@@ -68,7 +74,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 a.title as title,
                 COUNT(DISTINCT (CASE WHEN qi.maturityLevelId = a.id THEN qi.questionId ELSE NULL END)) as questionCount
             FROM MaturityLevelJpaEntity a
-            LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = :attributeId
+            LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = :attributeId AND qi.kitVersionId = a.kitVersionId
             WHERE a.kitVersionId = :kitVersionId
             GROUP BY a.id, a.index, a.title
             ORDER BY a.index

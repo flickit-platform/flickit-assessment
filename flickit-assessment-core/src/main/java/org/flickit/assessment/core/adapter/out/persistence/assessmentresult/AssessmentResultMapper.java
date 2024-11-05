@@ -30,8 +30,7 @@ public class AssessmentResultMapper {
         );
     }
 
-    public static AssessmentResult mapToDomainModel(AssessmentResultJpaEntity entity, MaturityLevel maturityLevel) {
-        var kit = new AssessmentKit(entity.getAssessment().getAssessmentKitId(), null, entity.getKitVersionId(), null);
+    public static AssessmentResult mapToDomainModel(AssessmentResultJpaEntity entity, MaturityLevel maturityLevel, AssessmentKit kit) {
         return new AssessmentResult(
             entity.getId(),
             AssessmentMapper.mapToDomainModel(entity.getAssessment(), kit, null),

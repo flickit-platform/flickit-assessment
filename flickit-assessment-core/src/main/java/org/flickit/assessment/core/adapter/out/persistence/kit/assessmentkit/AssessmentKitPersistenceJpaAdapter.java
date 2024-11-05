@@ -47,6 +47,6 @@ public class AssessmentKitPersistenceJpaAdapter implements
         AssessmentKitJpaEntity kitEntity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_KIT_ID_NOT_FOUND));
 
-        return new Result(kitEntity.getTitle(), kitEntity.getCreatedBy());
+        return new Result(kitEntity.getTitle(), kitEntity.getCreatedBy(), kitEntity.getExpertGroupId());
     }
 }
