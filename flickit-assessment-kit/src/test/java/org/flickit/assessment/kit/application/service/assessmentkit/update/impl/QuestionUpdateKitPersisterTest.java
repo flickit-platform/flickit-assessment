@@ -146,8 +146,10 @@ class QuestionUpdateKitPersisterTest {
         KitContext kitContext = createKitContext();
         kitContext.questionnaire().setQuestions(List.of(kitContext.question()));
 
+        var expectedAnswerRangeId = kitContext.answerOption1.getAnswerRangeId();
         var expectedQuestionId = 251L;
         var expectedQuestionImpactId = 56115L;
+        when(createAnswerRangePort.persist(any())).thenReturn(expectedAnswerRangeId);
         when(createQuestionPort.persist(any())).thenReturn(expectedQuestionId);
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(kitContext.answerOption1(), kitContext.answerOption2()));
         when(createQuestionImpactPort.persist(any())).thenReturn(expectedQuestionImpactId);
@@ -174,14 +176,18 @@ class QuestionUpdateKitPersisterTest {
         UUID currentUserId = UUID.randomUUID();
         persister.persist(ctx, savedKit, dslKit, currentUserId);
 
+        var createAnswerRangePortParam = ArgumentCaptor.forClass(CreateAnswerRangePort.Param.class);
+        verify(createAnswerRangePort, times(1)).persist(createAnswerRangePortParam.capture());
+        assertCreateAnswerRangeParam(savedKit, createAnswerRangePortParam, currentUserId);
+
         var createPortParam = ArgumentCaptor.forClass(CreateQuestionPort.Param.class);
         verify(createQuestionPort, times(1)).persist(createPortParam.capture());
-        assertCreateQuestionParam(dslQuestion, createPortParam.getValue(), savedKit, kitContext, currentUserId);
+        assertCreateQuestionParam(dslQuestion, createPortParam.getValue(), savedKit, kitContext, expectedAnswerRangeId, currentUserId);
 
         var createAnswerOptionParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
         verify(createAnswerOptionPort, times(2)).persist(createAnswerOptionParam.capture());
-        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().getFirst(), dslAnswerOption1, savedKit, currentUserId);
-        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().get(1), dslAnswerOption2, savedKit, currentUserId);
+        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().getFirst(), dslAnswerOption1, savedKit, expectedAnswerRangeId, currentUserId);
+        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().get(1), dslAnswerOption2, savedKit, expectedAnswerRangeId, currentUserId);
 
         verify(createQuestionImpactPort, times(1)).persist(any());
         verify(createAnswerOptionImpactPort, times(2)).persist(any());
@@ -230,6 +236,7 @@ class QuestionUpdateKitPersisterTest {
         UUID currentUserId = UUID.randomUUID();
         persister.persist(ctx, savedKit, dslKit, currentUserId);
 
+        verify(createAnswerRangePort, times(1)).persist(any());
         verify(createQuestionPort, times(1)).persist(any());
         verify(createAnswerOptionPort, times(2)).persist(any());
 
@@ -600,8 +607,10 @@ class QuestionUpdateKitPersisterTest {
             .subjects(List.of(dslSubject))
             .build();
 
+        var expectedAnswerRangeId = kitContext.answerOption1.getAnswerRangeId();
         var expectedQuestionId = 251L;
         var expectedQuestionImpactId = 56115L;
+        when(createAnswerRangePort.persist(any())).thenReturn(expectedAnswerRangeId);
         when(createQuestionPort.persist(any())).thenReturn(expectedQuestionId);
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(kitContext.answerOption1(), kitContext.answerOption2()));
         when(createQuestionImpactPort.persist(any())).thenReturn(expectedQuestionImpactId);
@@ -614,14 +623,18 @@ class QuestionUpdateKitPersisterTest {
         UUID currentUserId = UUID.randomUUID();
         persister.persist(ctx, savedKit, dslKit, currentUserId);
 
+        var createAnswerRangePortParam = ArgumentCaptor.forClass(CreateAnswerRangePort.Param.class);
+        verify(createAnswerRangePort, times(1)).persist(createAnswerRangePortParam.capture());
+        assertCreateAnswerRangeParam(savedKit, createAnswerRangePortParam, currentUserId);
+
         var createPortParam = ArgumentCaptor.forClass(CreateQuestionPort.Param.class);
         verify(createQuestionPort, times(1)).persist(createPortParam.capture());
-        assertCreateQuestionParam(dslQuestion, createPortParam.getValue(), savedKit, kitContext, currentUserId);
+        assertCreateQuestionParam(dslQuestion, createPortParam.getValue(), savedKit, kitContext, expectedAnswerRangeId, currentUserId);
 
         var createAnswerOptionParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
         verify(createAnswerOptionPort, times(2)).persist(createAnswerOptionParam.capture());
-        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().getFirst(), dslAnswerOption1, savedKit, currentUserId);
-        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().get(1), dslAnswerOption2, savedKit, currentUserId);
+        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().getFirst(), dslAnswerOption1, savedKit, expectedAnswerRangeId, currentUserId);
+        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().get(1), dslAnswerOption2, savedKit, expectedAnswerRangeId, currentUserId);
 
         verify(createQuestionImpactPort, times(1)).persist(any());
         verify(createAnswerOptionImpactPort, times(2)).persist(any());
@@ -678,6 +691,7 @@ class QuestionUpdateKitPersisterTest {
         UUID currentUserId = UUID.randomUUID();
         persister.persist(ctx, savedKit, dslKit, currentUserId);
 
+        verify(createAnswerRangePort, times(1)).persist(any());
         verify(createQuestionPort, times(1)).persist(any());
         verify(createAnswerOptionPort, times(2)).persist(any());
 
@@ -716,7 +730,14 @@ class QuestionUpdateKitPersisterTest {
         return new KitContext(levelTwo, questionnaire, question, attribute, impact, answerOption1, answerOption2, optionImpact2);
     }
 
-    private void assertCreateQuestionParam(QuestionDslModel dslQuestion, CreateQuestionPort.Param createPortParam, AssessmentKit savedKit, KitContext kitContext, UUID currentUserId) {
+    private void assertCreateAnswerRangeParam(AssessmentKit savedKit, ArgumentCaptor<CreateAnswerRangePort.Param> createAnswerRangePortParam, UUID currentUserId) {
+        assertEquals(savedKit.getActiveVersionId(), createAnswerRangePortParam.getValue().kitVersionId());
+        assertNull(createAnswerRangePortParam.getValue().title());
+        assertFalse(createAnswerRangePortParam.getValue().reusable());
+        assertEquals(currentUserId, createAnswerRangePortParam.getValue().createdBy());
+    }
+
+    private void assertCreateQuestionParam(QuestionDslModel dslQuestion, CreateQuestionPort.Param createPortParam, AssessmentKit savedKit, KitContext kitContext, long answerRangeId, UUID currentUserId) {
         assertEquals(dslQuestion.getCode(), createPortParam.code());
         assertEquals(dslQuestion.getTitle(), createPortParam.title());
         assertEquals(dslQuestion.getIndex(), createPortParam.index());
@@ -725,6 +746,7 @@ class QuestionUpdateKitPersisterTest {
         assertEquals(dslQuestion.isAdvisable(), createPortParam.advisable());
         assertEquals(savedKit.getActiveVersionId(), createPortParam.kitVersionId());
         assertEquals(kitContext.questionnaire().getId(), createPortParam.questionnaireId());
+        assertEquals(answerRangeId, createPortParam.answerRangeId());
         assertEquals(currentUserId, createPortParam.createdBy());
     }
 
@@ -741,8 +763,9 @@ class QuestionUpdateKitPersisterTest {
         assertEquals(currentUserId, questionImpactParam.getLastModifiedBy());
     }
 
-    private void assertCreateAnswerOptionParam(CreateAnswerOptionPort.Param createAnswerOptionParam, AnswerOptionDslModel dslAnswerOption1, AssessmentKit savedKit, UUID currentUserId) {
+    private void assertCreateAnswerOptionParam(CreateAnswerOptionPort.Param createAnswerOptionParam, AnswerOptionDslModel dslAnswerOption1, AssessmentKit savedKit, long answerRangeId, UUID currentUserId) {
         assertEquals(dslAnswerOption1.getCaption(), createAnswerOptionParam.title());
+        assertEquals(answerRangeId, createAnswerOptionParam.answerRangeId());
         assertEquals(dslAnswerOption1.getIndex(), createAnswerOptionParam.index());
         assertEquals(savedKit.getActiveVersionId(), createAnswerOptionParam.kitVersionId());
         assertEquals(currentUserId, createAnswerOptionParam.createdBy());
