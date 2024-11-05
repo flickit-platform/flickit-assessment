@@ -37,5 +37,4 @@
     <include file="classpath:liquibase/changelog-0.33.xml"/>
     <include file="classpath:liquibase/changelog-0.34.xml"/>
     <include file="classpath:liquibase/changelog-0.35.xml"/>
-    <include file="classpath:liquibase/changelog-0.34.xml"/>
 </databaseChangeLog>
