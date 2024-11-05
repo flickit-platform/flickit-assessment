@@ -7,14 +7,14 @@ public class AnswerOptionMother {
     private static Long id = 1L;
     private static int index = 1;
     private static Long answerRangeId = 123L;
-    private static double value = 1.0;
+    private static double value = 0.1;
 
     public static AnswerOption createSimpleAnswerOption() {
         return new AnswerOption(id++,
             "title" + id,
             index++,
             answerRangeId++,
-            value++);
+            value += 0.1);
     }
 
     public static AnswerOption createAnswerOption(long answerRangeId, String title, int index) {
@@ -22,7 +22,7 @@ public class AnswerOptionMother {
             id++,
             title,
             index,
-            answerRangeId++,
-            value++);
+            answerRangeId,
+            value += 0.1);
     }
 }
