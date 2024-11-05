@@ -27,8 +27,6 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     void deleteByIdAndKitVersionId(Long answerOptionId, Long kitVersionId);
 
-    List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(List<Long> answerRangeIds, long kitVersionId);
-
     List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(List<Long> answerRangeIds, Long kitVersionId, Sort sort);
 
     @Modifying
