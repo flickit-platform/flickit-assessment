@@ -180,8 +180,8 @@ class QuestionUpdateKitPersisterTest {
 
         var createAnswerOptionParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
         verify(createAnswerOptionPort, times(2)).persist(createAnswerOptionParam.capture());
-        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().getFirst(), dslAnswerOption1, expectedQuestionId, savedKit, currentUserId);
-        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().get(1), dslAnswerOption2, expectedQuestionId, savedKit, currentUserId);
+        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().getFirst(), dslAnswerOption1, savedKit, currentUserId);
+        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().get(1), dslAnswerOption2, savedKit, currentUserId);
 
         verify(createQuestionImpactPort, times(1)).persist(any());
         verify(createAnswerOptionImpactPort, times(2)).persist(any());
@@ -620,8 +620,8 @@ class QuestionUpdateKitPersisterTest {
 
         var createAnswerOptionParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
         verify(createAnswerOptionPort, times(2)).persist(createAnswerOptionParam.capture());
-        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().getFirst(), dslAnswerOption1, expectedQuestionId, savedKit, currentUserId);
-        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().get(1), dslAnswerOption2, expectedQuestionId, savedKit, currentUserId);
+        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().getFirst(), dslAnswerOption1, savedKit, currentUserId);
+        assertCreateAnswerOptionParam(createAnswerOptionParam.getAllValues().get(1), dslAnswerOption2, savedKit, currentUserId);
 
         verify(createQuestionImpactPort, times(1)).persist(any());
         verify(createAnswerOptionImpactPort, times(2)).persist(any());
@@ -643,8 +643,8 @@ class QuestionUpdateKitPersisterTest {
         var savedKit = AssessmentKitMother.completeKit(List.of(subject), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE);
+        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
+        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
@@ -705,8 +705,8 @@ class QuestionUpdateKitPersisterTest {
         var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, questionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
-        var answerOption1 = createAnswerOption(question.getId(), OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(question.getId(), OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(OPTION_TITLE, OPTION_INDEX2);
         var optionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var optionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         impact.setOptionImpacts(List.of(optionImpact1, optionImpact2));
@@ -741,10 +741,9 @@ class QuestionUpdateKitPersisterTest {
         assertEquals(currentUserId, questionImpactParam.getLastModifiedBy());
     }
 
-    private void assertCreateAnswerOptionParam(CreateAnswerOptionPort.Param createAnswerOptionParam, AnswerOptionDslModel dslAnswerOption1, long expectedQuestionId, AssessmentKit savedKit, UUID currentUserId) {
+    private void assertCreateAnswerOptionParam(CreateAnswerOptionPort.Param createAnswerOptionParam, AnswerOptionDslModel dslAnswerOption1, AssessmentKit savedKit, UUID currentUserId) {
         assertEquals(dslAnswerOption1.getCaption(), createAnswerOptionParam.title());
         assertEquals(dslAnswerOption1.getIndex(), createAnswerOptionParam.index());
-        assertEquals(expectedQuestionId, createAnswerOptionParam.questionId());
         assertEquals(savedKit.getActiveVersionId(), createAnswerOptionParam.kitVersionId());
         assertEquals(currentUserId, createAnswerOptionParam.createdBy());
     }
