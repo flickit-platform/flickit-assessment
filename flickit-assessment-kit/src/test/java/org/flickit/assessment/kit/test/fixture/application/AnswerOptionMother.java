@@ -15,12 +15,12 @@ public class AnswerOptionMother {
             answerRangeId++);
     }
 
-    public static AnswerOption createAnswerOption(String title, int index) {
+    public static AnswerOption createAnswerOption(long answerRangeId, String title, int index) {
         return new AnswerOption(
             id++,
             title,
             index,
-            answerRangeId++
+            answerRangeId
         );
     }
 }

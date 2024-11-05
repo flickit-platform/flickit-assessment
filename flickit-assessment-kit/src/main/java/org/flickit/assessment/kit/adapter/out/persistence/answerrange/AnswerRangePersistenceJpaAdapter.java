@@ -12,16 +12,14 @@ import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRangeMapper.toDomainModel;
 
 @Component
@@ -47,35 +45,25 @@ public class AnswerRangePersistenceJpaAdapter implements
         var sort = Sort.Direction.ASC;
         var pageResult = repository.findByKitVersionIdAndReusableTrue(kitVersionId, PageRequest.of(page, size, sort, order));
         List<Long> answerRangeEntityIds = pageResult.getContent().stream().map(AnswerRangeJpaEntity::getId).toList();
-        var answerOptionEntities = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeEntityIds, kitVersionId);
+        var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeEntityIds, kitVersionId,
+                Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
+            .collect(groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, toList()));
+
+        var answerRanges = pageResult.getContent().stream()
+            .map(entity -> {
+                List<AnswerOption> options = answerRangeIdToAnswerOptionsMap.get(entity.getId()).stream()
+                    .map(AnswerOptionMapper::mapToDomainModel)
+                    .toList();
+                return toDomainModel(entity, options);
+            }).toList();
 
         return new PaginatedResponse<>(
-            getAnswerRanges(pageResult.getContent(), answerOptionEntities),
+            answerRanges,
             pageResult.getNumber(),
             pageResult.getSize(),
             order,
             sort.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
-    }
-
-    private @NotNull List<AnswerRange> getAnswerRanges(List<AnswerRangeJpaEntity> answerRangeEntities, List<AnswerOptionJpaEntity> answerOptionEntities) {
-        Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToAnswerOptionsMap = answerOptionEntities.stream()
-            .collect(Collectors.groupingBy(
-                AnswerOptionJpaEntity::getAnswerRangeId,
-                Collectors.collectingAndThen(
-                    Collectors.toList(),
-                    list -> list.stream()
-                        .sorted(Comparator.comparingInt(AnswerOptionJpaEntity::getIndex))
-                        .toList())
-            ));
-
-        return answerRangeEntities.stream().map(entity -> {
-            List<AnswerOption> options = answerRangeIdToAnswerOptionsMap.get(entity.getId()).stream()
-                .map(AnswerOptionMapper::mapToDomainModel)
-                .toList();
-
-            return toDomainModel(entity, options);
-        }).toList();
     }
 }
