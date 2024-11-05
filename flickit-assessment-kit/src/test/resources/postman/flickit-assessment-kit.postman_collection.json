@@ -2116,7 +2116,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 3,\n    \"title\": \"new option\"\n}",
+							"raw": "{\n    \"index\": 5,\n    \"title\": \"new option\",\n    \"value\": 1.6\n}",
 							"options": {
 								"raw": {
 									"language": "json"

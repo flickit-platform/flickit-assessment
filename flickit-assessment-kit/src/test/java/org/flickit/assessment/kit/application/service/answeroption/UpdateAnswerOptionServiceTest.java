@@ -78,6 +78,7 @@ class UpdateAnswerOptionServiceTest {
             .answerOptionId(1L)
             .index(1)
             .title("answerOptionTitle")
+            .value(1d)
             .currentUserId(UUID.randomUUID());
     }
 

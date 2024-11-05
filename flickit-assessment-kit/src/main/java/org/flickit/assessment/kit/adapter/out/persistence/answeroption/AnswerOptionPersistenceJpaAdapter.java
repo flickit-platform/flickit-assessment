@@ -69,7 +69,9 @@ public class AnswerOptionPersistenceJpaAdapter implements
 
         repository.update(param.answerOptionId(),
             param.kitVersionId(),
+            param.index(),
             param.title(),
+            param.value(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }

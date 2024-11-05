@@ -415,6 +415,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ANSWER_OPTION_TITLE_NOT_NULL = "update-answer-option.title.notNull";
     public static final String UPDATE_ANSWER_OPTION_TITLE_SIZE_MIN = "update-answer-option.title.size.min";
     public static final String UPDATE_ANSWER_OPTION_TITLE_SIZE_MAX = "update-answer-option.title.size.max";
+    public static final String UPDATE_ANSWER_OPTION_VALUE_NOT_NULL = "update-answer-option.value.notNull";
 
 
     public static String entityNameSingleFirst(String fieldName) {

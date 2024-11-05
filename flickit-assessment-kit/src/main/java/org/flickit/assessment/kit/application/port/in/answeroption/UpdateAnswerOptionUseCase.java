@@ -34,15 +34,19 @@ public interface UpdateAnswerOptionUseCase {
         @Size(max = 100, message = UPDATE_ANSWER_OPTION_TITLE_SIZE_MAX)
         String title;
 
+        @NotNull(message = UPDATE_ANSWER_OPTION_VALUE_NOT_NULL)
+        Double value;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitVersionId, Long answerOptionId, Integer index, String title, UUID currentUserId) {
+        public Param(Long kitVersionId, Long answerOptionId, Integer index, String title, Double value, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.answerOptionId = answerOptionId;
             this.index = index;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
+            this.value = value;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

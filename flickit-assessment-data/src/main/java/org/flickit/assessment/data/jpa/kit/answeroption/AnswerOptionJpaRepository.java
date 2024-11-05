@@ -48,6 +48,7 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
             UPDATE AnswerOptionJpaEntity a SET
                 a.index = :index,
                 a.title = :title,
+                a.value = :value,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
             WHERE a.id = :id AND a.kitVersionId = :kitVersionId
@@ -56,6 +57,7 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
                 @Param("kitVersionId") long kitVersionId,
                 @Param("index") int index,
                 @Param("title") String title,
+                @Param("value") double value,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 }

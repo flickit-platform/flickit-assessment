@@ -36,6 +36,7 @@ public class UpdateAnswerOptionRestController {
             answerOptionId,
             dto.index(),
             dto.title(),
+            dto.value(),
             currentUserId);
     }
 }
