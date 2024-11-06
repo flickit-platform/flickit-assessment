@@ -321,8 +321,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             String savedOptionTitle = optionEntry.getValue().getTitle();
             String dslOptionTitle = dslOptionIndexMap.get(optionEntry.getKey()).getCaption();
             if (!savedOptionTitle.equals(dslOptionTitle)) {
-                updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(optionEntry.getValue().getId(),
-                    kitVersionId, dslOptionTitle, LocalDateTime.now(), currentUserId));
+                updateAnswerOptionPort.updateTitle(new UpdateAnswerOptionPort.UpdateTitleParam(
+                    optionEntry.getValue().getId(),
+                    kitVersionId,
+                    dslOptionTitle,
+                    LocalDateTime.now(),
+                    currentUserId));
                 log.debug("AnswerOption[id={}, index={}, newTitle{}, questionId{}] updated.",
                     optionEntry.getValue().getId(), optionEntry.getKey(), dslOptionTitle, savedQuestion.getId());
             }

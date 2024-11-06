@@ -417,6 +417,13 @@ public class ErrorMessageKey {
     public static final String UPDATE_ANSWER_RANGE_REUSABLE_NOT_NULL = "update-answer-range.reusable.notNull";
     public static final String UPDATE_ANSWER_RANGE_TITLE_NOT_NULL = "update-answer-range.title.notNull";
 
+    public static final String UPDATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "update-answer-option.kitVersionId.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option.answerOptionId.notNull";
+    public static final String UPDATE_ANSWER_OPTION_INDEX_NOT_NULL = "update-answer-option.index.notNull";
+    public static final String UPDATE_ANSWER_OPTION_TITLE_NOT_NULL = "update-answer-option.title.notNull";
+    public static final String UPDATE_ANSWER_OPTION_TITLE_SIZE_MAX = "update-answer-option.title.size.max";
+    public static final String UPDATE_ANSWER_OPTION_VALUE_NOT_NULL = "update-answer-option.value.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
