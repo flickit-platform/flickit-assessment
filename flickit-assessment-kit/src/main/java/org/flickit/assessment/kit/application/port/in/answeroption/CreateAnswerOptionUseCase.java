@@ -54,6 +54,6 @@ public interface CreateAnswerOptionUseCase {
         }
     }
 
-    record Result(long id, long answerRangeId) {
+    record Result(long id) {
     }
 }

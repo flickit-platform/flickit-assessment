@@ -50,7 +50,7 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
         }
 
         long answerOptionId = createAnswerOptionPort.persist(toCreateParam(param, questionAnswerRangeId));
-        return new Result(answerOptionId, questionAnswerRangeId);
+        return new Result(answerOptionId);
     }
 
     private void checkUserAccess(Param param) {

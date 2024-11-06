@@ -39,6 +39,6 @@ public class CreateAnswerOptionRestController {
     }
 
     private CreateAnswerOptionResponseDto toResponse(Result result) {
-        return new CreateAnswerOptionResponseDto(result.id(), result.answerRangeId());
+        return new CreateAnswerOptionResponseDto(result.id());
     }
 }
