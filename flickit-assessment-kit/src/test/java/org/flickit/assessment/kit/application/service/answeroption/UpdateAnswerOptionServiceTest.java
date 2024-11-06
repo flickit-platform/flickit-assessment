@@ -63,7 +63,15 @@ class UpdateAnswerOptionServiceTest {
 
         assertDoesNotThrow(() -> service.updateAnswerOption(param));
 
-        verify(updateAnswerOptionPort).update(any(UpdateAnswerOptionPort.Param.class));
+        ArgumentCaptor<UpdateAnswerOptionPort.Param> captor = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
+        verify(updateAnswerOptionPort).update(captor.capture());
+        assertEquals(param.getAnswerOptionId(), captor.getValue().answerOptionId());
+        assertEquals(param.getKitVersionId(), captor.getValue().kitVersionId());
+        assertEquals(param.getIndex(), captor.getValue().index());
+        assertEquals(param.getTitle(), captor.getValue().title());
+        assertEquals(param.getValue(), captor.getValue().value());
+        assertEquals(param.getCurrentUserId(), captor.getValue().lastModifiedBy());
+        assertNotNull(captor.getValue().lastModifiedBy());
     }
 
     private UpdateAnswerOptionUseCase.Param createParam(Consumer<UpdateAnswerOptionUseCase.Param.ParamBuilder> changer) {
