@@ -24,6 +24,7 @@ import static java.lang.Boolean.TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.util.GenerateCodeUtil.generateCode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -82,7 +83,7 @@ class UpdateKitInfoServiceTest {
         ExpertGroup expertGroup = ExpertGroupMother.createExpertGroup();
         UUID currentUserId = expertGroup.getOwnerId();
         String newTitle = "new title";
-        String newCode = "new-title";
+        String newCode = generateCode(newTitle);
         var param = new Param(kitId, newTitle, null, null, null, null, null, null, currentUserId);
 
         when(loadKitExpertGroupPort.loadKitExpertGroup(kitId)).thenReturn(expertGroup);
