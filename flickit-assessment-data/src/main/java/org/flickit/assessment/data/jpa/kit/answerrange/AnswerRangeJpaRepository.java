@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEntity, AnswerRangeJpaEntity.EntityId> {
@@ -34,4 +35,6 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
                 @Param("reusable") boolean reusable,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    Optional<AnswerRangeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 }

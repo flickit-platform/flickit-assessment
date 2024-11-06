@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
@@ -30,7 +31,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_RANGE_ID_
 public class AnswerRangePersistenceJpaAdapter implements
     CreateAnswerRangePort,
     UpdateAnswerRangePort,
-    LoadAnswerRangesPort {
+    LoadAnswerRangesPort,
+    LoadAnswerRangePort {
 
     private final AnswerRangeJpaRepository repository;
     private final AnswerOptionJpaRepository answerOptionRepository;
@@ -82,5 +84,12 @@ public class AnswerRangePersistenceJpaAdapter implements
             param.reusable(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public AnswerRange loadById(long kitVersionId, long id) {
+        return repository.findByIdAndKitVersionId(id, kitVersionId)
+            .map(entity -> AnswerRangeMapper.toDomainModel(entity, null))
+            .orElseThrow(() -> new ResourceNotFoundException(ANSWER_RANGE_ID_NOT_FOUND));
     }
 }
