@@ -68,6 +68,7 @@ class CreateAnswerOptionServiceTest {
 
         Result result = service.createAnswerOption(param);
         assertEquals(answerOptionId, result.id());
+        assertEquals(param.getAnswerRangeId(), result.answerRangeId());
 
         var createPortParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
         verify(createAnswerOptionPort, times(1)).persist(createPortParam.capture());
@@ -96,6 +97,7 @@ class CreateAnswerOptionServiceTest {
 
         Result result = service.createAnswerOption(param);
         assertEquals(answerOptionId, result.id());
+        assertEquals(answerRangeId, result.answerRangeId());
 
         var createAnswerRangePortParam = ArgumentCaptor.forClass(CreateAnswerRangePort.Param.class);
         verify(createAnswerRangePort, times(1)).persist(createAnswerRangePortParam.capture());

@@ -37,8 +37,8 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
         if (answerRangeId == null) {
             answerRangeId = createAnswerRangePort.persist(tocreateAnswerRangePortParam(param));
         }
-        Long answerOptionId = createAnswerOptionPort.persist(toCreateParam(param, answerRangeId));
-        return new Result(answerOptionId);
+        long answerOptionId = createAnswerOptionPort.persist(toCreateParam(param, answerRangeId));
+        return new Result(answerOptionId, answerRangeId);
     }
 
     private CreateAnswerRangePort.Param tocreateAnswerRangePortParam(Param param) {
