@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.kit.util.GenerateCodeUtil.*;
 
 @Service
 @Transactional
@@ -52,7 +52,7 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
 
     private CreateAssessmentKitPort.Param toPortParam(Param param) {
         return new CreateAssessmentKitPort.Param(
-            generateSlugCode(param.getTitle()),
+            generateCode(param.getTitle()),
             param.getTitle(),
             param.getSummary(),
             param.getAbout(),
