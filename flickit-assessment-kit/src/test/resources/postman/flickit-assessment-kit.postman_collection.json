@@ -2000,7 +2000,7 @@
 			]
 		},
 		{
-			"name": "AnswerOption",
+          "name": "Answer Option",
 			"item": [
 				{
 					"name": "Get Question Options",
@@ -2030,6 +2030,42 @@
 					},
 					"response": []
 				},
+              {
+                "name": "Update Answer Option",
+                "request": {
+                  "method": "PUT",
+                  "header": [
+                    {
+                      "key": "Authorization",
+                      "value": "{{authorization_header}}",
+                      "type": "text"
+                    }
+                  ],
+                  "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"index\": 5,\n    \"title\": \"new option\",\n    \"value\": 1.6\n}",
+                    "options": {
+                      "raw": {
+                        "language": "json"
+                      }
+                    }
+                  },
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-options/89306",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "kit-versions",
+                      "393",
+                      "answer-options",
+                      "89306"
+                    ]
+                  }
+                },
+                "response": []
+              },
 				{
 					"name": "Delete Answer Option",
 					"request": {
@@ -2134,47 +2170,6 @@
                 },
                 "response": []
               }
-			]
-		},
-		{
-			"name": "Answer Option",
-			"item": [
-				{
-					"name": "Update Answer Option",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"index\": 5,\n    \"title\": \"new option\",\n    \"value\": 1.6\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-options/89306",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"kit-versions",
-								"393",
-								"answer-options",
-								"89306"
-							]
-						}
-					},
-					"response": []
-				}
 			]
 		}
 	],
