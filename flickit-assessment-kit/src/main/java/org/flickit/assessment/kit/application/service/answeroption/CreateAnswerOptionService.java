@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
 
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final CreateAnswerRangePort createAnswerRangePort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
 
     @Override
@@ -31,15 +33,24 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        Long answerOptionId = createAnswerOptionPort.persist(toCreateParam(param));
+        Long answerRangeId = param.getAnswerRangeId();
+        if (answerRangeId == null) {
+            answerRangeId = createAnswerRangePort.persist(tocreateAnswerRangePortParam(param));
+        }
+        Long answerOptionId = createAnswerOptionPort.persist(toCreateParam(param, answerRangeId));
         return new Result(answerOptionId);
     }
 
-    private CreateAnswerOptionPort.Param toCreateParam(Param param) {
+    private CreateAnswerRangePort.Param tocreateAnswerRangePortParam(Param param) {
+        return new CreateAnswerRangePort.Param(param.getKitVersionId(), null, false, param.getCurrentUserId());
+    }
+
+    private CreateAnswerOptionPort.Param toCreateParam(Param param, Long answerRangeId) {
         return new CreateAnswerOptionPort.Param(
             param.getTitle(),
             param.getIndex(),
-            param.getQuestionId(),
+            answerRangeId,
+            param.getValue(),
             param.getKitVersionId(),
             param.getCurrentUserId());
     }
