@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UpdateAnswerOptionUseCaseParamTest {
 
@@ -41,8 +41,8 @@ class UpdateAnswerOptionUseCaseParamTest {
         assertThat(throwable).hasMessage("title: " + UPDATE_ANSWER_OPTION_TITLE_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.title("ab")));
-        assertThat(throwable).hasMessage("title: " + UPDATE_ANSWER_OPTION_TITLE_SIZE_MIN);
+            () -> createParam(b -> b.title(" ")));
+        assertThat(throwable).hasMessage("title: " + UPDATE_ANSWER_OPTION_TITLE_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(RandomStringUtils.randomAlphabetic(101))));

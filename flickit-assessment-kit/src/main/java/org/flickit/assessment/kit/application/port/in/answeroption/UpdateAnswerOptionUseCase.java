@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.answeroption;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -29,8 +30,7 @@ public interface UpdateAnswerOptionUseCase {
         @NotNull(message = UPDATE_ANSWER_OPTION_INDEX_NOT_NULL)
         Integer index;
 
-        @NotNull(message = UPDATE_ANSWER_OPTION_TITLE_NOT_NULL)
-        @Size(min = 3, message = UPDATE_ANSWER_OPTION_TITLE_SIZE_MIN)
+        @NotBlank(message = UPDATE_ANSWER_OPTION_TITLE_NOT_NULL)
         @Size(max = 100, message = UPDATE_ANSWER_OPTION_TITLE_SIZE_MAX)
         String title;
 
