@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,32 +37,31 @@ class UpdateAnswerOptionServiceTest {
     @Mock
     private UpdateAnswerOptionPort updateAnswerOptionPort;
 
-
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
     void testUpdateAnswerOption_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {
-        UpdateAnswerOptionUseCase.Param param = createParam(UpdateAnswerOptionUseCase.Param.ParamBuilder::build);
+        var param = createParam(UpdateAnswerOptionUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAnswerOption(param));
-
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(updateAnswerOptionPort);
     }
 
     @Test
     void testUpdateAnswerOption_WhenCurrentUserIsExpertGroupOwner_ThenUpdateAnswerOption() {
-        UpdateAnswerOptionUseCase.Param param = createParam(b -> b.currentUserId(ownerId));
+        var param = createParam(b -> b.currentUserId(ownerId));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(updateAnswerOptionPort).update(any(UpdateAnswerOptionPort.Param.class));
 
-        assertDoesNotThrow(() -> service.updateAnswerOption(param));
+        service.updateAnswerOption(param);
 
         ArgumentCaptor<UpdateAnswerOptionPort.Param> captor = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
         verify(updateAnswerOptionPort).update(captor.capture());
@@ -82,7 +82,7 @@ class UpdateAnswerOptionServiceTest {
 
     private UpdateAnswerOptionUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateAnswerOptionUseCase.Param.builder()
-            .kitVersionId(1L)
+            .kitVersionId(kitVersion.getId())
             .answerOptionId(1L)
             .index(1)
             .title("answerOptionTitle")
