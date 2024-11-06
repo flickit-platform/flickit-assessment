@@ -23,10 +23,10 @@ class CreateAnswerOptionUseCaseParamTest {
     }
 
     @Test
-    void testCreateAnswerOptionUseCaseParam_questionIdParamViolatesConstraints_ErrorMessage() {
+    void testCreateAnswerOptionUseCaseParam_valueParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.questionId(null)));
-        assertThat(throwable).hasMessage("questionId: " + CREATE_ANSWER_OPTION_QUESTION_ID_NOT_NULL);
+            () -> createParam(b -> b.value(null)));
+        assertThat(throwable).hasMessage("value: " + CREATE_ANSWER_OPTION_VALUE_NOT_NULL);
     }
 
     @Test
@@ -71,9 +71,10 @@ class CreateAnswerOptionUseCaseParamTest {
     private Param.ParamBuilder paramBuilder() {
         return Param.builder()
             .kitVersionId(1L)
-            .questionId(56L)
             .index(3)
             .title("first")
+            .answerRangeId(1563L)
+            .value(0.5D)
             .currentUserId(UUID.randomUUID());
     }
 }
