@@ -37,7 +37,7 @@ public class UpdateAnswerOptionService implements UpdateAnswerOptionUseCase {
                 param.getTitle(),
                 param.getValue(),
                 param.getCurrentUserId());
-        updateAnswerOptionPort.updateAnswerOption(updatePortParam);
+        updateAnswerOptionPort.update(updatePortParam);
     }
 
     private UpdateAnswerOptionPort.Param toParam(long answerOptionId,

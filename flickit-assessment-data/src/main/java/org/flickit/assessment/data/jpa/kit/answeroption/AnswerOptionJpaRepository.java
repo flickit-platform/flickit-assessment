@@ -37,16 +37,16 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
                 a.lastModifiedBy = :lastModifiedBy
             WHERE a.id = :id AND a.kitVersionId = :kitVersionId
         """)
-    void update(@Param("id") Long id,
-                @Param("kitVersionId") Long kitVersionId,
-                @Param("title") String title,
-                @Param("lastModificationTime") LocalDateTime lastModificationTime,
-                @Param("lastModifiedBy") UUID lastModifiedBy);
+    void updateTitle(@Param("id") Long id,
+                     @Param("kitVersionId") Long kitVersionId,
+                     @Param("title") String title,
+                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                     @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Modifying
     @Query("""
-            UPDATE AnswerOptionJpaEntity a SET
-                a.index = :index,
+            UPDATE AnswerOptionJpaEntity a
+            SET a.index = :index,
                 a.title = :title,
                 a.value = :value,
                 a.lastModificationTime = :lastModificationTime,

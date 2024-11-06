@@ -59,11 +59,11 @@ class UpdateAnswerOptionServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
-        doNothing().when(updateAnswerOptionPort).updateAnswerOption(any(UpdateAnswerOptionPort.Param.class));
+        doNothing().when(updateAnswerOptionPort).update(any(UpdateAnswerOptionPort.Param.class));
 
         assertDoesNotThrow(() -> service.updateAnswerOption(param));
 
-        verify(updateAnswerOptionPort).updateAnswerOption(any(UpdateAnswerOptionPort.Param.class));
+        verify(updateAnswerOptionPort).update(any(UpdateAnswerOptionPort.Param.class));
     }
 
     private UpdateAnswerOptionUseCase.Param createParam(Consumer<UpdateAnswerOptionUseCase.Param.ParamBuilder> changer) {

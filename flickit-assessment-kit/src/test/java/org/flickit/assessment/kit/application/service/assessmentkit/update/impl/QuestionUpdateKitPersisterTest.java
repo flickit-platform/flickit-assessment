@@ -5,7 +5,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionByDslPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
@@ -76,7 +76,7 @@ class QuestionUpdateKitPersisterTest {
     private UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
 
     @Mock
-    private UpdateAnswerOptionByDslPort updateAnswerOptionByDslPort;
+    private UpdateAnswerOptionPort updateAnswerOptionPort;
 
     @Mock
     private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
@@ -133,7 +133,7 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionByDslPort,
+            updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
@@ -188,7 +188,7 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionByDslPort
+            updateAnswerOptionPort
         );
     }
 
@@ -238,7 +238,7 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionByDslPort,
+            updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
@@ -296,7 +296,7 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionByDslPort,
+            updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
             createAnswerOptionPort
@@ -354,7 +354,7 @@ class QuestionUpdateKitPersisterTest {
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionByDslPort,
+            updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
@@ -407,7 +407,7 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             createAnswerOptionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionByDslPort,
+            updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
@@ -461,7 +461,7 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             createAnswerOptionImpactPort,
-            updateAnswerOptionByDslPort,
+            updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
             loadAnswerOptionsByQuestionPort,
@@ -487,7 +487,7 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(attribute))), List.of(levelTwo), List.of(savedQuestionnaire));
 
 
-        doNothing().when(updateAnswerOptionByDslPort).updateByDsl(any(UpdateAnswerOptionByDslPort.Param.class));
+        doNothing().when(updateAnswerOptionPort).updateTitle(any(UpdateAnswerOptionPort.UpdateTitleParam.class));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
@@ -580,7 +580,7 @@ class QuestionUpdateKitPersisterTest {
             deleteQuestionImpactPort,
             updateQuestionImpactPort,
             updateAnswerOptionImpactPort,
-            updateAnswerOptionByDslPort
+            updateAnswerOptionPort
         );
 
     }
