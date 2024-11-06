@@ -31,9 +31,10 @@ public class CreateAnswerOptionRestController {
 
     private Param toParam(Long kitVersionId, CreateAnswerOptionRequestDto requestDto, UUID currentUserId) {
         return new Param(kitVersionId,
-            requestDto.questionId(),
             requestDto.index(),
             requestDto.title(),
+            requestDto.answerRangeId(),
+            requestDto.value(),
             currentUserId);
     }
 
