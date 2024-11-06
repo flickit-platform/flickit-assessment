@@ -27,4 +27,13 @@ public class AnswerRangeMother {
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption(), createSimpleAnswerOption(), createSimpleAnswerOption())
         );
     }
+
+    public static AnswerRange createNonreusableAnswerRangeWithTwoOptions() {
+        return new AnswerRange(
+            id++,
+            "title" + id,
+            false,
+            List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
+        );
+    }
 }

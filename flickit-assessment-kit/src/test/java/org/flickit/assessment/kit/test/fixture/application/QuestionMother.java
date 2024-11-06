@@ -12,7 +12,7 @@ public class QuestionMother {
     private static Long id = 134L;
     private static int index = 1;
 
-    public static Question createQuestion(String code, String title, int index, String hint, boolean mayNotBeApplicable, boolean advisable, Long questionnaireId) {
+    public static Question createQuestion(String code, String title, int index, String hint, boolean mayNotBeApplicable, boolean advisable, Long answerRangeId, Long questionnaireId) {
         return new Question(
             id++,
             code,
@@ -21,7 +21,7 @@ public class QuestionMother {
             hint,
             mayNotBeApplicable,
             advisable,
-            153L,
+            answerRangeId,
             questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now()
