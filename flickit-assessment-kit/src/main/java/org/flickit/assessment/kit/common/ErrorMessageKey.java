@@ -422,7 +422,6 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_OPTION_VALUE_NOT_NULL = "create-answer-option.value.notNull";
     public static final String CREATE_ANSWER_OPTION_INDEX_NOT_NULL = "create-answer-option.index.notNull";
     public static final String CREATE_ANSWER_OPTION_TITLE_NOT_BLANK = "create-answer-option.title.notBlank";
-    public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MIN = "create-answer-option.title.size.min";
     public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MAX = "create-answer-option.title.size.max";
     public static final String CREATE_ANSWER_OPTION_INDEX_DUPLICATE = "create-answer-option.index.duplicate";
     public static final String CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE = "create-answer-option.answerRange.reusable";

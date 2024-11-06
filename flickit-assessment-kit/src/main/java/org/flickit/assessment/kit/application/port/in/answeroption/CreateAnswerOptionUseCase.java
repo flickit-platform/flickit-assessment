@@ -32,7 +32,6 @@ public interface CreateAnswerOptionUseCase {
         Integer index;
 
         @NotBlank(message = CREATE_ANSWER_OPTION_TITLE_NOT_BLANK)
-        @Size(min = 3, message = CREATE_ANSWER_OPTION_TITLE_SIZE_MIN)
         @Size(max = 100, message = CREATE_ANSWER_OPTION_TITLE_SIZE_MAX)
         String title;
 
