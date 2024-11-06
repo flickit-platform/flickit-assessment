@@ -71,7 +71,10 @@ public class QuestionnairePersistenceJpaAdapter implements
                 qs -> new QuestionnaireJpaEntity.EntityId(qs.questionnaireId(), param.kitVersionId()),
                 UpdateOrderParam.QuestionnaireOrder::index
             ));
-        List<QuestionnaireJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        List<Long> ids = param.orders().stream()
+            .map(UpdateOrderParam.QuestionnaireOrder::questionnaireId)
+            .toList();
+        List<QuestionnaireJpaEntity> entities = repository.findAllByIdInAndKitVersionId(ids, param.kitVersionId());
         if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
 
