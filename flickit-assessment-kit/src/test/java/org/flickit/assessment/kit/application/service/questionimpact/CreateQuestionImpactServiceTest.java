@@ -14,6 +14,7 @@ import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -44,10 +45,13 @@ class CreateQuestionImpactServiceTest {
     private CreateQuestionImpactPort createQuestionImpactPort;
 
     @Mock
-    private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
+    private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
 
     @Mock
-    private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
+    private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
+
+    @Captor
+    private ArgumentCaptor<List<CreateAnswerOptionImpactPort.Param>> createAnswerOptionImpactPortCaptor;
 
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
@@ -80,24 +84,22 @@ class CreateQuestionImpactServiceTest {
         doNothing().when(createAnswerOptionImpactPort).persistAll(anyList());
 
         long result = service.createQuestionImpact(param);
-
-        ArgumentCaptor<QuestionImpact> captor = ArgumentCaptor.forClass(QuestionImpact.class);
-        verify(createQuestionImpactPort).persist(captor.capture());
-
-        assertEquals(param.getKitVersionId(), captor.getValue().getKitVersionId());
-        assertEquals(param.getAttributeId(), captor.getValue().getAttributeId());
-        assertEquals(param.getMaturityLevelId(), captor.getValue().getMaturityLevelId());
-        assertEquals(param.getQuestionId(), captor.getValue().getQuestionId());
-        assertEquals(param.getWeight(), captor.getValue().getWeight());
-        assertEquals(param.getCurrentUserId(), captor.getValue().getCreatedBy());
-        assertEquals(param.getCurrentUserId(), captor.getValue().getLastModifiedBy());
-        assertNotNull(captor.getValue().getCreationTime());
-        assertNotNull(captor.getValue().getLastModificationTime());
         assertEquals(questionImpactId, result);
 
-        ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass(List.class);
-        verify(createAnswerOptionImpactPort).persistAll(listArgumentCaptor.capture());
-        List<CreateAnswerOptionImpactPort.Param> portParams = listArgumentCaptor.getValue();
+        ArgumentCaptor<QuestionImpact> questionImpactCaptor = ArgumentCaptor.forClass(QuestionImpact.class);
+        verify(createQuestionImpactPort).persist(questionImpactCaptor.capture());
+        assertEquals(param.getKitVersionId(), questionImpactCaptor.getValue().getKitVersionId());
+        assertEquals(param.getAttributeId(), questionImpactCaptor.getValue().getAttributeId());
+        assertEquals(param.getMaturityLevelId(), questionImpactCaptor.getValue().getMaturityLevelId());
+        assertEquals(param.getQuestionId(), questionImpactCaptor.getValue().getQuestionId());
+        assertEquals(param.getWeight(), questionImpactCaptor.getValue().getWeight());
+        assertEquals(param.getCurrentUserId(), questionImpactCaptor.getValue().getCreatedBy());
+        assertEquals(param.getCurrentUserId(), questionImpactCaptor.getValue().getLastModifiedBy());
+        assertNotNull(questionImpactCaptor.getValue().getCreationTime());
+        assertNotNull(questionImpactCaptor.getValue().getLastModificationTime());
+
+        verify(createAnswerOptionImpactPort).persistAll(createAnswerOptionImpactPortCaptor.capture());
+        List<CreateAnswerOptionImpactPort.Param> portParams = createAnswerOptionImpactPortCaptor.getValue();
         for (int i = 0; i < portParams.size(); i++) {
             assertEquals(questionImpactId, portParams.get(i).questionImpactId());
             assertEquals(options.get(i).getId(), portParams.get(i).optionId());
@@ -115,7 +117,7 @@ class CreateQuestionImpactServiceTest {
 
     private CreateQuestionImpactUseCase.Param.ParamBuilder paramBuilder() {
         return CreateQuestionImpactUseCase.Param.builder()
-            .kitVersionId(1L)
+            .kitVersionId(kitVersion.getId())
             .attributeId(2L)
             .maturityLevelId(3L)
             .questionId(4L)

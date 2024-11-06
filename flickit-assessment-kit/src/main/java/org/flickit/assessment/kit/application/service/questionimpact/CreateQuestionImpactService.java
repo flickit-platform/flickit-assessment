@@ -27,8 +27,8 @@ public class CreateQuestionImpactService implements CreateQuestionImpactUseCase 
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CreateQuestionImpactPort createQuestionImpactPort;
-    private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
     private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
+    private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
 
     @Override
     public long createQuestionImpact(Param param) {
@@ -47,14 +47,14 @@ public class CreateQuestionImpactService implements CreateQuestionImpactUseCase 
             .map(AnswerOption::getId)
             .toList();
 
-        List<CreateAnswerOptionImpactPort.Param> params = optionIds.stream()
+        List<CreateAnswerOptionImpactPort.Param> optionImpacts = optionIds.stream()
             .map(optionId -> new CreateAnswerOptionImpactPort.Param(questionImpactId,
                 optionId,
                 null,
                 kitVersionId,
                 currentUserId))
             .toList();
-        createAnswerOptionImpactPort.persistAll(params);
+        createAnswerOptionImpactPort.persistAll(optionImpacts);
 
         return questionImpactId;
     }
