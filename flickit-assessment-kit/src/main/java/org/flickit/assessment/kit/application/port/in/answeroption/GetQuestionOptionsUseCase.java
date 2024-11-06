@@ -41,6 +41,6 @@ public interface GetQuestionOptionsUseCase {
 
     record Result(List<Option> answerOptions) {
 
-        public record Option(long id, String title, int index) {}
+        public record Option(long id, String title, int index, double value) {}
     }
 }

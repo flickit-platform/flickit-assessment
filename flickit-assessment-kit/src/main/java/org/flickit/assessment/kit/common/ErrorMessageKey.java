@@ -19,6 +19,7 @@ public class ErrorMessageKey {
     public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
     public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
     public static final String ANSWER_OPTION_ID_NOT_FOUND = "answer-option.id.notFound";
+    public static final String ANSWER_RANGE_ID_NOT_FOUND = "answer-range.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -406,6 +407,15 @@ public class ErrorMessageKey {
 
     public static final String DELETE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "delete-kit-version.kitVersionId.notNull";
     public static final String DELETE_KIT_VERSION_NOT_ALLOWED = "delete.kitVersion.notAllowed";
+
+    public static final String CREATE_ANSWER_OPTION_DUPLICATE = "create-answer-option.duplicate";
+
+    public static final String UPDATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL = "update-answer-range.kitVersionId.notNull";
+    public static final String UPDATE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_NULL = "update-answer-range.answerRangeId.notNull";
+    public static final String UPDATE_ANSWER_RANGE_TITLE_SIZE_MIN = "update-answer-range.title.size.min";
+    public static final String UPDATE_ANSWER_RANGE_TITLE_SIZE_MAX = "update-answer-range.title.size.max";
+    public static final String UPDATE_ANSWER_RANGE_REUSABLE_NOT_NULL = "update-answer-range.reusable.notNull";
+    public static final String UPDATE_ANSWER_RANGE_TITLE_NOT_NULL = "update-answer-range.title.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
