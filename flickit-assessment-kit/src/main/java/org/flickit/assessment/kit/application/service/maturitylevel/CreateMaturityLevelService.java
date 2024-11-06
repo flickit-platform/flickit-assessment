@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
 @Transactional
@@ -32,7 +33,7 @@ public class CreateMaturityLevelService implements CreateMaturityLevelUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         MaturityLevel maturityLevel = new MaturityLevel(null,
-            MaturityLevel.generateSlugCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),

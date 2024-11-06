@@ -2,10 +2,9 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.answeroption;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.core.adapter.out.persistence.kit.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 
 import java.util.List;
 
@@ -13,23 +12,18 @@ import java.util.List;
 public class AnswerOptionMapper {
 
     public static AnswerOption mapToDomainModel(AnswerOptionJpaEntity answerOption,
-                                                List<AnswerOptionImpactJpaEntity> answerOptionImpacts) {
-        var impacts = answerOptionImpacts.stream()
-            .map(AnswerOptionImpactMapper::mapToDomainModel)
-            .toList();
+                                                List<AnswerOptionImpact> answerOptionImpacts) {
         return new AnswerOption(
             answerOption.getId(),
             answerOption.getIndex(),
             answerOption.getTitle(),
-            answerOption.getQuestionId(),
-            impacts);
+            answerOptionImpacts);
     }
 
     public static AnswerOption mapToDomainModelWithNoImpact(AnswerOptionJpaEntity entity) {
         return new AnswerOption(entity.getId(),
             entity.getIndex(),
             entity.getTitle(),
-            entity.getQuestionId(),
             null);
     }
 }

@@ -1,9 +1,9 @@
 package org.flickit.assessment.core.test.fixture.application;
 
 
-import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class SubjectValueMother {
 
-    public static SubjectValue withQAValues(List<AttributeValue> qaValues) {
+    public static SubjectValue withAttributeValues(List<AttributeValue> qaValues) {
         return new SubjectValue(UUID.randomUUID(), SubjectMother.withNoAttributes(), qaValues);
     }
 

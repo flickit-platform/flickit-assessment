@@ -49,7 +49,6 @@ public class AnswerHistoryMapper {
                 new AnswerOption(entity.getAnswerOptionId(),
                     null,
                     null,
-                    entity.getQuestionId(),
                     null) :
                 null,
             entity.getQuestionId(),

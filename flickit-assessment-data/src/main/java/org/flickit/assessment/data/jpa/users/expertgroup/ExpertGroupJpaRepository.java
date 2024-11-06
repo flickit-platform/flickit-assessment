@@ -14,6 +14,10 @@ import java.util.UUID;
 
 public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEntity, Long> {
 
+    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
+
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
+
     @Query("SELECT e.ownerId FROM ExpertGroupJpaEntity as e where e.id = :id and deleted=false")
     Optional<UUID> loadOwnerIdById(@Param("id") Long id);
 
@@ -95,10 +99,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
             WHERE e.id = :expertGroupId
         """)
     KitsCountView countKits(@Param("expertGroupId") long expertGroupId);
-
-    Optional<ExpertGroupJpaEntity> findByIdAndDeletedFalse(long id);
-
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") long id);
 
     @Modifying
     @Query("""
