@@ -418,7 +418,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ANSWER_RANGE_TITLE_NOT_NULL = "update-answer-range.title.notNull";
 
     public static final String CREATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-option.kitVersionId.notNull";
-    public static final String CREATE_ANSWER_OPTION_QUESTION_ID_NOT_NULL = "create-answer-option.questionId.notNull";
+    public static final String CREATE_ANSWER_OPTION_VALUE_NOT_NULL = "create-answer-option.value.notNull";
     public static final String CREATE_ANSWER_OPTION_INDEX_NOT_NULL = "create-answer-option.index.notNull";
     public static final String CREATE_ANSWER_OPTION_TITLE_NOT_BLANK = "create-answer-option.title.notBlank";
     public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MIN = "create-answer-option.title.size.min";

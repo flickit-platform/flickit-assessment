@@ -25,9 +25,6 @@ public interface CreateAnswerOptionUseCase {
         @NotNull(message = CREATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = CREATE_ANSWER_OPTION_QUESTION_ID_NOT_NULL)
-        Long questionId;
-
         @NotNull(message = CREATE_ANSWER_OPTION_INDEX_NOT_NULL)
         Integer index;
 
@@ -36,15 +33,21 @@ public interface CreateAnswerOptionUseCase {
         @Size(max = 100, message = CREATE_ANSWER_OPTION_TITLE_SIZE_MAX)
         String title;
 
+        Long answerRangeId;
+
+        @NotNull(message = CREATE_ANSWER_OPTION_VALUE_NOT_NULL)
+        Double value;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long kitVersionId, Long questionId, Integer index, String title, UUID currentUserId) {
+        public Param(Long kitVersionId, Integer index, String title, Long answerRangeId, Double value, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
-            this.questionId = questionId;
             this.index = index;
             this.title = Strings.trimWhitespace(title);
+            this.answerRangeId = answerRangeId;
+            this.value = value;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
