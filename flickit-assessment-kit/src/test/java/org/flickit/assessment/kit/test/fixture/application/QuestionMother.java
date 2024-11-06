@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.kit.application.domain.Question;
+import org.flickit.assessment.kit.application.domain.QuestionImpact;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -66,6 +67,32 @@ public class QuestionMother {
             answerOption1,
             answerOption2,
             answerOption3
+        ));
+        return question;
+    }
+
+    public static Question createQuestionWithImpacts() {
+        Question question = new Question(
+            id++,
+            "code",
+            "title",
+            index++,
+            "hint",
+            true,
+            true,
+            27L,
+            1L,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+        var answerOption1 = createAnswerOption(question.getAnswerRangeId(), "1st option", 0);
+        QuestionImpact impact = QuestionImpactMother.createQuestionImpact(1532L, 153L, 1, question.getId());
+
+        question.setOptions(List.of(
+            answerOption1
+        ));
+        question.setImpacts(List.of(
+            impact
         ));
         return question;
     }

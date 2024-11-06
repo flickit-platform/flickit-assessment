@@ -5,14 +5,17 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Question;
+import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase.Param;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase.Result;
 import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
 import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
@@ -57,10 +60,16 @@ class CreateAnswerOptionServiceTest {
     private CreateAnswerRangePort createAnswerRangePort;
 
     @Mock
+    private UpdateQuestionPort updateQuestionPort;
+
+    @Mock
     private LoadAnswerRangePort loadAnswerRangePort;
 
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
+
+    @Mock
+    private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
 
     @Test
     void testCreateAnswerOption_WhenCurrentUserIsNotOwner_ThrowAccessDeniedException() {
@@ -74,10 +83,10 @@ class CreateAnswerOptionServiceTest {
     }
 
     @Test
-    void testCreateAnswerOption_WhenAnswerRangeIdIsNotNullForQuestion_CreateAnswerOption() {
+    void testCreateAnswerOption_WhenAnswerRangeIdIsNotNullForQuestion_CreateAnswerOptionWithImpacts() {
         long answerOptionId = 123L;
         var param = createParam(b -> b.currentUserId(ownerId));
-        Question question = QuestionMother.createQuestion();
+        Question question = QuestionMother.createQuestionWithImpacts();
         AnswerRange answerRange = AnswerRangeMother.createNonreusableAnswerRangeWithTwoOptions();
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -98,7 +107,16 @@ class CreateAnswerOptionServiceTest {
         assertEquals(param.getValue(), createPortParam.getValue().value());
         assertEquals(param.getCurrentUserId(), createPortParam.getValue().createdBy());
 
-        verifyNoInteractions(createAnswerRangePort);
+        QuestionImpact questionImpact = question.getImpacts().getFirst();
+        var createOptionImpact = ArgumentCaptor.forClass(CreateAnswerOptionImpactPort.Param.class);
+        verify(createAnswerOptionImpactPort, times(1)).persist(createOptionImpact.capture());
+        assertEquals(param.getKitVersionId(), createOptionImpact.getValue().kitVersionId());
+        assertEquals(answerOptionId, createOptionImpact.getValue().optionId());
+        assertEquals(param.getValue(), createOptionImpact.getValue().value());
+        assertEquals(questionImpact.getId(), createOptionImpact.getValue().questionImpactId());
+        assertEquals(param.getCurrentUserId(), createOptionImpact.getValue().createdBy());
+
+        verifyNoInteractions(createAnswerRangePort, updateQuestionPort);
     }
 
     @Test
@@ -113,6 +131,7 @@ class CreateAnswerOptionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
         when(createAnswerRangePort.persist(any())).thenReturn(expectedAnswerRangeId);
+        doNothing().when(updateQuestionPort).updateAnswerRange(any());
         when(createAnswerOptionPort.persist(any())).thenReturn(answerOptionId);
 
         Result result = service.createAnswerOption(param);
@@ -125,9 +144,19 @@ class CreateAnswerOptionServiceTest {
         assertFalse(createAnswerRangePortParam.getValue().reusable());
         assertEquals(param.getCurrentUserId(), createAnswerRangePortParam.getValue().createdBy());
 
+        var updateQuestionPortParam = ArgumentCaptor.forClass(UpdateQuestionPort.UpdateAnswerRangeParam.class);
+        verify(updateQuestionPort, times(1)).updateAnswerRange(updateQuestionPortParam.capture());
+        assertEquals(question.getId(), updateQuestionPortParam.getValue().id());
+        assertEquals(param.getKitVersionId(), updateQuestionPortParam.getValue().kitVersionId());
+        assertEquals(expectedAnswerRangeId, updateQuestionPortParam.getValue().answerRangeId());
+        assertNotNull(updateQuestionPortParam.getValue().lastModificationTime());
+        assertEquals(param.getCurrentUserId(), updateQuestionPortParam.getValue().lastModifiedBy());
+
         var createPortParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
         verify(createAnswerOptionPort, times(1)).persist(createPortParam.capture());
         assertEquals(expectedAnswerRangeId, createPortParam.getValue().answerRangeId());
+
+        verifyNoInteractions(createAnswerOptionImpactPort);
     }
 
     @Test
@@ -144,7 +173,7 @@ class CreateAnswerOptionServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.createAnswerOption(param));
         assertEquals(CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE, throwable.getMessageKey());
 
-        verifyNoInteractions(createAnswerRangePort, createAnswerOptionPort);
+        verifyNoInteractions(createAnswerRangePort, createAnswerOptionPort, createAnswerOptionImpactPort);
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
