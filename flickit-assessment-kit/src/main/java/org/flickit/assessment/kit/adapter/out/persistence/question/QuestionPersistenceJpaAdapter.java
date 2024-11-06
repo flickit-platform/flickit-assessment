@@ -195,6 +195,18 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateAnswerRange(UpdateAnswerRangeParam param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId())) {
+            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+        }
+        repository.update(param.id(),
+            param.kitVersionId(),
+            param.answerRangeId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
+
+    @Override
     public PaginatedResponse<Question> loadQuestionnaireQuestions(LoadQuestionnaireQuestionsPort.Param param) {
         var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(param.questionnaireId(),
             param.kitVersionId(),
