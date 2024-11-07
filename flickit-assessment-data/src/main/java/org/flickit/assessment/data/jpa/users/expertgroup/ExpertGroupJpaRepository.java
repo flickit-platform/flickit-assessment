@@ -63,14 +63,14 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
     List<ExpertGroupMembersCountView> expertGroupMembersCount(List<Long> expertGroupIdList);
 
     @Query("""
-        SELECT
-            u.id as id,
-            u.displayName as displayName,
-            e.id as expertGroupId
-        FROM ExpertGroupJpaEntity e
-        JOIN ExpertGroupAccessJpaEntity a on a.expertGroupId = e.id
-        JOIN UserJpaEntity u on a.userId = u.id
-        WHERE a.status = 1 AND a.expertGroupId in :expertGroupIds
+            SELECT
+                u.id as id,
+                u.displayName as displayName,
+                e.id as expertGroupId
+            FROM ExpertGroupJpaEntity e
+            JOIN ExpertGroupAccessJpaEntity a on a.expertGroupId = e.id
+            JOIN UserJpaEntity u on a.userId = u.id
+            WHERE a.status = 1 AND a.expertGroupId in :expertGroupIds
         """)
     List<ExpertGroupMembersView> findMembersByExpertGroupId(@Param("expertGroupIds") List<Long> expertGroupIds);
 

@@ -10,6 +10,8 @@ import java.util.UUID;
 public class ExpertGroupMember {
 
     private final Long expertGroupId;
+
     private final UUID userId;
+
     private final String displayName;
 }
