@@ -70,7 +70,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .collect(Collectors.toMap(ExpertGroupMembersCountView::getId, ExpertGroupMembersCountView::getMembersCount));
 
         List<LoadExpertGroupListPort.Result> items = pageResult.getContent().stream()
-            .map(e -> resultWithMembers(e,  expertGroupMembersCountMap.get(e.getId()), members))
+            .map(e -> resultWithMembers(e, param.sizeOfMembers(), expertGroupMembersCountMap.get(e.getId()), members))
             .toList();
 
         return new PaginatedResponse<>(
@@ -83,11 +83,12 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersCount, List<ExpertGroupMember> members) {
+    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, int membersCount, List<ExpertGroupMember> members) {
         var relatedMembers = members.stream()
             .filter(m -> Objects.equals(m.getExpertGroupId(), item.getId()))
             .map(m -> new GetExpertGroupListUseCase.Member(m.getDisplayName()))
             .sorted(Comparator.comparing(GetExpertGroupListUseCase.Member::displayName))
+            .limit(membersSize)
             .toList();
         return mapToPortResult(item, relatedMembers, membersCount);
     }
