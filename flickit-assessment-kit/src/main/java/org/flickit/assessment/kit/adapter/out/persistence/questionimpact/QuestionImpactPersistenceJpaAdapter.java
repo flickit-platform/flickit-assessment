@@ -2,13 +2,17 @@ package org.flickit.assessment.kit.adapter.out.persistence.questionimpact;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.DeleteQuestionImpactPort;
+import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.UpdateQuestionImpactPort;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_IMPACT_ID_NOT_FOUND;
@@ -18,7 +22,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_IMPACT_
 public class QuestionImpactPersistenceJpaAdapter implements
     CreateQuestionImpactPort,
     DeleteQuestionImpactPort,
-    UpdateQuestionImpactPort {
+    UpdateQuestionImpactPort,
+    LoadQuestionImpactPort {
 
     private final QuestionImpactJpaRepository repository;
     private final KitDbSequenceGenerators sequenceGenerators;
@@ -60,5 +65,14 @@ public class QuestionImpactPersistenceJpaAdapter implements
             param.maturityLevelId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public List<QuestionImpact> loadAllByKitVersionId(long kitVersionId) {
+        List<QuestionImpactJpaEntity> entities = repository.findAllByKitVersionId(kitVersionId);
+
+        return entities.stream()
+            .map(QuestionImpactMapper::mapToDomainModel)
+            .toList();
     }
 }
