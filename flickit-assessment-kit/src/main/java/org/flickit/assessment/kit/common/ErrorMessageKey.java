@@ -408,8 +408,6 @@ public class ErrorMessageKey {
     public static final String DELETE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "delete-kit-version.kitVersionId.notNull";
     public static final String DELETE_KIT_VERSION_NOT_ALLOWED = "delete.kitVersion.notAllowed";
 
-    public static final String CREATE_ANSWER_OPTION_DUPLICATE = "create-answer-option.duplicate";
-
     public static final String UPDATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL = "update-answer-range.kitVersionId.notNull";
     public static final String UPDATE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_NULL = "update-answer-range.answerRangeId.notNull";
     public static final String UPDATE_ANSWER_RANGE_TITLE_SIZE_MIN = "update-answer-range.title.size.min";
