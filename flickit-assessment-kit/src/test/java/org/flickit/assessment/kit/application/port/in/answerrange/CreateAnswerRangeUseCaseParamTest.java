@@ -9,11 +9,17 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ANSWER_RANGE_TITLE_SIZE_MAX;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ANSWER_RANGE_TITLE_SIZE_MIN;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateAnswerRangeUseCaseParamTest {
+
+    @Test
+    void testCreateAnswerRangeUseCaseParam_kitVersionIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.kitVersionId(null)));
+        assertThat(throwable).hasMessage("kitVersionId: " + CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL);
+    }
 
     @Test
     void testCreateAnswerRangeUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
@@ -41,6 +47,7 @@ class CreateAnswerRangeUseCaseParamTest {
 
     private CreateAnswerRangeUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAnswerRangeUseCase.Param.builder()
+            .kitVersionId(1L)
             .title("title")
             .currentUserId(UUID.randomUUID());
     }
