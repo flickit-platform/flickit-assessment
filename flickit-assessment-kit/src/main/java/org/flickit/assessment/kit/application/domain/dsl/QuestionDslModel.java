@@ -20,5 +20,4 @@ public class QuestionDslModel extends BaseDslModel {
     List<AnswerOptionDslModel> answerOptions;
     boolean mayNotBeApplicable;
     boolean advisable;
-
 }

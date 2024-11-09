@@ -287,6 +287,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslQuestion.getDescription(),
                 dslQuestion.isMayNotBeApplicable(),
                 dslQuestion.isAdvisable(),
+                savedQuestion.getAnswerRangeId(),
                 LocalDateTime.now(),
                 currentUserId
             );
