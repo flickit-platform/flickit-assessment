@@ -45,9 +45,9 @@ public class SubjectValuePersistenceJpaAdapter implements
             .collect(Collectors.toMap(SubjectJpaEntity::getId, Function.identity()));
 
         return persistedEntities.stream()
-            .map(s -> {
-                SubjectJpaEntity subjectEntity = idToSubjectEntity.get(s.getSubjectId());
-                return SubjectValueMapper.mapToDomainModel(s, subjectEntity);
+            .map(sv -> {
+                SubjectJpaEntity subjectEntity = idToSubjectEntity.get(sv.getSubjectId());
+                return SubjectValueMapper.mapToDomainModel(sv, subjectEntity);
             })
             .toList();
     }

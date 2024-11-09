@@ -25,7 +25,7 @@ public class SubjectValue {
     @Setter
     Double confidenceValue;
 
-    Map<Long, Double> mLevelIdToAttrScoreWeightedMean = new HashMap<>();
+    Map<Long, Double> maturityScores = new HashMap<>();
 
     public SubjectValue(UUID id, Subject subject, List<AttributeValue> qavList) {
         this.id = id;
@@ -35,21 +35,12 @@ public class SubjectValue {
 
     public MaturityLevel calculate(List<MaturityLevel> maturityLevels) {
         attributeValues.forEach(attributeValue -> attributeValue.calculate(maturityLevels));
-        mLevelIdToAttrScoreWeightedMean = calculateAttrLevelScoreWeightedMean(maturityLevels);
+        maturityScores = calculateAttributeWeightedMeanScoresByMaturityLevel(maturityLevels);
 
-        return findGainedMaturityLevel(mLevelIdToAttrScoreWeightedMean, maturityLevels);
+        return findGainedMaturityLevel(maturityScores, maturityLevels);
     }
 
-    public Map<Long, Double> getSubjectLevelWeightedScore() {
-        Map<Long, Double> levelIdToWeightedScore = new HashMap<>();
-        mLevelIdToAttrScoreWeightedMean.forEach((mLevelId, attributeScoreWeightedMean) -> {
-            levelIdToWeightedScore.put(mLevelId, attributeScoreWeightedMean * subject.getWeight());
-        });
-
-        return levelIdToWeightedScore;
-    }
-
-    private Map<Long, Double> calculateAttrLevelScoreWeightedMean(List<MaturityLevel> maturityLevels) {
+    private Map<Long, Double> calculateAttributeWeightedMeanScoresByMaturityLevel(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> weightedSum = new HashMap<>();
         int totalWeight = 0;
 
@@ -72,12 +63,21 @@ public class SubjectValue {
             Double sumScores = entry.getValue();
 
             if (totalWeight > 0)
-                mLevelIdToAttrScoreWeightedMean.put(maturityLevelId, sumScores / totalWeight);
+                maturityScores.put(maturityLevelId, sumScores / totalWeight);
             else
-                mLevelIdToAttrScoreWeightedMean.put(maturityLevelId, 0.0);
+                maturityScores.put(maturityLevelId, 0.0);
         }
 
-        return mLevelIdToAttrScoreWeightedMean;
+        return maturityScores;
+    }
+
+    public Map<Long, Double> getSubjectLevelWeightedScore() {
+        Map<Long, Double> levelIdToWeightedScore = new HashMap<>();
+        maturityScores.forEach((maturityLevelId, attributeScoreWeightedMean) ->
+            levelIdToWeightedScore.put(maturityLevelId, attributeScoreWeightedMean * subject.getWeight())
+        );
+
+        return levelIdToWeightedScore;
     }
 
     private MaturityLevel findGainedMaturityLevel(Map<Long, Double> percentScores, List<MaturityLevel> maturityLevels) {

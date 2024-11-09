@@ -55,20 +55,20 @@ public class AssessmentResult {
 
     public MaturityLevel calculate() {
         List<MaturityLevel> maturityLevels = assessment.getAssessmentKit().getMaturityLevels();
-        setMaturityLevelOfSubjects(maturityLevels);
-        var mLevelIdToScoreWeightedMean = calculateSubjectLevelScoreWeightedMean(maturityLevels);
+        calculateSubjectValuesAndSetMaturityLevel(maturityLevels);
+        var maturityLevelIdToScores = calculateSubjectWeightedMeanScoresByMaturityLevel(maturityLevels);
 
-        return findGainedMaturityLevel(mLevelIdToScoreWeightedMean, maturityLevels);
+        return findGainedMaturityLevel(maturityLevelIdToScores, maturityLevels);
     }
 
-    private void setMaturityLevelOfSubjects(List<MaturityLevel> maturityLevels) {
+    private void calculateSubjectValuesAndSetMaturityLevel(List<MaturityLevel> maturityLevels) {
         subjectValues.forEach(e -> {
             MaturityLevel calcResult = e.calculate(maturityLevels);
             e.setMaturityLevel(calcResult);
         });
     }
 
-    private Map<Long, Double> calculateSubjectLevelScoreWeightedMean(List<MaturityLevel> maturityLevels) {
+    private Map<Long, Double> calculateSubjectWeightedMeanScoresByMaturityLevel(List<MaturityLevel> maturityLevels) {
         Map<Long, Double> levelIdToSubjectsWeightedScoreSum = new HashMap<>();
         MutableInt subjectsTotalWeight = new MutableInt();
 
@@ -93,14 +93,14 @@ public class AssessmentResult {
         return mLevelIdToScoreWeightedMean;
     }
 
-    private MaturityLevel findGainedMaturityLevel(Map<Long, Double> mLevelIdToWeightedMeanScore, List<MaturityLevel> maturityLevels) {
+    private MaturityLevel findGainedMaturityLevel(Map<Long, Double> maturityLevelIdToScores, List<MaturityLevel> maturityLevels) {
         List<MaturityLevel> sortedMaturityLevels = maturityLevels.stream()
             .sorted(Comparator.comparingInt(MaturityLevel::getIndex))
             .toList();
 
         MaturityLevel result = null;
         for (MaturityLevel ml : sortedMaturityLevels) {
-            if (!passLevel(mLevelIdToWeightedMeanScore, ml))
+            if (!passLevel(maturityLevelIdToScores, ml))
                 break;
 
             result = ml;
