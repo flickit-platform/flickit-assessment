@@ -44,6 +44,22 @@ public class QuestionMother {
         );
     }
 
+    public static Question createQuestionWithAnswerRangeId(Long answerRangeId) {
+        return new Question(
+            id++,
+            "code",
+            "title",
+            index++,
+            "hint",
+            true,
+            true,
+            answerRangeId,
+            1L,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+    }
+
     public static Question createQuestionWithOptions() {
         Question question = new Question(
             id++,

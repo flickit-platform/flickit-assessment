@@ -31,7 +31,7 @@ import static org.flickit.assessment.kit.test.fixture.application.AttributeMothe
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
-import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestionWithoutAnswerRangeId;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestionWithAnswerRangeId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -105,7 +105,7 @@ class GetQuestionImpactsServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(createQuestionWithoutAnswerRangeId());
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(createQuestionWithAnswerRangeId(null));
 
         var throwable = assertThrows(ValidationException.class, () -> service.getQuestionImpacts(param));
         assertEquals(GET_QUESTION_IMPACTS_QUESTION_ANSWER_RANGE_ID_NOT_NULL, throwable.getMessageKey());
