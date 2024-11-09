@@ -56,8 +56,8 @@ class GetSubjectProgressServiceTest {
         var questionIds = questions.stream()
             .map(Question::getId)
             .toList();
-        var qav = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1);
-        var subjectValue = SubjectValueMother.withAttributeValuesAndWeight(List.of(qav), 1);
+        var qav = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, 1533);
+        var subjectValue = SubjectValueMother.withAttributeValues(List.of(qav), 1);
         var result = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(
             List.of(subjectValue), MaturityLevelMother.levelTwo());
 

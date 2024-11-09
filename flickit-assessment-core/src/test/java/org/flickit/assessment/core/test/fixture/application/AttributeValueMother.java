@@ -14,8 +14,7 @@ public class AttributeValueMother {
         return new AttributeValue(UUID.randomUUID(), attribute, answers);
     }
 
-    public static AttributeValue hasFullScoreOnLevel23WithWeight(int weight) {
-        long attributeId = 1533;
+    public static AttributeValue hasFullScoreOnLevel23WithWeight(int weight, long attributeId) {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel23(attributeId),
             QuestionMother.withImpactsOnLevel23(attributeId),
@@ -37,8 +36,7 @@ public class AttributeValueMother {
             answers);
     }
 
-    public static AttributeValue hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(int weight) {
-        long attributeId = 1533;
+    public static AttributeValue hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(int weight, long attributeId) {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel23(attributeId),
             QuestionMother.withImpactsOnLevel23(attributeId),
@@ -60,8 +58,7 @@ public class AttributeValueMother {
             answers);
     }
 
-    public static AttributeValue hasFullScoreOnLevel24WithWeight(int weight) {
-        long attributeId = 1533;
+    public static AttributeValue hasFullScoreOnLevel24WithWeight(int weight, long attributeId) {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel24(attributeId),
             QuestionMother.withImpactsOnLevel24(attributeId),

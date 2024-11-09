@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.*;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValuesAndWeight;
+import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValues;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubjectValueTest {
@@ -18,14 +18,14 @@ class SubjectValueTest {
     void testCalculate_withSameWeightsAndScores() {
 
         List<AttributeValue> attributeValues = List.of(
-            hasFullScoreOnLevel23WithWeight(1),
-            hasFullScoreOnLevel23WithWeight(1),
-            hasFullScoreOnLevel23WithWeight(1),
-            hasFullScoreOnLevel23WithWeight(1),
-            hasFullScoreOnLevel23WithWeight(1));
+            hasFullScoreOnLevel23WithWeight(1, 1533),
+            hasFullScoreOnLevel23WithWeight(1, 1533),
+            hasFullScoreOnLevel23WithWeight(1, 1533),
+            hasFullScoreOnLevel23WithWeight(1, 1533),
+            hasFullScoreOnLevel23WithWeight(1, 1533));
 
 
-        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
+        SubjectValue subjectValue = withAttributeValues(attributeValues, 1);
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(allLevels());
         assertEquals(MaturityLevelMother.levelThree().getValue(), subjectMaturityLevel.getValue());
@@ -34,13 +34,13 @@ class SubjectValueTest {
     @Test
     void testCalculate_withDifferentWeightsAndScores() {
         var attributeValues = List.of(
-            hasFullScoreOnLevel24WithWeight(1),
-            hasFullScoreOnLevel24WithWeight(2),
-            hasFullScoreOnLevel23WithWeight(10),
-            hasFullScoreOnLevel24WithWeight(2),
-            hasFullScoreOnLevel24WithWeight(1));
+            hasFullScoreOnLevel24WithWeight(1, 1533),
+            hasFullScoreOnLevel24WithWeight(2, 1533),
+            hasFullScoreOnLevel23WithWeight(10, 1533),
+            hasFullScoreOnLevel24WithWeight(2, 1533),
+            hasFullScoreOnLevel24WithWeight(1, 1533));
 
-        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
+        SubjectValue subjectValue = withAttributeValues(attributeValues, 1);
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(allLevels());
         assertEquals(MaturityLevelMother.levelThree().getValue(), subjectMaturityLevel.getValue());
@@ -48,13 +48,13 @@ class SubjectValueTest {
 
     @Test
     void testCalculate_withDifferentWeightsAndScores_differentResultWithWeightedMeanLevelAndWeightedMeanScoreAlgorithms() {
-        var av1 = hasFullScoreOnLevel23WithWeight(1);
-        var av2 = hasFullScoreOnLevel23WithWeight(1);
-        var av3 = hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(10);
+        var av1 = hasFullScoreOnLevel23WithWeight(1, 1533);
+        var av2 = hasFullScoreOnLevel23WithWeight(1, 1533);
+        var av3 = hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(10, 1533);
 
         var attributeValues = List.of(av1, av2, av3);
 
-        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
+        SubjectValue subjectValue = withAttributeValues(attributeValues, 1);
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(allLevels());
         assertEquals(levelThree().getValue(), av1.getMaturityLevel().getValue());
@@ -82,7 +82,7 @@ class SubjectValueTest {
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()), //6 questions with 5 answers with cl=4, attrCl=20/30
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()));//6 questions with 5 answers with cl=4, attrCl=20/30
 
-        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
+        SubjectValue subjectValue = withAttributeValues(attributeValues, 1);
 
         double calculatedConfidenceValue = subjectValue.calculateConfidenceValue();
 
@@ -102,7 +102,7 @@ class SubjectValueTest {
             toBeCalcAsConfidenceLevelWithWeight(5, ConfidenceLevel.COMPLETELY_SURE.getId())    //6 questions with 5 answers with cl=5, attrCl = 25/30
         );
 
-        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
+        SubjectValue subjectValue = withAttributeValues(attributeValues, 1);
 
         double calculatedConfidenceValue = subjectValue.calculateConfidenceValue();
 

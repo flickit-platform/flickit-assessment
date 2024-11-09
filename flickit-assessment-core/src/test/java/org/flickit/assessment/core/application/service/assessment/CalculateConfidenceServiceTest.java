@@ -29,7 +29,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsConfidenceLevelWithWeight;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValuesAndSubjectWithAttributes;
+import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValues;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -103,8 +103,8 @@ class CalculateConfidenceServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            SubjectValueMother.withAttributeValuesAndSubjectWithAttributes(s1AttributeValues),
-            SubjectValueMother.withAttributeValuesAndSubjectWithAttributes(s2AttributeValues)
+            SubjectValueMother.withAttributeValues(s1AttributeValues, 1),
+            SubjectValueMother.withAttributeValues(s2AttributeValues, 1)
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
@@ -148,12 +148,12 @@ class CalculateConfidenceServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withAttributeValuesAndSubjectWithAttributes(s1AttributeValues),
-            withAttributeValuesAndSubjectWithAttributes(s2AttributeValues)
+            withAttributeValues(s1AttributeValues, 1),
+            withAttributeValues(s2AttributeValues, 1)
         );
 
         var newAttributeValue = toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()); //6 questions with 5 answers with cl=3, attrCl = 15/30
-        var newSubjectValue = withAttributeValuesAndSubjectWithAttributes(List.of());
+        var newSubjectValue = withAttributeValues(List.of(), 1);
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
         subjects.add(newSubjectValue.getSubject());

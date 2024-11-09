@@ -9,11 +9,7 @@ public class SubjectMother {
 
     private static long id = 134L;
 
-    public static Subject subjectWithWeight(int weight) {
-        return new Subject(id++, "subject" + id, weight, null);
-    }
-
-    public static Subject subjectWithAttributes(List<Attribute> attributes) {
-        return new Subject(id++, "subject" + id, 1, attributes);
+    public static Subject subjectWithWeightAndAttributes(int weight, List<Attribute> attributes) {
+        return new Subject(id++, "subject" + id, weight, attributes);
     }
 }

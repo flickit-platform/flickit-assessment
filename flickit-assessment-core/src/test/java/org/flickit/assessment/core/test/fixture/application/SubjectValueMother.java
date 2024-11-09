@@ -7,16 +7,12 @@ import org.flickit.assessment.core.application.domain.SubjectValue;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.test.fixture.application.SubjectMother.subjectWithAttributes;
+import static org.flickit.assessment.core.test.fixture.application.SubjectMother.subjectWithWeightAndAttributes;
 
 public class SubjectValueMother {
 
-    public static SubjectValue withAttributeValuesAndWeight(List<AttributeValue> attributeValues, int weight) {
-        return new SubjectValue(UUID.randomUUID(), SubjectMother.subjectWithWeight(weight), attributeValues);
-    }
-
-    public static SubjectValue withAttributeValuesAndSubjectWithAttributes(List<AttributeValue> attributeValues) {
+    public static SubjectValue withAttributeValues(List<AttributeValue> attributeValues, int weight) {
         var attributes = attributeValues.stream().map(AttributeValue::getAttribute).toList();
-        return new SubjectValue(UUID.randomUUID(), subjectWithAttributes(attributes), attributeValues);
+        return new SubjectValue(UUID.randomUUID(), subjectWithWeightAndAttributes(weight, attributes), attributeValues);
     }
 }
