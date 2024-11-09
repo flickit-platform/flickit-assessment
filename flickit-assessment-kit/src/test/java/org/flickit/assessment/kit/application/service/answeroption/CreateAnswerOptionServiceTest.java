@@ -87,7 +87,7 @@ class CreateAnswerOptionServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        when(loadAnswerRangePort.loadById(param.getKitVersionId(), question.getAnswerRangeId())).thenReturn(answerRange);
+        when(loadAnswerRangePort.load(question.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
         when(createAnswerOptionPort.persist(any())).thenReturn(answerOptionId);
 
         Result result = service.createAnswerOption(param);
@@ -152,7 +152,7 @@ class CreateAnswerOptionServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        when(loadAnswerRangePort.loadById(param.getKitVersionId(), question.getAnswerRangeId())).thenReturn(answerRange);
+        when(loadAnswerRangePort.load(question.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAnswerOption(param));
         assertEquals(CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE, throwable.getMessageKey());
