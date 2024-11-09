@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.questionimpact;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
@@ -22,8 +23,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionImpactMother.createAnswerOptionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
@@ -31,6 +31,7 @@ import static org.flickit.assessment.kit.test.fixture.application.AttributeMothe
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestionWithoutAnswerRangeId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -94,6 +95,20 @@ class GetQuestionImpactsServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionImpacts(param));
         assertEquals(QUESTION_ID_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(loadMaturityLevelsPort, loadAllAttributesPort);
+    }
+
+    @Test
+    void testGetQuestionImpacts_WhenQuestionIdHasNoAnswerRangeId_ThenThrowValidationException() {
+        var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(createQuestionWithoutAnswerRangeId());
+
+        var throwable = assertThrows(ValidationException.class, () -> service.getQuestionImpacts(param));
+        assertEquals(GET_QUESTION_IMPACTS_QUESTION_RANGE_ID_NOT_NULL, throwable.getMessageKey());
 
         verifyNoInteractions(loadMaturityLevelsPort, loadAllAttributesPort);
     }
