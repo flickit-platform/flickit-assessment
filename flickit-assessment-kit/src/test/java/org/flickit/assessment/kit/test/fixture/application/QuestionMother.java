@@ -29,6 +29,10 @@ public class QuestionMother {
     }
 
     public static Question createQuestion() {
+        return createQuestion(25);
+    }
+
+    public static Question createQuestion(long answerRangeId) {
         return new Question(
             id++,
             "code",
@@ -37,7 +41,7 @@ public class QuestionMother {
             "hint",
             true,
             true,
-            25L,
+            answerRangeId,
             1L,
             LocalDateTime.now(),
             LocalDateTime.now()
