@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitActiveVersionPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
@@ -14,6 +15,8 @@ import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.Crea
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.LoadSubjectQuestionnairePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -30,6 +33,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
     private final UpdateKitActiveVersionPort updateKitActiveVersionPort;
     private final LoadSubjectQuestionnairePort loadSubjectQuestionnairePort;
     private final CreateSubjectQuestionnairePort createSubjectQuestionnairePort;
+    private final UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
 
     @Override
     public void activateKitVersion(Param param) {
@@ -47,6 +51,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
 
         updateKitVersionStatusPort.updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         updateKitActiveVersionPort.updateActiveVersion(kit.getId(), param.getKitVersionId());
+        updateKitLastMajorModificationTimePort.updateLastMajorModificationTime(kit.getId(), LocalDateTime.now());
 
         var subjectQuestionnaires = loadSubjectQuestionnairePort.extractPairs(param.getKitVersionId()).stream()
             .collect(groupingBy(
