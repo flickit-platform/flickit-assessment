@@ -424,6 +424,9 @@ public class ErrorMessageKey {
     public static final String UPDATE_ANSWER_OPTION_TITLE_SIZE_MAX = "update-answer-option.title.size.max";
     public static final String UPDATE_ANSWER_OPTION_VALUE_NOT_NULL = "update-answer-option.value.notNull";
 
+    public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MIN = "create-answer-range.title.size.min";
+    public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MAX = "create-answer-range.title.size.max";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
