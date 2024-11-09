@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.port.in.answerrange.UpdateAnswerRa
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.question.CheckQuestionExistencePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_TITLE_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_NOT_ALLOWED;
 
 @Service
 @Transactional
@@ -25,6 +26,7 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
     private final UpdateAnswerRangePort updateAnswerRangePort;
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final CheckQuestionExistencePort checkQuestionExistencePort;
 
     @Override
     public void updateAnswerRange(Param param) {
@@ -33,8 +35,8 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (Boolean.TRUE.equals(param.getReusable()) && param.getTitle() == null)
-            throw new ValidationException(UPDATE_ANSWER_RANGE_TITLE_NOT_NULL);
+        if (checkQuestionExistencePort.checkByAnswerRangeId(param.getAnswerRangeId()))
+            throw new ValidationException(UPDATE_ANSWER_RANGE_NOT_ALLOWED);
 
         updateAnswerRangePort.update(toParam(param));
     }

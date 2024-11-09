@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.port.in.answerrange.UpdateAnswerRa
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.question.CheckQuestionExistencePort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_TITLE_NOT_NULL;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
@@ -37,6 +39,9 @@ class UpdateAnswerRangeServiceTest {
     private LoadKitVersionPort loadKitVersionPort;
 
     @Mock
+    private CheckQuestionExistencePort checkQuestionExistencePort;
+
+    @Mock
     private UpdateAnswerRangePort updateAnswerRangePort;
 
     private final UUID ownerId = UUID.randomUUID();
@@ -51,6 +56,20 @@ class UpdateAnswerRangeServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAnswerRange(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(updateAnswerRangePort);
+    }
+
+    @Test
+    void testUpdateAnswerRange_WhenAnswerRangeIdIsUsedByQuestions_ThenThrowValidationException() {
+        var param = createParam(b -> b.currentUserId(ownerId));
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(checkQuestionExistencePort.checkByAnswerRangeId(param.getAnswerRangeId())).thenReturn(true);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.updateAnswerRange(param));
+        assertEquals(UPDATE_ANSWER_RANGE_NOT_ALLOWED, throwable.getMessageKey());
 
         verifyNoInteractions(updateAnswerRangePort);
     }
