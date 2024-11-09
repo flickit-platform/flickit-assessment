@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.domain;
 
-import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,6 +7,8 @@ import java.util.List;
 
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.*;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelTwo;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValuesAndWeight;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,29 +32,46 @@ class AssessmentResultTest {
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
 
-        assertEquals(MaturityLevelMother.levelThree().getValue(), assessmentMaturityLevel.getValue());
+        assertEquals(levelThree().getValue(), assessmentMaturityLevel.getValue());
     }
 
     @Test
-    void testCalculate_withDifferentWeights() {
-
+    void testCalculate_withSameWeightsAndDifferentLevels() {
         SubjectValue sv1 = withAttributeValuesAndWeight(List.of(
             hasFullScoreOnLevel23WithWeight(1),
             hasFullScoreOnLevel23WithWeight(1)
-        ), 6);
+        ), 5);
         SubjectValue sv2 = withAttributeValuesAndWeight(List.of(
-            hasFullScoreOnLevel24WithWeight(1),
-            hasFullScoreOnLevel24WithWeight(1),
-            hasFullScoreOnLevel24WithWeight(1)
+            hasFullScoreOnLevel24WithWeight(10),
+            hasFullScoreOnLevel24WithWeight(10),
+            hasFullScoreOnLevel24WithWeight(10)
         ), 3);
         List<SubjectValue> subjectValues = List.of(sv1, sv2);
-
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
 
-        assertEquals(MaturityLevelMother.levelThree().getValue(), assessmentMaturityLevel.getValue());
+        //level2 score = 100, level3 score = (5*100 + 3*0)/8 = 62.5 => so level three passes
+        assertEquals(levelThree().getValue(), assessmentMaturityLevel.getValue());
+
+        sv1 = withAttributeValuesAndWeight(List.of(
+            hasFullScoreOnLevel23WithWeight(1),
+            hasFullScoreOnLevel23WithWeight(1)
+        ), 4);
+        sv2 = withAttributeValuesAndWeight(List.of(
+            hasFullScoreOnLevel24WithWeight(10),
+            hasFullScoreOnLevel24WithWeight(10),
+            hasFullScoreOnLevel24WithWeight(10)
+        ), 3);
+        subjectValues = List.of(sv1, sv2);
+
+        assessmentResult = invalidResultWithSubjectValues(subjectValues);
+
+        assessmentMaturityLevel = assessmentResult.calculate();
+
+        //level2 score = 100, level3 score = (4*100 + 3*0)/7 = 57.5 => so level three does not passe
+        assertEquals(levelTwo().getValue(), assessmentMaturityLevel.getValue());
     }
 
     @Test
