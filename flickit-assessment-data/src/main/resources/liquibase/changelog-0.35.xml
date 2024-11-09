@@ -177,4 +177,8 @@
                              columnNames="kit_version_id, index, answer_range_id"
                              constraintName="uq_fak_answeroption_index_kitversionid_answerrangeid"/>
     </changeSet>
+
+    <changeSet id="0.35-24" author="Mahdi Rezazadeh">
+        <modifyDataType tableName="fak_answer_option" columnName="title" newDataType="VARCHAR(100)"/>
+    </changeSet>
 </databaseChangeLog>

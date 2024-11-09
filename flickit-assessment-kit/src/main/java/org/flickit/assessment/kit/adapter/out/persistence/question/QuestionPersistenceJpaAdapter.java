@@ -92,6 +92,8 @@ public class QuestionPersistenceJpaAdapter implements
         var questionEntity = repository.findByIdAndKitVersionId(id, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
         Question question = QuestionMapper.mapToDomainModel(questionEntity);
+        if (question.getAnswerRangeId() == null)
+            return question;
 
         var optionEntities = answerOptionRepository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(questionEntity.getAnswerRangeId(), kitVersionId);
         var options = optionEntities.stream()
@@ -201,6 +203,18 @@ public class QuestionPersistenceJpaAdapter implements
             e.setLastModifiedBy(param.lastModifiedBy());
         });
         repository.saveAll(entities);
+    }
+
+    @Override
+    public void updateAnswerRange(UpdateAnswerRangeParam param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId())) {
+            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+        }
+        repository.updateAnswerRange(param.id(),
+            param.kitVersionId(),
+            param.answerRangeId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
     }
 
     @Override
