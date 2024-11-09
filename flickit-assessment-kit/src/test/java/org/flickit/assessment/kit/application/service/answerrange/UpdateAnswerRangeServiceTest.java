@@ -57,7 +57,7 @@ class UpdateAnswerRangeServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAnswerRange(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(updateAnswerRangePort);
+        verifyNoInteractions(checkQuestionExistencePort, updateAnswerRangePort);
     }
 
     @Test
@@ -79,6 +79,7 @@ class UpdateAnswerRangeServiceTest {
         var param = createParam(b -> b.currentUserId(ownerId).title(null));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(checkQuestionExistencePort.checkByAnswerRangeId(param.getAnswerRangeId())).thenReturn(false);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateAnswerRange(param));
