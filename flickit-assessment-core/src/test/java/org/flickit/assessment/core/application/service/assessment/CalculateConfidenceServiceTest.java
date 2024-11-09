@@ -29,7 +29,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsConfidenceLevelWithWeight;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
+import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValuesAndSubjectWithAttributes;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -103,8 +103,8 @@ class CalculateConfidenceServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            SubjectValueMother.withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
-            SubjectValueMother.withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
+            SubjectValueMother.withAttributeValuesAndSubjectWithAttributes(s1AttributeValues),
+            SubjectValueMother.withAttributeValuesAndSubjectWithAttributes(s2AttributeValues)
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
@@ -148,12 +148,12 @@ class CalculateConfidenceServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
-            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
+            withAttributeValuesAndSubjectWithAttributes(s1AttributeValues),
+            withAttributeValuesAndSubjectWithAttributes(s2AttributeValues)
         );
 
         var newAttributeValue = toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()); //6 questions with 5 answers with cl=3, attrCl = 15/30
-        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(), List.of(newAttributeValue.getAttribute()));
+        var newSubjectValue = withAttributeValuesAndSubjectWithAttributes(List.of());
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
         subjects.add(newSubjectValue.getSubject());

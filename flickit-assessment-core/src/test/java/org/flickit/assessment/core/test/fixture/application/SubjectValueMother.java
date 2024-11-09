@@ -15,7 +15,8 @@ public class SubjectValueMother {
         return new SubjectValue(UUID.randomUUID(), SubjectMother.subjectWithWeight(weight), attributeValues);
     }
 
-    public static SubjectValue withQAValuesAndSubjectWithQAs(List<AttributeValue> qaValues, List<Attribute> qas) {
-        return new SubjectValue(UUID.randomUUID(), SubjectMother.withAttributes(qas), qaValues);
+    public static SubjectValue withAttributeValuesAndSubjectWithAttributes(List<AttributeValue> attributeValues) {
+        var attributes = attributeValues.stream().map(AttributeValue::getAttribute).toList();
+        return new SubjectValue(UUID.randomUUID(), subjectWithAttributes(attributes), attributeValues);
     }
 }

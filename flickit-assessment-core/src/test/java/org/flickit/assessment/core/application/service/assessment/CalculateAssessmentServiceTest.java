@@ -30,8 +30,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel23WithWeight;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel24WithWeight;
+import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValuesAndSubjectWithAttributes;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValuesAndWeight;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -121,13 +121,13 @@ class CalculateAssessmentServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
-            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
+            withAttributeValuesAndSubjectWithAttributes(s1AttributeValues),
+            withAttributeValuesAndSubjectWithAttributes(s2AttributeValues)
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
         var newAttributeValue = hasFullScoreOnLevel24WithWeight(4);
-        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(newAttributeValue), List.of(newAttributeValue.getAttribute()));
+        var newSubjectValue = withAttributeValuesAndSubjectWithAttributes(List.of(newAttributeValue));
         subjects.add(newSubjectValue.getSubject());
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
