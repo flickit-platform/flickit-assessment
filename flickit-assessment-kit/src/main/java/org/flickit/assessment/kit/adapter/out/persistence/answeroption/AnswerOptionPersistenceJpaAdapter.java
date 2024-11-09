@@ -7,7 +7,10 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
-import org.flickit.assessment.kit.application.port.out.answeroption.*;
+import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.DeleteAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,9 +21,9 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_
 @Component
 @RequiredArgsConstructor
 public class AnswerOptionPersistenceJpaAdapter implements
-    UpdateAnswerOptionPort,
     LoadAnswerOptionsByQuestionPort,
     CreateAnswerOptionPort,
+    UpdateAnswerOptionPort,
     DeleteAnswerOptionPort {
 
     private final AnswerOptionJpaRepository repository;
@@ -28,10 +31,24 @@ public class AnswerOptionPersistenceJpaAdapter implements
     private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
-    public void update(UpdateAnswerOptionPort.Param param) {
-        repository.update(param.id(),
+    public void updateTitle(UpdateAnswerOptionPort.UpdateTitleParam param) {
+        repository.updateTitle(param.answerOptionId(),
             param.kitVersionId(),
             param.title(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
+
+    @Override
+    public void update(UpdateAnswerOptionPort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.answerOptionId(), param.kitVersionId()))
+            throw new ResourceNotFoundException(ANSWER_OPTION_ID_NOT_FOUND);
+
+        repository.update(param.answerOptionId(),
+            param.kitVersionId(),
+            param.index(),
+            param.title(),
+            param.value(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
