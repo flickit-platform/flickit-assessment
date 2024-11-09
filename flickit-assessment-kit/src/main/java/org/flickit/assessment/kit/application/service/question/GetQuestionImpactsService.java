@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Question;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTION_IMPACTS_QUESTION_ANSWER_RANGE_ID_NOT_NULL;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,6 +41,8 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         Question question = loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId());
+        if(question.getAnswerRangeId() == null)
+            throw new ValidationException(GET_QUESTION_IMPACTS_QUESTION_ANSWER_RANGE_ID_NOT_NULL);
 
         var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId()).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
