@@ -30,7 +30,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel23WithWeight;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.hasFullScoreOnLevel24WithWeight;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValues;
+import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValuesAndWeight;
 import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -83,8 +83,8 @@ class CalculateAssessmentServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withAttributeValues(s1AttributeValues),
-            withAttributeValues(s2AttributeValues)
+            withAttributeValuesAndWeight(s1AttributeValues, 1),
+            withAttributeValuesAndWeight(s2AttributeValues, 1)
         );
 
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);

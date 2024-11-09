@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.*;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValues;
+import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValuesAndWeight;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubjectValueTest {
@@ -25,7 +25,7 @@ class SubjectValueTest {
             hasFullScoreOnLevel23WithWeight(1));
 
 
-        SubjectValue subjectValue = withAttributeValues(attributeValues);
+        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(allLevels());
         assertEquals(MaturityLevelMother.levelThree().getValue(), subjectMaturityLevel.getValue());
@@ -40,7 +40,7 @@ class SubjectValueTest {
             hasFullScoreOnLevel24WithWeight(2),
             hasFullScoreOnLevel24WithWeight(1));
 
-        SubjectValue subjectValue = withAttributeValues(attributeValues);
+        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(allLevels());
         assertEquals(MaturityLevelMother.levelThree().getValue(), subjectMaturityLevel.getValue());
@@ -54,7 +54,7 @@ class SubjectValueTest {
 
         var attributeValues = List.of(av1, av2, av3);
 
-        SubjectValue subjectValue = withAttributeValues(attributeValues);
+        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
 
         MaturityLevel subjectMaturityLevel = subjectValue.calculate(allLevels());
         assertEquals(levelThree().getValue(), av1.getMaturityLevel().getValue());
@@ -82,7 +82,7 @@ class SubjectValueTest {
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()), //6 questions with 5 answers with cl=4, attrCl=20/30
             toBeCalcAsConfidenceLevelWithWeight(1, ConfidenceLevel.FAIRLY_SURE.getId()));//6 questions with 5 answers with cl=4, attrCl=20/30
 
-        SubjectValue subjectValue = withAttributeValues(attributeValues);
+        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
 
         double calculatedConfidenceValue = subjectValue.calculateConfidenceValue();
 
@@ -102,7 +102,7 @@ class SubjectValueTest {
             toBeCalcAsConfidenceLevelWithWeight(5, ConfidenceLevel.COMPLETELY_SURE.getId())    //6 questions with 5 answers with cl=5, attrCl = 25/30
         );
 
-        SubjectValue subjectValue = withAttributeValues(attributeValues);
+        SubjectValue subjectValue = withAttributeValuesAndWeight(attributeValues, 1);
 
         double calculatedConfidenceValue = subjectValue.calculateConfidenceValue();
 
