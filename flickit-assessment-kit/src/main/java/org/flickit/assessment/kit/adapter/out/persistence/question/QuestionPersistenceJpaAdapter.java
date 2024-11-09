@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -105,6 +106,15 @@ public class QuestionPersistenceJpaAdapter implements
         question.setImpacts(impacts);
         question.setOptions(options);
         return question;
+    }
+
+    @Override
+    public List<Question> loadAllByIdInAndKitVersion(Set<Long> ids, long kitVersionId) {
+        List<QuestionJpaEntity> entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
+
+        return entities.stream()
+            .map(QuestionMapper::mapToDomainModel)
+            .toList();
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact, List<AnswerOptionJpaEntity> optionEntities) {
