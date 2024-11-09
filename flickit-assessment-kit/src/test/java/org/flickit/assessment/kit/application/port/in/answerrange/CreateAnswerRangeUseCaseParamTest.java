@@ -25,11 +25,11 @@ class CreateAnswerRangeUseCaseParamTest {
     void testCreateAnswerRangeUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title("")));
-        assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_RANGE_TITLE_NOT_NULL);
+        assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_RANGE_TITLE_NOT_BLANK);
 
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
-        assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_RANGE_TITLE_NOT_NULL);
+        assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_RANGE_TITLE_NOT_BLANK);
 
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title("ab")));

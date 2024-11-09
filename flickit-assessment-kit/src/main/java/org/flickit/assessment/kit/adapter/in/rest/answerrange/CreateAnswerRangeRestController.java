@@ -19,7 +19,7 @@ public class CreateAnswerRangeRestController {
 
     @PostMapping("/kit-versions/{kitVersionId}/answer-ranges")
     public ResponseEntity<Result> crateAnswerRange(@PathVariable("kitVersionId") Long kitVersionId,
-                                                 @RequestBody CreateAnswerRangeRequestDto requestDto) {
+                                                   @RequestBody CreateAnswerRangeRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         var result = useCase.createAnswerRange(toParam(kitVersionId, currentUserId, requestDto));
         return new ResponseEntity<>(result, HttpStatus.OK);

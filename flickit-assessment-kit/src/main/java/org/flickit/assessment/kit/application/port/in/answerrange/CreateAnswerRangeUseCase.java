@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.port.in.answerrange;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -23,7 +24,7 @@ public interface CreateAnswerRangeUseCase {
         @NotNull(message = CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = CREATE_ANSWER_RANGE_TITLE_NOT_NULL)
+        @NotBlank(message = CREATE_ANSWER_RANGE_TITLE_NOT_BLANK)
         @Size(min = 3, message = CREATE_ANSWER_RANGE_TITLE_SIZE_MIN)
         @Size(max = 100, message = CREATE_ANSWER_RANGE_TITLE_SIZE_MAX)
         String title;
