@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.answeroption;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -11,9 +12,12 @@ import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswer
 import org.flickit.assessment.kit.application.port.out.answeroption.DeleteAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_OPTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
@@ -59,6 +63,21 @@ public class AnswerOptionPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
         return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(question.getAnswerRangeId(), kitVersionId).stream()
+            .map(AnswerOptionMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
+    public List<AnswerOption> loadByQuestionIdInAndKitVersionId(Set<Long> questionIds, long kitVersionId) {
+        List<QuestionJpaEntity> entities = questionRepository.findAllByIdInAndKitVersionId(questionIds, kitVersionId);
+        Set<Long> rangeIds = entities.stream()
+            .map(QuestionJpaEntity::getAnswerRangeId)
+            .collect(Collectors.toSet());
+        List<AnswerOptionJpaEntity> optionEntities = repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds,
+            kitVersionId,
+            Sort.by(AnswerOptionJpaEntity.Fields.index));
+
+        return optionEntities.stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }
