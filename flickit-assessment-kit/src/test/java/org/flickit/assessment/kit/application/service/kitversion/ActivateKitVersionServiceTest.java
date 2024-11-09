@@ -114,7 +114,7 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitVersionStatusPort).updateStatus(kitVersion.getKit().getActiveVersionId(), KitVersionStatus.ARCHIVE);
         doNothing().when(updateKitVersionStatusPort).updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kitVersion.getKit().getId(), param.getKitVersionId());
-        doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(anyLong(), any(LocalDateTime.class));
+        doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(param.getKitVersionId())).thenReturn(subjectQuestionnaireList);
 
         service.activateKitVersion(param);
@@ -142,7 +142,7 @@ class ActivateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(updateKitVersionStatusPort).updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kit.getId(), param.getKitVersionId());
-        doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(anyLong(), any(LocalDateTime.class));
+        doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(param.getKitVersionId())).thenReturn(subjectQuestionnaireList);
 
         service.activateKitVersion(param);
