@@ -200,7 +200,7 @@ public class QuestionPersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId())) {
             throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
         }
-        repository.update(param.id(),
+        repository.updateAnswerRange(param.id(),
             param.kitVersionId(),
             param.answerRangeId(),
             param.lastModificationTime(),

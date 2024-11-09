@@ -7,9 +7,9 @@ import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase.Param;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase.Result;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
@@ -87,7 +87,7 @@ class CreateAnswerOptionServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        when(loadAnswerRangePort.loadById(param.getKitVersionId(), question.getAnswerRangeId())).thenReturn(answerRange);
+        when(loadAnswerRangePort.load(question.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
         when(createAnswerOptionPort.persist(any())).thenReturn(answerOptionId);
 
         Result result = service.createAnswerOption(param);
@@ -152,7 +152,7 @@ class CreateAnswerOptionServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        when(loadAnswerRangePort.loadById(param.getKitVersionId(), question.getAnswerRangeId())).thenReturn(answerRange);
+        when(loadAnswerRangePort.load(question.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAnswerOption(param));
         assertEquals(CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE, throwable.getMessageKey());

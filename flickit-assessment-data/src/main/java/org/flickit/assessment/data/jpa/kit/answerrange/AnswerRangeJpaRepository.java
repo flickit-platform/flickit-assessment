@@ -20,6 +20,8 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
+    Optional<AnswerRangeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AnswerRangeJpaEntity a
@@ -35,6 +37,4 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
                 @Param("reusable") boolean reusable,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
-
-    Optional<AnswerRangeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 }

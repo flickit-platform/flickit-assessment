@@ -48,9 +48,11 @@ class CreateAnswerOptionUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
         assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_OPTION_TITLE_NOT_BLANK);
+
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title("     ")));
         assertThat(throwable).hasMessageContaining("title: " + CREATE_ANSWER_OPTION_TITLE_NOT_BLANK);
+
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(randomAlphabetic(101))));
         assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_OPTION_TITLE_SIZE_MAX);
@@ -63,10 +65,10 @@ class CreateAnswerOptionUseCaseParamTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private Param createParam(Consumer<Param.ParamBuilder> changer) {
+    private void createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
-        return paramBuilder.build();
+        paramBuilder.build();
     }
 
     private Param.ParamBuilder paramBuilder() {
