@@ -14,7 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface CreateAnswerRangeUseCase {
 
-    long createAnswerRange(Param param);
+    Result createAnswerRange(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -37,5 +37,8 @@ public interface CreateAnswerRangeUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+    }
+
+    record Result(long id){
     }
 }

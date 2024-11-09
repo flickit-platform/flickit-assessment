@@ -21,13 +21,13 @@ public class CreateAnswerRangeService implements CreateAnswerRangeUseCase {
     private final CreateAnswerRangePort createAnswerRangePort;
 
     @Override
-    public long createAnswerRange(Param param) {
+    public Result createAnswerRange(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
         var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!expertGroupOwnerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        return createAnswerRangePort.persist(toCreateAnswerRangePortParam(param));
+        return new Result(createAnswerRangePort.persist(toCreateAnswerRangePortParam(param)));
     }
 
     private CreateAnswerRangePort.Param toCreateAnswerRangePortParam(Param param) {
