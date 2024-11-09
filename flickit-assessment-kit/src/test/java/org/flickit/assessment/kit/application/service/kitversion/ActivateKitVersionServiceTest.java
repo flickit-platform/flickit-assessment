@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitActiveVersionPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
@@ -21,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,6 +61,9 @@ class ActivateKitVersionServiceTest {
     @Mock
     private CreateSubjectQuestionnairePort createSubjectQuestionnairePort;
 
+    @Mock
+    private UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
+
     private final UUID ownerId = UUID.randomUUID();
     private KitVersion kitVersion = createKitVersion(simpleKit());
     List<SubjectQuestionnaire> subjectQuestionnaireList = List.of(
@@ -77,7 +82,11 @@ class ActivateKitVersionServiceTest {
         var exception = assertThrows(ValidationException.class, () -> service.activateKitVersion(param));
         assertEquals(ACTIVATE_KIT_VERSION_STATUS_INVALID, exception.getMessageKey());
 
-        verifyNoInteractions(loadExpertGroupOwnerPort, updateKitVersionStatusPort, updateKitActiveVersionPort, createSubjectQuestionnairePort);
+        verifyNoInteractions(loadExpertGroupOwnerPort,
+            updateKitVersionStatusPort,
+            updateKitActiveVersionPort,
+            updateKitLastMajorModificationTimePort,
+            createSubjectQuestionnairePort);
     }
 
     @Test
@@ -90,7 +99,10 @@ class ActivateKitVersionServiceTest {
         var exception = assertThrows(AccessDeniedException.class, () -> service.activateKitVersion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
-        verifyNoInteractions(updateKitVersionStatusPort, updateKitActiveVersionPort, createSubjectQuestionnairePort);
+        verifyNoInteractions(updateKitVersionStatusPort,
+            updateKitActiveVersionPort,
+            updateKitLastMajorModificationTimePort,
+            createSubjectQuestionnairePort);
     }
 
     @Test
@@ -102,6 +114,7 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitVersionStatusPort).updateStatus(kitVersion.getKit().getActiveVersionId(), KitVersionStatus.ARCHIVE);
         doNothing().when(updateKitVersionStatusPort).updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kitVersion.getKit().getId(), param.getKitVersionId());
+        doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(param.getKitVersionId())).thenReturn(subjectQuestionnaireList);
 
         service.activateKitVersion(param);
@@ -129,6 +142,7 @@ class ActivateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(updateKitVersionStatusPort).updateStatus(param.getKitVersionId(), KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kit.getId(), param.getKitVersionId());
+        doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(param.getKitVersionId())).thenReturn(subjectQuestionnaireList);
 
         service.activateKitVersion(param);
