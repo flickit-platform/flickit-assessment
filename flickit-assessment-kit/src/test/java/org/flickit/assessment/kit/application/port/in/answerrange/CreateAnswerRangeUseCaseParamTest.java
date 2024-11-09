@@ -32,7 +32,7 @@ class CreateAnswerRangeUseCaseParamTest {
         assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_RANGE_TITLE_NOT_BLANK);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.title("ab")));
+            () -> createParam(b -> b.title("     ab  ")));
         assertThat(throwable).hasMessage("title: " + CREATE_ANSWER_RANGE_TITLE_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
