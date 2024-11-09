@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase;
 import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -37,7 +36,6 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
     private final UpdateQuestionPort updateQuestionPort;
     private final LoadAnswerRangePort loadAnswerRangePort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
-    private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
 
     @Override
     public Result createAnswerOption(Param param) {
@@ -55,7 +53,7 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
             }
         }
 
-        long answerOptionId = createAnswerOptionWithImpacts(param, questionAnswerRangeId, question);
+        long answerOptionId = createAnswerOptionPort.persist(toCreateParam(param, questionAnswerRangeId));
         return new Result(answerOptionId);
     }
 
@@ -76,20 +74,6 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
             answerRangeId,
             LocalDateTime.now(),
             param.getCurrentUserId());
-    }
-
-    private long createAnswerOptionWithImpacts(Param param, Long questionAnswerRangeId, Question question) {
-        long answerOptionId = createAnswerOptionPort.persist(toCreateParam(param, questionAnswerRangeId));
-        if (question.getAnswerRangeId() != null) {
-            question.getImpacts().forEach(i ->
-                createAnswerOptionImpactPort.persist(new CreateAnswerOptionImpactPort.Param(i.getId(),
-                    answerOptionId,
-                    param.getValue(),
-                    param.getKitVersionId(),
-                    param.getCurrentUserId()))
-            );
-        }
-        return answerOptionId;
     }
 
     private CreateAnswerOptionPort.Param toCreateParam(Param param, Long answerRangeId) {

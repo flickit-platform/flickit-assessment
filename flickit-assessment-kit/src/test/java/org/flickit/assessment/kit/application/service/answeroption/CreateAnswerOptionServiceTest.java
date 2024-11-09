@@ -5,12 +5,10 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Question;
-import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase.Param;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase.Result;
 import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -68,9 +66,6 @@ class CreateAnswerOptionServiceTest {
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
 
-    @Mock
-    private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
-
     @Test
     void testCreateAnswerOption_WhenCurrentUserIsNotOwner_ThrowAccessDeniedException() {
         var param = createParam(Param.ParamBuilder::build);
@@ -106,15 +101,6 @@ class CreateAnswerOptionServiceTest {
         assertEquals(question.getAnswerRangeId(), createPortParam.getValue().answerRangeId());
         assertEquals(param.getValue(), createPortParam.getValue().value());
         assertEquals(param.getCurrentUserId(), createPortParam.getValue().createdBy());
-
-        QuestionImpact questionImpact = question.getImpacts().getFirst();
-        var createOptionImpact = ArgumentCaptor.forClass(CreateAnswerOptionImpactPort.Param.class);
-        verify(createAnswerOptionImpactPort, times(1)).persist(createOptionImpact.capture());
-        assertEquals(param.getKitVersionId(), createOptionImpact.getValue().kitVersionId());
-        assertEquals(answerOptionId, createOptionImpact.getValue().optionId());
-        assertEquals(param.getValue(), createOptionImpact.getValue().value());
-        assertEquals(questionImpact.getId(), createOptionImpact.getValue().questionImpactId());
-        assertEquals(param.getCurrentUserId(), createOptionImpact.getValue().createdBy());
 
         verifyNoInteractions(createAnswerRangePort, updateQuestionPort);
     }
@@ -155,8 +141,6 @@ class CreateAnswerOptionServiceTest {
         var createPortParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
         verify(createAnswerOptionPort, times(1)).persist(createPortParam.capture());
         assertEquals(expectedAnswerRangeId, createPortParam.getValue().answerRangeId());
-
-        verifyNoInteractions(createAnswerOptionImpactPort);
     }
 
     @Test
@@ -173,7 +157,7 @@ class CreateAnswerOptionServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.createAnswerOption(param));
         assertEquals(CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE, throwable.getMessageKey());
 
-        verifyNoInteractions(createAnswerRangePort, createAnswerOptionPort, createAnswerOptionImpactPort);
+        verifyNoInteractions(createAnswerRangePort, createAnswerOptionPort);
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
