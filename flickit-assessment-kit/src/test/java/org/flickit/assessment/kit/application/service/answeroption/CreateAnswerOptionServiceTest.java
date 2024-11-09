@@ -78,7 +78,7 @@ class CreateAnswerOptionServiceTest {
     }
 
     @Test
-    void testCreateAnswerOption_WhenAnswerRangeIdIsNotNullForQuestion_CreateAnswerOptionWithImpacts() {
+    void testCreateAnswerOption_WhenAnswerRangeIdIsNonReusable_CreateAnswerOption() {
         long answerOptionId = 123L;
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question = QuestionMother.createQuestionWithImpacts();
