@@ -91,7 +91,7 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
         var levelTwo = levelTwo();
         var savedQuestionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, savedQuestionnaire.getId());
+        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, 153L, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
@@ -149,7 +149,7 @@ class QuestionUpdateKitPersisterTest {
 
         var levelTwo = levelTwo();
         var savedQuestionnaire2 = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_OLD_TITLE1, 1, null, false, true, savedQuestionnaire2.getId());
+        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_OLD_TITLE1, 1, null, false, true, 153L, savedQuestionnaire2.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
@@ -196,7 +196,7 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_QuestionUpdated_UpdateInDatabase() {
         var levelTwo = levelTwo();
         var savedQuestionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_OLD_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
+        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_OLD_TITLE1, 1, null, false, true, 153L, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
@@ -251,7 +251,7 @@ class QuestionUpdateKitPersisterTest {
         var levelTwo = levelTwo();
         var levelThree = levelThree();
         var savedQuestionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
+        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, 153L, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
@@ -308,7 +308,7 @@ class QuestionUpdateKitPersisterTest {
         var levelTwo = levelTwo();
         var levelThree = levelThree();
         var savedQuestionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
+        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, 153L, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact1 = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var savedImpact2 = createQuestionImpact(attribute.getId(), levelThree.getId(), 1, savedQuestion.getId());
@@ -366,7 +366,7 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_QuestionImpactUpdated_UpdateInDatabase() {
         var levelTwo = levelTwo();
         var savedQuestionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
+        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, 153L, savedQuestionnaire.getId());
         var attribute1 = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute1.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
@@ -419,7 +419,7 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_AnswerOptionImpactUpdated_UpdateInDatabase() {
         var levelTwo = levelTwo();
         var savedQuestionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
+        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, 153L, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
@@ -473,7 +473,7 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_AnswerOptionUpdated_UpdateInDatabase() {
         var levelTwo = levelTwo();
         var savedQuestionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, savedQuestionnaire.getId());
+        var savedQuestion = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, 153L, savedQuestionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var savedImpact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, savedQuestion.getId());
         var answerOption1 = createAnswerOption(savedQuestion.getAnswerRangeId(), OLD_OPTION_TITLE, OPTION_INDEX1);
@@ -487,7 +487,7 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(attribute))), List.of(levelTwo), List.of(savedQuestionnaire));
 
 
-        doNothing().when(updateAnswerOptionPort).update(any(UpdateAnswerOptionPort.Param.class));
+        doNothing().when(updateAnswerOptionPort).updateTitle(any(UpdateAnswerOptionPort.UpdateTitleParam.class));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(questionnaireWithTitle(QUESTIONNAIRE_TITLE1));
@@ -534,7 +534,7 @@ class QuestionUpdateKitPersisterTest {
         questionnaire.setQuestions(List.of());
         var savedKit = AssessmentKitMother.completeKit(List.of(subject), List.of(levelTwo), List.of(questionnaire));
 
-        var question = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 1L);
+        var question = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
         var answerOption1 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
         var answerOption2 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);

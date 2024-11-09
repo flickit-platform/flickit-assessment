@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.port.out.answerange;
+package org.flickit.assessment.kit.application.port.out.answerrange;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
