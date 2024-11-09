@@ -202,9 +202,9 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 q.lastModifiedBy = :lastModifiedBy
             WHERE q.id = :id AND q.kitVersionId = :kitVersionId
         """)
-    void update(@Param("id") Long id,
-                @Param("kitVersionId") Long kitVersionId,
-                @Param("answerRangeId") Long answerRangeId,
-                @Param("lastModificationTime") LocalDateTime lastModificationTime,
-                @Param("lastModifiedBy") UUID lastModifiedBy);
+    void updateAnswerRange(@Param("id") Long id,
+                           @Param("kitVersionId") Long kitVersionId,
+                           @Param("answerRangeId") Long answerRangeId,
+                           @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                           @Param("lastModifiedBy") UUID lastModifiedBy);
 }
