@@ -6,7 +6,7 @@ import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
