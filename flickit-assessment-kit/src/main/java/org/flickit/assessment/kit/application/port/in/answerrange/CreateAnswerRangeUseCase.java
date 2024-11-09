@@ -23,6 +23,7 @@ public interface CreateAnswerRangeUseCase {
         @NotNull(message = CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
+        @NotNull(message = CREATE_ANSWER_RANGE_TITLE_NOT_NULL)
         @Size(min = 3, message = CREATE_ANSWER_RANGE_TITLE_SIZE_MIN)
         @Size(max = 100, message = CREATE_ANSWER_RANGE_TITLE_SIZE_MAX)
         String title;
@@ -33,7 +34,7 @@ public interface CreateAnswerRangeUseCase {
         @Builder
         public Param(Long kitVersionId, String title, UUID currentUserId) {
             this.kitVersionId = kitVersionId;
-            this.title = title;
+            this.title = (title != null && !title.isBlank()) ? title.strip() : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

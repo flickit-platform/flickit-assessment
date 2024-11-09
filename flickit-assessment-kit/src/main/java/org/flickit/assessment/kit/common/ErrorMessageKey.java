@@ -432,6 +432,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE = "create-answer-option.answerRange.reusable";
 
     public static final String CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL = "create-answer-range.kitVersionId.notNull";
+    public static final String CREATE_ANSWER_RANGE_TITLE_NOT_NULL = "create-answer-range.title.notNull";
     public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MIN = "create-answer-range.title.size.min";
     public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MAX = "create-answer-range.title.size.max";
 
