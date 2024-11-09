@@ -108,7 +108,7 @@ class GetQuestionImpactsServiceTest {
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(createQuestionWithoutAnswerRangeId());
 
         var throwable = assertThrows(ValidationException.class, () -> service.getQuestionImpacts(param));
-        assertEquals(GET_QUESTION_IMPACTS_QUESTION_RANGE_ID_NOT_NULL, throwable.getMessageKey());
+        assertEquals(GET_QUESTION_IMPACTS_QUESTION_ANSWER_RANGE_ID_NOT_NULL, throwable.getMessageKey());
 
         verifyNoInteractions(loadMaturityLevelsPort, loadAllAttributesPort);
     }
