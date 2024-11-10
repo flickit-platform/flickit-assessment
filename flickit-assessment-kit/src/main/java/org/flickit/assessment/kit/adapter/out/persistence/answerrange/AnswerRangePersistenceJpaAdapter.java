@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -30,7 +32,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_RANGE_ID_
 public class AnswerRangePersistenceJpaAdapter implements
     CreateAnswerRangePort,
     UpdateAnswerRangePort,
-    LoadAnswerRangesPort {
+    LoadAnswerRangesPort,
+    LoadAnswerRangePort {
 
     private final AnswerRangeJpaRepository repository;
     private final AnswerOptionJpaRepository answerOptionRepository;
@@ -82,5 +85,11 @@ public class AnswerRangePersistenceJpaAdapter implements
             param.reusable(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public Optional<AnswerRange> loadAnswerRange(long id, long kitVersionId) {
+        return repository.findByIdAndKitVersionId(id, kitVersionId)
+            .map(e -> AnswerRangeMapper.toDomainModel(e, null));
     }
 }
