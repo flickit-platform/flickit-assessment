@@ -124,6 +124,9 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             QuestionJpaEntity question = view.getQuestion();
             QuestionImpactJpaEntity questionImpact = view.getQuestionImpact();
 
+            if (questionImpact == null)
+                continue;
+
             Long attributeId = questionImpact.getAttributeId();
             Long questionId = question.getId();
 
