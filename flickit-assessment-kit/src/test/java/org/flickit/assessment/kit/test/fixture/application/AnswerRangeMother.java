@@ -14,6 +14,7 @@ public class AnswerRangeMother {
         return new AnswerRange(
             id++,
             "title" + id,
+            true,
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
         );
     }
@@ -22,7 +23,17 @@ public class AnswerRangeMother {
         return new AnswerRange(
             id++,
             "title" + id,
+            true,
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption(), createSimpleAnswerOption(), createSimpleAnswerOption())
+        );
+    }
+
+    public static AnswerRange createAnswerRangeWithIsReusable(boolean reusable) {
+        return new AnswerRange(
+            id++,
+            "title" + id,
+            reusable,
+            null
         );
     }
 }
