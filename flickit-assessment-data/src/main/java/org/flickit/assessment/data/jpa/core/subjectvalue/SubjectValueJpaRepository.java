@@ -35,8 +35,8 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
             SELECT
                 sv as subjectValue,
                 s as subject
-                FROM SubjectValueJpaEntity sv
-                    JOIN SubjectJpaEntity s ON sv.subjectId = s.id AND sv.assessmentResult.kitVersionId = s.kitVersionId
+            FROM SubjectValueJpaEntity sv
+            JOIN SubjectJpaEntity s ON sv.subjectId = s.id AND sv.assessmentResult.kitVersionId = s.kitVersionId
             WHERE sv.assessmentResult.id = :assessmentResultId
         """)
     List<SubjectValueWithSubjectView> findAllWithSubjectByAssessmentResultId(UUID assessmentResultId);

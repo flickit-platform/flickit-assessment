@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_CONFIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional
@@ -65,10 +65,9 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
     private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
-        if (isAssessmentResultReinitializationRequired(assessmentResult)) {
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
+        if (isAssessmentResultReinitializationRequired(assessmentResult))
             reinitializeAssessmentResult(assessmentResult);
-        }
     }
 
     private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {

@@ -64,9 +64,8 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
-        if (isAssessmentResultReinitializationRequired(assessmentResult)) {
+        if (isAssessmentResultReinitializationRequired(assessmentResult))
             reinitializeAssessmentResult(assessmentResult);
-        }
     }
 
     private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {

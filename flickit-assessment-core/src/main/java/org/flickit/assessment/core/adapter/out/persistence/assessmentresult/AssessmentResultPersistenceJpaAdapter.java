@@ -15,7 +15,6 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.SubjectIdAttributeValueView;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
@@ -39,7 +38,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
     UpdateAssessmentResultPort {
 
     private final AssessmentResultJpaRepository repository;
-    private final AssessmentJpaRepository assessmentRepo;
+    private final AssessmentJpaRepository assessmentRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AssessmentKitJpaRepository kitRepository;
     private final SubjectValueJpaRepository subjectValueRepository;
@@ -58,7 +57,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
     @Override
     public UUID persist(Param param) {
         AssessmentResultJpaEntity entity = AssessmentResultMapper.mapToJpaEntity(param);
-        AssessmentJpaEntity assessment = assessmentRepo.findById(param.assessmentId())
+        AssessmentJpaEntity assessment = assessmentRepository.findById(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ASSESSMENT_RESULT_ASSESSMENT_ID_NOT_FOUND));
         entity.setAssessment(assessment);
         AssessmentResultJpaEntity savedEntity = repository.save(entity);
@@ -91,7 +90,7 @@ public class AssessmentResultPersistenceJpaAdapter implements
         var subjectValueViews = subjectValueRepository.findAllWithSubjectByAssessmentResultId(assessmentResultId);
         var attributeValueViews = attributeValueRepository.findAllWithAttributeByAssessmentResultId(assessmentResultId);
         var subjectIdToAttributeValuesMap = attributeValueViews.stream()
-            .collect(Collectors.groupingBy(SubjectIdAttributeValueView::getSubjectId));
+            .collect(Collectors.groupingBy(e -> e.getAttribute().getSubjectId()));
         return subjectValueViews.stream()
             .map(v -> {
                 var subjectValue = SubjectValueMapper.mapToDomainModel(v.getSubjectValue(), v.getSubject());
