@@ -2,11 +2,10 @@ package org.flickit.assessment.kit.application.service.answerrange;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answerrange.UpdateAnswerRangeUseCase;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
@@ -38,11 +37,9 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var answerRange = loadAnswerRangePort.loadAnswerRange(param.getAnswerRangeId(), param.getKitVersionId());
-        if (answerRange.isEmpty())
-            throw new ResourceNotFoundException(UPDATE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_FOUND);
+        var answerRange = loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId());
 
-        if (checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId()) && answerRange.get().isReusable() && param.getReusable().equals(false))
+        if (checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId()) && answerRange.isReusable() && param.getReusable().equals(false))
             throw new ValidationException(UPDATE_ANSWER_RANGE_NOT_ALLOWED);
 
         if (Boolean.TRUE.equals(param.getReusable()) && param.getTitle() == null)
