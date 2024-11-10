@@ -13,7 +13,6 @@ import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGro
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
-import org.flickit.assessment.kit.application.port.out.questionimpact.LoadQuestionImpactPort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.CreateSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.LoadSubjectQuestionnairePort;
 import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
@@ -71,9 +70,6 @@ class ActivateKitVersionServiceTest {
     private UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
 
     @Mock
-    private LoadQuestionImpactPort loadQuestionImpactPort;
-
-    @Mock
     private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
 
     @Mock
@@ -111,7 +107,6 @@ class ActivateKitVersionServiceTest {
             updateKitActiveVersionPort,
             updateKitLastMajorModificationTimePort,
             createSubjectQuestionnairePort,
-            loadQuestionImpactPort,
             loadAnswerOptionsByQuestionPort,
             loadQuestionPort,
             createAnswerOptionImpactPort);
@@ -131,7 +126,6 @@ class ActivateKitVersionServiceTest {
             updateKitActiveVersionPort,
             updateKitLastMajorModificationTimePort,
             createSubjectQuestionnairePort,
-            loadQuestionImpactPort,
             loadAnswerOptionsByQuestionPort,
             loadQuestionPort,
             createAnswerOptionImpactPort);
@@ -153,6 +147,9 @@ class ActivateKitVersionServiceTest {
         var qImpact2 = QuestionImpactMother.createQuestionImpact(1L, 2L, 1, question2.getId());
         var qImpacts = List.of(qImpact1, qImpact2);
 
+        question1.setImpacts(List.of(qImpact1));
+        question2.setImpacts(List.of(qImpact2));
+
         Long kitVersionId = param.getKitVersionId();
         when(loadKitVersionPort.load(kitVersionId)).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
@@ -161,9 +158,8 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kitVersion.getKit().getId(), kitVersionId);
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
-        when(loadQuestionImpactPort.loadAllByKitVersionId(kitVersionId)).thenReturn(qImpacts);
-        when(loadQuestionPort.loadAllByIdInAndKitVersion(anySet(), anyLong())).thenReturn(questions);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
+        when(loadQuestionPort.loadAllByKitVersionId(kitVersionId)).thenReturn(questions);
+        when(loadAnswerOptionsByQuestionPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
 
         service.activateKitVersion(param);
 
@@ -205,6 +201,9 @@ class ActivateKitVersionServiceTest {
         var qImpact2 = QuestionImpactMother.createQuestionImpact(1L, 2L, 1, question2.getId());
         var qImpacts = List.of(qImpact1, qImpact2);
 
+        question1.setImpacts(List.of(qImpact1));
+        question2.setImpacts(List.of(qImpact2));
+
 
         Long kitVersionId = param.getKitVersionId();
         when(loadKitVersionPort.load(kitVersionId)).thenReturn(kitVersion);
@@ -213,9 +212,8 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kit.getId(), kitVersionId);
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
-        when(loadQuestionImpactPort.loadAllByKitVersionId(kitVersionId)).thenReturn(qImpacts);
-        when(loadQuestionPort.loadAllByIdInAndKitVersion(anySet(), anyLong())).thenReturn(questions);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
+        when(loadQuestionPort.loadAllByKitVersionId(anyLong())).thenReturn(questions);
+        when(loadAnswerOptionsByQuestionPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
 
         service.activateKitVersion(param);
 

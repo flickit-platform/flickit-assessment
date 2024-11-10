@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -26,12 +25,10 @@ public class CreateQuestionImpactService implements CreateQuestionImpactUseCase 
 
     @Override
     public long createQuestionImpact(Param param) {
-        Long kitVersionId = param.getKitVersionId();
-        var kitversion = loadKitVersionPort.load(kitVersionId);
+        var kitversion = loadKitVersionPort.load(param.getKitVersionId());
         var expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(kitversion.getKit().getExpertGroupId());
 
-        UUID currentUserId = param.getCurrentUserId();
-        if (!expertGroupOwnerId.equals(currentUserId))
+        if (!expertGroupOwnerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         return createQuestionImpactPort.persist(toQuestionImpact(param));
