@@ -88,7 +88,6 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
-    public static final String GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND = "get-kit-stats.activeVersion.notFound";
 
     public static final String GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL = "get-kit-editable-info.kitId.notNull";
 
@@ -430,6 +429,14 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MAX = "create-answer-option.title.size.max";
     public static final String CREATE_ANSWER_OPTION_INDEX_DUPLICATE = "create-answer-option.index.duplicate";
     public static final String CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE = "create-answer-option.answerRange.reusable";
+
+    public static final String CREATE_REUSABLE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "create-reusable-answer-option.kitVersionId.notNull";
+    public static final String CREATE_REUSABLE_ANSWER_OPTION_ANSWER_RANGE_ID_NOT_NULL = "create-reusable-answer-option.answerRangeId.notNull";
+    public static final String CREATE_REUSABLE_ANSWER_OPTION_INDEX_NOT_NULL = "create-reusable-answer-option.index.notNull";
+    public static final String CREATE_REUSABLE_ANSWER_OPTION_TITLE_NOT_BLANK = "create-reusable-answer-option.title.notBlank";
+    public static final String CREATE_REUSABLE_ANSWER_OPTION_TITLE_SIZE_MAX = "create-reusable-answer-option.title.size.max";
+    public static final String CREATE_REUSABLE_ANSWER_OPTION_VALUE_NOT_NULL = "create-reusable-answer-option.value.notNull";
+    public static final String CREATE_ANSWER_OPTION_ANSWER_RANGE_NON_REUSABLE = "create-reusable-answer-option.answerRange.non-reusable";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
