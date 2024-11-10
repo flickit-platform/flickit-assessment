@@ -1,13 +1,16 @@
 package org.flickit.assessment.kit.application.service.answerrange;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answerrange.UpdateAnswerRangeUseCase;
+import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.CheckQuestionExistencePort;
+import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,12 +18,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_TITLE_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,6 +47,9 @@ class UpdateAnswerRangeServiceTest {
     @Mock
     private UpdateAnswerRangePort updateAnswerRangePort;
 
+    @Mock
+    private LoadAnswerRangePort loadAnswerRangePort;
+
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
@@ -61,11 +67,13 @@ class UpdateAnswerRangeServiceTest {
     }
 
     @Test
-    void testUpdateAnswerRange_WhenAnswerRangeIdIsUsedByQuestions_ThenThrowValidationException() {
-        var param = createParam(b -> b.currentUserId(ownerId));
+    void testUpdateAnswerRange_WhenAnswerRangeIsUsedByQuestionsAndReusableToNonReusableUpdate_ThenThrowValidationException() {
+        var param = createParam(b -> b.currentUserId(ownerId).reusable(false));
+        var answerRange = AnswerRangeMother.createAnswerRangeWithIsReusable(true);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(loadAnswerRangePort.loadAnswerRange(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(Optional.of(answerRange));
         when(checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId())).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateAnswerRange(param));
@@ -77,9 +85,11 @@ class UpdateAnswerRangeServiceTest {
     @Test
     void testUpdateAnswerRange_WhenCurrentUserIsExpertGroupOwnerAndReusableAnswerRangeTitleIsNull_ThenThrowValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId).title(null));
+        var answerRange = AnswerRangeMother.createAnswerRangeWithIsReusable(true);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId())).thenReturn(false);
+        when(loadAnswerRangePort.loadAnswerRange(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(Optional.of(answerRange));
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateAnswerRange(param));
@@ -89,11 +99,27 @@ class UpdateAnswerRangeServiceTest {
     }
 
     @Test
-    void testUpdateAnswerRange_WhenCurrentUserIsExpertGroupOwnerAndReusableAnswerRangeTitleIsValid_ThenUpdateAnswerRange() {
-        var param = createParam(b -> b.currentUserId(ownerId));
+    void testUpdateAnswerRange_WhenAnswerRangeNotFound_ResourceNotFoundException() {
+        var param = createParam(b -> b.currentUserId(ownerId).title(null));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(loadAnswerRangePort.loadAnswerRange(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(Optional.empty());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAnswerRange(param));
+        assertEquals(UPDATE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(updateAnswerRangePort);
+    }
+
+    @Test
+    void testUpdateAnswerRange_WhenCurrentUserIsExpertGroupOwnerAndReusableAnswerRangeTitleIsValid_ThenUpdateAnswerRange() {
+        var param = createParam(b -> b.currentUserId(ownerId));
+        var answerRange = AnswerRangeMother.createAnswerRangeWithIsReusable(true);
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(loadAnswerRangePort.loadAnswerRange(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(Optional.of(answerRange));
         doNothing().when(updateAnswerRangePort).update(any(UpdateAnswerRangePort.Param.class));
 
         service.updateAnswerRange(param);
@@ -117,10 +143,10 @@ class UpdateAnswerRangeServiceTest {
 
     private UpdateAnswerRangeUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateAnswerRangeUseCase.Param.builder()
-                .kitVersionId(1L)
-                .answerRangeId(2L)
-                .title("title")
-                .reusable(true)
-                .currentUserId(UUID.randomUUID());
+            .kitVersionId(1L)
+            .answerRangeId(2L)
+            .title("title")
+            .reusable(true)
+            .currentUserId(UUID.randomUUID());
     }
 }
