@@ -2134,7 +2134,7 @@
 			"name": "Answer Range",
 			"item": [
 				{
-					"name": "Create Reusable Answer Option",
+					"name": "Create Answer Range Option",
 					"request": {
 						"method": "POST",
 						"header": [
