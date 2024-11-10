@@ -9,7 +9,6 @@ import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswer
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
-import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,6 +21,8 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,9 +32,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateAnswerRangeOptionServiceTest {
-
-    private final UUID ownerId = UUID.randomUUID();
-    private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @InjectMocks
     private CreateAnswerRangeOptionService service;
@@ -50,6 +48,9 @@ class CreateAnswerRangeOptionServiceTest {
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
 
+    private final UUID ownerId = UUID.randomUUID();
+    private final KitVersion kitVersion = createKitVersion(simpleKit());
+
     @Test
     void testCreateAnswerRangeOption_WhenCurrentUserIsNotOwner_ThrowAccessDeniedException() {
         var param = createParam(CreateAnswerRangeOptionUseCase.Param.ParamBuilder::build);
@@ -59,12 +60,14 @@ class CreateAnswerRangeOptionServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAnswerRangeOption(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadAnswerRangePort, createAnswerOptionPort);
     }
 
     @Test
     void testCreateAnswerRangeOption_WhenAnswerRangeIsNonReusable_ThrowsValidationException() {
-        var param = createParam(b -> b.currentUserId(ownerId));
-        AnswerRange answerRange = AnswerRangeMother.createNonreusableAnswerRangeWithTwoOptions();
+        AnswerRange answerRange = createNonReusableAnswerRangeWithTwoOptions();
+        var param = createParam(b -> b.currentUserId(ownerId).answerRangeId(answerRange.getId()));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
@@ -79,25 +82,25 @@ class CreateAnswerRangeOptionServiceTest {
     @Test
     void testCreateAnswerRangeOption_WhenAnswerRangeIsReusable_CreateAnswerOption() {
         long answerOptionId = 123L;
-        var param = createParam(b -> b.currentUserId(ownerId));
-        AnswerRange answerRange = AnswerRangeMother.createAnswerRangeWithTwoOptions();
+        AnswerRange answerRange = createReusableAnswerRangeWithTwoOptions();
+        var param = createParam(b -> b.currentUserId(ownerId).answerRangeId(answerRange.getId()));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
         when(createAnswerOptionPort.persist(any())).thenReturn(answerOptionId);
 
-        CreateAnswerRangeOptionUseCase.Result result = service.createAnswerRangeOption(param);
+        var result = service.createAnswerRangeOption(param);
         assertEquals(answerOptionId, result.id());
 
-        var createPortParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
-        verify(createAnswerOptionPort, times(1)).persist(createPortParam.capture());
-        assertEquals(param.getKitVersionId(), createPortParam.getValue().kitVersionId());
-        assertEquals(param.getIndex(), createPortParam.getValue().index());
-        assertEquals(param.getTitle(), createPortParam.getValue().title());
-        assertEquals(param.getAnswerRangeId(), createPortParam.getValue().answerRangeId());
-        assertEquals(param.getValue(), createPortParam.getValue().value());
-        assertEquals(param.getCurrentUserId(), createPortParam.getValue().createdBy());
+        var createPortCaptor = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
+        verify(createAnswerOptionPort, times(1)).persist(createPortCaptor.capture());
+        assertEquals(param.getKitVersionId(), createPortCaptor.getValue().kitVersionId());
+        assertEquals(param.getIndex(), createPortCaptor.getValue().index());
+        assertEquals(param.getTitle(), createPortCaptor.getValue().title());
+        assertEquals(param.getAnswerRangeId(), createPortCaptor.getValue().answerRangeId());
+        assertEquals(param.getValue(), createPortCaptor.getValue().value());
+        assertEquals(param.getCurrentUserId(), createPortCaptor.getValue().createdBy());
     }
 
     private CreateAnswerRangeOptionUseCase.Param createParam(Consumer<CreateAnswerRangeOptionUseCase.Param.ParamBuilder> changer) {
@@ -108,7 +111,7 @@ class CreateAnswerRangeOptionServiceTest {
 
     private CreateAnswerRangeOptionUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAnswerRangeOptionUseCase.Param.builder()
-            .kitVersionId(1L)
+            .kitVersionId(kitVersion.getId())
             .answerRangeId(5163L)
             .index(3)
             .title("first")
