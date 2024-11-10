@@ -3,6 +3,7 @@ package org.flickit.assessment.users.adapter.out.persistence.expertgroupaccess;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.users.common.ErrorMessageKey.DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND;
+import static org.flickit.assessment.users.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -31,9 +33,13 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     UpdateExpertGroupLastSeenPort {
 
     private final ExpertGroupAccessJpaRepository repository;
+    private final ExpertGroupJpaRepository expertGroupJpaRepository;
 
     @Override
     public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int status, int page, int size) {
+        if (!expertGroupJpaRepository.existsById(expertGroupId))
+            throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
+
         var pageResult = repository.findExpertGroupMembers(expertGroupId, status, LocalDateTime.now(),
             PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
