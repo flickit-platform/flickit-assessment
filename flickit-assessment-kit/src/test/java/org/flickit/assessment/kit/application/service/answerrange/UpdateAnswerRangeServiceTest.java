@@ -51,7 +51,7 @@ class UpdateAnswerRangeServiceTest {
 
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
-    private final AnswerRange answerRange = AnswerRangeMother.createReusableAnswerRange();
+    private final AnswerRange answerRange = AnswerRangeMother.createReusableAnswerRangeWithNoOptions();
 
     @Test
     void testUpdateAnswerRange_WhenCurrentUserIsNotExpertGroupOwner_ThenThrowAccessDeniedException() {

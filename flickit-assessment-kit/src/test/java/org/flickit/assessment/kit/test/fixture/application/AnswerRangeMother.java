@@ -37,7 +37,7 @@ public class AnswerRangeMother {
         );
     }
 
-    public static AnswerRange createReusableAnswerRange() {
+    public static AnswerRange createReusableAnswerRangeWithNoOptions() {
         return new AnswerRange(
             id++,
             "title" + id,
