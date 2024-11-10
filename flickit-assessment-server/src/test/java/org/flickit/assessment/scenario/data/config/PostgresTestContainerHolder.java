@@ -10,11 +10,10 @@ public class PostgresTestContainerHolder {
     private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER;
 
     static {
-        POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:latest")
+        POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:15.8")
             .withDatabaseName("flickit")
             .withUsername("flickit")
-            .withPassword("flickit")
-            .withInitScript("init.sql");
+            .withPassword("flickit");
 
         POSTGRESQL_CONTAINER.start();
     }
@@ -27,6 +26,5 @@ public class PostgresTestContainerHolder {
         registry.add("spring.datasource.url", POSTGRESQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRESQL_CONTAINER::getUsername);
         registry.add("spring.datasource.password", POSTGRESQL_CONTAINER::getPassword);
-        registry.add("spring.liquibase.enabled", () -> false);
     }
 }

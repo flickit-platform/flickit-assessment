@@ -10,7 +10,7 @@ public class MinioTestContainerHolder {
     private static final MinIOContainer MINIO_CONTAINER;
 
     static {
-        MINIO_CONTAINER = new MinIOContainer("minio/minio:latest")
+        MINIO_CONTAINER = new MinIOContainer("minio/minio:RELEASE.2024-09-22T00-33-43Z")
             .withUserName("minioadmin")
             .withPassword("minioadmin");
 
