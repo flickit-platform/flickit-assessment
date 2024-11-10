@@ -37,11 +37,11 @@ public class AnswerRangeMother {
         );
     }
 
-    public static AnswerRange createAnswerRangeWithIsReusable(boolean reusable) {
+    public static AnswerRange createReusableAnswerRange() {
         return new AnswerRange(
             id++,
             "title" + id,
-            reusable,
+            true,
             null
         );
     }
