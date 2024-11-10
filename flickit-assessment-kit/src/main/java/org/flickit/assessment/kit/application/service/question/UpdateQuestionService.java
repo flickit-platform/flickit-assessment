@@ -41,6 +41,7 @@ public class UpdateQuestionService implements UpdateQuestionUseCase {
             param.getHint(),
             param.getMayNotBeApplicable(),
             param.getAdvisable(),
+            param.getAnswerRangeId(),
             LocalDateTime.now(),
             param.getCurrentUserId()));
     }

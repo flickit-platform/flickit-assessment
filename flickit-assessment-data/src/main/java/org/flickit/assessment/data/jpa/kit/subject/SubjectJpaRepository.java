@@ -8,10 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, SubjectJpaEntity.EntityId> {
 
@@ -19,7 +16,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
 
     Optional<SubjectJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
-    List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Set<Long> ids, long kitVersionId);
+    List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
 
     Page<SubjectJpaEntity> findByKitVersionId(long kitVersionId, PageRequest pageRequest);
 

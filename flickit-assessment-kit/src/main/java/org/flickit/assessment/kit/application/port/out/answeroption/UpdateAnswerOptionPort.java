@@ -8,9 +8,21 @@ public interface UpdateAnswerOptionPort {
     void update(Param param);
 
     record Param(
-        Long id,
+        long answerOptionId,
+        long kitVersionId,
+        int index,
+        String title,
+        double value,
+        LocalDateTime lastModificationTime,
+        UUID lastModifiedBy) {}
+
+    void updateTitle(UpdateTitleParam param);
+
+    record UpdateTitleParam(
+        Long answerOptionId,
         Long kitVersionId,
         String title,
         LocalDateTime lastModificationTime,
-        UUID lastModifiedBy) {}
+        UUID lastModifiedBy) {
+    }
 }

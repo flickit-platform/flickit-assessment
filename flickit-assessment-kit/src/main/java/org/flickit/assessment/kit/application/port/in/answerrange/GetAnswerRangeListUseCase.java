@@ -49,7 +49,7 @@ public interface GetAnswerRangeListUseCase {
 
     record AnswerRangeListItem(Long id, String title, List<AnswerOptionListItem> answerOptions) {
 
-        public record AnswerOptionListItem(long id, String title, int index) {
+        public record AnswerOptionListItem(long id, String title, int index, double value) {
         }
     }
 }

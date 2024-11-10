@@ -19,6 +19,7 @@ public interface UpdateQuestionPort {
                  String hint,
                  Boolean mayNotBeApplicable,
                  Boolean advisable,
+                 Long answerRangeId,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedBy) {
     }
@@ -45,5 +46,17 @@ public interface UpdateQuestionPort {
 
         public record QuestionOrder(long questionId, int index, String code) {
         }
+    }
+
+    /**
+     * Updates the Answer range of questions based on the provided {@link UpdateAnswerRangeParam} object.
+     */
+    void updateAnswerRange(UpdateAnswerRangeParam param);
+
+    record UpdateAnswerRangeParam(long id,
+                                  long kitVersionId,
+                                  long answerRangeId,
+                                  LocalDateTime lastModificationTime,
+                                  UUID lastModifiedBy) {
     }
 }
