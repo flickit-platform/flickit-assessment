@@ -3,10 +3,12 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
@@ -21,12 +23,14 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_ASSESSMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CalculateAssessmentService implements CalculateAssessmentUseCase {
 
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadCalculateInfoPort loadCalculateInfoPort;
     private final UpdateCalculatedResultPort updateCalculatedResultPort;
     private final UpdateAssessmentPort updateAssessmentPort;
@@ -41,9 +45,9 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
+        reinitializeAssessmentResultIfRequired(param.getAssessmentId());
+
         AssessmentResult assessmentResult = loadCalculateInfoPort.load(param.getAssessmentId());
-        if (isAssessmentResultReinitializationRequired(assessmentResult))
-            reinitializeAssessmentResult(assessmentResult);
 
         MaturityLevel calcResult = assessmentResult.calculate();
         assessmentResult.setMaturityLevel(calcResult);
@@ -52,11 +56,16 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         assessmentResult.setLastCalculationTime(LocalDateTime.now());
 
         updateCalculatedResultPort.updateCalculatedResult(assessmentResult);
-
         updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
 
-
         return new Result(calcResult);
+    }
+
+    private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
+        if (isAssessmentResultReinitializationRequired(assessmentResult))
+            reinitializeAssessmentResult(assessmentResult);
     }
 
     private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {
