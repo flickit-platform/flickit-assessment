@@ -94,8 +94,8 @@ public class AssessmentResultPersistenceJpaAdapter implements
             .collect(Collectors.groupingBy(SubjectIdAttributeValueView::getSubjectId));
         return subjectValueViews.stream()
             .map(v -> {
-                var subjectValue = SubjectValueMapper.mapToDomainModel(v);
-                var attributeValues = subjectIdToAttributeValuesMap.get(v.getSubjectId()).stream()
+                var subjectValue = SubjectValueMapper.mapToDomainModel(v.getSubjectValue(), v.getSubject());
+                var attributeValues = subjectIdToAttributeValuesMap.get(v.getSubject().getId()).stream()
                     .map(av -> AttributeValueMapper.mapToDomainModel(av.getAttributeValue(), av.getAttribute()))
                     .toList();
                 subjectValue.setAttributeValues(attributeValues);
