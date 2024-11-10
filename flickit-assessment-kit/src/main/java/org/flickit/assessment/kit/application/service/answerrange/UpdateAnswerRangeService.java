@@ -36,7 +36,7 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        if (checkQuestionExistencePort.checkByAnswerRangeId(param.getAnswerRangeId()))
+        if (checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId()))
             throw new ValidationException(UPDATE_ANSWER_RANGE_NOT_ALLOWED);
 
         if (Boolean.TRUE.equals(param.getReusable()) && param.getTitle() == null)
