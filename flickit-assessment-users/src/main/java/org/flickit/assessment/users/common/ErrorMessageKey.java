@@ -46,7 +46,6 @@ public class ErrorMessageKey {
     public static final String GET_EXPERT_GROUP_MEMBERS_SIZE_MIN = "get-expert-group-members.size.min";
     public static final String GET_EXPERT_GROUP_MEMBERS_SIZE_MAX = "get-expert-group-members.size.max";
     public static final String GET_EXPERT_GROUP_MEMBERS_PAGE_MIN = "get-expert-group-members.page.min";
-    public static final String GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND = "get-expert-group-members.expertGroup.notFound";
     public static final String GET_EXPERT_GROUP_MEMBERS_STATUS_INVALID = "get-expert-group-members.status.invalid";
 
     public static final String DELETE_EXPERT_GROUP_KITS_EXIST = "delete-expert-group.kits.exist";
