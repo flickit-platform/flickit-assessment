@@ -31,4 +31,10 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
     void updateConfidenceValueById(@Param(value = "id") UUID id,
                                    @Param(value = "confidenceValue") Double confidenceValue);
 
+    @Query("""
+            SELECT sv FROM SubjectValueJpaEntity sv
+                JOIN SubjectJpaEntity s ON sv.subjectId = s.id AND sv.assessmentResult.kitVersionId = s.kitVersionId
+            WHERE sv.assessmentResult.id = :assessmentResultId
+        """)
+    List<SubjectValueJpaEntity> findAllWithSubjectByAssessmentResultId(UUID assessmentResultId);
 }
