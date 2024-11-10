@@ -38,14 +38,13 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(param.getId());
 
         boolean userIsOwner = ownerId.equals(param.getCurrentUserId());
-
         if (!userIsOwner && param.getStatus() == ExpertGroupAccessStatus.PENDING)
             return new PaginatedResponse<>(List.of(), 0, 0, null, null, 0);
 
         ExpertGroupAccessStatus requiredStatus = param.getStatus() != null ? param.getStatus() : ExpertGroupAccessStatus.ACTIVE;
 
         var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), requiredStatus.ordinal(), param.getPage(), param.getSize());
-        var members = mapToMembers(portResult.getItems(), userIsOwner);
+        var members = mapToMembers(portResult.getItems(), userIsOwner, param.getCurrentUserId());
 
         return new PaginatedResponse<>(
             members,
@@ -57,7 +56,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
         );
     }
 
-    private List<Member> mapToMembers(List<LoadExpertGroupMembersPort.Member> items, boolean userIsOwner) {
+    private List<Member> mapToMembers(List<LoadExpertGroupMembersPort.Member> items, boolean userIsOwner, UUID currentUserId) {
         return items.stream()
             .map(item -> new Member(
                 item.id(),
@@ -67,7 +66,8 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
                 createFileDownloadLinkPort.createDownloadLink(item.picture(), EXPIRY_DURATION),
                 item.linkedin(),
                 ExpertGroupAccessStatus.values()[item.status()],
-                item.inviteExpirationDate()
+                item.inviteExpirationDate(),
+                userIsOwner && !item.id().equals(currentUserId) ? Boolean.TRUE : Boolean.FALSE
             ))
             .toList();
     }

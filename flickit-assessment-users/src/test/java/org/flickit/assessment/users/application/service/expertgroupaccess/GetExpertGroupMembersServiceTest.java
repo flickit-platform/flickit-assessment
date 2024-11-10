@@ -44,16 +44,13 @@ class GetExpertGroupMembersServiceTest {
     private final int page = 0;
     private final int size = 10;
     private final LoadExpertGroupMembersPort.Member member1 = createPortResult(UUID.randomUUID());
-    private final LoadExpertGroupMembersPort.Member member2 = createPortResult(UUID.randomUUID());
+    private final LoadExpertGroupMembersPort.Member member2 = createPortResult(ownerId);
     private final List<LoadExpertGroupMembersPort.Member> portMembers = List.of(member1, member2);
-    List<GetExpertGroupMembersUseCase.Member> expectedMembers = List.of(
-        portToUseCaseResult(member1),
-        portToUseCaseResult(member2)
-    );
-
+    List<GetExpertGroupMembersUseCase.Member> expectedMembers =
+        List.of(portToUseCaseResult(member1, true), portToUseCaseResult(member2, false));
 
     @Test
-    void testGetExpertGroupMembersService_WhenValidInputsAndNoStatus_ShouldReturnValidResults() {
+    void testGetExpertGroupMembersService_WhenValidInputsAndNoStatusAndCurrentUserIsOwner_ShouldReturnValidResults() {
         var param = createParam(b -> b.status(null).currentUserId(ownerId));
 
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, param.getPage(), param.getSize(), "title", "asc", 2);
@@ -70,6 +67,30 @@ class GetExpertGroupMembersServiceTest {
         assertEquals(size, result.getSize());
         assertEquals("title", result.getSort());
         assertEquals("asc", result.getOrder());
+        assertEquals(expectedMembers.getFirst().deletable(), result.getItems().getFirst().deletable());
+        assertEquals(expectedMembers.getLast().deletable(), result.getItems().getLast().deletable());
+        assertEquals(portMembers.size(), result.getTotal());
+    }
+
+    @Test
+    void testGetExpertGroupMembersService_WhenValidInputsAndNoStatusAndCurrentUserIsNotOwner_ShouldReturnValidResults() {
+        var param = createParam(b -> b.status(null));
+
+        PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, param.getPage(), param.getSize(), "title", "asc", 2);
+
+        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
+        when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(ownerId);
+        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), 1, param.getPage(), param.getSize())).thenReturn(paginatedResult);
+        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
+
+        PaginatedResponse<GetExpertGroupMembersUseCase.Member> result = service.getExpertGroupMembers(param);
+
+        assertEquals(page, result.getPage());
+        assertEquals(size, result.getSize());
+        assertEquals("title", result.getSort());
+        assertEquals("asc", result.getOrder());
+        assertFalse(result.getItems().getFirst().deletable());
+        assertFalse(result.getItems().getLast().deletable());
         assertEquals(portMembers.size(), result.getTotal());
     }
 
@@ -127,7 +148,7 @@ class GetExpertGroupMembersServiceTest {
             LocalDateTime.now());
     }
 
-    private GetExpertGroupMembersUseCase.Member portToUseCaseResult(LoadExpertGroupMembersPort.Member portMember) {
+    private GetExpertGroupMembersUseCase.Member portToUseCaseResult(LoadExpertGroupMembersPort.Member portMember, boolean deletable) {
         return new GetExpertGroupMembersUseCase.Member(
             portMember.id(),
             portMember.email(),
@@ -136,7 +157,9 @@ class GetExpertGroupMembersServiceTest {
             expectedDownloadLink,
             portMember.linkedin(),
             ExpertGroupAccessStatus.values()[portMember.status()],
-            portMember.inviteExpirationDate());
+            portMember.inviteExpirationDate(),
+            deletable
+        );
     }
 
     private GetExpertGroupMembersUseCase.Param createParam(Consumer<GetExpertGroupMembersUseCase.Param.ParamBuilder> changer) {

@@ -66,6 +66,7 @@ public interface GetExpertGroupMembersUseCase {
         String pictureLink,
         String linkedin,
         ExpertGroupAccessStatus status,
-        LocalDateTime inviteExpirationDate) {
+        LocalDateTime inviteExpirationDate,
+        boolean deletable) {
     }
 }
