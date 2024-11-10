@@ -86,7 +86,6 @@ class UpdateAnswerRangeServiceTest {
         var param = createParam(b -> b.currentUserId(ownerId).title(null));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(checkQuestionExistencePort.existsByAnswerRange(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(false);
         when(loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
