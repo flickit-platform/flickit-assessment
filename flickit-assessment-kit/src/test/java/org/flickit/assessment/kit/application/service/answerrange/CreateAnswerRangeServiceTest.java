@@ -69,7 +69,7 @@ class CreateAnswerRangeServiceTest {
         assertEquals(param.getKitVersionId(), createPortParam.kitVersionId());
         assertEquals(param.getTitle(), createPortParam.title());
         assertEquals(param.getCurrentUserId(), createPortParam.createdBy());
-        assertEquals(Boolean.TRUE, createPortParam.reusable());
+        assertTrue(createPortParam.reusable());
     }
 
     private CreateAnswerRangeUseCase.Param createParam(Consumer<CreateAnswerRangeUseCase.Param.ParamBuilder> changer) {

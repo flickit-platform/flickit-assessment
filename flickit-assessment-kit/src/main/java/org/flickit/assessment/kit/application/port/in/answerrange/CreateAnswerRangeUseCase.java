@@ -41,6 +41,6 @@ public interface CreateAnswerRangeUseCase {
         }
     }
 
-    record Result(long id){
+    record Result(long id) {
     }
 }
