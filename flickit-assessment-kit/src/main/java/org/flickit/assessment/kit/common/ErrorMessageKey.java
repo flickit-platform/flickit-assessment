@@ -393,6 +393,7 @@ public class ErrorMessageKey {
 
     public static final String GET_QUESTION_OPTIONS_KIT_VERSION_ID_NOT_NULL = "get-question-options.kitVersionId.notNull";
     public static final String GET_QUESTION_OPTIONS_QUESTION_ID_NOT_NULL = "get-question-options.questionId.notNull";
+    public static final String GET_QUESTION_OPTIONS_QUESTION_ANSWER_RANGE_ID_NOT_NULL = "get-question-options.questionAnswerRangeId.notNull";
 
     public static final String GET_QUESTIONNAIRE_QUESTIONS_KIT_VERSION_ID_NOT_NULL = "get-questionnaire-questions-kitVersionId.notNull";
     public static final String GET_QUESTIONNAIRE_QUESTIONS_QUESTIONNAIRE_ID_NOT_NULL = "get-questionnaire-questions-questionnaireId.notNull";

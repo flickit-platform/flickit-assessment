@@ -1,12 +1,14 @@
 package org.flickit.assessment.kit.application.service.answeroption;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answeroption.GetQuestionOptionsUseCase;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,9 +20,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_QUESTION_OPTIONS_QUESTION_ANSWER_RANGE_ID_NOT_NULL;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestionWithAnswerRangeId;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -40,6 +44,9 @@ class GetQuestionOptionsServiceTest {
     @Mock
     private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
 
+    @Mock
+    private LoadQuestionPort loadQuestionPort;
+
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @Test
@@ -57,6 +64,20 @@ class GetQuestionOptionsServiceTest {
     }
 
     @Test
+    void testGetQuestionOptions_WhenQuestionIdHasNoAnswerRangeId_ThenThrowValidationException() {
+        var param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(createQuestionWithAnswerRangeId(null));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.getQuestionOptions(param));
+        assertEquals(GET_QUESTION_OPTIONS_QUESTION_ANSWER_RANGE_ID_NOT_NULL, throwable.getMessageKey());
+
+        verifyNoInteractions(loadAnswerOptionsByQuestionPort);
+    }
+
+    @Test
     void testGetQuestionOptions_WhenCurrentUserIsExpertGroupMember_ThenGetQuestionOptions() {
         var param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
         var answerRangeId = 8329L;
@@ -67,6 +88,7 @@ class GetQuestionOptionsServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             .thenReturn(true);
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(createQuestionWithAnswerRangeId(123L));
         when(loadAnswerOptionsByQuestionPort.loadByQuestionId(param.getQuestionId(), param.getKitVersionId()))
             .thenReturn(expectedAnswerOptions);
 
