@@ -37,4 +37,12 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
             WHERE sv.assessmentResult.id = :assessmentResultId
         """)
     List<SubjectValueJpaEntity> findAllWithSubjectByAssessmentResultId(UUID assessmentResultId);
+
+    @Query("""
+            SELECT sv
+            FROM SubjectValueJpaEntity sv
+                LEFT JOIN SubjectJpaEntity s ON s.id = sv.subjectId AND s.kitVersionId = sv.assessmentResult.kitVersionId
+            WHERE s.id IS NULL AND sv.assessmentResult.id = :assessmentResultId
+        """)
+    List<SubjectValueJpaEntity> findDeprecatedSubjectValues(@Param(value = "assessmentResultId") UUID assessmentResultId);
 }
