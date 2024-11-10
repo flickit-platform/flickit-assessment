@@ -4,10 +4,7 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Value;
+import lombok.*;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.validation.EnumValue;
@@ -45,6 +42,7 @@ public interface GetExpertGroupMembersUseCase {
         @Min(value = 0, message = GET_EXPERT_GROUP_MEMBERS_PAGE_MIN)
         int page;
 
+        @Builder
         public Param(Long expertGroupId, @Nullable String status, UUID currentUserId, int size, int page) {
             this.id = expertGroupId;
             this.status = status;
