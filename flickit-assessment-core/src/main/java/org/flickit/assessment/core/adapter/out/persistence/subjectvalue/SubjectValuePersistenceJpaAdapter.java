@@ -6,7 +6,6 @@ import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
@@ -28,7 +27,6 @@ public class SubjectValuePersistenceJpaAdapter implements
     private final SubjectValueJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
-    private final SubjectInsightJpaRepository subjectInsightRepository;
 
     @Override
     public List<SubjectValue> persistAll(List<Long> subjectIds, UUID assessmentResultId) {
