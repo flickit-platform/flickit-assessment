@@ -28,6 +28,15 @@ public class AnswerRangeMother {
         );
     }
 
+    public static AnswerRange createNonreusableAnswerRangeWithTwoOptions() {
+        return new AnswerRange(
+            id++,
+            "title" + id,
+            false,
+            List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
+        );
+    }
+
     public static AnswerRange createAnswerRangeWithIsReusable(boolean reusable) {
         return new AnswerRange(
             id++,
