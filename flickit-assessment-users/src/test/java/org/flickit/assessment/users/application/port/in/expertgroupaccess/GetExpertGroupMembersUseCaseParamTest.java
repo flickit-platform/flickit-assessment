@@ -19,13 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetExpertGroupMembersUseCaseParamTest {
 
     @Test
-    void testGetExpertGroupMembersUseCaseParam_WhenCurrentUserParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.currentUserId(null)));
-        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
-    }
-
-    @Test
     void testGetExpertGroupMembersUseCaseParam_WhenExpertGroupIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.expertGroupId(null)));
@@ -48,6 +41,13 @@ class GetExpertGroupMembersUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.page(-1)));
         assertThat(throwable).hasMessage("page: " + GET_EXPERT_GROUP_MEMBERS_PAGE_MIN);
+    }
+
+    @Test
+    void testGetExpertGroupMembersUseCaseParam_WhenCurrentUserParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.currentUserId(null)));
+        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     private void createParam(Consumer<Param.ParamBuilder> changer) {
