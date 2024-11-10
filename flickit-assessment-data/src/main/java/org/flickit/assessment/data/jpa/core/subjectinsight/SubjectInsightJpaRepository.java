@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,6 +26,4 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
                                                 @Param("insight") String insight,
                                                 @Param("insightTime") LocalDateTime insightTime,
                                                 @Param("insightBy") UUID insightBy);
-
-    void deleteAllByAssessmentResultIdAndSubjectIdIn(UUID assessmentResultId, Collection<Long> subjectIds);
 }

@@ -13,6 +13,4 @@ public interface AttributeMaturityScoreJpaRepository extends
     Optional<AttributeMaturityScoreJpaEntity> findByAttributeValueIdAndMaturityLevelId(UUID attributeValueId, long maturityLevelId);
 
     List<AttributeMaturityScoreJpaEntity> findByAttributeValueIdIn(Collection<UUID> attributeValueIds);
-
-    void deleteAllByAttributeValueIdIn(Collection<UUID> attributeValueIds);
 }

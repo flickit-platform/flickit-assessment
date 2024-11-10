@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.application.port.out.subjectvalue.DeleteDeprecatedSubjectValuesPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepository;
@@ -24,8 +23,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_SUBJECT_
 @Component
 @RequiredArgsConstructor
 public class SubjectValuePersistenceJpaAdapter implements
-    CreateSubjectValuePort,
-    DeleteDeprecatedSubjectValuesPort {
+    CreateSubjectValuePort {
 
     private final SubjectValueJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -54,14 +52,5 @@ public class SubjectValuePersistenceJpaAdapter implements
                 return SubjectValueMapper.mapToDomainModel(sv, subjectEntity);
             })
             .toList();
-    }
-
-    @Override
-    public void deleteDeprecatedSubjectValues(UUID assessmentResultId) {
-        var deprecatedSubjectValues = repository.findDeprecatedSubjectValues(assessmentResultId);
-        var subjectValueIds = deprecatedSubjectValues.stream().map(SubjectValueJpaEntity::getId).toList();
-        var subjectIds = deprecatedSubjectValues.stream().map(SubjectValueJpaEntity::getSubjectId).toList();
-        subjectInsightRepository.deleteAllByAssessmentResultIdAndSubjectIdIn(assessmentResultId, subjectIds);
-        repository.deleteAllById(subjectValueIds);
     }
 }

@@ -12,10 +12,8 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.attributevalue.DeleteDeprecatedAttributeValuesPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.application.port.out.subjectvalue.DeleteDeprecatedSubjectValuesPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +39,6 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     private final CreateSubjectValuePort createSubjectValuePort;
     private final CreateAttributeValuePort createAttributeValuePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final DeleteDeprecatedSubjectValuesPort deleteDeprecatedSubjectValuesPort;
-    private final DeleteDeprecatedAttributeValuesPort deleteDeprecatedAttributeValuesPort;
 
     @Override
     public Result calculateMaturityLevel(Param param) {
@@ -80,8 +76,6 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
     }
 
     private void reinitializeAssessmentResult(AssessmentResult assessmentResult) {
-        deleteDeprecatedSubjectValuesPort.deleteDeprecatedSubjectValues(assessmentResult.getId());
-        deleteDeprecatedAttributeValuesPort.deleteDeprecatedAttributeValues(assessmentResult.getId());
         var allSubjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId());
 
         List<SubjectValue> newSubjectValues = createNewSubjectValues(allSubjects, assessmentResult.getSubjectValues(), assessmentResult.getId());

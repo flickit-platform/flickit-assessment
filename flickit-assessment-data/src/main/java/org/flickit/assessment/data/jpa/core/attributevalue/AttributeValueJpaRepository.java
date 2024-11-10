@@ -61,11 +61,4 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
     @Query("update AttributeValueJpaEntity a set a.confidenceValue = :confidenceValue where a.id = :id")
     void updateConfidenceValueById(@Param(value = "id") UUID id,
                                    @Param(value = "confidenceValue") Double confidenceValue);
-
-    @Query("""
-            SELECT av FROM AttributeValueJpaEntity av
-                LEFT JOIN AttributeJpaEntity a ON av.attributeId = a.id AND av.assessmentResult.kitVersionId = a.kitVersionId
-            WHERE a.id IS NULL AND av.assessmentResult.id = :assessmentResultId
-        """)
-    List<AttributeValueJpaEntity> findDeprecatedAttributeValues(@Param(value = "assessmentResultId") UUID assessmentResultId);
 }

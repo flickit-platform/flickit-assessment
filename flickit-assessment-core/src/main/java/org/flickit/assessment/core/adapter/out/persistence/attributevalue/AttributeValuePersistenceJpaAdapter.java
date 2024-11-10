@@ -14,14 +14,11 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.attributevalue.DeleteDeprecatedAttributeValuesPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributeinsight.AttributeInsightJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
@@ -47,8 +44,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AttributeValuePersistenceJpaAdapter implements
     CreateAttributeValuePort,
-    LoadAttributeValuePort,
-    DeleteDeprecatedAttributeValuesPort {
+    LoadAttributeValuePort {
 
     private final AttributeValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -58,8 +54,6 @@ public class AttributeValuePersistenceJpaAdapter implements
     private final AnswerJpaRepository answerRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
-    private final AttributeMaturityScoreJpaRepository attributeMaturityScoreRepository;
-    private final AttributeInsightJpaRepository attributeInsightRepository;
 
     @Override
     public List<AttributeValue> persistAll(List<Long> attributeIds, UUID assessmentResultId) {
@@ -154,15 +148,5 @@ public class AttributeValuePersistenceJpaAdapter implements
                 return AnswerMapper.mapToDomainModel(answerEntity, answerOption);
             })
             .toList();
-    }
-
-    @Override
-    public void deleteDeprecatedAttributeValues(UUID assessmentResultId) {
-        var attributeValues = repository.findDeprecatedAttributeValues(assessmentResultId);
-        var attributeValueIds = attributeValues.stream().map(AttributeValueJpaEntity::getId).toList();
-        attributeMaturityScoreRepository.deleteAllByAttributeValueIdIn(attributeValueIds);
-        List<Long> attributeIds = attributeValues.stream().map(AttributeValueJpaEntity::getAttributeId).toList();
-        attributeInsightRepository.deleteAllByAssessmentResultIdAndAttributeIdIn(assessmentResultId, attributeIds);
-        repository.deleteAllById(attributeValueIds);
     }
 }
