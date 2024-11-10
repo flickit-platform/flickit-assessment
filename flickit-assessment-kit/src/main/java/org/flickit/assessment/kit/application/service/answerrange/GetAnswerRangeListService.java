@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class GetAnswerRangeListService implements GetAnswerRangeListUseCase {
         List<AnswerRangeListItem> items = paginatedResponse.getItems().stream()
             .map(e -> new AnswerRangeListItem(e.getId(), e.getTitle(),
                 e.getAnswerOptions().stream()
-                    .map(a -> new AnswerRangeListItem.AnswerOptionListItem(a.getId(), a.getTitle(), a.getIndex()))
+                    .map(a -> new AnswerRangeListItem.AnswerOptionListItem(a.getId(), a.getTitle(), a.getIndex(), a.getValue()))
                     .toList()))
             .toList();
 
