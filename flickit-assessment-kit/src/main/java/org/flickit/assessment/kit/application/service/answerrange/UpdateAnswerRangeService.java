@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_TITLE_NOT_NULL;
 
 @Service
 @Transactional
@@ -39,8 +40,8 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
 
         var answerRange = loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId());
 
-        var isQuestionPresent = checkQuestionExistencePort.existsByAnswerRange(param.getAnswerRangeId(), param.getKitVersionId());
-        if (isQuestionPresent && answerRange.isReusable() && Boolean.FALSE.equals(param.getReusable()))
+        if (answerRange.isReusable() && Boolean.FALSE.equals(param.getReusable()) &&
+            checkQuestionExistencePort.existsByAnswerRange(param.getAnswerRangeId(), param.getKitVersionId()))
             throw new ValidationException(UPDATE_ANSWER_RANGE_NOT_ALLOWED);
 
         if (Boolean.TRUE.equals(param.getReusable()) && param.getTitle() == null)
