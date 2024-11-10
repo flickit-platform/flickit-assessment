@@ -43,6 +43,7 @@
 		<novu.version>1.6.0</novu.version>
         <spring-ai.version>1.0.0-M2</spring-ai.version>
         <testcontainers.version>1.20.2</testcontainers.version>
+        <guava.version>33.3.1-jre</guava.version>
 
 		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -227,6 +228,11 @@
             <artifactId>minio</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
     </dependencies>
 

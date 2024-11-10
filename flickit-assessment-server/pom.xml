@@ -39,6 +39,12 @@
             <groupId>org.flickit</groupId>
             <artifactId>flickit-assessment-common</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
