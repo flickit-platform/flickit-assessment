@@ -10,10 +10,14 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
@@ -24,6 +28,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     DeleteDeprecatedSubjectValuesPort {
 
     private final SubjectValueJpaRepository repository;
+    private final SubjectJpaRepository subjectRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final SubjectInsightJpaRepository subjectInsightRepository;
 
@@ -39,9 +44,15 @@ public class SubjectValuePersistenceJpaAdapter implements
         }).toList();
 
         var persistedEntities = repository.saveAll(entities);
+        Long kitVersionId = assessmentResult.getKitVersionId();
+        var idToSubjectEntity = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, kitVersionId).stream()
+            .collect(Collectors.toMap(SubjectJpaEntity::getId, Function.identity()));
 
         return persistedEntities.stream()
-            .map(SubjectValueMapper::mapToDomainModel)
+            .map(sv -> {
+                SubjectJpaEntity subjectEntity = idToSubjectEntity.get(sv.getSubjectId());
+                return SubjectValueMapper.mapToDomainModel(sv, subjectEntity);
+            })
             .toList();
     }
 

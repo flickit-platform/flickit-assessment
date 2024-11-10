@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEntity, AnswerRangeJpaEntity.EntityId> {
@@ -18,6 +19,8 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
     Page<AnswerRangeJpaEntity> findByKitVersionIdAndReusableTrue(long kitVersionId, Pageable pageable);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
+
+    Optional<AnswerRangeJpaEntity> findByIdAndKitVersionId(long id, long kitVersionId);
 
     @Modifying
     @Query("""

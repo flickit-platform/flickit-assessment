@@ -60,6 +60,7 @@ class GetKitQuestionnaireDetailServiceTest {
             "qHint",
             true,
             true,
+            153L,
             1L);
 
         var expectedResult = new LoadKitQuestionnaireDetailPort.Result(5,
