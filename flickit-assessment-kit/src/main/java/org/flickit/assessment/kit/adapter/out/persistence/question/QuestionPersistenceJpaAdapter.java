@@ -46,7 +46,8 @@ public class QuestionPersistenceJpaAdapter implements
     LoadQuestionPort,
     LoadAttributeLevelQuestionsPort,
     DeleteQuestionPort,
-    LoadQuestionnaireQuestionsPort {
+    LoadQuestionnaireQuestionsPort,
+    CheckQuestionExistencePort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -222,5 +223,10 @@ public class QuestionPersistenceJpaAdapter implements
             QuestionJpaEntity.Fields.INDEX,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public boolean existsByAnswerRange(long answerRangeId, long kitVersionId) {
+        return repository.existsByAnswerRangeIdAndKitVersionId(answerRangeId, kitVersionId);
     }
 }

@@ -36,4 +36,13 @@ public class AnswerRangeMother {
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
         );
     }
+
+    public static AnswerRange createReusableAnswerRangeWithNoOptions() {
+        return new AnswerRange(
+            id++,
+            "title" + id,
+            true,
+            null
+        );
+    }
 }
