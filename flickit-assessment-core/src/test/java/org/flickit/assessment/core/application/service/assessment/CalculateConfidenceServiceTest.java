@@ -8,6 +8,7 @@ import org.flickit.assessment.core.application.port.in.assessment.CalculateConfi
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
@@ -23,13 +24,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_CONFIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.AttributeValueMother.toBeCalcAsConfidenceLevelWithWeight;
-import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withQAValuesAndSubjectWithQAs;
+import static org.flickit.assessment.core.test.fixture.application.SubjectValueMother.withAttributeValues;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -39,6 +41,9 @@ class CalculateConfidenceServiceTest {
 
     @InjectMocks
     private CalculateConfidenceService service;
+
+    @Mock
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -103,8 +108,8 @@ class CalculateConfidenceServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            SubjectValueMother.withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
-            SubjectValueMother.withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
+            SubjectValueMother.withAttributeValues(s1AttributeValues, 1),
+            SubjectValueMother.withAttributeValues(s2AttributeValues, 1)
         );
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
@@ -114,6 +119,7 @@ class CalculateConfidenceServiceTest {
         Param param = new Param(assessmentResult.getAssessment().getId(), currentUserId);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
 
@@ -125,7 +131,7 @@ class CalculateConfidenceServiceTest {
         verify(updateAssessmentPort, times(1)).updateLastModificationTime(any(), any());
 
         assertNotNull(result);
-        double maxPossibleSumConfidence = (100 * 2) + (100 * 2) + (100 * 3) + (100 * 3) + (100 * 4) + (100 * 1); //1500
+        double maxPossibleSumConfidence = (100 * 2) + (100 * 2) + (100 * 3) + (100 * 3) + (100 * 4) + (100); //1500
         double gainedSumConfidence = (((5.0 / 30.0) * 2) + ((25.0 / 30.0) * 2) + ((15.0 / 30.0) * 3) + ((25.0 / 30.0) * 3) + ((15.0 / 30.0) * 4) + ((25.0 / 30.0) * 1)) * 100;
         double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
         assertEquals(confidenceValue, result.confidenceValue(), 0.01);
@@ -148,12 +154,12 @@ class CalculateConfidenceServiceTest {
         );
 
         List<SubjectValue> subjectValues = List.of(
-            withQAValuesAndSubjectWithQAs(s1AttributeValues, s1AttributeValues.stream().map(AttributeValue::getAttribute).toList()),
-            withQAValuesAndSubjectWithQAs(s2AttributeValues, s2AttributeValues.stream().map(AttributeValue::getAttribute).toList())
+            withAttributeValues(s1AttributeValues, 1),
+            withAttributeValues(s2AttributeValues, 1)
         );
 
         var newAttributeValue = toBeCalcAsConfidenceLevelWithWeight(4, ConfidenceLevel.SOMEWHAT_UNSURE.getId()); //6 questions with 5 answers with cl=3, attrCl = 15/30
-        var newSubjectValue = withQAValuesAndSubjectWithQAs(List.of(), List.of(newAttributeValue.getAttribute()));
+        var newSubjectValue = withAttributeValues(List.of(), 1);
 
         List<Subject> subjects = new ArrayList<>(subjectValues.stream().map(SubjectValue::getSubject).toList());
         subjects.add(newSubjectValue.getSubject());
@@ -164,6 +170,7 @@ class CalculateConfidenceServiceTest {
         CalculateConfidenceUseCase.Param param = new CalculateConfidenceUseCase.Param(assessmentResult.getAssessment().getId(), currentUserId);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentResult.getAssessment().getId())).thenReturn(Optional.of(assessmentResult));
         when(loadConfidenceLevelCalculateInfoPort.load(assessmentResult.getAssessment().getId())).thenReturn(assessmentResult);
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
@@ -177,7 +184,7 @@ class CalculateConfidenceServiceTest {
         assertNotNull(result);
         assertNotNull(result.confidenceValue());
 
-        double maxPossibleSumConfidence = (100 * 2) + (100 * 2) + (100 * 3) + (100 * 3) + (100 * 4) + (100 * 1) + (100 * 4);
+        double maxPossibleSumConfidence = (100 * 2) + (100 * 2) + (100 * 3) + (100 * 3) + (100 * 4) + (100) + (100 * 4);
         double gainedSumConfidence = (((5.0 / 30.0) * 2) + ((25.0 / 30.0) * 2) + ((15.0 / 30.0) * 3) +
             ((25.0 / 30.0) * 3) + ((15.0 / 30.0) * 4) + ((25.0 / 30.0) * 1) + (15.0 / 30.0) * 4) * 100;
         double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;

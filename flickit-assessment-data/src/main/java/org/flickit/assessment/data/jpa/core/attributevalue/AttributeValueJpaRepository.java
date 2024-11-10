@@ -39,7 +39,18 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
             WHERE att.subjectId IN :subjectIds
         """)
     List<SubjectIdAttributeValueView> findByAssessmentResultIdAndSubjectIdIn(@Param(value = "assessmentResultId") UUID assessmentResultId,
-                                                                                 @Param(value = "subjectIds") Collection<Long> subjectIds);
+                                                                             @Param(value = "subjectIds") Collection<Long> subjectIds);
+
+    @Query("""
+            SELECT
+                av AS attributeValue,
+                att.subjectId AS subjectId,
+                att AS attribute
+            FROM AttributeValueJpaEntity av
+            JOIN AttributeJpaEntity att ON av.attributeId = att.id AND av.assessmentResult.kitVersionId = att.kitVersionId
+            WHERE av.assessmentResult.id = :assessmentResultId
+        """)
+    List<SubjectIdAttributeValueView> findAllWithAttributeByAssessmentResultId(@Param(value = "assessmentResultId") UUID assessmentResultId);
 
     @Modifying
     @Query("update AttributeValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")
