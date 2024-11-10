@@ -66,11 +66,11 @@ class QuestionCreateKitPersisterTest {
 
         var levelTwo = levelTwo();
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, questionnaire.getId());
+        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, 153L, questionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
-        var answerOption1 = createAnswerOption(question.getId(), OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(question.getId(), OPTION_TITLE, OPTION_INDEX2);
+        var answerOption1 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
+        var answerOption2 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
         var optionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
         var optionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
         impact.setOptionImpacts(List.of(optionImpact1, optionImpact2));
@@ -108,8 +108,8 @@ class QuestionCreateKitPersisterTest {
 
         when(createAnswerRangePort.persist(createAnswerRangeParam)).thenReturn(answerRangeId);
         when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
-        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), question.getId(), answerRangeId, OPTION_VALUE1, kitVersionId, currentUserId);
-        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), question.getId(), answerRangeId, OPTION_VALUE2, kitVersionId, currentUserId);
+        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), answerRangeId, OPTION_VALUE1, kitVersionId, currentUserId);
+        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), answerRangeId, OPTION_VALUE2, kitVersionId, currentUserId);
         when(createAnswerOptionPort.persist(createOption1Param)).thenReturn(answerOption1.getId());
         when(createAnswerOptionPort.persist(createOption2Param)).thenReturn(answerOption2.getId());
 

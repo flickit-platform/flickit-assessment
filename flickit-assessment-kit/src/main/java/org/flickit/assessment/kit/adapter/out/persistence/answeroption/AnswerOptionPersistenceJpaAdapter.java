@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.answeroption;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
@@ -20,9 +21,9 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_
 @Component
 @RequiredArgsConstructor
 public class AnswerOptionPersistenceJpaAdapter implements
-    UpdateAnswerOptionPort,
     LoadAnswerOptionsByQuestionPort,
     CreateAnswerOptionPort,
+    UpdateAnswerOptionPort,
     DeleteAnswerOptionPort {
 
     private final AnswerOptionJpaRepository repository;
@@ -30,8 +31,8 @@ public class AnswerOptionPersistenceJpaAdapter implements
     private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
-    public void update(UpdateAnswerOptionPort.Param param) {
-        repository.update(param.id(),
+    public void updateTitle(UpdateAnswerOptionPort.UpdateTitleParam param) {
+        repository.updateTitle(param.answerOptionId(),
             param.kitVersionId(),
             param.title(),
             param.lastModificationTime(),
@@ -39,11 +40,25 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AnswerOption> loadByQuestionId(Long questionId, Long kitVersionId) {
-        if (!questionRepository.existsByIdAndKitVersionId(questionId, kitVersionId))
-            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+    public void update(UpdateAnswerOptionPort.Param param) {
+        if (!repository.existsByIdAndKitVersionId(param.answerOptionId(), param.kitVersionId()))
+            throw new ResourceNotFoundException(ANSWER_OPTION_ID_NOT_FOUND);
 
-        return repository.findByQuestionIdAndKitVersionId(questionId, kitVersionId).stream()
+        repository.update(param.answerOptionId(),
+            param.kitVersionId(),
+            param.index(),
+            param.title(),
+            param.value(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
+
+    @Override
+    public List<AnswerOption> loadByQuestionId(Long questionId, Long kitVersionId) {
+        QuestionJpaEntity question = questionRepository.findByIdAndKitVersionId(questionId, kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
+
+        return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(question.getAnswerRangeId(), kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }

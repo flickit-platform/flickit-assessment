@@ -32,8 +32,8 @@ class QuestionUpdateKitValidatorTest {
 
     @Test
     void testValidator_SameQuestionsInDbAndDsl_Valid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 1L);
-        var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 1L);
+        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+        var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
         questionOne.setOptions(List.of());
         questionTwo.setOptions(List.of());
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
@@ -59,8 +59,8 @@ class QuestionUpdateKitValidatorTest {
 
     @Test
     void testValidator_dslHasOneQuestionLessThanDb_Invalid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 1L);
-        var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 1L);
+        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+        var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
         questionOne.setOptions(List.of());
         questionTwo.setOptions(List.of());
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
@@ -90,7 +90,7 @@ class QuestionUpdateKitValidatorTest {
 
     @Test
     void testValidator_dslHasOneNewAnswerOption_Invalid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 1L);
+        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
         questionOne.setOptions(List.of());
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne));
@@ -124,8 +124,8 @@ class QuestionUpdateKitValidatorTest {
 
     @Test
     void testValidator_dslHasOneNewAnswerOptionLessThanDb_Invalid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 1L);
-        var deletedAnswerOption = AnswerOptionMother.createAnswerOption(questionOne.getId(), OPTION_TITLE, 1);
+        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+        var deletedAnswerOption = AnswerOptionMother.createAnswerOption(questionOne.getAnswerRangeId(), OPTION_TITLE, 1);
         questionOne.setOptions(List.of(deletedAnswerOption));
         var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne));

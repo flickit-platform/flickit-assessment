@@ -45,7 +45,7 @@ public class AnswerPersistenceJpaAdapter implements
                 .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
 
         if (!Objects.equals(question.getKitVersionId(), assessmentResult.getKitVersionId()) ||
-            (answerOption!=null && !Objects.equals(question.getId(), answerOption.getQuestionId())) ||
+            (answerOption!=null && !Objects.equals(question.getAnswerRangeId(), answerOption.getAnswerRangeId())) ||
             !Objects.equals(question.getQuestionnaireId(), param.questionnaireId()))
             throw new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND);
 
@@ -74,8 +74,10 @@ public class AnswerPersistenceJpaAdapter implements
         if (param.answerOptionId() != null) {
             answerOption = answerOptionRepository.findByIdAndKitVersionId(param.answerOptionId(), answer.getAssessmentResult().getKitVersionId())
                 .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
+            var question = questionRepository.findByIdAndKitVersionId(answer.getQuestionId(), answer.getAssessmentResult().getKitVersionId())
+                .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND));
 
-            if (!Objects.equals(answer.getQuestionId(), answerOption.getQuestionId()))
+            if (!Objects.equals(answerOption.getAnswerRangeId(), question.getAnswerRangeId()))
                 throw new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND);
         }
 

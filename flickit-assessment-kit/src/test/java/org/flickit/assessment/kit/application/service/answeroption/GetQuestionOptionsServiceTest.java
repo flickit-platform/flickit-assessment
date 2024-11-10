@@ -59,8 +59,9 @@ class GetQuestionOptionsServiceTest {
     @Test
     void testGetQuestionOptions_WhenCurrentUserIsExpertGroupMember_ThenGetQuestionOptions() {
         var param = createParam(GetQuestionOptionsUseCase.Param.ParamBuilder::build);
-        var answerOptionA = createAnswerOption(param.getQuestionId(), "titleA", 1);
-        var answerOptionB = createAnswerOption(param.getQuestionId(), "titleB", 2);
+        var answerRangeId = 8329L;
+        var answerOptionA = createAnswerOption(answerRangeId, "titleA", 1);
+        var answerOptionB = createAnswerOption(answerRangeId, "titleB", 2);
         List<AnswerOption> expectedAnswerOptions = List.of(answerOptionA, answerOptionB);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
@@ -76,6 +77,7 @@ class GetQuestionOptionsServiceTest {
             assertEquals(expectedAnswerOptions.get(i).getId(), result.answerOptions().get(i).id());
             assertEquals(expectedAnswerOptions.get(i).getIndex(), result.answerOptions().get(i).index());
             assertEquals(expectedAnswerOptions.get(i).getTitle(), result.answerOptions().get(i).title());
+            assertEquals(expectedAnswerOptions.get(i).getValue(), result.answerOptions().get(i).value());
         }
     }
 

@@ -67,9 +67,9 @@ class GetKitQuestionDetailServiceTest {
         var maturityLevels = MaturityLevelMother.allLevels();
         var question = QuestionMother.createQuestion();
 
-        var answerOption1 = createAnswerOption(question.getId(), "1st option", 0);
-        var answerOption2 = createAnswerOption(question.getId(), "2nd option", 1);
-        var answerOption3 = createAnswerOption(question.getId(), "3rd option", 2);
+        var answerOption1 = createAnswerOption(question.getAnswerRangeId(), "1st option", 0);
+        var answerOption2 = createAnswerOption(question.getAnswerRangeId(), "2nd option", 1);
+        var answerOption3 = createAnswerOption(question.getAnswerRangeId(), "3rd option", 2);
 
         var answerOptions = List.of(
             answerOption1,
