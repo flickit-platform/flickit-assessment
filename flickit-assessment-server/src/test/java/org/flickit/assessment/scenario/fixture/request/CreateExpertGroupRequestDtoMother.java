@@ -1,11 +1,13 @@
 package org.flickit.assessment.scenario.fixture.request;
 
+import lombok.experimental.UtilityClass;
 import org.flickit.assessment.users.adapter.in.rest.expertgroup.CreateExpertGroupRequestDto;
 
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.scenario.fixture.request.MultiPartFileMother.picture;
 
+@UtilityClass
 public class CreateExpertGroupRequestDtoMother {
 
     private static int index = 0;
