@@ -417,6 +417,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_ANSWER_RANGE_REUSABLE_NOT_NULL = "update-answer-range.reusable.notNull";
     public static final String UPDATE_ANSWER_RANGE_TITLE_NOT_NULL = "update-answer-range.title.notNull";
     public static final String UPDATE_ANSWER_RANGE_NOT_ALLOWED = "update-answer-range.notAllowed";
+    public static final String UPDATE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_FOUND = "update-answer-range.answerRangeId.notFound";
 
     public static final String UPDATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "update-answer-option.kitVersionId.notNull";
     public static final String UPDATE_ANSWER_OPTION_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option.answerOptionId.notNull";
