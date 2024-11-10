@@ -82,7 +82,7 @@ class CreateAnswerOptionServiceTest {
         long answerOptionId = 123L;
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question = QuestionMother.createQuestionWithImpacts();
-        AnswerRange answerRange = AnswerRangeMother.createNonreusableAnswerRangeWithTwoOptions();
+        AnswerRange answerRange = AnswerRangeMother.createNonReusableAnswerRangeWithTwoOptions();
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);

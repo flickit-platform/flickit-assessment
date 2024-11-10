@@ -2134,6 +2134,41 @@
 			"name": "Answer Range",
 			"item": [
 				{
+					"name": "Create Answer Range Option",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"answerRangeId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-range-options",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"answer-range-options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Load Answer Range List",
 					"request": {
 						"method": "GET",
