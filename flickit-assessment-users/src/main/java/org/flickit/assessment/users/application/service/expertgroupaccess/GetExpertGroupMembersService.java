@@ -28,13 +28,11 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
     @Override
     public PaginatedResponse<Member> getExpertGroupMembers(Param param) {
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(param.getId());
-
         boolean userIsOwner = ownerId.equals(param.getCurrentUserId());
         if (!userIsOwner && param.getStatus() == ExpertGroupAccessStatus.PENDING)
             return new PaginatedResponse<>(List.of(), 0, 0, null, null, 0);
 
         ExpertGroupAccessStatus requiredStatus = param.getStatus() != null ? param.getStatus() : ExpertGroupAccessStatus.ACTIVE;
-
         var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), requiredStatus.ordinal(), param.getPage(), param.getSize());
         var members = mapToMembers(portResult.getItems(), userIsOwner, param.getCurrentUserId());
 
@@ -59,8 +57,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
                 item.linkedin(),
                 ExpertGroupAccessStatus.values()[item.status()],
                 item.inviteExpirationDate(),
-                userIsOwner && !item.id().equals(currentUserId) ? Boolean.TRUE : Boolean.FALSE
-            ))
+                userIsOwner && !item.id().equals(currentUserId) ? Boolean.TRUE : Boolean.FALSE))
             .toList();
     }
 }
