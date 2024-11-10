@@ -39,7 +39,7 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
 
         var answerRange = loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId());
 
-        var isQuestionPresent = checkQuestionExistencePort.checkByAnswerRangeIdAndKitVersionId(param.getAnswerRangeId(), param.getKitVersionId());
+        var isQuestionPresent = checkQuestionExistencePort.existsByAnswerRange(param.getAnswerRangeId(), param.getKitVersionId());
         if (isQuestionPresent && answerRange.isReusable() && Boolean.FALSE.equals(param.getReusable()))
             throw new ValidationException(UPDATE_ANSWER_RANGE_NOT_ALLOWED);
 

@@ -226,7 +226,7 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean checkByAnswerRangeIdAndKitVersionId(long answerRangeId, long kitVersionId) {
+    public boolean existsByAnswerRange(long answerRangeId, long kitVersionId) {
         return repository.existsByAnswerRangeIdAndKitVersionId(answerRangeId, kitVersionId);
     }
 }
