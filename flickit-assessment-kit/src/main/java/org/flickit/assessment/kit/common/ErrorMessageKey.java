@@ -430,13 +430,13 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_OPTION_INDEX_DUPLICATE = "create-answer-option.index.duplicate";
     public static final String CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE = "create-answer-option.answerRange.reusable";
 
-    public static final String CREATE_REUSABLE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "create-reusable-answer-option.kitVersionId.notNull";
-    public static final String CREATE_REUSABLE_ANSWER_OPTION_ANSWER_RANGE_ID_NOT_NULL = "create-reusable-answer-option.answerRangeId.notNull";
-    public static final String CREATE_REUSABLE_ANSWER_OPTION_INDEX_NOT_NULL = "create-reusable-answer-option.index.notNull";
-    public static final String CREATE_REUSABLE_ANSWER_OPTION_TITLE_NOT_BLANK = "create-reusable-answer-option.title.notBlank";
-    public static final String CREATE_REUSABLE_ANSWER_OPTION_TITLE_SIZE_MAX = "create-reusable-answer-option.title.size.max";
-    public static final String CREATE_REUSABLE_ANSWER_OPTION_VALUE_NOT_NULL = "create-reusable-answer-option.value.notNull";
-    public static final String CREATE_ANSWER_OPTION_ANSWER_RANGE_NON_REUSABLE = "create-reusable-answer-option.answerRange.non-reusable";
+    public static final String CREATE_ANSWER_RANGE_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-range-option.kitVersionId.notNull";
+    public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_ID_NOT_NULL = "create-answer-range-option.answerRangeId.notNull";
+    public static final String CREATE_ANSWER_RANGE_OPTION_INDEX_NOT_NULL = "create-answer-range-option.index.notNull";
+    public static final String CREATE_ANSWER_RANGE_OPTION_TITLE_NOT_BLANK = "create-answer-range-option.title.notBlank";
+    public static final String CREATE_ANSWER_RANGE_OPTION_TITLE_SIZE_MAX = "create-answer-range-option.title.size.max";
+    public static final String CREATE_ANSWER_RANGE_OPTION_VALUE_NOT_NULL = "create-answer-range-option.value.notNull";
+    public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE = "create-answer-range-option.answerRange.non-reusable";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

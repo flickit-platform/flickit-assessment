@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.domain.KitVersion;
-import org.flickit.assessment.kit.application.port.in.answerrange.CreateReusableAnswerOptionUseCase;
+import org.flickit.assessment.kit.application.port.in.answerrange.CreateAnswerRangeOptionUseCase;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ANSWER_OPTION_ANSWER_RANGE_NON_REUSABLE;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,13 +30,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateReusableAnswerOptionServiceTest {
+class CreateAnswerRangeOptionServiceTest {
 
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
     @InjectMocks
-    private CreateReusableAnswerOptionService service;
+    private CreateAnswerRangeOptionService service;
 
     @Mock
     private LoadKitVersionPort loadKitVersionPort;
@@ -51,18 +51,18 @@ class CreateReusableAnswerOptionServiceTest {
     private CreateAnswerOptionPort createAnswerOptionPort;
 
     @Test
-    void testCreateReusableAnswerOption_WhenCurrentUserIsNotOwner_ThrowAccessDeniedException() {
-        var param = createParam(CreateReusableAnswerOptionUseCase.Param.ParamBuilder::build);
+    void testCreateAnswerRangeOption_WhenCurrentUserIsNotOwner_ThrowAccessDeniedException() {
+        var param = createParam(CreateAnswerRangeOptionUseCase.Param.ParamBuilder::build);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.createReusableAnswerOption(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.createAnswerRangeOption(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
-    void testCreateReusableAnswerOption_WhenAnswerRangeIsNonReusable_ThrowsValidationException() {
+    void testCreateAnswerRangeOption_WhenAnswerRangeIsNonReusable_ThrowsValidationException() {
         var param = createParam(b -> b.currentUserId(ownerId));
         AnswerRange answerRange = AnswerRangeMother.createNonreusableAnswerRangeWithTwoOptions();
 
@@ -70,14 +70,14 @@ class CreateReusableAnswerOptionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
 
-        var throwable = assertThrows(ValidationException.class, () -> service.createReusableAnswerOption(param));
-        assertEquals(CREATE_ANSWER_OPTION_ANSWER_RANGE_NON_REUSABLE, throwable.getMessageKey());
+        var throwable = assertThrows(ValidationException.class, () -> service.createAnswerRangeOption(param));
+        assertEquals(CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE, throwable.getMessageKey());
 
         verifyNoInteractions(createAnswerOptionPort);
     }
 
     @Test
-    void testCreateReusableAnswerOption_WhenAnswerRangeIsReusable_CreateAnswerOption() {
+    void testCreateAnswerRangeOption_WhenAnswerRangeIsReusable_CreateAnswerOption() {
         long answerOptionId = 123L;
         var param = createParam(b -> b.currentUserId(ownerId));
         AnswerRange answerRange = AnswerRangeMother.createAnswerRangeWithTwoOptions();
@@ -87,7 +87,7 @@ class CreateReusableAnswerOptionServiceTest {
         when(loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
         when(createAnswerOptionPort.persist(any())).thenReturn(answerOptionId);
 
-        CreateReusableAnswerOptionUseCase.Result result = service.createReusableAnswerOption(param);
+        CreateAnswerRangeOptionUseCase.Result result = service.createAnswerRangeOption(param);
         assertEquals(answerOptionId, result.id());
 
         var createPortParam = ArgumentCaptor.forClass(CreateAnswerOptionPort.Param.class);
@@ -100,14 +100,14 @@ class CreateReusableAnswerOptionServiceTest {
         assertEquals(param.getCurrentUserId(), createPortParam.getValue().createdBy());
     }
 
-    private CreateReusableAnswerOptionUseCase.Param createParam(Consumer<CreateReusableAnswerOptionUseCase.Param.ParamBuilder> changer) {
+    private CreateAnswerRangeOptionUseCase.Param createParam(Consumer<CreateAnswerRangeOptionUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private CreateReusableAnswerOptionUseCase.Param.ParamBuilder paramBuilder() {
-        return CreateReusableAnswerOptionUseCase.Param.builder()
+    private CreateAnswerRangeOptionUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateAnswerRangeOptionUseCase.Param.builder()
             .kitVersionId(1L)
             .answerRangeId(5163L)
             .index(3)

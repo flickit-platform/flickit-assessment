@@ -1,4 +1,4 @@
 package org.flickit.assessment.kit.adapter.in.rest.answerrange;
 
-public record CreateReusableAnswerOptionResponseDto(long id) {
+public record CreateAnswerRangeOptionResponseDto(long id) {
 }

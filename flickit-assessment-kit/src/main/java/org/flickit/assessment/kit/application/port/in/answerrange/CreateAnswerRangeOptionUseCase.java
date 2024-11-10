@@ -14,28 +14,28 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public interface CreateReusableAnswerOptionUseCase {
+public interface CreateAnswerRangeOptionUseCase {
 
-    Result createReusableAnswerOption(Param param);
+    Result createAnswerRangeOption(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = CREATE_REUSABLE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL)
+        @NotNull(message = CREATE_ANSWER_RANGE_OPTION_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
 
-        @NotNull(message = CREATE_REUSABLE_ANSWER_OPTION_ANSWER_RANGE_ID_NOT_NULL)
+        @NotNull(message = CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_ID_NOT_NULL)
         Long answerRangeId;
 
-        @NotNull(message = CREATE_REUSABLE_ANSWER_OPTION_INDEX_NOT_NULL)
+        @NotNull(message = CREATE_ANSWER_RANGE_OPTION_INDEX_NOT_NULL)
         Integer index;
 
-        @NotBlank(message = CREATE_REUSABLE_ANSWER_OPTION_TITLE_NOT_BLANK)
-        @Size(max = 100, message = CREATE_REUSABLE_ANSWER_OPTION_TITLE_SIZE_MAX)
+        @NotBlank(message = CREATE_ANSWER_RANGE_OPTION_TITLE_NOT_BLANK)
+        @Size(max = 100, message = CREATE_ANSWER_RANGE_OPTION_TITLE_SIZE_MAX)
         String title;
 
-        @NotNull(message = CREATE_REUSABLE_ANSWER_OPTION_VALUE_NOT_NULL)
+        @NotNull(message = CREATE_ANSWER_RANGE_OPTION_VALUE_NOT_NULL)
         Double value;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
