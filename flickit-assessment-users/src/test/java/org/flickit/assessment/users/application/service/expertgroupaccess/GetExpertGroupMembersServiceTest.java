@@ -1,10 +1,8 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -20,7 +18,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -30,12 +27,13 @@ class GetExpertGroupMembersServiceTest {
 
     @InjectMocks
     private GetExpertGroupMembersService service;
-    @Mock
-    private CheckExpertGroupExistsPort checkExpertGroupExistsPort;
+
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+
     @Mock
     private LoadExpertGroupMembersPort loadExpertGroupMembersPort;
+
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
@@ -55,7 +53,6 @@ class GetExpertGroupMembersServiceTest {
 
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, param.getPage(), param.getSize(), "title", "asc", 2);
 
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(ownerId);
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), 1, param.getPage(), param.getSize())).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
@@ -78,7 +75,6 @@ class GetExpertGroupMembersServiceTest {
 
         PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, param.getPage(), param.getSize(), "title", "asc", 2);
 
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(ownerId);
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), 1, param.getPage(), param.getSize())).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
@@ -98,7 +94,6 @@ class GetExpertGroupMembersServiceTest {
     void testGetExpertGroupMembersService_WhenCurrentUserIsNotOwnerAndPendingStatus_ShouldReturnEmptyResult() {
         var param = createParam(b -> b.status(ExpertGroupAccessStatus.PENDING.name()));
 
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(ownerId);
 
         PaginatedResponse<GetExpertGroupMembersUseCase.Member> result = service.getExpertGroupMembers(param);
@@ -112,21 +107,10 @@ class GetExpertGroupMembersServiceTest {
     }
 
     @Test
-    void testGetExpertGroupMembers_WhenExpertGroupIdIsInvalid_ShouldReturnExpertGroupNotFound() {
-        var param = createParam(GetExpertGroupMembersUseCase.Param.ParamBuilder::build);
-
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(false);
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getExpertGroupMembers(param));
-        assertEquals(GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND, throwable.getMessage());
-    }
-
-    @Test
     void testGetExpertGroupMembers_CurrentUserIsNotOwner_ResultWithoutEmail() {
         var param = createParam(GetExpertGroupMembersUseCase.Param.ParamBuilder::build);
         var paginatedResult = new PaginatedResponse<>(portMembers, param.getPage(), param.getSize(), "title", "asc", 2);
 
-        when(checkExpertGroupExistsPort.existsById(param.getId())).thenReturn(true);
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(param.getCurrentUserId());
         when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), 1, param.getPage(), param.getSize())).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);

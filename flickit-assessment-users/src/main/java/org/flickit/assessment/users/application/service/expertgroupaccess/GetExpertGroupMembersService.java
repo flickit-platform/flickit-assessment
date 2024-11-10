@@ -2,10 +2,8 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -16,8 +14,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND;
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -25,16 +21,12 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
-    private final CheckExpertGroupExistsPort checkExpertGroupExistsPort;
     private final LoadExpertGroupMembersPort loadExpertGroupMembersPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
     public PaginatedResponse<Member> getExpertGroupMembers(Param param) {
-        if (!checkExpertGroupExistsPort.existsById(param.getId()))
-            throw new ResourceNotFoundException(GET_EXPERT_GROUP_MEMBERS_EXPERT_GROUP_NOT_FOUND);
-
         UUID ownerId = loadExpertGroupOwnerPort.loadOwnerId(param.getId());
 
         boolean userIsOwner = ownerId.equals(param.getCurrentUserId());
