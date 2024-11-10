@@ -73,7 +73,7 @@ class UpdateAnswerRangeServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
-        when(checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId())).thenReturn(true);
+        when(checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateAnswerRange(param));
         assertEquals(UPDATE_ANSWER_RANGE_NOT_ALLOWED, throwable.getMessageKey());
@@ -86,7 +86,7 @@ class UpdateAnswerRangeServiceTest {
         var param = createParam(b -> b.currentUserId(ownerId).title(null));
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId())).thenReturn(false);
+        when(checkQuestionExistencePort.checkByAnswerRange(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(false);
         when(loadAnswerRangePort.load(param.getAnswerRangeId(), param.getKitVersionId())).thenReturn(answerRange);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
 

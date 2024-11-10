@@ -25,7 +25,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
 
-    boolean existsByAnswerRangeId(long answerRangeId);
+    boolean existsByAnswerRangeId(long answerRangeId, long kitVersionId);
 
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
 
