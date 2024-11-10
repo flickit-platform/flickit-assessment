@@ -9,5 +9,5 @@ public interface LoadAnswerOptionsByQuestionPort {
 
     List<AnswerOption> loadByQuestionId(Long questionId, Long kitVersionId);
 
-    List<AnswerOption> loadByQuestionIdInAndKitVersionId(Set<Long> questionIds, long kitVersionId);
+    List<AnswerOption> loadByRangeIdInAndKitVersionId(Set<Long> rangeIds, long kitVersionId);
 }

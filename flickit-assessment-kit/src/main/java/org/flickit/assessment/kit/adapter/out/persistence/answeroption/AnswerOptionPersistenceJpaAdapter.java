@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_OPTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
@@ -68,14 +67,9 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AnswerOption> loadByQuestionIdInAndKitVersionId(Set<Long> questionIds, long kitVersionId) {
-        List<QuestionJpaEntity> entities = questionRepository.findAllByIdInAndKitVersionId(questionIds, kitVersionId);
-        Set<Long> rangeIds = entities.stream()
-            .map(QuestionJpaEntity::getAnswerRangeId)
-            .collect(Collectors.toSet());
-        List<AnswerOptionJpaEntity> optionEntities = repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds,
-            kitVersionId,
-            Sort.by(AnswerOptionJpaEntity.Fields.index));
+    public List<AnswerOption> loadByRangeIdInAndKitVersionId(Set<Long> rangeIds, long kitVersionId) {
+        Sort sortByIndex = Sort.by(AnswerOptionJpaEntity.Fields.index);
+        var optionEntities = repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds, kitVersionId, sortByIndex);
 
         return optionEntities.stream()
             .map(AnswerOptionMapper::mapToDomainModel)
