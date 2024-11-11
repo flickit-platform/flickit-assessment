@@ -19,7 +19,6 @@ public interface UpdateQuestionPort {
                  String hint,
                  Boolean mayNotBeApplicable,
                  Boolean advisable,
-                 Long answerRangeId,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedBy) {
     }

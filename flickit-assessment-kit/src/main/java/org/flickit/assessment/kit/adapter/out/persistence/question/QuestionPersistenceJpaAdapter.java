@@ -70,7 +70,6 @@ public class QuestionPersistenceJpaAdapter implements
             param.hint(),
             param.mayNotBeApplicable(),
             param.advisable(),
-            param.answerRangeId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }

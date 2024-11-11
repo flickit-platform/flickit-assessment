@@ -44,8 +44,6 @@ public interface UpdateQuestionUseCase {
         @NotNull(message = UPDATE_QUESTION_ADVISABLE_NOT_NULL)
         Boolean advisable;
 
-        Long answerRangeId;
-
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
@@ -56,7 +54,7 @@ public interface UpdateQuestionUseCase {
                      String title,
                      String hint,
                      Boolean mayNotBeApplicable,
-                     Boolean advisable, Long answerRangeId,
+                     Boolean advisable,
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.questionId = questionId;
@@ -65,7 +63,6 @@ public interface UpdateQuestionUseCase {
             this.hint = hint != null && !hint.isBlank() ? hint.trim(): null;
             this.mayNotBeApplicable = mayNotBeApplicable;
             this.advisable = advisable;
-            this.answerRangeId = answerRangeId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
