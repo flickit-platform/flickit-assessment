@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.answeroption;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -9,11 +10,13 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.DeleteAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_OPTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
@@ -21,7 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_
 @Component
 @RequiredArgsConstructor
 public class AnswerOptionPersistenceJpaAdapter implements
-    LoadAnswerOptionsByQuestionPort,
+    LoadAnswerOptionsPort,
     CreateAnswerOptionPort,
     UpdateAnswerOptionPort,
     DeleteAnswerOptionPort {
@@ -59,6 +62,14 @@ public class AnswerOptionPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
         return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(question.getAnswerRangeId(), kitVersionId).stream()
+            .map(AnswerOptionMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
+    public List<AnswerOption> loadByRangeIdInAndKitVersionId(Set<Long> rangeIds, long kitVersionId) {
+        Sort sortByIndex = Sort.by(AnswerOptionJpaEntity.Fields.index);
+        return repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds, kitVersionId, sortByIndex).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }

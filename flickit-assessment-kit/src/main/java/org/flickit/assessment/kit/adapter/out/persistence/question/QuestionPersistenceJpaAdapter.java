@@ -10,6 +10,7 @@ import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpact
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuestionsView;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
@@ -44,6 +45,7 @@ public class QuestionPersistenceJpaAdapter implements
     CreateQuestionPort,
     CountSubjectQuestionsPort,
     LoadQuestionPort,
+    LoadQuestionsPort,
     LoadAttributeLevelQuestionsPort,
     DeleteQuestionPort,
     LoadQuestionnaireQuestionsPort,
@@ -108,6 +110,24 @@ public class QuestionPersistenceJpaAdapter implements
         question.setImpacts(impacts);
         question.setOptions(options);
         return question;
+    }
+
+    @Override
+    public List<Question> loadAllByKitVersionId(long kitVersionId) {
+        var questionWithImpactsViews =  repository.loadByKitVersionId(kitVersionId);
+        var questionEntityToViews = questionWithImpactsViews.stream()
+            .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
+
+        return questionEntityToViews.entrySet().stream()
+            .map(e -> {
+                Question question = QuestionMapper.mapToDomainModel(e.getKey());
+                List<QuestionImpact> qImpacts = e.getValue().stream()
+                    .map(v -> QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact()))
+                    .toList();
+                question.setImpacts(qImpacts);
+                return question;
+            })
+            .toList();
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact, List<AnswerOptionJpaEntity> optionEntities) {
