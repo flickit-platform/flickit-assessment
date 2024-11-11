@@ -24,7 +24,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.application.service.assessmentkit.update.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
-import static org.flickit.assessment.kit.util.GenerateCodeUtil.*;
 
 @Slf4j
 @Service
@@ -113,7 +112,7 @@ public class QuestionnaireUpdateKitPersister implements UpdateKitPersister {
                 savedQuestionnaire.getId(),
                 kitVersionId,
                 dslQuestionnaire.getTitle(),
-                generateCode(dslQuestionnaire.getTitle()),
+                dslQuestionnaire.getCode(),
                 dslQuestionnaire.getIndex(),
                 dslQuestionnaire.getDescription(),
                 LocalDateTime.now(),
