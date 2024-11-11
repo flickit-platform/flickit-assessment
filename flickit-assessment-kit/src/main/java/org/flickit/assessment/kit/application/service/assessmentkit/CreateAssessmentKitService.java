@@ -52,7 +52,7 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
 
     private CreateAssessmentKitPort.Param toPortParam(Param param) {
         return new CreateAssessmentKitPort.Param(
-                generateSlugCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getSummary(),
             param.getAbout(),
