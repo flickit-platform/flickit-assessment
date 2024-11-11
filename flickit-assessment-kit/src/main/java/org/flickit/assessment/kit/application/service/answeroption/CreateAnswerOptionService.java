@@ -48,9 +48,8 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
             updateQuestionPort.updateAnswerRange(toUpdateQuestionPortParam(param, question, questionAnswerRangeId));
         } else {
             AnswerRange answerRange = loadAnswerRangePort.load(questionAnswerRangeId, param.getKitVersionId());
-            if (answerRange.isReusable()) {
+            if (answerRange.isReusable())
                 throw new ValidationException(CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE);
-            }
         }
 
         long answerOptionId = createAnswerOptionPort.persist(toCreateParam(param, questionAnswerRangeId));
