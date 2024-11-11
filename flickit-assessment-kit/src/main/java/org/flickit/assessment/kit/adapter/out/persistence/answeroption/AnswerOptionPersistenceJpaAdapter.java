@@ -69,9 +69,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
     @Override
     public List<AnswerOption> loadByRangeIdInAndKitVersionId(Set<Long> rangeIds, long kitVersionId) {
         Sort sortByIndex = Sort.by(AnswerOptionJpaEntity.Fields.index);
-        var optionEntities = repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds, kitVersionId, sortByIndex);
-
-        return optionEntities.stream()
+        return repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds, kitVersionId, sortByIndex).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }

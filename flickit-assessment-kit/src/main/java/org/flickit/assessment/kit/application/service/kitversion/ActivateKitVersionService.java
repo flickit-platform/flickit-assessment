@@ -76,11 +76,10 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
 
     private void createAnswerOptionImpacts(Long kitVersionId, UUID currentUserId) {
         List<Question> questions = loadQuestionsPort.loadAllByKitVersionId(kitVersionId);
-        Set<Long> rangeIds = questions.stream()
-            .map(Question::getAnswerRangeId)
-            .collect(toSet());
+        Map<Long, Long> questionIdToRangeId = questions.stream()
+            .collect(toMap(Question::getId, Question::getAnswerRangeId));
 
-        var answerOptions = loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(rangeIds, kitVersionId);
+        var answerOptions = loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(new HashSet<>(questionIdToRangeId.values()), kitVersionId);
         Map<Long, List<AnswerOption>> rangeIdToOptions = answerOptions.stream()
             .collect(groupingBy(AnswerOption::getAnswerRangeId));
 
@@ -89,10 +88,8 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
             .flatMap(Collection::stream)
             .toList();
 
-        Map<Long, Long> questionIdToRangeId = questions.stream()
-            .collect(toMap(Question::getId, Question::getAnswerRangeId));
 
-        List<CreateAnswerOptionImpactPort.Param> outPortParams = qImpacts.stream()
+        List<CreateAnswerOptionImpactPort.Param> optionImpacts = qImpacts.stream()
             .map(qImpact -> {
                 Long rangeId = questionIdToRangeId.get(qImpact.getQuestionId());
                 List<AnswerOption> options = rangeIdToOptions.get(rangeId);
@@ -107,6 +104,6 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
             .flatMap(Collection::stream)
             .toList();
 
-        createAnswerOptionImpactPort.persistAll(outPortParams);
+        createAnswerOptionImpactPort.persistAll(optionImpacts);
     }
 }
