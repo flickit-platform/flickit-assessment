@@ -87,7 +87,7 @@ public class AnswerRangePersistenceJpaAdapter implements
     }
 
     @Override
-    public AnswerRange load(long kitVersionId, long id) {
+    public AnswerRange load(long id, long kitVersionId) {
         return repository.findByIdAndKitVersionId(id, kitVersionId)
             .map(entity -> AnswerRangeMapper.toDomainModel(entity, null))
             .orElseThrow(() -> new ResourceNotFoundException(ANSWER_RANGE_ID_NOT_FOUND));
