@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.questionnaire;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionnaire.UpdateQuestionnaireUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -15,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.util.GenerateCodeUtil.generateCode;
 
 @Service
 @Transactional
@@ -32,7 +32,7 @@ public class UpdateQuestionnaireService implements UpdateQuestionnaireUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        String code = SlugCodeUtil.generateSlugCode(param.getTitle());
+        String code = generateCode(param.getTitle());
         updateQuestionnairePort.update(new UpdateQuestionnairePort.Param(param.getQuestionnaireId(),
             param.getKitVersionId(),
             param.getTitle(),
