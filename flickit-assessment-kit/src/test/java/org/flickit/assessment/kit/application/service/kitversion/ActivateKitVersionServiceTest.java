@@ -2,7 +2,9 @@ package org.flickit.assessment.kit.application.service.kitversion;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.KitVersion;
+import org.flickit.assessment.kit.application.domain.KitVersionStatus;
+import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
@@ -12,7 +14,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLa
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.CreateSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.LoadSubjectQuestionnairePort;
 import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
@@ -73,7 +75,7 @@ class ActivateKitVersionServiceTest {
     private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
 
     @Mock
-    private LoadQuestionPort loadQuestionPort;
+    private LoadQuestionsPort loadQuestionsPort;
 
     @Mock
     private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
@@ -108,7 +110,7 @@ class ActivateKitVersionServiceTest {
             updateKitLastMajorModificationTimePort,
             createSubjectQuestionnairePort,
             loadAnswerOptionsByQuestionPort,
-            loadQuestionPort,
+            loadQuestionsPort,
             createAnswerOptionImpactPort);
     }
 
@@ -127,7 +129,7 @@ class ActivateKitVersionServiceTest {
             updateKitLastMajorModificationTimePort,
             createSubjectQuestionnairePort,
             loadAnswerOptionsByQuestionPort,
-            loadQuestionPort,
+            loadQuestionsPort,
             createAnswerOptionImpactPort);
     }
 
@@ -158,7 +160,7 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kitVersion.getKit().getId(), kitVersionId);
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
-        when(loadQuestionPort.loadAllByKitVersionId(kitVersionId)).thenReturn(questions);
+        when(loadQuestionsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(questions);
         when(loadAnswerOptionsByQuestionPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
 
         service.activateKitVersion(param);
@@ -212,7 +214,7 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kit.getId(), kitVersionId);
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
-        when(loadQuestionPort.loadAllByKitVersionId(anyLong())).thenReturn(questions);
+        when(loadQuestionsPort.loadAllByKitVersionId(anyLong())).thenReturn(questions);
         when(loadAnswerOptionsByQuestionPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
 
         service.activateKitVersion(param);

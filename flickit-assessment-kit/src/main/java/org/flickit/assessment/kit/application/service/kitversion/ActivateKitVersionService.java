@@ -12,7 +12,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLa
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.UpdateKitVersionStatusPort;
-import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.CreateSubjectQuestionnairePort;
 import org.flickit.assessment.kit.application.port.out.subjectquestionnaire.LoadSubjectQuestionnairePort;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
     private final CreateSubjectQuestionnairePort createSubjectQuestionnairePort;
     private final UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
     private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
-    private final LoadQuestionPort loadQuestionPort;
+    private final LoadQuestionsPort loadQuestionsPort;
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
 
     @Override
@@ -60,14 +60,22 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
         updateKitActiveVersionPort.updateActiveVersion(kit.getId(), kitVersionId);
         updateKitLastMajorModificationTimePort.updateLastMajorModificationTime(kit.getId(), LocalDateTime.now());
 
+        createSubjectQuestionnaires(kitVersionId);
+
+        createAnswerOptionImpacts(kitVersionId, param.getCurrentUserId());
+    }
+
+    private void createSubjectQuestionnaires(Long kitVersionId) {
         var subjectQuestionnaires = loadSubjectQuestionnairePort.extractPairs(kitVersionId).stream()
             .collect(groupingBy(
                 SubjectQuestionnaire::getQuestionnaireId,
                 mapping(SubjectQuestionnaire::getSubjectId, toSet())));
 
         createSubjectQuestionnairePort.persistAll(subjectQuestionnaires, kitVersionId);
+    }
 
-        List<Question> questions = loadQuestionPort.loadAllByKitVersionId(kitVersionId);
+    private void createAnswerOptionImpacts(Long kitVersionId, UUID currentUserId) {
+        List<Question> questions = loadQuestionsPort.loadAllByKitVersionId(kitVersionId);
         Set<Long> rangeIds = questions.stream()
             .map(Question::getAnswerRangeId)
             .collect(toSet());
@@ -93,7 +101,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
                         option.getId(),
                         null,
                         kitVersionId,
-                        param.getCurrentUserId()))
+                        currentUserId))
                     .toList();
             })
             .flatMap(Collection::stream)

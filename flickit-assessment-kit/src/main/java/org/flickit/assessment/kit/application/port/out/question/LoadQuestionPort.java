@@ -3,8 +3,6 @@ package org.flickit.assessment.kit.application.port.out.question;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Question;
 
-import java.util.List;
-
 public interface LoadQuestionPort {
 
     /**
@@ -16,6 +14,4 @@ public interface LoadQuestionPort {
      * Or the question does not belong to that kit version
      */
     Question load(long id, long kitVersionId);
-
-    List<Question> loadAllByKitVersionId(long kitVersionId);
 }

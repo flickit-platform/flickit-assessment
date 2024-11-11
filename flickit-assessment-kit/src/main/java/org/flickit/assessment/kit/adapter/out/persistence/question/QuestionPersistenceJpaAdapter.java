@@ -45,6 +45,7 @@ public class QuestionPersistenceJpaAdapter implements
     CreateQuestionPort,
     CountSubjectQuestionsPort,
     LoadQuestionPort,
+    LoadQuestionsPort,
     LoadAttributeLevelQuestionsPort,
     DeleteQuestionPort,
     LoadQuestionnaireQuestionsPort,
