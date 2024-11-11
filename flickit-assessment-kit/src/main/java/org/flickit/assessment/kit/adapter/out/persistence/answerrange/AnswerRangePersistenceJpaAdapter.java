@@ -11,9 +11,9 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -87,7 +87,7 @@ public class AnswerRangePersistenceJpaAdapter implements
     }
 
     @Override
-    public AnswerRange loadById(long kitVersionId, long id) {
+    public AnswerRange load(long kitVersionId, long id) {
         return repository.findByIdAndKitVersionId(id, kitVersionId)
             .map(entity -> AnswerRangeMapper.toDomainModel(entity, null))
             .orElseThrow(() -> new ResourceNotFoundException(ANSWER_RANGE_ID_NOT_FOUND));

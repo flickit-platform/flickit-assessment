@@ -7,9 +7,9 @@ import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.answeroption.CreateAnswerOptionUseCase;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
@@ -47,7 +47,7 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
             questionAnswerRangeId = createAnswerRangePort.persist(tocreateAnswerRangePortParam(param));
             updateQuestionPort.updateAnswerRange(toUpdateQuestionPortParam(param, question, questionAnswerRangeId));
         } else {
-            AnswerRange answerRange = loadAnswerRangePort.loadById(param.getKitVersionId(), questionAnswerRangeId);
+            AnswerRange answerRange = loadAnswerRangePort.load(param.getKitVersionId(), questionAnswerRangeId);
             if (answerRange.isReusable()) {
                 throw new ValidationException(CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE);
             }
