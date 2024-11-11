@@ -56,8 +56,7 @@ public interface UpdateQuestionUseCase {
                      String title,
                      String hint,
                      Boolean mayNotBeApplicable,
-                     Boolean advisable,
-                     Long answerRangeId,
+                     Boolean advisable, Long answerRangeId,
                      UUID currentUserId) {
             this.kitVersionId = kitVersionId;
             this.questionId = questionId;
