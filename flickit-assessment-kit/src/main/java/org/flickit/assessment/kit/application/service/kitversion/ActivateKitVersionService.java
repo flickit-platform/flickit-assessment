@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitActiveVersionPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
@@ -37,7 +37,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
     private final LoadSubjectQuestionnairePort loadSubjectQuestionnairePort;
     private final CreateSubjectQuestionnairePort createSubjectQuestionnairePort;
     private final UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
-    private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
+    private final LoadAnswerOptionsPort loadAnswerOptionsPort;
     private final LoadQuestionsPort loadQuestionsPort;
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
 
@@ -80,7 +80,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
             .map(Question::getAnswerRangeId)
             .collect(toSet());
 
-        var answerOptions = loadAnswerOptionsByQuestionPort.loadByRangeIdInAndKitVersionId(rangeIds, kitVersionId);
+        var answerOptions = loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(rangeIds, kitVersionId);
         Map<Long, List<AnswerOption>> rangeIdToOptions = answerOptions.stream()
             .collect(groupingBy(AnswerOption::getAnswerRangeId));
 

@@ -4,7 +4,7 @@ import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
@@ -79,7 +79,7 @@ class QuestionUpdateKitPersisterTest {
     private UpdateAnswerOptionPort updateAnswerOptionPort;
 
     @Mock
-    private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
+    private LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
@@ -136,7 +136,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -161,7 +161,7 @@ class QuestionUpdateKitPersisterTest {
         savedQuestion.setImpacts(List.of(savedImpact));
         savedQuestionnaire2.setQuestions(List.of(savedQuestion));
 
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslQuestionnaire = QuestionnaireDslModelMother.domainToDslModel(savedQuestionnaire2);
@@ -241,7 +241,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -266,7 +266,7 @@ class QuestionUpdateKitPersisterTest {
 
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(1L);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslMaturityLevelThree = MaturityLevelDslModelMother.domainToDslModel(levelThree());
@@ -357,7 +357,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -410,7 +410,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -464,7 +464,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -519,7 +519,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -566,7 +566,7 @@ class QuestionUpdateKitPersisterTest {
             .subjects(List.of(dslSubject))
             .build();
 
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
+        when(loadAnswerOptionsPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(answerOption1, answerOption2));
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(levelTwo).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));

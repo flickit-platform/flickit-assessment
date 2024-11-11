@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answeroption.GetQuestionOptionsUseCase;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ class GetQuestionOptionsServiceTest {
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
-    private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
+    private LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
@@ -53,7 +53,7 @@ class GetQuestionOptionsServiceTest {
         AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionOptions(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAnswerOptionsByQuestionPort);
+        verifyNoInteractions(loadAnswerOptionsPort);
     }
 
     @Test
@@ -67,7 +67,7 @@ class GetQuestionOptionsServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId()))
             .thenReturn(true);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(param.getQuestionId(), param.getKitVersionId()))
+        when(loadAnswerOptionsPort.loadByQuestionId(param.getQuestionId(), param.getKitVersionId()))
             .thenReturn(expectedAnswerOptions);
 
         var result = service.getQuestionOptions(param);

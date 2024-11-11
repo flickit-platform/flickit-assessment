@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.domain.SubjectQuestionnaire;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.in.kitversion.ActivateKitVersionUseCase.Param;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitActiveVersionPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitLastMajorModificationTimePort;
@@ -72,7 +72,7 @@ class ActivateKitVersionServiceTest {
     private UpdateKitLastMajorModificationTimePort updateKitLastMajorModificationTimePort;
 
     @Mock
-    private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
+    private LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Mock
     private LoadQuestionsPort loadQuestionsPort;
@@ -109,7 +109,7 @@ class ActivateKitVersionServiceTest {
             updateKitActiveVersionPort,
             updateKitLastMajorModificationTimePort,
             createSubjectQuestionnairePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             loadQuestionsPort,
             createAnswerOptionImpactPort);
     }
@@ -128,7 +128,7 @@ class ActivateKitVersionServiceTest {
             updateKitActiveVersionPort,
             updateKitLastMajorModificationTimePort,
             createSubjectQuestionnairePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             loadQuestionsPort,
             createAnswerOptionImpactPort);
     }
@@ -161,7 +161,7 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
         when(loadQuestionsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(questions);
-        when(loadAnswerOptionsByQuestionPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
+        when(loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
 
         service.activateKitVersion(param);
 
@@ -215,7 +215,7 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
         when(loadQuestionsPort.loadAllByKitVersionId(anyLong())).thenReturn(questions);
-        when(loadAnswerOptionsByQuestionPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
+        when(loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
 
         service.activateKitVersion(param);
 

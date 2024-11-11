@@ -10,7 +10,7 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.DeleteAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_
 @Component
 @RequiredArgsConstructor
 public class AnswerOptionPersistenceJpaAdapter implements
-    LoadAnswerOptionsByQuestionPort,
+    LoadAnswerOptionsPort,
     CreateAnswerOptionPort,
     UpdateAnswerOptionPort,
     DeleteAnswerOptionPort {
