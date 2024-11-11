@@ -30,10 +30,10 @@ public class QuestionMother {
     }
 
     public static Question createQuestion() {
-        return createQuestion(25);
+        return createQuestion(25L);
     }
 
-    public static Question createQuestion(long answerRangeId) {
+    public static Question createQuestion(Long answerRangeId) {
         return new Question(
             id++,
             "code",
