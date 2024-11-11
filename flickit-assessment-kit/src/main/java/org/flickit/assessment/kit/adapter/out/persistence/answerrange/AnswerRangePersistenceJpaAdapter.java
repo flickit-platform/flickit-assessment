@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -57,9 +58,12 @@ public class AnswerRangePersistenceJpaAdapter implements
 
         var answerRanges = pageResult.getContent().stream()
             .map(entity -> {
-                List<AnswerOption> options = answerRangeIdToAnswerOptionsMap.get(entity.getId()).stream()
-                    .map(AnswerOptionMapper::mapToDomainModel)
-                    .toList();
+                List<AnswerOption> options = new ArrayList<>();
+                if (answerRangeIdToAnswerOptionsMap.get(entity.getId()) != null) {
+                    options = answerRangeIdToAnswerOptionsMap.get(entity.getId()).stream()
+                        .map(AnswerOptionMapper::mapToDomainModel)
+                        .toList();
+                }
                 return toDomainModel(entity, options);
             }).toList();
 
