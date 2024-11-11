@@ -68,12 +68,13 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            SELECT s.id AS id,
+            SELECT
+                s.id AS id,
                 s.title AS title,
                 sq.questionnaireId AS questionnaireId
-            FROM SubjectJpaEntity s
-            JOIN SubjectQuestionnaireJpaEntity sq ON s.id = sq.subjectId
-            WHERE sq.questionnaireId IN :questionnaireIds AND s.kitVersionId = :kitVersionId
+            FROM SubjectQuestionnaireJpaEntity sq
+            JOIN SubjectJpaEntity s ON s.id = sq.subjectId AND s.kitVersionId = :kitVersionId
+            WHERE sq.questionnaireId IN :questionnaireIds AND sq.kitVersionId = :kitVersionId
         """)
     List<SubjectWithQuestionnaireIdView> findAllWithQuestionnaireIdByKitVersionId(@Param(value = "questionnaireIds") List<Long> questionnaireIds,
                                                                                   @Param(value = "kitVersionId") long kitVersionId);
