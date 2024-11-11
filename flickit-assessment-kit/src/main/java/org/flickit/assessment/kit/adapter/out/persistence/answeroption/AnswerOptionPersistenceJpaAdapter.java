@@ -61,6 +61,9 @@ public class AnswerOptionPersistenceJpaAdapter implements
         QuestionJpaEntity question = questionRepository.findByIdAndKitVersionId(questionId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
+        if (question.getAnswerRangeId() == null)
+            return List.of();
+
         return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(question.getAnswerRangeId(), kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
