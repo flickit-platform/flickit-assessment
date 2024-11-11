@@ -122,7 +122,11 @@ public class QuestionPersistenceJpaAdapter implements
             .map(e -> {
                 Question question = QuestionMapper.mapToDomainModel(e.getKey());
                 List<QuestionImpact> qImpacts = e.getValue().stream()
-                    .map(v -> QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact()))
+                    .map(v -> {
+                        if (v.getQuestionImpact() == null)
+                            return null;
+                        return QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact());
+                    })
                     .toList();
                 question.setImpacts(qImpacts);
                 return question;

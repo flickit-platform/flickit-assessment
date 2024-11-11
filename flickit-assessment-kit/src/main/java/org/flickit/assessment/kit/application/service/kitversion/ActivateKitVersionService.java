@@ -77,6 +77,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
     private void createAnswerOptionImpacts(Long kitVersionId, UUID currentUserId) {
         List<Question> questions = loadQuestionsPort.loadAllByKitVersionId(kitVersionId);
         Map<Long, Long> questionIdToRangeId = questions.stream()
+            .filter(q -> q.getAnswerRangeId() != null)
             .collect(toMap(Question::getId, Question::getAnswerRangeId));
 
         var answerOptions = loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(new HashSet<>(questionIdToRangeId.values()), kitVersionId);
@@ -86,6 +87,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
         List<QuestionImpact> qImpacts = questions.stream()
             .map(Question::getImpacts)
             .flatMap(Collection::stream)
+            .filter(Objects::nonNull)
             .toList();
 
 
