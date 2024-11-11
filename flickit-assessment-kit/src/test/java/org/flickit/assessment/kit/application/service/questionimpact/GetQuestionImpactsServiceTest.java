@@ -163,6 +163,22 @@ class GetQuestionImpactsServiceTest {
         assertEquals(optionImpacts.size(), attr2AffectedLevel1.optionValues().size());
     }
 
+    @Test
+    void testGetQuestionImpacts_WhenQuestionNoImpacts_ThenReturnEmptyResult() {
+        var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
+
+        var question = createQuestion();
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
+
+        var result = service.getQuestionImpacts(param);
+        assertEquals(0, result.attributeImpacts().size());
+
+        verifyNoInteractions(loadMaturityLevelsPort, loadAllAttributesPort);
+    }
+
     private GetQuestionImpactsUseCase.Param createParam(Consumer<GetQuestionImpactsUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
