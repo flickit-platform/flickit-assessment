@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.util.GenerateCodeUtil.*;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Slf4j
 @Service
@@ -85,7 +85,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
     @NotNull
     private CreateAssessmentKitPort.Param toCreateKitParam(Param param) {
         return new CreateAssessmentKitPort.Param(
-            generateCode(param.getTitle()),
+            generateSlugCode(param.getTitle()),
             param.getTitle(),
             param.getSummary(),
             param.getAbout(),

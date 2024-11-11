@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.util.GenerateCodeUtil.*;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -87,7 +87,7 @@ class CreateAssessmentKitServiceTest {
 
         ArgumentCaptor<CreateAssessmentKitPort.Param> createKitPortParamCaptor = ArgumentCaptor.forClass(CreateAssessmentKitPort.Param.class);
         verify(createAssessmentKitPort).persist(createKitPortParamCaptor.capture());
-        assertEquals(generateCode(param.getTitle()), createKitPortParamCaptor.getValue().code());
+        assertEquals(generateSlugCode(param.getTitle()), createKitPortParamCaptor.getValue().code());
         assertEquals(param.getTitle(), createKitPortParamCaptor.getValue().title());
         assertEquals(param.getSummary(), createKitPortParamCaptor.getValue().summary());
         assertEquals(param.getAbout(), createKitPortParamCaptor.getValue().about());
