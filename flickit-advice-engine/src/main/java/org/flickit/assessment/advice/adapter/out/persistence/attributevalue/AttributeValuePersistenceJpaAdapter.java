@@ -3,6 +3,8 @@ package org.flickit.assessment.advice.adapter.out.persistence.attributevalue;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -16,17 +18,21 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component("adviceAttributeValuePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrentAndTargetLevelIndexPort {
 
     private final AttributeValueJpaRepository repository;
+    private final AssessmentResultJpaRepository assessmentResultRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
     public List<Result> loadAttributeCurrentAndTargetLevelIndex(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
-        var maturityLevels = maturityLevelRepository.findAllInKitVersionWithOneId(attributeLevelTargets.getFirst().getMaturityLevelId());
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var maturityLevels = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId());
         var maturityLevelsIdMap = maturityLevels.stream()
             .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 
