@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.AnswerRange;
 
 public interface LoadAnswerRangePort {
 
-    AnswerRange load(long id, long kitVersionId);
+    AnswerRange loadById(long kitVersionId, long id);
 }
