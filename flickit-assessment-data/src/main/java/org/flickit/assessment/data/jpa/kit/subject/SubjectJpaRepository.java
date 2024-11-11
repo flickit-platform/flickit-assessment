@@ -68,7 +68,8 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            SELECT DISTINCT s.id AS id,
+            SELECT DISTINCT
+                s.id AS id,
                 s.title AS title,
                 sq.questionnaireId AS questionnaireId
             FROM SubjectJpaEntity s
