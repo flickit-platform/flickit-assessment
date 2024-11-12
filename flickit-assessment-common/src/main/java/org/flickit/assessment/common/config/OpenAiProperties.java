@@ -22,8 +22,8 @@ public class OpenAiProperties {
     private DefaultChatOptions chatOptions;
 
     private String attributeAiInsightPrompt = """
-        As a software quality assessor, I have evaluated the {title} maturity of a system.
-        We define {title} as {description}. The uploaded Excel file contains multiple-choice questions used to assess {title}.
+        As a software quality assessor, I have evaluated the {attributeTitle} maturity of a system for an assessment titled {assessmentTitle}.
+        We define {attributeTitle} as {attributeDescription}. The uploaded Excel file contains multiple-choice questions used to assess {attributeTitle}.
         The Excel columns include the question, a hint, the weight of the question in calculating the overall score,
          and the actual score achieved by the software. Please generate an executive summary highlighting the main strengths and weaknesses in less than 100 words.
         Use polite and considerate language, avoiding any derogatory terms, and do not mention the scores of individual questions.
@@ -45,8 +45,8 @@ public class OpenAiProperties {
         Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
         """;
 
-    public Prompt createAttributeAiInsightPrompt(String title, String description, String excelFile) {
-        var promptTemplate = new PromptTemplate(attributeAiInsightPrompt, Map.of("title", title, "description", description, "excelFile", excelFile));
+    public Prompt createAttributeAiInsightPrompt(String attributeTitle, String attributeDescription, String assessmentTitle, String excelFile) {
+        var promptTemplate = new PromptTemplate(attributeAiInsightPrompt, Map.of("attributeTitle", attributeTitle, "description", attributeDescription, assessmentTitle,"assessmentTitle", "excelFile", excelFile));
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
 
