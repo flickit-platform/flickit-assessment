@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,7 +86,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     @Query("""
             SELECT DISTINCT
                 q.id AS questionId,
-                anso.index AS answeredOptionIndex,
                 qanso.id AS optionId,
                 qanso.index AS optionIndex,
                 qi.weight AS questionImpactWeight,
@@ -95,23 +95,35 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
             JOIN AnswerOptionJpaEntity qanso ON q.answerRangeId = qanso.answerRangeId AND q.kitVersionId = qanso.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId AND qi.id = ansoi.questionImpactId AND ansoi.kitVersionId = q.kitVersionId
-            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = :assessmentResultId AND q.id = ans.questionId
-            LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
             WHERE
                 q.advisable = TRUE
                 AND q.kitVersionId = :kitVersionId
                 AND qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
+        """)
+    List<ImprovableImpactfulQuestionView> findAdvisableImpactfulQuestions(@Param("kitVersionId") long kitVersionId,
+                                                                          @Param("attributeId") long attributeId,
+                                                                          @Param("maturityLevelId") long maturityLevelId);
+
+    @Query("""
+            SELECT DISTINCT
+                q.id AS questionId,
+                anso.index AS answeredOptionIndex
+            FROM QuestionJpaEntity q
+            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = :assessmentResultId AND q.id = ans.questionId
+            LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
+            WHERE
+                q.id IN :questionIds
+                AND q.kitVersionId = :kitVersionId
                 AND (ans.answerOptionId IS NULL
                     OR (anso.index != (
                         SELECT MAX(sq_ans.index) FROM AnswerOptionJpaEntity sq_ans
                         WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = :kitVersionId
                     )))
         """)
-    List<ImprovableImpactfulQuestionView> findAdvisableImprovableImpactfulQuestions(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                                    @Param("kitVersionId") long kitVersionId,
-                                                                                    @Param("attributeId") long attributeId,
-                                                                                    @Param("maturityLevelId") long maturityLevelId);
+    List<ImprovableQuestionView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
+                                                         @Param("kitVersionId") long kitVersionId,
+                                                         @Param("questionIds") Collection<Long> questionIds);
 
     @Query("""
             SELECT

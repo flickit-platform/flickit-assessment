@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepo
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.ImprovableImpactfulQuestionView;
+import org.flickit.assessment.data.jpa.kit.question.ImprovableQuestionView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -41,13 +42,14 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
         Map<Long, Question> idToQuestions = new HashMap<>();
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
+        long kitVersionId = assessmentResult.getKitVersionId();
 
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
-            Long attributeId = attributeLevelTarget.getAttributeId();
-            Long maturityLevelId = attributeLevelTarget.getMaturityLevelId();
+            long attributeId = attributeLevelTarget.getAttributeId();
+            long maturityLevelId = attributeLevelTarget.getMaturityLevelId();
 
             List<LevelCompetenceJpaEntity> levelCompetenceEntities =
-                levelCompetenceRepository.findByAffectedLevelIdAndKitVersionId(maturityLevelId, assessmentResult.getKitVersionId());
+                levelCompetenceRepository.findByAffectedLevelIdAndKitVersionId(maturityLevelId, kitVersionId);
             for (LevelCompetenceJpaEntity levelCompetenceEntity : levelCompetenceEntities) {
                 Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevelId();
                 AttributeValueJpaEntity attributeValueEntity =
@@ -58,10 +60,15 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                     .map(AttributeMaturityScoreJpaEntity::getScore)
                     .orElse(DEFAULT_ATTRIBUTE_MATURITY_SCORE);
 
-                List<ImprovableImpactfulQuestionView> impactfulQuestions =
-                    questionRepository.findAdvisableImprovableImpactfulQuestions(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, effectiveLevelId);
+                var impactfulQuestions = questionRepository.findAdvisableImpactfulQuestions(kitVersionId, attributeId, effectiveLevelId);
 
-                Map<Long, Integer> impactfulQuestionIdToQuestionImpact = mapImpactfulQuestionIdToWeight(impactfulQuestions);
+                var impactfulQuestionIds = impactfulQuestions.stream()
+                    .map(ImprovableImpactfulQuestionView::getQuestionId)
+                    .collect(toSet());
+                var improvableQuestions = questionRepository.findImprovableQuestions(assessmentResult.getId(), kitVersionId, impactfulQuestionIds);
+                var improvableImpactfulQuestions = filterImprovableImpactfulQuestions(improvableQuestions, impactfulQuestions);
+
+                Map<Long, Integer> impactfulQuestionIdToQuestionImpact = mapImpactfulQuestionIdToWeight(improvableImpactfulQuestions);
                 int totalScore = calculateTotalScore(impactfulQuestionIdToQuestionImpact);
                 double gainedScore = totalScore * (gainedScorePercentage/100.0);
                 double requiredScore = totalScore * (levelCompetenceEntity.getValue()/100.0);
@@ -69,8 +76,8 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                     new AttributeLevelScore(gainedScore, requiredScore, attributeId, effectiveLevelId);
                 attributeLevelScores.add(attributeLevelScore);
 
-                Map<Long, List<ImpactfulQuestionOption>> impactfulQuestionIdToOptions = mapImpactfulQuestionIdToOptions(impactfulQuestions);
-                Map<Long, Integer> impactfulQuestionIdToQuestionAnswer = mapImpactfulQuestionIdToAnswer(impactfulQuestions);
+                Map<Long, List<ImpactfulQuestionOption>> impactfulQuestionIdToOptions = mapImpactfulQuestionIdToOptions(improvableImpactfulQuestions);
+                Map<Long, Integer> impactfulQuestionIdToQuestionAnswer = mapImpactfulQuestionIdToAnswer(improvableQuestions);
                 impactfulQuestionIdToOptions.forEach((impactfulQuestionId, impactfulOptions) -> {
                     if (idToQuestions.containsKey(impactfulQuestionId)) {
                         Question existedQuestion = idToQuestions.get(impactfulQuestionId);
@@ -84,6 +91,15 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
             }
         }
         return new Plan(attributeLevelScores, new ArrayList<>(idToQuestions.values()));
+    }
+
+    private List<ImprovableImpactfulQuestionView> filterImprovableImpactfulQuestions(List<ImprovableQuestionView> improvableQuestions, List<ImprovableImpactfulQuestionView> impactfulQuestions) {
+        var improvableQuestionIds = improvableQuestions.stream()
+            .map(ImprovableQuestionView::getQuestionId)
+            .collect(toSet());
+        return impactfulQuestions.stream()
+            .filter(v -> improvableQuestionIds.contains(v.getQuestionId()))
+            .toList();
     }
 
     private Map<Long, Integer> mapImpactfulQuestionIdToWeight(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
@@ -110,17 +126,10 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                 )));
     }
 
-    private Map<Long, Integer> mapImpactfulQuestionIdToAnswer(List<ImprovableImpactfulQuestionView> impactfulQuestions) {
-        Map<Long, Integer> questionIdToQuestionAnswer = new HashMap<>();
-        for (ImprovableImpactfulQuestionView question: impactfulQuestions) {
-            Long questionId = question.getQuestionId();
-            Integer answeredOptionIndex = question.getAnsweredOptionIndex();
-            if (answeredOptionIndex != null) {
-                answeredOptionIndex -= 1;
-            }
-            questionIdToQuestionAnswer.putIfAbsent(questionId, answeredOptionIndex);
-        }
-        return questionIdToQuestionAnswer;
+    private Map<Long, Integer> mapImpactfulQuestionIdToAnswer(List<ImprovableQuestionView> improvableQuestions) {
+        return improvableQuestions.stream()
+            .filter(v -> v.getAnsweredOptionIndex() != null)
+            .collect(toMap(ImprovableQuestionView::getQuestionId, v -> v.getAnsweredOptionIndex() - 1));
     }
 
     private int calculateTotalScore(Map<Long, Integer> questionIdToQuestionImpact) {
