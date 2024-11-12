@@ -28,6 +28,7 @@ public class OpenAiProperties {
          and the actual score achieved by the software. Please generate an executive summary highlighting the main strengths and weaknesses in less than 100 words.
         Start directly with specific strengths and weaknesses, avoiding introductory sentences.
         Use polite and considerate language, avoiding any derogatory terms, and do not mention the scores of individual questions.
+        Please keep your summary descriptive and avoid prescribing actions or solutions.
         Here is the file content: {fileContent}.
         """;
 
