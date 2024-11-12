@@ -23,7 +23,7 @@ public class OpenAiProperties {
 
     private String attributeAiInsightPrompt = """
         As a software quality assessor, I have evaluated the {attributeTitle} maturity of a system for an assessment titled {assessmentTitle}.
-        We define {attributeTitle} as {attributeDescription}. The file content contains contains multiple-choice questions used to assess {attributeTitle}.
+        We define {attributeTitle} as {attributeDescription}. The file content contains multiple-choice questions used to assess {attributeTitle}.
         The columns include the question, a hint, the weight of the question in calculating the overall score,
          and the actual score achieved by the software. Please generate an executive summary highlighting the main strengths and weaknesses in less than 100 words.
         Both the weight and score contribute to reflecting the significance of each question within the assessment, indicating its impact on the overall maturity evaluation.
