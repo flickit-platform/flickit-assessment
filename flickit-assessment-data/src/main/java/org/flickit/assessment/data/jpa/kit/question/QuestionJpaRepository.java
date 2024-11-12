@@ -92,7 +92,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 ansoi.value AS optionImpactValue,
                 qanso.value AS optionValue
             FROM QuestionJpaEntity q
-            JOIN AssessmentResultJpaEntity asmr ON asmr.id = :assessmentResultId AND q.kitVersionId = asmr.kitVersionId
             JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
             JOIN AnswerOptionJpaEntity qanso ON q.answerRangeId = qanso.answerRangeId AND q.kitVersionId = qanso.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId AND qi.id = ansoi.questionImpactId AND ansoi.kitVersionId = q.kitVersionId
@@ -100,17 +99,19 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
             WHERE
                 q.advisable = TRUE
+                AND q.kitVersionId = :kitVersionId
                 AND qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND (ans.answerOptionId IS NULL
                     OR (anso.index != (
                         SELECT MAX(sq_ans.index) FROM AnswerOptionJpaEntity sq_ans
-                        WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = asmr.kitVersionId
+                        WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = :kitVersionId
                     )))
         """)
     List<ImprovableImpactfulQuestionView> findAdvisableImprovableImpactfulQuestions(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                                    @Param("attributeId") Long attributeId,
-                                                                                    @Param("maturityLevelId") Long maturityLevelId);
+                                                                                    @Param("kitVersionId") long kitVersionId,
+                                                                                    @Param("attributeId") long attributeId,
+                                                                                    @Param("maturityLevelId") long maturityLevelId);
 
     @Query("""
             SELECT
