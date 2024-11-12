@@ -101,9 +101,9 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 AND qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
         """)
-    List<ImprovableImpactfulQuestionView> findAdvisableImpactfulQuestions(@Param("kitVersionId") long kitVersionId,
-                                                                          @Param("attributeId") long attributeId,
-                                                                          @Param("maturityLevelId") long maturityLevelId);
+    List<ImpactfulQuestionView> findAdvisableImpactfulQuestions(@Param("kitVersionId") long kitVersionId,
+                                                                @Param("attributeId") long attributeId,
+                                                                @Param("maturityLevelId") long maturityLevelId);
 
     @Query("""
             SELECT DISTINCT
@@ -121,9 +121,9 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                         WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = :kitVersionId
                     )))
         """)
-    List<ImprovableQuestionView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
-                                                         @Param("kitVersionId") long kitVersionId,
-                                                         @Param("questionIds") Collection<Long> questionIds);
+    List<QuestionIdWithAnsweredOptionIndexView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                        @Param("kitVersionId") long kitVersionId,
+                                                                        @Param("questionIds") Collection<Long> questionIds);
 
     @Query("""
             SELECT
