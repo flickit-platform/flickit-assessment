@@ -59,7 +59,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                     .orElse(DEFAULT_ATTRIBUTE_MATURITY_SCORE);
 
                 List<ImprovableImpactfulQuestionView> impactfulQuestions =
-                    questionRepository.findAdvisableImprovableImpactfulQuestions(assessmentId, attributeId, effectiveLevelId);
+                    questionRepository.findAdvisableImprovableImpactfulQuestions(assessmentResult.getId(), attributeId, effectiveLevelId);
 
                 Map<Long, Integer> impactfulQuestionIdToQuestionImpact = mapImpactfulQuestionIdToWeight(impactfulQuestions);
                 int totalScore = calculateTotalScore(impactfulQuestionIdToQuestionImpact);

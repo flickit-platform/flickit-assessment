@@ -92,12 +92,12 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 ansoi.value AS optionImpactValue,
                 qanso.value AS optionValue
             FROM QuestionJpaEntity q
-            JOIN AssessmentResultJpaEntity asmr ON asmr.assessment.id = :assessmentId AND q.kitVersionId = asmr.kitVersionId
+            JOIN AssessmentResultJpaEntity asmr ON asmr.id = :assessmentResultId AND q.kitVersionId = asmr.kitVersionId
             JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
             JOIN AnswerOptionJpaEntity qanso ON q.answerRangeId = qanso.answerRangeId AND q.kitVersionId = qanso.kitVersionId
             LEFT JOIN AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId AND qi.id = ansoi.questionImpactId AND ansoi.kitVersionId = q.kitVersionId
-            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = asmr.id AND q.id = ans.questionId
-            LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.answerRangeId = anso.answerRangeId AND q.kitVersionId = anso.kitVersionId
+            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = :assessmentResultId AND q.id = ans.questionId
+            LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
             WHERE
                 q.advisable = TRUE
                 AND qi.attributeId = :attributeId
@@ -108,7 +108,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                         WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = asmr.kitVersionId
                     )))
         """)
-    List<ImprovableImpactfulQuestionView> findAdvisableImprovableImpactfulQuestions(@Param("assessmentId") UUID assessmentId,
+    List<ImprovableImpactfulQuestionView> findAdvisableImprovableImpactfulQuestions(@Param("assessmentResultId") UUID assessmentResultId,
                                                                                     @Param("attributeId") Long attributeId,
                                                                                     @Param("maturityLevelId") Long maturityLevelId);
 
