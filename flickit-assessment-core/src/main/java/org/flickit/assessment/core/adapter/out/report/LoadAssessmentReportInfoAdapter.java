@@ -140,13 +140,14 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .map(e -> {
                 Long maturityLevelId = subjectIdToSubjectValue.get(e.getId()).getMaturityLevelId();
                 MaturityLevel subjectMaturityLevel = idToMaturityLevel.get(maturityLevelId);
+                var attributeValues = subjectIdToAttributeValueMap.get(e.getId());
                 return new AssessmentSubjectReportItem(e.getId(),
                     e.getTitle(),
                     e.getIndex(),
                     e.getDescription(),
                     subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
                     subjectMaturityLevel,
-                    subjectIdToAttributeValueMap.get(e.getId()).stream()
+                    attributeValues == null ? List.of() : attributeValues.stream()
                         .map(x -> buildAttributeReportItem(idToMaturityLevel, x))
                         .toList());
             }).toList();

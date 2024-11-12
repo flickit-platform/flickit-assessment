@@ -38,9 +38,13 @@ public class SubjectPersistenceJpaAdapter implements
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
         return views.stream().map(entity -> {
-            List<Attribute> attributes = subjectIdToAttrEntities.get(entity.getId()).stream()
-                .map(AttributeMapper::mapToDomainModel)
-                .toList();
+            var subjectAttributeEntities = subjectIdToAttrEntities.get(entity.getId());
+            List<Attribute> attributes = null;
+            if (subjectAttributeEntities != null) {
+                attributes = subjectAttributeEntities.stream()
+                    .map(AttributeMapper::mapToDomainModel)
+                    .toList();
+            }
 
             return mapToDomainModel(entity, attributes);
         }).toList();
