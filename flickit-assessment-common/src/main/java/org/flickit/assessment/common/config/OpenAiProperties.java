@@ -30,7 +30,7 @@ public class OpenAiProperties {
         Each question's weight reflects its importance and effectiveness, while the score—ranging between 0 and 1—indicates the strength of that question on the {attributeTitle} attribute.
         Start directly with specific strengths and weaknesses, avoiding introductory sentences. Consider the use of the assessment title ("{assessmentTitle}") when discussing strengths and weaknesses.
         Use polite and considerate language, avoiding any derogatory terms, and do not mention the scores of individual questions.
-        Please keep your summary descriptive and avoid prescribing actions or solutions.
+        Please keep your summary descriptive and avoid prescribing actions or solutions. Do not include generic conclusions such as "Overall, the {attributeTitle} maturity level is deemed acceptable."
         Here is the file content: {fileContent}.
         """;
 
