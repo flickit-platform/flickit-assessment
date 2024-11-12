@@ -26,6 +26,8 @@ public class OpenAiProperties {
         We define {attributeTitle} as {attributeDescription}. The file content contains contains multiple-choice questions used to assess {attributeTitle}.
         The columns include the question, a hint, the weight of the question in calculating the overall score,
          and the actual score achieved by the software. Please generate an executive summary highlighting the main strengths and weaknesses in less than 100 words.
+        Both the weight and score contribute to reflecting the significance of each question within the assessment, indicating its impact on the overall maturity evaluation.
+        Each question's weight reflects its importance and effectiveness, while the score—ranging between 0 and 1—indicates the strength of that question on the {attributeTitle} attribute.
         Start directly with specific strengths and weaknesses, avoiding introductory sentences.
         Use polite and considerate language, avoiding any derogatory terms, and do not mention the scores of individual questions.
         Please keep your summary descriptive and avoid prescribing actions or solutions.
