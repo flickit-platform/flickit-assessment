@@ -39,7 +39,7 @@ public class SubjectPersistenceJpaAdapter implements
 
         return views.stream().map(entity -> {
             var subjectAttributeEntities = subjectIdToAttrEntities.get(entity.getId());
-            List<Attribute> attributes = null;
+            List<Attribute> attributes = List.of();
             if (subjectAttributeEntities != null) {
                 attributes = subjectAttributeEntities.stream()
                     .map(AttributeMapper::mapToDomainModel)
