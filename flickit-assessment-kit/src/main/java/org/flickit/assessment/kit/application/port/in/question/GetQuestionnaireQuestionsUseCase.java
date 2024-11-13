@@ -54,5 +54,7 @@ public interface GetQuestionnaireQuestionsUseCase {
                             int index,
                             String hint,
                             boolean mayNotBeApplicable,
-                            boolean advisable) {}
+                            boolean advisable,
+                            Long answerRangeId) {
+    }
 }
