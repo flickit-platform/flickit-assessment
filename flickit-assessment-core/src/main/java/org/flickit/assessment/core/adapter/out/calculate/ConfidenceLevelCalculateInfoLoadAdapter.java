@@ -99,8 +99,10 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestionsWithImpact = new HashMap<>();
 
         for (QuestionJoinQuestionImpactView view : questionJoinImpactViews) {
-            QuestionJpaEntity question = view.getQuestion();
             QuestionImpactJpaEntity questionImpact = view.getQuestionImpact();
+            if (questionImpact == null)
+                continue;
+            QuestionJpaEntity question = view.getQuestion();
 
             Long attributeId = questionImpact.getAttributeId();
             Long questionId = question.getId();
@@ -127,6 +129,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
         Map<Long, Integer> qaIdToWeightMap = subjectEntities.stream()
+            .filter(x -> subjectIdToAttrEntities.get(x.getId()) != null)
             .flatMap(x -> subjectIdToAttrEntities.get(x.getId()).stream())
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
 
@@ -216,8 +219,11 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
         for (SubjectJpaEntity sEntity : subjectEntities) {
-            List<Attribute> attributes = subjectIdToAttrEntities.get(sEntity.getId()).stream()
-                .map(AttributeMapper::mapToDomainModel).toList();
+            List<Attribute> attributes = List.of();
+            if (subjectIdToAttrEntities.get(sEntity.getId()) != null) {
+                attributes = subjectIdToAttrEntities.get(sEntity.getId()).stream()
+                    .map(AttributeMapper::mapToDomainModel).toList();
+            }
             List<AttributeValue> qavList = attributes.stream()
                 .map(q -> attrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)

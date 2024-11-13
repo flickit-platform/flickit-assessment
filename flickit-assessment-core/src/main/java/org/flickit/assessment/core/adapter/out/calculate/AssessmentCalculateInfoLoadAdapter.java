@@ -246,8 +246,11 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
         for (SubjectJpaEntity sEntity : subjectEntities) {
-            List<Attribute> attributes = subjectIdToAttrEntities.get(sEntity.getId()).stream()
-                .map(AttributeMapper::mapToDomainModel).toList();
+            List<Attribute> attributes = List.of();
+            if (subjectIdToAttrEntities.get(sEntity.getId()) != null) {
+                attributes = subjectIdToAttrEntities.get(sEntity.getId()).stream()
+                    .map(AttributeMapper::mapToDomainModel).toList();
+            }
             List<AttributeValue> qavList = attributes.stream()
                 .map(q -> attrIdToValue.get(q.getId()))
                 .filter(Objects::nonNull)

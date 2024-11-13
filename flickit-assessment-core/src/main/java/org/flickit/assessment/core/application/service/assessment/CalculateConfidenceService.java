@@ -113,6 +113,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
     private Map<UUID, List<AttributeValue>> createNewAttributeValues(List<Subject> kitSubjects, List<SubjectValue> subjectValues, UUID assessmentResultId) {
         List<Attribute> kitAttributes = kitSubjects.stream()
+            .filter(s -> s.getAttributes() != null)
             .flatMap(s -> s.getAttributes().stream())
             .toList();
 
@@ -131,10 +132,12 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
             .toList();
 
         Map<Long, Long> attributeIdToSubjectId = new HashMap<>();
-        for (Subject subject : kitSubjects) {
-            for (Attribute attribute : subject.getAttributes())
-                attributeIdToSubjectId.put(attribute.getId(), subject.getId());
-        }
+        kitSubjects.forEach(subject -> {
+            if (subject.getAttributes() != null) {
+                subject.getAttributes().forEach(attribute ->
+                    attributeIdToSubjectId.put(attribute.getId(), subject.getId()));
+            }
+        });
 
         List<AttributeValue> newAttributeValues = createAttributeValuePort.persistAll(newAttributeIds, assessmentResultId);
         Map<Long, SubjectValue> subjectIdToSubjectValue = subjectValues.stream().collect(Collectors.toMap(a -> a.getSubject().getId(), a -> a));
