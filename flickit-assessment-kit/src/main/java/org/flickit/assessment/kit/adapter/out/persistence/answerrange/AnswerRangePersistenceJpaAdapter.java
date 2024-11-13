@@ -49,8 +49,8 @@ public class AnswerRangePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AnswerRange> loadByKitVersionId(long kitVersionId, int page, int size) {
-        var order = AnswerRangeJpaEntity.Fields.creationTime;
-        var sort = Sort.Direction.ASC;
+        var order = AnswerRangeJpaEntity.Fields.lastModificationTime;
+        var sort = Sort.Direction.DESC;
         var pageResult = repository.findByKitVersionIdAndReusableTrue(kitVersionId, PageRequest.of(page, size, sort, order));
         List<Long> answerRangeEntityIds = pageResult.getContent().stream().map(AnswerRangeJpaEntity::getId).toList();
         var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeEntityIds, kitVersionId,

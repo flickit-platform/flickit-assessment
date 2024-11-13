@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.question.UpdateQuestionUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitAssessmentsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
@@ -29,6 +30,7 @@ public class UpdateQuestionService implements UpdateQuestionUseCase {
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
     private final LoadQuestionPort loadQuestionPort;
+    private final CountKitAssessmentsPort countKitAssessmentsPort;
 
     @Override
     public void updateQuestion(Param param) {
@@ -38,8 +40,11 @@ public class UpdateQuestionService implements UpdateQuestionUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         Question question = loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId());
-        if (question.getAnswerRangeId() != null && !Objects.equals(question.getAnswerRangeId(), param.getAnswerRangeId()))
+        if (question.getAnswerRangeId() != null
+            && !Objects.equals(question.getAnswerRangeId(), param.getAnswerRangeId())
+            && countKitAssessmentsPort.count(kitVersion.getKit().getId()) > 0)
             throw new ValidationException(UPDATE_QUESTION_ANSWER_RANGE_ID_NOT_UPDATABLE);
+
         String code = Question.generateCode(param.getIndex());
         updateQuestionPort.update(new UpdateQuestionPort.Param(param.getQuestionId(),
             param.getKitVersionId(),

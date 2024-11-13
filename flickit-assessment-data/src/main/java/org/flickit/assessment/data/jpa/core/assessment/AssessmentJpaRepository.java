@@ -31,6 +31,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 AND (a.assessmentKitId = :kitId OR :kitId IS NULL)
                 AND a.deleted = FALSE
                 AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+                AND r.kitVersionId = k.kitVersionId
                 AND (s.ownerId = :userId OR (ur.roleId is not null AND ur.roleId != :associateRoleId))
             ORDER BY a.lastModificationTime DESC
         """)

@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.question.UpdateQuestionUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitAssessmentsPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionPort;
@@ -46,6 +47,9 @@ class UpdateQuestionServiceTest {
     @Mock
     private LoadQuestionPort loadQuestionPort;
 
+    @Mock
+    private CountKitAssessmentsPort countKitAssessmentsPort;
+
     private final UUID ownerId = UUID.randomUUID();
     private final KitVersion kitVersion = createKitVersion(simpleKit());
 
@@ -59,7 +63,7 @@ class UpdateQuestionServiceTest {
         AccessDeniedException throwable = assertThrows(AccessDeniedException.class, () -> service.updateQuestion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadQuestionPort, updateQuestionPort);
+        verifyNoInteractions(loadQuestionPort, updateQuestionPort, countKitAssessmentsPort);
     }
 
     @Test
@@ -86,21 +90,50 @@ class UpdateQuestionServiceTest {
         assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
         assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
         assertNotNull(outPortParam.getValue().lastModificationTime());
+
+        verifyNoInteractions(countKitAssessmentsPort);
     }
 
     @Test
-    void testUpdateQuestion_WhenAnswerRangeIdUpdated_ThenThrowException() {
+    void testUpdateQuestion_WhenAnswerRangeIdUpdatedAndKitIsUsedInAssessments_ThenThrowException() {
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question = QuestionMother.createQuestion(param.getAnswerRangeId() + 1);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
+        when(countKitAssessmentsPort.count(kitVersion.getKit().getId())).thenReturn(1L);
 
         ValidationException throwable = assertThrows(ValidationException.class, () -> service.updateQuestion(param));
         assertEquals(UPDATE_QUESTION_ANSWER_RANGE_ID_NOT_UPDATABLE, throwable.getMessageKey());
 
         verifyNoInteractions(updateQuestionPort);
+    }
+
+    @Test
+    void testUpdateQuestion_WhenAnswerRangeIdUpdatedAndKitIsNotUsedInAssessments_ThenThrowException() {
+        var param = createParam(b -> b.currentUserId(ownerId));
+        Question question = QuestionMother.createQuestion(param.getAnswerRangeId() + 1);
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
+        when(countKitAssessmentsPort.count(kitVersion.getKit().getId())).thenReturn(0L);
+
+        service.updateQuestion(param);
+
+        ArgumentCaptor<UpdateQuestionPort.Param> outPortParam = ArgumentCaptor.forClass(UpdateQuestionPort.Param.class);
+        verify(updateQuestionPort).update(outPortParam.capture());
+        assertNotNull(outPortParam.getValue());
+        assertEquals(param.getQuestionId(), outPortParam.getValue().id());
+        assertEquals(param.getKitVersionId(), outPortParam.getValue().kitVersionId());
+        assertEquals(param.getIndex(), outPortParam.getValue().index());
+        assertEquals(param.getTitle(), outPortParam.getValue().title());
+        assertEquals(param.getHint(), outPortParam.getValue().hint());
+        assertEquals(param.getMayNotBeApplicable(), outPortParam.getValue().mayNotBeApplicable());
+        assertEquals(param.getAdvisable(), outPortParam.getValue().advisable());
+        assertEquals(param.getCurrentUserId(), outPortParam.getValue().lastModifiedBy());
+        assertNotNull(outPortParam.getValue().lastModificationTime());
     }
 
     @Test
