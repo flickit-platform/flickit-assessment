@@ -445,6 +445,10 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_RANGE_OPTION_VALUE_NOT_NULL = "create-answer-range-option.value.notNull";
     public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE = "create-answer-range-option.answerRange.non-reusable";
 
+    public static final String VALIDATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "validate-kit-version.kitVersionId.notNull";
+    public static final String VALIDATE_KIT_VERSION_STATUS_INVALID = "validate-kit-version.status.invalid";
+    public static final String VALIDATE_KIT_VERSION_EMPTY_QUESTION_IMPACT_UNSUPPORTED = "validate-kit-version.question-impact.empty.unsupported";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
