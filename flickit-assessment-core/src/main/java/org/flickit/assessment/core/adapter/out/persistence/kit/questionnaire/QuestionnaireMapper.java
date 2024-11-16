@@ -18,7 +18,9 @@ public class QuestionnaireMapper {
                                                       int answerCount,
                                                       int nextQuestion){
         var questionnaireEntity = questionnaireView.getQuestionnaire();
-        var subjects = subjectsView.stream()
+        List<QuestionnaireListItem.Subject> subjects = List.of();
+        if (subjectsView != null)
+            subjects = subjectsView.stream()
             .map(s -> new QuestionnaireListItem.Subject(s.getId(), s.getTitle()))
             .toList();
         int progress = (int) Math.floor(((double) answerCount / questionnaireView.getQuestionCount()) * 100);

@@ -61,8 +61,6 @@ public class AssessmentJpaEntity {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class Fields {
-        public static final String ASSESSMENT_KIT_ID = "assessmentKitId";
-        public static final String SPACE_ID = "spaceId";
         public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
     }
 }
