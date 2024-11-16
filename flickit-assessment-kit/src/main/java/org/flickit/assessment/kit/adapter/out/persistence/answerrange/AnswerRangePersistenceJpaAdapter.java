@@ -79,6 +79,14 @@ public class AnswerRangePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<AnswerRange> loadByKitVersionIdAndWithoutAnswerOptions(long kitVersionId) {
+        return repository.findByKitVersionIdAndWithoutOptions(kitVersionId)
+            .stream()
+            .map(e -> AnswerRangeMapper.toDomainModel(e, null))
+            .toList();
+    }
+
+    @Override
     public void update(UpdateAnswerRangePort.Param param) {
         if (!repository.existsByIdAndKitVersionId(param.answerRangeId(), param.kitVersionId()))
             throw new ResourceNotFoundException(ANSWER_RANGE_ID_NOT_FOUND);
