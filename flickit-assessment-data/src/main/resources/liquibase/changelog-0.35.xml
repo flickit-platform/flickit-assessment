@@ -189,28 +189,4 @@
         </update>
     </changeSet>
 
-    <changeSet id="0.35-26" author="Ali Sedaghat">
-        <createTable tableName="fak_custom_kit">
-            <column autoIncrement="true" name="id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="kit_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="title" type="varchar(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="custom_data" type="json">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="0.35-27" author="Ali Sedaghat">
-        <addColumn tableName="fac_assessment">
-            <column name="custom_kit_id" type="bigint">
-                <constraints nullable="true"/>
-            </column>
-        </addColumn>
-    </changeSet>
 </databaseChangeLog>
