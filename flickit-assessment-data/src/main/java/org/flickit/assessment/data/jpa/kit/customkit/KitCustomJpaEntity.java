@@ -9,18 +9,16 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Entity
-@Table(name = "fak_custom_kit")
+@Table(name = "fak_kit_custom")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CustomKitJpaEntity {
+public class KitCustomJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
@@ -38,7 +36,7 @@ public class CustomKitJpaEntity {
 
     @Column(name = "custom_data", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
-    private Map<String, String> customData = new HashMap<>();
+    private String customData;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;

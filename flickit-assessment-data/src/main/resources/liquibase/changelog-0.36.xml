@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
     <changeSet id="0.36-01" author="Ali Sedaghat">
-        <createTable tableName="fak_custom_kit">
+        <createTable tableName="fak_kit_custom">
             <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -36,25 +36,25 @@
     </changeSet>
 
     <changeSet id="0.36-02" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_custom_kit" columnNames="title,kit_id"
-                             constraintName="uq_fak_customkit_title_kitid"/>
+        <addUniqueConstraint tableName="fak_kit_custom" columnNames="title,kit_id"
+                             constraintName="uq_fak_kitcustom_title_kitid"/>
     </changeSet>
 
     <changeSet id="0.36-03" author="Ali Sedaghat">
-        <addUniqueConstraint tableName="fak_custom_kit" columnNames="code,kit_id"
-                             constraintName="uq_fak_customkit_code_kitid"/>
+        <addUniqueConstraint tableName="fak_kit_custom" columnNames="code,kit_id"
+                             constraintName="uq_fak_kitcustom_code_kitid"/>
     </changeSet>
 
     <changeSet id="0.36-04" author="Ali Sedaghat">
-        <addForeignKeyConstraint baseTableName="fak_custom_kit" baseColumnNames="kit_id"
-                                 constraintName="fk_fak_customkit_kit"
+        <addForeignKeyConstraint baseTableName="fak_kit_custom" baseColumnNames="kit_id"
+                                 constraintName="fk_fak_kitcustom_kit"
                                  referencedTableName="fak_assessment_kit"
                                  referencedColumnNames="id"/>
     </changeSet>
 
     <changeSet id="0.36-05" author="Ali Sedaghat">
         <addColumn tableName="fac_assessment">
-            <column name="custom_kit_id" type="bigint">
+            <column name="kit_custom_id" type="bigint">
                 <constraints nullable="true"/>
             </column>
         </addColumn>
