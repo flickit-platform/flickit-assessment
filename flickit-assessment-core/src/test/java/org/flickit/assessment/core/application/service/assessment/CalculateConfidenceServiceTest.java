@@ -175,7 +175,7 @@ class CalculateConfidenceServiceTest {
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
-        when(createAttributeValuePort.persistAll(anyList(), any())).thenReturn(List.of(newAttributeValue));
+        when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
 
         CalculateConfidenceUseCase.Result result = service.calculate(param);
         verify(updateCalculatedConfidenceLevelResultPort, times(1)).updateCalculatedConfidence(any(AssessmentResult.class));
