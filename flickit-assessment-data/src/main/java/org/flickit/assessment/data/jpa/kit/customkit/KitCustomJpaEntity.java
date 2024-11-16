@@ -23,10 +23,10 @@ public class KitCustomJpaEntity {
     @Id
     @EqualsAndHashCode.Include
     @Column(name = "id", updatable = false, nullable = false)
-    private long id;
+    private Long id;
 
     @Column(name = "kit_id", nullable = false)
-    private long kitId;
+    private Long kitId;
 
     @Column(name = "title", nullable = false)
     private String title;
