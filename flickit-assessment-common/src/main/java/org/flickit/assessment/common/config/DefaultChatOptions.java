@@ -13,7 +13,7 @@ public class DefaultChatOptions implements ChatOptions {
     @Builder.Default
     private String model = "gpt-4o-mini";
     @Builder.Default
-    private Float temperature= 0.7f;
+    private Float temperature= 0.0f;
     private Float frequencyPenalty;
     private Integer maxTokens;
     private Float presencePenalty;

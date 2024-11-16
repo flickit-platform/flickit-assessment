@@ -64,7 +64,7 @@ class GetQuestionnaireQuestionsServiceTest {
     void testGetQuestionnaireQuestions_WhenCurrentUserIsExpertGroupOwner_ThenGetQuestionnaireQuestions() {
         var param = createParam(b -> b.currentUserId(ownerId));
         Question question1 = createQuestion();
-        Question question2 = createQuestion();
+        Question question2 = createQuestion(null);
         var items = List.of(question1, question2);
         PaginatedResponse<Question> pageResult = new PaginatedResponse<>(
             items,
@@ -96,6 +96,7 @@ class GetQuestionnaireQuestionsServiceTest {
             assertEquals(expected.getHint(), actual.hint());
             assertEquals(expected.getMayNotBeApplicable(), actual.mayNotBeApplicable());
             assertEquals(expected.getAdvisable(), actual.advisable());
+            assertEquals(expected.getAnswerRangeId(), actual.answerRangeId());
         }
     }
 

@@ -7,6 +7,7 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.assessmentkit.Ass
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueMapper;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.assessmentresult.*;
@@ -94,9 +95,12 @@ public class AssessmentResultPersistenceJpaAdapter implements
         return subjectValueViews.stream()
             .map(v -> {
                 var subjectValue = SubjectValueMapper.mapToDomainModel(v.getSubjectValue(), v.getSubject());
-                var attributeValues = subjectIdToAttributeValuesMap.get(v.getSubject().getId()).stream()
-                    .map(av -> AttributeValueMapper.mapToDomainModel(av.getAttributeValue(), av.getAttribute()))
-                    .toList();
+                List<AttributeValue> attributeValues = List.of();
+                if (subjectIdToAttributeValuesMap.get(v.getSubject().getId()) != null) {
+                    attributeValues = subjectIdToAttributeValuesMap.get(v.getSubject().getId()).stream()
+                        .map(av -> AttributeValueMapper.mapToDomainModel(av.getAttributeValue(), av.getAttribute()))
+                        .toList();
+                }
                 subjectValue.setAttributeValues(attributeValues);
                 return subjectValue;
             }).toList();
