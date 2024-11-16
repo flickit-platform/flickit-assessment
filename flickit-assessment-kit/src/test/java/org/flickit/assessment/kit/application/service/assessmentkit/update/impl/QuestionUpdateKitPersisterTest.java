@@ -6,7 +6,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
@@ -83,7 +83,7 @@ class QuestionUpdateKitPersisterTest {
     private UpdateAnswerOptionPort updateAnswerOptionPort;
 
     @Mock
-    private LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
+    private LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
@@ -115,7 +115,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -134,7 +134,7 @@ class QuestionUpdateKitPersisterTest {
         var expectedQuestionImpactId = 56115L;
         when(createAnswerRangePort.persist(any())).thenReturn(expectedAnswerRangeId);
         when(createQuestionPort.persist(any())).thenReturn(expectedQuestionId);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(kitContext.answerOption1(), kitContext.answerOption2()));
+        when(loadAnswerOptionsPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(kitContext.answerOption1(), kitContext.answerOption2()));
         when(createQuestionImpactPort.persist(any())).thenReturn(expectedQuestionImpactId);
 
         AssessmentKitDslModel dslKit = createKitDslModel(QUESTION_TITLE1, 1, 1, OPTION_TITLE);
@@ -219,7 +219,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -234,7 +234,7 @@ class QuestionUpdateKitPersisterTest {
         var expectedQuestionImpactId = 413591L;
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(expectedQuestionImpactId);
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(1L);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(kitContext.answerOption1(), kitContext.answerOption2()));
+        when(loadAnswerOptionsPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(kitContext.answerOption1(), kitContext.answerOption2()));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
         var dslMaturityLevelThree = MaturityLevelDslModelMother.domainToDslModel(levelThree());
@@ -314,7 +314,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -353,7 +353,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -392,7 +392,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -403,7 +403,7 @@ class QuestionUpdateKitPersisterTest {
         kitContext.questionnaire().setQuestions(List.of(kitContext.question()));
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
 
-        doNothing().when(updateAnswerOptionPort).update(any(UpdateAnswerOptionPort.Param.class));
+        doNothing().when(updateAnswerOptionPort).updateTitle(any(UpdateAnswerOptionPort.UpdateTitleParam.class));
 
         AssessmentKitDslModel dslKit = createKitDslModel(QUESTION_TITLE1, 1, 1, NEW_OPTION_TITLE);
 
@@ -431,7 +431,7 @@ class QuestionUpdateKitPersisterTest {
             updateAnswerOptionImpactPort,
             createQuestionPort,
             createAnswerRangePort,
-            loadAnswerOptionsByQuestionPort,
+            loadAnswerOptionsPort,
             createAnswerOptionPort
         );
     }
@@ -449,7 +449,7 @@ class QuestionUpdateKitPersisterTest {
         var expectedQuestionImpactId = 56115L;
         when(createAnswerRangePort.persist(any())).thenReturn(expectedAnswerRangeId);
         when(createQuestionPort.persist(any())).thenReturn(expectedQuestionId);
-        when(loadAnswerOptionsByQuestionPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(kitContext.answerOption1(), kitContext.answerOption2()));
+        when(loadAnswerOptionsPort.loadByQuestionId(any(), eq(savedKit.getActiveVersionId()))).thenReturn(List.of(kitContext.answerOption1(), kitContext.answerOption2()));
         when(createQuestionImpactPort.persist(any())).thenReturn(expectedQuestionImpactId);
 
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();

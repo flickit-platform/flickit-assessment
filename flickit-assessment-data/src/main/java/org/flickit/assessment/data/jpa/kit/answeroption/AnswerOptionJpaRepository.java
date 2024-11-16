@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     void deleteByIdAndKitVersionId(Long answerOptionId, Long kitVersionId);
 
-    List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(List<Long> answerRangeIds, Long kitVersionId, Sort sort);
+    List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(Collection<Long> answerRangeIds, Long kitVersionId, Sort sort);
 
     @Modifying
     @Query("""
@@ -37,9 +38,27 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
                 a.lastModifiedBy = :lastModifiedBy
             WHERE a.id = :id AND a.kitVersionId = :kitVersionId
         """)
+    void updateTitle(@Param("id") Long id,
+                     @Param("kitVersionId") Long kitVersionId,
+                     @Param("title") String title,
+                     @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                     @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Modifying
+    @Query("""
+            UPDATE AnswerOptionJpaEntity a
+            SET a.index = :index,
+                a.title = :title,
+                a.value = :value,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :id AND a.kitVersionId = :kitVersionId
+        """)
     void update(@Param("id") Long id,
-                @Param("kitVersionId") Long kitVersionId,
+                @Param("kitVersionId") long kitVersionId,
+                @Param("index") int index,
                 @Param("title") String title,
+                @Param("value") double value,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 }

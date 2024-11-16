@@ -162,6 +162,31 @@ class GetSubjectInsightServiceTest {
         assertFalse(result.editable());
     }
 
+    @Test
+    void testGetSubjectInsight_SubjectHasNoAttribute_ReturnBlankDefaultInsight() {
+        GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
+        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+
+        var subjectReport = createSubjectWithNullMaturityLevelReportInfo();
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
+            .thenReturn(Optional.empty());
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
+            .thenReturn(false);
+        when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId())).thenReturn(subjectReport);
+
+        GetSubjectInsightUseCase.Result result = service.getSubjectInsight(param);
+
+        assertNull(result.assessorInsight());
+        assertNotNull(result.defaultInsight());
+        assertTrue(result.defaultInsight().insight().isBlank());
+        assertFalse(result.editable());
+    }
+
     private LoadSubjectReportInfoPort.Result createSubjectReportInfo() {
         MaturityLevel maturityLevel1 = MaturityLevelMother.levelTwo();
         MaturityLevel maturityLevel2 = MaturityLevelMother.levelFive();
@@ -189,5 +214,16 @@ class GetSubjectInsightServiceTest {
         return new LoadSubjectReportInfoPort.Result(subjectReportItem,
             List.of(maturityLevel1, maturityLevel2),
             List.of(subjectAttributeReportItem1, subjectAttributeReportItem2));
+    }
+
+    private LoadSubjectReportInfoPort.Result createSubjectWithNullMaturityLevelReportInfo() {
+        MaturityLevel maturityLevel1 = MaturityLevelMother.levelTwo();
+        MaturityLevel maturityLevel2 = MaturityLevelMother.levelFive();
+        var subjectReportItem = new SubjectReportItem(2L, "software", "description", null,
+            100.0, true, true);
+
+        return new LoadSubjectReportInfoPort.Result(subjectReportItem,
+            List.of(maturityLevel1, maturityLevel2),
+            List.of());
     }
 }

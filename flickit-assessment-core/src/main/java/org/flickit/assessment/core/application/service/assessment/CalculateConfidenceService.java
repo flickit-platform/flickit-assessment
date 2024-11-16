@@ -3,10 +3,12 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CalculateConfidenceUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
@@ -21,12 +23,14 @@ import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CALCULATE_CONFIDENCE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
+    private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadConfidenceLevelCalculateInfoPort loadConfidenceLevelCalculateInfoPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final UpdateCalculatedConfidencePort updateCalculatedConfidenceLevelResultPort;
@@ -41,10 +45,9 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CALCULATE_CONFIDENCE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
+        reinitializeAssessmentResultIfRequired(param.getAssessmentId());
 
-        if (isAssessmentResultReinitializationRequired(assessmentResult))
-            reinitializeAssessmentResult(assessmentResult);
+        AssessmentResult assessmentResult = loadConfidenceLevelCalculateInfoPort.load(param.getAssessmentId());
 
         Double confidenceValue = assessmentResult.calculateConfidenceValue();
 
@@ -58,6 +61,13 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
         updateAssessmentPort.updateLastModificationTime(param.getAssessmentId(), assessmentResult.getLastModificationTime());
 
         return new Result(confidenceValue);
+    }
+
+    private void reinitializeAssessmentResultIfRequired(UUID assessmentId) {
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
+        if (isAssessmentResultReinitializationRequired(assessmentResult))
+            reinitializeAssessmentResult(assessmentResult);
     }
 
     private boolean isAssessmentResultReinitializationRequired(AssessmentResult assessmentResult) {
@@ -103,6 +113,7 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
 
     private Map<UUID, List<AttributeValue>> createNewAttributeValues(List<Subject> kitSubjects, List<SubjectValue> subjectValues, UUID assessmentResultId) {
         List<Attribute> kitAttributes = kitSubjects.stream()
+            .filter(s -> s.getAttributes() != null)
             .flatMap(s -> s.getAttributes().stream())
             .toList();
 
@@ -121,10 +132,12 @@ public class CalculateConfidenceService implements CalculateConfidenceUseCase {
             .toList();
 
         Map<Long, Long> attributeIdToSubjectId = new HashMap<>();
-        for (Subject subject : kitSubjects) {
-            for (Attribute attribute : subject.getAttributes())
-                attributeIdToSubjectId.put(attribute.getId(), subject.getId());
-        }
+        kitSubjects.forEach(subject -> {
+            if (subject.getAttributes() != null) {
+                subject.getAttributes().forEach(attribute ->
+                    attributeIdToSubjectId.put(attribute.getId(), subject.getId()));
+            }
+        });
 
         List<AttributeValue> newAttributeValues = createAttributeValuePort.persistAll(newAttributeIds, assessmentResultId);
         Map<Long, SubjectValue> subjectIdToSubjectValue = subjectValues.stream().collect(Collectors.toMap(a -> a.getSubject().getId(), a -> a));

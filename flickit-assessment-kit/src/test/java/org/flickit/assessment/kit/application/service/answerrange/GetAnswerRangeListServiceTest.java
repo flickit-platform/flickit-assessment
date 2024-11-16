@@ -6,7 +6,7 @@ import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.answerrange.GetAnswerRangeListUseCase;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithFourOptions;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithTwoOptions;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +59,7 @@ class GetAnswerRangeListServiceTest {
     @Test
     void testGetAnswerRangeList_ValidParams_ReturnsPaginatedAnswerRangeWithOptions() {
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
-        var answerRange1 = createAnswerRangeWithTwoOptions();
+        var answerRange1 = createReusableAnswerRangeWithTwoOptions();
         var answerRange2 = createAnswerRangeWithFourOptions();
 
         PaginatedResponse<AnswerRange> paginatedAnswerRanges = new PaginatedResponse<>(

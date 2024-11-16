@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,6 +26,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
 
+    boolean existsByAnswerRangeIdAndKitVersionId(long answerRangeId, long kitVersionId);
+
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
 
     @Modifying
@@ -36,6 +39,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 q.index = :index,
                 q.mayNotBeApplicable = :mayNotBeApplicable,
                 q.advisable = :advisable,
+                q.answerRangeId = :answerRangeId,
                 q.lastModificationTime = :lastModificationTime,
                 q.lastModifiedBy = :lastModifiedBy
             WHERE q.id = :id AND q.kitVersionId = :kitVersionId
@@ -48,6 +52,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 @Param("hint") String hint,
                 @Param("mayNotBeApplicable") Boolean mayNotBeApplicable,
                 @Param("advisable") Boolean advisable,
+                @Param("answerRangeId") Long answerRangeId,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
@@ -79,37 +84,46 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     Integer countDistinctBySubjectId(@Param("subjectId") long subjectId, @Param("kitVersionId") Long kitVersionId);
 
     @Query("""
-           SELECT DISTINCT q.id AS  questionId,
-                anso.index AS answeredOptionIndex,
+            SELECT DISTINCT
+                q.id AS questionId,
                 qanso.id AS optionId,
                 qanso.index AS optionIndex,
                 qi.weight AS questionImpactWeight,
                 ansoi.value AS optionImpactValue,
                 qanso.value AS optionValue
-           FROM QuestionJpaEntity q
-           JOIN QuestionnaireJpaEntity qn ON q.questionnaireId = qn.id AND q.kitVersionId = qn.kitVersionId
-           JOIN AssessmentResultJpaEntity asmr ON asmr.assessment.id = :assessmentId
-           JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
-           JOIN AnswerOptionJpaEntity qanso ON q.answerRangeId = qanso.answerRangeId AND q.kitVersionId = qanso.kitVersionId
-           LEFT JOIN  AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId and qi.id = ansoi.questionImpactId AND qi.kitVersionId = ansoi.kitVersionId
-           LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = asmr.id and q.id = ans.questionId
-           LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.answerRangeId = anso.answerRangeId AND q.kitVersionId = anso.kitVersionId
-           WHERE q.advisable = TRUE
-               AND (asmr.assessment.id = :assessmentId
-               AND anso.index NOT IN (SELECT MAX(sq_ans.index)
-                                  FROM AnswerOptionJpaEntity sq_ans
-                                  WHERE sq_ans.answerRangeId = q.id)
-               AND qi.attributeId = :attributeId
-               AND qi.maturityLevelId = :maturityLevelId)
-               OR (asmr.assessment.id = :assessmentId
-                   AND ans.answerOptionId IS NULL
-                   AND qi.attributeId = :attributeId)
-               AND qi.maturityLevelId = :maturityLevelId
-               AND q.kitVersionId = asmr.kitVersionId
+            FROM QuestionJpaEntity q
+            JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
+            JOIN AnswerOptionJpaEntity qanso ON q.answerRangeId = qanso.answerRangeId AND q.kitVersionId = qanso.kitVersionId
+            LEFT JOIN AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId AND qi.id = ansoi.questionImpactId AND ansoi.kitVersionId = q.kitVersionId
+            WHERE
+                q.advisable = TRUE
+                AND q.kitVersionId = :kitVersionId
+                AND qi.attributeId = :attributeId
+                AND qi.maturityLevelId = :maturityLevelId
         """)
-    List<ImprovableImpactfulQuestionView> findAdvisableImprovableImpactfulQuestions(@Param("assessmentId") UUID assessmentId,
-                                                                                    @Param("attributeId") Long attributeId,
-                                                                                    @Param("maturityLevelId") Long maturityLevelId);
+    List<ImpactfulQuestionView> findAdvisableImpactfulQuestions(@Param("kitVersionId") long kitVersionId,
+                                                                @Param("attributeId") long attributeId,
+                                                                @Param("maturityLevelId") long maturityLevelId);
+
+    @Query("""
+            SELECT DISTINCT
+                q.id AS questionId,
+                anso.index AS answeredOptionIndex
+            FROM QuestionJpaEntity q
+            LEFT JOIN AnswerJpaEntity ans ON ans.assessmentResult.id = :assessmentResultId AND q.id = ans.questionId
+            LEFT JOIN AnswerOptionJpaEntity anso ON ans.answerOptionId = anso.id AND q.kitVersionId = anso.kitVersionId
+            WHERE
+                q.id IN :questionIds
+                AND q.kitVersionId = :kitVersionId
+                AND (ans.answerOptionId IS NULL
+                    OR (anso.index != (
+                        SELECT MAX(sq_ans.index) FROM AnswerOptionJpaEntity sq_ans
+                        WHERE sq_ans.answerRangeId = anso.answerRangeId AND sq_ans.kitVersionId = :kitVersionId
+                    )))
+        """)
+    List<QuestionIdWithAnsweredOptionIndexView> findImprovableQuestions(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                        @Param("kitVersionId") long kitVersionId,
+                                                                        @Param("questionIds") Collection<Long> questionIds);
 
     @Query("""
             SELECT
@@ -118,10 +132,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 q.index AS index,
                 ao AS option,
                 atr AS attribute,
-                questionnaire AS questionnaire
+                qsnnr AS questionnaire
             FROM QuestionJpaEntity q
             JOIN AnswerOptionJpaEntity ao ON q.answerRangeId = ao.answerRangeId AND q.kitVersionId = ao.kitVersionId
-            JOIN QuestionnaireJpaEntity questionnaire ON q.questionnaireId = questionnaire.id AND q.kitVersionId = questionnaire.kitVersionId
+            JOIN QuestionnaireJpaEntity qsnnr ON q.questionnaireId = qsnnr.id AND q.kitVersionId = qsnnr.kitVersionId
             JOIN AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId AND ao.kitVersionId = impact.kitVersionId
             JOIN QuestionImpactJpaEntity qi ON qi.id = impact.questionImpactId AND qi.kitVersionId = impact.kitVersionId
             JOIN AttributeJpaEntity atr ON qi.attributeId = atr.id AND qi.kitVersionId = atr.kitVersionId
@@ -191,4 +205,18 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             ORDER BY qsn.questionnaireId asc, qsn.index asc
         """)
     List<AttributeImpactfulQuestionsView> findByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId);
+
+    @Modifying
+    @Query("""
+            UPDATE QuestionJpaEntity q
+            SET q.answerRangeId = :answerRangeId,
+                q.lastModificationTime = :lastModificationTime,
+                q.lastModifiedBy = :lastModifiedBy
+            WHERE q.id = :id AND q.kitVersionId = :kitVersionId
+        """)
+    void updateAnswerRange(@Param("id") Long id,
+                           @Param("kitVersionId") Long kitVersionId,
+                           @Param("answerRangeId") Long answerRangeId,
+                           @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                           @Param("lastModifiedBy") UUID lastModifiedBy);
 }

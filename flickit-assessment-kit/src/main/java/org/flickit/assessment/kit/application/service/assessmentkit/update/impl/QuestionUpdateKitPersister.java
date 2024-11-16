@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsByQuestionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
@@ -41,7 +41,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
     private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
-    private final LoadAnswerOptionsByQuestionPort loadAnswerOptionsByQuestionPort;
+    private final LoadAnswerOptionsPort loadAnswerOptionsPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
     private final CreateAnswerRangePort createAnswerRangePort;
 
@@ -245,7 +245,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
 
-        Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsByQuestionPort.loadByQuestionId(questionId, kitVersionId).stream()
+        Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsPort.loadByQuestionId(questionId, kitVersionId).stream()
             .collect(toMap(AnswerOption::getIndex, AnswerOption::getId));
 
         dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(
@@ -287,6 +287,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 dslQuestion.getDescription(),
                 dslQuestion.isMayNotBeApplicable(),
                 dslQuestion.isAdvisable(),
+                savedQuestion.getAnswerRangeId(),
                 LocalDateTime.now(),
                 currentUserId
             );
@@ -321,8 +322,12 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             String savedOptionTitle = optionEntry.getValue().getTitle();
             String dslOptionTitle = dslOptionIndexMap.get(optionEntry.getKey()).getCaption();
             if (!savedOptionTitle.equals(dslOptionTitle)) {
-                updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(optionEntry.getValue().getId(),
-                    kitVersionId, dslOptionTitle, LocalDateTime.now(), currentUserId));
+                updateAnswerOptionPort.updateTitle(new UpdateAnswerOptionPort.UpdateTitleParam(
+                    optionEntry.getValue().getId(),
+                    kitVersionId,
+                    dslOptionTitle,
+                    LocalDateTime.now(),
+                    currentUserId));
                 log.debug("AnswerOption[id={}, index={}, newTitle{}, questionId{}] updated.",
                     optionEntry.getValue().getId(), optionEntry.getKey(), dslOptionTitle, savedQuestion.getId());
             }

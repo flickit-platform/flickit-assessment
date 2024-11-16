@@ -40,6 +40,9 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
 
         Question question = loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId());
 
+        if (question.getImpacts() == null)
+            return new Result(List.of());
+
         var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId()).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
 

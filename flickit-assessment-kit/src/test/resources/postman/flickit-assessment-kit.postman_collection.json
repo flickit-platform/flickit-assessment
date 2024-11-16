@@ -1166,7 +1166,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false\n}",
+							"raw": "{\n    \"index\": 26,\n    \"title\": \"update question title\",\n    \"hint\": \"new hint\",\n    \"mayNotBeApplicable\": true,\n    \"advisable\": false,\n    \"answerRangeId\": 1618\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1174,16 +1174,16 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/questions/22777",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/223/questions/4859",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"kit-versions",
-								"393",
+								"223",
 								"questions",
-								"22777"
+								"4859"
 							]
 						}
 					},
@@ -2000,8 +2000,43 @@
 			]
 		},
 		{
-			"name": "AnswerOption",
+			"name": "Answer Option",
 			"item": [
+				{
+					"name": "Create Answer Option",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"questionId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-options",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"answer-options"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Get Question Options",
 					"request": {
@@ -2025,6 +2060,42 @@
 								"questions",
 								"22799",
 								"options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Answer Option",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"index\": 5,\n    \"title\": \"new option\",\n    \"value\": 1.6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-options/89306",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"answer-options",
+								"89306"
 							]
 						}
 					},
@@ -2063,6 +2134,41 @@
 			"name": "Answer Range",
 			"item": [
 				{
+					"name": "Create Answer Range Option",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"answerRangeId\": 3,\n    \"index\": \"1\",\n    \"title\": \"Yes\",\n    \"value\": 0.5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-range-options",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"answer-range-options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Load Answer Range List",
 					"request": {
 						"method": "GET",
@@ -2093,6 +2199,77 @@
 									"key": "size",
 									"value": "10"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Answer Range",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"alpha\",\n    \"reusable\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-ranges/3345",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"answer-ranges",
+								"3345"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Answer Range",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"alpha\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/393/answer-ranges",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"393",
+								"answer-ranges"
 							]
 						}
 					},

@@ -19,6 +19,7 @@ public class ErrorMessageKey {
     public static final String SUBJECT_ID_NOT_FOUND = "subject-id.notFound";
     public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
     public static final String ANSWER_OPTION_ID_NOT_FOUND = "answer-option.id.notFound";
+    public static final String ANSWER_RANGE_ID_NOT_FOUND = "answer-range.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -87,7 +88,6 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
-    public static final String GET_KIT_STATS_ACTIVE_VERSION_NOT_FOUND = "get-kit-stats.activeVersion.notFound";
 
     public static final String GET_KIT_EDITABLE_INFO_KIT_ID_NOT_NULL = "get-kit-editable-info.kitId.notNull";
 
@@ -364,6 +364,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_QUESTION_HINT_SIZE_MAX = "update-question.hint.size.max";
     public static final String UPDATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "update-question.myNotBeApplicable.notNull";
     public static final String UPDATE_QUESTION_ADVISABLE_NOT_NULL = "update-question.advisable.notNull";
+    public static final String UPDATE_QUESTION_ANSWER_RANGE_ID_NOT_UPDATABLE = "update-question.answerRangeId.notUpdatable";
 
     public static final String UPDATE_QUESTIONS_ORDER_KIT_VERSION_ID_NOT_NULL = "update-questions-order.kitVersionId.notNull";
     public static final String UPDATE_QUESTIONS_ORDER_ORDERS_NOT_NULL = "update-questions-order.orders.notNull";
@@ -407,7 +408,42 @@ public class ErrorMessageKey {
     public static final String DELETE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "delete-kit-version.kitVersionId.notNull";
     public static final String DELETE_KIT_VERSION_NOT_ALLOWED = "delete.kitVersion.notAllowed";
 
-    public static final String CREATE_ANSWER_OPTION_DUPLICATE = "create-answer-option.duplicate";
+    public static final String UPDATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL = "update-answer-range.kitVersionId.notNull";
+    public static final String UPDATE_ANSWER_RANGE_ANSWER_RANGE_ID_NOT_NULL = "update-answer-range.answerRangeId.notNull";
+    public static final String UPDATE_ANSWER_RANGE_TITLE_SIZE_MIN = "update-answer-range.title.size.min";
+    public static final String UPDATE_ANSWER_RANGE_TITLE_SIZE_MAX = "update-answer-range.title.size.max";
+    public static final String UPDATE_ANSWER_RANGE_REUSABLE_NOT_NULL = "update-answer-range.reusable.notNull";
+    public static final String UPDATE_ANSWER_RANGE_TITLE_NOT_NULL = "update-answer-range.title.notNull";
+    public static final String UPDATE_ANSWER_RANGE_NOT_ALLOWED = "update-answer-range.notAllowed";
+
+    public static final String UPDATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "update-answer-option.kitVersionId.notNull";
+    public static final String UPDATE_ANSWER_OPTION_ANSWER_OPTION_ID_NOT_NULL = "update-answer-option.answerOptionId.notNull";
+    public static final String UPDATE_ANSWER_OPTION_INDEX_NOT_NULL = "update-answer-option.index.notNull";
+    public static final String UPDATE_ANSWER_OPTION_TITLE_NOT_NULL = "update-answer-option.title.notNull";
+    public static final String UPDATE_ANSWER_OPTION_TITLE_SIZE_MAX = "update-answer-option.title.size.max";
+    public static final String UPDATE_ANSWER_OPTION_VALUE_NOT_NULL = "update-answer-option.value.notNull";
+
+    public static final String CREATE_ANSWER_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-option.kitVersionId.notNull";
+    public static final String CREATE_ANSWER_OPTION_QUESTION_NOT_NULL = "create-answer-option.questionId.notNull";
+    public static final String CREATE_ANSWER_OPTION_VALUE_NOT_NULL = "create-answer-option.value.notNull";
+    public static final String CREATE_ANSWER_OPTION_INDEX_NOT_NULL = "create-answer-option.index.notNull";
+    public static final String CREATE_ANSWER_OPTION_TITLE_NOT_BLANK = "create-answer-option.title.notBlank";
+    public static final String CREATE_ANSWER_OPTION_TITLE_SIZE_MAX = "create-answer-option.title.size.max";
+    public static final String CREATE_ANSWER_OPTION_INDEX_DUPLICATE = "create-answer-option.index.duplicate";
+    public static final String CREATE_ANSWER_OPTION_ANSWER_RANGE_REUSABLE = "create-answer-option.answerRange.reusable";
+
+    public static final String CREATE_ANSWER_RANGE_KIT_VERSION_ID_NOT_NULL = "create-answer-range.kitVersionId.notNull";
+    public static final String CREATE_ANSWER_RANGE_TITLE_NOT_BLANK = "create-answer-range.title.notBlank";
+    public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MIN = "create-answer-range.title.size.min";
+    public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MAX = "create-answer-range.title.size.max";
+
+    public static final String CREATE_ANSWER_RANGE_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-range-option.kitVersionId.notNull";
+    public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_ID_NOT_NULL = "create-answer-range-option.answerRangeId.notNull";
+    public static final String CREATE_ANSWER_RANGE_OPTION_INDEX_NOT_NULL = "create-answer-range-option.index.notNull";
+    public static final String CREATE_ANSWER_RANGE_OPTION_TITLE_NOT_BLANK = "create-answer-range-option.title.notBlank";
+    public static final String CREATE_ANSWER_RANGE_OPTION_TITLE_SIZE_MAX = "create-answer-range-option.title.size.max";
+    public static final String CREATE_ANSWER_RANGE_OPTION_VALUE_NOT_NULL = "create-answer-range-option.value.notNull";
+    public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE = "create-answer-range-option.answerRange.non-reusable";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

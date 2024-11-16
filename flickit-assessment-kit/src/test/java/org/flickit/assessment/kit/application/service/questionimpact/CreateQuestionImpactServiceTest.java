@@ -57,25 +57,26 @@ class CreateQuestionImpactServiceTest {
     @Test
     void testCreateQuestionImpact_validParams_successfulCreateQuestionImpact() {
         var param = createParam(b -> b.currentUserId(ownerId));
+        long questionImpactId = 1L;
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(questionImpactId);
 
+        long result = service.createQuestionImpact(param);
+        assertEquals(questionImpactId, result);
 
-        service.createQuestionImpact(param);
-
-        ArgumentCaptor<QuestionImpact> captor = ArgumentCaptor.forClass(QuestionImpact.class);
-        verify(createQuestionImpactPort).persist(captor.capture());
-
-        assertEquals(param.getKitVersionId(), captor.getValue().getKitVersionId());
-        assertEquals(param.getAttributeId(), captor.getValue().getAttributeId());
-        assertEquals(param.getMaturityLevelId(), captor.getValue().getMaturityLevelId());
-        assertEquals(param.getQuestionId(), captor.getValue().getQuestionId());
-        assertEquals(param.getWeight(), captor.getValue().getWeight());
-        assertEquals(param.getCurrentUserId(), captor.getValue().getCreatedBy());
-        assertEquals(param.getCurrentUserId(), captor.getValue().getLastModifiedBy());
-        assertNotNull(captor.getValue().getCreationTime());
-        assertNotNull(captor.getValue().getLastModificationTime());
+        ArgumentCaptor<QuestionImpact> questionImpactCaptor = ArgumentCaptor.forClass(QuestionImpact.class);
+        verify(createQuestionImpactPort).persist(questionImpactCaptor.capture());
+        assertEquals(param.getKitVersionId(), questionImpactCaptor.getValue().getKitVersionId());
+        assertEquals(param.getAttributeId(), questionImpactCaptor.getValue().getAttributeId());
+        assertEquals(param.getMaturityLevelId(), questionImpactCaptor.getValue().getMaturityLevelId());
+        assertEquals(param.getQuestionId(), questionImpactCaptor.getValue().getQuestionId());
+        assertEquals(param.getWeight(), questionImpactCaptor.getValue().getWeight());
+        assertEquals(param.getCurrentUserId(), questionImpactCaptor.getValue().getCreatedBy());
+        assertEquals(param.getCurrentUserId(), questionImpactCaptor.getValue().getLastModifiedBy());
+        assertNotNull(questionImpactCaptor.getValue().getCreationTime());
+        assertNotNull(questionImpactCaptor.getValue().getLastModificationTime());
     }
 
     private CreateQuestionImpactUseCase.Param createParam(Consumer<CreateQuestionImpactUseCase.Param.ParamBuilder> changer) {
@@ -86,7 +87,7 @@ class CreateQuestionImpactServiceTest {
 
     private CreateQuestionImpactUseCase.Param.ParamBuilder paramBuilder() {
         return CreateQuestionImpactUseCase.Param.builder()
-            .kitVersionId(1L)
+            .kitVersionId(kitVersion.getId())
             .attributeId(2L)
             .maturityLevelId(3L)
             .questionId(4L)
