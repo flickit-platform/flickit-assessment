@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.common.exception.api.Notification;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -34,7 +34,7 @@ public interface ValidateKitVersionUseCase {
         }
     }
 
-    record Result(boolean isValid, Notification message) {
+    record Result(boolean isValid, List<String> errors) {
     }
 }
 
