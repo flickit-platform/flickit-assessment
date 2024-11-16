@@ -6,7 +6,7 @@
     <changeSet id="0.36-01" author="Ali Sedaghat">
         <createTable tableName="fak_kit_custom">
             <column autoIncrement="true" name="id" type="bigint">
-                <constraints nullable="false"/>
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fak_kit_custom"/>
             </column>
             <column name="kit_id" type="bigint">
                 <constraints nullable="false"/>
