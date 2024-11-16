@@ -33,14 +33,15 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     UpdateExpertGroupLastSeenPort {
 
     private final ExpertGroupAccessJpaRepository repository;
-    private final ExpertGroupJpaRepository expertGroupJpaRepository;
+    private final ExpertGroupJpaRepository expertGroupRepository;
 
     @Override
     public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int status, int page, int size) {
         if (!expertGroupJpaRepository.existsById(expertGroupId))
+        if (!expertGroupRepository.existsById(expertGroupId))
             throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
 
-        var pageResult = repository.findExpertGroupMembers(expertGroupId, status, LocalDateTime.now(),
+        var pageResult = repository.findExpertGroupMembers(expertGroupId, status.ordinal(), LocalDateTime.now(),
             PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
         var items = pageResult
