@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.service.kitversion.validatekitversion;
+package org.flickit.assessment.kit.application.service.kitversion;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -8,6 +8,7 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.service.kitversion.validatekitversion.KitVersionValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
