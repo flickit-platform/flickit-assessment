@@ -30,6 +30,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
 
+    List<QuestionJpaEntity> findAllByKitVersionIdAndAnswerRangeIdIsNull(long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE QuestionJpaEntity q
@@ -223,8 +225,8 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     @Query("""
             SELECT q
             FROM QuestionJpaEntity q
-            JOIN QuestionImpactJpaEntity qi on q.kitVersionId = qi.kitVersionId
-            WHERE q.kitVersionId = :kitVersionId
+            Left JOIN QuestionImpactJpaEntity qi on q.kitVersionId = qi.kitVersionId
+            WHERE q.kitVersionId = :kitVersionId and qi.id = null
         """)
     List<QuestionJpaEntity> findAllByKitVersionIdAndWithoutQuestionImpact(@Param("kitVersionId") long kitVersionId);
 }

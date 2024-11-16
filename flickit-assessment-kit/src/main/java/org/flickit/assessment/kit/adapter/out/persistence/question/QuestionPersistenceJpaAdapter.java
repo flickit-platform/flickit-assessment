@@ -142,6 +142,14 @@ public class QuestionPersistenceJpaAdapter implements
             .toList();
     }
 
+    @Override
+    public List<Question> loadQuestionsWithoutAnswerRange(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndAnswerRangeIdIsNull(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToDomainModel)
+            .toList();
+    }
+
     private QuestionImpact setOptionImpacts(QuestionImpact impact, List<AnswerOptionJpaEntity> optionEntities) {
         var optionImpactsEntities = answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId());
         var optionIdToOptionValueMap = optionEntities.stream()
