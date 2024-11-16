@@ -90,6 +90,14 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
+    public List<Subject> loadByKitVersionIdAndWithoutAttribute(long kitVersionId) {
+        return repository.findByKitVersionIdAndWithoutAttribute(kitVersionId)
+            .stream()
+            .map(e -> SubjectMapper.mapToDomainModel(e, null))
+            .toList();
+    }
+
+    @Override
     public Subject load(long subjectId, long kitVersionId) {
         var subjectEntity = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));

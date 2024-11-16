@@ -88,4 +88,12 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT s
+            FROM SubjectJpaEntity s
+            LEFT JOIN AttributeJpaEntity a ON a.subjectId = s.id
+            WHERE s.kitVersionId = :kitVersionId AND s.id IS NULL
+        """)
+    List<SubjectJpaEntity> findByKitVersionIdAndWithoutAttribute(@Param("kitVersionId") long kitVersionId);
 }
