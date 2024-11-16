@@ -136,7 +136,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public List<Question> loadQuestionsWithoutImpact(long kitVersionId) {
-        return repository.findAllByKitVersionIdAndWithoutQuestionImpact(kitVersionId)
+        return repository.findByKitVersionIdQuestionImpactsIsNull(kitVersionId)
             .stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
