@@ -219,4 +219,12 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                            @Param("answerRangeId") Long answerRangeId,
                            @Param("lastModificationTime") LocalDateTime lastModificationTime,
                            @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Query("""
+            SELECT q
+            FROM QuestionJpaEntity q
+            JOIN QuestionImpactJpaEntity qi on q.kitVersionId = qi.kitVersionId
+            WHERE q.kitVersionId = :kitVersionId
+        """)
+    List<QuestionJpaEntity> findAllByKitVersionIdAndWithoutQuestionImpact(@Param("kitVersionId") long kitVersionId);
 }
