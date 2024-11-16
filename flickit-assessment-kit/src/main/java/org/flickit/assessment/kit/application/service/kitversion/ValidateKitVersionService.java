@@ -47,9 +47,9 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_QUESTION_IMPACT_UNSUPPORTED));
         if (!loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId()).isEmpty())
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_QUESTION_ANSWER_RANGE_UNSUPPORTED));
-        if (!loadAnswerRangesPort.loadByKitVersionIdAndWithoutAnswerOptions(param.getKitVersionId()).isEmpty())
+        if (!loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId()).isEmpty())
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ANSWER_RANGE_OPTION_UNSUPPORTED));
-        if (!loadSubjectsPort.loadByKitVersionIdAndWithoutAttribute(param.getKitVersionId()).isEmpty())
+        if (!loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId()).isEmpty())
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ATTRIBUTE_SUBJECT_UNSUPPORTED));
         if (!loadAttributePort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId()).isEmpty())
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ATTRIBUTE_QUESTION_IMPACT_UNSUPPORTED));

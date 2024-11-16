@@ -23,7 +23,6 @@ public class ValidateKitVersionRestController {
     public ResponseEntity<Result> validateKitVersion(@PathVariable("kitVersionId") Long kitVersionId) {
         var currentUserId = userContext.getUser().id();
         return new ResponseEntity<>(useCase.validate(toParam(kitVersionId, currentUserId)), HttpStatus.OK);
-
     }
 
     private Param toParam(Long kitVersionId, UUID currentUserId) {

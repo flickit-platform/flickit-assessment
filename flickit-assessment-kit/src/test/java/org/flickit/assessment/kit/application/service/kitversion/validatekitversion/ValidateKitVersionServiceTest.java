@@ -80,8 +80,8 @@ class ValidateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
         when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(List.of());
-        when(loadAnswerRangesPort.loadByKitVersionIdAndWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of());
-        when(loadSubjectsPort.loadByKitVersionIdAndWithoutAttribute(param.getKitVersionId())).thenReturn(List.of());
+        when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of());
+        when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(List.of());
         when(loadAttributePort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
 
         var result = service.validate(param);
@@ -99,8 +99,8 @@ class ValidateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
         when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of(mock(Question.class)));
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(List.of(mock(Question.class)));
-        when(loadAnswerRangesPort.loadByKitVersionIdAndWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of(mock(AnswerRange.class)));
-        when(loadSubjectsPort.loadByKitVersionIdAndWithoutAttribute(param.getKitVersionId())).thenReturn(List.of(mock(Subject.class)));
+        when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of(mock(AnswerRange.class)));
+        when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(List.of(mock(Subject.class)));
         when(loadAttributePort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of(mock(Attribute.class)));
 
         var result = service.validate(param);
