@@ -57,7 +57,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
                 item.linkedin(),
                 ExpertGroupAccessStatus.values()[item.status()],
                 item.inviteExpirationDate(),
-                userIsOwner && !item.id().equals(currentUserId) ? Boolean.TRUE : Boolean.FALSE))
+                userIsOwner && !item.id().equals(currentUserId)))
             .toList();
     }
 }
