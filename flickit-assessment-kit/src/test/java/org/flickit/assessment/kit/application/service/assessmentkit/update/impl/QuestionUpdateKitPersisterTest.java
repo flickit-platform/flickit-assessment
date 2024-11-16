@@ -414,9 +414,9 @@ class QuestionUpdateKitPersisterTest {
         UUID currentUserId = UUID.randomUUID();
         persister.persist(ctx, savedKit, dslKit, currentUserId);
 
-        var updateParam = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
-        verify(updateAnswerOptionPort, times(1)).update(updateParam.capture());
-        assertEquals(kitContext.answerOption1().getId(), updateParam.getValue().id());
+        var updateParam = ArgumentCaptor.forClass(UpdateAnswerOptionPort.UpdateTitleParam.class);
+        verify(updateAnswerOptionPort, times(1)).updateTitle(updateParam.capture());
+        assertEquals(kitContext.answerOption1().getId(), updateParam.getValue().answerOptionId());
         assertEquals(savedKit.getActiveVersionId(), updateParam.getValue().kitVersionId());
         assertEquals(NEW_OPTION_TITLE, updateParam.getValue().title());
         assertNotNull(updateParam.getValue().lastModificationTime());
@@ -495,7 +495,7 @@ class QuestionUpdateKitPersisterTest {
     private KitContext createKitContext() {
         var levelTwo = levelTwo();
         var questionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, questionnaire.getId());
+        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, 25L, questionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
         var answerOption1 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
