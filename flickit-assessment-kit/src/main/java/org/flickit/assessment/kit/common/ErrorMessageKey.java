@@ -448,6 +448,10 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "validate-kit-version.kitVersionId.notNull";
     public static final String VALIDATE_KIT_VERSION_STATUS_INVALID = "validate-kit-version.status.invalid";
     public static final String VALIDATE_KIT_VERSION_EMPTY_QUESTION_IMPACT_UNSUPPORTED = "validate-kit-version.question-impact.empty.unsupported";
+    public static final String VALIDATE_KIT_VERSION_EMPTY_QUESTION_ANSWER_RANGE_UNSUPPORTED = "validate-kit-version.question-answer.empty.unsupported";
+    public static final String VALIDATE_KIT_VERSION_EMPTY_ANSWER_RANGE_OPTION_UNSUPPORTED = "validate-kit-version.answer-range-option.empty.unsupported";
+    public static final String VALIDATE_KIT_VERSION_EMPTY_ATTRIBUTE_SUBJECT_UNSUPPORTED = "validate-kit-version.attribute-subject.empty.unsupported";
+    public static final String VALIDATE_KIT_VERSION_EMPTY_ATTRIBUTE_QUESTION_IMPACT_UNSUPPORTED = "validate-kit-version.attributeQuestionImpact.empty.unsupported";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
