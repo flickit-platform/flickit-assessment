@@ -33,7 +33,7 @@ public class GetExpertGroupMembersService implements GetExpertGroupMembersUseCas
             return new PaginatedResponse<>(List.of(), 0, 0, null, null, 0);
 
         ExpertGroupAccessStatus requiredStatus = param.getStatus() != null ? param.getStatus() : ExpertGroupAccessStatus.ACTIVE;
-        var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), requiredStatus.ordinal(), param.getPage(), param.getSize());
+        var portResult = loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), requiredStatus, param.getPage(), param.getSize());
         var members = mapToMembers(portResult.getItems(), userIsOwner, param.getCurrentUserId());
 
         return new PaginatedResponse<>(

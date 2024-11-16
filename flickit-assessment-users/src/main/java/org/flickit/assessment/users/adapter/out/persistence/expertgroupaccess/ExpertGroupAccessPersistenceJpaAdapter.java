@@ -8,6 +8,7 @@ import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaRepository;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,8 +37,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     private final ExpertGroupJpaRepository expertGroupRepository;
 
     @Override
-    public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, int status, int page, int size) {
-        if (!expertGroupJpaRepository.existsById(expertGroupId))
+    public PaginatedResponse<Member> loadExpertGroupMembers(long expertGroupId, ExpertGroupAccessStatus status, int page, int size) {
         if (!expertGroupRepository.existsById(expertGroupId))
             throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
 

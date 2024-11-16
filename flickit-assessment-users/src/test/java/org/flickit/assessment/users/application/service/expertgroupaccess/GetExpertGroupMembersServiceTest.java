@@ -49,8 +49,8 @@ class GetExpertGroupMembersServiceTest {
     void testGetExpertGroupMembers_WhenCurrentUserIsOwnerAndNoStatusIsGiven_ThenReturnActiveMembers() {
         var param = createParam(b -> b.status(null).currentUserId(expertGroup.getOwnerId()));
 
-        LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), ACTIVE);
-        LoadExpertGroupMembersPort.Member member2 = createMember(expertGroup.getOwnerId(), ACTIVE);
+        LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), ExpertGroupAccessStatus.ACTIVE);
+        LoadExpertGroupMembersPort.Member member2 = createMember(expertGroup.getOwnerId(), ExpertGroupAccessStatus.ACTIVE);
 
         var paginatedResult = new PaginatedResponse<>(List.of(member1, member2),
             param.getPage(),
@@ -60,7 +60,7 @@ class GetExpertGroupMembersServiceTest {
             2);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
-        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), 1, param.getPage(), param.getSize())).thenReturn(paginatedResult);
+        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), ACTIVE, param.getPage(), param.getSize())).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
 
         var result = service.getExpertGroupMembers(param);
@@ -97,7 +97,7 @@ class GetExpertGroupMembersServiceTest {
             2);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
-        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), 1, param.getPage(), param.getSize())).thenReturn(paginatedResult);
+        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), ACTIVE, param.getPage(), param.getSize())).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
 
         var result = service.getExpertGroupMembers(param);
@@ -121,7 +121,7 @@ class GetExpertGroupMembersServiceTest {
 
     @Test
     void testGetExpertGroupMembers_WhenCurrentUserIsNotOwnerAndStatusIsPending_ThenReturnEmptyResult() {
-        var param = createParam(b -> b.status(ExpertGroupAccessStatus.PENDING.name()));
+        var param = createParam(b -> b.status(PENDING.name()));
 
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
 
@@ -149,7 +149,7 @@ class GetExpertGroupMembersServiceTest {
             2);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
-        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), 0, param.getPage(), param.getSize())).thenReturn(paginatedResult);
+        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), PENDING, param.getPage(), param.getSize())).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
 
         var result = service.getExpertGroupMembers(param);
