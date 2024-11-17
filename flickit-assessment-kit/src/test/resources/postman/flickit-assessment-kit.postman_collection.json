@@ -2293,7 +2293,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"test kit custom\",\n    \"subjects\": [\n        {\n            \"id\": 1000,\n            \"weight\": 1\n        }\n    ],\n    \"attributes\": [\n        {\n            \"id\": 200,\n            \"weight\": 2\n        }\n    ],\n    \"questionnaires\": [\n        {\n            \"id\": 213,\n            \"disabled\": true\n        }\n    ]\n}",
+							"raw": "{\n    \"title\": \"test kit custom\",\n    \"customData\": {\n        \"subjects\": [\n            {\n                \"id\": 1000,\n                \"weight\": 1\n            }\n        ],\n        \"attributes\": [\n            {\n                \"id\": 200,\n                \"weight\": 2\n            }\n        ],\n        \"questionnaires\": [\n            {\n                \"id\": 213,\n                \"disabled\": true\n            }\n        ]\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
