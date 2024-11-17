@@ -106,11 +106,11 @@ class ValidateKitVersionServiceTest {
         var result = service.validate(param);
         assertFalse(result.isValid());
         assertEquals(5, result.errors().size());
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_QUESTION_IMPACT_UNSUPPORTED)));
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_QUESTION_ANSWER_RANGE_UNSUPPORTED)));
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ANSWER_RANGE_OPTION_UNSUPPORTED)));
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ATTRIBUTE_SUBJECT_UNSUPPORTED)));
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ATTRIBUTE_QUESTION_IMPACT_UNSUPPORTED)));
+        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL)));
+        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL)));
+        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL)));
+        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_SUBJECT_NOT_NULL)));
+        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL)));
     }
 
     @Test

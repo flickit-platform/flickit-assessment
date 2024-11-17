@@ -43,16 +43,16 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         List<String> errors = new LinkedList<>();
-        if (!loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_QUESTION_IMPACT_UNSUPPORTED));
         if (!loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_QUESTION_ANSWER_RANGE_UNSUPPORTED));
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL));
+        if (!loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId()).isEmpty())
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL));
         if (!loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ANSWER_RANGE_OPTION_UNSUPPORTED));
-        if (!loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ATTRIBUTE_SUBJECT_UNSUPPORTED));
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL));
         if (!loadAttributePort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_EMPTY_ATTRIBUTE_QUESTION_IMPACT_UNSUPPORTED));
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL));
+        if (!loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId()).isEmpty())
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_SUBJECT_NOT_NULL));
 
         return toResult(errors);
     }
