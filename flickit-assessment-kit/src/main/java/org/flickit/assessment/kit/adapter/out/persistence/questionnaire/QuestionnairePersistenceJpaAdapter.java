@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
 
@@ -66,20 +66,15 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public void updateOrders(UpdateQuestionnairePort.UpdateOrderParam param) {
-        Map<QuestionnaireJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
-            .collect(Collectors.toMap(
-                qs -> new QuestionnaireJpaEntity.EntityId(qs.questionnaireId(), param.kitVersionId()),
-                UpdateOrderParam.QuestionnaireOrder::index
-            ));
-        List<Long> ids = param.orders().stream()
-            .map(UpdateOrderParam.QuestionnaireOrder::questionnaireId)
-            .toList();
-        List<QuestionnaireJpaEntity> entities = repository.findAllByIdInAndKitVersionId(ids, param.kitVersionId());
+        Map<Long, Integer> idToIndex = param.orders().stream()
+            .collect(toMap(UpdateOrderParam.QuestionnaireOrder::questionnaireId, UpdateOrderParam.QuestionnaireOrder::index));
+
+        List<QuestionnaireJpaEntity> entities = repository.findAllByIdInAndKitVersionId(idToIndex.keySet(), param.kitVersionId());
         if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
 
         entities.forEach(x -> {
-            int newIndex = idToIndex.get(new QuestionnaireJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            int newIndex = idToIndex.get(x.getId());
             x.setIndex(newIndex);
             x.setLastModificationTime(param.lastModificationTime());
             x.setLastModifiedBy(param.lastModifiedBy());
