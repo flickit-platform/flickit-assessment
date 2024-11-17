@@ -457,6 +457,7 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL = "create-kit-custom.attributeWeight.notNull";
     public static final String CREATE_KIT_CUSTOM_QUESTIONNAIRE_ID_NOT_NULL = "create-kit-custom.questionnaireId.notNull";
     public static final String CREATE_KIT_CUSTOM_QUESTIONNAIRE_DISABLED_NOT_NULL = "create-kit-custom.questionnaireDisabled.notNull";
+    public static final String CREATE_KIT_CUSTOM_TITLE_DUPLICATE = "create-kit-custom.title.duplicate";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
