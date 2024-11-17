@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -60,13 +61,13 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .map(ExpertGroupWithDetailsView::getId)
             .toList();
 
-        var members = repository.findMembersByExpertGroupId(expertGroupIdList)
+        var expertGroupIdToMembers = repository.findMembersByExpertGroupId(expertGroupIdList)
             .stream()
             .map(e -> new ExpertGroupMember(e.getExpertGroupId(), e.getId(), e.getDisplayName()))
-            .toList();
+            .collect(Collectors.groupingBy(ExpertGroupMember::getExpertGroupId));
 
         List<LoadExpertGroupListPort.Result> items = pageResult.getContent().stream()
-            .map(e -> resultWithMembers(e, param.sizeOfMembers(), members))
+            .map(e -> resultWithMembers(e, param.sizeOfMembers(), expertGroupIdToMembers))
             .toList();
 
         return new PaginatedResponse<>(
@@ -79,10 +80,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, List<ExpertGroupMember> members) {
-        var expertGroupIdToMembers = members.stream()
-            .collect(Collectors.groupingBy(ExpertGroupMember::getExpertGroupId));
-
+    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, Map<Long, List<ExpertGroupMember>> expertGroupIdToMembers) {
         var relatedMembers = expertGroupIdToMembers.getOrDefault(item.getId(), List.of()).stream()
             .map(m -> new GetExpertGroupListUseCase.Member(m.getDisplayName()))
             .sorted(Comparator.comparing(GetExpertGroupListUseCase.Member::displayName))
