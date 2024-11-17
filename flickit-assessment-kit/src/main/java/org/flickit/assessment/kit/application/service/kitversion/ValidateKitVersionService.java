@@ -34,13 +34,11 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
     @Override
     public Result validate(Param param) {
         var kitVersion = loadKitVersionPort.load(param.getKitVersionId());
-        if (!KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
-            throw new ValidationException(VALIDATE_KIT_VERSION_STATUS_INVALID);
-
-        var kit = kitVersion.getKit();
-        var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId());
+        var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        if (!KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
+            throw new ValidationException(VALIDATE_KIT_VERSION_STATUS_INVALID);
 
         List<String> errors = new LinkedList<>();
         if (!loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId()).isEmpty())

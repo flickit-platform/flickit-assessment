@@ -59,19 +59,33 @@ class ValidateKitVersionServiceTest {
     private LoadAttributePort loadAttributePort;
 
     @Test
-    void testValidateKitVersionService_WhenInvalidKitVersion_ShouldThrowValidationException() {
+    void testValidateKitVersion_whenKitVersionIsInvalid_shouldThrowValidationException() {
         var param = createParam(ValidateKitVersionUseCase.Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitVersion = KitVersionMother.createActiveKitVersion(assessmentKit);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         var throwable = assertThrows(ValidationException.class, () -> service.validate(param));
         assertEquals(VALIDATE_KIT_VERSION_STATUS_INVALID, throwable.getMessageKey());
     }
 
     @Test
-    void testValidateKitVersionService_WhenThereIsNotAnyProblem_ShouldReturnIsValid() {
+    void testValidateKitVersion_WhenCurrentUserIsNotExpertGroupOwner_ShouldThrowAccessDeniedException() {
+        var param = createParam(ValidateKitVersionUseCase.Param.ParamBuilder::build);
+        var assessmentKit = AssessmentKitMother.simpleKit();
+        var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(UUID.randomUUID());
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.validate(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
+    void testValidateKitVersion_whenKitVersionIsValid_ShouldReturnIsValid() {
         var param = createParam(ValidateKitVersionUseCase.Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
@@ -90,7 +104,7 @@ class ValidateKitVersionServiceTest {
     }
 
     @Test
-    void testValidateKitVersionService_WhenThereAreProblems_ShouldReturnIsValid() {
+    void testValidateKitVersion_WhenProblemsExist_ShouldReturnIsInvalid() {
         var param = createParam(ValidateKitVersionUseCase.Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
@@ -111,19 +125,6 @@ class ValidateKitVersionServiceTest {
         assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL)));
         assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_SUBJECT_NOT_NULL)));
         assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL)));
-    }
-
-    @Test
-    void testValidateKitVersionService_WhenCurrentUserIsNotExpertGroupOwner_ShouldThrowAccessDeniedException() {
-        var param = createParam(ValidateKitVersionUseCase.Param.ParamBuilder::build);
-        var assessmentKit = AssessmentKitMother.simpleKit();
-        var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
-
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(UUID.randomUUID());
-
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.validate(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     private ValidateKitVersionUseCase.Param createParam(Consumer<ValidateKitVersionUseCase.Param.ParamBuilder> changer) {
