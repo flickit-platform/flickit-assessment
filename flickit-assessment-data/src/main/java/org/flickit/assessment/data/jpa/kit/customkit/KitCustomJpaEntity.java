@@ -35,7 +35,6 @@ public class KitCustomJpaEntity {
     private String code;
 
     @Column(name = "custom_data", nullable = false)
-    @JdbcTypeCode(SqlTypes.JSON)
     private String customData;
 
     @Column(name = "creation_time", nullable = false)
