@@ -451,7 +451,7 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.question-impact.notNull";
     public static final String VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL = "validate-kit-version.answerRange-answerOption.notNull";
     public static final String VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.attribute-question-impact.notNull";
-    public static final String VALIDATE_KIT_VERSION_ATTRIBUTE_SUBJECT_NOT_NULL = "validate-kit-version.attribute-subject.notNull";
+    public static final String VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL = "validate-kit-version.subject-attribute.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
