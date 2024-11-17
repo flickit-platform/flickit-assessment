@@ -5,17 +5,17 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupMembersCountView;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
-import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
+import org.flickit.assessment.users.application.domain.ExpertGroupMember;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -62,31 +62,32 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .map(ExpertGroupWithDetailsView::getId)
             .toList();
 
-        var expertGroupMembersCountMap = repository.expertGroupMembersCount(expertGroupIdList).stream()
-            .collect(Collectors.toMap(ExpertGroupMembersCountView::getId, ExpertGroupMembersCountView::getMembersCount));
+        var expertGroupIdToMembers = repository.findMembersByExpertGroupId(expertGroupIdList)
+            .stream()
+            .map(e -> new ExpertGroupMember(e.getExpertGroupId(), e.getId(), e.getDisplayName()))
+            .collect(Collectors.groupingBy(ExpertGroupMember::getExpertGroupId));
 
         List<LoadExpertGroupListPort.Result> items = pageResult.getContent().stream()
-            .map(e -> resultWithMembers(e, param.sizeOfMembers(), expertGroupMembersCountMap.get(e.getId())))
+            .map(e -> resultWithMembers(e, param.sizeOfMembers(), expertGroupIdToMembers.getOrDefault(e.getId(), List.of())))
             .toList();
 
         return new PaginatedResponse<>(
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            ExpertGroupAccessJpaEntity.Fields.lastSeen,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
     }
 
-    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, int membersCount) {
-        var members = repository.findMembersByExpertGroupId(item.getId(),
-                PageRequest.of(0, membersSize, Sort.Direction.ASC, UserJpaEntity.Fields.NAME))
-            .stream()
-            .map(GetExpertGroupListUseCase.Member::new)
+    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, List<ExpertGroupMember> expertGroupMembers) {
+        var topMembers = expertGroupMembers.stream()
+            .map(m -> new GetExpertGroupListUseCase.Member(m.getDisplayName()))
+            .sorted(Comparator.comparing(GetExpertGroupListUseCase.Member::displayName))
+            .limit(membersSize)
             .toList();
-
-        return mapToPortResult(item, members, membersCount);
+        return mapToPortResult(item, topMembers, expertGroupMembers.size());
     }
 
     @Override

@@ -15,59 +15,57 @@ import java.util.UUID;
 
 public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGroupAccessJpaEntity, Long> {
 
+    boolean existsByExpertGroupIdAndUserId(long expertGroupId, UUID userId);
+
     @Query("""
-        SELECT
-        u.id as id,
-        u.email as email,
-        u.displayName as displayName,
-        u.bio as bio,
-        u.picture as picture,
-        u.linkedin as linkedin,
-        e.status as status,
-        e.inviteExpirationDate as inviteExpirationDate
-        FROM ExpertGroupAccessJpaEntity e
-        LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
-        LEFT JOIN UserJpaEntity u on e.userId = u.id
-        WHERE e.expertGroupId = :expertGroupId
-            AND e.status = :status
-            AND g.deleted = FALSE
-            AND ((:status = 0 AND e.inviteExpirationDate > :now) OR :status = 1)
+            SELECT
+                u.id as id,
+                u.email as email,
+                u.displayName as displayName,
+                u.bio as bio,
+                u.picture as picture,
+                u.linkedin as linkedin,
+                e.status as status,
+                e.inviteExpirationDate as inviteExpirationDate
+            FROM ExpertGroupAccessJpaEntity e
+            LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
+            LEFT JOIN UserJpaEntity u on e.userId = u.id
+            WHERE e.expertGroupId = :expertGroupId
+                AND e.status = :status
+                AND g.deleted = FALSE
+                AND ((:status = 0 AND e.inviteExpirationDate > :now) OR :status = 1)
         """)
     Page<ExpertGroupMembersView> findExpertGroupMembers(@Param(value = "expertGroupId") Long expertGroupId,
                                                         @Param(value = "status") int status,
                                                         @Param(value = "now") LocalDateTime now,
                                                         Pageable pageable);
 
-    boolean existsByExpertGroupIdAndUserId(@Param(value = "expertGroupId") long expertGroupId,
-                                           @Param(value = "userId") UUID userId);
-
     @Query("""
-        SELECT
-        e.status as status
-        FROM ExpertGroupAccessJpaEntity e
-        LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
-        WHERE e.expertGroupId = :expertGroupId AND e.userId = :userId AND g.deleted = FALSE
+            SELECT e.status as status
+            FROM ExpertGroupAccessJpaEntity e
+            LEFT JOIN ExpertGroupJpaEntity g on g.id = e.expertGroupId
+            WHERE e.expertGroupId = :expertGroupId AND e.userId = :userId AND g.deleted = FALSE
         """)
     Optional<Integer> findExpertGroupMemberStatus(@Param(value = "expertGroupId") long expertGroupId,
                                                   @Param(value = "userId") UUID userId);
 
     @Query("""
-        SELECT a
-        FROM ExpertGroupAccessJpaEntity a
-        LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
-        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND e.deleted = FALSE
+            SELECT a
+            FROM ExpertGroupAccessJpaEntity a
+            LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
+            WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND e.deleted = FALSE
         """)
     Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndAndUserId(@Param(value = "expertGroupId") long expertGroupId,
                                                                          @Param(value = "userId") UUID userId);
 
     @Modifying
     @Query("""
-        UPDATE ExpertGroupAccessJpaEntity a
-        SET a.status = 1,
-            a.inviteToken = null,
-            a.inviteExpirationDate = null,
-            a.lastModificationTime = :modificationTime
-        WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
+            UPDATE ExpertGroupAccessJpaEntity a
+            SET a.status = 1,
+                a.inviteToken = null,
+                a.inviteExpirationDate = null,
+                a.lastModificationTime = :modificationTime
+            WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId
         """)
     void confirmInvitation(@Param(value = "expertGroupId") long expertGroupId,
                            @Param(value = "userId") UUID userId,

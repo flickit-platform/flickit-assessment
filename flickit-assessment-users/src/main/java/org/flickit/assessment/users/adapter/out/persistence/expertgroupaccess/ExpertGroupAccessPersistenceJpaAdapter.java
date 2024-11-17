@@ -42,7 +42,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND);
 
         var pageResult = repository.findExpertGroupMembers(expertGroupId, status.ordinal(), LocalDateTime.now(),
-            PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME));
+            PageRequest.of(page, size, Sort.Direction.DESC, ExpertGroupAccessJpaEntity.Fields.lastSeen));
 
         var items = pageResult
             .stream()
@@ -53,7 +53,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            ExpertGroupAccessJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            ExpertGroupAccessJpaEntity.Fields.lastSeen,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
