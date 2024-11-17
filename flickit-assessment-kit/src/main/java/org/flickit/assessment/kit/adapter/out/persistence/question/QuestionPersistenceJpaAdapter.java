@@ -135,16 +135,16 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Question> loadQuestionsWithoutImpact(long kitVersionId) {
-        return repository.findByKitVersionIdQuestionImpactsIsNull(kitVersionId)
+    public List<Question> loadQuestionsWithoutAnswerRange(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndAnswerRangeIdIsNull(kitVersionId)
             .stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
     }
 
     @Override
-    public List<Question> loadQuestionsWithoutAnswerRange(long kitVersionId) {
-        return repository.findAllByKitVersionIdAndAnswerRangeIdIsNull(kitVersionId)
+    public List<Question> loadQuestionsWithoutImpact(long kitVersionId) {
+        return repository.findByKitVersionIdQuestionImpactsIsNull(kitVersionId)
             .stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();

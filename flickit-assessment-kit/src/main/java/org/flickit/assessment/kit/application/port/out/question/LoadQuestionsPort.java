@@ -8,7 +8,7 @@ public interface LoadQuestionsPort {
 
     List<Question> loadAllByKitVersionId(long kitVersionId);
 
-    List<Question> loadQuestionsWithoutImpact (long kitVersionId);
-
     List<Question> loadQuestionsWithoutAnswerRange (long kitVersionId);
+
+    List<Question> loadQuestionsWithoutImpact (long kitVersionId);
 }
