@@ -1,0 +1,19 @@
+package org.flickit.assessment.kit.adapter.out.persistence.kitcustom;
+
+import org.flickit.assessment.data.jpa.kit.customkit.KitCustomJpaEntity;
+import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustomPort;
+
+public class KitCustomMapper {
+
+    public static KitCustomJpaEntity mapToJpaEntity(CreateKitCustomPort.Param param) {
+        return new KitCustomJpaEntity(null,
+            param.kitId(),
+            param.title(),
+            param.code(),
+            param.customData(),
+            param.creationTime(),
+            param.creationTime(),
+            param.createdBy(),
+            param.createdBy());
+    }
+}
