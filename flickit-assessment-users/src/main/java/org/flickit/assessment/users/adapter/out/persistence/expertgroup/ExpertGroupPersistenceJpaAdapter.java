@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -66,11 +65,8 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .map(e -> new ExpertGroupMember(e.getExpertGroupId(), e.getId(), e.getDisplayName()))
             .toList();
 
-        var expertGroupMembersCountMap = repository.expertGroupMembersCount(expertGroupIdList).stream()
-            .collect(Collectors.toMap(ExpertGroupMembersCountView::getId, ExpertGroupMembersCountView::getMembersCount));
-
         List<LoadExpertGroupListPort.Result> items = pageResult.getContent().stream()
-            .map(e -> resultWithMembers(e, param.sizeOfMembers(), expertGroupMembersCountMap.get(e.getId()), members))
+            .map(e -> resultWithMembers(e, param.sizeOfMembers(), members))
             .toList();
 
         return new PaginatedResponse<>(
@@ -83,14 +79,16 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, int membersCount, List<ExpertGroupMember> members) {
-        var relatedMembers = members.stream()
-            .filter(m -> Objects.equals(m.getExpertGroupId(), item.getId()))
+    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, List<ExpertGroupMember> members) {
+        var expertGroupIdToMembers = members.stream()
+            .collect(Collectors.groupingBy(ExpertGroupMember::getExpertGroupId));
+
+        var relatedMembers = expertGroupIdToMembers.getOrDefault(item.getId(), List.of()).stream()
             .map(m -> new GetExpertGroupListUseCase.Member(m.getDisplayName()))
             .sorted(Comparator.comparing(GetExpertGroupListUseCase.Member::displayName))
             .limit(membersSize)
             .toList();
-        return mapToPortResult(item, relatedMembers, membersCount);
+        return mapToPortResult(item, relatedMembers, expertGroupIdToMembers.get(item.getId()).size());
     }
 
     @Override
