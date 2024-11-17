@@ -159,6 +159,20 @@ jobs:
           DEPLOY_TOKEN: ${{ secrets.ASSESSMENT_CORE_DEPLOY_TOKEN_STAGING }}
           APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
 
+          
+  Deploy_With_Webhook:
+    needs: build-and-push-latest-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy service on Webhook
+        run: |
+          status_code=$(curl --silent --output /dev/null --write-out "%{http_code}" -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}?tag=${GITHUB_SHA:0:7}")
+          if [ "$status_code" -ne 204 ]; then
+            echo "Unexpected status code: $status_code"
+            exit 1
+          fi
+
+
   tag-and-release:
     needs: [sonar]
     name: tag and release
