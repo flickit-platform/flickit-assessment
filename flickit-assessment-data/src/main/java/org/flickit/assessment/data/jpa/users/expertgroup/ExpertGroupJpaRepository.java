@@ -54,16 +54,6 @@ public interface ExpertGroupJpaRepository extends JpaRepository<ExpertGroupJpaEn
 
     @Query("""
             SELECT
-                a.expertGroupId as id,
-                COUNT(DISTINCT userId) as membersCount
-            FROM ExpertGroupAccessJpaEntity a
-            WHERE a.expertGroupId IN :expertGroupIdList AND a.status = 1
-            GROUP BY a.expertGroupId
-        """)
-    List<ExpertGroupMembersCountView> expertGroupMembersCount(List<Long> expertGroupIdList);
-
-    @Query("""
-            SELECT
                 u.id as id,
                 u.displayName as displayName,
                 e.id as expertGroupId
