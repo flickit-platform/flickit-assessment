@@ -32,29 +32,33 @@ public class CreateKitCustomRestController {
     private static CreateKitCustomUseCase.Param toParam(long kitId,
                                                         UUID currentUserId,
                                                         CreateKitCustomRequestDto requestDto) {
-        var subjectDtos = requestDto.subjects();
-        if (subjectDtos == null)
-            subjectDtos = new ArrayList<>();
+        KitCustomData customData = null;
+        var customDataDto = requestDto.customData();
+        if (customDataDto != null) {
+            var subjectDtos = customDataDto.subjects();
+            if (subjectDtos == null)
+                subjectDtos = new ArrayList<>();
 
-        var attributeDtos = requestDto.attributes();
-        if (attributeDtos == null)
-            attributeDtos = new ArrayList<>();
+            var attributeDtos = customDataDto.attributes();
+            if (attributeDtos == null)
+                attributeDtos = new ArrayList<>();
 
-        var questionnaireDtos = requestDto.questionnaires();
-        if (questionnaireDtos == null)
-            questionnaireDtos = new ArrayList<>();
+            var questionnaireDtos = customDataDto.questionnaires();
+            if (questionnaireDtos == null)
+                questionnaireDtos = new ArrayList<>();
 
-        var subjects = subjectDtos.stream()
-            .map(e -> new KitCustomData.Subject(e.id(), e.weight()))
-            .toList();
-        var attributes = attributeDtos.stream()
-            .map(e -> new KitCustomData.Attribute(e.id(), e.weight()))
-            .toList();
-        var questionnaires = questionnaireDtos.stream()
-            .map(e -> new KitCustomData.Questionnaire(e.id(), e.disabled()))
-            .toList();
+            var subjects = subjectDtos.stream()
+                .map(e -> new KitCustomData.Subject(e.id(), e.weight()))
+                .toList();
+            var attributes = attributeDtos.stream()
+                .map(e -> new KitCustomData.Attribute(e.id(), e.weight()))
+                .toList();
+            var questionnaires = questionnaireDtos.stream()
+                .map(e -> new KitCustomData.Questionnaire(e.id(), e.disabled()))
+                .toList();
 
-        var customData = new KitCustomData(subjects, attributes, questionnaires);
+            customData = new KitCustomData(subjects, attributes, questionnaires);
+        }
 
         return new CreateKitCustomUseCase.Param(kitId, requestDto.title(), customData, currentUserId);
     }
