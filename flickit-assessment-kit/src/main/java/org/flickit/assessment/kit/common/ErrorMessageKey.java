@@ -445,6 +445,19 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_RANGE_OPTION_VALUE_NOT_NULL = "create-answer-range-option.value.notNull";
     public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE = "create-answer-range-option.answerRange.non-reusable";
 
+    public static final String CREATE_KIT_CUSTOM_KIT_ID_NOT_NULL = "create-kit-custom.kitId.notNull";
+    public static final String CREATE_KIT_CUSTOM_TITLE_NOT_NULL = "create-kit-custom.title.notNull";
+    public static final String CREATE_KIT_CUSTOM_TITLE_SIZE_MIN = "create-kit-custom.title.size.min";
+    public static final String CREATE_KIT_CUSTOM_TITLE_SIZE_MAX = "create-kit-custom.title.size.max";
+    public static final String CREATE_KIT_CUSTOM_DATA_NOT_NULL = "create-kit-custom.data.notNull";
+    public static final String CREATE_KIT_CUSTOM_NOT_ALLOWED = "create-kit-custom.notAllowed";
+    public static final String CREATE_KIT_CUSTOM_SUBJECT_ID_NOT_NULL = "create-kit-custom.subjectId.notNull";
+    public static final String CREATE_KIT_CUSTOM_SUBJECT_WEIGHT_NOT_NULL = "create-kit-custom.subjectWeight.notNull";
+    public static final String CREATE_KIT_CUSTOM_ATTRIBUTE_ID_NOT_NULL = "create-kit-custom.attributeId.notNull";
+    public static final String CREATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL = "create-kit-custom.attributeWeight.notNull";
+    public static final String CREATE_KIT_CUSTOM_QUESTIONNAIRE_ID_NOT_NULL = "create-kit-custom.questionnaireId.notNull";
+    public static final String CREATE_KIT_CUSTOM_QUESTIONNAIRE_DISABLED_NOT_NULL = "create-kit-custom.questionnaireDisabled.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
