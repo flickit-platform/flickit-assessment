@@ -188,5 +188,4 @@
             <where>weight=0</where>
         </update>
     </changeSet>
-
 </databaseChangeLog>

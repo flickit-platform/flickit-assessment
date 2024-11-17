@@ -127,7 +127,7 @@ public class CalculateAssessmentService implements CalculateAssessmentUseCase {
         var newAttributeIds = kitAttributes.stream()
             .map(Attribute::getId)
             .filter(a -> !attributesWithValue.contains(a))
-            .toList();
+            .collect(Collectors.toSet());
 
         Map<Long, Long> attributeIdToSubjectId = new HashMap<>();
         kitSubjects.forEach(subject -> {

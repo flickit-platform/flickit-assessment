@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -56,7 +57,7 @@ public class AttributeValuePersistenceJpaAdapter implements
     private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
 
     @Override
-    public List<AttributeValue> persistAll(List<Long> attributeIds, UUID assessmentResultId) {
+    public List<AttributeValue> persistAll(Set<Long> attributeIds, UUID assessmentResultId) {
         AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND));
 

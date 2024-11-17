@@ -264,7 +264,7 @@ class CreateAssessmentServiceTest {
 
         verify(loadSpaceOwnerPort, times(1)).loadOwnerId(any());
         verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
-        verify(createAttributeValuePort, times(1)).persistAll(anyList(), any());
+        verify(createAttributeValuePort, times(1)).persistAll(anySet(), any());
     }
 
     @Test

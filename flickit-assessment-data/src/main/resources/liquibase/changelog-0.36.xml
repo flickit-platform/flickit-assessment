@@ -59,4 +59,10 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.36-06" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fac_attribute_value" columnNames="assessment_result_id, attribute_id"
+                             constraintName="uq_fac_attribute_value_assessmentresultid_attributeid"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
 </databaseChangeLog>

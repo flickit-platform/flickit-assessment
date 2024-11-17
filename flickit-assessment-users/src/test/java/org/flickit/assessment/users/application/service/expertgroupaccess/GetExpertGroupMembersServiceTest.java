@@ -1,10 +1,9 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.GetExpertGroupMembersUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroup.CheckExpertGroupExistsPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupMembersPort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
@@ -18,9 +17,14 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
+import static org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus.ACTIVE;
+import static org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus.PENDING;
+import static org.flickit.assessment.users.test.fixture.application.ExpertGroupMother.createExpertGroup;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,61 +32,100 @@ class GetExpertGroupMembersServiceTest {
 
     @InjectMocks
     private GetExpertGroupMembersService service;
-    @Mock
-    private CheckExpertGroupExistsPort checkExpertGroupExistsPort;
+
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+
     @Mock
     private LoadExpertGroupMembersPort loadExpertGroupMembersPort;
+
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
+    private final ExpertGroup expertGroup = createExpertGroup("picturePath", UUID.randomUUID());
+    private final String expectedDownloadLink = "downloadLink";
+
     @Test
-    void testGetExpertGroupMembers_ValidInputs_NoStatus_ValidResults() {
-        UUID currentUserId = UUID.randomUUID();
-        String expectedDownloadLink = "downloadLink";
-        long expertGroupId = 123L;
-        int page = 0;
-        int size = 10;
-        GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, null, currentUserId, size, page);
-        LoadExpertGroupMembersPort.Member member1 = createPortResult(UUID.randomUUID());
-        LoadExpertGroupMembersPort.Member member2 = createPortResult(UUID.randomUUID());
-        List<LoadExpertGroupMembersPort.Member> portMembers = List.of(member1, member2);
-        List<GetExpertGroupMembersUseCase.Member> expectedMembers = List.of(
-            portToUseCaseResult(member1),
-            portToUseCaseResult(member2)
-        );
+    void testGetExpertGroupMembers_WhenCurrentUserIsOwnerAndNoStatusIsGiven_ThenReturnActiveMembers() {
+        var param = createParam(b -> b.status(null).currentUserId(expertGroup.getOwnerId()));
 
-        PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
+        LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), ExpertGroupAccessStatus.ACTIVE);
+        LoadExpertGroupMembersPort.Member member2 = createMember(expertGroup.getOwnerId(), ExpertGroupAccessStatus.ACTIVE);
 
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
-        when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(currentUserId);
-        when(loadExpertGroupMembersPort.loadExpertGroupMembers(expertGroupId, 1, page, size)).thenReturn(paginatedResult);
+        var paginatedResult = new PaginatedResponse<>(List.of(member1, member2),
+            param.getPage(),
+            param.getSize(),
+            "title",
+            "asc",
+            2);
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
+        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), ACTIVE, param.getPage(), param.getSize())).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
 
-        PaginatedResponse<GetExpertGroupMembersUseCase.Member> result = service.getExpertGroupMembers(param);
+        var result = service.getExpertGroupMembers(param);
 
-        assertEquals(expectedMembers, result.getItems());
-        assertEquals(page, result.getPage());
-        assertEquals(size, result.getSize());
-        assertEquals("title", result.getSort());
-        assertEquals("asc", result.getOrder());
-        assertEquals(portMembers.size(), result.getTotal());
+        assertNotNull(result.getItems());
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(paginatedResult.getSort(), result.getSort());
+        assertEquals(paginatedResult.getOrder(), result.getOrder());
+        assertTrue(result.getItems().getFirst().deletable());
+        assertFalse(result.getItems().getLast().deletable());
+        assertEquals(paginatedResult.getTotal(), result.getTotal());
+        for (GetExpertGroupMembersUseCase.Member member : result.getItems()) {
+            assertNotNull(member.email());
+            assertNotNull(member.inviteExpirationDate());
+            assertEquals(ACTIVE, member.status());
+        }
+
+        verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
     }
 
     @Test
-    void testGetExpertGroupMembers_CurrentUserIsNotOwner_PendingStatus_EmptyResult() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID ownerId = UUID.randomUUID();
-        long expertGroupId = 123L;
-        int page = 0;
-        int size = 10;
-        GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, ExpertGroupAccessStatus.PENDING.name(), currentUserId, size, page);
+    void testGetExpertGroupMembers_WhenCurrentUserIsNotOwnerAndNoStatusIsGiven_ThenReturnActiveMembers() {
+        var param = createParam(b -> b.status(null));
+        LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), ACTIVE);
+        LoadExpertGroupMembersPort.Member member2 = createMember(expertGroup.getOwnerId(), ACTIVE);
 
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
-        when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(ownerId);
+        var paginatedResult = new PaginatedResponse<>(List.of(member1, member2),
+            param.getPage(),
+            param.getSize(),
+            "title",
+            "asc",
+            2);
 
-        PaginatedResponse<GetExpertGroupMembersUseCase.Member> result = service.getExpertGroupMembers(param);
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
+        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), ACTIVE, param.getPage(), param.getSize())).thenReturn(paginatedResult);
+        when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
+
+        var result = service.getExpertGroupMembers(param);
+
+        assertNotNull(result.getItems());
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(paginatedResult.getSort(), result.getSort());
+        assertEquals(paginatedResult.getOrder(), result.getOrder());
+        assertFalse(result.getItems().getFirst().deletable());
+        assertFalse(result.getItems().getLast().deletable());
+        assertEquals(paginatedResult.getTotal(), result.getTotal());
+        for (GetExpertGroupMembersUseCase.Member member : result.getItems()) {
+            assertNull(member.email());
+            assertNotNull(member.inviteExpirationDate());
+            assertEquals(ACTIVE, member.status());
+        }
+        verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
+    }
+
+    @Test
+    void testGetExpertGroupMembers_WhenCurrentUserIsNotOwnerAndStatusIsPending_ThenReturnEmptyResult() {
+        var param = createParam(b -> b.status(PENDING.name()));
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
+
+        var result = service.getExpertGroupMembers(param);
 
         assertEquals(0, result.getItems().size());
         assertEquals(0, result.getPage());
@@ -93,43 +136,41 @@ class GetExpertGroupMembersServiceTest {
     }
 
     @Test
-    void testGetExpertGroupMembers_InvalidExpertGroupId_ExpertGroupNotFound() {
-        UUID currentUserId = UUID.randomUUID();
-        long expertGroupId = 123L;
-        int page = 0;
-        int size = 10;
-        GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, null, currentUserId, size, page);
+    void testGetExpertGroupMembers_CurrentUserIsOwnerAndStatusIsPending_ThenReturnPendingMembers() {
+        var param = createParam(b -> b.currentUserId(expertGroup.getOwnerId()).status(PENDING.name()));
+        LoadExpertGroupMembersPort.Member member1 = createMember(UUID.randomUUID(), PENDING);
+        LoadExpertGroupMembersPort.Member member2 = createMember(UUID.randomUUID(), PENDING);
 
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(false);
-        assertThrows(ResourceNotFoundException.class, ()->service.getExpertGroupMembers(param));
-    }
+        var paginatedResult = new PaginatedResponse<>(List.of(member1, member2),
+            param.getPage(),
+            param.getSize(),
+            "title",
+            "asc",
+            2);
 
-    @Test
-    void testGetExpertGroupMembers_CurrentUserIsNotOwner_ResultWithoutEmail() {
-        UUID currentUserId = UUID.randomUUID();
-        String expectedDownloadLink = "downloadLink";
-        long expertGroupId = 123L;
-        int page = 0;
-        int size = 10;
-
-        GetExpertGroupMembersUseCase.Param param = new GetExpertGroupMembersUseCase.Param(expertGroupId, null, currentUserId, size, page);
-        LoadExpertGroupMembersPort.Member member1 = createPortResult(UUID.randomUUID());
-        LoadExpertGroupMembersPort.Member member2 = createPortResult(UUID.randomUUID());
-        List<LoadExpertGroupMembersPort.Member> portMembers = List.of(member1, member2);
-        PaginatedResponse<LoadExpertGroupMembersPort.Member> paginatedResult = new PaginatedResponse<>(portMembers, page, size, "title", "asc", 2);
-
-        when(checkExpertGroupExistsPort.existsById(any(Long.class))).thenReturn(true);
-        when(loadExpertGroupOwnerPort.loadOwnerId(any(Long.class))).thenReturn(currentUserId);
-        when(loadExpertGroupMembersPort.loadExpertGroupMembers(expertGroupId, 1, page, size)).thenReturn(paginatedResult);
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getId())).thenReturn(expertGroup.getOwnerId());
+        when(loadExpertGroupMembersPort.loadExpertGroupMembers(param.getId(), PENDING, param.getPage(), param.getSize())).thenReturn(paginatedResult);
         when(createFileDownloadLinkPort.createDownloadLink(any(String.class), any(Duration.class))).thenReturn(expectedDownloadLink);
 
-        PaginatedResponse<GetExpertGroupMembersUseCase.Member> result = service.getExpertGroupMembers(param);
+        var result = service.getExpertGroupMembers(param);
 
         assertNotNull(result.getItems());
-        assertNotNull(result.getItems().stream().map(GetExpertGroupMembersUseCase.Member::email));
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(paginatedResult.getSort(), result.getSort());
+        assertEquals(paginatedResult.getOrder(), result.getOrder());
+        assertEquals(paginatedResult.getTotal(), result.getTotal());
+        for (GetExpertGroupMembersUseCase.Member member : result.getItems()) {
+            assertTrue(member.deletable());
+            assertNotNull(member.email());
+            assertNotNull(member.inviteExpirationDate());
+            assertEquals(PENDING, member.status());
+        }
+        verify(createFileDownloadLinkPort).createDownloadLink(member1.picture(), Duration.ofDays(1));
+        verify(createFileDownloadLinkPort).createDownloadLink(member2.picture(), Duration.ofDays(1));
     }
 
-    private LoadExpertGroupMembersPort.Member createPortResult(UUID memberId) {
+    private LoadExpertGroupMembersPort.Member createMember(UUID memberId, ExpertGroupAccessStatus status) {
         return new LoadExpertGroupMembersPort.Member(
             memberId,
             "email" + memberId + "@example.com",
@@ -137,20 +178,22 @@ class GetExpertGroupMembersServiceTest {
             "Bio" + memberId,
             "picture" + memberId + ".png",
             "http://www.example" + memberId + ".com",
-            ExpertGroupAccessStatus.ACTIVE.ordinal(),
+            status.ordinal(),
             LocalDateTime.now());
     }
 
-    private GetExpertGroupMembersUseCase.Member portToUseCaseResult(LoadExpertGroupMembersPort.Member portMember) {
-        String expectedDownloadLink = "downloadLink";
-        return new GetExpertGroupMembersUseCase.Member(
-            portMember.id(),
-            portMember.email(),
-            portMember.displayName(),
-            portMember.bio(),
-            expectedDownloadLink,
-            portMember.linkedin(),
-            ExpertGroupAccessStatus.values()[portMember.status()],
-            portMember.inviteExpirationDate());
+    private GetExpertGroupMembersUseCase.Param createParam(Consumer<GetExpertGroupMembersUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private GetExpertGroupMembersUseCase.Param.ParamBuilder paramBuilder() {
+        return GetExpertGroupMembersUseCase.Param.builder()
+            .expertGroupId(expertGroup.getId())
+            .size(10)
+            .page(0)
+            .currentUserId(UUID.randomUUID())
+            .status(ACTIVE.name());
     }
 }
