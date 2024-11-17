@@ -70,6 +70,9 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
         var subjectReport = loadSubjectReportInfoPort.load(assessmentId, subjectId);
         var subject = subjectReport.subject();
 
+        if (subject.maturityLevel() == null)
+            return "";
+
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subject.title(),
             subject.description(),

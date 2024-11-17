@@ -10,10 +10,11 @@ public class AnswerRangeMother {
 
     private static Long id = 1L;
 
-    public static AnswerRange createAnswerRangeWithTwoOptions() {
+    public static AnswerRange createReusableAnswerRangeWithTwoOptions() {
         return new AnswerRange(
             id++,
             "title" + id,
+            true,
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
         );
     }
@@ -22,7 +23,26 @@ public class AnswerRangeMother {
         return new AnswerRange(
             id++,
             "title" + id,
+            true,
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption(), createSimpleAnswerOption(), createSimpleAnswerOption())
+        );
+    }
+
+    public static AnswerRange createNonReusableAnswerRangeWithTwoOptions() {
+        return new AnswerRange(
+            id++,
+            "title" + id,
+            false,
+            List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
+        );
+    }
+
+    public static AnswerRange createReusableAnswerRangeWithNoOptions() {
+        return new AnswerRange(
+            id++,
+            "title" + id,
+            true,
+            null
         );
     }
 }

@@ -213,9 +213,9 @@ class CreateAssessmentServiceTest {
         Attribute qa5 = AttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
-            new Subject(2L, "subject2", List.of(qa3, qa4)),
-            new Subject(1L, "subject1", List.of(qa1, qa2)),
-            new Subject(3L, "subject3", List.of(qa5))
+            new Subject(2L, "subject2", 1, List.of(qa3, qa4)),
+            new Subject(1L, "subject1", 1, List.of(qa1, qa2)),
+            new Subject(3L, "subject3", 1, List.of(qa5))
         );
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
@@ -249,9 +249,9 @@ class CreateAssessmentServiceTest {
         Attribute qa5 = AttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
-            new Subject(1L, "subject2", List.of(qa1, qa2)),
-            new Subject(2L, "subject1", List.of(qa3, qa4)),
-            new Subject(3L, "subject3", List.of(qa5))
+            new Subject(1L, "subject2", 1, List.of(qa1, qa2)),
+            new Subject(2L, "subject1", 1, List.of(qa3, qa4)),
+            new Subject(3L, "subject3", 1, List.of(qa5))
         );
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
@@ -264,7 +264,7 @@ class CreateAssessmentServiceTest {
 
         verify(loadSpaceOwnerPort, times(1)).loadOwnerId(any());
         verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
-        verify(createAttributeValuePort, times(1)).persistAll(anyList(), any());
+        verify(createAttributeValuePort, times(1)).persistAll(anySet(), any());
     }
 
     @Test

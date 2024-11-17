@@ -11,14 +11,17 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
-import org.flickit.assessment.kit.application.port.out.answerange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -30,7 +33,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.ANSWER_RANGE_ID_
 public class AnswerRangePersistenceJpaAdapter implements
     CreateAnswerRangePort,
     UpdateAnswerRangePort,
-    LoadAnswerRangesPort {
+    LoadAnswerRangesPort,
+    LoadAnswerRangePort {
 
     private final AnswerRangeJpaRepository repository;
     private final AnswerOptionJpaRepository answerOptionRepository;
@@ -45,8 +49,8 @@ public class AnswerRangePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AnswerRange> loadByKitVersionId(long kitVersionId, int page, int size) {
-        var order = AnswerRangeJpaEntity.Fields.creationTime;
-        var sort = Sort.Direction.ASC;
+        var order = AnswerRangeJpaEntity.Fields.lastModificationTime;
+        var sort = Sort.Direction.DESC;
         var pageResult = repository.findByKitVersionIdAndReusableTrue(kitVersionId, PageRequest.of(page, size, sort, order));
         List<Long> answerRangeEntityIds = pageResult.getContent().stream().map(AnswerRangeJpaEntity::getId).toList();
         var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeEntityIds, kitVersionId,
@@ -55,11 +59,14 @@ public class AnswerRangePersistenceJpaAdapter implements
 
         var answerRanges = pageResult.getContent().stream()
             .map(entity -> {
-                List<AnswerOption> options = answerRangeIdToAnswerOptionsMap.get(entity.getId()).stream()
+                List<AnswerOption> options = Optional.ofNullable(answerRangeIdToAnswerOptionsMap.get(entity.getId()))
+                    .orElse(Collections.emptyList())
+                    .stream()
                     .map(AnswerOptionMapper::mapToDomainModel)
                     .toList();
                 return toDomainModel(entity, options);
-            }).toList();
+            })
+            .toList();
 
         return new PaginatedResponse<>(
             answerRanges,
@@ -82,5 +89,12 @@ public class AnswerRangePersistenceJpaAdapter implements
             param.reusable(),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public AnswerRange load(long id, long kitVersionId) {
+        return repository.findByIdAndKitVersionId(id, kitVersionId)
+            .map(entity -> AnswerRangeMapper.toDomainModel(entity, null))
+            .orElseThrow(() -> new ResourceNotFoundException(ANSWER_RANGE_ID_NOT_FOUND));
     }
 }

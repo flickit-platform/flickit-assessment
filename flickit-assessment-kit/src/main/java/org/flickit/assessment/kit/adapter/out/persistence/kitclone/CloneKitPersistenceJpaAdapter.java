@@ -5,7 +5,6 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
@@ -26,7 +25,6 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
     private final SubjectJpaRepository subjectRepository;
     private final AttributeJpaRepository attributeRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
-    private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final LevelCompetenceJpaRepository levelCompetenceRepository;
     private final AnswerRangeJpaRepository answerRangeRepository;
@@ -72,12 +70,6 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
             entity.prepareForClone(param.updatingKitVersionId(), param.clonedBy(), param.cloneTime());
         });
 
-        var answerOptionImpactEntities = answerOptionImpactRepository.findAllByKitVersionId(param.activeKitVersionId());
-        answerOptionImpactEntities.forEach(entity -> {
-            entityManager.detach(entity);
-            entity.prepareForClone(param.updatingKitVersionId(), param.clonedBy(), param.cloneTime());
-        });
-
         var questionImpactEntities = questionImpactRepository.findAllByKitVersionId(param.activeKitVersionId());
         questionImpactEntities.forEach(entity -> {
             entityManager.detach(entity);
@@ -103,7 +95,6 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         attributeRepository.saveAll(attributeEntities);
         answerOptionRepository.saveAll(answerOptionEntities);
         questionImpactRepository.saveAll(questionImpactEntities);
-        answerOptionImpactRepository.saveAll(answerOptionImpactEntities);
         levelCompetenceRepository.saveAll(levelCompetenceEntities);
         answerRangeRepository.saveAll(answerRangeEntities);
     }

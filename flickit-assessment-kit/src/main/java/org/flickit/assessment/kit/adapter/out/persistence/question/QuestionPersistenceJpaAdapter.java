@@ -10,6 +10,7 @@ import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpact
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuestionsView;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
@@ -44,9 +45,11 @@ public class QuestionPersistenceJpaAdapter implements
     CreateQuestionPort,
     CountSubjectQuestionsPort,
     LoadQuestionPort,
+    LoadQuestionsPort,
     LoadAttributeLevelQuestionsPort,
     DeleteQuestionPort,
-    LoadQuestionnaireQuestionsPort {
+    LoadQuestionnaireQuestionsPort,
+    CheckQuestionExistencePort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -69,6 +72,7 @@ public class QuestionPersistenceJpaAdapter implements
             param.hint(),
             param.mayNotBeApplicable(),
             param.advisable(),
+            param.answerRangeId(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }
@@ -90,6 +94,8 @@ public class QuestionPersistenceJpaAdapter implements
         var questionEntity = repository.findByIdAndKitVersionId(id, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
         Question question = QuestionMapper.mapToDomainModel(questionEntity);
+        if (question.getAnswerRangeId() == null)
+            return question;
 
         var optionEntities = answerOptionRepository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(questionEntity.getAnswerRangeId(), kitVersionId);
         var options = optionEntities.stream()
@@ -104,6 +110,28 @@ public class QuestionPersistenceJpaAdapter implements
         question.setImpacts(impacts);
         question.setOptions(options);
         return question;
+    }
+
+    @Override
+    public List<Question> loadAllByKitVersionId(long kitVersionId) {
+        var questionWithImpactsViews =  repository.loadByKitVersionId(kitVersionId);
+        var questionEntityToViews = questionWithImpactsViews.stream()
+            .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
+
+        return questionEntityToViews.entrySet().stream()
+            .map(e -> {
+                Question question = QuestionMapper.mapToDomainModel(e.getKey());
+                List<QuestionImpact> qImpacts = e.getValue().stream()
+                    .map(v -> {
+                        if (v.getQuestionImpact() == null)
+                            return null;
+                        return QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact());
+                    })
+                    .toList();
+                question.setImpacts(qImpacts);
+                return question;
+            })
+            .toList();
     }
 
     private QuestionImpact setOptionImpacts(QuestionImpact impact, List<AnswerOptionJpaEntity> optionEntities) {
@@ -193,6 +221,18 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateAnswerRange(UpdateAnswerRangeParam param) {
+        if (!repository.existsByIdAndKitVersionId(param.id(), param.kitVersionId())) {
+            throw new ResourceNotFoundException(QUESTION_ID_NOT_FOUND);
+        }
+        repository.updateAnswerRange(param.id(),
+            param.kitVersionId(),
+            param.answerRangeId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
+    }
+
+    @Override
     public PaginatedResponse<Question> loadQuestionnaireQuestions(LoadQuestionnaireQuestionsPort.Param param) {
         var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(param.questionnaireId(),
             param.kitVersionId(),
@@ -207,5 +247,10 @@ public class QuestionPersistenceJpaAdapter implements
             QuestionJpaEntity.Fields.INDEX,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public boolean existsByAnswerRange(long answerRangeId, long kitVersionId) {
+        return repository.existsByAnswerRangeIdAndKitVersionId(answerRangeId, kitVersionId);
     }
 }
