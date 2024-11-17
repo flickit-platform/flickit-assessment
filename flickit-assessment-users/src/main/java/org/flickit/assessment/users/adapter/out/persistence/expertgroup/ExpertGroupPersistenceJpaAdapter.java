@@ -3,7 +3,9 @@ package org.flickit.assessment.users.adapter.out.persistence.expertgroup;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.data.jpa.users.expertgroup.*;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
+import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupWithDetailsView;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.users.application.domain.ExpertGroup;
 import org.flickit.assessment.users.application.domain.ExpertGroupMember;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,7 @@ public class ExpertGroupPersistenceJpaAdapter implements
             .collect(Collectors.groupingBy(ExpertGroupMember::getExpertGroupId));
 
         List<LoadExpertGroupListPort.Result> items = pageResult.getContent().stream()
-            .map(e -> resultWithMembers(e, param.sizeOfMembers(), expertGroupIdToMembers))
+            .map(e -> resultWithMembers(e, param.sizeOfMembers(), expertGroupIdToMembers.getOrDefault(e.getId(), List.of())))
             .toList();
 
         return new PaginatedResponse<>(
@@ -80,13 +81,13 @@ public class ExpertGroupPersistenceJpaAdapter implements
         );
     }
 
-    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, Map<Long, List<ExpertGroupMember>> expertGroupIdToMembers) {
-        var relatedMembers = expertGroupIdToMembers.getOrDefault(item.getId(), List.of()).stream()
+    private LoadExpertGroupListPort.Result resultWithMembers(ExpertGroupWithDetailsView item, int membersSize, List<ExpertGroupMember> expertGroupMembers) {
+        var topMembers = expertGroupMembers.stream()
             .map(m -> new GetExpertGroupListUseCase.Member(m.getDisplayName()))
             .sorted(Comparator.comparing(GetExpertGroupListUseCase.Member::displayName))
             .limit(membersSize)
             .toList();
-        return mapToPortResult(item, relatedMembers, expertGroupIdToMembers.get(item.getId()).size());
+        return mapToPortResult(item, topMembers, expertGroupMembers.size());
     }
 
     @Override
