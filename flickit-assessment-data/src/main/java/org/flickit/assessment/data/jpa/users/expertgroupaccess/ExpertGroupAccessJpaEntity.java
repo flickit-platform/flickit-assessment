@@ -2,12 +2,11 @@ package org.flickit.assessment.data.jpa.users.expertgroupaccess;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @IdClass(ExpertGroupAccessJpaEntity.EntityId.class)
@@ -16,6 +15,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class ExpertGroupAccessJpaEntity {
 
@@ -63,10 +63,5 @@ public class ExpertGroupAccessJpaEntity {
 
         private Long expertGroupId;
         private UUID userId;
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
     }
 }

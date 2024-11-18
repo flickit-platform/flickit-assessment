@@ -156,7 +156,7 @@ class CalculateAssessmentServiceTest {
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(any())).thenReturn(LocalDateTime.now());
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(subjects);
         when(createSubjectValuePort.persistAll(anyList(), any())).thenReturn(List.of(newSubjectValue));
-        when(createAttributeValuePort.persistAll(anyList(), any())).thenReturn(List.of(newAttributeValue));
+        when(createAttributeValuePort.persistAll(anySet(), any())).thenReturn(List.of(newAttributeValue));
 
         CalculateAssessmentUseCase.Result result = service.calculateMaturityLevel(param);
         verify(updateCalculatedResultPort, times(1)).updateCalculatedResult(any(AssessmentResult.class));

@@ -6,6 +6,7 @@ import java.util.UUID;
 public interface ExpertGroupMembersView {
 
     UUID getId();
+    Long getExpertGroupId();
     String getEmail();
     String getDisplayName();
     String getBio();

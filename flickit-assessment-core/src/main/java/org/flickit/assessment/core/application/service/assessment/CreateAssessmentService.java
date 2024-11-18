@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
@@ -92,9 +94,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         List<Subject> subjects = loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId);
         List<Long> subjectIds = subjects.stream().map(Subject::getId).toList();
-        List<Long> attributeIds = subjects.stream()
+        Set<Long> attributeIds = subjects.stream()
             .map(x -> x.getAttributes().stream().map(Attribute::getId).toList())
-            .flatMap(List::stream).toList();
+            .flatMap(List::stream).collect(Collectors.toSet());
         createSubjectValuePort.persistAll(subjectIds, assessmentResultId);
         createAttributeValuePort.persistAll(attributeIds, assessmentResultId);
     }
