@@ -56,7 +56,7 @@ class CreateKitCustomServiceTest {
         AssessmentKit kit = AssessmentKitMother.simpleKit();
         long kitCustomId = 1;
         String kitCustomData = """
-            {"subjects":[{"id":1,"weight":1}],"attributes":[],"questionnaires":[]}
+            {"subs":[{"id":1000,"w":1}],"atts":[{"id":200,"w":2}]}
             """;
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -98,7 +98,7 @@ class CreateKitCustomServiceTest {
         AssessmentKit kit = AssessmentKitMother.privateKit();
         long kitCustomId = 1;
         String kitCustomData = """
-            {"subjects":[{"id":1,"weight":1}],"attributes":[],"questionnaires":[]}
+            {"subs":[{"id":1000,"w":1}],"atts":[{"id":200,"w":2}]}
             """;
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);

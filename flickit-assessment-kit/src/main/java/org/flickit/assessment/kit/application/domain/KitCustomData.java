@@ -1,10 +1,17 @@
 package org.flickit.assessment.kit.application.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
-public record KitCustomData(List<Subject> subjects, List<Attribute> attributes) {
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public record KitCustomData(@JsonProperty("subs") List<Subject> subjects,
+                            @JsonProperty("atts") List<Attribute> attributes) {
 
-    public record Subject(long id, int weight) {}
+    public record Subject(@JsonProperty("id") long id, @JsonProperty("w") int weight) {
+    }
 
-    public record Attribute(long id, int weight) {}
+    public record Attribute(@JsonProperty("id") long id, @JsonProperty("w") int weight) {
+    }
 }
