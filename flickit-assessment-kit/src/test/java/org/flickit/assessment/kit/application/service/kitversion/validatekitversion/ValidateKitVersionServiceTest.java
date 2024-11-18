@@ -3,20 +3,15 @@ package org.flickit.assessment.kit.application.service.kitversion.validatekitver
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.kit.application.domain.AnswerRange;
-import org.flickit.assessment.kit.application.domain.Attribute;
-import org.flickit.assessment.kit.application.domain.Question;
-import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.application.service.kitversion.ValidateKitVersionService;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.KitVersionMother;
+import org.flickit.assessment.kit.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +26,6 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,7 +50,7 @@ class ValidateKitVersionServiceTest {
     private LoadSubjectsPort loadSubjectsPort;
 
     @Mock
-    private LoadAttributePort loadAttributePort;
+    private LoadAllAttributesPort loadAllAttributesPort;
 
     @Test
     void testValidateKitVersion_whenKitVersionIsInvalid_shouldThrowValidationException() {
@@ -96,7 +90,7 @@ class ValidateKitVersionServiceTest {
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(List.of());
         when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of());
         when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(List.of());
-        when(loadAttributePort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
+        when(loadAllAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
 
         var result = service.validate(param);
         assertTrue(result.isValid());
@@ -108,23 +102,35 @@ class ValidateKitVersionServiceTest {
         var param = createParam(ValidateKitVersionUseCase.Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
+        var loadQuestionsPortResult = List.of(new LoadQuestionsPort.Result(1, 100L, "Q100Title"),
+            new LoadQuestionsPort.Result(2, 200L, "Q100Title"));
+        var listOfAnswerRanges = List.of(AnswerRangeMother.createReusableAnswerRangeWithTwoOptions());
+        var listOfSubjects = List.of(SubjectMother.subjectWithTitle("Title1"), SubjectMother.subjectWithTitle("Title2"));
+        var listOfAttributes = List.of(AttributeMother.attributeWithTitle("Title1"), AttributeMother.attributeWithTitle("Title2"));
+        List<String> expectedErrors = List.of(
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, loadQuestionsPortResult.getLast().questionIndex(), loadQuestionsPortResult.getLast().questionnaireTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, loadQuestionsPortResult.getLast().questionIndex(), loadQuestionsPortResult.getLast().questionnaireTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL, listOfAnswerRanges.getFirst().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getFirst().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getLast().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, listOfAttributes.getFirst().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, listOfAttributes.getLast().getTitle())
+        );
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
-        when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of(mock(Question.class)));
-        when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(List.of(mock(Question.class)));
-        when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of(mock(AnswerRange.class)));
-        when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(List.of(mock(Subject.class)));
-        when(loadAttributePort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of(mock(Attribute.class)));
+        when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
+        when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
+        when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(listOfAnswerRanges);
+        when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(listOfSubjects);
+        when(loadAllAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(listOfAttributes);
 
         var result = service.validate(param);
         assertFalse(result.isValid());
-        assertEquals(5, result.errors().size());
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL)));
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL)));
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL)));
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL)));
-        assertTrue(result.errors().contains(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL)));
+        assertEquals(9, result.errors().size());
+        assertTrue(result.errors().containsAll(expectedErrors));
     }
 
     private ValidateKitVersionUseCase.Param createParam(Consumer<ValidateKitVersionUseCase.Param.ParamBuilder> changer) {
@@ -138,5 +144,4 @@ class ValidateKitVersionServiceTest {
             .kitVersionId(1L)
             .currentUserId(UUID.randomUUID());
     }
-
 }

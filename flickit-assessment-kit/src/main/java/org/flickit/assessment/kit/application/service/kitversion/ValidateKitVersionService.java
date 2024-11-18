@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.kit.application.domain.KitVersionStatus;
+import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributePort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
@@ -29,7 +29,7 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
     private final LoadQuestionsPort loadQuestionsPort;
     private final LoadAnswerRangesPort loadAnswerRangesPort;
     private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadAttributePort loadAttributePort;
+    private final LoadAllAttributesPort loadAllAttributesPort;
 
     @Override
     public Result validate(Param param) {
@@ -41,16 +41,30 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
             throw new ValidationException(VALIDATE_KIT_VERSION_STATUS_INVALID);
 
         List<String> errors = new LinkedList<>();
-        if (!loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL));
-        if (!loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL));
-        if (!loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL));
-        if (!loadAttributePort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL));
-        if (!loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId()).isEmpty())
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_SUBJECT_NOT_NULL));
+        errors.addAll(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, e.questionIndex(), e.questionnaireTitle()))
+            .toList());
+
+        errors.addAll(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, e.questionIndex(), e.questionnaireTitle()))
+            .toList());
+
+        errors.addAll(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL, e.getTitle()))
+            .toList());
+
+        errors.addAll(loadAllAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
+            .toList());
+
+        errors.addAll(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))
+            .toList());
 
         return toResult(errors);
     }
