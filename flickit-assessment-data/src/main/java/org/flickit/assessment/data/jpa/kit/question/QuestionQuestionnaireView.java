@@ -2,7 +2,7 @@ package org.flickit.assessment.data.jpa.kit.question;
 
 public interface QuestionQuestionnaireView {
 
-    Long getQuestionId();
+    int getQuestionIndex();
 
     Long getQuestionnaireId();
 

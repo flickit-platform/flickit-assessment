@@ -135,18 +135,18 @@ public class QuestionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Question> loadQuestionsWithoutAnswerRange(long kitVersionId) {
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutAnswerRange(long kitVersionId) {
         return repository.findAllByKitVersionIdAndAnswerRangeIdIsNull(kitVersionId)
             .stream()
-            .map(QuestionMapper::mapToDomainModel)
+            .map(QuestionMapper::mapToPortResult)
             .toList();
     }
 
     @Override
-    public List<Question> loadQuestionsWithoutImpact(long kitVersionId) {
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutImpact(long kitVersionId) {
         return repository.findByKitVersionIdQuestionAndImpactsIsNull(kitVersionId)
             .stream()
-            .map(QuestionMapper::mapToDomainModel)
+            .map(QuestionMapper::mapToPortResult)
             .toList();
     }
 
@@ -197,7 +197,7 @@ public class QuestionPersistenceJpaAdapter implements
                 question.setImpacts(List.of(impact));
                 question.setOptions(options);
 
-                return new Result(question, questionnaire);
+                return new LoadAttributeLevelQuestionsPort.Result(question, questionnaire);
             }).toList();
     }
 

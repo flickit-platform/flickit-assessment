@@ -8,7 +8,10 @@ public interface LoadQuestionsPort {
 
     List<Question> loadAllByKitVersionId(long kitVersionId);
 
-    List<Question> loadQuestionsWithoutAnswerRange (long kitVersionId);
+    List<Result> loadQuestionsWithoutAnswerRange (long kitVersionId);
 
-    List<Question> loadQuestionsWithoutImpact (long kitVersionId);
+    List<Result> loadQuestionsWithoutImpact (long kitVersionId);
+
+    record Result(int questionIndex, long questionnaireId, String questionnaireTitle){
+    }
 }
