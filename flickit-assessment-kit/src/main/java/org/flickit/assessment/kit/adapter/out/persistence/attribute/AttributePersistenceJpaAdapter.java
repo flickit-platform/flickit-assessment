@@ -102,7 +102,7 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public List<Attribute> loadByKitVersionIdAndQuestionsWithoutImpact(long kitVersionId) {
-        return repository.findAllByKitVersionIdAndWithoutQuestionImpact(kitVersionId)
+        return repository.findAllByKitVersionIdAndQuestionImpactIsNull(kitVersionId)
             .stream()
             .map(AttributeMapper::mapToDomainModel)
             .toList();

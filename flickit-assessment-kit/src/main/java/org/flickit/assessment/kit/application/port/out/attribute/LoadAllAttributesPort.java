@@ -7,4 +7,6 @@ import java.util.List;
 public interface LoadAllAttributesPort {
 
     List<Attribute> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId);
+
+    List<Attribute> loadByKitVersionIdAndQuestionsWithoutImpact(long kitVersionId);
 }
