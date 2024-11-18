@@ -7,11 +7,11 @@ public interface CreateKitCustomPort {
 
     long persist(Param param);
 
-    record Param(
-        long kitId,
-        String title,
-        String code,
-        String customData,
-        LocalDateTime creationTime,
-        UUID createdBy) {}
+    record Param(long kitId,
+                 String title,
+                 String code,
+                 String customData,
+                 LocalDateTime creationTime,
+                 UUID createdBy) {
+    }
 }
