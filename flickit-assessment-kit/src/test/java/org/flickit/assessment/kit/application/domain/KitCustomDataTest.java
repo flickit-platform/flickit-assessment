@@ -17,10 +17,9 @@ class KitCustomDataTest {
     void givenKitCustomDataEmpty_WhenCreatingAKitCustomData_ThenThrowsValidationException() {
         List<KitCustomData.Subject> subjects = new ArrayList<>();
         List<KitCustomData.Attribute> attributes = new ArrayList<>();
-        List<KitCustomData.Questionnaire> questionnaires = new ArrayList<>();
 
         var validationException = assertThrows(ValidationException.class,
-            () -> new KitCustomData(subjects, attributes, questionnaires));
+            () -> new KitCustomData(subjects, attributes));
         assertEquals(CREATE_KIT_CUSTOM_NOT_ALLOWED, validationException.getMessageKey());
     }
 
@@ -62,25 +61,5 @@ class KitCustomDataTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new KitCustomData.Attribute(attributeId, weight));
         assertThat(throwable).hasMessage("weight: " + CREATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL);
-    }
-
-    @Test
-    void givenQuestionnaireIdIsNull_WhenCreatingAQuestionnaireCustomData_ThenThrowException() {
-        Long questionnaireId = null;
-        boolean disabled = true;
-
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new KitCustomData.Questionnaire(questionnaireId, disabled));
-        assertThat(throwable).hasMessage("questionnaireId: " + CREATE_KIT_CUSTOM_QUESTIONNAIRE_ID_NOT_NULL);
-    }
-
-    @Test
-    void givenQuestionnaireDisabledIsNull_WhenCreatingAQuestionnaireCustomData_ThenThrowException() {
-        long questionnaireId = 1;
-        Boolean disabled = null;
-
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new KitCustomData.Questionnaire(questionnaireId, disabled));
-        assertThat(throwable).hasMessage("disabled: " + CREATE_KIT_CUSTOM_QUESTIONNAIRE_DISABLED_NOT_NULL);
     }
 }

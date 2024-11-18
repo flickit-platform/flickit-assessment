@@ -10,10 +10,10 @@ import java.util.List;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public record KitCustomData(List<Subject> subjects, List<Attribute> attributes, List<Questionnaire> questionnaires) {
+public record KitCustomData(List<Subject> subjects, List<Attribute> attributes) {
 
     public KitCustomData {
-        if (subjects.isEmpty() && attributes.isEmpty() && questionnaires.isEmpty())
+        if (subjects.isEmpty() && attributes.isEmpty())
             throw new ValidationException(CREATE_KIT_CUSTOM_NOT_ALLOWED);
     }
 
@@ -47,23 +47,6 @@ public record KitCustomData(List<Subject> subjects, List<Attribute> attributes, 
         public Attribute(Long attributeId, Integer weight) {
             this.attributeId = attributeId;
             this.weight = weight;
-            this.validateSelf();
-        }
-    }
-
-    @Value
-    @EqualsAndHashCode(callSuper = false)
-    public static class Questionnaire extends SelfValidating<Questionnaire> {
-
-        @NotNull(message = CREATE_KIT_CUSTOM_QUESTIONNAIRE_ID_NOT_NULL)
-        Long questionnaireId;
-
-        @NotNull(message = CREATE_KIT_CUSTOM_QUESTIONNAIRE_DISABLED_NOT_NULL)
-        Boolean disabled;
-
-        public Questionnaire(Long questionnaireId, Boolean disabled) {
-            this.questionnaireId = questionnaireId;
-            this.disabled = disabled;
             this.validateSelf();
         }
     }

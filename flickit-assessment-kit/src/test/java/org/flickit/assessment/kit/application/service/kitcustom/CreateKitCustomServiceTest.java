@@ -127,7 +127,7 @@ class CreateKitCustomServiceTest {
 
     private CreateKitCustomUseCase.Param.ParamBuilder paramBuilder() {
         KitCustomData.Subject subject = new KitCustomData.Subject(1L, 1);
-        KitCustomData customData = new KitCustomData(List.of(subject), new ArrayList<>(), new ArrayList<>());
+        KitCustomData customData = new KitCustomData(List.of(subject), new ArrayList<>());
         return CreateKitCustomUseCase.Param.builder()
             .kitId(1L)
             .title("custom title")

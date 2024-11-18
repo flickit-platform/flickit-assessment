@@ -43,21 +43,14 @@ public class CreateKitCustomRestController {
             if (attributeDtos == null)
                 attributeDtos = new ArrayList<>();
 
-            var questionnaireDtos = customDataDto.questionnaires();
-            if (questionnaireDtos == null)
-                questionnaireDtos = new ArrayList<>();
-
             var subjects = subjectDtos.stream()
                 .map(e -> new KitCustomData.Subject(e.id(), e.weight()))
                 .toList();
             var attributes = attributeDtos.stream()
                 .map(e -> new KitCustomData.Attribute(e.id(), e.weight()))
                 .toList();
-            var questionnaires = questionnaireDtos.stream()
-                .map(e -> new KitCustomData.Questionnaire(e.id(), e.disabled()))
-                .toList();
 
-            customData = new KitCustomData(subjects, attributes, questionnaires);
+            customData = new KitCustomData(subjects, attributes);
         }
 
         return new CreateKitCustomUseCase.Param(kitId, requestDto.title(), customData, currentUserId);
