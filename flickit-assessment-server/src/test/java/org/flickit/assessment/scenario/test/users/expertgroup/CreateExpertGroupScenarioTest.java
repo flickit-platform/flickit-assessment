@@ -75,5 +75,4 @@ class CreateExpertGroupScenarioTest extends AbstractScenarioTest {
         int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
         assertEquals(countBefore, countAfter);
     }
-
 }
