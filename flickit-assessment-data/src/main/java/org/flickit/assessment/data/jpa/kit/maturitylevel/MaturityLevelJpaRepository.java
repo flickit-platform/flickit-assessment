@@ -62,12 +62,6 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            FROM MaturityLevelJpaEntity ml
-            WHERE ml.kitVersionId = (SELECT l.kitVersionId FROM MaturityLevelJpaEntity AS l WHERE l.id = :id)
-        """)
-    List<MaturityLevelJpaEntity> findAllInKitVersionWithOneId(@Param(value = "id") Long id);
-
-    @Query("""
             SELECT
                 a.id as id,
                 a.index as index,

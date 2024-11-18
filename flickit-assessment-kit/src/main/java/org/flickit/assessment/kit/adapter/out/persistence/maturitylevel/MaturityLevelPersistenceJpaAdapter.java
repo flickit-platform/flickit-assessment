@@ -79,7 +79,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
         if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
-        repository.update(maturityLevel.getId(), kitVersionId, maturityLevel.getTitle(), maturityLevel.getIndex(), maturityLevel.getCode(),
+        repository.update(maturityLevel.getId(), kitVersionId, maturityLevel.getCode(), maturityLevel.getIndex(), maturityLevel.getTitle(),
             maturityLevel.getDescription(), maturityLevel.getValue(), lastModificationTime, lastModifiedBy);
     }
 

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.kit.util.GenerateCodeUtil.*;
 
 @Service
 @Transactional
@@ -32,7 +32,7 @@ public class UpdateSubjectService implements UpdateSubjectUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        String code = generateSlugCode(param.getTitle());
+        String code = generateCode(param.getTitle());
         updateSubjectPort.update(new UpdateSubjectPort.Param(param.getSubjectId(),
             param.getKitVersionId(),
             code,

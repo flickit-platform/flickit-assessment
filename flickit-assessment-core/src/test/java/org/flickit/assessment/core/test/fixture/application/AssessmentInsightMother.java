@@ -12,7 +12,7 @@ public class AssessmentInsightMother {
             UUID.randomUUID(),
             assessmentResultId,
             RandomStringUtils.random(50),
-            LocalDateTime.now(),
+            LocalDateTime.now().plusSeconds(1),
             UUID.randomUUID()
         );
     }

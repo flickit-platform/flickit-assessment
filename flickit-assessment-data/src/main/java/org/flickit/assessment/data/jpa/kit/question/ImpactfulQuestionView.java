@@ -1,10 +1,8 @@
 package org.flickit.assessment.data.jpa.kit.question;
 
-public interface ImprovableImpactfulQuestionView {
+public interface ImpactfulQuestionView {
 
     Long getQuestionId();
-
-    Integer getAnsweredOptionIndex();
 
     Long getOptionId();
 

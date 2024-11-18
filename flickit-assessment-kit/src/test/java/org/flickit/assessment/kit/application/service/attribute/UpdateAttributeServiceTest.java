@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.kit.util.GenerateCodeUtil.*;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,7 +68,7 @@ class UpdateAttributeServiceTest {
 
         assertEquals(param.getKitVersionId(), attributeUpdateParam.getValue().kitVersionId());
         assertEquals(param.getAttributeId(), attributeUpdateParam.getValue().id());
-        assertEquals(generateSlugCode(param.getTitle()), attributeUpdateParam.getValue().code());
+        assertEquals(generateCode(param.getTitle()), attributeUpdateParam.getValue().code());
         assertEquals(param.getTitle(), attributeUpdateParam.getValue().title());
         assertEquals(param.getDescription(), attributeUpdateParam.getValue().description());
         assertEquals(param.getSubjectId(), attributeUpdateParam.getValue().subjectId());

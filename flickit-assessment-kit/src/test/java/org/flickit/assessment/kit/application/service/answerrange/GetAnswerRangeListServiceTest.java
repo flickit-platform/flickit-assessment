@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithFourOptions;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithTwoOptions;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +59,7 @@ class GetAnswerRangeListServiceTest {
     @Test
     void testGetAnswerRangeList_ValidParams_ReturnsPaginatedAnswerRangeWithOptions() {
         var param = createParam(GetAnswerRangeListUseCase.Param.ParamBuilder::build);
-        var answerRange1 = createAnswerRangeWithTwoOptions();
+        var answerRange1 = createReusableAnswerRangeWithTwoOptions();
         var answerRange2 = createAnswerRangeWithFourOptions();
 
         PaginatedResponse<AnswerRange> paginatedAnswerRanges = new PaginatedResponse<>(
