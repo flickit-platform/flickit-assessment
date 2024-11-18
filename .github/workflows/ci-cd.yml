@@ -160,8 +160,9 @@ jobs:
           APP_ID: ${{ secrets.ASSESSMENT_CORE_APP_ID_STAGING }}
 
           
-  Deploy_With_Webhook:
-    needs: build-and-push-latest-image
+  deploy-with-webhook:
+    needs: [build-and-push-latest-image]
+    name: deploy with webhook
     runs-on: ubuntu-latest
     steps:
       - name: Deploy service on Webhook
