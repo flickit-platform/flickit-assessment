@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
@@ -29,7 +29,7 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
     private final LoadQuestionsPort loadQuestionsPort;
     private final LoadAnswerRangesPort loadAnswerRangesPort;
     private final LoadSubjectsPort loadSubjectsPort;
-    private final LoadAllAttributesPort loadAllAttributesPort;
+    private final LoadAttributesPort loadAttributesPort;
 
     @Override
     public Result validate(Param param) {
@@ -56,7 +56,7 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL, e.getTitle()))
             .toList());
 
-        errors.addAll(loadAllAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())
+        errors.addAll(loadAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
             .toList());

@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
@@ -50,7 +50,7 @@ class ValidateKitVersionServiceTest {
     private LoadSubjectsPort loadSubjectsPort;
 
     @Mock
-    private LoadAllAttributesPort loadAllAttributesPort;
+    private LoadAttributesPort loadAttributesPort;
 
     @Test
     void testValidateKitVersion_whenKitVersionIsInvalid_shouldThrowValidationException() {
@@ -90,7 +90,7 @@ class ValidateKitVersionServiceTest {
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(List.of());
         when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of());
         when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(List.of());
-        when(loadAllAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
+        when(loadAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
 
         var result = service.validate(param);
         assertTrue(result.isValid());
@@ -125,7 +125,7 @@ class ValidateKitVersionServiceTest {
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
         when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(listOfSubjects);
-        when(loadAllAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(listOfAttributes);
+        when(loadAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(listOfAttributes);
 
         var result = service.validate(param);
         assertFalse(result.isValid());
