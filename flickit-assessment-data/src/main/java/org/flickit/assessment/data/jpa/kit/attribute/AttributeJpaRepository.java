@@ -105,8 +105,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     @Query("""
             SELECT at
             FROM AttributeJpaEntity at
-            LEFT JOIN QuestionImpactJpaEntity qi ON at.kitVersionId = qi.kitVersionId AND qi.attributeId = at.id
-            WHERE at.kitVersionId = :kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = at.id
+            WHERE at.kitVersionId = :kitVersionId AND qi.id IS NULL
         """)
-    List<AttributeJpaEntity> findAllByKitVersionIdAndWithoutQuestionImpact(@Param("kitVersionId") long kitVersionId);
+    List<AttributeJpaEntity> findAllByKitVersionIdAndQuestionImpactIsNull(@Param("kitVersionId") long kitVersionId);
 }

@@ -30,8 +30,6 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
 
     List<QuestionJpaEntity> findAllByIdInAndKitVersionIdAndQuestionnaireId(List<Long> ids, long kitVersionId, long questionnaireId);
 
-    List<QuestionJpaEntity> findAllByKitVersionIdAndAnswerRangeIdIsNull(long kitVersionId);
-
     @Modifying
     @Query("""
             UPDATE QuestionJpaEntity q
@@ -223,10 +221,19 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                            @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            SELECT q
+            SELECT q.index AS questionIndex, qn.id AS questionnaireId, qn.title AS questionnaireTitle
             FROM QuestionJpaEntity q
-            Left JOIN QuestionImpactJpaEntity qi on q.kitVersionId = qi.kitVersionId
-            WHERE q.kitVersionId = :kitVersionId and qi.id = null
+            JOIN QuestionnaireJpaEntity qn on qn.id = q.questionnaireId
+            WHERE q.kitVersionId = :kitVersionId AND q.answerRangeId IS NULL
         """)
-    List<QuestionJpaEntity> findByKitVersionIdQuestionAndImpactsIsNull(@Param("kitVersionId") long kitVersionId);
+    List<QuestionQuestionnaireView> findAllByKitVersionIdAndAnswerRangeIdIsNull(long kitVersionId);
+
+    @Query("""
+            SELECT q.index as questionIndex, q.questionnaireId as questionnaireId, qr.title as questionnaireTitle
+            FROM QuestionJpaEntity q
+            JOIN QuestionnaireJpaEntity qr on q.questionnaireId = qr.id
+            Left JOIN QuestionImpactJpaEntity qi on qi.questionId = q.id
+            WHERE q.kitVersionId = :kitVersionId and qi.id IS null
+        """)
+    List<QuestionQuestionnaireView> findByKitVersionIdQuestionAndImpactsIsNull(@Param("kitVersionId") long kitVersionId);
 }
