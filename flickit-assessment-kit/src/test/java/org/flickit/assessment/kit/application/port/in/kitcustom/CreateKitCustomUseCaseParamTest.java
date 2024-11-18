@@ -5,7 +5,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -13,7 +12,8 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateKitCustomUseCaseParamTest {
 
@@ -31,7 +31,7 @@ class CreateKitCustomUseCaseParamTest {
         assertThat(throwable).hasMessage("title: " + CREATE_KIT_CUSTOM_TITLE_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.title("ab")));
+            () -> createParam(b -> b.title("  ab  ")));
         assertThat(throwable).hasMessage("title: " + CREATE_KIT_CUSTOM_TITLE_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class,
@@ -48,9 +48,6 @@ class CreateKitCustomUseCaseParamTest {
 
     @Test
     void testCreateKitCustomUseCaseParam_customDataSubjectsAttributesParamViolatesConstraints_ErrorMessage() {
-        List<CreateKitCustomUseCase.Param.KitCustomData.CustomSubject> subjects = new ArrayList<>();
-        List<CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute> attributes = new ArrayList<>();
-
         var validationException = assertThrows(ValidationException.class,
             () -> createParam(b -> b.customData(createCustomDataParam(c ->
                 c.customSubjects(List.of()).customAttributes(List.of())))));
@@ -59,41 +56,29 @@ class CreateKitCustomUseCaseParamTest {
 
     @Test
     void testCreateKitCustomUseCaseParam_customDataSubjectIdParamViolatesConstraints_ErrorMessage() {
-        Long subjectId = null;
-        int weight = 1;
-
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(subjectId, weight));
+            () -> new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(null, 1));
         assertThat(throwable).hasMessage("id: " + CREATE_KIT_CUSTOM_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
     void testCreateKitCustomUseCaseParam_customDataSubjectWeightParamViolatesConstraints_ErrorMessage() {
-        long subjectId = 1;
-        Integer weight = null;
-
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(subjectId, weight));
+            () -> new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(123L, null));
         assertThat(throwable).hasMessage("weight: " + CREATE_KIT_CUSTOM_SUBJECT_WEIGHT_NOT_NULL);
     }
 
     @Test
     void testCreateKitCustomUseCaseParam_customDataAttributeIdParamViolatesConstraints_ErrorMessage() {
-        Long attributeId = null;
-        int weight = 1;
-
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute(attributeId, weight));
+            () -> new CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute(null, 1));
         assertThat(throwable).hasMessage("id: " + CREATE_KIT_CUSTOM_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
     void testCreateKitCustomUseCaseParam_customDataAttributeWeightParamViolatesConstraints_ErrorMessage() {
-        long attributeId = 1;
-        Integer weight = null;
-
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute(attributeId, weight));
+            () -> new CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute(123L, null));
         assertThat(throwable).hasMessage("weight: " + CREATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL);
     }
 
@@ -111,12 +96,24 @@ class CreateKitCustomUseCaseParamTest {
     }
 
     private CreateKitCustomUseCase.Param.ParamBuilder paramBuilder() {
-        var customSubject = new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(1L, 1);
-        var customData = new CreateKitCustomUseCase.Param.KitCustomData(List.of(customSubject), new ArrayList<>());
         return CreateKitCustomUseCase.Param.builder()
             .kitId(1L)
             .title("title")
-            .customData(customData)
+            .customData(createCustomDataParam(CreateKitCustomUseCase.Param.KitCustomData.KitCustomDataBuilder::build))
             .currentUserId(UUID.randomUUID());
+    }
+
+    private CreateKitCustomUseCase.Param.KitCustomData createCustomDataParam(Consumer<CreateKitCustomUseCase.Param.KitCustomData.KitCustomDataBuilder> changer) {
+        var param = KitCustomDataBuilder();
+        changer.accept(param);
+        return param.build();
+    }
+
+    private CreateKitCustomUseCase.Param.KitCustomData.KitCustomDataBuilder KitCustomDataBuilder() {
+        var customSubject = new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(1L, 1);
+        var customAttribute = new CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute(1L, 1);
+        return CreateKitCustomUseCase.Param.KitCustomData.builder()
+            .customSubjects(List.of(customSubject))
+            .customAttributes(List.of(customAttribute));
     }
 }

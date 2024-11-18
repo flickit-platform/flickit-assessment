@@ -45,6 +45,7 @@ public interface CreateKitCustomUseCase {
             this.validateSelf();
         }
 
+        @Builder
         public record KitCustomData(List<CustomSubject> customSubjects, List<CustomAttribute> customAttributes) {
 
             public KitCustomData {
@@ -80,6 +81,7 @@ public interface CreateKitCustomUseCase {
                 @NotNull(message = CREATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL)
                 Integer weight;
 
+                @Builder
                 public CustomAttribute(Long id, Integer weight) {
                     this.id = id;
                     this.weight = weight;
