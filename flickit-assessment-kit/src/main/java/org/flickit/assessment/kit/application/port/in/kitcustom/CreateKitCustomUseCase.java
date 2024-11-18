@@ -49,7 +49,7 @@ public interface CreateKitCustomUseCase {
 
             public KitCustomData {
                 if (customSubjects.isEmpty() && customAttributes.isEmpty())
-                    throw new ValidationException(CREATE_KIT_CUSTOM_NOT_ALLOWED);
+                    throw new ValidationException(CREATE_KIT_CUSTOM_EMPTY_CUSTOM_NOT_ALLOWED);
             }
 
             @Value

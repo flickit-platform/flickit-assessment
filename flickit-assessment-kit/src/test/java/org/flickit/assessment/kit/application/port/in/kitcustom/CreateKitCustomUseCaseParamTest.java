@@ -52,8 +52,9 @@ class CreateKitCustomUseCaseParamTest {
         List<CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute> attributes = new ArrayList<>();
 
         var validationException = assertThrows(ValidationException.class,
-            () -> new CreateKitCustomUseCase.Param.KitCustomData(subjects, attributes));
-        assertEquals(CREATE_KIT_CUSTOM_NOT_ALLOWED, validationException.getMessageKey());
+            () -> createParam(b -> b.customData(createCustomDataParam(c ->
+                c.customSubjects(List.of()).customAttributes(List.of())))));
+        assertEquals(CREATE_KIT_CUSTOM_EMPTY_CUSTOM_NOT_ALLOWED, validationException.getMessageKey());
     }
 
     @Test
