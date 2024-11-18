@@ -61,7 +61,7 @@ class CreateKitCustomServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(createKitCustomPort.persist(any(CreateKitCustomPort.Param.class))).thenReturn(kitCustomId);
-        when(mapper.writeValueAsString(param.getCustomData())).thenReturn(kitCustomData);
+        when(mapper.writeValueAsString(any(KitCustomData.class))).thenReturn(kitCustomData);
 
         long actualKitCustomId = service.createKitCustom(param);
         assertEquals(kitCustomId, actualKitCustomId);
@@ -104,7 +104,7 @@ class CreateKitCustomServiceTest {
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(createKitCustomPort.persist(any(CreateKitCustomPort.Param.class))).thenReturn(kitCustomId);
-        when(mapper.writeValueAsString(param.getCustomData())).thenReturn(kitCustomData);
+        when(mapper.writeValueAsString(any(KitCustomData.class))).thenReturn(kitCustomData);
 
         long actualKitCustomId = service.createKitCustom(param);
         assertEquals(kitCustomId, actualKitCustomId);
@@ -126,8 +126,8 @@ class CreateKitCustomServiceTest {
     }
 
     private CreateKitCustomUseCase.Param.ParamBuilder paramBuilder() {
-        KitCustomData.Subject subject = new KitCustomData.Subject(1L, 1);
-        KitCustomData customData = new KitCustomData(List.of(subject), new ArrayList<>());
+        var customSubject = new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(1L, 1);
+        var customData = new CreateKitCustomUseCase.Param.KitCustomData(List.of(customSubject), new ArrayList<>());
         return CreateKitCustomUseCase.Param.builder()
             .kitId(1L)
             .title("custom title")

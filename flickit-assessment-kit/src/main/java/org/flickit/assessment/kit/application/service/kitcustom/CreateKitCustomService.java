@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.CreateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustomPort;
@@ -39,13 +40,25 @@ public class CreateKitCustomService implements CreateKitCustomUseCase {
     @SneakyThrows
     private CreateKitCustomPort.Param toParam(Param param) {
         String code = SlugCodeUtil.generateSlugCode(param.getTitle());
-        String customData = objectMapper.writeValueAsString(param.getCustomData());
+        KitCustomData kitCustomData = toKitCustomData(param.getCustomData());
 
         return new CreateKitCustomPort.Param(param.getKitId(),
             param.getTitle(),
             code,
-            customData,
+            objectMapper.writeValueAsString(kitCustomData),
             LocalDateTime.now(),
             param.getCurrentUserId());
+    }
+
+    private KitCustomData toKitCustomData(Param.KitCustomData customData) {
+        var subjects = customData.customSubjects().stream()
+            .map(e -> new KitCustomData.Subject(e.getId(), e.getWeight()))
+            .toList();
+
+        var attributes = customData.customAttributes().stream()
+            .map(e -> new KitCustomData.Attribute(e.getId(), e.getWeight()))
+            .toList();
+
+        return new KitCustomData(subjects, attributes);
     }
 }

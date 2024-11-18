@@ -6,8 +6,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
+import org.flickit.assessment.common.exception.ValidationException;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -42,6 +43,49 @@ public interface CreateKitCustomUseCase {
             this.customData = customData;
             this.currentUserId = currentUserId;
             this.validateSelf();
+        }
+
+        public record KitCustomData(List<CustomSubject> customSubjects, List<CustomAttribute> customAttributes) {
+
+            public KitCustomData {
+                if (customSubjects.isEmpty() && customAttributes.isEmpty())
+                    throw new ValidationException(CREATE_KIT_CUSTOM_NOT_ALLOWED);
+            }
+
+            @Value
+            @EqualsAndHashCode(callSuper = false)
+            public static class CustomSubject extends SelfValidating<CustomSubject> {
+
+                @NotNull(message = CREATE_KIT_CUSTOM_SUBJECT_ID_NOT_NULL)
+                Long id;
+
+                @NotNull(message = CREATE_KIT_CUSTOM_SUBJECT_WEIGHT_NOT_NULL)
+                Integer weight;
+
+                @Builder
+                public CustomSubject(Long id, Integer weight) {
+                    this.id = id;
+                    this.weight = weight;
+                    this.validateSelf();
+                }
+            }
+
+            @Value
+            @EqualsAndHashCode(callSuper = false)
+            public static class CustomAttribute extends SelfValidating<CustomAttribute> {
+
+                @NotNull(message = CREATE_KIT_CUSTOM_ATTRIBUTE_ID_NOT_NULL)
+                Long id;
+
+                @NotNull(message = CREATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL)
+                Integer weight;
+
+                public CustomAttribute(Long id, Integer weight) {
+                    this.id = id;
+                    this.weight = weight;
+                    this.validateSelf();
+                }
+            }
         }
     }
 }

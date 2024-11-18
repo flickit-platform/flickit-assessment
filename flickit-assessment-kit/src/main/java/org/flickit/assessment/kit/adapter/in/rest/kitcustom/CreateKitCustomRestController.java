@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.in.rest.kitcustom;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.CreateKitCustomUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,28 +29,25 @@ public class CreateKitCustomRestController {
         return new ResponseEntity<>(new CreateKitCustomResponseDto(kitCustomId), HttpStatus.CREATED);
     }
 
-    private static CreateKitCustomUseCase.Param toParam(long kitId,
+    private static CreateKitCustomUseCase.Param toParam(Long kitId,
                                                         UUID currentUserId,
                                                         CreateKitCustomRequestDto requestDto) {
-        KitCustomData customData = null;
+        CreateKitCustomUseCase.Param.KitCustomData customData = null;
         var customDataDto = requestDto.customData();
         if (customDataDto != null) {
-            var subjectDtos = customDataDto.subjects();
-            if (subjectDtos == null)
-                subjectDtos = new ArrayList<>();
+            List<CreateKitCustomUseCase.Param.KitCustomData.CustomSubject> subjects =
+                customDataDto.subjects() != null ? customDataDto.subjects().stream()
+                    .map(e -> new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(e.id(), e.weight()))
+                    .toList()
+                : new ArrayList<>();
 
-            var attributeDtos = customDataDto.attributes();
-            if (attributeDtos == null)
-                attributeDtos = new ArrayList<>();
+            List<CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute> attributes =
+                customDataDto.attributes() != null ? customDataDto.attributes().stream()
+                    .map(e -> new CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute(e.id(), e.weight()))
+                    .toList()
+                : new ArrayList<>();
 
-            var subjects = subjectDtos.stream()
-                .map(e -> new KitCustomData.Subject(e.id(), e.weight()))
-                .toList();
-            var attributes = attributeDtos.stream()
-                .map(e -> new KitCustomData.Attribute(e.id(), e.weight()))
-                .toList();
-
-            customData = new KitCustomData(subjects, attributes);
+            customData = new CreateKitCustomUseCase.Param.KitCustomData(subjects, attributes);
         }
 
         return new CreateKitCustomUseCase.Param(kitId, requestDto.title(), customData, currentUserId);
