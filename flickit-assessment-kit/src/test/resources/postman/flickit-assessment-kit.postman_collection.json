@@ -954,7 +954,7 @@
 							]
 						}
 					},
-A					"response": []
+					"response": []
 				},
 				{
 					"name": "Validate Kit Version",
@@ -968,7 +968,7 @@ A					"response": []
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/kit-versions/516/activate",
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/516/validate",
 							"host": [
 								"{{base_url}}"
 							],
