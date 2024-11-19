@@ -436,6 +436,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_RANGE_TITLE_NOT_BLANK = "create-answer-range.title.notBlank";
     public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MIN = "create-answer-range.title.size.min";
     public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MAX = "create-answer-range.title.size.max";
+    public static final String CREATE_ANSWER_RANGE_TITLE_DUPLICATE = "create-answer-range.title.duplicate";
 
     public static final String CREATE_ANSWER_RANGE_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-range-option.kitVersionId.notNull";
     public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_ID_NOT_NULL = "create-answer-range-option.answerRangeId.notNull";
