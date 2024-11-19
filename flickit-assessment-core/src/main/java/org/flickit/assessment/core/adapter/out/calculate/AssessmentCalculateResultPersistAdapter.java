@@ -76,10 +76,20 @@ public class AssessmentCalculateResultPersistAdapter implements
             assessmentResult.getLastConfidenceCalculationTime());
 
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
-        subjectValues.forEach(s -> subjectValueRepo.updateConfidenceValueById(s.getId(), s.getConfidenceValue()));
+        Map<UUID, Double> subjectValueIdToConfidence = subjectValues.stream()
+            .collect(toMap(SubjectValue::getId, SubjectValue::getConfidenceValue));
+        List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findAllById(subjectValueIdToConfidence.keySet());
 
-        subjectValues.stream()
-            .flatMap(x -> x.getAttributeValues().stream())
-            .forEach(qav -> attributeValueRepo.updateConfidenceValueById(qav.getId(), qav.getConfidenceValue()));
+        subjectValueEntities.forEach(s -> s.setConfidenceValue(subjectValueIdToConfidence.get(s.getId())));
+        subjectValueRepo.saveAll(subjectValueEntities);
+
+        List<AttributeValue> attributeValue = subjectValues.stream()
+            .flatMap(s -> s.getAttributeValues().stream()).toList();
+        Map<UUID, Double> attributeValueIdToConfidence = attributeValue.stream()
+            .collect(toMap(AttributeValue::getId, AttributeValue::getConfidenceValue));
+        List<AttributeValueJpaEntity> attributeValueEntities = attributeValueRepo.findAllById(attributeValueIdToConfidence.keySet());
+
+        attributeValueEntities.forEach(a -> a.setConfidenceValue(attributeValueIdToConfidence.get(a.getId())));
+        attributeValueRepo.saveAll(attributeValueEntities);
     }
 }

@@ -1,7 +1,6 @@
 package org.flickit.assessment.data.jpa.core.attributevalue;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -51,9 +50,4 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
             WHERE av.assessmentResult.id = :assessmentResultId
         """)
     List<SubjectIdAttributeValueView> findAllWithAttributeByAssessmentResultId(@Param(value = "assessmentResultId") UUID assessmentResultId);
-
-    @Modifying
-    @Query("update AttributeValueJpaEntity a set a.confidenceValue = :confidenceValue where a.id = :id")
-    void updateConfidenceValueById(@Param(value = "id") UUID id,
-                                   @Param(value = "confidenceValue") Double confidenceValue);
 }
