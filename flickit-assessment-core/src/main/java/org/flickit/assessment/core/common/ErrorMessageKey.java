@@ -256,6 +256,6 @@ public class ErrorMessageKey {
     public static final String MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND = "migrate-assessment-result-kit-version.assessmentResultId.notFound";
     public static final String MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND = "migrate-assessment-result-kit-version.activeVersion.notFound";
 
-    public static final String SET_KIT_CUSTOM_TO_ASSESSMENT_ASSESSMENT_ID_NOT_NULL = "set-kit-custom-to-assessment.assessmentId.notNull";
-    public static final String SET_KIT_CUSTOM_TO_ASSESSMENT_KIT_CUSTOM_ID_NOT_NULL = "set-kit-custom-to-assessment.kitCustomId.notNull";
+    public static final String ASSIGN_KIT_CUSTOM_ASSESSMENT_ID_NOT_NULL = "assign-kit-custom.assessmentId.notNull";
+    public static final String ASSIGN_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "assign-kit-custom.kitCustomId.notNull";
 }
