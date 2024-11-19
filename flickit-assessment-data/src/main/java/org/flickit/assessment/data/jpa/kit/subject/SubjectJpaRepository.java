@@ -92,7 +92,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
     @Query("""
             SELECT s
             FROM SubjectJpaEntity s
-            LEFT JOIN AttributeJpaEntity a ON a.subjectId = s.id
+            LEFT JOIN AttributeJpaEntity a ON a.subjectId = s.id AND a.kitVersionId = s.kitVersionId
             WHERE s.kitVersionId = :kitVersionId AND a.id IS NULL
         """)
     List<SubjectJpaEntity> findByKitVersionIdAttributesIsNull(@Param("kitVersionId") long kitVersionId);
