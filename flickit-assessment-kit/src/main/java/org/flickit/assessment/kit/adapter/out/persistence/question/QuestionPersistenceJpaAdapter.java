@@ -114,7 +114,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public List<Question> loadAllByKitVersionId(long kitVersionId) {
-        var questionWithImpactsViews =  repository.loadByKitVersionId(kitVersionId);
+        var questionWithImpactsViews = repository.loadByKitVersionId(kitVersionId);
         var questionEntityToViews = questionWithImpactsViews.stream()
             .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
 
@@ -131,6 +131,22 @@ public class QuestionPersistenceJpaAdapter implements
                 question.setImpacts(qImpacts);
                 return question;
             })
+            .toList();
+    }
+
+    @Override
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutAnswerRange(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutAnswerRange(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToPortResult)
+            .toList();
+    }
+
+    @Override
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutImpact(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToPortResult)
             .toList();
     }
 
@@ -181,7 +197,7 @@ public class QuestionPersistenceJpaAdapter implements
                 question.setImpacts(List.of(impact));
                 question.setOptions(options);
 
-                return new Result(question, questionnaire);
+                return new LoadAttributeLevelQuestionsPort.Result(question, questionnaire);
             }).toList();
     }
 

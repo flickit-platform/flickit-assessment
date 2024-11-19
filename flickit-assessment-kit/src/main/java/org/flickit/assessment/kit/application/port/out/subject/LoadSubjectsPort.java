@@ -27,4 +27,6 @@ public interface LoadSubjectsPort {
      * @return a {@code PaginatedResponse<Subject>} containing the subjects for the specified kit version and pagination settings.
      */
     PaginatedResponse<Subject> loadPaginatedByKitVersionId(long kitVersionId, int page, int size);
+
+    List<Subject> loadSubjectsWithoutAttribute(long kitVersionId);
 }

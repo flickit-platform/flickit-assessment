@@ -23,6 +23,7 @@ import java.util.*;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.ACTIVATE_KIT_VERSION_INVALID;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ACTIVATE_KIT_VERSION_STATUS_INVALID;
 
 @Service
@@ -40,6 +41,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
     private final LoadAnswerOptionsPort loadAnswerOptionsPort;
     private final LoadQuestionsPort loadQuestionsPort;
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
+    private final KitVersionValidator kitVersionValidator;
 
     @Override
     public void activateKitVersion(Param param) {
@@ -52,6 +54,9 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
         var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        if (!kitVersionValidator.validate(kitVersionId).isEmpty())
+            throw new ValidationException(ACTIVATE_KIT_VERSION_INVALID);
 
         if (kit.getActiveVersionId() != null)
             updateKitVersionStatusPort.updateStatus(kit.getActiveVersionId(), KitVersionStatus.ARCHIVE);
