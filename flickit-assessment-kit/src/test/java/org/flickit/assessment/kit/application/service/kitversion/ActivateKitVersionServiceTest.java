@@ -37,6 +37,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.ACTIVATE_KIT_VERSION_INVALID;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ACTIVATE_KIT_VERSION_STATUS_INVALID;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithKitVersionId;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
@@ -80,6 +81,9 @@ class ActivateKitVersionServiceTest {
     @Mock
     private CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
 
+    @Mock
+    private KitVersionValidator kitVersionValidator;
+
     @Captor
     private ArgumentCaptor<Map<Long, Set<Long>>> qnnIdToSubjIdsCaptor;
 
@@ -111,7 +115,8 @@ class ActivateKitVersionServiceTest {
             createSubjectQuestionnairePort,
             loadAnswerOptionsPort,
             loadQuestionsPort,
-            createAnswerOptionImpactPort);
+            createAnswerOptionImpactPort,
+            kitVersionValidator);
     }
 
     @Test
@@ -123,6 +128,27 @@ class ActivateKitVersionServiceTest {
 
         var exception = assertThrows(AccessDeniedException.class, () -> service.activateKitVersion(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+
+        verifyNoInteractions(updateKitVersionStatusPort,
+            updateKitActiveVersionPort,
+            updateKitLastMajorModificationTimePort,
+            createSubjectQuestionnairePort,
+            loadAnswerOptionsPort,
+            loadQuestionsPort,
+            createAnswerOptionImpactPort,
+            kitVersionValidator);
+    }
+
+    @Test
+    void testActivateKitVersion_kitVersionIsNotValid_ThrowsValidationException() {
+        var param = createParam(b -> b.currentUserId(ownerId));
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
+        when(kitVersionValidator.validate(param.getKitVersionId())).thenReturn(List.of("Invalid question"));
+
+        var exception = assertThrows(ValidationException.class, () -> service.activateKitVersion(param));
+        assertEquals(ACTIVATE_KIT_VERSION_INVALID, exception.getMessageKey());
 
         verifyNoInteractions(updateKitVersionStatusPort,
             updateKitActiveVersionPort,
@@ -156,6 +182,7 @@ class ActivateKitVersionServiceTest {
         when(loadKitVersionPort.load(kitVersionId)).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(updateKitVersionStatusPort).updateStatus(kitVersion.getKit().getActiveVersionId(), KitVersionStatus.ARCHIVE);
+        when(kitVersionValidator.validate(param.getKitVersionId())).thenReturn(List.of());
         doNothing().when(updateKitVersionStatusPort).updateStatus(kitVersionId, KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kitVersion.getKit().getId(), kitVersionId);
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
@@ -210,6 +237,7 @@ class ActivateKitVersionServiceTest {
         Long kitVersionId = param.getKitVersionId();
         when(loadKitVersionPort.load(kitVersionId)).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(ownerId);
+        when(kitVersionValidator.validate(param.getKitVersionId())).thenReturn(List.of());
         doNothing().when(updateKitVersionStatusPort).updateStatus(kitVersionId, KitVersionStatus.ACTIVE);
         doNothing().when(updateKitActiveVersionPort).updateActiveVersion(kit.getId(), kitVersionId);
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
