@@ -3,8 +3,6 @@ package org.flickit.assessment.kit.application.service.kitversion;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
@@ -37,8 +35,6 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
         var ownerId = loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId());
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        if (!KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
-            throw new ValidationException(VALIDATE_KIT_VERSION_STATUS_INVALID);
 
         List<String> errors = new LinkedList<>();
         errors.addAll(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())

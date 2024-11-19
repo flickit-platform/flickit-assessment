@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.kitversion.validatekitver
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.port.in.kitversion.ValidateKitVersionUseCase;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
@@ -53,23 +52,10 @@ class ValidateKitVersionServiceTest {
     private LoadAttributesPort loadAttributesPort;
 
     @Test
-    void testValidateKitVersion_whenKitVersionIsInvalid_shouldThrowValidationException() {
-        var param = createParam(ValidateKitVersionUseCase.Param.ParamBuilder::build);
-        var assessmentKit = AssessmentKitMother.simpleKit();
-        var kitVersion = KitVersionMother.createActiveKitVersion(assessmentKit);
-
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
-        when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
-
-        var throwable = assertThrows(ValidationException.class, () -> service.validate(param));
-        assertEquals(VALIDATE_KIT_VERSION_STATUS_INVALID, throwable.getMessageKey());
-    }
-
-    @Test
     void testValidateKitVersion_WhenCurrentUserIsNotExpertGroupOwner_ShouldThrowAccessDeniedException() {
         var param = createParam(ValidateKitVersionUseCase.Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
-        var kitVersion = KitVersionMother.createKitVersion(assessmentKit);
+        var kitVersion = KitVersionMother.createActiveKitVersion(assessmentKit);
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(UUID.randomUUID());
