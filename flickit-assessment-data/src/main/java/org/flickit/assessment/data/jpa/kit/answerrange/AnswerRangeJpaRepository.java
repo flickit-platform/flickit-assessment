@@ -44,5 +44,5 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
             LEFT JOIN AnswerOptionJpaEntity o on o.answerRangeId = a.id AND a.kitVersionId = o.kitVersionId
             WHERE a.kitVersionId = :kitVersionId AND o.id IS NULL AND a.reusable = true
         """)
-    List<AnswerRangeJpaEntity> findByKitVersionIdAndWithoutOptions(@Param("kitVersionId") long kitVersionId);
+    List<AnswerRangeJpaEntity> findAllByKitVersionIdAndWithoutOptions(@Param("kitVersionId") long kitVersionId);
 }

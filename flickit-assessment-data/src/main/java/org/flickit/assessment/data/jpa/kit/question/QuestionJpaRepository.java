@@ -235,5 +235,5 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             Left JOIN QuestionImpactJpaEntity qi on qi.questionId = q.id
             WHERE q.kitVersionId = :kitVersionId and qi.id IS null
         """)
-    List<QuestionQuestionnaireView> findByKitVersionIdAndQuestionImpactsIsNull(@Param("kitVersionId") long kitVersionId);
+    List<QuestionQuestionnaireView> findAllByKitVersionIdAndQuestionImpactsIsNull(@Param("kitVersionId") long kitVersionId);
 }
