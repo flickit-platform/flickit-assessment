@@ -94,7 +94,7 @@ public enum AssessmentUserRole {
             CREATE_ASSESSMENT_INSIGHT,
             CREATE_SUBJECT_INSIGHT,
             MANAGE_ADD_ON,
-            SET_KIT_CUSTOM)),
+            MANAGE_KIT_CUSTOM)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,

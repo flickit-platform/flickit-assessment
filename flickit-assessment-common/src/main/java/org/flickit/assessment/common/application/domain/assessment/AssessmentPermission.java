@@ -45,7 +45,7 @@ public enum AssessmentPermission {
     CREATE_ASSESSMENT_INSIGHT("createAssessmentInsight"),
     CREATE_SUBJECT_INSIGHT("createSubjectInsight"),
     MANAGE_ADD_ON("manageAddOn"),
-    SET_KIT_CUSTOM("setKitCustom"),;
+    MANAGE_KIT_CUSTOM("manageKitCustom"),;
 
     private final String code;
 }

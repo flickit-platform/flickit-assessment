@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.port.out.assessment.UpdateAssessm
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.SET_KIT_CUSTOM;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_KIT_CUSTOM;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -21,7 +21,7 @@ public class SetKitCustomToAssessmentService implements SetKitCustomToAssessment
 
     @Override
     public void setKitCustomToAssessment(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), SET_KIT_CUSTOM))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_KIT_CUSTOM))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         updateAssessmentPort.updateKitCustomId(param.getAssessmentId(), param.getKitCustomId());

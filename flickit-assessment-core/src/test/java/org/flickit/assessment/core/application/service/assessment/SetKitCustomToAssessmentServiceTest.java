@@ -36,7 +36,7 @@ class SetKitCustomToAssessmentServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
             param.getCurrentUserId(),
-            AssessmentPermission.SET_KIT_CUSTOM)).thenReturn(false);
+            AssessmentPermission.MANAGE_KIT_CUSTOM)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.setKitCustomToAssessment(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -50,7 +50,7 @@ class SetKitCustomToAssessmentServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
             param.getCurrentUserId(),
-            AssessmentPermission.SET_KIT_CUSTOM)).thenReturn(true);
+            AssessmentPermission.MANAGE_KIT_CUSTOM)).thenReturn(true);
         doNothing().when(updateAssessmentPort).updateKitCustomId(param.getAssessmentId(), param.getKitCustomId());
 
         service.setKitCustomToAssessment(param);
