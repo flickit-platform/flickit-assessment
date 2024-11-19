@@ -3,11 +3,13 @@ package org.flickit.assessment.core.adapter.out.calculate;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.adapter.out.persistence.attributematurityscore.AttributeMaturityScorePersistenceJpaAdapter;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
@@ -46,14 +48,20 @@ public class AssessmentCalculateResultPersistAdapter implements
         subjectValueEntities.forEach(s -> s.setMaturityLevelId(subjectValueIdToLevel.get(s.getId()).getId()));
         subjectValueRepo.saveAll(subjectValueEntities);
 
+        List<AttributeValue> attributeValue = subjectValues.stream()
+            .flatMap(s -> s.getAttributeValues().stream()).toList();
+        Map<UUID, MaturityLevel> attributeValueIdToLevel = attributeValue.stream()
+            .collect(toMap(AttributeValue::getId, AttributeValue::getMaturityLevel));
+        List<AttributeValueJpaEntity> attributeValueEntities = attributeValueRepo.findAllById(attributeValueIdToLevel.keySet());
+
+        attributeValueEntities.forEach(a -> a.setMaturityLevelId(attributeValueIdToLevel.get(a.getId()).getId()));
+        attributeValueRepo.saveAll(attributeValueEntities);
+
         subjectValues.stream()
             .flatMap(x -> x.getAttributeValues().stream())
-            .forEach(qav -> {
-                attributeValueRepo.updateMaturityLevelById(qav.getId(), qav.getMaturityLevel().getId());
+            .forEach(qav ->
                 qav.getMaturityScores().forEach(maturityScore ->
-                    attributeMaturityScoreAdapter.saveOrUpdate(qav.getId(), maturityScore)
-                );
-            });
+                    attributeMaturityScoreAdapter.saveOrUpdate(qav.getId(), maturityScore)));
     }
 
     @Override

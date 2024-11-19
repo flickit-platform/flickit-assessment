@@ -53,11 +53,6 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
     List<SubjectIdAttributeValueView> findAllWithAttributeByAssessmentResultId(@Param(value = "assessmentResultId") UUID assessmentResultId);
 
     @Modifying
-    @Query("update AttributeValueJpaEntity a set a.maturityLevelId = :maturityLevelId where a.id = :id")
-    void updateMaturityLevelById(@Param(value = "id") UUID id,
-                                 @Param(value = "maturityLevelId") Long maturityLevelId);
-
-    @Modifying
     @Query("update AttributeValueJpaEntity a set a.confidenceValue = :confidenceValue where a.id = :id")
     void updateConfidenceValueById(@Param(value = "id") UUID id,
                                    @Param(value = "confidenceValue") Double confidenceValue);
