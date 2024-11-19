@@ -17,14 +17,6 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
 
     @Modifying
     @Query("""
-            UPDATE SubjectValueJpaEntity a SET a.maturityLevelId = :maturityLevelId
-            WHERE a.id = :id
-        """)
-    void updateMaturityLevelById(@Param(value = "id") UUID id,
-                                 @Param(value = "maturityLevelId") Long maturityLevelId);
-
-    @Modifying
-    @Query("""
             UPDATE SubjectValueJpaEntity a SET a.confidenceValue = :confidenceValue
             WHERE a.id = :id
         """)
