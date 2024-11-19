@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.springframework.stereotype.Service;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.util.GenerateCodeUtil.generateCode;
 
 @Service
 @Transactional
@@ -31,8 +32,10 @@ public class CreateAnswerRangeService implements CreateAnswerRangeUseCase {
     }
 
     private CreateAnswerRangePort.Param toCreateAnswerRangePortParam(Param param) {
+        String code = generateCode(param.getTitle());
         return new CreateAnswerRangePort.Param(param.getKitVersionId(),
             param.getTitle(),
+            code,
             Boolean.TRUE,
             param.getCurrentUserId());
     }

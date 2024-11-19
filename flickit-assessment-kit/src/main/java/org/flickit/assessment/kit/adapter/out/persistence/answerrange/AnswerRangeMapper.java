@@ -18,6 +18,7 @@ public class AnswerRangeMapper {
         return new AnswerRangeJpaEntity(null,
             param.kitVersionId(),
             param.title(),
+            param.code(),
             param.reusable(),
             creationTime,
             creationTime,
