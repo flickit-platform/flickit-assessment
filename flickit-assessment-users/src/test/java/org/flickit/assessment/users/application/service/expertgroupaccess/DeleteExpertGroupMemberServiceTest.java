@@ -13,8 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +42,19 @@ class DeleteExpertGroupMemberServiceTest {
 
         verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
         verify(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
+    }
+
+    @Test
+    void deleteMember_userIsOwner_AccessDeniedException() {
+        long expertGroupId = 0L;
+        UUID currentUserId = UUID.randomUUID();
+        DeleteExpertGroupMemberUseCase.Param param =
+            new DeleteExpertGroupMemberUseCase.Param(expertGroupId, currentUserId, currentUserId);
+
+        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.deleteMember(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
