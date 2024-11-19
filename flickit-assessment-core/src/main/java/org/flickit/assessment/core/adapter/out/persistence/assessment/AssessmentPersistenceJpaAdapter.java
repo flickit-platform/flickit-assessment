@@ -113,7 +113,7 @@ public class AssessmentPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -179,7 +179,7 @@ public class AssessmentPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
