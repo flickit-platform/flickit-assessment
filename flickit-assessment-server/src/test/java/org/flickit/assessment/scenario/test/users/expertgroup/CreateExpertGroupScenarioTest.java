@@ -1,12 +1,15 @@
 package org.flickit.assessment.scenario.test.users.expertgroup;
 
+import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
+import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.hamcrest.Matchers.notNullValue;
@@ -50,4 +53,26 @@ class CreateExpertGroupScenarioTest extends AbstractScenarioTest {
         assertEquals(ExpertGroupAccessStatus.ACTIVE, ExpertGroupAccessStatus.values()[userAccess.getStatus()]);
     }
 
+    @Test
+    void createExpertGroup_duplicateTitle() {
+        final var request = createExpertGroupRequestDto();
+        // First invoke
+        var response = expertGroupHelper.create(context, request);
+        response.then()
+            .statusCode(201);
+
+        final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
+
+        // Second invoke with the same request
+        var response2 = expertGroupHelper.create(context, request);
+        var error = response2.then()
+            .statusCode(400)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(INVALID_INPUT, error.code());
+        assertNotNull(error.message());
+
+        int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
 }

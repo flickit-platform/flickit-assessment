@@ -69,4 +69,8 @@ public class KitDbSequenceGenerators {
     public Long generateAnswerRangeId() {
         return sequenceGenerator.generate("fak_answer_range_id_seq");
     }
+
+    public Long generateKitCustomId() {
+        return sequenceGenerator.generate("fak_kit_custom_id_seq");
+    }
 }
