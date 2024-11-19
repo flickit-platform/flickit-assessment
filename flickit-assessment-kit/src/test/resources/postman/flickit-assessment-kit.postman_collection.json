@@ -955,6 +955,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Validate Kit Version",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/kit-versions/516/validate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"kit-versions",
+								"516",
+								"validate"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

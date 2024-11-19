@@ -101,4 +101,12 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             ORDER BY s.index, at.index
         """)
     Page<AttributeJoinSubjectView> findAllByKitVersionId(long kitVersionId, Pageable pageable);
+
+    @Query("""
+            SELECT at
+            FROM AttributeJpaEntity at
+            LEFT JOIN QuestionImpactJpaEntity qi ON qi.attributeId = at.id AND qi.kitVersionId = at.kitVersionId
+            WHERE at.kitVersionId = :kitVersionId AND qi.id IS NULL
+        """)
+    List<AttributeJpaEntity> findAllByKitVersionIdAndWithoutImpact(@Param("kitVersionId") long kitVersionId);
 }
