@@ -232,6 +232,14 @@ public class AssessmentPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateKitCustomId(UUID id, long kitCustomId) {
+        if (!repository.existsByIdAndDeletedFalse(id))
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
+
+        repository.updateKitCustomId(id, kitCustomId);
+    }
+
+    @Override
     public boolean isAssessmentSpaceMember(UUID assessmentId, UUID userId) {
         return repository.checkIsAssessmentSpaceMember(assessmentId, userId).isPresent();
     }
