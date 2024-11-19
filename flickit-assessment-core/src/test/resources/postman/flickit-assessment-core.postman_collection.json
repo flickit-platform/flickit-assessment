@@ -442,6 +442,33 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Set Kit Custom to Assessment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/kit-customs/5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"88c50ea3-9486-4186-9ed4-7ff9bc32b768",
+								"kit-customs",
+								"5"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
