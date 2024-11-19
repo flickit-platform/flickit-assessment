@@ -446,7 +446,6 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE = "create-answer-range-option.answerRange.non-reusable";
 
     public static final String VALIDATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "validate-kit-version.kitVersionId.notNull";
-    public static final String VALIDATE_KIT_VERSION_STATUS_INVALID = "validate-kit-version.status.invalid";
     public static final String VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL = "validate-kit-version.question-answer-range.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.question-impact.notNull";
     public static final String VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL = "validate-kit-version.answerRange-answerOption.notNull";
