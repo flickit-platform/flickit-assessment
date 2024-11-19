@@ -444,7 +444,7 @@
 					"response": []
 				},
 				{
-					"name": "Set Kit Custom to Assessment",
+					"name": "Assign Kit Custom",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -454,17 +454,25 @@
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"kitCustomId\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/88c50ea3-9486-4186-9ed4-7ff9bc32b768/kit-customs/5",
+							"raw": "{{base_url}}/{{api_path}}/assessments/893a0f3b-5dcf-4713-8e84-2747fed5b96f/assign-kit-custom",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"88c50ea3-9486-4186-9ed4-7ff9bc32b768",
-								"kit-customs",
-								"5"
+								"893a0f3b-5dcf-4713-8e84-2747fed5b96f",
+								"assign-kit-custom"
 							]
 						}
 					},
