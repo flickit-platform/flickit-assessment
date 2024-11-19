@@ -15,7 +15,6 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadU
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -57,7 +56,6 @@ class GetAssessmentServiceTest {
     private AssessmentPermissionChecker assessmentPermissionChecker;
 
     @Test
-    @DisplayName("The GetAssessment service should successfully return the result when the currentUser has Manager role")
     void testGetAssessment_validResultManageableViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
@@ -99,7 +97,6 @@ class GetAssessmentServiceTest {
     }
 
     @Test
-    @DisplayName("The GetAssessment service should successfully return the result when currentUser has not Manager role but has view permission.")
     void testGetAssessment_validResultNotManageableViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
@@ -130,7 +127,6 @@ class GetAssessmentServiceTest {
     }
 
     @Test
-    @DisplayName("The GetAssessment service should successfully return the result when the currentUser doesn't have view permission")
     void testGetAssessment_validResultNotManageableNotViewable_successful() {
         var maturityLevel = MaturityLevelMother.levelThree();
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, maturityLevel);
@@ -160,7 +156,6 @@ class GetAssessmentServiceTest {
     }
 
     @Test
-    @DisplayName("The GetAssessment service should throw a ResourceNotFoundException when the assessment ID is invalid.")
     void getAssessment_invalidAssessmentId_ResourceNotFoundException() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
@@ -183,7 +178,6 @@ class GetAssessmentServiceTest {
     }
 
     @Test
-    @DisplayName("The GetAssessment service should throw an AccessDeniedException when the user does not have access.")
     void getAssessment_UserHasNotAccess_AccessDeniedException() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
