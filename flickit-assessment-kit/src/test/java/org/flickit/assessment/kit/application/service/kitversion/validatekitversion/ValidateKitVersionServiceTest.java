@@ -75,8 +75,8 @@ class ValidateKitVersionServiceTest {
         when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(List.of());
         when(loadAnswerRangesPort.loadAnswerRangesWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of());
-        when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(List.of());
-        when(loadAttributesPort.loadUnImpactedAttributes(param.getKitVersionId())).thenReturn(List.of());
+        when(loadSubjectsPort.loadSubjectsWithoutAttribute(param.getKitVersionId())).thenReturn(List.of());
+        when(loadAttributesPort.loadUnimpactedAttributes(param.getKitVersionId())).thenReturn(List.of());
 
         var result = service.validate(param);
         assertTrue(result.isValid());
@@ -110,8 +110,8 @@ class ValidateKitVersionServiceTest {
         when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
         when(loadAnswerRangesPort.loadAnswerRangesWithoutAnswerOptions(param.getKitVersionId())).thenReturn(listOfAnswerRanges);
-        when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(listOfSubjects);
-        when(loadAttributesPort.loadUnImpactedAttributes(param.getKitVersionId())).thenReturn(listOfAttributes);
+        when(loadSubjectsPort.loadSubjectsWithoutAttribute(param.getKitVersionId())).thenReturn(listOfSubjects);
+        when(loadAttributesPort.loadUnimpactedAttributes(param.getKitVersionId())).thenReturn(listOfAttributes);
 
         var result = service.validate(param);
         assertFalse(result.isValid());

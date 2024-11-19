@@ -52,12 +52,12 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL, e.getTitle()))
             .toList());
 
-        errors.addAll(loadAttributesPort.loadUnImpactedAttributes(param.getKitVersionId())
+        errors.addAll(loadAttributesPort.loadUnimpactedAttributes(param.getKitVersionId())
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
             .toList());
 
-        errors.addAll(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())
+        errors.addAll(loadSubjectsPort.loadSubjectsWithoutAttribute(param.getKitVersionId())
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))
             .toList());

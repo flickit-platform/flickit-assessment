@@ -18,7 +18,7 @@ public interface ValidateKitVersionUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = true)
-    class Param extends SelfValidating<ActivateKitVersionUseCase.Param> {
+    class Param extends SelfValidating<ValidateKitVersionUseCase.Param> {
 
         @NotNull(message = VALIDATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL)
         Long kitVersionId;
