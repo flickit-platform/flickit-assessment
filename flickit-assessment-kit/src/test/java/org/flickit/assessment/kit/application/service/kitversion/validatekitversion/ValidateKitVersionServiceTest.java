@@ -88,7 +88,7 @@ class ValidateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
         when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(List.of());
-        when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of());
+        when(loadAnswerRangesPort.loadAnswerRangesWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of());
         when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(List.of());
         when(loadAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
 
@@ -123,7 +123,7 @@ class ValidateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
         when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
-        when(loadAnswerRangesPort.loadByKitVersionIdWithoutAnswerOptions(param.getKitVersionId())).thenReturn(listOfAnswerRanges);
+        when(loadAnswerRangesPort.loadAnswerRangesWithoutAnswerOptions(param.getKitVersionId())).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadByKitVersionIdWithoutAttribute(param.getKitVersionId())).thenReturn(listOfSubjects);
         when(loadAttributesPort.loadByKitVersionIdAndQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(listOfAttributes);
 

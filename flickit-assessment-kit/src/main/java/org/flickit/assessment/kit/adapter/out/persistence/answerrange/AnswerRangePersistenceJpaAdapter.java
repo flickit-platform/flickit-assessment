@@ -79,7 +79,7 @@ public class AnswerRangePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AnswerRange> loadByKitVersionIdWithoutAnswerOptions(long kitVersionId) {
+    public List<AnswerRange> loadAnswerRangesWithoutAnswerOptions(long kitVersionId) {
         return repository.findByKitVersionIdAndWithoutOptions(kitVersionId)
             .stream()
             .map(e -> AnswerRangeMapper.toDomainModel(e, null))
