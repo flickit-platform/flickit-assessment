@@ -226,7 +226,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             JOIN QuestionnaireJpaEntity qn on qn.id = q.questionnaireId AND qn.kitVersionId = q.kitVersionId
             WHERE q.kitVersionId = :kitVersionId AND q.answerRangeId IS NULL
         """)
-    List<QuestionQuestionnaireView> findAllByKitVersionIdAndAnswerRangeIdIsNull(long kitVersionId);
+    List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutAnswerRange(long kitVersionId);
 
     @Query("""
             SELECT q.index as questionIndex, q.questionnaireId as questionnaireId, qr.title as questionnaireTitle
@@ -235,5 +235,5 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             Left JOIN QuestionImpactJpaEntity qi on qi.questionId = q.id
             WHERE q.kitVersionId = :kitVersionId and qi.id IS null
         """)
-    List<QuestionQuestionnaireView> findAllByKitVersionIdAndQuestionImpactsIsNull(@Param("kitVersionId") long kitVersionId);
+    List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutImpact(@Param("kitVersionId") long kitVersionId);
 }

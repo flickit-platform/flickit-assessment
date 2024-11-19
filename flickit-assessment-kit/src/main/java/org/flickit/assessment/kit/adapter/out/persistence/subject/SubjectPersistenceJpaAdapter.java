@@ -91,7 +91,7 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public List<Subject> loadByKitVersionIdWithoutAttribute(long kitVersionId) {
-        return repository.findByKitVersionIdAttributesIsNull(kitVersionId)
+        return repository.findAllByKitVersionIdAndWithoutAttributes(kitVersionId)
             .stream()
             .map(e -> SubjectMapper.mapToDomainModel(e, null))
             .toList();
