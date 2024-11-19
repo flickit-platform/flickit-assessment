@@ -22,7 +22,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.common.util.GenerateCodeUtil.generateCode;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_TITLE_NOT_NULL;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,9 +111,11 @@ class UpdateAnswerRangeServiceTest {
         ArgumentCaptor<UpdateAnswerRangePort.Param> captor = ArgumentCaptor.forClass(UpdateAnswerRangePort.Param.class);
         verify(updateAnswerRangePort).update(captor.capture());
         assertNotNull(captor.getValue());
+        String code = generateCode(param.getTitle());
         assertEquals(param.getAnswerRangeId(), captor.getValue().answerRangeId());
         assertEquals(param.getKitVersionId(), captor.getValue().kitVersionId());
         assertEquals(param.getTitle(), captor.getValue().title());
+        assertEquals(code, captor.getValue().code());
         assertEquals(param.getReusable(), captor.getValue().reusable());
         assertEquals(param.getCurrentUserId(), captor.getValue().lastModifiedBy());
         assertNotNull(captor.getValue().lastModificationTime());

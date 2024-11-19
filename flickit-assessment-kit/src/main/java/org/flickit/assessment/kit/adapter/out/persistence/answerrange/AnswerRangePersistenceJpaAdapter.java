@@ -86,6 +86,7 @@ public class AnswerRangePersistenceJpaAdapter implements
         repository.update(param.answerRangeId(),
             param.kitVersionId(),
             param.title(),
+            param.code(),
             param.reusable(),
             param.lastModificationTime(),
             param.lastModifiedBy());
