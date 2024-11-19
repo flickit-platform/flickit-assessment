@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.kitcustom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
@@ -18,7 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -66,15 +66,11 @@ class CreateKitCustomServiceTest {
         long actualKitCustomId = service.createKitCustom(param);
         assertEquals(kitCustomId, actualKitCustomId);
 
+        assertCreateKitCustomPortParamMapping(param, kitCustomData);
+
+        assertKitCustomDataMapping(param.getCustomData());
+
         verifyNoInteractions(checkKitUserAccessPort);
-        verify(createKitCustomPort).persist(portParamCaptor.capture());
-        assertNotNull(portParamCaptor.getValue());
-        assertEquals(param.getKitId(), portParamCaptor.getValue().kitId());
-        assertEquals(param.getTitle(), portParamCaptor.getValue().title());
-        assertEquals("custom-title", portParamCaptor.getValue().code());
-        assertEquals(kitCustomData, portParamCaptor.getValue().customData());
-        assertNotNull(portParamCaptor.getValue().creationTime());
-        assertEquals(param.getCurrentUserId(), portParamCaptor.getValue().createdBy());
     }
 
     @Test
@@ -109,6 +105,12 @@ class CreateKitCustomServiceTest {
         long actualKitCustomId = service.createKitCustom(param);
         assertEquals(kitCustomId, actualKitCustomId);
 
+        assertCreateKitCustomPortParamMapping(param, kitCustomData);
+
+        assertKitCustomDataMapping(param.getCustomData());
+    }
+
+    private void assertCreateKitCustomPortParamMapping(CreateKitCustomUseCase.Param param, String kitCustomData) {
         verify(createKitCustomPort).persist(portParamCaptor.capture());
         assertNotNull(portParamCaptor.getValue());
         assertEquals(param.getKitId(), portParamCaptor.getValue().kitId());
@@ -119,6 +121,28 @@ class CreateKitCustomServiceTest {
         assertEquals(param.getCurrentUserId(), portParamCaptor.getValue().createdBy());
     }
 
+    @SneakyThrows
+    private void assertKitCustomDataMapping(CreateKitCustomUseCase.Param.KitCustomData kitCustomData) {
+        ArgumentCaptor<KitCustomData> customDataCaptor = ArgumentCaptor.forClass(KitCustomData.class);
+        verify(mapper).writeValueAsString(customDataCaptor.capture());
+
+        var subjects = customDataCaptor.getValue().subjects();
+        var customSubjects = kitCustomData.customSubjects();
+        Assertions.assertThat(subjects)
+            .zipSatisfy(customSubjects, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getWeight(), actual.weight());
+            });
+
+        var attributes = customDataCaptor.getValue().attributes();
+        var customAttributes = kitCustomData.customAttributes();
+        Assertions.assertThat(attributes)
+            .zipSatisfy(customAttributes, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getWeight(), actual.weight());
+            });
+    }
+
     private CreateKitCustomUseCase.Param createParam(Consumer<CreateKitCustomUseCase.Param.ParamBuilder> changer) {
         var param = paramBuilder();
         changer.accept(param);
@@ -126,8 +150,9 @@ class CreateKitCustomServiceTest {
     }
 
     private CreateKitCustomUseCase.Param.ParamBuilder paramBuilder() {
-        var customSubject = new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(1L, 1);
-        var customData = new CreateKitCustomUseCase.Param.KitCustomData(List.of(customSubject), new ArrayList<>());
+        var customSubject = new CreateKitCustomUseCase.Param.KitCustomData.CustomSubject(111L, 1);
+        var customAttribute = new CreateKitCustomUseCase.Param.KitCustomData.CustomAttribute(123L, 5);
+        var customData = new CreateKitCustomUseCase.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         return CreateKitCustomUseCase.Param.builder()
             .kitId(1L)
             .title("custom title")
