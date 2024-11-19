@@ -959,7 +959,7 @@
 				{
 					"name": "Validate Kit Version",
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
@@ -976,7 +976,7 @@
 								"{{api_path}}",
 								"kit-versions",
 								"516",
-								"activate"
+								"validate"
 							]
 						}
 					},
