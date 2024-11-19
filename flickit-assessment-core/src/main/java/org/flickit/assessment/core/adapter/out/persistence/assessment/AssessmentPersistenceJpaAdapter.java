@@ -40,7 +40,7 @@ public class AssessmentPersistenceJpaAdapter implements
     LoadAssessmentListPort,
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
-    GetAssessmentPort,
+    LoadAssessmentPort,
     DeleteAssessmentPort,
     CheckAssessmentSpaceMembershipPort {
 

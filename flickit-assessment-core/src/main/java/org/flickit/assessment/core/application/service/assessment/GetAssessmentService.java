@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
@@ -26,7 +26,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 public class GetAssessmentService implements GetAssessmentUseCase {
 
     private final LoadUserPort loadUserPort;
-    private final GetAssessmentPort getAssessmentPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
@@ -37,7 +37,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId())
+        var assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND));
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
