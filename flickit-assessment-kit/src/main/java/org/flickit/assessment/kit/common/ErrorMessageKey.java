@@ -460,7 +460,7 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "validate-kit-version.kitVersionId.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL = "validate-kit-version.question-answer-range.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.question-impact.notNull";
-    public static final String VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL = "validate-kit-version.answerRange-answerOption.notNull";
+    public static final String VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS = "validate-kit-version.answerRange.lowOptions";
     public static final String VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.attribute-question-impact.notNull";
     public static final String VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL = "validate-kit-version.subject-attribute.notNull";
 

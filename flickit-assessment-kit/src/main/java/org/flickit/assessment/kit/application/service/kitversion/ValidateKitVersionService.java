@@ -47,9 +47,9 @@ public class ValidateKitVersionService implements ValidateKitVersionUseCase {
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, e.questionIndex(), e.questionnaireTitle()))
             .toList());
 
-        errors.addAll(loadAnswerRangesPort.loadAnswerRangesWithoutAnswerOptions(param.getKitVersionId())
+        errors.addAll(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(param.getKitVersionId())
             .stream()
-            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL, e.getTitle()))
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, e.getTitle()))
             .toList());
 
         errors.addAll(loadAttributesPort.loadUnimpactedAttributes(param.getKitVersionId())

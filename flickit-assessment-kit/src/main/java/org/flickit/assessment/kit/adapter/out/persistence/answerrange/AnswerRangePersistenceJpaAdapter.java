@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJoinOptionView;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
@@ -21,7 +22,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -79,10 +82,18 @@ public class AnswerRangePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AnswerRange> loadAnswerRangesWithoutAnswerOptions(long kitVersionId) {
-        return repository.findAllByKitVersionIdAndWithoutOptions(kitVersionId)
-            .stream()
-            .map(e -> AnswerRangeMapper.toDomainModel(e, null))
+    public List<AnswerRange> loadAnswerRangesWithNotEnoughOptions(long kitVersionId) {
+        var rangeViews = repository.findAllWithOptionsByKitVersionId(kitVersionId);
+
+        Map<AnswerRangeJpaEntity, List<AnswerOptionJpaEntity>> answerRangeToOptions = rangeViews.stream()
+            .collect(Collectors.groupingBy(
+                AnswerRangeJoinOptionView::getAnswerRange,
+                Collectors.mapping(AnswerRangeJoinOptionView::getAnswerOption, Collectors.toList())
+            ));
+
+        return answerRangeToOptions.entrySet().stream()
+            .filter(entry -> entry.getValue().size() < 2) // Filter AnswerRanges with zero or one option
+            .map(entry -> AnswerRangeMapper.toDomainModel(entry.getKey(), null))
             .toList();
     }
 

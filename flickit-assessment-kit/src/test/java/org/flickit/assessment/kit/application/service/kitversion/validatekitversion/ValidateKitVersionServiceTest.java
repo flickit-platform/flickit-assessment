@@ -74,7 +74,7 @@ class ValidateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
         when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(List.of());
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(List.of());
-        when(loadAnswerRangesPort.loadAnswerRangesWithoutAnswerOptions(param.getKitVersionId())).thenReturn(List.of());
+        when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(param.getKitVersionId())).thenReturn(List.of());
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(param.getKitVersionId())).thenReturn(List.of());
         when(loadAttributesPort.loadUnimpactedAttributes(param.getKitVersionId())).thenReturn(List.of());
 
@@ -98,7 +98,7 @@ class ValidateKitVersionServiceTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, loadQuestionsPortResult.getLast().questionIndex(), loadQuestionsPortResult.getLast().questionnaireTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, loadQuestionsPortResult.getFirst().questionIndex(), loadQuestionsPortResult.getFirst().questionnaireTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, loadQuestionsPortResult.getLast().questionIndex(), loadQuestionsPortResult.getLast().questionnaireTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_ANSWER_OPTION_NOT_NULL, listOfAnswerRanges.getFirst().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, listOfAnswerRanges.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getLast().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, listOfAttributes.getFirst().getTitle()),
@@ -109,7 +109,7 @@ class ValidateKitVersionServiceTest {
         when(loadExpertGroupOwnerPort.loadOwnerId(assessmentKit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
         when(loadQuestionsPort.loadQuestionsWithoutImpact(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
         when(loadQuestionsPort.loadQuestionsWithoutAnswerRange(param.getKitVersionId())).thenReturn(loadQuestionsPortResult);
-        when(loadAnswerRangesPort.loadAnswerRangesWithoutAnswerOptions(param.getKitVersionId())).thenReturn(listOfAnswerRanges);
+        when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(param.getKitVersionId())).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(param.getKitVersionId())).thenReturn(listOfSubjects);
         when(loadAttributesPort.loadUnimpactedAttributes(param.getKitVersionId())).thenReturn(listOfAttributes);
 

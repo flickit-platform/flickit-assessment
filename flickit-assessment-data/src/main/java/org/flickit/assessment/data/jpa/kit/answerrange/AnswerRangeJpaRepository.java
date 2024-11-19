@@ -39,10 +39,10 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-            SELECT a
+            SELECT a as answerRange, o as answerOption
             FROM AnswerRangeJpaEntity a
             LEFT JOIN AnswerOptionJpaEntity o on o.answerRangeId = a.id AND a.kitVersionId = o.kitVersionId
-            WHERE a.kitVersionId = :kitVersionId AND o.id IS NULL AND a.reusable = true
+            WHERE a.kitVersionId = :kitVersionId AND a.reusable = TRUE
         """)
-    List<AnswerRangeJpaEntity> findAllByKitVersionIdAndWithoutOptions(@Param("kitVersionId") long kitVersionId);
+    List<AnswerRangeJoinOptionView> findAllWithOptionsByKitVersionId(@Param("kitVersionId") long kitVersionId);
 }
