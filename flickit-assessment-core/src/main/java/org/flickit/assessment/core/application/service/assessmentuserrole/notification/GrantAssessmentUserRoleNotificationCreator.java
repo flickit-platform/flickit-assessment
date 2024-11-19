@@ -8,7 +8,7 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.User;
 import org.flickit.assessment.core.application.domain.notification.GrantAssessmentUserRoleNotificationCmd;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.application.service.assessmentuserrole.notification.GrantAssessmentUserRoleNotificationPayload.AssessmentModel;
 import org.flickit.assessment.core.application.service.assessmentuserrole.notification.GrantAssessmentUserRoleNotificationPayload.RoleModel;
@@ -28,12 +28,12 @@ import static org.flickit.assessment.core.common.MessageKey.NOTIFICATION_TITLE_G
 public class GrantAssessmentUserRoleNotificationCreator
     implements NotificationCreator<GrantAssessmentUserRoleNotificationCmd> {
 
-    private final GetAssessmentPort getAssessmentPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final LoadUserPort loadUserPort;
 
     @Override
     public List<NotificationEnvelope> create(GrantAssessmentUserRoleNotificationCmd cmd) {
-        Optional<Assessment> assessment = getAssessmentPort.getAssessmentById(cmd.assessmentId());
+        Optional<Assessment> assessment = loadAssessmentPort.getAssessmentById(cmd.assessmentId());
         Optional<User> user = loadUserPort.loadById(cmd.assignerUserId());
         var targetUser = loadUserPort.loadById(cmd.targetUserId())
             .map(x -> new NotificationEnvelope.User(x.getId(), x.getEmail()));

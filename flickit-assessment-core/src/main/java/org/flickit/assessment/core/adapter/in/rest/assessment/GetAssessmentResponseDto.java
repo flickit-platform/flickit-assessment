@@ -10,6 +10,7 @@ public record GetAssessmentResponseDto(
     String title,
     String shortTitle,
     SpaceResponseDto space,
+    Long kitCustomId,
     KitResponseDto kit,
     LocalDateTime creationTime,
     LocalDateTime lastModificationTime,
