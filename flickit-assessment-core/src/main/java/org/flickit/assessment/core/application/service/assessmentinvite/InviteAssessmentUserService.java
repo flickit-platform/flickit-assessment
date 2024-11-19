@@ -8,7 +8,7 @@ import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessmentinvite.InviteAssessmentUserUseCase;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateAssessmentInvitePort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.GrantUserAssessmentRolePort;
 import org.flickit.assessment.core.application.port.out.space.CreateSpaceInvitePort;
@@ -33,7 +33,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final GetAssessmentPort getAssessmentPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final LoadUserPort loadUserPort;
     private final CreateSpaceInvitePort createSpaceInvitePort;
     private final CreateAssessmentInvitePort createAssessmentInvitePort;
@@ -48,7 +48,7 @@ public class InviteAssessmentUserService implements InviteAssessmentUserUseCase 
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_USER_ASSESSMENT_ROLE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessment = getAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+        var assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
 
         var user = loadUserPort.loadByEmail(param.getEmail());
         var creationTime = LocalDateTime.now();
