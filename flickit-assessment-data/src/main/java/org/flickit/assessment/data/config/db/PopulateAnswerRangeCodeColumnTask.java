@@ -4,7 +4,6 @@ import liquibase.change.custom.CustomTaskChange;
 import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.CustomChangeException;
-import liquibase.exception.SetupException;
 import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
 
@@ -51,11 +50,13 @@ public class PopulateAnswerRangeCodeColumnTask implements CustomTaskChange {
     }
 
     @Override
-    public void setUp() throws SetupException {
+    public void setUp() {
+        // No setup is required
     }
 
     @Override
     public void setFileOpener(ResourceAccessor resourceAccessor) {
+        // No external resources are needed
     }
 
     @Override
