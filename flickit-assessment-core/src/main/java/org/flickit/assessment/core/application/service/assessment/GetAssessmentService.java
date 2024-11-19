@@ -55,6 +55,7 @@ public class GetAssessmentService implements GetAssessmentUseCase {
             assessment.getTitle(),
             assessment.getShortTitle(),
             assessment.getSpace(),
+            assessment.getKitCustomId(),
             assessment.getAssessmentKit(),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),

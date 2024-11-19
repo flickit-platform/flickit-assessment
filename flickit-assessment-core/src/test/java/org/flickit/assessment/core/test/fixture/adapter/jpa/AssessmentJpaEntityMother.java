@@ -22,6 +22,7 @@ public class AssessmentJpaEntityMother {
             "shortTitle" + assessmentCounter,
             kitId++,
             1L,
+            null,
             LocalDateTime.now(),
             LocalDateTime.now(),
             NOT_DELETED_DELETION_TIME,

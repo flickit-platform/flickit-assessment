@@ -41,6 +41,9 @@ public class AssessmentJpaEntity {
     @Column(name = "space_id", nullable = false)
     private Long spaceId;
 
+    @Column(name = "kit_custom_id")
+    private Long kitCustomId;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
