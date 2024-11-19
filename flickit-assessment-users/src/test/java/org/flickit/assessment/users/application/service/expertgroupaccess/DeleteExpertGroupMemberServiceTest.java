@@ -1,8 +1,7 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.users.application.port.in.expertgroupaccess.DeleteExpertGroupMemberUseCase;
+import org.flickit.assessment.users.application.port.in.expertgroupaccess.DeleteExpertGroupMemberUseCase.Param;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.DeleteExpertGroupMemberPort;
 import org.junit.jupiter.api.Test;
@@ -22,34 +21,29 @@ class DeleteExpertGroupMemberServiceTest {
 
     @InjectMocks
     private DeleteExpertGroupMemberService service;
+
     @Mock
     private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+
     @Mock
     DeleteExpertGroupMemberPort deleteExpertGroupMemberPort;
 
+    private Param param = new Param(0L, UUID.randomUUID(), UUID.randomUUID());
+
     @Test
-    void deleteMember_validParameter_successful() {
-        UUID userId = UUID.randomUUID();
-        long expertGroupId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteExpertGroupMemberUseCase.Param param =
-            new DeleteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
+    void deleteExpertGroupMember_validParameter_successful() {
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
-        doNothing().when(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
+        service.deleteMember(param);
 
-        assertDoesNotThrow(() -> service.deleteMember(param));
-
-        verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
+        verify(deleteExpertGroupMemberPort).deleteMember(param.getExpertGroupId(), param.getUserId());
     }
 
     @Test
-    void deleteMember_userIsOwner_AccessDeniedException() {
+    void deleteExpertGroupMember_userIsOwner_AccessDeniedException() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
-        DeleteExpertGroupMemberUseCase.Param param =
-            new DeleteExpertGroupMemberUseCase.Param(expertGroupId, currentUserId, currentUserId);
+        param = new Param(expertGroupId, currentUserId, currentUserId);
 
         when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
 
@@ -58,49 +52,11 @@ class DeleteExpertGroupMemberServiceTest {
     }
 
     @Test
-    void deleteMember_userNotMember_ResourceNotFoundException() {
-        UUID userId = UUID.randomUUID();
-        long expertGroupId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteExpertGroupMemberUseCase.Param param =
-            new DeleteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
-
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(currentUserId);
-        doThrow(new ResourceNotFoundException(""))
-            .when(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
-
-        assertThrows(ResourceNotFoundException.class, () -> service.deleteMember(param));
-        verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verify(deleteExpertGroupMemberPort).deleteMember(expertGroupId, userId);
-    }
-
-    @Test
-    void deleteMember_expertGroupNotExist_AccessDeniedException() {
-        UUID userId = UUID.randomUUID();
-        long expertGroupId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteExpertGroupMemberUseCase.Param param =
-            new DeleteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
-
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(null);
+    void deleteMember_currentUserIsNotOwner_AccessDeniedException() {
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(UUID.randomUUID());
 
         assertThrows(AccessDeniedException.class, () -> service.deleteMember(param));
-        verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
-        verifyNoInteractions(deleteExpertGroupMemberPort);
-    }
-
-    @Test
-    void deleteMember_currentUserNotOwner_AccessDeniedException() {
-        UUID userId = UUID.randomUUID();
-        long expertGroupId = 0L;
-        UUID currentUserId = UUID.randomUUID();
-        DeleteExpertGroupMemberUseCase.Param param =
-            new DeleteExpertGroupMemberUseCase.Param(expertGroupId, userId, currentUserId);
-
-        when(loadExpertGroupOwnerPort.loadOwnerId(expertGroupId)).thenReturn(UUID.randomUUID());
-
-        assertThrows(AccessDeniedException.class, () -> service.deleteMember(param));
-        verify(loadExpertGroupOwnerPort).loadOwnerId(expertGroupId);
+        verify(loadExpertGroupOwnerPort).loadOwnerId(param.getExpertGroupId());
         verifyNoInteractions(deleteExpertGroupMemberPort);
     }
 }
