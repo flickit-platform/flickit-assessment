@@ -17,9 +17,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.GenerateCodeUtil.generateCode;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
-import static org.flickit.assessment.kit.util.GenerateCodeUtil.generateCode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

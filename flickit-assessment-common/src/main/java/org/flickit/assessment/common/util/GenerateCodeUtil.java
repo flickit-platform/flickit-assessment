@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.util;
+package org.flickit.assessment.common.util;
 
 import lombok.experimental.UtilityClass;
 

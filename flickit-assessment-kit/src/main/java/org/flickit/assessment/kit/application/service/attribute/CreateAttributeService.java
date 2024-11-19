@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.util.GenerateCodeUtil.*;
+import static org.flickit.assessment.common.util.GenerateCodeUtil.generateCode;
 
 @Service
 @Transactional

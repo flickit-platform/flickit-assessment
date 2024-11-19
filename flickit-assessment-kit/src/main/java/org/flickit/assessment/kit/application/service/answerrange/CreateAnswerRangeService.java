@@ -10,7 +10,7 @@ import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersion
 import org.springframework.stereotype.Service;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.util.GenerateCodeUtil.generateCode;
+import static org.flickit.assessment.common.util.GenerateCodeUtil.generateCode;
 
 @Service
 @Transactional
