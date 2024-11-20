@@ -90,7 +90,9 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                 });
             }
         }
-        return new Plan(attributeLevelScores, new ArrayList<>(idToQuestions.values()));
+        var questions = new ArrayList<>(idToQuestions.values());
+        questions.sort(getQuestionComparator());
+        return new Plan(attributeLevelScores, questions);
     }
 
     private List<ImpactfulQuestionView> filterImprovableImpactfulQuestions(List<QuestionIdWithAnsweredOptionIndexView> improvableQuestions, List<ImpactfulQuestionView> impactfulQuestions) {
@@ -170,6 +172,30 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                 progress,
                 DEFAULT_QUESTION_COST);
         }).toList();
+    }
+
+    private Comparator<Question> getQuestionComparator() {
+        return (q1, q2) -> {
+            int compareOptionsSize = Integer.compare(q1.getOptions().size(), q2.getOptions().size());
+            if (compareOptionsSize != 0) {
+                return compareOptionsSize; // Ascending order for options size
+            }
+            for (int optionIndex = 0; optionIndex < q1.getOptions().size(); optionIndex++) {
+                double maxPromisedScore1 = q1.getOptions().get(optionIndex)
+                    .getPromisedScores().values().stream()
+                    .max(Double::compare).orElse(0.0);
+
+                double maxPromisedScore2 = q2.getOptions().get(optionIndex)
+                    .getPromisedScores().values().stream()
+                    .max(Double::compare).orElse(0.0);
+
+                int compareMaxScore = Double.compare(maxPromisedScore2, maxPromisedScore1);
+                if (compareMaxScore != 0) {
+                    return compareMaxScore; // Descending order for max promised score
+                }
+            }
+            return 0;
+        };
     }
 
     private record ImpactfulQuestionOption(Long impactfulOptionId,
