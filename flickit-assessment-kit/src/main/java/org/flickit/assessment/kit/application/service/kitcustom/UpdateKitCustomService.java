@@ -43,7 +43,7 @@ public class UpdateKitCustomService implements UpdateKitCustomUseCase {
         String code = SlugCodeUtil.generateSlugCode(param.getTitle());
         KitCustomData kitCustomData = toKitCustomData(param.getCustomData());
 
-        return new UpdateKitCustomPort.Param(param.getId(),
+        return new UpdateKitCustomPort.Param(param.getKitCustomId(),
             param.getKitId(),
             param.getTitle(),
             code,

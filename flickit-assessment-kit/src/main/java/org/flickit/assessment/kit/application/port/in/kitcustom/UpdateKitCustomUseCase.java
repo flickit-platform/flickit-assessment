@@ -24,7 +24,7 @@ public interface UpdateKitCustomUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL)
-        Long id;
+        Long kitCustomId;
 
         @NotNull(message = UPDATE_KIT_CUSTOM_KIT_ID_NOT_NULL)
         Long kitId;
@@ -41,8 +41,8 @@ public interface UpdateKitCustomUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Long id, Long kitId, String title, KitCustomData customData, UUID currentUserId) {
-            this.id = id;
+        public Param(Long kitCustomId, Long kitId, String title, KitCustomData customData, UUID currentUserId) {
+            this.kitCustomId = kitCustomId;
             this.kitId = kitId;
             this.title = title != null && !title.isBlank() ? title.trim() : null;
             this.customData = customData;

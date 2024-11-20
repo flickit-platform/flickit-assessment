@@ -142,7 +142,7 @@ class UpdateKitCustomServiceTest {
 
     private UpdateKitCustomUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateKitCustomUseCase.Param.builder()
-            .id(12L)
+            .kitCustomId(12L)
             .kitId(1L)
             .title("title")
             .customData(createCustomDataParam(UpdateKitCustomUseCase.Param.KitCustomData.KitCustomDataBuilder::build))

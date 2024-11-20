@@ -19,8 +19,8 @@ class UpdateKitCustomUseCaseParamTest {
     @Test
     void testUpdateKitCustomUseCaseParam_kitCustomIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.id(null)));
-        assertThat(throwable).hasMessage("id: " + UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL);
+            () -> createParam(b -> b.kitCustomId(null)));
+        assertThat(throwable).hasMessage("kitCustomId: " + UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL);
     }
 
     @Test
@@ -103,7 +103,7 @@ class UpdateKitCustomUseCaseParamTest {
 
     private UpdateKitCustomUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateKitCustomUseCase.Param.builder()
-            .id(12L)
+            .kitCustomId(12L)
             .kitId(1L)
             .title("title")
             .customData(createCustomDataParam(UpdateKitCustomUseCase.Param.KitCustomData.KitCustomDataBuilder::build))
