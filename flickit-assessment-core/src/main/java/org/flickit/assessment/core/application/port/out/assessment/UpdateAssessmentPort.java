@@ -9,6 +9,8 @@ public interface UpdateAssessmentPort {
 
     void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
 
+    void updateKitCustomId(UUID id, long kitCustomId);
+
     record AllParam(UUID id,
                     String title,
                     String shortTitle,
