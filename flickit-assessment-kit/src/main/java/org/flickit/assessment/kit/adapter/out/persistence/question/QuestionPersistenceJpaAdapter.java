@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -181,7 +182,10 @@ public class QuestionPersistenceJpaAdapter implements
                 var answerOptionEntities = entry.getValue().stream()
                     .collect(toMap(e -> e.getAnswerOption().getId(), AttributeLevelImpactfulQuestionsView::getAnswerOption,
                         (existing, replacement) -> existing))
-                    .values();
+                    .values()
+                    .stream()
+                    .sorted(Comparator.comparing(AnswerOptionJpaEntity::getIndex))
+                    .toList();
                 var optionIdToOptionValueMap = answerOptionEntities.stream()
                     .collect(toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getValue));
                 var options = answerOptionEntities.stream().map(AnswerOptionMapper::mapToDomainModel).toList();
