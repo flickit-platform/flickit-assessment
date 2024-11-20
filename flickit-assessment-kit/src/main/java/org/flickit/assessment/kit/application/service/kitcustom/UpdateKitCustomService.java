@@ -7,13 +7,12 @@ import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.kitcustom.UpdateKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-
-import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
 
 import java.time.LocalDateTime;
 
