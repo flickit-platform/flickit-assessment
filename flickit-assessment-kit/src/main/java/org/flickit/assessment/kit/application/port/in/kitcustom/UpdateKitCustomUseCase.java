@@ -13,7 +13,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL;
 
 public interface UpdateKitCustomUseCase {
 
