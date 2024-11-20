@@ -16,8 +16,8 @@ public interface KitCustomJpaRepository extends JpaRepository<KitCustomJpaEntity
     @Query("""
             UPDATE KitCustomJpaEntity k
             SET k.title = :title,
-                K.code = :code,
-                K.customData = :customData,
+                k.code = :code,
+                k.customData = :customData,
                 k.lastModificationTime = :lastModificationTime,
                 k.lastModifiedBy = :lastModifiedBy
             WHERE k.id = :id
@@ -25,7 +25,7 @@ public interface KitCustomJpaRepository extends JpaRepository<KitCustomJpaEntity
     void update(@Param("id") long id,
                 @Param("title") String title,
                 @Param("code") String code,
-                @Param("customId") String customData,
+                @Param("customData") String customData,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 }

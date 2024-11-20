@@ -23,12 +23,12 @@ public class UpdateKitCustomRestController {
                                                 @PathVariable("kitCustomId") Long kitCustomId,
                                                 @RequestBody UpdateKitCustomRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.updateKitCustom(toParam(kitId, kitCustomId, currentUserId, requestDto));
+        useCase.updateKitCustom(toParam(kitCustomId, kitId, currentUserId, requestDto));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private static UpdateKitCustomUseCase.Param toParam(Long kitId,
-                                                        Long kitCustomId,
+    private static UpdateKitCustomUseCase.Param toParam(Long kitCustomId,
+                                                        Long kitId,
                                                         UUID currentUserId,
                                                         UpdateKitCustomRequestDto requestDto) {
         UpdateKitCustomUseCase.Param.KitCustomData customData = null;
@@ -49,6 +49,6 @@ public class UpdateKitCustomRestController {
             customData = new UpdateKitCustomUseCase.Param.KitCustomData(subjects, attributes);
         }
 
-        return new UpdateKitCustomUseCase.Param(kitId, kitCustomId, requestDto.title(), customData, currentUserId);
+        return new UpdateKitCustomUseCase.Param(kitCustomId, kitId, requestDto.title(), customData, currentUserId);
     }
 }
