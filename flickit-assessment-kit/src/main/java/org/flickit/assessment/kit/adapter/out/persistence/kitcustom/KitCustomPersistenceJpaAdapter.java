@@ -29,7 +29,15 @@ public class KitCustomPersistenceJpaAdapter implements
 
     @Override
     public void update(UpdateKitCustomPort.Param param) {
-        if(!repository.existsById(param.id()))
+        if (!repository.existsByIdAndKitId(param.id(), param.kitId()))
             throw new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND);
+
+        repository.update(param.id(),
+            param.title(),
+            param.code(),
+            param.customData(),
+            param.lastModificationTime(),
+            param.lastModifiedBy()
+        );
     }
 }
