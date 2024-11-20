@@ -1,4 +1,4 @@
-package org.flickit.assessment.data.jpa.kit.customkit;
+package org.flickit.assessment.data.jpa.kit.kitcustom;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
