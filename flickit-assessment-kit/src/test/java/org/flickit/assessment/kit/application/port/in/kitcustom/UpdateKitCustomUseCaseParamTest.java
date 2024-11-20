@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UpdateKitCustomUseCaseParamTest {
 
     @Test
-    void testUpdateKitCustomUseCaseParam_kitCustomIdViolatesConstraints_ErrorMessage() {
+    void testUpdateKitCustomUseCaseParam_kitCustomIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.id(null)));
         assertThat(throwable).hasMessage("id: " + UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL);
@@ -103,6 +103,7 @@ class UpdateKitCustomUseCaseParamTest {
 
     private UpdateKitCustomUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateKitCustomUseCase.Param.builder()
+            .id(12L)
             .kitId(1L)
             .title("title")
             .customData(createCustomDataParam(UpdateKitCustomUseCase.Param.KitCustomData.KitCustomDataBuilder::build))
