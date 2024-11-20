@@ -7,7 +7,7 @@ public interface UpdateExpertGroupPort {
 
     void update(Param param);
 
-    record Param(long id, long kitId, String code, String title, String bio, String about, String website,
+    record Param(long id, String code, String title, String bio, String about, String website,
                  LocalDateTime lastModificationTime, UUID lastModifiedBy) {
     }
 }
