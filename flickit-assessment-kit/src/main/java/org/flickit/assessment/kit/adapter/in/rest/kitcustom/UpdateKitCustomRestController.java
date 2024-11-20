@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.adapter.in.rest.kitcustom;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
+import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,28 +28,28 @@ public class UpdateKitCustomRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private static UpdateKitCustomUseCase.Param toParam(Long kitCustomId,
-                                                        Long kitId,
-                                                        UUID currentUserId,
-                                                        UpdateKitCustomRequestDto requestDto) {
-        UpdateKitCustomUseCase.Param.KitCustomData customData = null;
+    private static Param toParam(Long kitCustomId,
+                                 Long kitId,
+                                 UUID currentUserId,
+                                 UpdateKitCustomRequestDto requestDto) {
+        Param.KitCustomData customData = null;
         var customDataDto = requestDto.customData();
         if (customDataDto != null) {
-            List<UpdateKitCustomUseCase.Param.KitCustomData.CustomSubject> subjects =
+            List<Param.KitCustomData.CustomSubject> subjects =
                 customDataDto.subjects() != null ? customDataDto.subjects().stream()
-                    .map(e -> new UpdateKitCustomUseCase.Param.KitCustomData.CustomSubject(e.id(), e.weight()))
+                    .map(e -> new Param.KitCustomData.CustomSubject(e.id(), e.weight()))
                     .toList()
                     : new ArrayList<>();
 
-            List<UpdateKitCustomUseCase.Param.KitCustomData.CustomAttribute> attributes =
+            List<Param.KitCustomData.CustomAttribute> attributes =
                 customDataDto.attributes() != null ? customDataDto.attributes().stream()
-                    .map(e -> new UpdateKitCustomUseCase.Param.KitCustomData.CustomAttribute(e.id(), e.weight()))
+                    .map(e -> new Param.KitCustomData.CustomAttribute(e.id(), e.weight()))
                     .toList()
                     : new ArrayList<>();
 
-            customData = new UpdateKitCustomUseCase.Param.KitCustomData(subjects, attributes);
+            customData = new Param.KitCustomData(subjects, attributes);
         }
 
-        return new UpdateKitCustomUseCase.Param(kitCustomId, kitId, requestDto.title(), customData, currentUserId);
+        return new Param(kitCustomId, kitId, requestDto.title(), customData, currentUserId);
     }
 }
