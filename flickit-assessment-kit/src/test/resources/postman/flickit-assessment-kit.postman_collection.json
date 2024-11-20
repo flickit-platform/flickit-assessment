@@ -2362,7 +2362,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/393/kit-customs",
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/393/kit-customs/1",
 							"host": [
 								"{{base_url}}"
 							],
@@ -2370,7 +2370,8 @@
 								"{{api_path}}",
 								"assessment-kits",
 								"393",
-								"kit-customs"
+								"kit-customs",
+								"1"
 							]
 						}
 					},
