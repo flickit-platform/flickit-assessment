@@ -31,7 +31,7 @@ class AssignKitCustomServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
-    void testAssignKitCustom_WhenCurrentUserDoesntHaveRequiredPermission_ThenThrowAccessDeniedException() {
+    void testAssignKitCustom_WhenCurrentUserDoesNotHaveRequiredPermission_ThenThrowAccessDeniedException() {
         var param = createParam(AssignKitCustomUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
@@ -45,7 +45,7 @@ class AssignKitCustomServiceTest {
     }
 
     @Test
-    void testAssignKitCustom_WhenCurrenUserHasRequiredPermission_ThenUpdateAssessmentKitCustom() {
+    void testAssignKitCustom_WhenCurrentUserHasRequiredPermission_ThenUpdateAssessmentKitCustom() {
         var param = createParam(AssignKitCustomUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
