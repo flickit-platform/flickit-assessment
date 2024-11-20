@@ -31,7 +31,7 @@ class DeleteExpertGroupMemberServiceTest {
     private Param param = new Param(0L, UUID.randomUUID(), UUID.randomUUID());
 
     @Test
-    void deleteExpertGroupMember_validParameter_successful() {
+    void testDeleteExpertGroupMember_validParameter_successful() {
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(param.getCurrentUserId());
 
         service.deleteMember(param);
@@ -40,7 +40,7 @@ class DeleteExpertGroupMemberServiceTest {
     }
 
     @Test
-    void deleteExpertGroupMember_userIsOwner_AccessDeniedException() {
+    void testDeleteExpertGroupMember_userIsOwner_AccessDeniedException() {
         long expertGroupId = 0L;
         UUID currentUserId = UUID.randomUUID();
         param = new Param(expertGroupId, currentUserId, currentUserId);
@@ -52,7 +52,7 @@ class DeleteExpertGroupMemberServiceTest {
     }
 
     @Test
-    void deleteMember_currentUserIsNotOwner_AccessDeniedException() {
+    void testDeleteExpertGroupMember_currentUserIsNotOwner_AccessDeniedException() {
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(UUID.randomUUID());
 
         assertThrows(AccessDeniedException.class, () -> service.deleteMember(param));
