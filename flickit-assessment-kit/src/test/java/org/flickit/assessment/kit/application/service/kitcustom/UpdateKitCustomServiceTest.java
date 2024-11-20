@@ -1,19 +1,52 @@
 package org.flickit.assessment.kit.application.service.kitcustom;
 
+import lombok.SneakyThrows;
+import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
+import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+
+
 @ExtendWith(SpringExtension.class)
 class UpdateKitCustomServiceTest {
 
+    @InjectMocks
+    private UpdateKitCustomService service;
+
+    @Mock
+    private LoadAssessmentKitPort loadAssessmentKitPort;
+
+    @Mock
+    private CheckKitUserAccessPort checkKitUserAccessPort;
+
     @Test
-    void testUpdateKitCustom_ki_su() {
+    @SneakyThrows
+    void testCreateKitCustom_WhenKitIsPrivate_ThenCreateKitCustom() {
+        var param = createParam(UpdateKitCustomUseCase.Param.ParamBuilder::build);
+        AssessmentKit kit = AssessmentKitMother.privateKit();
+
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+        when(checkKitUserAccessPort.hasAccess(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateKitCustom(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     private UpdateKitCustomUseCase.Param createParam(Consumer<UpdateKitCustomUseCase.Param.ParamBuilder> changer) {
