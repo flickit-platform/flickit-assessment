@@ -176,9 +176,9 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
 
     private Comparator<Question> getQuestionComparator() {
         return (q1, q2) -> {
-            int compareOptionsSize = Integer.compare(q1.getOptions().size(), q2.getOptions().size());
+            int compareOptionsSize = Integer.compare(q2.getOptions().size(), q1.getOptions().size());
             if (compareOptionsSize != 0) {
-                return compareOptionsSize; // Ascending order for options size
+                return compareOptionsSize; // Descending order for options size
             }
             for (int optionIndex = 0; optionIndex < q1.getOptions().size(); optionIndex++) {
                 double maxPromisedScore1 = q1.getOptions().get(optionIndex)
