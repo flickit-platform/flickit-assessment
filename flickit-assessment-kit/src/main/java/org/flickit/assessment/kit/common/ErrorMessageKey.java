@@ -20,6 +20,7 @@ public class ErrorMessageKey {
     public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
     public static final String ANSWER_OPTION_ID_NOT_FOUND = "answer-option.id.notFound";
     public static final String ANSWER_RANGE_ID_NOT_FOUND = "answer-range.id.notFound";
+    public static final String KIT_CUSTOM_ID_NOT_FOUND = "kit-custom.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
