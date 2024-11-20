@@ -177,9 +177,9 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     private Comparator<Question> getQuestionComparator() {
         return (q1, q2) -> {
             int compareOptionsSize = Integer.compare(q2.getOptions().size(), q1.getOptions().size());
-            if (compareOptionsSize != 0) {
+            if (compareOptionsSize != 0)
                 return compareOptionsSize; // Descending order for options size
-            }
+
             for (int optionIndex = 0; optionIndex < q1.getOptions().size(); optionIndex++) {
                 double maxPromisedScore1 = q1.getOptions().get(optionIndex)
                     .getPromisedScores().values().stream()
@@ -190,9 +190,8 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                     .max(Double::compare).orElse(0.0);
 
                 int compareMaxScore = Double.compare(maxPromisedScore2, maxPromisedScore1);
-                if (compareMaxScore != 0) {
+                if (compareMaxScore != 0)
                     return compareMaxScore; // Descending order for max promised score
-                }
             }
             return 0;
         };
