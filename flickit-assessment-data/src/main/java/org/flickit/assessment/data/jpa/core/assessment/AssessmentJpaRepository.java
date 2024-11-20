@@ -144,6 +144,14 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         AND level.id in :levelIds
     """)
     Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
+
+    @Modifying
+    @Query("""
+        UPDATE AssessmentJpaEntity a SET
+         a.kitCustomId = :kitCustomId
+        WHERE a.id = :id
+        """)
+    void updateKitCustomId(@Param("id") UUID id, @Param("kitCustomId") long kitCustomId);
 }
 
 
