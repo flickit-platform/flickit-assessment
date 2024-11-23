@@ -41,7 +41,7 @@ class LeaveExpertGroupServiceTest {
     private final UUID currentUserId = UUID.randomUUID();
 
     @Test
-    void tesLeaveExpertGroup_WhenUserHasNotAccess_ShouldThrowAccessDeniedException() {
+    void testLeaveExpertGroup_WhenUserHasNotAccess_ShouldThrowAccessDeniedException() {
         var param = createParam(LeaveExpertGroupUseCase.Param.ParamBuilder::build);
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId()))
@@ -54,7 +54,7 @@ class LeaveExpertGroupServiceTest {
     }
 
     @Test
-    void tesLeaveExpertGroup_WhenUserUserIsExpertGroupOwner_ShouldThrowAccessDeniedException() {
+    void testLeaveExpertGroup_WhenUserIsExpertGroupOwner_ShouldThrowValidationException() {
         var param = createParam(b -> b.currentUserId(currentUserId));
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId()))
@@ -66,7 +66,7 @@ class LeaveExpertGroupServiceTest {
     }
 
     @Test
-    void tesLeaveExpertGroup_ValidParameters_ShouldLeaveExpertGroup() {
+    void testLeaveExpertGroup_ValidParameters_ShouldLeaveExpertGroup() {
         var param = createParam(LeaveExpertGroupUseCase.Param.ParamBuilder::build);
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId()))
