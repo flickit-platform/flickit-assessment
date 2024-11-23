@@ -17,7 +17,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 public interface GetKitCustomSubjectUseCase {
 
-    PaginatedResponse<Result> getKitCustomSubject(Param param);
+    PaginatedResponse<Subject> getKitCustomSubject(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -49,13 +49,10 @@ public interface GetKitCustomSubjectUseCase {
         }
     }
 
-    record Result(Subject subject) {
+    record Subject(long id, String title, int index, Weight weight, List<Attribute> attributes) {
 
-        public record Subject(long id, String title, Weight weight, List<Attribute> attributes) {
-
-            public record Attribute(long id, String title, Weight weight) {}
-        }
-
-        public record Weight(int defaultValue, Integer customValue) {}
+        public record Attribute(long id, String title, int index, Weight weight) {}
     }
+
+    record Weight(int defaultValue, Integer customValue) {}
 }

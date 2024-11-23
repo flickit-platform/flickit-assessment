@@ -88,26 +88,28 @@ class GetKitCustomSubjectServiceTest {
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
-        PaginatedResponse<GetKitCustomSubjectUseCase.Result> resultPaginatedResponse = service.getKitCustomSubject(param);
+        PaginatedResponse<GetKitCustomSubjectUseCase.Subject> resultPaginatedResponse = service.getKitCustomSubject(param);
         assertNotNull(resultPaginatedResponse);
-        List<GetKitCustomSubjectUseCase.Result> actualItems = resultPaginatedResponse.getItems();
+        List<GetKitCustomSubjectUseCase.Subject> actualItems = resultPaginatedResponse.getItems();
         assertNotNull(actualItems);
         assertEquals(1, actualItems.size());
 
         var expectedItem = paginatedResponse.getItems().getFirst();
         var actualItem = actualItems.getFirst();
         assertNotNull(actualItem);
-        assertEquals(expectedItem.getId(), actualItem.subject().id());
-        assertEquals(expectedItem.getTitle(), actualItem.subject().title());
-        assertEquals(subjectCustom.weight(), actualItem.subject().weight().customValue());
-        assertEquals(expectedItem.getWeight(), actualItem.subject().weight().defaultValue());
-        assertEquals(expectedItem.getAttributes().size(), actualItem.subject().attributes().size());
+        assertEquals(expectedItem.getId(), actualItem.id());
+        assertEquals(expectedItem.getTitle(), actualItem.title());
+        assertEquals(expectedItem.getIndex(), actualItem.index());
+        assertEquals(subjectCustom.weight(), actualItem.weight().customValue());
+        assertEquals(expectedItem.getWeight(), actualItem.weight().defaultValue());
+        assertEquals(expectedItem.getAttributes().size(), actualItem.attributes().size());
 
         var expectedAttribute = expectedItem.getAttributes().getFirst();
-        var actualAttribute = actualItem.subject().attributes().getFirst();
+        var actualAttribute = actualItem.attributes().getFirst();
         assertNotNull(actualAttribute);
         assertEquals(expectedAttribute.getId(), actualAttribute.id());
         assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
+        assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
         assertEquals(attributeCustom.weight(), actualAttribute.weight().customValue());
         assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
     }
@@ -137,26 +139,28 @@ class GetKitCustomSubjectServiceTest {
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
-        PaginatedResponse<GetKitCustomSubjectUseCase.Result> resultPaginatedResponse = service.getKitCustomSubject(param);
+        PaginatedResponse<GetKitCustomSubjectUseCase.Subject> resultPaginatedResponse = service.getKitCustomSubject(param);
         assertNotNull(resultPaginatedResponse);
-        List<GetKitCustomSubjectUseCase.Result> actualItems = resultPaginatedResponse.getItems();
+        List<GetKitCustomSubjectUseCase.Subject> actualItems = resultPaginatedResponse.getItems();
         assertNotNull(actualItems);
         assertEquals(1, actualItems.size());
 
         var expectedSubject = paginatedResponse.getItems().getFirst();
         var actualSubject = actualItems.getFirst();
         assertNotNull(actualSubject);
-        assertEquals(expectedSubject.getId(), actualSubject.subject().id());
-        assertEquals(expectedSubject.getTitle(), actualSubject.subject().title());
-        assertEquals(subjectCustom.weight(), actualSubject.subject().weight().customValue());
-        assertEquals(expectedSubject.getWeight(), actualSubject.subject().weight().defaultValue());
-        assertEquals(expectedSubject.getAttributes().size(), actualSubject.subject().attributes().size());
+        assertEquals(expectedSubject.getId(), actualSubject.id());
+        assertEquals(expectedSubject.getTitle(), actualSubject.title());
+        assertEquals(expectedSubject.getIndex(), actualSubject.index());
+        assertEquals(subjectCustom.weight(), actualSubject.weight().customValue());
+        assertEquals(expectedSubject.getWeight(), actualSubject.weight().defaultValue());
+        assertEquals(expectedSubject.getAttributes().size(), actualSubject.attributes().size());
 
         var expectedAttribute = expectedSubject.getAttributes().getFirst();
-        var actualAttribute = actualSubject.subject().attributes().getFirst();
+        var actualAttribute = actualSubject.attributes().getFirst();
         assertNotNull(actualAttribute);
         assertEquals(expectedAttribute.getId(), actualAttribute.id());
         assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
+        assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
         assertEquals(attributeCustom.weight(), actualAttribute.weight().customValue());
         assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
 
@@ -172,7 +176,7 @@ class GetKitCustomSubjectServiceTest {
         Attribute maintainabilityAttr = AttributeMother.attributeWithTitle("maintainability");
         Subject subject = SubjectMother.subjectWithAttributes("software", List.of(flexibilityAttr, maintainabilityAttr));
         var flexibilityAttrCustom = new KitCustomData.Attribute(flexibilityAttr.getId(), 2);
-        KitCustomData kitCustomData = new KitCustomData(new ArrayList<>(), List.of(flexibilityAttrCustom));
+        KitCustomData kitCustomData = new KitCustomData(null, List.of(flexibilityAttrCustom));
         LoadKitCustomPort.Result kitCustom = new LoadKitCustomPort.Result(1, "custom", kit.getId(), kitCustomData);
 
         PaginatedResponse<Subject> paginatedResponse = new PaginatedResponse<>(List.of(subject),
@@ -188,34 +192,37 @@ class GetKitCustomSubjectServiceTest {
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
-        PaginatedResponse<GetKitCustomSubjectUseCase.Result> resultPaginatedResponse = service.getKitCustomSubject(param);
+        PaginatedResponse<GetKitCustomSubjectUseCase.Subject> resultPaginatedResponse = service.getKitCustomSubject(param);
         assertNotNull(resultPaginatedResponse);
-        List<GetKitCustomSubjectUseCase.Result> actualItems = resultPaginatedResponse.getItems();
+        List<GetKitCustomSubjectUseCase.Subject> actualItems = resultPaginatedResponse.getItems();
         assertNotNull(actualItems);
         assertEquals(1, actualItems.size());
 
         var expectedSubject = paginatedResponse.getItems().getFirst();
         var actualSubject = actualItems.getFirst();
         assertNotNull(actualSubject);
-        assertEquals(expectedSubject.getId(), actualSubject.subject().id());
-        assertEquals(expectedSubject.getTitle(), actualSubject.subject().title());
-        assertEquals(expectedSubject.getWeight(), actualSubject.subject().weight().defaultValue());
-        assertNull(actualSubject.subject().weight().customValue());
-        assertEquals(expectedSubject.getAttributes().size(), actualSubject.subject().attributes().size());
+        assertEquals(expectedSubject.getId(), actualSubject.id());
+        assertEquals(expectedSubject.getTitle(), actualSubject.title());
+        assertEquals(expectedSubject.getIndex(), actualSubject.index());
+        assertEquals(expectedSubject.getWeight(), actualSubject.weight().defaultValue());
+        assertNull(actualSubject.weight().customValue());
+        assertEquals(expectedSubject.getAttributes().size(), actualSubject.attributes().size());
 
         var expectedFlexibilityAttr = expectedSubject.getAttributes().getFirst();
-        var actualFlexibilityAttr = actualSubject.subject().attributes().getFirst();
+        var actualFlexibilityAttr = actualSubject.attributes().getFirst();
         assertNotNull(actualFlexibilityAttr);
         assertEquals(expectedFlexibilityAttr.getId(), actualFlexibilityAttr.id());
         assertEquals(expectedFlexibilityAttr.getTitle(), actualFlexibilityAttr.title());
+        assertEquals(expectedFlexibilityAttr.getIndex(), actualFlexibilityAttr.index());
         assertEquals(flexibilityAttrCustom.weight(), actualFlexibilityAttr.weight().customValue());
         assertEquals(expectedFlexibilityAttr.getWeight(), actualFlexibilityAttr.weight().defaultValue());
 
         var expectedMaintainabilityAttr = expectedSubject.getAttributes().get(1);
-        var actualMaintainabilityAttr = actualSubject.subject().attributes().get(1);
+        var actualMaintainabilityAttr = actualSubject.attributes().get(1);
         assertNotNull(actualMaintainabilityAttr);
         assertEquals(expectedMaintainabilityAttr.getId(), actualMaintainabilityAttr.id());
         assertEquals(expectedMaintainabilityAttr.getTitle(), actualMaintainabilityAttr.title());
+        assertEquals(expectedMaintainabilityAttr.getIndex(), actualMaintainabilityAttr.index());
         assertEquals(expectedMaintainabilityAttr.getWeight(), actualMaintainabilityAttr.weight().defaultValue());
         assertNull(actualMaintainabilityAttr.weight().customValue());
 
@@ -247,27 +254,29 @@ class GetKitCustomSubjectServiceTest {
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
-        PaginatedResponse<GetKitCustomSubjectUseCase.Result> resultPaginatedResponse = service.getKitCustomSubject(param);
+        PaginatedResponse<GetKitCustomSubjectUseCase.Subject> resultPaginatedResponse = service.getKitCustomSubject(param);
         assertNotNull(resultPaginatedResponse);
-        List<GetKitCustomSubjectUseCase.Result> actualItems = resultPaginatedResponse.getItems();
+        List<GetKitCustomSubjectUseCase.Subject> actualItems = resultPaginatedResponse.getItems();
         assertNotNull(actualItems);
         assertEquals(1, actualItems.size());
 
         var expectedSubject = paginatedResponse.getItems().getFirst();
         var actualSubject = actualItems.getFirst();
         assertNotNull(actualSubject);
-        assertEquals(expectedSubject.getId(), actualSubject.subject().id());
-        assertEquals(expectedSubject.getTitle(), actualSubject.subject().title());
-        assertEquals(subjectCustom.weight(), actualSubject.subject().weight().customValue());
-        assertEquals(expectedSubject.getWeight(), actualSubject.subject().weight().defaultValue());
-        assertEquals(expectedSubject.getAttributes().size(), actualSubject.subject().attributes().size());
+        assertEquals(expectedSubject.getId(), actualSubject.id());
+        assertEquals(expectedSubject.getTitle(), actualSubject.title());
+        assertEquals(expectedSubject.getIndex(), actualSubject.index());
+        assertEquals(subjectCustom.weight(), actualSubject.weight().customValue());
+        assertEquals(expectedSubject.getWeight(), actualSubject.weight().defaultValue());
+        assertEquals(expectedSubject.getAttributes().size(), actualSubject.attributes().size());
 
         for (int i = 0; i < expectedSubject.getAttributes().size(); i++) {
             var expectedAttribute = expectedSubject.getAttributes().get(i);
-            var actualAttribute = actualSubject.subject().attributes().get(i);
+            var actualAttribute = actualSubject.attributes().get(i);
             assertNotNull(actualAttribute);
             assertEquals(expectedAttribute.getId(), actualAttribute.id());
             assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
+            assertEquals(expectedAttribute.getIndex(), actualAttribute.index());
             assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
             assertNull(actualAttribute.weight().customValue());
         }

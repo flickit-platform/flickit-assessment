@@ -30,7 +30,7 @@ public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
     private final LoadKitCustomPort loadKitCustomPort;
 
     @Override
-    public PaginatedResponse<Result> getKitCustomSubject(Param param) {
+    public PaginatedResponse<Subject> getKitCustomSubject(Param param) {
         AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
         if (kit.isPrivate() && !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -57,15 +57,15 @@ public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
         var items = paginatedResponse.getItems().stream()
             .map(e -> {
                 var attributes = e.getAttributes().stream()
-                    .map(x -> new Result.Subject.Attribute(x.getId(),
-                            x.getTitle(),
-                            new Result.Weight(x.getWeight(), attributeIdToWeight.get(x.getId()))))
+                    .map(x -> new Subject.Attribute(x.getId(),
+                        x.getTitle(),
+                        x.getIndex(),
+                        new Weight(x.getWeight(), attributeIdToWeight.get(x.getId()))))
                     .toList();
-                var subject = new Result.Subject(e.getId(),
-                        e.getTitle(),
-                        new Result.Weight(e.getWeight(), subjectIdToWeight.get(e.getId())), attributes);
 
-                return new Result(subject);
+                return new Subject(e.getId(), e.getTitle(), e.getIndex(), new Weight(e.getWeight(),
+                    subjectIdToWeight.get(e.getId())), attributes);
+
             }).toList();
 
         return new PaginatedResponse<>(items,
