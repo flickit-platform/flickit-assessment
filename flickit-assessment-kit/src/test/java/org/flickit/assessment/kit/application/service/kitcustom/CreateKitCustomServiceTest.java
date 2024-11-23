@@ -1,8 +1,8 @@
 package org.flickit.assessment.kit.application.service.kitcustom;
 
+import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.CreateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustomPort;
@@ -96,16 +96,24 @@ class CreateKitCustomServiceTest {
         assertEquals(param.getKitId(), portParamCaptor.getValue().kitId());
         assertEquals(param.getTitle(), portParamCaptor.getValue().title());
         assertEquals("custom-title", portParamCaptor.getValue().code());
-        KitCustomData.Subject subject = portParamCaptor.getValue().customData().subjects().getFirst();
-        KitCustomData.Attribute attribute = portParamCaptor.getValue().customData().attributes().getFirst();
-        var useCaseParamSubject = param.getCustomData().customSubjects().getFirst();
-        var useCaseParamAttribute = param.getCustomData().customAttributes().getFirst();
-        assertEquals(useCaseParamSubject.getId(), subject.id());
-        assertEquals(useCaseParamSubject.getWeight(), subject.weight());
-        assertEquals(useCaseParamAttribute.getId(), attribute.id());
-        assertEquals(useCaseParamAttribute.getWeight(), attribute.weight());
         assertNotNull(portParamCaptor.getValue().creationTime());
         assertEquals(param.getCurrentUserId(), portParamCaptor.getValue().createdBy());
+
+        var actualSubjects = portParamCaptor.getValue().customData().subjects();
+        var expectedSubjects = param.getCustomData().customSubjects();
+        Assertions.assertThat(actualSubjects)
+            .zipSatisfy(expectedSubjects, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getWeight(), actual.weight());
+            });
+
+        var actualAttributes = portParamCaptor.getValue().customData().attributes();
+        var expectedAttributes = param.getCustomData().customAttributes();
+        Assertions.assertThat(actualAttributes)
+            .zipSatisfy(expectedAttributes, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getWeight(), actual.weight());
+            });
     }
 
     private CreateKitCustomUseCase.Param createParam(Consumer<CreateKitCustomUseCase.Param.ParamBuilder> changer) {
