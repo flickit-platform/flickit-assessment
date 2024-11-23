@@ -30,7 +30,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(SpringExtension.class)
 class UpdateKitCustomServiceTest {
 
