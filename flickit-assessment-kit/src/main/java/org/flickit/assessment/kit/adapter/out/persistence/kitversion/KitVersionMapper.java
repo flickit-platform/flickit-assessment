@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class KitVersionMapper {
 
     public static KitVersionJpaEntity createParamToJpaEntity(Long id, AssessmentKitJpaEntity kit, CreateKitVersionPort.Param param) {
-        var statusVersion = param.status().getId() == 2 ? param.status().getId() : -id;
+        var statusVersion = param.status().getId() == 2 ? -id : param.status().getId();
         return new KitVersionJpaEntity(
             id,
             kit,

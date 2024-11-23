@@ -38,14 +38,15 @@ public class KitVersionPersistenceJpaAdapter implements
         var kitEntity = kitRepository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        var versionEntity = KitVersionMapper.createParamToJpaEntity(kitEntity, param);
-        versionEntity.setId(sequenceGenerators.generateKitVersionId());
+        var id = sequenceGenerators.generateKitVersionId();
+        var versionEntity = KitVersionMapper.createParamToJpaEntity(id, kitEntity, param);
         return repository.save(versionEntity).getId();
     }
 
     @Override
     public void updateStatus(long kitVersionId, KitVersionStatus newStatus) {
-        repository.updateStatus(kitVersionId, newStatus.getId());
+        long statusVersion = newStatus.getId() == 2 ? -kitVersionId : newStatus.getId();
+        repository.updateStatus(kitVersionId, newStatus.getId(), statusVersion);
     }
 
     @Override
