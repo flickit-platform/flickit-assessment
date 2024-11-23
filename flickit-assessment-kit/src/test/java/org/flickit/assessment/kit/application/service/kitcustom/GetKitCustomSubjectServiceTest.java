@@ -11,7 +11,7 @@ import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomSubj
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.LoadKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
 import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
@@ -39,7 +39,7 @@ class GetKitCustomSubjectServiceTest {
     private GetKitCustomSubjectService service;
 
     @Mock
-    private LoadSubjectPort loadSubjectPort;
+    private LoadSubjectsPort loadSubjectsPort;
 
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
@@ -61,7 +61,7 @@ class GetKitCustomSubjectServiceTest {
         var accessDeniedException = assertThrows(AccessDeniedException.class, () -> service.getKitCustomSubject(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, accessDeniedException.getMessage());
 
-        verifyNoInteractions(loadSubjectPort, loadKitCustomPort);
+        verifyNoInteractions(loadSubjectsPort, loadKitCustomPort);
     }
 
     @Test
@@ -82,7 +82,7 @@ class GetKitCustomSubjectServiceTest {
         var throwable = assertThrows(ValidationException.class, () -> service.getKitCustomSubject(param));
         assertEquals(GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID, throwable.getMessageKey());
 
-        verifyNoInteractions(checkKitUserAccessPort, loadSubjectPort);
+        verifyNoInteractions(checkKitUserAccessPort, loadSubjectsPort);
     }
 
     @Test
@@ -107,7 +107,7 @@ class GetKitCustomSubjectServiceTest {
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
-        when(loadSubjectPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
+        when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
@@ -156,7 +156,7 @@ class GetKitCustomSubjectServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
-        when(loadSubjectPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
+        when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
@@ -207,7 +207,7 @@ class GetKitCustomSubjectServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
-        when(loadSubjectPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
+        when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
@@ -266,7 +266,7 @@ class GetKitCustomSubjectServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
-        when(loadSubjectPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
+        when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 

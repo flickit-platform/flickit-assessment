@@ -10,7 +10,7 @@ import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomSubj
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.LoadKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_CUSTOM_S
 @RequiredArgsConstructor
 public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
 
-    private final LoadSubjectPort loadSubjectPort;
+    private final LoadSubjectsPort loadSubjectsPort;
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckKitUserAccessPort checkKitUserAccessPort;
     private final LoadKitCustomPort loadKitCustomPort;
@@ -53,7 +53,7 @@ public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
             attributeIdToWeight = new HashMap<>();
         }
 
-        var paginatedResponse = loadSubjectPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
+        var paginatedResponse = loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize());
 
