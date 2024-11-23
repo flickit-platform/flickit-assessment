@@ -1,8 +1,5 @@
 package org.flickit.assessment.kit.application.service.kitcustom;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
@@ -46,29 +43,19 @@ class CreateKitCustomServiceTest {
     @Captor
     private ArgumentCaptor<CreateKitCustomPort.Param> portParamCaptor;
 
-    @Mock
-    private ObjectMapper mapper;
-
     @Test
-    @SneakyThrows
     void testCreateKitCustom_WhenKitIsPublic_ThenCreateKitCustom() {
         var param = createParam(CreateKitCustomUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
         long kitCustomId = 1;
-        String kitCustomData = """
-            {"subs":[{"id":1000,"w":1}],"atts":[{"id":200,"w":2}]}
-            """;
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(createKitCustomPort.persist(any(CreateKitCustomPort.Param.class))).thenReturn(kitCustomId);
-        when(mapper.writeValueAsString(any(KitCustomData.class))).thenReturn(kitCustomData);
 
         long actualKitCustomId = service.createKitCustom(param);
         assertEquals(kitCustomId, actualKitCustomId);
 
-        assertCreateKitCustomPortParamMapping(param, kitCustomData);
-
-        assertKitCustomDataMapping(param.getCustomData());
+        assertCreateKitCustomPortParamMapping(param);
 
         verifyNoInteractions(checkKitUserAccessPort);
     }
@@ -84,63 +71,41 @@ class CreateKitCustomServiceTest {
         var accessDeniedException = assertThrows(AccessDeniedException.class, () -> service.createKitCustom(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, accessDeniedException.getMessage());
 
-        verifyNoInteractions(createKitCustomPort, mapper);
+        verifyNoInteractions(createKitCustomPort);
     }
 
     @Test
-    @SneakyThrows
     void testCreateKitCustom_WhenKitIsPrivateAndCurrentUserHasAccessToKit_ThenCreateKitCustom() {
         var param = createParam(CreateKitCustomUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
         long kitCustomId = 1;
-        String kitCustomData = """
-            {"subs":[{"id":1000,"w":1}],"atts":[{"id":200,"w":2}]}
-            """;
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
         when(createKitCustomPort.persist(any(CreateKitCustomPort.Param.class))).thenReturn(kitCustomId);
-        when(mapper.writeValueAsString(any(KitCustomData.class))).thenReturn(kitCustomData);
 
         long actualKitCustomId = service.createKitCustom(param);
         assertEquals(kitCustomId, actualKitCustomId);
 
-        assertCreateKitCustomPortParamMapping(param, kitCustomData);
-
-        assertKitCustomDataMapping(param.getCustomData());
+        assertCreateKitCustomPortParamMapping(param);
     }
 
-    private void assertCreateKitCustomPortParamMapping(CreateKitCustomUseCase.Param param, String kitCustomData) {
+    private void assertCreateKitCustomPortParamMapping(CreateKitCustomUseCase.Param param) {
         verify(createKitCustomPort).persist(portParamCaptor.capture());
         assertNotNull(portParamCaptor.getValue());
         assertEquals(param.getKitId(), portParamCaptor.getValue().kitId());
         assertEquals(param.getTitle(), portParamCaptor.getValue().title());
         assertEquals("custom-title", portParamCaptor.getValue().code());
-        assertEquals(kitCustomData, portParamCaptor.getValue().customData());
+        KitCustomData.Subject subject = portParamCaptor.getValue().customData().subjects().getFirst();
+        KitCustomData.Attribute attribute = portParamCaptor.getValue().customData().attributes().getFirst();
+        var useCaseParamSubject = param.getCustomData().customSubjects().getFirst();
+        var useCaseParamAttribute = param.getCustomData().customAttributes().getFirst();
+        assertEquals(useCaseParamSubject.getId(), subject.id());
+        assertEquals(useCaseParamSubject.getWeight(), subject.weight());
+        assertEquals(useCaseParamAttribute.getId(), attribute.id());
+        assertEquals(useCaseParamAttribute.getWeight(), attribute.weight());
         assertNotNull(portParamCaptor.getValue().creationTime());
         assertEquals(param.getCurrentUserId(), portParamCaptor.getValue().createdBy());
-    }
-
-    @SneakyThrows
-    private void assertKitCustomDataMapping(CreateKitCustomUseCase.Param.KitCustomData kitCustomData) {
-        ArgumentCaptor<KitCustomData> customDataCaptor = ArgumentCaptor.forClass(KitCustomData.class);
-        verify(mapper).writeValueAsString(customDataCaptor.capture());
-
-        var subjects = customDataCaptor.getValue().subjects();
-        var customSubjects = kitCustomData.customSubjects();
-        Assertions.assertThat(subjects)
-            .zipSatisfy(customSubjects, (actual, expected) -> {
-                assertEquals(expected.getId(), actual.id());
-                assertEquals(expected.getWeight(), actual.weight());
-            });
-
-        var attributes = customDataCaptor.getValue().attributes();
-        var customAttributes = kitCustomData.customAttributes();
-        Assertions.assertThat(attributes)
-            .zipSatisfy(customAttributes, (actual, expected) -> {
-                assertEquals(expected.getId(), actual.id());
-                assertEquals(expected.getWeight(), actual.weight());
-            });
     }
 
     private CreateKitCustomUseCase.Param createParam(Consumer<CreateKitCustomUseCase.Param.ParamBuilder> changer) {

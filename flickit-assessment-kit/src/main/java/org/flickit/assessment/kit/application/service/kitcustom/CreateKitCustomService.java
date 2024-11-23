@@ -1,8 +1,6 @@
 package org.flickit.assessment.kit.application.service.kitcustom;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
@@ -26,7 +24,6 @@ public class CreateKitCustomService implements CreateKitCustomUseCase {
     private final CreateKitCustomPort createKitCustomPort;
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckKitUserAccessPort checkKitUserAccessPort;
-    private final ObjectMapper objectMapper;
 
     @Override
     public long createKitCustom(Param param) {
@@ -37,7 +34,6 @@ public class CreateKitCustomService implements CreateKitCustomUseCase {
         return createKitCustomPort.persist(toParam(param));
     }
 
-    @SneakyThrows
     private CreateKitCustomPort.Param toParam(Param param) {
         String code = SlugCodeUtil.generateSlugCode(param.getTitle());
         KitCustomData kitCustomData = toKitCustomData(param.getCustomData());
@@ -45,7 +41,7 @@ public class CreateKitCustomService implements CreateKitCustomUseCase {
         return new CreateKitCustomPort.Param(param.getKitId(),
             param.getTitle(),
             code,
-            objectMapper.writeValueAsString(kitCustomData),
+            kitCustomData,
             LocalDateTime.now(),
             param.getCurrentUserId());
     }
