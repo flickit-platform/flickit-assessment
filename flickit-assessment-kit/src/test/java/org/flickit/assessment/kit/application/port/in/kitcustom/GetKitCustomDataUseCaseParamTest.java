@@ -21,12 +21,6 @@ class GetKitCustomDataUseCaseParamTest {
     }
 
     @Test
-    void testGetKitCustomDataUseCaseParam_kitCustomIdParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.kitCustomId(null)));
-        assertThat(throwable).hasMessage("kitCustomId: " + GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_NOT_NULL);
-    }
-
-    @Test
     void testGetKitCustomDataUseCaseParam_pageParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.page(-1)));
         assertThat(throwable).hasMessage("page: " + GET_KIT_CUSTOM_DATA_PAGE_MIN);

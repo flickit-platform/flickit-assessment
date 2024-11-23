@@ -21,9 +21,9 @@ public class GetKitCustomDataRestController {
     private final GetKitCustomDataUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/assessment-kits/{kitId}/kit-customs/{kitCustomId}/custom-data")
+    @GetMapping("/assessment-kits/{kitId}/custom-subjects")
     public ResponseEntity<PaginatedResponse<Result>> getKitCustomData(@PathVariable("kitId") Long kitId,
-                                                                      @PathVariable("kitCustomId") Long kitCustomId,
+                                                                      @RequestParam(value = "kitCustomId", required = false) Long kitCustomId,
                                                                       @RequestParam(defaultValue = "0") int page,
                                                                       @RequestParam(defaultValue = "20") int size) {
         UUID currentUserId = userContext.getUser().id();

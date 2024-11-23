@@ -14,6 +14,8 @@ import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -35,14 +37,21 @@ public class GetKitCustomDataService implements GetKitCustomDataUseCase {
         if (kit.isPrivate() && !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var kitCustom = loadKitCustomPort.loadById(param.getKitCustomId());
-        if (kitCustom.kitId() != kit.getId())
-            throw new ValidationException(GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_INVALID);
+        Map<Long, Integer> subjectIdToWeight;
+        Map<Long, Integer> attributeIdToWeight;
+        if (param.getKitCustomId() != null) {
+            var kitCustom = loadKitCustomPort.loadById(param.getKitCustomId());
+            if (kitCustom.kitId() != kit.getId())
+                throw new ValidationException(GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_INVALID);
 
-        var subjectIdToWeight = kitCustom.customData().subjects().stream()
-            .collect(Collectors.toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
-        var attributeIdToWeight = kitCustom.customData().attributes().stream()
-            .collect(Collectors.toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+            subjectIdToWeight = kitCustom.customData().subjects().stream()
+                    .collect(Collectors.toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
+            attributeIdToWeight = kitCustom.customData().attributes().stream()
+                    .collect(Collectors.toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+        } else {
+            subjectIdToWeight = new HashMap<>();
+            attributeIdToWeight = new HashMap<>();
+        }
 
         var paginatedResponse = loadSubjectPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
@@ -51,19 +60,14 @@ public class GetKitCustomDataService implements GetKitCustomDataUseCase {
         var items = paginatedResponse.getItems().stream()
             .map(e -> {
                 var attributes = e.getAttributes().stream()
-                    .map(x -> {
-                        boolean customized = attributeIdToWeight.containsKey(x.getId());
-                        int weight = x.getWeight();
-                        if (customized)
-                            weight = attributeIdToWeight.get(x.getId());
-                        return new Result.Subject.Attribute(x.getId(), x.getTitle(), weight, customized);})
+                    .map(x -> new Result.Subject.Attribute(x.getId(),
+                            x.getTitle(),
+                            new Result.Weight(x.getWeight(), attributeIdToWeight.get(x.getId()))))
                     .toList();
-
-                boolean customized = subjectIdToWeight.containsKey(e.getId());
-                Integer weight = e.getWeight();
-                if (customized)
-                    weight = subjectIdToWeight.get(e.getId());
-                var subject = new Result.Subject(e.getId(), e.getTitle(), weight, attributes, customized);
+                var subject = new Result.Subject(e.getId(),
+                        e.getTitle(),
+                        new Result.Weight(e.getWeight(), subjectIdToWeight.get(e.getId())),
+                        attributes);
 
                 return new Result(subject);})
             .toList();

@@ -122,8 +122,8 @@ class GetKitCustomDataServiceTest {
         assertNotNull(actualItem);
         assertEquals(expectedItem.getId(), actualItem.subject().id());
         assertEquals(expectedItem.getTitle(), actualItem.subject().title());
-        assertEquals(subjectCustom.weight(), actualItem.subject().weight());
-        assertTrue(actualItem.subject().customized());
+        assertEquals(subjectCustom.weight(), actualItem.subject().weight().customValue());
+        assertEquals(expectedItem.getWeight(), actualItem.subject().weight().defaultValue());
         assertEquals(expectedItem.getAttributes().size(), actualItem.subject().attributes().size());
 
         var expectedAttribute = expectedItem.getAttributes().getFirst();
@@ -131,8 +131,8 @@ class GetKitCustomDataServiceTest {
         assertNotNull(actualAttribute);
         assertEquals(expectedAttribute.getId(), actualAttribute.id());
         assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
-        assertEquals(attributeCustom.weight(), actualAttribute.weight());
-        assertTrue(actualAttribute.customized());
+        assertEquals(attributeCustom.weight(), actualAttribute.weight().customValue());
+        assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
     }
 
     @Test
@@ -171,8 +171,8 @@ class GetKitCustomDataServiceTest {
         assertNotNull(actualSubject);
         assertEquals(expectedSubject.getId(), actualSubject.subject().id());
         assertEquals(expectedSubject.getTitle(), actualSubject.subject().title());
-        assertEquals(subjectCustom.weight(), actualSubject.subject().weight());
-        assertTrue(actualSubject.subject().customized());
+        assertEquals(subjectCustom.weight(), actualSubject.subject().weight().customValue());
+        assertEquals(expectedSubject.getWeight(), actualSubject.subject().weight().defaultValue());
         assertEquals(expectedSubject.getAttributes().size(), actualSubject.subject().attributes().size());
 
         var expectedAttribute = expectedSubject.getAttributes().getFirst();
@@ -180,8 +180,8 @@ class GetKitCustomDataServiceTest {
         assertNotNull(actualAttribute);
         assertEquals(expectedAttribute.getId(), actualAttribute.id());
         assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
-        assertEquals(attributeCustom.weight(), actualAttribute.weight());
-        assertTrue(actualAttribute.customized());
+        assertEquals(attributeCustom.weight(), actualAttribute.weight().customValue());
+        assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
 
         verifyNoInteractions(checkKitUserAccessPort);
     }
@@ -222,8 +222,8 @@ class GetKitCustomDataServiceTest {
         assertNotNull(actualSubject);
         assertEquals(expectedSubject.getId(), actualSubject.subject().id());
         assertEquals(expectedSubject.getTitle(), actualSubject.subject().title());
-        assertEquals(expectedSubject.getWeight(), actualSubject.subject().weight());
-        assertFalse(actualSubject.subject().customized());
+        assertEquals(expectedSubject.getWeight(), actualSubject.subject().weight().defaultValue());
+        assertNull(actualSubject.subject().weight().customValue());
         assertEquals(expectedSubject.getAttributes().size(), actualSubject.subject().attributes().size());
 
         var expectedFlexibilityAttr = expectedSubject.getAttributes().getFirst();
@@ -231,16 +231,16 @@ class GetKitCustomDataServiceTest {
         assertNotNull(actualFlexibilityAttr);
         assertEquals(expectedFlexibilityAttr.getId(), actualFlexibilityAttr.id());
         assertEquals(expectedFlexibilityAttr.getTitle(), actualFlexibilityAttr.title());
-        assertEquals(flexibilityAttrCustom.weight(), actualFlexibilityAttr.weight());
-        assertTrue(actualFlexibilityAttr.customized());
+        assertEquals(flexibilityAttrCustom.weight(), actualFlexibilityAttr.weight().customValue());
+        assertEquals(expectedFlexibilityAttr.getWeight(), actualFlexibilityAttr.weight().defaultValue());
 
         var expectedMaintainabilityAttr = expectedSubject.getAttributes().get(1);
         var actualMaintainabilityAttr = actualSubject.subject().attributes().get(1);
         assertNotNull(actualMaintainabilityAttr);
         assertEquals(expectedMaintainabilityAttr.getId(), actualMaintainabilityAttr.id());
         assertEquals(expectedMaintainabilityAttr.getTitle(), actualMaintainabilityAttr.title());
-        assertEquals(expectedMaintainabilityAttr.getWeight(), actualMaintainabilityAttr.weight());
-        assertFalse(actualMaintainabilityAttr.customized());
+        assertEquals(expectedMaintainabilityAttr.getWeight(), actualMaintainabilityAttr.weight().defaultValue());
+        assertNull(actualMaintainabilityAttr.weight().customValue());
 
         verifyNoInteractions(checkKitUserAccessPort);
     }
@@ -281,8 +281,8 @@ class GetKitCustomDataServiceTest {
         assertNotNull(actualSubject);
         assertEquals(expectedSubject.getId(), actualSubject.subject().id());
         assertEquals(expectedSubject.getTitle(), actualSubject.subject().title());
-        assertEquals(subjectCustom.weight(), actualSubject.subject().weight());
-        assertTrue(actualSubject.subject().customized());
+        assertEquals(subjectCustom.weight(), actualSubject.subject().weight().customValue());
+        assertEquals(expectedSubject.getWeight(), actualSubject.subject().weight().defaultValue());
         assertEquals(expectedSubject.getAttributes().size(), actualSubject.subject().attributes().size());
 
         for (int i = 0; i < expectedSubject.getAttributes().size(); i++) {
@@ -291,8 +291,8 @@ class GetKitCustomDataServiceTest {
             assertNotNull(actualAttribute);
             assertEquals(expectedAttribute.getId(), actualAttribute.id());
             assertEquals(expectedAttribute.getTitle(), actualAttribute.title());
-            assertEquals(expectedAttribute.getWeight(), actualAttribute.weight());
-            assertFalse(actualAttribute.customized());
+            assertEquals(expectedAttribute.getWeight(), actualAttribute.weight().defaultValue());
+            assertNull(actualAttribute.weight().customValue());
         }
 
         verifyNoInteractions(checkKitUserAccessPort);

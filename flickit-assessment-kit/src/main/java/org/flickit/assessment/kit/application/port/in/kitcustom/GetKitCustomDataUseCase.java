@@ -26,7 +26,6 @@ public interface GetKitCustomDataUseCase {
         @NotNull(message = GET_KIT_CUSTOM_DATA_KIT_ID_NOT_NULL)
         Long kitId;
 
-        @NotNull(message = GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_NOT_NULL)
         Long kitCustomId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -52,9 +51,11 @@ public interface GetKitCustomDataUseCase {
 
     record Result(Subject subject) {
 
-        public record Subject(long id, String title, int weight, List<Attribute> attributes, boolean customized) {
+        public record Subject(long id, String title, Weight weight, List<Attribute> attributes) {
 
-            public record Attribute(long id, String title, int weight, boolean customized) {}
+            public record Attribute(long id, String title, Weight weight) {}
         }
+
+        public record Weight(int defaultValue, Integer customValue) {}
     }
 }
