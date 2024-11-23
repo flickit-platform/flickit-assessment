@@ -2353,7 +2353,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/399/kit-customs/1/custom-data",
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/399/custom-subjects?kitCustomId=6",
 							"host": [
 								"{{base_url}}"
 							],
@@ -2361,9 +2361,13 @@
 								"{{api_path}}",
 								"assessment-kits",
 								"399",
-								"kit-customs",
-								"1",
-								"custom-data"
+								"custom-subjects"
+							],
+							"query": [
+								{
+									"key": "kitCustomId",
+									"value": "6"
+								}
 							]
 						}
 					},
