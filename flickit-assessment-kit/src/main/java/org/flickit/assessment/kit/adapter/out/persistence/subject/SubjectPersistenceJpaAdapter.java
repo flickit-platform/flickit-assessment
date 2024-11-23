@@ -6,9 +6,11 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
+import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.data.domain.Page;
@@ -23,8 +25,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -104,6 +105,33 @@ public class SubjectPersistenceJpaAdapter implements
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, kitVersionId);
         return mapToDomainModel(subjectEntity,
             attributeEntities.stream().map(AttributeMapper::mapToDomainModel).toList());
+    }
+
+    @Override
+    public PaginatedResponse<Subject> loadWithAttributesByKitVersionId(long kitVersionId,
+                                                                       int page,
+                                                                       int size) {
+        var pageResponse = repository.findWithAttributesByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        var subjectEntityToSubjectAttrView = pageResponse.getContent().stream()
+            .collect(Collectors.groupingBy(SubjectJoinAttributeView::getSubject));
+
+        List<Subject> subjects = subjectEntityToSubjectAttrView.entrySet().stream()
+            .map(e -> {
+                List<Attribute> attributes = e.getValue().stream()
+                    .map(x -> AttributeMapper.mapToDomainModel(x.getAttribute()))
+                    .toList();
+                return mapToDomainModel(e.getKey(), attributes);
+            })
+            .toList();
+
+        return new PaginatedResponse<>(
+            subjects,
+            pageResponse.getNumber(),
+            pageResponse.getSize(),
+            SubjectJpaEntity.Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) pageResponse.getTotalElements()
+        );
     }
 
     @Override
