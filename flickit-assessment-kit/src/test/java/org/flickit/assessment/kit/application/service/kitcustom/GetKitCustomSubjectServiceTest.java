@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetKitCustomDataServiceTest {
+class GetKitCustomSubjectServiceTest {
 
     @InjectMocks
     private GetKitCustomSubjectService service;
@@ -86,7 +86,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetKitCustomSubject_WhenKitIsPrivateAndCurrentUserHasAccessToKitAndAllSubjectAndAttributesCustomized_ThenGetKitCustomData() {
+    void testGetKitCustomSubject_WhenKitIsPrivateAndCurrentUserHasAccessToKitAndAllSubjectAndAttributesCustomized_ThenGetKitCustomSubject() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
 
@@ -136,7 +136,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetKitCustomSubject_WhenKitIsPublicAndAllSubjectAndAttributesCustomized_ThenGetKitCustomData() {
+    void testGetKitCustomSubject_WhenKitIsPublicAndAllSubjectAndAttributesCustomized_ThenGetKitCustomSubject() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
@@ -187,7 +187,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetKitCustomSubject_WhenKitIsPublicAndJustOneAttributeCustomized_ThenGetKitCustomData() {
+    void testGetKitCustomSubject_WhenKitIsPublicAndJustOneAttributeCustomized_ThenGetKitCustomSubject() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
@@ -246,7 +246,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetKitCustomSubject_WhenKitIsPublicAndJustOneSubjectCustomized_ThenGetKitCustomData() {
+    void testGetKitCustomSubject_WhenKitIsPublicAndJustOneSubjectCustomized_ThenGetKitCustomSubject() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
