@@ -20,14 +20,14 @@ public interface LeaveExpertGroupUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = LEAVE_EXPERT_GROUP_ID_NOT_NULL)
-        Long id;
+        Long expertGroupId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long id, UUID currentUserId) {
-            this.id = id;
+        public Param(Long expertGroupId, UUID currentUserId) {
+            this.expertGroupId = expertGroupId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
