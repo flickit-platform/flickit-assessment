@@ -104,9 +104,10 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
     @Query("""
         SELECT s as subject,
                a as attribute
-        FROM SubjectJpaEntity s JOIN AttributeJpaEntity a
-                ON  s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
+        FROM SubjectJpaEntity s
+        JOIN AttributeJpaEntity a ON  s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
         WHERE s.kitVersionId = :kitVersionId
+        ORDER BY s.index
         """)
-    Page<SubjectJoinAttributeView> findWithAttributesByKitVersionId(Long kitVersionId, Pageable pageable);
+    List<SubjectJoinAttributeView> findWithAttributesByKitVersionId(Long kitVersionId);
 }

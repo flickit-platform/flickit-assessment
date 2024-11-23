@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
@@ -111,26 +112,31 @@ public class SubjectPersistenceJpaAdapter implements
     public PaginatedResponse<Subject> loadWithAttributesByKitVersionId(long kitVersionId,
                                                                        int page,
                                                                        int size) {
-        var pageResponse = repository.findWithAttributesByKitVersionId(kitVersionId, PageRequest.of(page, size));
-        var subjectEntityToSubjectAttrView = pageResponse.getContent().stream()
+        var views = repository.findWithAttributesByKitVersionId(kitVersionId);
+        var subjectEntityToSubjectAttrView = views.stream()
             .collect(Collectors.groupingBy(SubjectJoinAttributeView::getSubject));
 
-        List<Subject> subjects = subjectEntityToSubjectAttrView.entrySet().stream()
+        Map<Long, Subject> subjectIdToSubject = subjectEntityToSubjectAttrView.entrySet().stream()
             .map(e -> {
                 List<Attribute> attributes = e.getValue().stream()
                     .map(x -> AttributeMapper.mapToDomainModel(x.getAttribute()))
                     .toList();
                 return mapToDomainModel(e.getKey(), attributes);
             })
+            .collect(Collectors.toMap(Subject::getId, Function.identity()));
+
+        Page<SubjectJpaEntity> subjectEntitesPage = repository.findByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        List<Subject> items = subjectEntitesPage.getContent().stream()
+            .map(e -> subjectIdToSubject.get(e.getId()))
             .toList();
 
         return new PaginatedResponse<>(
-            subjects,
-            pageResponse.getNumber(),
-            pageResponse.getSize(),
+            items,
+            subjectEntitesPage.getNumber(),
+            subjectEntitesPage.getSize(),
             SubjectJpaEntity.Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
-            (int) pageResponse.getTotalElements()
+            (int) subjectEntitesPage.getTotalElements()
         );
     }
 
