@@ -147,4 +147,6 @@ public class ErrorMessageKey {
     public static final String CREATE_USER_DISPLAY_NAME_SIZE_MAX = "create-user.displayName.size.max";
 
     public static final String LEAVE_EXPERT_GROUP_ID_NOT_NULL = "leave-expert-group.expertGroupId.notNull";
+    public static final String LEAVE_EXPERT_GROUP_NOT_ALLOWED = "leave-expert-group.owner.notAllowed";
+
 }

@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.expertgroupaccess;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.LeaveExpertGroupUseCase;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.users.common.ErrorMessageKey.LEAVE_EXPERT_GROUP_NOT_ALLOWED;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -59,8 +61,8 @@ class LeaveExpertGroupServiceTest {
             .thenReturn(Optional.of(mock(ExpertGroupAccess.class)));
         when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(currentUserId);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.leaveExpertGroup(param));
-        Assertions.assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        var throwable = assertThrows(ValidationException.class, () -> service.leaveExpertGroup(param));
+        Assertions.assertEquals(LEAVE_EXPERT_GROUP_NOT_ALLOWED, throwable.getMessageKey());
     }
 
     @Test
