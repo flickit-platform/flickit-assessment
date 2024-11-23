@@ -66,7 +66,7 @@ class LeaveExpertGroupServiceTest {
     }
 
     @Test
-    void testLeaveExpertGroup_ValidParameters_ShouldLeaveExpertGroup() {
+    void testLeaveExpertGroup_WhenUserIsNotOwnerAndHasAccess_ShouldLeaveExpertGroup() {
         var param = createParam(LeaveExpertGroupUseCase.Param.ParamBuilder::build);
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId()))
