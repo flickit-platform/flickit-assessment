@@ -59,7 +59,7 @@ class UpdateKitCustomServiceTest {
 
     @Test
     @SneakyThrows
-    void testCreateKitCustom_WhenKitIsPrivateAndUserHasNotAccess_ThenThrowAccessDeniedException() {
+    void testUpdateKitCustom_WhenKitIsPrivateAndUserHasNotAccess_ThenThrowAccessDeniedException() {
         AssessmentKit kit = AssessmentKitMother.privateKit();
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
