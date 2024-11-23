@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.domain.Subject;
-import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomDataUseCase;
+import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomSubjectUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.LoadKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
@@ -27,7 +27,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_INVALID;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 class GetKitCustomDataServiceTest {
 
     @InjectMocks
-    private GetKitCustomDataService service;
+    private GetKitCustomSubjectService service;
 
     @Mock
     private LoadSubjectPort loadSubjectPort;
@@ -52,13 +52,13 @@ class GetKitCustomDataServiceTest {
 
     @Test
     void testGetCustomData_WhenKitIsPrivateAndCurrentUserHasNoAccessToKit_ThenThrowAccessDeniedException() {
-        var param = createParam(GetKitCustomDataUseCase.Param.ParamBuilder::build);
+        var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
 
-        var accessDeniedException = assertThrows(AccessDeniedException.class, () -> service.getKitCustomData(param));
+        var accessDeniedException = assertThrows(AccessDeniedException.class, () -> service.getKitCustomSubject(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, accessDeniedException.getMessage());
 
         verifyNoInteractions(loadSubjectPort, loadKitCustomPort);
@@ -66,7 +66,7 @@ class GetKitCustomDataServiceTest {
 
     @Test
     void testGetCustomData_WhenKitIsPublicButRequestedKitCustomIsNotValidForKit_ThenThrowValidationException() {
-        var param = createParam(GetKitCustomDataUseCase.Param.ParamBuilder::build);
+        var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
         Attribute attribute = AttributeMother.attributeWithTitle("flexibility");
@@ -79,15 +79,15 @@ class GetKitCustomDataServiceTest {
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
 
-        var throwable = assertThrows(ValidationException.class, () -> service.getKitCustomData(param));
-        assertEquals(GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_INVALID, throwable.getMessageKey());
+        var throwable = assertThrows(ValidationException.class, () -> service.getKitCustomSubject(param));
+        assertEquals(GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID, throwable.getMessageKey());
 
         verifyNoInteractions(checkKitUserAccessPort, loadSubjectPort);
     }
 
     @Test
     void testGetCustomData_WhenKitIsPrivateAndCurrentUserHasAccessToKitAndAllSubjectAndAttributesCustomized_ThenGetKitCustomData() {
-        var param = createParam(GetKitCustomDataUseCase.Param.ParamBuilder::build);
+        var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
 
         Attribute attribute = AttributeMother.attributeWithTitle("flexibility");
@@ -111,9 +111,9 @@ class GetKitCustomDataServiceTest {
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
-        PaginatedResponse<GetKitCustomDataUseCase.Result> resultPaginatedResponse = service.getKitCustomData(param);
+        PaginatedResponse<GetKitCustomSubjectUseCase.Result> resultPaginatedResponse = service.getKitCustomSubject(param);
         assertNotNull(resultPaginatedResponse);
-        List<GetKitCustomDataUseCase.Result> actualItems = resultPaginatedResponse.getItems();
+        List<GetKitCustomSubjectUseCase.Result> actualItems = resultPaginatedResponse.getItems();
         assertNotNull(actualItems);
         assertEquals(1, actualItems.size());
 
@@ -137,7 +137,7 @@ class GetKitCustomDataServiceTest {
 
     @Test
     void testGetKitCustomData_WhenKitIsPublicAndAllSubjectAndAttributesCustomized_ThenGetKitCustomData() {
-        var param = createParam(GetKitCustomDataUseCase.Param.ParamBuilder::build);
+        var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
         Attribute attribute = AttributeMother.attributeWithTitle("flexibility");
@@ -160,9 +160,9 @@ class GetKitCustomDataServiceTest {
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
-        PaginatedResponse<GetKitCustomDataUseCase.Result> resultPaginatedResponse = service.getKitCustomData(param);
+        PaginatedResponse<GetKitCustomSubjectUseCase.Result> resultPaginatedResponse = service.getKitCustomSubject(param);
         assertNotNull(resultPaginatedResponse);
-        List<GetKitCustomDataUseCase.Result> actualItems = resultPaginatedResponse.getItems();
+        List<GetKitCustomSubjectUseCase.Result> actualItems = resultPaginatedResponse.getItems();
         assertNotNull(actualItems);
         assertEquals(1, actualItems.size());
 
@@ -188,7 +188,7 @@ class GetKitCustomDataServiceTest {
 
     @Test
     void testGetKitCustomData_WhenKitIsPublicAndJustOneAttributeCustomized_ThenGetKitCustomData() {
-        var param = createParam(GetKitCustomDataUseCase.Param.ParamBuilder::build);
+        var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
         Attribute flexibilityAttr = AttributeMother.attributeWithTitle("flexibility");
@@ -211,9 +211,9 @@ class GetKitCustomDataServiceTest {
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
-        PaginatedResponse<GetKitCustomDataUseCase.Result> resultPaginatedResponse = service.getKitCustomData(param);
+        PaginatedResponse<GetKitCustomSubjectUseCase.Result> resultPaginatedResponse = service.getKitCustomSubject(param);
         assertNotNull(resultPaginatedResponse);
-        List<GetKitCustomDataUseCase.Result> actualItems = resultPaginatedResponse.getItems();
+        List<GetKitCustomSubjectUseCase.Result> actualItems = resultPaginatedResponse.getItems();
         assertNotNull(actualItems);
         assertEquals(1, actualItems.size());
 
@@ -247,7 +247,7 @@ class GetKitCustomDataServiceTest {
 
     @Test
     void testGetKitCustomData_WhenKitIsPublicAndJustOneSubjectCustomized_ThenGetKitCustomData() {
-        var param = createParam(GetKitCustomDataUseCase.Param.ParamBuilder::build);
+        var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
         Attribute flexibilityAttr = AttributeMother.attributeWithTitle("flexibility");
@@ -270,9 +270,9 @@ class GetKitCustomDataServiceTest {
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
 
-        PaginatedResponse<GetKitCustomDataUseCase.Result> resultPaginatedResponse = service.getKitCustomData(param);
+        PaginatedResponse<GetKitCustomSubjectUseCase.Result> resultPaginatedResponse = service.getKitCustomSubject(param);
         assertNotNull(resultPaginatedResponse);
-        List<GetKitCustomDataUseCase.Result> actualItems = resultPaginatedResponse.getItems();
+        List<GetKitCustomSubjectUseCase.Result> actualItems = resultPaginatedResponse.getItems();
         assertNotNull(actualItems);
         assertEquals(1, actualItems.size());
 
@@ -298,14 +298,14 @@ class GetKitCustomDataServiceTest {
         verifyNoInteractions(checkKitUserAccessPort);
     }
 
-    private GetKitCustomDataUseCase.Param createParam(Consumer<GetKitCustomDataUseCase.Param.ParamBuilder> changer) {
+    private GetKitCustomSubjectUseCase.Param createParam(Consumer<GetKitCustomSubjectUseCase.Param.ParamBuilder> changer) {
         var param = paramBuilder();
         changer.accept(param);
         return param.build();
     }
 
-    private GetKitCustomDataUseCase.Param.ParamBuilder paramBuilder() {
-        return GetKitCustomDataUseCase.Param.builder()
+    private GetKitCustomSubjectUseCase.Param.ParamBuilder paramBuilder() {
+        return GetKitCustomSubjectUseCase.Param.builder()
             .kitId(1L)
             .kitCustomId(2L)
             .currentUserId(UUID.randomUUID())

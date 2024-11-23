@@ -15,15 +15,15 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
-public interface GetKitCustomDataUseCase {
+public interface GetKitCustomSubjectUseCase {
 
-    PaginatedResponse<Result> getKitCustomData(Param param);
+    PaginatedResponse<Result> getKitCustomSubject(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_KIT_CUSTOM_DATA_KIT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_CUSTOM_SUBJECT_KIT_ID_NOT_NULL)
         Long kitId;
 
         Long kitCustomId;
@@ -31,11 +31,11 @@ public interface GetKitCustomDataUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        @Min(value = 0, message = GET_KIT_CUSTOM_DATA_PAGE_MIN)
+        @Min(value = 0, message = GET_KIT_CUSTOM_SUBJECT_PAGE_MIN)
         int page;
 
-        @Min(value = 1, message = GET_KIT_CUSTOM_DATA_SIZE_MIN)
-        @Max(value = 100, message = GET_KIT_CUSTOM_DATA_SIZE_MAX)
+        @Min(value = 1, message = GET_KIT_CUSTOM_SUBJECT_SIZE_MIN)
+        @Max(value = 100, message = GET_KIT_CUSTOM_SUBJECT_SIZE_MAX)
         int size;
 
         @Builder

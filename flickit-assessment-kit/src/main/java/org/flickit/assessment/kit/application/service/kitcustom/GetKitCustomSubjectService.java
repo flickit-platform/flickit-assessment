@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
-import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomDataUseCase;
+import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomSubjectUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.LoadKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
@@ -19,12 +19,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_INVALID;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetKitCustomDataService implements GetKitCustomDataUseCase {
+public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
 
     private final LoadSubjectPort loadSubjectPort;
     private final LoadAssessmentKitPort loadAssessmentKitPort;
@@ -32,7 +32,7 @@ public class GetKitCustomDataService implements GetKitCustomDataUseCase {
     private final LoadKitCustomPort loadKitCustomPort;
 
     @Override
-    public PaginatedResponse<Result> getKitCustomData(Param param) {
+    public PaginatedResponse<Result> getKitCustomSubject(Param param) {
         AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
         if (kit.isPrivate() && !checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -42,7 +42,7 @@ public class GetKitCustomDataService implements GetKitCustomDataUseCase {
         if (param.getKitCustomId() != null) {
             var kitCustom = loadKitCustomPort.loadById(param.getKitCustomId());
             if (kitCustom.kitId() != kit.getId())
-                throw new ValidationException(GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_INVALID);
+                throw new ValidationException(GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID);
 
             subjectIdToWeight = kitCustom.customData().subjects().stream()
                     .collect(Collectors.toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));

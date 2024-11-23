@@ -478,12 +478,11 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_CUSTOM_ATTRIBUTE_ID_NOT_NULL = "update-kit-custom.attributeId.notNull";
     public static final String UPDATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL = "update-kit-custom.attributeWeight.notNull";
 
-    public static final String GET_KIT_CUSTOM_DATA_KIT_ID_NOT_NULL = "get-subject-with-attributes.kitId.notNull";
-    public static final String GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_NOT_NULL = "get-subject-with-attributes.kitCustomId.notNull";
-    public static final String GET_KIT_CUSTOM_DATA_PAGE_MIN = "get-subject-with-attributes.page.min";
-    public static final String GET_KIT_CUSTOM_DATA_SIZE_MIN = "get-subject-with-attributes.size.min";
-    public static final String GET_KIT_CUSTOM_DATA_SIZE_MAX = "get-subject-with-attributes.size.max";
-    public static final String GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_INVALID = "get-kit-custom-data.kitCustomId.invalid";
+    public static final String GET_KIT_CUSTOM_SUBJECT_KIT_ID_NOT_NULL = "get-kit-custom-subject.kitId.notNull";
+    public static final String GET_KIT_CUSTOM_SUBJECT_PAGE_MIN = "get-kit-custom-subject.page.min";
+    public static final String GET_KIT_CUSTOM_SUBJECT_SIZE_MIN = "get-kit-custom-subject.size.min";
+    public static final String GET_KIT_CUSTOM_SUBJECT_SIZE_MAX = "get-kit-custom-subject.size.max";
+    public static final String GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID = "get-kit-custom-subject.kitCustomId.invalid";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
