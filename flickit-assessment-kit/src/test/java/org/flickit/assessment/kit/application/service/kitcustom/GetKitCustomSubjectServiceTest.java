@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.application.service.kitcustom;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
@@ -27,7 +26,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -65,27 +63,6 @@ class GetKitCustomSubjectServiceTest {
     }
 
     @Test
-    void testGetKitCustomSubject_WhenKitIsPublicButRequestedKitCustomIsNotValidForKit_ThenThrowValidationException() {
-        var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
-        AssessmentKit kit = AssessmentKitMother.simpleKit();
-
-        Attribute attribute = AttributeMother.attributeWithTitle("flexibility");
-        Subject subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
-        var subjectCustom = new KitCustomData.Subject(subject.getId(), 2);
-        var attributeCustom = new KitCustomData.Attribute(attribute.getId(), 2);
-        KitCustomData kitCustomData = new KitCustomData(List.of(subjectCustom), List.of(attributeCustom));
-        LoadKitCustomPort.Result kitCustom = new LoadKitCustomPort.Result(1, "custom", 10, kitCustomData);
-
-        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
-
-        var throwable = assertThrows(ValidationException.class, () -> service.getKitCustomSubject(param));
-        assertEquals(GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID, throwable.getMessageKey());
-
-        verifyNoInteractions(checkKitUserAccessPort, loadSubjectsPort);
-    }
-
-    @Test
     void testGetKitCustomSubject_WhenKitIsPrivateAndCurrentUserHasAccessToKitAndAllSubjectAndAttributesCustomized_ThenGetKitCustomSubject() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
@@ -106,7 +83,7 @@ class GetKitCustomSubjectServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
+        when(loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
         when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
@@ -155,7 +132,7 @@ class GetKitCustomSubjectServiceTest {
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
+        when(loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
         when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
@@ -206,7 +183,7 @@ class GetKitCustomSubjectServiceTest {
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
+        when(loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
         when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
@@ -265,7 +242,7 @@ class GetKitCustomSubjectServiceTest {
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadKitCustomPort.loadById(param.getKitCustomId())).thenReturn(kitCustom);
+        when(loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
         when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);

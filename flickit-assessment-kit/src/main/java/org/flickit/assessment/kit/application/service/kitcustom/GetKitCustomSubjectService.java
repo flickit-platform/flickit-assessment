@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.kitcustom;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomSubjectUseCase;
@@ -19,7 +18,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,10 +38,7 @@ public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
         Map<Long, Integer> subjectIdToWeight;
         Map<Long, Integer> attributeIdToWeight;
         if (param.getKitCustomId() != null) {
-            var kitCustom = loadKitCustomPort.loadById(param.getKitCustomId());
-            if (kitCustom.kitId() != kit.getId())
-                throw new ValidationException(GET_KIT_CUSTOM_SUBJECT_KIT_CUSTOM_ID_INVALID);
-
+            var kitCustom = loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId());
             subjectIdToWeight = kitCustom.customData().subjects().stream()
                     .collect(Collectors.toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
             attributeIdToWeight = kitCustom.customData().attributes().stream()
@@ -66,11 +61,10 @@ public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
                     .toList();
                 var subject = new Result.Subject(e.getId(),
                         e.getTitle(),
-                        new Result.Weight(e.getWeight(), subjectIdToWeight.get(e.getId())),
-                        attributes);
+                        new Result.Weight(e.getWeight(), subjectIdToWeight.get(e.getId())), attributes);
 
-                return new Result(subject);})
-            .toList();
+                return new Result(subject);
+            }).toList();
 
         return new PaginatedResponse<>(items,
             paginatedResponse.getPage(),
