@@ -2352,7 +2352,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"test kit custom\",\n    \"customData\": {\n        \"subjects\": [\n            {\n                \"id\": 1000,\n                \"weight\": 1\n            }\n        ],\n        \"attributes\": [\n            {\n                \"id\": 200,\n                \"weight\": 2\n            }\n        ]\n    }\n}",
+                          "raw": "{\n    \"kitId\": 393,\n    \"title\": \"test kit custom\",\n    \"customData\": {\n        \"subjects\": [\n            {\n                \"id\": 1000,\n                \"weight\": 1\n            }\n        ],\n        \"attributes\": [\n            {\n                \"id\": 200,\n                \"weight\": 2\n            }\n        ]\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2360,14 +2360,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/393/kit-customs/1",
+                          "raw": "{{base_url}}/{{api_path}}/kit-customs/1",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-								"assessment-kits",
-								"393",
 								"kit-customs",
 								"1"
 							]
