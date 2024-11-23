@@ -3,8 +3,10 @@ package org.flickit.assessment.users.application.service.expertgroupaccess;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.LeaveExpertGroupUseCase;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.DeleteExpertGroupMemberPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.LoadExpertGroupAccessPort;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +18,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -30,8 +31,12 @@ class LeaveExpertGroupServiceTest {
     private LoadExpertGroupAccessPort loadExpertGroupAccessPort;
 
     @Mock
+    private LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+
+    @Mock
     private DeleteExpertGroupMemberPort deleteExpertGroupMemberPort;
 
+    private final UUID currentUserId = UUID.randomUUID();
 
     @Test
     void tesLeaveExpertGroup_WhenUserHasNotAccess_ShouldThrowAccessDeniedException() {
@@ -41,7 +46,21 @@ class LeaveExpertGroupServiceTest {
             .thenReturn(Optional.empty());
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.leaveExpertGroup(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        Assertions.assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadExpertGroupOwnerPort);
+    }
+
+    @Test
+    void tesLeaveExpertGroup_WhenUserUserIsExpertGroupOwner_ShouldThrowAccessDeniedException() {
+        var param = createParam(b -> b.currentUserId(currentUserId));
+
+        when(loadExpertGroupAccessPort.loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId()))
+            .thenReturn(Optional.of(mock(ExpertGroupAccess.class)));
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(currentUserId);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.leaveExpertGroup(param));
+        Assertions.assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
@@ -50,13 +69,12 @@ class LeaveExpertGroupServiceTest {
 
         when(loadExpertGroupAccessPort.loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId()))
             .thenReturn(Optional.ofNullable(mock(ExpertGroupAccess.class)));
+        when(loadExpertGroupOwnerPort.loadOwnerId(param.getExpertGroupId())).thenReturn(UUID.randomUUID());
 
         service.leaveExpertGroup(param);
 
-        verify(loadExpertGroupAccessPort, times(1)).loadExpertGroupAccess(param.getExpertGroupId(), param.getCurrentUserId());
+        verify(deleteExpertGroupMemberPort, times(1)).deleteMember(param.getExpertGroupId(), param.getCurrentUserId());
     }
-
-
 
     private LeaveExpertGroupUseCase.Param createParam(Consumer<LeaveExpertGroupUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
