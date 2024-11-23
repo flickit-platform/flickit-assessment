@@ -3,6 +3,7 @@ package org.flickit.assessment.users.adapter.in.rest.expertgroupaccess;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.users.application.port.in.expertgroupaccess.LeaveExpertGroupUseCase;
+import org.flickit.assessment.users.application.port.in.expertgroupaccess.LeaveExpertGroupUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +27,7 @@ public class LeaveExpertGroupRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    private LeaveExpertGroupUseCase.Param toParam(Long id, UUID currentUserId) {
-        return new LeaveExpertGroupUseCase.Param(id, currentUserId);
+    private Param toParam(Long id, UUID currentUserId) {
+        return new Param(id, currentUserId);
     }
 }
