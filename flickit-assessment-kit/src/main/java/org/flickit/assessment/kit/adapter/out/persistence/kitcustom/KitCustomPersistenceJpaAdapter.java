@@ -5,18 +5,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.customkit.KitCustomJpaEntity;
-import org.flickit.assessment.data.jpa.kit.customkit.KitCustomJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
+import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.LoadKitCustomPort;
+import org.flickit.assessment.kit.application.port.out.kitcustom.UpdateKitCustomPort;
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_CUSTOM_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
-public class KitCustomPersistenceJpaAdapter implements CreateKitCustomPort, LoadKitCustomPort {
+public class KitCustomPersistenceJpaAdapter implements
+    CreateKitCustomPort,
+    LoadKitCustomPort,
+    UpdateKitCustomPort {
 
     private final KitCustomJpaRepository repository;
     private final KitDbSequenceGenerators sequenceGenerators;
@@ -24,7 +30,7 @@ public class KitCustomPersistenceJpaAdapter implements CreateKitCustomPort, Load
 
     @Override
     @SneakyThrows
-    public long persist(Param param) {
+    public long persist(CreateKitCustomPort.Param param) {
         String kitCustomJson = objectMapper.writeValueAsString(param.customData());
         KitCustomJpaEntity entity = KitCustomMapper.mapToJpaEntity(param, kitCustomJson);
         entity.setId(sequenceGenerators.generateKitCustomId());
@@ -33,11 +39,25 @@ public class KitCustomPersistenceJpaAdapter implements CreateKitCustomPort, Load
 
     @Override
     @SneakyThrows
-    public Result loadById(long kitCustomId) {
+    public LoadKitCustomPort.Result loadById(long kitCustomId) {
         var kitCustomEntity = repository.findById(kitCustomId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
 
         KitCustomData customData = objectMapper.readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
-        return new Result(kitCustomId, kitCustomEntity.getTitle(), kitCustomEntity.getKitId(), customData);
+        return new LoadKitCustomPort.Result(kitCustomId, kitCustomEntity.getTitle(), kitCustomEntity.getKitId(), customData);
+    }
+
+    @Override
+    public void update(UpdateKitCustomPort.Param param) {
+        if (!repository.existsByIdAndKitId(param.id(), param.kitId()))
+            throw new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND);
+
+        repository.update(param.id(),
+            param.title(),
+            param.code(),
+            param.customData(),
+            param.lastModificationTime(),
+            param.lastModifiedBy()
+        );
     }
 }
