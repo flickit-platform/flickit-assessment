@@ -51,7 +51,7 @@ class GetKitCustomDataServiceTest {
     private LoadKitCustomPort loadKitCustomPort;
 
     @Test
-    void testGetCustomData_WhenKitIsPrivateAndCurrentUserHasNoAccessToKit_ThenThrowAccessDeniedException() {
+    void testGetKitCustomSubject_WhenKitIsPrivateAndCurrentUserHasNoAccessToKit_ThenThrowAccessDeniedException() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
 
@@ -65,7 +65,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetCustomData_WhenKitIsPublicButRequestedKitCustomIsNotValidForKit_ThenThrowValidationException() {
+    void testGetKitCustomSubject_WhenKitIsPublicButRequestedKitCustomIsNotValidForKit_ThenThrowValidationException() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
@@ -86,7 +86,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetCustomData_WhenKitIsPrivateAndCurrentUserHasAccessToKitAndAllSubjectAndAttributesCustomized_ThenGetKitCustomData() {
+    void testGetKitCustomSubject_WhenKitIsPrivateAndCurrentUserHasAccessToKitAndAllSubjectAndAttributesCustomized_ThenGetKitCustomData() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
 
@@ -136,7 +136,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetKitCustomData_WhenKitIsPublicAndAllSubjectAndAttributesCustomized_ThenGetKitCustomData() {
+    void testGetKitCustomSubject_WhenKitIsPublicAndAllSubjectAndAttributesCustomized_ThenGetKitCustomData() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
@@ -187,7 +187,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetKitCustomData_WhenKitIsPublicAndJustOneAttributeCustomized_ThenGetKitCustomData() {
+    void testGetKitCustomSubject_WhenKitIsPublicAndJustOneAttributeCustomized_ThenGetKitCustomData() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
@@ -246,7 +246,7 @@ class GetKitCustomDataServiceTest {
     }
 
     @Test
-    void testGetKitCustomData_WhenKitIsPublicAndJustOneSubjectCustomized_ThenGetKitCustomData() {
+    void testGetKitCustomSubject_WhenKitIsPublicAndJustOneSubjectCustomized_ThenGetKitCustomData() {
         var param = createParam(GetKitCustomSubjectUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.simpleKit();
 
