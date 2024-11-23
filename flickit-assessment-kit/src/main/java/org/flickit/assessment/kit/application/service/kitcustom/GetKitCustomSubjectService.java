@@ -39,10 +39,12 @@ public class GetKitCustomSubjectService implements GetKitCustomSubjectUseCase {
         Map<Long, Integer> attributeIdToWeight;
         if (param.getKitCustomId() != null) {
             var kitCustom = loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId());
-            subjectIdToWeight = kitCustom.customData().subjects().stream()
-                    .collect(Collectors.toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
-            attributeIdToWeight = kitCustom.customData().attributes().stream()
-                    .collect(Collectors.toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+
+            subjectIdToWeight = kitCustom.customData().subjects() != null ? kitCustom.customData().subjects().stream()
+                .collect(Collectors.toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight)) : new HashMap<>();
+
+            attributeIdToWeight = kitCustom.customData().attributes() != null ? kitCustom.customData().attributes().stream()
+                .collect(Collectors.toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight)) : new HashMap<>();
         } else {
             subjectIdToWeight = new HashMap<>();
             attributeIdToWeight = new HashMap<>();
