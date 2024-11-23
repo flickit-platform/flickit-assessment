@@ -68,11 +68,12 @@
 
     <changeSet id="0.36-07" author="Maziyar Gerami">
         <addColumn tableName="fak_kit_version">
-            <column name="status_version" type="bigint" valueComputed="CASE
-            WHEN status = 0 THEN 0
-            WHEN status = 1 THEN 1
-            WHEN status = 2 THEN -id
-        END"/>
+            <column name="status_version" type="bigint" valueComputed="
+            CASE
+                WHEN status = 0 THEN 0
+                WHEN status = 1 THEN 1
+                WHEN status = 2 THEN -id
+            END"/>
         </addColumn>
     </changeSet>
 
