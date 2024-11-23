@@ -2342,7 +2342,7 @@
 					"response": []
 				},
 				{
-					"name": "Get Kit Custom Data",
+					"name": "Get Kit Custom Subject",
 					"request": {
 						"method": "GET",
 						"header": [
