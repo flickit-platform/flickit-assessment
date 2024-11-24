@@ -14,6 +14,7 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -51,6 +52,7 @@ public class AssessmentPersistenceJpaAdapter implements
     private final AssessmentKitJpaRepository kitRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final KitVersionJpaRepository kitVersionRepository;
+    private final KitCustomJpaRepository kitCustomRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -233,8 +235,11 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public void updateKitCustomId(UUID id, long kitCustomId) {
-        if (!repository.existsByIdAndDeletedFalse(id))
-            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
+        AssessmentKitSpaceJoinView view = repository.findByIdAndDeletedFalse(id)
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+
+        if (!kitCustomRepository.existsByIdAndKitId(kitCustomId, view.getKit().getId()))
+            throw new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND);
 
         repository.updateKitCustomId(id, kitCustomId);
     }
