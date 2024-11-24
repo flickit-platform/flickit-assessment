@@ -465,6 +465,7 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS = "validate-kit-version.answerRange.lowOptions";
     public static final String VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.attribute-question-impact.notNull";
     public static final String VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL = "validate-kit-version.subject-attribute.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL = "validate-kit-version.questionnaire-question.notNull";
     public static final String VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL = "validate-kit-version.subject.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTION_NOT_NULL= "validate-kit-version.question.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL= "validate-kit-version.questionnaire.notNull";
