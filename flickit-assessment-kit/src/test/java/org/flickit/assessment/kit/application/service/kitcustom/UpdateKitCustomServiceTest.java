@@ -2,12 +2,15 @@ package org.flickit.assessment.kit.application.service.kitcustom;
 
 import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitFullInfoPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.UpdateKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
+import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
+import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -21,6 +24,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_CUSTOM_UNRELATED_ATTRIBUTE_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_CUSTOM_UNRELATED_SUBJECT_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,10 +50,9 @@ class UpdateKitCustomServiceTest {
     @Captor
     private ArgumentCaptor<UpdateKitCustomPort.Param> portParamCaptor;
 
-    private final UpdateKitCustomUseCase.Param param = createParam(UpdateKitCustomUseCase.Param.ParamBuilder::build);
-
     @Test
     void testUpdateKitCustom_WhenKitIsPrivateAndUserHasNotAccess_ThenThrowAccessDeniedException() {
+        var param = createParam(UpdateKitCustomUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
 
         when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
@@ -60,7 +64,13 @@ class UpdateKitCustomServiceTest {
 
     @Test
     void testUpdateKitCustom_WhenKitIsPrivateAndCurrentUserHasAccessToKit_ThenCreateKitCustom() {
-        AssessmentKit kit = AssessmentKitMother.privateKit();
+        var attribute = AttributeMother.attributeWithTitle("flexibility");
+        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
+        var kit = AssessmentKitMother.kitWithSubjects(List.of(subject), true);
+        var customSubject = new UpdateKitCustomService.Param.KitCustomData.CustomSubject(subject.getId(), 1);
+        var customAttribute = new UpdateKitCustomService.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
+        var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
+        var param = createParam(b -> b.customData(customData));
 
         when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
@@ -72,7 +82,13 @@ class UpdateKitCustomServiceTest {
 
     @Test
     void testUpdateKitCustom_WhenKitIsPublic_ThenCreateKitCustom() {
-        AssessmentKit kit = AssessmentKitMother.simpleKit();
+        var attribute = AttributeMother.attributeWithTitle("flexibility");
+        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
+        var kit = AssessmentKitMother.kitWithSubjects(List.of(subject));
+        var customSubject = new UpdateKitCustomService.Param.KitCustomData.CustomSubject(subject.getId(), 1);
+        var customAttribute = new UpdateKitCustomService.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
+        var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
+        var param = createParam(b -> b.customData(customData));
 
         when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
         doNothing().when(updateKitCustomPort).update(any(UpdateKitCustomPort.Param.class));
@@ -81,6 +97,42 @@ class UpdateKitCustomServiceTest {
         assertUpdateKitCustomPortParamMapping(param);
 
         verifyNoInteractions(checkKitUserAccessPort);
+    }
+
+    @Test
+    void testUpdateKitCustom_WhenKitIsPublicButSubjectCustomIsNotRelatedToKit_ThenThrowValidationException() {
+        var attribute = AttributeMother.attributeWithTitle("flexibility");
+        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
+        var kit = AssessmentKitMother.kitWithSubjects(List.of(subject));
+        var customSubject = new UpdateKitCustomService.Param.KitCustomData.CustomSubject(1L, 1);
+        var customAttribute = new UpdateKitCustomService.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
+        var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
+        var param = createParam(b -> b.customData(customData));
+
+        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.updateKitCustom(param));
+        assertEquals(UPDATE_KIT_CUSTOM_UNRELATED_SUBJECT_NOT_ALLOWED, throwable.getMessageKey());
+
+        verifyNoInteractions(checkKitUserAccessPort, updateKitCustomPort);
+    }
+
+    @Test
+    void testUpdateKitCustom_WhenKitIsPublicButAttributeCustomIsNotRelatedToKit_ThenThrowValidationException() {
+        var attribute = AttributeMother.attributeWithTitle("flexibility");
+        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
+        var kit = AssessmentKitMother.kitWithSubjects(List.of(subject));
+        var customSubject = new UpdateKitCustomService.Param.KitCustomData.CustomSubject(subject.getId(), 1);
+        var customAttribute = new UpdateKitCustomService.Param.KitCustomData.CustomAttribute(1L, 5);
+        var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
+        var param = createParam(b -> b.customData(customData));
+
+        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+
+        var throwable = assertThrows(ValidationException.class, () -> service.updateKitCustom(param));
+        assertEquals(UPDATE_KIT_CUSTOM_UNRELATED_ATTRIBUTE_NOT_ALLOWED, throwable.getMessageKey());
+
+        verifyNoInteractions(checkKitUserAccessPort, updateKitCustomPort);
     }
 
     private void assertUpdateKitCustomPortParamMapping(UpdateKitCustomUseCase.Param param) {

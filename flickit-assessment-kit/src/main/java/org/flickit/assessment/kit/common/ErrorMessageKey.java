@@ -479,6 +479,8 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_CUSTOM_SUBJECT_WEIGHT_NOT_NULL = "update-kit-custom.subjectWeight.notNull";
     public static final String UPDATE_KIT_CUSTOM_ATTRIBUTE_ID_NOT_NULL = "update-kit-custom.attributeId.notNull";
     public static final String UPDATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL = "update-kit-custom.attributeWeight.notNull";
+    public static final String UPDATE_KIT_CUSTOM_UNRELATED_SUBJECT_NOT_ALLOWED = "update-kit-custom.unrelatedSubject.notAllowed";
+    public static final String UPDATE_KIT_CUSTOM_UNRELATED_ATTRIBUTE_NOT_ALLOWED = "update-kit-custom.unrelatedAttribute.notAllowed";
 
     public static final String GET_KIT_CUSTOM_SUBJECT_KIT_ID_NOT_NULL = "get-kit-custom-subject.kitId.notNull";
     public static final String GET_KIT_CUSTOM_SUBJECT_PAGE_MIN = "get-kit-custom-subject.page.min";
