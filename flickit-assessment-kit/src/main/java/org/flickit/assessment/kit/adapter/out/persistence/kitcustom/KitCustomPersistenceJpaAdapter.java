@@ -37,7 +37,7 @@ public class KitCustomPersistenceJpaAdapter implements
 
     @Override
     @SneakyThrows
-    public LoadKitCustomPort.Result loadById(long kitCustomId, long kitId) {
+    public LoadKitCustomPort.Result loadByIdAndKitId(long kitCustomId, long kitId) {
         var kitCustomEntity = repository.findByIdAndKitId(kitCustomId, kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
 

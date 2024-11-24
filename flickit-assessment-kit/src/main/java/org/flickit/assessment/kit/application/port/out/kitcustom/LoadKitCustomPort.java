@@ -4,7 +4,7 @@ import org.flickit.assessment.kit.application.domain.KitCustomData;
 
 public interface LoadKitCustomPort {
 
-    Result loadById(long kitCustomId, long kitId);
+    Result loadByIdAndKitId(long kitCustomId, long kitId);
 
     record Result(long id, String title, long kitId, KitCustomData customData) {}
 }

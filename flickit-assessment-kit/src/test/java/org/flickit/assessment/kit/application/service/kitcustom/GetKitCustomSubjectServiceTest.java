@@ -83,7 +83,7 @@ class GetKitCustomSubjectServiceTest {
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
-        when(loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
+        when(loadKitCustomPort.loadByIdAndKitId(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
         when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
@@ -134,7 +134,7 @@ class GetKitCustomSubjectServiceTest {
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
+        when(loadKitCustomPort.loadByIdAndKitId(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
         when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
@@ -187,7 +187,7 @@ class GetKitCustomSubjectServiceTest {
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
+        when(loadKitCustomPort.loadByIdAndKitId(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
         when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
@@ -249,7 +249,7 @@ class GetKitCustomSubjectServiceTest {
             1);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadKitCustomPort.loadById(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
+        when(loadKitCustomPort.loadByIdAndKitId(param.getKitCustomId(), param.getKitId())).thenReturn(kitCustom);
         when(loadSubjectsPort.loadWithAttributesByKitVersionId(kit.getActiveVersionId(),
             param.getPage(),
             param.getSize())).thenReturn(paginatedResponse);
