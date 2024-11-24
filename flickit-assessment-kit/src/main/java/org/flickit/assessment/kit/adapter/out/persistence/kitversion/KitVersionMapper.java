@@ -15,12 +15,11 @@ import java.time.LocalDateTime;
 public class KitVersionMapper {
 
     public static KitVersionJpaEntity createParamToJpaEntity(Long id, AssessmentKitJpaEntity kit, CreateKitVersionPort.Param param) {
-        var statusVersion = param.status() == KitVersionStatus.ARCHIVE ? -id : param.status().getId();
         return new KitVersionJpaEntity(
             id,
             kit,
             param.status().getId(),
-            statusVersion,
+            mapKitVersionToVersionStatus(param.status(), id),
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
@@ -36,5 +35,9 @@ public class KitVersionMapper {
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
             entity.getLastModifiedBy());
+    }
+
+    public static long mapKitVersionToVersionStatus(KitVersionStatus status, long id){
+        return status == KitVersionStatus.ARCHIVE ? -id : status.getId();
     }
 }
