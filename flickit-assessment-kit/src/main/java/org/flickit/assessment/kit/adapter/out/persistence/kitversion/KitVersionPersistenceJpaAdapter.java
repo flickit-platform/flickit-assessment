@@ -45,7 +45,7 @@ public class KitVersionPersistenceJpaAdapter implements
 
     @Override
     public void updateStatus(long kitVersionId, KitVersionStatus newStatus) {
-        long statusVersion = newStatus.getId() == 2 ? -kitVersionId : newStatus.getId();
+        long statusVersion = newStatus == KitVersionStatus.ARCHIVE ? -kitVersionId : newStatus.getId();
         repository.updateStatus(kitVersionId, newStatus.getId(), statusVersion);
     }
 
