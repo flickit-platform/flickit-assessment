@@ -23,5 +23,5 @@ public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEnti
         """)
     void updateStatus(@Param("id") long kitVersionId,
                       @Param("status") int status,
-                      @Param("statusVersion") long statusVersion);
+                      @Param("statusVersion") Long statusVersion);
 }
