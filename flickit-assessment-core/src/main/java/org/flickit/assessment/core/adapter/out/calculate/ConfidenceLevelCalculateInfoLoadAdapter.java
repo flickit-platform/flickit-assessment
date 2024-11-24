@@ -3,11 +3,13 @@ package org.flickit.assessment.core.adapter.out.calculate;
 import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.kitcustom.KitCustomPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
+import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomPort.KitCustomData;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -46,6 +48,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final KitCustomPersistenceJpaAdapter kitCustomJpaAdapter;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<AttributeValueJpaEntity> allAttributeValueEntities,
@@ -66,8 +69,23 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         var subjectValueEntities = subjectValueRepo.findByAssessmentResultId(assessmentResultId);
         var allAttributeValueEntities = attributeValueRepo.findByAssessmentResultId(assessmentResultId);
 
+        AssessmentJpaEntity assessment = assessmentResultEntity.getAssessment();
+        Long kitCustomId = assessment.getKitCustomId();
+        KitCustomData kitCustomData = null;
+        if (kitCustomId != null) {
+            kitCustomData = kitCustomJpaAdapter.loadCustomDataByIdAndKitId(kitCustomId, assessment.getAssessmentKitId());
+        }
+
         // load all subjects and their related attributes (by assessmentKit)
         List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        if (kitCustomData != null && kitCustomData.subjects() != null) {
+            Map<Long, Integer> subjectIdToWeight = kitCustomData.subjects().stream()
+                .collect(toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
+            subjectEntities.forEach(e -> {
+                if (subjectIdToWeight.containsKey(e.getId()))
+                    e.setWeight(subjectIdToWeight.get(e.getId()));
+            });
+        }
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
@@ -82,9 +100,16 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             allAttributeValueEntities,
             impactfulQuestions);
 
-        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context, subjectEntities, kitVersionId);
+        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context,
+            subjectEntities,
+            kitCustomData,
+            kitVersionId);
 
-        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue, subjectEntities, subjectValueEntities, kitVersionId);
+        List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue,
+            subjectEntities,
+            subjectValueEntities,
+            kitCustomData,
+            kitVersionId);
 
         return new AssessmentResult(
             assessmentResultId,
@@ -122,9 +147,20 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param kitVersionId the intended version of kit
      * @return a map of each attributeId to it's corresponding attributeValue
      */
-    private Map<Long, AttributeValue> buildAttributeValues(Context context, List<SubjectJpaEntity> subjectEntities, long kitVersionId) {
+    private Map<Long, AttributeValue> buildAttributeValues(Context context,
+                                                           List<SubjectJpaEntity> subjectEntities,
+                                                           KitCustomData kitCustomData,
+                                                           long kitVersionId) {
         List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
+        if (kitCustomData != null && kitCustomData.attributes() != null) {
+            Map<Long, Integer> attributeIdToWeight = kitCustomData.attributes().stream()
+                .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+            attributeEntities.forEach(e -> {
+                if (attributeIdToWeight.containsKey(e.getId()))
+                    e.setWeight(attributeIdToWeight.get(e.getId()));
+            });
+        }
 
         Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
@@ -207,14 +243,25 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param kitVersionId         the intended version of kit
      * @return list of subjectValues
      */
-    private List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue, List<SubjectJpaEntity> subjectEntities,
-                                                  List<SubjectValueJpaEntity> subjectValueEntities, long kitVersionId) {
+    private List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue,
+                                                  List<SubjectJpaEntity> subjectEntities,
+                                                  List<SubjectValueJpaEntity> subjectValueEntities,
+                                                  KitCustomData kitCustomData,
+                                                  long kitVersionId) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
 
         List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
+        if (kitCustomData != null && kitCustomData.attributes() != null) {
+            Map<Long, Integer> attributeIdToWeight = kitCustomData.attributes().stream()
+                .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+            attributeEntities.forEach(e -> {
+                if (attributeIdToWeight.containsKey(e.getId()))
+                    e.setWeight(attributeIdToWeight.get(e.getId()));
+            });
+        }
         Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
