@@ -4,6 +4,6 @@ public interface CountKitVersionStatsPort {
 
     Result countKitVersionStats(long kitVersionId);
 
-    record Result(int subjectCount, int questionnairesCount, int questionsCount, int maturityLevelsCount) {
+    record Result(int subjectCount, int questionnaireCount, int questionCount, int maturityLevelCount) {
     }
 }
