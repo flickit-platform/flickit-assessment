@@ -458,6 +458,8 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_CUSTOM_ATTRIBUTE_ID_NOT_NULL = "create-kit-custom.attributeId.notNull";
     public static final String CREATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL = "create-kit-custom.attributeWeight.notNull";
     public static final String CREATE_KIT_CUSTOM_TITLE_DUPLICATE = "create-kit-custom.title.duplicate";
+    public static final String CREATE_KIT_CUSTOM_UNRELATED_SUBJECT_NOT_ALLOWED = "create-kit-custom.unrelatedSubject.notAllowed";
+    public static final String CREATE_KIT_CUSTOM_UNRELATED_ATTRIBUTE_NOT_ALLOWED = "create-kit-custom.unrelatedAttribute.notAllowed";
 
     public static final String VALIDATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "validate-kit-version.kitVersionId.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL = "validate-kit-version.question-answer-range.notNull";
