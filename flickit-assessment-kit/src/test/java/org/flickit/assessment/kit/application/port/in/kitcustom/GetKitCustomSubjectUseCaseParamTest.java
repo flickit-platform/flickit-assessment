@@ -12,49 +12,43 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class GetKitCustomDataUseCaseParamTest {
+class GetKitCustomSubjectUseCaseParamTest {
 
     @Test
-    void testGetKitCustomDataUseCaseParam_kitIdParamViolatesConstraints_ErrorMessage() {
+    void testGetKitCustomSubjectUseCaseParam_kitIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.kitId(null)));
-        assertThat(throwable).hasMessage("kitId: " + GET_KIT_CUSTOM_DATA_KIT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("kitId: " + GET_KIT_CUSTOM_SUBJECT_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testGetKitCustomDataUseCaseParam_kitCustomIdParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.kitCustomId(null)));
-        assertThat(throwable).hasMessage("kitCustomId: " + GET_KIT_CUSTOM_DATA_KIT_CUSTOM_ID_NOT_NULL);
-    }
-
-    @Test
-    void testGetKitCustomDataUseCaseParam_pageParamViolatesConstraints_ErrorMessage() {
+    void testGetKitCustomSubjectUseCaseParam_pageParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.page(-1)));
-        assertThat(throwable).hasMessage("page: " + GET_KIT_CUSTOM_DATA_PAGE_MIN);
+        assertThat(throwable).hasMessage("page: " + GET_KIT_CUSTOM_SUBJECT_PAGE_MIN);
     }
 
     @Test
-    void testGetKitCustomDataUseCaseParam_sizeParamViolatesConstraints_ErrorMessage() {
+    void testGetKitCustomSubjectUseCaseParam_sizeParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.size(-1)));
-        assertThat(throwable).hasMessage("size: " + GET_KIT_CUSTOM_DATA_SIZE_MIN);
+        assertThat(throwable).hasMessage("size: " + GET_KIT_CUSTOM_SUBJECT_SIZE_MIN);
 
         throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.size(101)));
-        assertThat(throwable).hasMessage("size: " + GET_KIT_CUSTOM_DATA_SIZE_MAX);
+        assertThat(throwable).hasMessage("size: " + GET_KIT_CUSTOM_SUBJECT_SIZE_MAX);
     }
 
     @Test
-    void testGetKitCustomDataUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
+    void testGetKitCustomSubjectUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class, () -> createParam(b -> b.currentUserId(null)));
         AssertionsForClassTypes.assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private void createParam(Consumer<GetKitCustomDataUseCase.Param.ParamBuilder> changer) {
+    private void createParam(Consumer<GetKitCustomSubjectUseCase.Param.ParamBuilder> changer) {
         var param = paramBuilder();
         changer.accept(param);
         param.build();
     }
 
-    private GetKitCustomDataUseCase.Param.ParamBuilder paramBuilder() {
-        return GetKitCustomDataUseCase.Param.builder()
+    private GetKitCustomSubjectUseCase.Param.ParamBuilder paramBuilder() {
+        return GetKitCustomSubjectUseCase.Param.builder()
             .kitId(1L)
             .kitCustomId(2L)
             .currentUserId(UUID.randomUUID())

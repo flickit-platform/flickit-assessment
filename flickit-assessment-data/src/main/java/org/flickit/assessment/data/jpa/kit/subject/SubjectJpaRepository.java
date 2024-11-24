@@ -2,7 +2,6 @@ package org.flickit.assessment.data.jpa.kit.subject;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -104,9 +103,10 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
     @Query("""
         SELECT s as subject,
                a as attribute
-        FROM SubjectJpaEntity s JOIN AttributeJpaEntity a
-                ON  s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
+        FROM SubjectJpaEntity s
+        JOIN AttributeJpaEntity a ON  s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
         WHERE s.kitVersionId = :kitVersionId
+        ORDER BY s.index
         """)
-    Page<SubjectJoinAttributeView> findWithAttributesByKitVersionId(Long kitVersionId, Pageable pageable);
+    List<SubjectJoinAttributeView> findWithAttributesByKitVersionId(Long kitVersionId);
 }
