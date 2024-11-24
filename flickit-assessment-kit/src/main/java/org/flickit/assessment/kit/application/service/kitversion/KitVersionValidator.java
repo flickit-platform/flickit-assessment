@@ -56,11 +56,11 @@ public class KitVersionValidator {
         var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
         if (kitVersionCounts.subjectCount() == 0)
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL));
-        if (kitVersionCounts.questionsCount() == 0)
+        if (kitVersionCounts.questionCount() == 0)
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL));
-        if (kitVersionCounts.questionnairesCount() == 0)
+        if (kitVersionCounts.questionnaireCount() == 0)
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL));
-        if (kitVersionCounts.maturityLevelsCount() == 0)
+        if (kitVersionCounts.maturityLevelCount() == 0)
             errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL));
 
         return errors;
