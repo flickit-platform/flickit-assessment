@@ -6,7 +6,10 @@ import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomU
 import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +22,17 @@ public class UpdateKitCustomRestController {
     private final UpdateKitCustomUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessment-kits/{kitId}/kit-customs/{kitCustomId}")
-    public ResponseEntity<Void> updateKitCustom(@PathVariable("kitId") Long kitId,
-                                                @PathVariable("kitCustomId") Long kitCustomId,
+    @PutMapping("/kit-customs/{kitCustomId}")
+    public ResponseEntity<Void> updateKitCustom(@PathVariable("kitCustomId") Long kitCustomId,
                                                 @RequestBody UpdateKitCustomRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.updateKitCustom(toParam(kitCustomId, kitId, currentUserId, requestDto));
+        useCase.updateKitCustom(toParam(kitCustomId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private static Param toParam(Long kitCustomId,
-                                 Long kitId,
-                                 UUID currentUserId,
-                                 UpdateKitCustomRequestDto requestDto) {
+                                 UpdateKitCustomRequestDto requestDto,
+                                 UUID currentUserId) {
         Param.KitCustomData customData = null;
         var customDataDto = requestDto.customData();
         if (customDataDto != null) {
@@ -50,6 +51,6 @@ public class UpdateKitCustomRestController {
             customData = new Param.KitCustomData(subjects, attributes);
         }
 
-        return new Param(kitCustomId, kitId, requestDto.title(), customData, currentUserId);
+        return new Param(kitCustomId, requestDto.kitId(), requestDto.title(), customData, currentUserId);
     }
 }
