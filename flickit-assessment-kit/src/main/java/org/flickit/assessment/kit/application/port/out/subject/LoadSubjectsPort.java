@@ -29,4 +29,6 @@ public interface LoadSubjectsPort {
     PaginatedResponse<Subject> loadPaginatedByKitVersionId(long kitVersionId, int page, int size);
 
     List<Subject> loadSubjectsWithoutAttribute(long kitVersionId);
+
+    PaginatedResponse<Subject> loadWithAttributesByKitVersionId(long kitVersionId, int page, int size);
 }
