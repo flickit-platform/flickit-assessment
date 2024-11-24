@@ -96,6 +96,11 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<Questionnaire> loadQuestionnairesWithoutQuestion(long kitVersionId) {
+        return List.of();
+    }
+
+    @Override
     public PaginatedResponse<LoadQuestionnairesPort.Result> loadAllByKitVersionId(long kitVersionId, int page, int size) {
         var pageResult = repository.findAllWithQuestionCountByKitVersionId(kitVersionId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()

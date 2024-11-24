@@ -7,6 +7,7 @@ import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRan
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class KitVersionValidator {
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadAttributesPort loadAttributesPort;
     private final CountKitVersionStatsPort countKitVersionStatsPort;
+    private final LoadQuestionnairesPort loadQuestionnairesPort;
 
     public List<String> validate(long kitVersionId) {
         List<String> errors = new LinkedList<>();
@@ -51,6 +53,11 @@ public class KitVersionValidator {
         errors.addAll(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))
+            .toList());
+
+        errors.addAll(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, e.getTitle()))
             .toList());
 
         var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
