@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
+import org.flickit.assessment.kit.application.domain.KitCustom;
 import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.LoadKitCustomPort;
@@ -43,6 +44,16 @@ public class KitCustomPersistenceJpaAdapter implements
 
         KitCustomData customData = objectMapper.readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
         return new LoadKitCustomPort.Result(kitCustomId, kitCustomEntity.getTitle(), kitCustomEntity.getKitId(), customData);
+    }
+
+    @Override
+    @SneakyThrows
+    public KitCustom load(long kitCustomId) {
+        var entity = repository.findById(kitCustomId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
+
+        KitCustomData customData = objectMapper.readValue(entity.getCustomData(), KitCustomData.class);
+        return KitCustomMapper.mapToDomain(entity, customData);
     }
 
     @Override

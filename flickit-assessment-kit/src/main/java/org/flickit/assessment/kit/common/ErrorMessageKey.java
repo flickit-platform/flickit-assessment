@@ -483,6 +483,8 @@ public class ErrorMessageKey {
     public static final String GET_KIT_CUSTOM_SUBJECT_SIZE_MIN = "get-kit-custom-subject.size.min";
     public static final String GET_KIT_CUSTOM_SUBJECT_SIZE_MAX = "get-kit-custom-subject.size.max";
 
+    public static final String GET_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "get-kit-custom.kitCustomId.notNull";
+
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
     }
