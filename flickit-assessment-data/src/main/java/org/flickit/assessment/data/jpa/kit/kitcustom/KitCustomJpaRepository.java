@@ -6,11 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface KitCustomJpaRepository extends JpaRepository<KitCustomJpaEntity, Long> {
 
     boolean existsByIdAndKitId(long id, long kitId);
+
+    Optional<KitCustomJpaEntity> findByIdAndKitId(long id, long kitId);
 
     @Modifying
     @Query("""

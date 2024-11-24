@@ -2319,7 +2319,7 @@
 						],
 						"body": {
 							"mode": "raw",
-                          "raw": "{\n    \"kitId\": 393,\n    \"title\": \"test kit custom\",\n    \"customData\": {\n        \"subjects\": [\n            {\n                \"id\": 1000,\n                \"weight\": 1\n            }\n        ],\n        \"attributes\": [\n            {\n                \"id\": 200,\n                \"weight\": 2\n            }\n        ]\n    }\n}",
+                          "raw": "{\n    \"kitId\": 393,\n    \"title\": \"test kit custom\",\n    \"customData\": {\n        \"subjects\": [\n            {\n                \"id\": 540,\n                \"weight\": 2\n            }\n        ],\n        \"attributes\": [\n            {\n                \"id\": 2011,\n                \"weight\": 2\n            }\n        ]\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2334,6 +2334,38 @@
 							"path": [
 								"{{api_path}}",
 								"kit-customs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kit Custom Subject",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/399/custom-subjects?kitCustomId=6",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"399",
+								"custom-subjects"
+							],
+							"query": [
+								{
+									"key": "kitCustomId",
+									"value": "6"
+								}
 							]
 						}
 					},

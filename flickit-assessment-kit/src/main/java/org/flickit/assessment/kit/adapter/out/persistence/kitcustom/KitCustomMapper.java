@@ -8,12 +8,12 @@ import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustom
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KitCustomMapper {
 
-    public static KitCustomJpaEntity mapToJpaEntity(CreateKitCustomPort.Param param) {
+    public static KitCustomJpaEntity mapToJpaEntity(CreateKitCustomPort.Param param, String kitCustomJson) {
         return new KitCustomJpaEntity(null,
             param.kitId(),
             param.title(),
             param.code(),
-            param.customData(),
+            kitCustomJson,
             param.creationTime(),
             param.creationTime(),
             param.createdBy(),
