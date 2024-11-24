@@ -1,18 +1,19 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.kitcustom.KitCustomPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadCalculateInfoPort;
-import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomPort.KitCustomData;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -28,6 +29,7 @@ import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpact
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.OptionImpactWithQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -43,6 +45,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.KIT_CUSTOM_ID_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -58,7 +61,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
-    private final KitCustomPersistenceJpaAdapter kitCustomJpaAdapter;
+    private final KitCustomJpaRepository kitCustomRepository;
+    private final ObjectMapper objectMapper;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<AnswerOptionJpaEntity> allAnswerOptionsEntities,
@@ -68,6 +72,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     }
 
     @Override
+    @SneakyThrows
     public AssessmentResult load(UUID assessmentId) {
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
@@ -85,7 +90,9 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         Long kitCustomId = assessment.getKitCustomId();
         KitCustomData kitCustomData = null;
         if (kitCustomId != null) {
-            kitCustomData = kitCustomJpaAdapter.loadCustomDataByIdAndKitId(kitCustomId, assessment.getAssessmentKitId());
+            var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, assessment.getAssessmentKitId())
+                .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
+            kitCustomData = objectMapper.readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
         }
 
         // load all subjects by kitVersionId

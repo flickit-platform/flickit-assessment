@@ -1,15 +1,16 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.kitcustom.KitCustomPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.subject.SubjectMapper;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadConfidenceLevelCalculateInfoPort;
-import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomPort.KitCustomData;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
@@ -21,6 +22,7 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -36,6 +38,7 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.KIT_CUSTOM_ID_NOT_FOUND;
 
 @Component
 @AllArgsConstructor
@@ -48,7 +51,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     private final QuestionJpaRepository questionRepository;
     private final SubjectJpaRepository subjectRepository;
     private final AttributeJpaRepository attributeRepository;
-    private final KitCustomPersistenceJpaAdapter kitCustomJpaAdapter;
+    private final KitCustomJpaRepository kitCustomRepository;
+    private final ObjectMapper objectMapper;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<AttributeValueJpaEntity> allAttributeValueEntities,
@@ -56,6 +60,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
     }
 
     @Override
+    @SneakyThrows
     public AssessmentResult load(UUID assessmentId) {
         AssessmentResultJpaEntity assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(CALCULATE_CONFIDENCE_ASSESSMENT_RESULT_NOT_FOUND));
@@ -73,7 +78,9 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         Long kitCustomId = assessment.getKitCustomId();
         KitCustomData kitCustomData = null;
         if (kitCustomId != null) {
-            kitCustomData = kitCustomJpaAdapter.loadCustomDataByIdAndKitId(kitCustomId, assessment.getAssessmentKitId());
+            var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, assessment.getAssessmentKitId())
+                .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
+            kitCustomData = objectMapper.readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
         }
 
         // load all subjects and their related attributes (by assessmentKit)
