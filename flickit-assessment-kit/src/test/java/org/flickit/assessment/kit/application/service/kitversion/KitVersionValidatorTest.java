@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.kitversion;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,9 @@ class KitVersionValidatorTest {
     @Mock
     private LoadAttributesPort loadAttributesPort;
 
+    @Mock
+    private CountKitVersionStatsPort countKitVersionStatsPort;
+
     @Test
     void testValidate() {
         var kitKitVersionId = 123L;
@@ -57,8 +61,10 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, listOfAnswerRanges.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getLast().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, listOfAttributes.getFirst().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, listOfAttributes.getLast().getTitle())
+            MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL, listOfAttributes.getFirst().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL, listOfAttributes.getLast().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL, listOfAttributes.getLast().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL, listOfAttributes.getLast().getTitle())
         );
 
         when(loadQuestionsPort.loadQuestionsWithoutImpact(kitKitVersionId)).thenReturn(loadQuestionsPortResult);
@@ -66,9 +72,10 @@ class KitVersionValidatorTest {
         when(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitKitVersionId)).thenReturn(listOfAnswerRanges);
         when(loadSubjectsPort.loadSubjectsWithoutAttribute(kitKitVersionId)).thenReturn(listOfSubjects);
         when(loadAttributesPort.loadUnimpactedAttributes(kitKitVersionId)).thenReturn(listOfAttributes);
+        when(countKitVersionStatsPort.countKitVersionStats(kitKitVersionId)).thenReturn(new CountKitVersionStatsPort.Result(0, 0, 0, 0));
 
         var result = validator.validate(kitKitVersionId);
-        assertEquals(9, result.size());
+        assertEquals(13, result.size());
         assertThat(result).containsAll(expectedErrors);
     }
 }

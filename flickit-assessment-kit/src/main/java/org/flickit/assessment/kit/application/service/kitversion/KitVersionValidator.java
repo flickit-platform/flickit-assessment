@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
+import org.flickit.assessment.kit.application.port.out.kitversion.CountKitVersionStatsPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class KitVersionValidator {
     private final LoadAnswerRangesPort loadAnswerRangesPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadAttributesPort loadAttributesPort;
+    private final CountKitVersionStatsPort countKitVersionStatsPort;
 
     public List<String> validate(long kitVersionId) {
         List<String> errors = new LinkedList<>();
@@ -50,6 +52,16 @@ public class KitVersionValidator {
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))
             .toList());
+
+        var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
+        if (kitVersionCounts.subjectCount() == 0)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL));
+        if (kitVersionCounts.questionsCount() == 0)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL));
+        if (kitVersionCounts.questionnairesCount() == 0)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL));
+        if (kitVersionCounts.maturityLevelsCount() == 0)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL));
 
         return errors;
     }
