@@ -72,7 +72,7 @@
             CASE
                 WHEN status = 0 THEN 0
                 WHEN status = 1 THEN 1
-                WHEN status = 2 THEN -id
+                ELSE -id
             END"/>
         </addColumn>
     </changeSet>
