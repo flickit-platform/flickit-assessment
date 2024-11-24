@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.kitcustom.UpdateKitCustomPort;

@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.application.port.out.kitcustom;
 
-import org.flickit.assessment.kit.application.domain.KitCustomData;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

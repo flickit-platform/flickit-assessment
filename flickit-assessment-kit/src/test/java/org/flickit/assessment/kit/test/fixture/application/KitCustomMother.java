@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
 import org.flickit.assessment.kit.application.domain.KitCustom;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

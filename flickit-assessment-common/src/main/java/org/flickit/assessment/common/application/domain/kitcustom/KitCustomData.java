@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.domain;
+package org.flickit.assessment.common.application.domain.kitcustom;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
