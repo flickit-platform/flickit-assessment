@@ -67,11 +67,11 @@ class KitVersionValidatorTest {
             MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, listOfAnswerRanges.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getFirst().getTitle()),
             MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, listOfSubjects.getLast().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL, listOfAttributes.getFirst().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL, listOfAttributes.getLast().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL, listOfAttributes.getLast().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL, listOfAttributes.getLast().getTitle()),
-            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, listOfAttributes.getLast().getTitle())
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, listOfAttributes.getLast().getTitle()),
+            MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL),
+            MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL),
+            MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL)
         );
 
         when(loadQuestionsPort.loadQuestionsWithoutImpact(kitKitVersionId)).thenReturn(loadQuestionsPortResult);
