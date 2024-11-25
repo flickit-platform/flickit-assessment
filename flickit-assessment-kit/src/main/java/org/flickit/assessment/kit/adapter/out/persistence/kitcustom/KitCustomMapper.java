@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaEntity;
 import org.flickit.assessment.kit.application.domain.KitCustom;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustomPort;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.KitCustom;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.GetKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.LoadKitCustomPort;

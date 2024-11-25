@@ -1,7 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.kitcustom;
 
 import org.flickit.assessment.kit.application.domain.KitCustom;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 
 public interface LoadKitCustomPort {
 
