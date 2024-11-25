@@ -44,7 +44,8 @@ public enum AssessmentPermission {
     DELETE_ASSESSMENT_INVITE("deleteAssessmentInvite"),
     CREATE_ASSESSMENT_INSIGHT("createAssessmentInsight"),
     CREATE_SUBJECT_INSIGHT("createSubjectInsight"),
-    MANAGE_ADD_ON("manageAddOn");
+    MANAGE_ADD_ON("manageAddOn"),
+    MANAGE_KIT_CUSTOM("manageKitCustom"),;
 
     private final String code;
 }

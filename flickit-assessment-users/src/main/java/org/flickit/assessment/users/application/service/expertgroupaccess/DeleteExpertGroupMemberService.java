@@ -23,13 +23,13 @@ public class DeleteExpertGroupMemberService implements DeleteExpertGroupMemberUs
 
     @Override
     public void deleteMember(Param param) {
-        validateCurrentUser(param.getExpertGroupId(), param.getCurrentUserId());
+        validateCurrentUser(param.getExpertGroupId(), param.getUserId(), param.getCurrentUserId());
         deleteExpertGroupMemberPort.deleteMember(param.getExpertGroupId(), param.getUserId());
     }
 
-    private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
+    private void validateCurrentUser(Long expertGroupId, UUID userId, UUID currentUserId) {
         UUID expertGroupOwnerId = loadExpertGroupOwnerPort.loadOwnerId(expertGroupId);
-        if (!Objects.equals(expertGroupOwnerId, currentUserId))
+        if (!Objects.equals(expertGroupOwnerId, currentUserId) || Objects.equals(userId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }

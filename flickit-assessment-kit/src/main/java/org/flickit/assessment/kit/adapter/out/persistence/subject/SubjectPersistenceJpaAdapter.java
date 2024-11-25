@@ -6,9 +6,11 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
+import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
 import org.flickit.assessment.kit.application.port.out.subject.*;
 import org.springframework.data.domain.Page;
@@ -20,11 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -90,12 +92,52 @@ public class SubjectPersistenceJpaAdapter implements
     }
 
     @Override
+    public List<Subject> loadSubjectsWithoutAttribute(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutAttributes(kitVersionId)
+            .stream()
+            .map(e -> SubjectMapper.mapToDomainModel(e, null))
+            .toList();
+    }
+
+    @Override
     public Subject load(long subjectId, long kitVersionId) {
         var subjectEntity = repository.findByIdAndKitVersionId (subjectId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND));
         List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, kitVersionId);
         return mapToDomainModel(subjectEntity,
             attributeEntities.stream().map(AttributeMapper::mapToDomainModel).toList());
+    }
+
+    @Override
+    public PaginatedResponse<Subject> loadWithAttributesByKitVersionId(long kitVersionId,
+                                                                       int page,
+                                                                       int size) {
+        var views = repository.findWithAttributesByKitVersionId(kitVersionId);
+        var subjectEntityToSubjectAttrView = views.stream()
+            .collect(Collectors.groupingBy(SubjectJoinAttributeView::getSubject));
+
+        Map<Long, Subject> subjectIdToSubject = subjectEntityToSubjectAttrView.entrySet().stream()
+            .map(e -> {
+                List<Attribute> attributes = e.getValue().stream()
+                    .map(x -> AttributeMapper.mapToDomainModel(x.getAttribute()))
+                    .toList();
+                return mapToDomainModel(e.getKey(), attributes);
+            })
+            .collect(Collectors.toMap(Subject::getId, Function.identity()));
+
+        Page<SubjectJpaEntity> subjectEntitesPage = repository.findByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        List<Subject> items = subjectEntitesPage.getContent().stream()
+            .map(e -> subjectIdToSubject.get(e.getId()))
+            .toList();
+
+        return new PaginatedResponse<>(
+            items,
+            subjectEntitesPage.getNumber(),
+            subjectEntitesPage.getSize(),
+            SubjectJpaEntity.Fields.index,
+            Sort.Direction.ASC.name().toLowerCase(),
+            (int) subjectEntitesPage.getTotalElements()
+        );
     }
 
     @Override

@@ -20,6 +20,7 @@ public class ErrorMessageKey {
     public static final String QUESTION_IMPACT_ID_NOT_FOUND = "question-impact.id.notFound";
     public static final String ANSWER_OPTION_ID_NOT_FOUND = "answer-option.id.notFound";
     public static final String ANSWER_RANGE_ID_NOT_FOUND = "answer-range.id.notFound";
+    public static final String KIT_CUSTOM_ID_NOT_FOUND = "kit-custom.id.notFound";
 
     public static final String UPDATE_KIT_BY_DSL_KIT_ID_NOT_NULL = "update-kit-by-dsl.kitId.notNull";
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
@@ -237,6 +238,7 @@ public class ErrorMessageKey {
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
     public static final String ACTIVATE_KIT_VERSION_STATUS_INVALID = "activate-kit-version.status.invalid";
+    public static final String ACTIVATE_KIT_VERSION_INVALID = "activate-kit-version.invalid";
 
     public static final String GET_KIT_MATURITY_LEVELS_KIT_VERSION_ID_NOT_NULL = "get-kit-maturity-levels-kitVersionId-notNull";
     public static final String GET_KIT_MATURITY_LEVELS_SIZE_MIN = "get-kit-maturity-levels-size-min";
@@ -444,6 +446,44 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_RANGE_OPTION_TITLE_SIZE_MAX = "create-answer-range-option.title.size.max";
     public static final String CREATE_ANSWER_RANGE_OPTION_VALUE_NOT_NULL = "create-answer-range-option.value.notNull";
     public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_NON_REUSABLE = "create-answer-range-option.answerRange.non-reusable";
+
+    public static final String CREATE_KIT_CUSTOM_KIT_ID_NOT_NULL = "create-kit-custom.kitId.notNull";
+    public static final String CREATE_KIT_CUSTOM_TITLE_NOT_NULL = "create-kit-custom.title.notNull";
+    public static final String CREATE_KIT_CUSTOM_TITLE_SIZE_MIN = "create-kit-custom.title.size.min";
+    public static final String CREATE_KIT_CUSTOM_TITLE_SIZE_MAX = "create-kit-custom.title.size.max";
+    public static final String CREATE_KIT_CUSTOM_DATA_NOT_NULL = "create-kit-custom.data.notNull";
+    public static final String CREATE_KIT_CUSTOM_EMPTY_CUSTOM_NOT_ALLOWED = "create-kit-custom.emptyCustom.notAllowed";
+    public static final String CREATE_KIT_CUSTOM_SUBJECT_ID_NOT_NULL = "create-kit-custom.subjectId.notNull";
+    public static final String CREATE_KIT_CUSTOM_SUBJECT_WEIGHT_NOT_NULL = "create-kit-custom.subjectWeight.notNull";
+    public static final String CREATE_KIT_CUSTOM_ATTRIBUTE_ID_NOT_NULL = "create-kit-custom.attributeId.notNull";
+    public static final String CREATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL = "create-kit-custom.attributeWeight.notNull";
+    public static final String CREATE_KIT_CUSTOM_TITLE_DUPLICATE = "create-kit-custom.title.duplicate";
+
+    public static final String VALIDATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "validate-kit-version.kitVersionId.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL = "validate-kit-version.question-answer-range.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.question-impact.notNull";
+    public static final String VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS = "validate-kit-version.answerRange.lowOptions";
+    public static final String VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.attribute-question-impact.notNull";
+    public static final String VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL = "validate-kit-version.subject-attribute.notNull";
+
+    public static final String UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "update-kit-custom.kitCustomId.notNull";
+    public static final String UPDATE_KIT_CUSTOM_KIT_ID_NOT_NULL = "update-kit-custom.kitId.notNull";
+    public static final String UPDATE_KIT_CUSTOM_TITLE_NOT_NULL = "update-kit-custom.title.notNull";
+    public static final String UPDATE_KIT_CUSTOM_TITLE_SIZE_MIN = "update-kit-custom.title.size.min";
+    public static final String UPDATE_KIT_CUSTOM_TITLE_SIZE_MAX = "update-kit-custom.title.size.max";
+    public static final String UPDATE_KIT_CUSTOM_DATA_NOT_NULL = "update-kit-custom.data.notNull";
+    public static final String UPDATE_KIT_CUSTOM_EMPTY_CUSTOM_NOT_ALLOWED = "update-kit-custom.emptyCustom.notAllowed";
+    public static final String UPDATE_KIT_CUSTOM_SUBJECT_ID_NOT_NULL = "update-kit-custom.subjectId.notNull";
+    public static final String UPDATE_KIT_CUSTOM_SUBJECT_WEIGHT_NOT_NULL = "update-kit-custom.subjectWeight.notNull";
+    public static final String UPDATE_KIT_CUSTOM_ATTRIBUTE_ID_NOT_NULL = "update-kit-custom.attributeId.notNull";
+    public static final String UPDATE_KIT_CUSTOM_ATTRIBUTE_WEIGHT_NOT_NULL = "update-kit-custom.attributeWeight.notNull";
+
+    public static final String GET_KIT_CUSTOM_SUBJECT_KIT_ID_NOT_NULL = "get-kit-custom-subject.kitId.notNull";
+    public static final String GET_KIT_CUSTOM_SUBJECT_PAGE_MIN = "get-kit-custom-subject.page.min";
+    public static final String GET_KIT_CUSTOM_SUBJECT_SIZE_MIN = "get-kit-custom-subject.size.min";
+    public static final String GET_KIT_CUSTOM_SUBJECT_SIZE_MAX = "get-kit-custom-subject.size.max";
+
+    public static final String GET_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "get-kit-custom.kitCustomId.notNull";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);

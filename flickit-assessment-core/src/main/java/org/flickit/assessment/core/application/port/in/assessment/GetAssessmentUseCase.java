@@ -44,6 +44,7 @@ public interface GetAssessmentUseCase {
                   String title,
                   String shortTitle,
                   Space space,
+                  Long kitCustomId,
                   AssessmentKit kit,
                   LocalDateTime creationTime,
                   LocalDateTime lastModificationTime,

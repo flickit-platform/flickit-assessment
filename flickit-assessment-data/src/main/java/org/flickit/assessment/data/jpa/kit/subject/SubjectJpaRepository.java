@@ -8,7 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, SubjectJpaEntity.EntityId> {
 
@@ -88,4 +91,22 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT s
+            FROM SubjectJpaEntity s
+            LEFT JOIN AttributeJpaEntity a ON a.subjectId = s.id AND a.kitVersionId = s.kitVersionId
+            WHERE s.kitVersionId = :kitVersionId AND a.id IS NULL
+        """)
+    List<SubjectJpaEntity> findAllByKitVersionIdAndWithoutAttributes(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+        SELECT s as subject,
+               a as attribute
+        FROM SubjectJpaEntity s
+        JOIN AttributeJpaEntity a ON  s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
+        WHERE s.kitVersionId = :kitVersionId
+        ORDER BY s.index
+        """)
+    List<SubjectJoinAttributeView> findWithAttributesByKitVersionId(Long kitVersionId);
 }

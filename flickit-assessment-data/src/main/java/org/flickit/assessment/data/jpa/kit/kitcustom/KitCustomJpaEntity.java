@@ -1,12 +1,10 @@
-package org.flickit.assessment.data.jpa.kit.customkit;
+package org.flickit.assessment.data.jpa.kit.kitcustom;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -35,7 +33,6 @@ public class KitCustomJpaEntity {
     private String code;
 
     @Column(name = "custom_data", nullable = false)
-    @JdbcTypeCode(SqlTypes.JSON)
     private String customData;
 
     @Column(name = "creation_time", nullable = false)
