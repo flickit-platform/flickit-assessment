@@ -19,7 +19,7 @@ public class KitVersionMapper {
             id,
             kit,
             param.status().getId(),
-            mapKitVersionToVersionStatus(param.status(), id),
+            generateStatusVersion(param.status(), id),
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
@@ -37,7 +37,7 @@ public class KitVersionMapper {
             entity.getLastModifiedBy());
     }
 
-    public static long mapKitVersionToVersionStatus(KitVersionStatus status, long id){
-        return status == KitVersionStatus.ARCHIVE ? -id : status.getId();
+    public static long generateStatusVersion(KitVersionStatus status, long kitVersionId) {
+        return status == KitVersionStatus.ARCHIVE ? -kitVersionId : status.getId();
     }
 }
