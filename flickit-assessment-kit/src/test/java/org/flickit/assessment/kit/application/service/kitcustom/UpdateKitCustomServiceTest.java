@@ -5,9 +5,10 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitFullInfoPort;
+import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.UpdateKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
 import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
@@ -39,13 +40,16 @@ class UpdateKitCustomServiceTest {
     private UpdateKitCustomService service;
 
     @Mock
-    private LoadAssessmentKitFullInfoPort loadAssessmentKitFullInfoPort;
+    private LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Mock
     private CheckKitUserAccessPort checkKitUserAccessPort;
 
     @Mock
     private UpdateKitCustomPort updateKitCustomPort;
+
+    @Mock
+    private LoadSubjectsPort loadSubjectsPort;
 
     @Captor
     private ArgumentCaptor<UpdateKitCustomPort.Param> portParamCaptor;
@@ -55,7 +59,7 @@ class UpdateKitCustomServiceTest {
         var param = createParam(UpdateKitCustomUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
 
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateKitCustom(param));
@@ -72,8 +76,9 @@ class UpdateKitCustomServiceTest {
         var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         var param = createParam(b -> b.customData(customData));
 
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
         doNothing().when(updateKitCustomPort).update(any(UpdateKitCustomPort.Param.class));
 
         service.updateKitCustom(param);
@@ -90,7 +95,8 @@ class UpdateKitCustomServiceTest {
         var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         var param = createParam(b -> b.customData(customData));
 
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+        when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
         doNothing().when(updateKitCustomPort).update(any(UpdateKitCustomPort.Param.class));
 
         service.updateKitCustom(param);
@@ -109,7 +115,8 @@ class UpdateKitCustomServiceTest {
         var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         var param = createParam(b -> b.customData(customData));
 
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+        when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateKitCustom(param));
         assertEquals(UPDATE_KIT_CUSTOM_UNRELATED_SUBJECT_NOT_ALLOWED, throwable.getMessageKey());
@@ -127,7 +134,8 @@ class UpdateKitCustomServiceTest {
         var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         var param = createParam(b -> b.customData(customData));
 
-        when(loadAssessmentKitFullInfoPort.load(param.getKitId())).thenReturn(kit);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
+        when(loadSubjectsPort.loadByKitVersionId(kit.getActiveVersionId())).thenReturn(List.of(subject));
 
         var throwable = assertThrows(ValidationException.class, () -> service.updateKitCustom(param));
         assertEquals(UPDATE_KIT_CUSTOM_UNRELATED_ATTRIBUTE_NOT_ALLOWED, throwable.getMessageKey());
