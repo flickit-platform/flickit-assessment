@@ -15,10 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -60,7 +57,12 @@ public class MaturityLevelPersistenceJpaAdapter implements
                 ml -> new EntityId(ml.getId(), kitVersionId),
                 ml -> ml
             ));
-        List<MaturityLevelJpaEntity> entities = repository.findAllById(idToModel.keySet());
+
+        Set<Long> ids = maturityLevels.stream()
+            .map(MaturityLevel::getId)
+            .collect(Collectors.toSet());
+
+        List<MaturityLevelJpaEntity> entities = repository.findAllByKitVersionIdAndIdIn(kitVersionId, ids);
         entities.forEach(x -> {
             MaturityLevel newLevel = idToModel.get(new EntityId(x.getId(), kitVersionId));
             x.setIndex(newLevel.getIndex());
@@ -90,7 +92,12 @@ public class MaturityLevelPersistenceJpaAdapter implements
                 ml -> new EntityId(ml.maturityLevelId(), param.kitVersionId()),
                 ml -> ml
             ));
-        List<MaturityLevelJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+
+        Set<Long> ids = param.orders().stream()
+            .map(UpdateOrderParam.MaturityLevelOrder::maturityLevelId)
+            .collect(Collectors.toSet());
+
+        List<MaturityLevelJpaEntity> entities = repository.findAllByKitVersionIdAndIdIn(param.kitVersionId(), ids);
         if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
