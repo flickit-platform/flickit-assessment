@@ -57,4 +57,12 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         """)
     Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId,
                                                                            Pageable pageable);
+
+    @Query("""
+            SELECT qs
+            FROM QuestionnaireJpaEntity qs
+            LEFT JOIN QuestionJpaEntity q ON q.questionnaireId = qs.id AND qs.kitVersionId = q.kitVersionId
+            WHERE qs.kitVersionId = :kitVersionId AND q.id IS NULL
+        """)
+    List<QuestionnaireJpaEntity> findAllByKitVersionIdAndWithoutQuestion(@Param("kitVersionId") long kitVersionId);
 }

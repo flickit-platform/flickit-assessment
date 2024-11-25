@@ -97,7 +97,9 @@ public class QuestionnairePersistenceJpaAdapter implements
 
     @Override
     public List<Questionnaire> loadQuestionnairesWithoutQuestion(long kitVersionId) {
-        return List.of();
+        return repository.findAllByKitVersionIdAndWithoutQuestion(kitVersionId).stream()
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .toList();
     }
 
     @Override
