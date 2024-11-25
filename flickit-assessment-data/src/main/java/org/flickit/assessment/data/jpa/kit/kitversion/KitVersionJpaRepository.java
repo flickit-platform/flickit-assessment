@@ -24,7 +24,7 @@ public interface KitVersionJpaRepository extends JpaRepository<KitVersionJpaEnti
 
     @Query("""
             SELECT
-                (SELECT COUNT(DISTINCT qe.id) FROM QuestionnaireJpaEntity qe WHERE  qe.kitVersionId = :id) AS questionnaireCount,
+                (SELECT COUNT(DISTINCT qe.id) FROM QuestionnaireJpaEntity qe WHERE qe.kitVersionId = :id) AS questionnaireCount,
                 (SELECT COUNT(DISTINCT s.id) FROM SubjectJpaEntity s WHERE s.kitVersionId = :id) AS subjectCount,
                 (SELECT COUNT(DISTINCT q.id) FROM QuestionJpaEntity q WHERE q.kitVersionId = :id) AS questionCount,
                 (SELECT COUNT(DISTINCT m.id) FROM MaturityLevelJpaEntity m WHERE m.kitVersionId = :id) AS maturityLevelCount
