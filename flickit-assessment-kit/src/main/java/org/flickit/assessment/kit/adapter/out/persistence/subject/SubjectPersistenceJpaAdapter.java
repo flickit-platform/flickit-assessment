@@ -165,17 +165,17 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public void updateOrders(UpdateOrderParam param) {
-        Map<SubjectJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
+        Map<Long, Integer> idToIndex = param.orders().stream()
             .collect(Collectors.toMap(
-                ml -> new SubjectJpaEntity.EntityId(ml.subjectId(), param.kitVersionId()),
+                UpdateOrderParam.SubjectOrder::subjectId,
                 UpdateOrderParam.SubjectOrder::index
             ));
-        List<SubjectJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+        List<SubjectJpaEntity> entities = repository.findAllByIdInAndKitVersionId(idToIndex.keySet(), param.kitVersionId());
         if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
         entities.forEach(x -> {
-            int newIndex = idToIndex.get(new SubjectJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            int newIndex = idToIndex.get(x.getId());
             x.setIndex(newIndex);
             x.setLastModificationTime(param.lastModificationTime());
             x.setLastModifiedBy(param.lastModifiedBy());
