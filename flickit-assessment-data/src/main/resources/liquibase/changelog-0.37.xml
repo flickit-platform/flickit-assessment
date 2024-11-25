@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.37-01" author="Maziyar Gerami">
+        <addColumn tableName="fak_kit_version">
+            <column name="status_version" type="bigint" valueComputed="
+            CASE
+                WHEN status = 0 THEN 0
+                WHEN status = 1 THEN 1
+                ELSE -id
+            END"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.37-02" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fak_kit_version" columnNames="kit_id,status_version"
+                             constraintName="uq_fak_kitversion_statusversion_kitId">
+        </addUniqueConstraint>
+    </changeSet>
+
+    <changeSet id="0.37-03" author="Maziyar Gerami">
+        <addNotNullConstraint tableName="fak_kit_version" columnName="status_version"/>
+    </changeSet>
+</databaseChangeLog>

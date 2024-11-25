@@ -65,21 +65,4 @@
                              constraintName="uq_fac_attribute_value_assessmentresultid_attributeid"
                              deferrable="true" initiallyDeferred="true"/>
     </changeSet>
-
-    <changeSet id="0.36-07" author="Maziyar Gerami">
-        <addColumn tableName="fak_kit_version">
-            <column name="status_version" type="bigint" valueComputed="
-            CASE
-                WHEN status = 0 THEN 0
-                WHEN status = 1 THEN 1
-                ELSE -id
-            END"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.36-08" author="Maziyar Gerami">
-        <addUniqueConstraint tableName="fak_kit_version" columnNames="id,status_version"
-        constraintName="uq_fak_kitversion_statusversion_kitid">
-        </addUniqueConstraint>
-    </changeSet>
 </databaseChangeLog>
