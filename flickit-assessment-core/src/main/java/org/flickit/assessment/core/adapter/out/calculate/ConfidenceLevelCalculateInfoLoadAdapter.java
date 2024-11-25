@@ -84,20 +84,15 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
         }
 
         // load all subjects and their related attributes (by assessmentKit)
-        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
-        if (kitCustomData != null && kitCustomData.subjects() != null) {
-            Map<Long, Integer> subjectIdToWeight = kitCustomData.subjects().stream()
-                .collect(toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
-            subjectEntities.forEach(e -> {
-                if (subjectIdToWeight.containsKey(e.getId()))
-                    e.setWeight(subjectIdToWeight.get(e.getId()));
-            });
-        }
+        List<SubjectJpaEntity> subjectEntities = loadSubjectEntities(kitVersionId, kitCustomData);
+
+        // load all attribute entities by kitVersionId and customData
+        List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
+        List<AttributeJpaEntity> attributeEntities = loadAttributeEntities(subjectIds, kitVersionId, kitCustomData);
 
         // load all questions with their impacts (by assessmentKit)
         List<QuestionJoinQuestionImpactView> allQuestionsJoinImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
         Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> impactfulQuestions = mapQuestionToImpacts(allQuestionsJoinImpactViews);
-
 
         // load all answers submitted with this assessmentResult
         var allAnswerEntities = answerRepo.findByAssessmentResultId(assessmentResultId);
@@ -107,16 +102,12 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             allAttributeValueEntities,
             impactfulQuestions);
 
-        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context,
-            subjectEntities,
-            kitCustomData,
-            kitVersionId);
+        Map<Long, AttributeValue> attributeIdToValue = buildAttributeValues(context, attributeEntities);
 
         List<SubjectValue> subjectValues = buildSubjectValues(attributeIdToValue,
             subjectEntities,
-            subjectValueEntities,
-            kitCustomData,
-            kitVersionId);
+            attributeEntities,
+            subjectValueEntities);
 
         return new AssessmentResult(
             assessmentResultId,
@@ -125,6 +116,44 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
             subjectValues,
             assessmentResultEntity.getLastCalculationTime(),
             assessmentResultEntity.getLastConfidenceCalculationTime());
+    }
+
+    /**
+     * Loads and returns a list of {@code SubjectJpaEntity} objects associated with the given kit version.
+     * If custom subject data is provided, updates the weight of the subjects in the list based on the custom data.
+     *
+     * @return a list of {@code SubjectJpaEntity} objects
+     */
+    private List<SubjectJpaEntity> loadSubjectEntities(long kitVersionId, KitCustomData kitCustomData) {
+        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        if (kitCustomData != null && kitCustomData.subjects() != null) {
+            Map<Long, Integer> subjectIdToWeight = kitCustomData.subjects().stream()
+                .collect(toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
+            subjectEntities.forEach(e -> {
+                if (subjectIdToWeight.containsKey(e.getId()))
+                    e.setWeight(subjectIdToWeight.get(e.getId()));
+            });
+        }
+        return subjectEntities;
+    }
+
+    /**
+     * Loads and returns a list of {@code AttributeJpaEntity} objects associated with the given subjects and kit version.
+     * If custom attribute data is provided, updates the weight of the attributes in the list based on the custom data.
+     *
+     * @return a list of {@code AttributeJpaEntity} objects with updated weights if custom data is provided
+     */
+    private List<AttributeJpaEntity> loadAttributeEntities(List<Long> subjectIds, long kitVersionId, KitCustomData kitCustomData) {
+        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
+        if (kitCustomData != null && kitCustomData.attributes() != null) {
+            Map<Long, Integer> attributeIdToWeight = kitCustomData.attributes().stream()
+                .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+            attributeEntities.forEach(e -> {
+                if (attributeIdToWeight.containsKey(e.getId()))
+                    e.setWeight(attributeIdToWeight.get(e.getId()));
+            });
+        }
+        return attributeEntities;
     }
 
     private Map<Long, Map<Long, List<QuestionImpactJpaEntity>>> mapQuestionToImpacts(List<QuestionJoinQuestionImpactView> questionJoinImpactViews) {
@@ -151,29 +180,10 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * with all information needed for calculate their maturity levels
      *
      * @param context      all previously loaded data
-     * @param kitVersionId the intended version of kit
      * @return a map of each attributeId to it's corresponding attributeValue
      */
-    private Map<Long, AttributeValue> buildAttributeValues(Context context,
-                                                           List<SubjectJpaEntity> subjectEntities,
-                                                           KitCustomData kitCustomData,
-                                                           long kitVersionId) {
-        List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
-        if (kitCustomData != null && kitCustomData.attributes() != null) {
-            Map<Long, Integer> attributeIdToWeight = kitCustomData.attributes().stream()
-                .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
-            attributeEntities.forEach(e -> {
-                if (attributeIdToWeight.containsKey(e.getId()))
-                    e.setWeight(attributeIdToWeight.get(e.getId()));
-            });
-        }
-
-        Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
-            .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
-        Map<Long, Integer> qaIdToWeightMap = subjectEntities.stream()
-            .filter(x -> subjectIdToAttrEntities.get(x.getId()) != null)
-            .flatMap(x -> subjectIdToAttrEntities.get(x.getId()).stream())
+    private Map<Long, AttributeValue> buildAttributeValues(Context context, List<AttributeJpaEntity> attributeEntities) {
+        Map<Long, Integer> attributeIdToWeightMap = attributeEntities.stream()
             .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
 
         Map<Long, AttributeValue> attributeIdToValueMap = new HashMap<>();
@@ -185,7 +195,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
                 attributeId,
                 null,
                 null,
-                qaIdToWeightMap.get(attributeId),
+                attributeIdToWeightMap.get(attributeId),
                 impactfulQuestions
             );
 
@@ -247,28 +257,16 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @param attrIdToValue        map of attributeIds to their corresponding value
      * @param subjectEntities    list of subjects
      * @param subjectValueEntities list of subjectValue entities
-     * @param kitVersionId         the intended version of kit
      * @return list of subjectValues
      */
     private List<SubjectValue> buildSubjectValues(Map<Long, AttributeValue> attrIdToValue,
                                                   List<SubjectJpaEntity> subjectEntities,
-                                                  List<SubjectValueJpaEntity> subjectValueEntities,
-                                                  KitCustomData kitCustomData,
-                                                  long kitVersionId) {
+                                                  List<AttributeJpaEntity> attributeEntities,
+                                                  List<SubjectValueJpaEntity> subjectValueEntities) {
         List<SubjectValue> subjectValues = new ArrayList<>();
         Map<Long, SubjectValueJpaEntity> subjectIdToValue = subjectValueEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, sv -> sv));
 
-        List<Long> subjectIds = subjectEntities.stream().map(SubjectJpaEntity::getId).toList();
-        List<AttributeJpaEntity> attributeEntities = attributeRepository.findAllBySubjectIdInAndKitVersionId(subjectIds, kitVersionId);
-        if (kitCustomData != null && kitCustomData.attributes() != null) {
-            Map<Long, Integer> attributeIdToWeight = kitCustomData.attributes().stream()
-                .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
-            attributeEntities.forEach(e -> {
-                if (attributeIdToWeight.containsKey(e.getId()))
-                    e.setWeight(attributeIdToWeight.get(e.getId()));
-            });
-        }
         Map<Long, List<AttributeJpaEntity>> subjectIdToAttrEntities = attributeEntities.stream()
             .collect(Collectors.groupingBy(AttributeJpaEntity::getSubjectId));
 
