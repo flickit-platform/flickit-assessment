@@ -75,9 +75,9 @@ public class AssessmentPersistenceJpaAdapter implements
             .map(e -> new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentKit().getKitVersionId()))
             .collect(Collectors.toSet());
 
-        var maturityLevelIdToMaturityLevel =
-            maturityLevelRepository.findAllById(assessmentMaturityLevelIds).stream()
-                .collect(Collectors.toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
+        var maturityLevelIdToMaturityLevel = kitMaturityLevelEntities.stream()
+            .filter(e -> assessmentMaturityLevelIds.contains(new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId())))
+            .collect(Collectors.toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
 
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
