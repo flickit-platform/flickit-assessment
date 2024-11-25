@@ -99,4 +99,14 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
             WHERE s.kitVersionId = :kitVersionId AND a.id IS NULL
         """)
     List<SubjectJpaEntity> findAllByKitVersionIdAndWithoutAttributes(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+        SELECT s as subject,
+               a as attribute
+        FROM SubjectJpaEntity s
+        JOIN AttributeJpaEntity a ON  s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
+        WHERE s.kitVersionId = :kitVersionId
+        ORDER BY s.index
+        """)
+    List<SubjectJoinAttributeView> findWithAttributesByKitVersionId(Long kitVersionId);
 }
