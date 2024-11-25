@@ -16,8 +16,8 @@
     </changeSet>
 
     <changeSet id="0.37-02" author="Maziyar Gerami">
-        <addUniqueConstraint tableName="fak_kit_version" columnNames="kit_id,status_version"
-                             constraintName="uq_fak_kitversion_statusversion_kitId">
+        <addUniqueConstraint tableName="fak_kit_version" columnNames="kit_id, status_version"
+                             constraintName="uq_fak_kitversion_kitId_statusversion">
         </addUniqueConstraint>
     </changeSet>
 
