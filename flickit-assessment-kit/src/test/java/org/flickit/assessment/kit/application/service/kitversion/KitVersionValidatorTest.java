@@ -45,7 +45,6 @@ class KitVersionValidatorTest {
     @Mock
     private CountKitVersionStatsPort countKitVersionStatsPort;
 
-
     @Mock
     private LoadQuestionnairesPort loadQuestionnairesPort;
 
