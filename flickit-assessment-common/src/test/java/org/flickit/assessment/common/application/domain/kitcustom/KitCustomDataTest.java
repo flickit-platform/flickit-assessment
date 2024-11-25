@@ -1,8 +1,7 @@
-package org.flickit.assessment.kit.test.fixture.application.domain;
+package org.flickit.assessment.common.application.domain.kitcustom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

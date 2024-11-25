@@ -28,6 +28,9 @@ public class KitVersionJpaEntity {
     @Column(name = "status", nullable = false)
     private int status;
 
+    @Column(name = "status_version", nullable = false)
+    private long statusVersion;
+
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 

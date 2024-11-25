@@ -18,10 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -120,12 +117,14 @@ public class SubjectPersistenceJpaAdapter implements
             .map(e -> {
                 List<Attribute> attributes = e.getValue().stream()
                     .map(x -> AttributeMapper.mapToDomainModel(x.getAttribute()))
+                    .sorted(Comparator.comparing(Attribute::getIndex))
                     .toList();
                 return mapToDomainModel(e.getKey(), attributes);
             })
             .collect(Collectors.toMap(Subject::getId, Function.identity()));
 
-        Page<SubjectJpaEntity> subjectEntitesPage = repository.findByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        Page<SubjectJpaEntity> subjectEntitesPage = repository.findByKitVersionId(kitVersionId,
+            PageRequest.of(page, size, Sort.Direction.ASC, SubjectJpaEntity.Fields.index));
         List<Subject> items = subjectEntitesPage.getContent().stream()
             .map(e -> subjectIdToSubject.get(e.getId()))
             .toList();
