@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @UtilityClass
-public class GenerateCodeUtil {
+public class GenerateHashCodeUtil {
 
     private static final String PREFIX = "C";
 

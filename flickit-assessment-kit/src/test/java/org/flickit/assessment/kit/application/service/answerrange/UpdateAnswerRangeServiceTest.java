@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.util.GenerateCodeUtil.generateCode;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_TITLE_NOT_NULL;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;

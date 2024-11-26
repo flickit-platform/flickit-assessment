@@ -11,7 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.flickit.assessment.common.util.GenerateCodeUtil.generateCode;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 
 public class PopulateAnswerRangeCodeColumnTask implements CustomTaskChange {
 
