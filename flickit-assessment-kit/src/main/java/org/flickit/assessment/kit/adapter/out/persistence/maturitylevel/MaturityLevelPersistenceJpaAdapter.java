@@ -62,7 +62,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .map(MaturityLevel::getId)
             .collect(Collectors.toSet());
 
-        List<MaturityLevelJpaEntity> entities = repository.findAllByKitVersionIdAndIdIn(kitVersionId, ids);
+        List<MaturityLevelJpaEntity> entities = repository.findAllByIdInAndKitVersionId(ids, kitVersionId);
         entities.forEach(x -> {
             MaturityLevel newLevel = idToModel.get(new EntityId(x.getId(), kitVersionId));
             x.setIndex(newLevel.getIndex());
@@ -97,7 +97,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
             .map(UpdateOrderParam.MaturityLevelOrder::maturityLevelId)
             .collect(Collectors.toSet());
 
-        List<MaturityLevelJpaEntity> entities = repository.findAllByKitVersionIdAndIdIn(param.kitVersionId(), ids);
+        List<MaturityLevelJpaEntity> entities = repository.findAllByIdInAndKitVersionId(ids, param.kitVersionId());
         if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
@@ -152,7 +152,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public List<MaturityLevel> loadByKitVersionId(long kitVersionId, Collection<Long> ids) {
-        return repository.findAllByKitVersionIdAndIdIn(kitVersionId, ids).stream()
+        return repository.findAllByIdInAndKitVersionId(ids, kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
     }
