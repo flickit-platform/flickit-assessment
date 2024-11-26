@@ -12,7 +12,7 @@ public class AssessmentJpaEntityMother {
     private static long kitId = 134L;
     private static int assessmentCounter = 341;
 
-    public static AssessmentJpaEntity assessmentEntityWithKit() {
+    public static AssessmentJpaEntity assessmentEntityWithKitCustom() {
         assessmentCounter++;
         UUID createdBy = UUID.randomUUID();
         return new AssessmentJpaEntity(
@@ -22,6 +22,7 @@ public class AssessmentJpaEntityMother {
             "shortTitle" + assessmentCounter,
             kitId++,
             1L,
+            823L,
             LocalDateTime.now(),
             LocalDateTime.now(),
             NOT_DELETED_DELETION_TIME,

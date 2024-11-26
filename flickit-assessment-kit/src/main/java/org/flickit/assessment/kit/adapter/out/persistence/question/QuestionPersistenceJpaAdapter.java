@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -114,7 +115,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public List<Question> loadAllByKitVersionId(long kitVersionId) {
-        var questionWithImpactsViews =  repository.loadByKitVersionId(kitVersionId);
+        var questionWithImpactsViews = repository.loadByKitVersionId(kitVersionId);
         var questionEntityToViews = questionWithImpactsViews.stream()
             .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
 
@@ -131,6 +132,22 @@ public class QuestionPersistenceJpaAdapter implements
                 question.setImpacts(qImpacts);
                 return question;
             })
+            .toList();
+    }
+
+    @Override
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutAnswerRange(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutAnswerRange(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToPortResult)
+            .toList();
+    }
+
+    @Override
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutImpact(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToPortResult)
             .toList();
     }
 
@@ -165,7 +182,10 @@ public class QuestionPersistenceJpaAdapter implements
                 var answerOptionEntities = entry.getValue().stream()
                     .collect(toMap(e -> e.getAnswerOption().getId(), AttributeLevelImpactfulQuestionsView::getAnswerOption,
                         (existing, replacement) -> existing))
-                    .values();
+                    .values()
+                    .stream()
+                    .sorted(Comparator.comparing(AnswerOptionJpaEntity::getIndex))
+                    .toList();
                 var optionIdToOptionValueMap = answerOptionEntities.stream()
                     .collect(toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getValue));
                 var options = answerOptionEntities.stream().map(AnswerOptionMapper::mapToDomainModel).toList();
@@ -181,7 +201,7 @@ public class QuestionPersistenceJpaAdapter implements
                 question.setImpacts(List.of(impact));
                 question.setOptions(options);
 
-                return new Result(question, questionnaire);
+                return new LoadAttributeLevelQuestionsPort.Result(question, questionnaire);
             }).toList();
     }
 

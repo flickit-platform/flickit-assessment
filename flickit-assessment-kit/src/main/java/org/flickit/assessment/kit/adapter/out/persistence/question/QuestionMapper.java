@@ -3,8 +3,10 @@ package org.flickit.assessment.kit.adapter.out.persistence.question;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.question.QuestionQuestionnaireView;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +26,10 @@ public class QuestionMapper {
             entity.getCreationTime(),
             entity.getLastModificationTime()
         );
+    }
+
+    public static LoadQuestionsPort.Result mapToPortResult(QuestionQuestionnaireView view) {
+        return new LoadQuestionsPort.Result(view.getQuestionIndex(), view.getQuestionnaireId(), view.getQuestionnaireTitle());
     }
 
     public static QuestionJpaEntity mapToJpaEntity(CreateQuestionPort.Param param) {

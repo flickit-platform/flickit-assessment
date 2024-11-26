@@ -9,7 +9,6 @@ import org.flickit.assessment.core.application.port.out.assessment.CreateAssessm
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentKitSpaceJoinView;
 
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentMapper {
 
@@ -21,6 +20,7 @@ public class AssessmentMapper {
             param.shortTitle(),
             param.assessmentKitId(),
             param.spaceId(),
+            null,
             param.creationTime(),
             param.creationTime(),
             param.deletionTime(),
@@ -44,6 +44,7 @@ public class AssessmentMapper {
             assessment.getShortTitle(),
             kit,
             space,
+            assessment.getKitCustomId(),
             assessment.getCreationTime(),
             assessment.getLastModificationTime(),
             assessment.getDeletionTime(),

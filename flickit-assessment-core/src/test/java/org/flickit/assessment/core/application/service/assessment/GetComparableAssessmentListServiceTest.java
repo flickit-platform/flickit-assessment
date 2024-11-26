@@ -45,7 +45,7 @@ class GetComparableAssessmentListServiceTest {
             List.of(assessment1, assessment2),
             page,
             size,
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             2
         );
@@ -76,7 +76,7 @@ class GetComparableAssessmentListServiceTest {
         assertEquals(0, assessments.getPage());
         assertEquals(2, assessments.getTotal());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
-        assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
+        assertEquals(AssessmentJpaEntity.Fields.lastModificationTime, assessments.getSort());
 
         verify(loadAssessmentPort, times(1)).loadComparableAssessments(any(), any(), anyInt(), anyInt());
     }
@@ -95,7 +95,7 @@ class GetComparableAssessmentListServiceTest {
             List.of(assessment1, assessment2),
             page,
             size,
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             2
         );
@@ -126,7 +126,7 @@ class GetComparableAssessmentListServiceTest {
         assertEquals(0, assessments.getPage());
         assertEquals(2, assessments.getTotal());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
-        assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
+        assertEquals(AssessmentJpaEntity.Fields.lastModificationTime, assessments.getSort());
 
         verify(loadAssessmentPort, times(1)).loadComparableAssessments(any(), any(), anyInt(), anyInt());
     }

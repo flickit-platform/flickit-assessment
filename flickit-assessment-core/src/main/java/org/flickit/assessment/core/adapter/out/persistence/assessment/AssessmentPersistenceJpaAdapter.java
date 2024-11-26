@@ -40,7 +40,7 @@ public class AssessmentPersistenceJpaAdapter implements
     LoadAssessmentListPort,
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
-    GetAssessmentPort,
+    LoadAssessmentPort,
     DeleteAssessmentPort,
     CheckAssessmentSpaceMembershipPort {
 
@@ -113,7 +113,7 @@ public class AssessmentPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -179,7 +179,7 @@ public class AssessmentPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -229,6 +229,14 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime) {
         repository.updateLastModificationTime(id, lastModificationTime);
+    }
+
+    @Override
+    public void updateKitCustomId(UUID id, long kitCustomId) {
+        if (!repository.existsByIdAndDeletedFalse(id))
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
+
+        repository.updateKitCustomId(id, kitCustomId);
     }
 
     @Override

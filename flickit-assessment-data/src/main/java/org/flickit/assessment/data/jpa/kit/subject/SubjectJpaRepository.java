@@ -1,14 +1,17 @@
 package org.flickit.assessment.data.jpa.kit.subject;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, SubjectJpaEntity.EntityId> {
 
@@ -18,7 +21,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
 
     List<SubjectJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
 
-    Page<SubjectJpaEntity> findByKitVersionId(long kitVersionId, PageRequest pageRequest);
+    Page<SubjectJpaEntity> findByKitVersionId(long kitVersionId, Pageable pageable);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
@@ -88,4 +91,21 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         """)
     List<SubjectJpaEntity> findAllByQuestionnaireIdAndKitVersionId(@Param("questionnaireId") long questionnaireId,
                                                                    @Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT s
+            FROM SubjectJpaEntity s
+            LEFT JOIN AttributeJpaEntity a ON a.subjectId = s.id AND a.kitVersionId = s.kitVersionId
+            WHERE s.kitVersionId = :kitVersionId AND a.id IS NULL
+        """)
+    List<SubjectJpaEntity> findAllByKitVersionIdAndWithoutAttributes(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+        SELECT s as subject,
+               a as attribute
+        FROM SubjectJpaEntity s
+        JOIN AttributeJpaEntity a ON  s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
+        WHERE s.kitVersionId = :kitVersionId
+        """)
+    List<SubjectJoinAttributeView> findWithAttributesByKitVersionId(Long kitVersionId);
 }
