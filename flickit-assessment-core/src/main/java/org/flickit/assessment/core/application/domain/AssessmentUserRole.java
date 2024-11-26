@@ -78,7 +78,6 @@ public enum AssessmentUserRole {
         COMMENTER_PERMISSIONS(Set.of(
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
-            VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
             ADD_EVIDENCE_ATTACHMENT,
