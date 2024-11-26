@@ -67,7 +67,9 @@ public class QuestionnairePersistenceJpaAdapter implements
     @Override
     public void updateOrders(UpdateQuestionnairePort.UpdateOrderParam param) {
         Map<Long, Integer> idToIndex = param.orders().stream()
-            .collect(toMap(UpdateOrderParam.QuestionnaireOrder::questionnaireId, UpdateOrderParam.QuestionnaireOrder::index));
+            .collect(toMap(
+                UpdateOrderParam.QuestionnaireOrder::questionnaireId,
+                UpdateOrderParam.QuestionnaireOrder::index));
 
         List<QuestionnaireJpaEntity> entities = repository.findAllByIdInAndKitVersionId(idToIndex.keySet(), param.kitVersionId());
         if (entities.size() != param.orders().size())
