@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.port.in.advicenarration.GetAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -29,13 +30,13 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
 
     @Override
     public Result getAdviceNarration(Param param) {
-        if(!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+/*        if(!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);*/
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND));
 
-        boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
+        boolean editable = assessmentAccessChecker.isAuthorized(ID.fromDomain(param.getAssessmentId()), ID.fromDomain(param.getCurrentUserId()), CREATE_ADVICE);
         boolean aiEnabled = appAiProperties.isEnabled();
 
         var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());

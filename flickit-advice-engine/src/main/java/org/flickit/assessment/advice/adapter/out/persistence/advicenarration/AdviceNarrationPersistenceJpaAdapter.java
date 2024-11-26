@@ -2,6 +2,7 @@ package org.flickit.assessment.advice.adapter.out.persistence.advicenarration;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
@@ -27,10 +28,10 @@ public class AdviceNarrationPersistenceJpaAdapter implements
 
     @Override
     public void updateAssessorNarration(AdviceNarration adviceNarration) {
-        repository.updateAssessorNarration(adviceNarration.getAssessmentResultId(),
+        repository.updateAssessorNarration(ID.fromDomain(adviceNarration.getAssessmentResultId()),
             adviceNarration.getAssessorNarration(),
             adviceNarration.getAssessorNarrationTime(),
-            adviceNarration.getCreatedBy());
+            ID.fromDomain(adviceNarration.getCreatedBy()));
     }
 
     @Override

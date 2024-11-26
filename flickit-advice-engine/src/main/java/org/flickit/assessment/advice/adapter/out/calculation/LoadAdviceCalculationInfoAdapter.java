@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.adapter.out.calculation;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.*;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
@@ -37,10 +38,10 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     private static final int DEFAULT_QUESTION_COST = 1;
 
     @Override
-    public Plan loadAdviceCalculationInfo(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+    public Plan loadAdviceCalculationInfo(ID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         List<AttributeLevelScore> attributeLevelScores = new ArrayList<>();
         Map<Long, Question> idToQuestions = new HashMap<>();
-        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(ID.fromDomain(assessmentId))
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
         long kitVersionId = assessmentResult.getKitVersionId();
 

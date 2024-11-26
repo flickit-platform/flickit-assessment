@@ -6,6 +6,7 @@ import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessm
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedAttributeIdsRelatedToAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadSelectedLevelIdsRelatedToAssessmentPort;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -29,25 +30,25 @@ public class AssessmentPersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public Set<Long> loadSelectedAttributeIdsRelatedToAssessment(UUID assessmentId, Set<Long> attributeIds) {
-        return repository.findSelectedAttributeIdsRelatedToAssessment(assessmentId, attributeIds);
+    public Set<Long> loadSelectedAttributeIdsRelatedToAssessment(ID assessmentId, Set<Long> attributeIds) {
+        return repository.findSelectedAttributeIdsRelatedToAssessment(ID.fromDomain(assessmentId), attributeIds);
     }
 
     @Override
-    public Set<Long> loadSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds) {
-        return repository.findSelectedLevelIdsRelatedToAssessment(assessmentId, levelIds);
+    public Set<Long> loadSelectedLevelIdsRelatedToAssessment(ID assessmentId, Set<Long> levelIds) {
+        return repository.findSelectedLevelIdsRelatedToAssessment(ID.fromDomain(assessmentId), levelIds);
     }
 
     @Override
-    public Long loadKitVersionIdById(UUID assessmentId) {
-        return assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+    public Long loadKitVersionIdById(ID assessmentId) {
+        return assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(ID.fromDomain(assessmentId))
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND))
             .getKitVersionId();
     }
 
     @Override
-    public Assessment loadById(UUID assessmentId) {
-        return repository.findById(assessmentId).map(AssessmentMapper::mapToDomain)
+    public Assessment loadById(ID assessmentId) {
+        return repository.findById(ID.fromDomain(assessmentId)).map(AssessmentMapper::mapToDomain)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
     }
 }

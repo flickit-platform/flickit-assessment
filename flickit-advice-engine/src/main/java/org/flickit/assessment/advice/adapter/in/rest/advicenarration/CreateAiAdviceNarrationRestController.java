@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase.Param;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase.Result;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,6 @@ public class CreateAiAdviceNarrationRestController {
     }
 
     private Param toParam(UUID assessmentId, CreateAiAdviceNarrationRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.adviceListItems(), requestDto.attributeLevelTargets(), currentUserId);
+        return new Param(ID.toDomain(assessmentId), requestDto.adviceListItems(), requestDto.attributeLevelTargets(), ID.toDomain(currentUserId));
     }
 }

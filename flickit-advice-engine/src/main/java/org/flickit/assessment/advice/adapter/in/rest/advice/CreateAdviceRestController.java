@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase;
 import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase.Param;
 import org.flickit.assessment.advice.application.port.in.advice.CreateAdviceUseCase.Result;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class CreateAdviceRestController {
     }
 
     private Param toParam(UUID assessmentId, CreateAdviceRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.attributeLevelTargets(), currentUserId);
+        return new Param(ID.toDomain(assessmentId), requestDto.attributeLevelTargets(), ID.toDomain(currentUserId));
     }
 
     private CreateAdviceResponseDto toResponseDto(Result result) {

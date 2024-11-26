@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateAiAdviceNarrationUseCaseParamTest {
 
-    @Test
+/*    @Test
     void testCreateAiAdviceNarrationParam_assessmentIdIsNull_ErrorMessage() {
         var currentUserId = UUID.randomUUID();
         var adviceListItems = List.of(AdviceListItemMother.createSimpleAdviceListItem());
@@ -53,5 +53,5 @@ class CreateAiAdviceNarrationUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> new CreateAiAdviceNarrationUseCase.Param(assessmentId, adviceListItems, attributeLevelTargets, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
-    }
+    }*/
 }

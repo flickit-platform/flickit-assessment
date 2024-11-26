@@ -3,6 +3,7 @@ package org.flickit.assessment.advice.adapter.out.persistence.attributevalue;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
@@ -29,8 +30,8 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
     private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
-    public List<Result> loadAttributeCurrentAndTargetLevelIndex(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
-        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+    public List<Result> loadAttributeCurrentAndTargetLevelIndex(ID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(ID.fromDomain(assessmentId))
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         var maturityLevels = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId());
         var maturityLevelsIdMap = maturityLevels.stream()
@@ -41,7 +42,7 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
             .toList();
 
         List<AttributeValueJpaEntity> attrValueEntities =
-            repository.findByAssessmentResult_assessment_IdAndAttributeIdIn(assessmentId, attributeIds);
+            repository.findByAssessmentResult_assessment_IdAndAttributeIdIn(ID.fromDomain(assessmentId), attributeIds);
 
         Map<Long, AttributeValueJpaEntity> attributeIdToAttributeValueMap = attrValueEntities.stream()
             .collect(toMap(AttributeValueJpaEntity::getAttributeId, Function.identity()));

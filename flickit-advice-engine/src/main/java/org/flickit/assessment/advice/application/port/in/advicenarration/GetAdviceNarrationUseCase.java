@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.ID;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,12 +21,12 @@ public interface GetAdviceNarrationUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
+        ID assessmentId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID currentUserId;
+        ID currentUserId;
 
-        public Param(UUID assessmentId, UUID currentUserId) {
+        public Param(ID assessmentId, ID currentUserId) {
             this.assessmentId = assessmentId;
             this.currentUserId = currentUserId;
             this.validateSelf();

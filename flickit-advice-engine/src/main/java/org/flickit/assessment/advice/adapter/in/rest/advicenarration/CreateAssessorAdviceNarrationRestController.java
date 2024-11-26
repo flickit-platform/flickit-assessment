@@ -2,6 +2,7 @@ package org.flickit.assessment.advice.adapter.in.rest.advicenarration;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAssessorAdviceNarrationUseCase;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +23,12 @@ public class CreateAssessorAdviceNarrationRestController {
     @PostMapping("/assessments/{assessmentId}/advice-narration")
     public ResponseEntity<Void> createAssessorAdviceNarration(@PathVariable("assessmentId") UUID assessmentId,
                                                               @RequestBody CreateAssessorAdviceNarrationRequestDto requestDto) {
-        UUID currentUserId = userContext.getUser().id();
+        var currentUserId = userContext.getUser().id();
         useCase.createAssessorAdviceNarration(toParam(assessmentId, requestDto.assessorNarration(), currentUserId));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private CreateAssessorAdviceNarrationUseCase.Param toParam(UUID assessmentId, String assessorNarration, UUID currentUserId) {
-        return new CreateAssessorAdviceNarrationUseCase.Param(assessmentId, assessorNarration, currentUserId);
+        return new CreateAssessorAdviceNarrationUseCase.Param(ID.toDomain(assessmentId), assessorNarration, ID.toDomain(currentUserId));
     }
 }

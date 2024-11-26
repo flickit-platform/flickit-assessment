@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.ID;
+import org.stringtemplate.v4.ST;
 
 import java.util.UUID;
 
@@ -21,17 +23,17 @@ public interface CreateAssessorAdviceNarrationUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
+        ID<String> assessmentId;
 
         @Size(min = 3, message = CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MIN)
         @Size(max = 1500, message = CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MAX)
         String assessorNarration;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID currentUserId;
+        ID<String> currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, String assessorNarration, UUID currentUserId) {
+        public Param(ID<String> assessmentId, String assessorNarration, ID<String> currentUserId) {
             this.assessmentId = assessmentId;
             this.assessorNarration = assessorNarration != null && !assessorNarration.isBlank() ? assessorNarration.strip() : null;
             this.currentUserId = currentUserId;

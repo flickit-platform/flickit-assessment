@@ -6,6 +6,7 @@ import lombok.Value;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.ID;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public interface CreateAiAdviceNarrationUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = CREATE_AI_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
+        ID assessmentId;
 
         @NotNull(message = CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL)
         List<AdviceListItem> adviceListItems;
@@ -31,9 +32,9 @@ public interface CreateAiAdviceNarrationUseCase {
         List<AttributeLevelTarget> attributeLevelTargets;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID currentUserId;
+        ID currentUserId;
 
-        public Param(UUID assessmentId, List<AdviceListItem> adviceListItems, List<AttributeLevelTarget> attributeLevelTargets, UUID currentUserId) {
+        public Param(ID assessmentId, List<AdviceListItem> adviceListItems, List<AttributeLevelTarget> attributeLevelTargets, ID currentUserId) {
             this.assessmentId = assessmentId;
             this.adviceListItems = adviceListItems;
             this.attributeLevelTargets = attributeLevelTargets;

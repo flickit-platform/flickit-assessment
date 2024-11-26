@@ -15,6 +15,7 @@ import org.flickit.assessment.advice.application.port.out.assessment.LoadSelecte
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadAdviceCalculationInfoPort;
 import org.flickit.assessment.advice.application.port.out.calculation.LoadCreatedAdviceDetailsPort;
+import org.flickit.assessment.common.application.domain.ID;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -53,11 +54,11 @@ public class CreateAdviceService implements CreateAdviceUseCase {
 
     @Override
     public Result createAdvice(Param param) {
-        UUID assessmentId = param.getAssessmentId();
+        var assessmentId = param.getAssessmentId();
 
         validateUserAccess(assessmentId, param.getCurrentUserId());
 
-        validateAssessmentResultPort.validate(assessmentId);
+        validateAssessmentResultPort.validate(ID.fromDomain(assessmentId));
 
         List<AttributeLevelTarget> attributeLevelTargets = param.getAttributeLevelTargets();
         validateAssessmentAttributeRelation(assessmentId, attributeLevelTargets);
@@ -81,12 +82,12 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         return mapToResult(plan, kitVersionId);
     }
 
-    private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
-        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ADVICE))
+    private void validateUserAccess(ID assessmentId, ID currentUserId) {
+        if (!assessmentAccessChecker.isAuthorized(ID.fromDomain(assessmentId), ID.fromDomain(currentUserId), CREATE_ADVICE))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private void validateAssessmentAttributeRelation(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+    private void validateAssessmentAttributeRelation(ID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         Set<Long> selectedAttrIds = attributeLevelTargets.stream()
             .map(AttributeLevelTarget::getAttributeId)
             .collect(Collectors.toSet());
@@ -96,7 +97,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_ATTRIBUTE_RELATION_NOT_FOUND);
     }
 
-    private void validateAssessmentLevelRelation(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+    private void validateAssessmentLevelRelation(ID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         Set<Long> selectedLevelIds = attributeLevelTargets.stream()
             .map(AttributeLevelTarget::getMaturityLevelId)
             .collect(Collectors.toSet());
@@ -106,7 +107,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
             throw new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_LEVEL_RELATION_NOT_FOUND);
     }
 
-    private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+    private List<AttributeLevelTarget> filterValidAttributeLevelTargets(ID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         var attributeCurrentAndTargetLevelIndexes = loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(assessmentId, attributeLevelTargets);
         var validAttributeIds = attributeCurrentAndTargetLevelIndexes.stream()
             .filter(a -> a.targetMaturityLevelIndex() > a.currentMaturityLevelIndex())

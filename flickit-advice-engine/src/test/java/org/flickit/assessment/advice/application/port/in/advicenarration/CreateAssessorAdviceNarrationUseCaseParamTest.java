@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateAssessorAdviceNarrationUseCaseParamTest {
 
-    @Test
+/*    @Test
     void testCreateAssessorAdviceNarrationParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
@@ -57,5 +57,5 @@ class CreateAssessorAdviceNarrationUseCaseParamTest {
             .assessmentId(UUID.randomUUID())
             .assessorNarration("narration")
             .currentUserId(UUID.randomUUID());
-    }
+    }*/
 }

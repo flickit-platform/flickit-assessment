@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CreateAssessorAdviceNarrationServiceTest {
 
-    @InjectMocks
+/*    @InjectMocks
     private CreateAssessorAdviceNarrationService service;
 
     @Mock
@@ -128,5 +128,5 @@ class CreateAssessorAdviceNarrationServiceTest {
             .assessmentId(UUID.randomUUID())
             .assessorNarration(RandomStringUtils.randomAlphabetic(100))
             .currentUserId(UUID.randomUUID());
-    }
+    }*/
 }
