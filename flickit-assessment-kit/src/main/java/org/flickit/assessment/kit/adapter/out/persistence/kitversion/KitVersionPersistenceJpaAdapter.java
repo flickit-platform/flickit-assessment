@@ -20,7 +20,8 @@ public class KitVersionPersistenceJpaAdapter implements
     CreateKitVersionPort,
     UpdateKitVersionStatusPort,
     DeleteKitVersionPort,
-    CheckKitVersionExistencePort {
+    CheckKitVersionExistencePort,
+    CountKitVersionStatsPort {
 
     private final KitVersionJpaRepository repository;
     private final AssessmentKitJpaRepository kitRepository;
@@ -57,5 +58,14 @@ public class KitVersionPersistenceJpaAdapter implements
     @Override
     public void delete(long kitVersionId) {
         repository.deleteById(kitVersionId);
+    }
+
+    @Override
+    public CountKitVersionStatsPort.Result countKitVersionStats(long kitVersionId) {
+        var entity = repository.countKitVersionStat(kitVersionId);
+        return new Result(entity.getSubjectCount(),
+            entity.getQuestionnaireCount(),
+            entity.getQuestionCount(),
+            entity.getMaturityLevelCount());
     }
 }

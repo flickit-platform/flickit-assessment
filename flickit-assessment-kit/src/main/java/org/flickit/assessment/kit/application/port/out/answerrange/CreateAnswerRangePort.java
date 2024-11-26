@@ -6,5 +6,5 @@ public interface CreateAnswerRangePort {
 
     long persist(Param param);
 
-    record Param(long kitVersionId, String title, boolean reusable, UUID createdBy) {}
+    record Param(long kitVersionId, String title, String code, boolean reusable, UUID createdBy) {}
 }

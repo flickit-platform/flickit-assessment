@@ -169,7 +169,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
         dslQuestions.values().forEach(dslQuestion -> {
             Long questionnaireId = questionnaires.get(dslQuestion.getQuestionnaireCode());
-            var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, false, currentUserId);
+            var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
             long answerRangeId = createAnswerRangePort.persist(createAnswerRangeParam);
 
             var createParam = toCreateQuestionParam(kitVersionId, questionnaireId, answerRangeId, currentUserId, dslQuestion);

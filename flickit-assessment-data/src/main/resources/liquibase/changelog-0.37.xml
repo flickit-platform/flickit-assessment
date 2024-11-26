@@ -24,4 +24,31 @@
     <changeSet id="0.37-03" author="Maziyar Gerami">
         <addNotNullConstraint tableName="fak_kit_version" columnName="status_version"/>
     </changeSet>
+
+    <changeSet id="0.37-04" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_answer_range">
+            <column name="code" type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.37-05" author="Mahdi Rezazadeh">
+        <customChange class="org.flickit.assessment.data.config.db.PopulateAnswerRangeCodeColumnTask"/>
+    </changeSet>
+
+    <changeSet id="0.37-06" author="Mahdi Rezazadeh">
+        <sql>
+            ALTER TABLE fak_answer_range
+            ADD CONSTRAINT fak_answer_range_title_notnull
+            CHECK (NOT reusable OR (title IS NOT NULL AND code IS NOT NULL));
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.37-07" author="Mahdi Rezazadeh">
+        <sql>
+            CREATE UNIQUE INDEX uq_fak_answer_range_code_kitversionid
+            ON fak_answer_range (kit_version_id, code) WHERE reusable = TRUE;
+        </sql>
+    </changeSet>
 </databaseChangeLog>

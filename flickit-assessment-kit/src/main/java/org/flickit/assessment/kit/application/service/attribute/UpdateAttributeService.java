@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.util.GenerateCodeUtil.*;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 
 @Service
 @Transactional

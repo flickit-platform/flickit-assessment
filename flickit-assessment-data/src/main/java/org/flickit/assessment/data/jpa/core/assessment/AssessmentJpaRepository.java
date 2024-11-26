@@ -15,6 +15,8 @@ import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
 
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
+
     @Query("""
             SELECT
                 a as assessment,
@@ -87,8 +89,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
             WHERE a.id = :id
         """)
     void delete(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
-
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Query("""
             SELECT

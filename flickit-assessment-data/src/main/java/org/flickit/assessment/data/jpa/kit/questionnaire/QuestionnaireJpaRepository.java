@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +24,8 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
+
+    List<QuestionnaireJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
 
     @Modifying
     @Query("""
@@ -57,4 +60,12 @@ public interface QuestionnaireJpaRepository extends JpaRepository<QuestionnaireJ
         """)
     Page<QuestionnaireListItemView> findAllWithQuestionCountByKitVersionId(@Param(value = "kitVersionId") long kitVersionId,
                                                                            Pageable pageable);
+
+    @Query("""
+            SELECT qs
+            FROM QuestionnaireJpaEntity qs
+            LEFT JOIN QuestionJpaEntity q ON q.questionnaireId = qs.id AND qs.kitVersionId = q.kitVersionId
+            WHERE qs.kitVersionId = :kitVersionId AND q.id IS NULL
+        """)
+    List<QuestionnaireJpaEntity> findAllByKitVersionIdAndWithoutQuestion(@Param("kitVersionId") long kitVersionId);
 }

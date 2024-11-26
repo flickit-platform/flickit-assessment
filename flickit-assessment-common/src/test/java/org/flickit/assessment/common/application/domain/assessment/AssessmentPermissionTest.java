@@ -32,7 +32,6 @@ class AssessmentPermissionTest {
             Map.entry(UPDATE_EVIDENCE, "updateEvidence"),
             Map.entry(DELETE_EVIDENCE, "deleteEvidence"),
             Map.entry(VIEW_EVIDENCE_LIST, "viewEvidenceList"),
-            Map.entry(VIEW_ATTRIBUTE_EVIDENCE_LIST, "viewAttributeEvidenceList"),
             Map.entry(ADD_EVIDENCE_ATTACHMENT, "addEvidenceAttachment"),
             Map.entry(VIEW_EVIDENCE_ATTACHMENT, "viewEvidenceAttachment"),
             Map.entry(DELETE_EVIDENCE_ATTACHMENT, "deleteEvidenceAttachment"),
@@ -58,6 +57,6 @@ class AssessmentPermissionTest {
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
             assertTrue(permissionCodesMap.containsValue(e.getCode()))
         );
-        assertEquals(39, AssessmentPermission.values().length);
+        assertEquals(38, AssessmentPermission.values().length);
     }
 }

@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.KitVersionMother.createKitVersion;
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,8 +67,10 @@ class CreateAnswerRangeServiceTest {
         verify(createAnswerRangePort, times(1)).persist(createPortCaptor.capture());
         var createPortParam = createPortCaptor.getValue();
 
+        String expectedCode = generateCode(param.getTitle());
         assertEquals(param.getKitVersionId(), createPortParam.kitVersionId());
         assertEquals(param.getTitle(), createPortParam.title());
+        assertEquals(expectedCode, createPortParam.code());
         assertEquals(param.getCurrentUserId(), createPortParam.createdBy());
         assertTrue(createPortParam.reusable());
     }
