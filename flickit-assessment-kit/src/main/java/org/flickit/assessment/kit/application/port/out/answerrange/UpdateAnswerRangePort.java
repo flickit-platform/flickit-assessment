@@ -11,6 +11,7 @@ public interface UpdateAnswerRangePort {
         long answerRangeId,
         long kitVersionId,
         String title,
+        String code,
         boolean reusable,
         LocalDateTime lastModificationTime,
         UUID lastModifiedBy) {}

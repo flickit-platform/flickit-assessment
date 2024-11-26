@@ -84,7 +84,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                 Map<String, Long> maturityLevels,
                                 Long kitVersionId,
                                 UUID currentUserId) {
-        var param = new CreateAnswerRangePort.Param(kitVersionId, null, false, currentUserId);
+        var param = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
         long answerRangeId = createAnswerRangePort.persist(param);
         var createParam = new CreateQuestionPort.Param(
             dslQuestion.getCode(),

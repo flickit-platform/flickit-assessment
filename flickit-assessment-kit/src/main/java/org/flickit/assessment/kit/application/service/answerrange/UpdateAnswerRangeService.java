@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_ANSWER_RANGE_TITLE_NOT_NULL;
 
@@ -51,9 +52,11 @@ public class UpdateAnswerRangeService implements UpdateAnswerRangeUseCase {
     }
 
     private static UpdateAnswerRangePort.Param toParam(Param param) {
+        String code = generateCode(param.getTitle());
         return new UpdateAnswerRangePort.Param(param.getAnswerRangeId(),
             param.getKitVersionId(),
             param.getTitle(),
+            code,
             param.getReusable(),
             LocalDateTime.now(),
             param.getCurrentUserId());
