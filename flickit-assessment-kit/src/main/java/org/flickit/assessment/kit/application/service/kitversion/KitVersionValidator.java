@@ -30,6 +30,40 @@ public class KitVersionValidator {
 
     public List<String> validate(long kitVersionId) {
         List<String> errors = new LinkedList<>();
+
+        var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
+        if (kitVersionCounts.maturityLevelCount() == 0)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL));
+
+        if (kitVersionCounts.subjectCount() == 0)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL));
+
+        if (kitVersionCounts.questionnaireCount() == 0)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL));
+
+        if (kitVersionCounts.questionCount() == 0)
+            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL));
+
+        errors.addAll(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))
+            .toList());
+
+        errors.addAll(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
+            .toList());
+
+        errors.addAll(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, e.getTitle()))
+            .toList());
+
+        errors.addAll(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)
+            .stream()
+            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, e.getTitle()))
+            .toList());
+
         errors.addAll(loadQuestionsPort.loadQuestionsWithoutImpact(kitVersionId)
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_IMPACT_NOT_NULL, e.questionIndex(), e.questionnaireTitle()))
@@ -39,36 +73,6 @@ public class KitVersionValidator {
             .stream()
             .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_ANSWER_RANGE_NOT_NULL, e.questionIndex(), e.questionnaireTitle()))
             .toList());
-
-        errors.addAll(loadAnswerRangesPort.loadAnswerRangesWithNotEnoughOptions(kitVersionId)
-            .stream()
-            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS, e.getTitle()))
-            .toList());
-
-        errors.addAll(loadAttributesPort.loadUnimpactedAttributes(kitVersionId)
-            .stream()
-            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL, e.getTitle()))
-            .toList());
-
-        errors.addAll(loadSubjectsPort.loadSubjectsWithoutAttribute(kitVersionId)
-            .stream()
-            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL, e.getTitle()))
-            .toList());
-
-        errors.addAll(loadQuestionnairesPort.loadQuestionnairesWithoutQuestion(kitVersionId)
-            .stream()
-            .map(e -> MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL, e.getTitle()))
-            .toList());
-
-        var kitVersionCounts = countKitVersionStatsPort.countKitVersionStats(kitVersionId);
-        if (kitVersionCounts.subjectCount() == 0)
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL));
-        if (kitVersionCounts.questionCount() == 0)
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTION_NOT_NULL));
-        if (kitVersionCounts.questionnaireCount() == 0)
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL));
-        if (kitVersionCounts.maturityLevelCount() == 0)
-            errors.add(MessageBundle.message(VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL));
 
         return errors;
     }
