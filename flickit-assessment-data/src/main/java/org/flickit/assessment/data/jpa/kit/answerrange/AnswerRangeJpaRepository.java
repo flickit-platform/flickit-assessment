@@ -26,6 +26,7 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
     @Query("""
             UPDATE AnswerRangeJpaEntity a
             SET a.title = :title,
+                a.code = :code,
                 a.reusable = :reusable,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy = :lastModifiedBy
@@ -34,6 +35,7 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
     void update(@Param("answerRangeId") long answerRangeId,
                 @Param("kitVersionId") long kitVersionId,
                 @Param("title") String title,
+                @Param("code") String code,
                 @Param("reusable") boolean reusable,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);

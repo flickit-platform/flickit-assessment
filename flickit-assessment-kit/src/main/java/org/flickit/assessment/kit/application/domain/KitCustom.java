@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.domain;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

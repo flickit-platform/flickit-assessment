@@ -32,6 +32,9 @@ public class AnswerRangeJpaEntity {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "code")
+    private String code;
+
     @Column(name = "reusable", nullable = false)
     private boolean reusable;
 

@@ -29,6 +29,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -65,7 +67,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
         Set<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentKit().getKitVersionId())
-            .collect(Collectors.toSet());
+            .collect(toSet());
 
         List<MaturityLevelJpaEntity> kitMaturityLevelEntities = maturityLevelRepository.findAllByKitVersionIdIn(kitVersionIds);
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
@@ -73,11 +75,11 @@ public class AssessmentPersistenceJpaAdapter implements
 
         var assessmentMaturityLevelIds = pageResult.getContent().stream()
             .map(e -> new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentKit().getKitVersionId()))
-            .collect(Collectors.toSet());
+            .collect(toSet());
 
-        var maturityLevelIdToMaturityLevel =
-            maturityLevelRepository.findAllById(assessmentMaturityLevelIds).stream()
-                .collect(Collectors.toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
+        var maturityLevelIdToMaturityLevel = kitMaturityLevelEntities.stream()
+            .filter(e -> assessmentMaturityLevelIds.contains(new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId())))
+            .collect(toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
 
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
@@ -126,17 +128,17 @@ public class AssessmentPersistenceJpaAdapter implements
 
         Set<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentResult().getKitVersionId())
-            .collect(Collectors.toSet());
+            .collect(toSet());
 
         List<KitVersionJpaEntity> kitVersionEntities = kitVersionRepository.findAllByIdIn(kitVersionIds);
 
         //Map kitId to kitVersionId used in assessmentResult, which may not necessarily be the active version.
         Map<Long, Long> kitIdToKitVersionId = kitVersionEntities.stream()
-            .collect(Collectors.toMap(e -> e.getKit().getId(), KitVersionJpaEntity::getId));
+            .collect(toMap(e -> e.getKit().getId(), KitVersionJpaEntity::getId));
 
         List<AssessmentKitJpaEntity> kitEntities = kitRepository.findByKitVersionIds(kitVersionIds);
         Map<Long, AssessmentKitJpaEntity> kitIdToKitEntity = kitEntities.stream()
-            .collect(Collectors.toMap(AssessmentKitJpaEntity::getId, Function.identity()));
+            .collect(toMap(AssessmentKitJpaEntity::getId, Function.identity()));
 
         List<MaturityLevelJpaEntity> kitMaturityLevelEntities = maturityLevelRepository.findAllByKitVersionIdIn(kitVersionIds);
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
@@ -144,7 +146,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
         Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevel =
             kitMaturityLevelEntities.stream()
-                .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+                .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
