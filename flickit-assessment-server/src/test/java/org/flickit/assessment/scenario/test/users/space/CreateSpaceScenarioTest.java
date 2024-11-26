@@ -95,11 +95,11 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
         var newSpaceId = secondCreateResponseWithSameTitle.body().path("id");
         SpaceJpaEntity secondSpace = jpaTemplate.load(newSpaceId, SpaceJpaEntity.class);
 
-        assertEquals(1, countBeforeDelete);
         assertFalse(space.isDeleted());
-        assertEquals(1, countAfterDelete);
         assertTrue(deletedSpace.isDeleted());
-        assertEquals(2, countAfterSecondCreation);
         assertFalse(secondSpace.isDeleted());
+        assertEquals(1, countBeforeDelete);
+        assertEquals(1, countAfterDelete);
+        assertEquals(2, countAfterSecondCreation);
     }
 }
