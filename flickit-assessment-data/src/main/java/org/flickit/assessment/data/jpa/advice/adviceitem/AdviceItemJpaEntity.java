@@ -23,11 +23,11 @@ public class AdviceItemJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     UUID id;
 
-    @Column(name = "assessment_result_id", nullable = false)
-    UUID assessmentResultId;
-
     @Column(name = "title",length = 100, nullable = false)
     String title;
+
+    @Column(name = "assessment_result_id", nullable = false)
+    UUID assessmentResultId;
 
     @Column(name = "description", length = 500)
     String description;
