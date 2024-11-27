@@ -4,18 +4,13 @@ import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.UpdateKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.AttributeMother;
-import org.flickit.assessment.kit.test.fixture.application.SubjectMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -26,12 +21,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_CUSTOM_UNRELATED_ATTRIBUTE_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_CUSTOM_UNRELATED_SUBJECT_NOT_ALLOWED;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithSubjects;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKit;
+import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
+import static org.flickit.assessment.kit.test.fixture.application.SubjectMother.subjectWithAttributes;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,19 +53,10 @@ class UpdateKitCustomServiceTest {
     @Captor
     private ArgumentCaptor<UpdateKitCustomPort.Param> portParamCaptor;
 
-    @Mock
-    private ObjectMapper mapper;
-
-    private final UpdateKitCustomUseCase.Param param = createParam(UpdateKitCustomUseCase.Param.ParamBuilder::build);
-    private final String kitCustomData = """
-        {"subs":[{"id":1000,"w":1}],"atts":[{"id":200,"w":2}]}
-        """;
-
     @Test
-    @SneakyThrows
-    void testUpdateKitCustom_WhenKitIsPrivateAndUserHasNotAccess_ThenThrowAccessDeniedException() {
+    void testUpdateKitCustom_WhenKitIsPrivateAndCurrentUserHasNotAccess_ThenThrowAccessDeniedException() {
         var param = createParam(UpdateKitCustomUseCase.Param.ParamBuilder::build);
-        AssessmentKit kit = AssessmentKitMother.privateKit();
+        AssessmentKit kit = privateKit();
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
@@ -78,12 +67,13 @@ class UpdateKitCustomServiceTest {
 
     @Test
     void testUpdateKitCustom_WhenKitIsPrivateAndCurrentUserHasAccessToKit_ThenCreateKitCustom() {
-        var attribute = AttributeMother.attributeWithTitle("flexibility");
-        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
-        var kit = AssessmentKitMother.kitWithSubjects(List.of(subject), true);
-        var customSubject = new UpdateKitCustomService.Param.KitCustomData.CustomSubject(subject.getId(), 1);
-        var customAttribute = new UpdateKitCustomService.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
-        var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
+        var attribute = attributeWithTitle("flexibility");
+        var subject = subjectWithAttributes("software", List.of(attribute));
+        var kit = kitWithSubjects(List.of(subject), true);
+
+        var customSubject = new UpdateKitCustomUseCase.Param.KitCustomData.CustomSubject(subject.getId(), 1);
+        var customAttribute = new UpdateKitCustomUseCase.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
+        var customData = new UpdateKitCustomUseCase.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         var param = createParam(b -> b.customData(customData));
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -98,12 +88,12 @@ class UpdateKitCustomServiceTest {
 
     @Test
     void testUpdateKitCustom_WhenKitIsPublic_ThenCreateKitCustom() {
-        var attribute = AttributeMother.attributeWithTitle("flexibility");
-        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
-        var kit = AssessmentKitMother.kitWithSubjects(List.of(subject));
-        var customSubject = new UpdateKitCustomService.Param.KitCustomData.CustomSubject(subject.getId(), 1);
-        var customAttribute = new UpdateKitCustomService.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
-        var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
+        var attribute = attributeWithTitle("flexibility");
+        var subject = subjectWithAttributes("software", List.of(attribute));
+        var kit = kitWithSubjects(List.of(subject));
+        var customSubject = new UpdateKitCustomUseCase.Param.KitCustomData.CustomSubject(subject.getId(), 1);
+        var customAttribute = new UpdateKitCustomUseCase.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
+        var customData = new UpdateKitCustomUseCase.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         var param = createParam(b -> b.customData(customData));
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -119,12 +109,12 @@ class UpdateKitCustomServiceTest {
 
     @Test
     void testUpdateKitCustom_WhenKitIsPublicButSubjectCustomIsNotRelatedToKit_ThenThrowValidationException() {
-        var attribute = AttributeMother.attributeWithTitle("flexibility");
-        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
-        var kit = AssessmentKitMother.kitWithSubjects(List.of(subject));
-        var customSubject = new UpdateKitCustomService.Param.KitCustomData.CustomSubject(1L, 1);
-        var customAttribute = new UpdateKitCustomService.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
-        var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
+        var attribute = attributeWithTitle("flexibility");
+        var subject = subjectWithAttributes("software", List.of(attribute));
+        var kit = kitWithSubjects(List.of(subject));
+        var customSubject = new UpdateKitCustomUseCase.Param.KitCustomData.CustomSubject(1L, 1);
+        var customAttribute = new UpdateKitCustomUseCase.Param.KitCustomData.CustomAttribute(attribute.getId(), 5);
+        var customData = new UpdateKitCustomUseCase.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         var param = createParam(b -> b.customData(customData));
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -138,12 +128,12 @@ class UpdateKitCustomServiceTest {
 
     @Test
     void testUpdateKitCustom_WhenKitIsPublicButAttributeCustomIsNotRelatedToKit_ThenThrowValidationException() {
-        var attribute = AttributeMother.attributeWithTitle("flexibility");
-        var subject = SubjectMother.subjectWithAttributes("software", List.of(attribute));
-        var kit = AssessmentKitMother.kitWithSubjects(List.of(subject));
-        var customSubject = new UpdateKitCustomService.Param.KitCustomData.CustomSubject(subject.getId(), 1);
-        var customAttribute = new UpdateKitCustomService.Param.KitCustomData.CustomAttribute(1L, 5);
-        var customData = new UpdateKitCustomService.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
+        var attribute = attributeWithTitle("flexibility");
+        var subject = subjectWithAttributes("software", List.of(attribute));
+        var kit = kitWithSubjects(List.of(subject));
+        var customSubject = new UpdateKitCustomUseCase.Param.KitCustomData.CustomSubject(subject.getId(), 1);
+        var customAttribute = new UpdateKitCustomUseCase.Param.KitCustomData.CustomAttribute(1L, 5);
+        var customData = new UpdateKitCustomUseCase.Param.KitCustomData(List.of(customSubject), List.of(customAttribute));
         var param = createParam(b -> b.customData(customData));
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
