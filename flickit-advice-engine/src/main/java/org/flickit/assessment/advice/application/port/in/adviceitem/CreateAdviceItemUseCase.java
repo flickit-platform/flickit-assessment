@@ -35,15 +35,15 @@ public interface CreateAdviceItemUseCase {
         String description;
 
         @NotNull(message = CREATE_ADVICE_ITEM_COST_NOT_NULL)
-        @EnumValue(enumClass = CostType.class)
+        @EnumValue(enumClass = CostType.class, message = CREATE_ADVICE_ITEM_COST_INVALID)
         String cost;
 
         @NotNull(message = CREATE_ADVICE_ITEM_PRIORITY_NOT_NULL)
-        @EnumValue(enumClass = PriorityType.class)
+        @EnumValue(enumClass = PriorityType.class, message = CREATE_ADVICE_ITEM_PRIORITY_INVALID)
         String priority;
 
         @NotNull(message = CREATE_ADVICE_ITEM_IMPACT_NOT_NULL)
-        @EnumValue(enumClass = ImpactType.class)
+        @EnumValue(enumClass = ImpactType.class, message = CREATE_ADVICE_ITEM_IMPACT_INVALID)
         String impact;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -57,6 +57,7 @@ public interface CreateAdviceItemUseCase {
             this.priority = priority;
             this.impact = impact;
             this.currentUserId = currentUserId;
+            this.validateSelf();
         }
     }
 

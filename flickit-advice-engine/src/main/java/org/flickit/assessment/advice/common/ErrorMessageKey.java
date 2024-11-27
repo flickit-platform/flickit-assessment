@@ -38,6 +38,9 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN = "create-advice-item.description.size.min";
     public static final String CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX = "create-advice-item.description.size.max";
     public static final String CREATE_ADVICE_ITEM_COST_NOT_NULL = "create-advice-item.cost.notNull";
+    public static final String CREATE_ADVICE_ITEM_COST_INVALID = "create-advice-item.cost.invalid";
     public static final String CREATE_ADVICE_ITEM_PRIORITY_NOT_NULL = "create-advice-item.priority.notNull";
+    public static final String CREATE_ADVICE_ITEM_PRIORITY_INVALID = "create-advice-item.priority.invalid";
     public static final String CREATE_ADVICE_ITEM_IMPACT_NOT_NULL = "create-advice-item.impact.notNull";
+    public static final String CREATE_ADVICE_ITEM_IMPACT_INVALID = "create-advice-item.impact.invalid";
 }
