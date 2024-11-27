@@ -51,4 +51,42 @@
             ON fak_answer_range (kit_version_id, code) WHERE reusable = TRUE;
         </sql>
     </changeSet>
+
+    <changeSet id="0.37-08" author="Maziyar Gerami">
+        <createTable tableName="faa_advice_item">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="pk_faa_advice_item" nullable="false"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(1000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="cost" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="impact" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
