@@ -6,12 +6,12 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentJpaEntityMother.assessmentEntityWithKit;
+import static org.flickit.assessment.core.test.fixture.adapter.jpa.AssessmentJpaEntityMother.assessmentEntityWithKitCustom;
 
 public class AssessmentResultJpaEntityMother {
 
     public static AssessmentResultJpaEntity validSimpleAssessmentResultEntity(Long maturityLevelId, Boolean isCalculateValid, Boolean isConfidenceValid) {
-        AssessmentJpaEntity assessmentEntity = assessmentEntityWithKit();
+        AssessmentJpaEntity assessmentEntity = assessmentEntityWithKitCustom();
         return new AssessmentResultJpaEntity(
             UUID.randomUUID(),
             assessmentEntity,

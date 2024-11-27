@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.UpdateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.UpdateKitCustomPort;
@@ -54,7 +55,16 @@ class UpdateKitCustomServiceTest {
     @Captor
     private ArgumentCaptor<UpdateKitCustomPort.Param> portParamCaptor;
 
+    @Mock
+    private ObjectMapper mapper;
+
+    private final UpdateKitCustomUseCase.Param param = createParam(UpdateKitCustomUseCase.Param.ParamBuilder::build);
+    private final String kitCustomData = """
+        {"subs":[{"id":1000,"w":1}],"atts":[{"id":200,"w":2}]}
+        """;
+
     @Test
+    @SneakyThrows
     void testUpdateKitCustom_WhenKitIsPrivateAndUserHasNotAccess_ThenThrowAccessDeniedException() {
         var param = createParam(UpdateKitCustomUseCase.Param.ParamBuilder::build);
         AssessmentKit kit = AssessmentKitMother.privateKit();
@@ -82,6 +92,7 @@ class UpdateKitCustomServiceTest {
         doNothing().when(updateKitCustomPort).update(any(UpdateKitCustomPort.Param.class));
 
         service.updateKitCustom(param);
+
         assertUpdateKitCustomPortParamMapping(param);
     }
 
@@ -100,6 +111,7 @@ class UpdateKitCustomServiceTest {
         doNothing().when(updateKitCustomPort).update(any(UpdateKitCustomPort.Param.class));
 
         service.updateKitCustom(param);
+
         assertUpdateKitCustomPortParamMapping(param);
 
         verifyNoInteractions(checkKitUserAccessPort);
@@ -167,7 +179,6 @@ class UpdateKitCustomServiceTest {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getWeight(), actual.weight());
             });
-
     }
 
     private UpdateKitCustomUseCase.Param createParam(Consumer<UpdateKitCustomUseCase.Param.ParamBuilder> changer) {

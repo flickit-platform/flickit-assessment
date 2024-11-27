@@ -235,6 +235,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
     public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
     public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_STATUS_DUPLICATE = "create-assessment-kit.kitStatus.duplicate";
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
     public static final String ACTIVATE_KIT_VERSION_STATUS_INVALID = "activate-kit-version.status.invalid";
@@ -438,6 +439,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_RANGE_TITLE_NOT_BLANK = "create-answer-range.title.notBlank";
     public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MIN = "create-answer-range.title.size.min";
     public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MAX = "create-answer-range.title.size.max";
+    public static final String CREATE_ANSWER_RANGE_TITLE_DUPLICATE = "create-answer-range.title.duplicate";
 
     public static final String CREATE_ANSWER_RANGE_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-range-option.kitVersionId.notNull";
     public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_ID_NOT_NULL = "create-answer-range-option.answerRangeId.notNull";

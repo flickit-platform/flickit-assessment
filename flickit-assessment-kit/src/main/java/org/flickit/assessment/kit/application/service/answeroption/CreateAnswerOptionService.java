@@ -64,7 +64,7 @@ public class CreateAnswerOptionService implements CreateAnswerOptionUseCase {
     }
 
     private CreateAnswerRangePort.Param tocreateAnswerRangePortParam(Param param) {
-        return new CreateAnswerRangePort.Param(param.getKitVersionId(), null, false, param.getCurrentUserId());
+        return new CreateAnswerRangePort.Param(param.getKitVersionId(), null, null, false, param.getCurrentUserId());
     }
 
     private UpdateQuestionPort.UpdateAnswerRangeParam toUpdateQuestionPortParam(Param param, Question question, long answerRangeId) {
