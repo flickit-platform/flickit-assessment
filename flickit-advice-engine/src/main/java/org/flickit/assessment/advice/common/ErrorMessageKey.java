@@ -44,4 +44,5 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_ITEM_PRIORITY_INVALID = "create-advice-item.priority.invalid";
     public static final String CREATE_ADVICE_ITEM_IMPACT_NOT_NULL = "create-advice-item.impact.notNull";
     public static final String CREATE_ADVICE_ITEM_IMPACT_INVALID = "create-advice-item.impact.invalid";
+    public static final String CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "create-advice-item.assessmentResult.notFound";
 }
