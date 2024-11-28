@@ -33,9 +33,6 @@ public interface CreateAdviceItemUseCase {
         @Size(max = 500, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MAX)
         String title;
 
-        @NotNull(message = CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_ID_NOT_NULL)
-        UUID assessmentResultId;
-
         @Size(min = 3, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN)
         @Size(max = 1000, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX)
         String description;
@@ -56,10 +53,9 @@ public interface CreateAdviceItemUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, String title, UUID assessmentResultId, String description, String cost, String priority, String impact, UUID currentUserId) {
+        public Param(UUID assessmentId, String title, String description, String cost, String priority, String impact, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.title = title != null && !title.isBlank() ? title.strip() : null;
-            this.assessmentResultId = assessmentResultId;
             this.description = description != null ? description.strip() : null;
             this.cost = cost;
             this.priority = priority;
