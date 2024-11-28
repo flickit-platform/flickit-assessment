@@ -21,19 +21,15 @@ public class CreateAdviceItemRestController {
     private final CreateAdviceItemUseCase useCase;
 
     @PostMapping("/assessments/{assessmentId}/advice-item")
-    ResponseEntity<CreateAdviceItemResponseDto> createAdvice(@PathVariable("assessmentId") UUID assessmentId,
+    ResponseEntity<Result> createAdvice(@PathVariable("assessmentId") UUID assessmentId,
                                                              @RequestBody CreateAdviceItemRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         Param param = toParam(assessmentId, requestDto, currentUserId);
         Result result = useCase.createAdviceItem(param);
-        return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     private Param toParam(UUID assessmentId, CreateAdviceItemRequestDto requestDto, UUID currentUserId) {
         return new Param(assessmentId, requestDto.title(), requestDto.description(), requestDto.cost(), requestDto.priority(), requestDto.impact(), currentUserId);
-    }
-
-    private CreateAdviceItemResponseDto toResponseDto(Result result) {
-        return new CreateAdviceItemResponseDto(result.id());
     }
 }
