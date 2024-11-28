@@ -32,6 +32,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSOR_NARRATION_SIZE_MAX = "create-assessor-advice-narration.assessorNarration.size.max";
     public static final String CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND = "create-assessor-advice-narration.assessmentResult.notFound";
 
+    public static final String CREATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL = "create-advice-item.assessmentId.notNull";
     public static final String CREATE_ADVICE_ITEM_TITLE_NOT_NULL = "create-advice-item.title.notNull";
     public static final String CREATE_ADVICE_ITEM_TITLE_SIZE_MIN = "create-advice-item.title.size.min";
     public static final String CREATE_ADVICE_ITEM_TITLE_SIZE_MAX = "create-advice-item.title.size.max";

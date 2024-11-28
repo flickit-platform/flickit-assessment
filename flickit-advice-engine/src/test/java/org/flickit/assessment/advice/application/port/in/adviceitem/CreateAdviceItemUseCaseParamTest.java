@@ -16,6 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreateAdviceItemUseCaseParamTest {
 
     @Test
+    void testCreateAdviceItemUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.assessmentId(null)));
+        assertThat(throwable).hasMessage("assessmentId: " + CREATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL);
+    }
+
+    @Test
     void testCreateAdviceItemUseCaseParam_titleViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
@@ -89,6 +96,7 @@ class CreateAdviceItemUseCaseParamTest {
 
     private CreateAdviceItemUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAdviceItemUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
             .title("title")
             .description("description")
             .cost("LOW")

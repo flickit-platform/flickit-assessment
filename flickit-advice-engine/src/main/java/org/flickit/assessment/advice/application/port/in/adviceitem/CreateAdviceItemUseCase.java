@@ -25,6 +25,9 @@ public interface CreateAdviceItemUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
+        @NotNull(message = CREATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL)
+        UUID assessmentId;
+
         @NotNull(message = CREATE_ADVICE_ITEM_TITLE_NOT_NULL)
         @Size(min = 3, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MIN )
         @Size(max = 500, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MAX)
@@ -50,7 +53,8 @@ public interface CreateAdviceItemUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(String title, String description, String cost, String priority, String impact, UUID currentUserId) {
+        public Param(UUID assessmentId, String title, String description, String cost, String priority, String impact, UUID currentUserId) {
+            this.assessmentId = assessmentId;
             this.title = title != null && !title.isBlank() ? title.strip() : null;
             this.description = description != null ? description.strip() : null;
             this.cost = cost;
