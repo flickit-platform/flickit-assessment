@@ -16,7 +16,7 @@ public class AdviceItemJpaAdapter implements CreateAdviceItemPort {
 
     @Override
     public UUID persist(AdviceItem adviceItem) {
-        var unsavedEntity = AdviceItemMapper.toJpaEntity(adviceItem);
-        return repository.save(unsavedEntity).getId();
+        var entity = AdviceItemMapper.toJpaEntity(adviceItem);
+        return repository.save(entity).getId();
     }
 }

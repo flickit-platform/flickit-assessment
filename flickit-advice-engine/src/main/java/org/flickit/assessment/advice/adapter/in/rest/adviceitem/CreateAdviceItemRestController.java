@@ -22,7 +22,7 @@ public class CreateAdviceItemRestController {
 
     @PostMapping("/assessments/{assessmentId}/advice-item")
     ResponseEntity<Result> createAdvice(@PathVariable("assessmentId") UUID assessmentId,
-                                                             @RequestBody CreateAdviceItemRequestDto requestDto) {
+                                        @RequestBody CreateAdviceItemRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         Param param = toParam(assessmentId, requestDto, currentUserId);
         Result result = useCase.createAdviceItem(param);
