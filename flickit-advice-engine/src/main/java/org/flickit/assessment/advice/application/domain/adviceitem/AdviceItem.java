@@ -10,8 +10,8 @@ import java.util.UUID;
 public class AdviceItem {
 
     private final UUID id;
-    private final UUID assessmentResultId;
     private final String title;
+    private final UUID assessmentResultId;
     private final String description;
     private final CostType cost;
     private final ImpactType impact;
