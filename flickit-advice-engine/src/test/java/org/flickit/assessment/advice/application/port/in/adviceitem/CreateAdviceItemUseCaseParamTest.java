@@ -38,6 +38,13 @@ class CreateAdviceItemUseCaseParamTest {
     }
 
     @Test
+    void testCreateAdviceItemUseCaseParam_assessmentResultIdParamViolatesConstraint_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.assessmentId(null)));
+        assertThat(throwable).hasMessage("assessmentResultId: " + CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_ID_NOT_NULL);
+    }
+
+    @Test
     void testCreateAdviceItemUseCaseParam_descriptionViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.description(RandomStringUtils.random(1001))));
