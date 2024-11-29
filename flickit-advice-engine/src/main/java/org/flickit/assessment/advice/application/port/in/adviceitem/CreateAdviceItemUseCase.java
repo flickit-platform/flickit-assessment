@@ -29,8 +29,8 @@ public interface CreateAdviceItemUseCase {
         UUID assessmentId;
 
         @NotNull(message = CREATE_ADVICE_ITEM_TITLE_NOT_NULL)
-        @Size(min = 3, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MIN )
-        @Size(max = 500, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MAX)
+        @Size(min = 3, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MIN)
+        @Size(max = 100, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MAX)
         String title;
 
         @Size(min = 3, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN)

@@ -23,13 +23,13 @@ class CreateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testCreateAdviceItemUseCaseParam_titleViolatesConstraint_ErrorMessage() {
+    void testCreateAdviceItemUseCaseParam_titleViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
         assertThat(throwable).hasMessage("title: " + CREATE_ADVICE_ITEM_TITLE_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.title(RandomStringUtils.random(5001))));
+            () -> createParam(b -> b.title(RandomStringUtils.random(101))));
         assertThat(throwable).hasMessage("title: " + CREATE_ADVICE_ITEM_TITLE_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
@@ -38,7 +38,7 @@ class CreateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testCreateAdviceItemUseCaseParam_descriptionViolatesConstraint_ErrorMessage() {
+    void testCreateAdviceItemUseCaseParam_descriptionViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.description(RandomStringUtils.random(1001))));
         assertThat(throwable).hasMessage("description: " + CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX);
@@ -49,7 +49,7 @@ class CreateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testCreateAdviceItemUseCaseParam_impactViolatesConstraint_ErrorMessage() {
+    void testCreateAdviceItemUseCaseParam_impactViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.impact(null)));
         assertThat(throwable).hasMessage("impact: " + CREATE_ADVICE_ITEM_IMPACT_NOT_NULL);
@@ -60,7 +60,7 @@ class CreateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testCreateAdviceItemUseCaseParam_costViolatesConstraint_ErrorMessage() {
+    void testCreateAdviceItemUseCaseParam_costViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.cost(null)));
         assertThat(throwable).hasMessage("cost: " + CREATE_ADVICE_ITEM_COST_NOT_NULL);
@@ -71,7 +71,7 @@ class CreateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testCreateAdviceItemUseCaseParam_priorityViolatesConstraint_ErrorMessage() {
+    void testCreateAdviceItemUseCaseParam_priorityViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.priority(null)));
         assertThat(throwable).hasMessage("priority: " + CREATE_ADVICE_ITEM_PRIORITY_NOT_NULL);
