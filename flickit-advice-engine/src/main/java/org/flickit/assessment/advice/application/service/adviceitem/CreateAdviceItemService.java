@@ -43,6 +43,11 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
         return new Result(createAdviceItemPort.persist(toAdviceItem(param, assessmentResult.getId())));
     }
 
+    private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
+        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ADVICE))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+    }
+
     private AdviceItem toAdviceItem(Param param, UUID assessmentResultId) {
         return new AdviceItem(null,
             param.getTitle(),
@@ -55,10 +60,5 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
             LocalDateTime.now(),
             param.getCurrentUserId(),
             param.getCurrentUserId());
-    }
-
-    private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
-        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ADVICE))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }
