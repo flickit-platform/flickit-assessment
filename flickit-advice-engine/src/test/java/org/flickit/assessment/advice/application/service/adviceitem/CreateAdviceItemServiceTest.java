@@ -92,7 +92,6 @@ class CreateAdviceItemServiceTest {
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getLastModifiedBy());
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
-        verify(createAdviceItemPort).persist(argumentCaptor.capture());
     }
 
     private CreateAdviceItemUseCase.Param createParam(Consumer<CreateAdviceItemUseCase.Param.ParamBuilder> changer) {
