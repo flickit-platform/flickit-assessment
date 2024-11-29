@@ -17,7 +17,7 @@ public class AdviceItemMapper {
             adviceItem.getPriority().ordinal(),
             adviceItem.getImpact().ordinal(),
             adviceItem.getCreationTime(),
-            adviceItem.getCreationTime(),
+            adviceItem.getLastModificationTime(),
             adviceItem.getCreatedBy(),
             adviceItem.getLastModifiedBy());
     }
