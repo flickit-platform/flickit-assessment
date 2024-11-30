@@ -15,7 +15,7 @@ class ImpactLevelTest {
 
     @Test
     void testImpactLevel_NameOfItemsShouldNotBeChanged() {
-        assertEquals("LOW",ImpactLevel.LOW.name());
+        assertEquals("LOW", ImpactLevel.LOW.name());
         assertEquals("MEDIUM", ImpactLevel.MEDIUM.name());
         assertEquals("HIGH", ImpactLevel.HIGH.name());
     }
