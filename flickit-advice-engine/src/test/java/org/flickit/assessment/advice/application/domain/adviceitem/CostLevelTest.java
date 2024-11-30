@@ -15,7 +15,7 @@ class CostLevelTest {
 
     @Test
     void testCostLevel_NameOfItemsShouldNotBeChanged() {
-        assertEquals("LOW",CostLevel.LOW.name());
+        assertEquals("LOW", CostLevel.LOW.name());
         assertEquals("MEDIUM", CostLevel.MEDIUM.name());
         assertEquals("HIGH", CostLevel.HIGH.name());
     }
