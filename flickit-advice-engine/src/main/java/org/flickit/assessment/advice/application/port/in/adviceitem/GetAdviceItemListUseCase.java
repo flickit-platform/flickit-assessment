@@ -2,6 +2,8 @@ package org.flickit.assessment.advice.application.port.in.adviceitem;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 
@@ -14,6 +16,8 @@ public interface GetAdviceItemListUseCase {
 
     PaginatedResponse<AdviceItemListItem> getAdviceItems(Param param);
 
+    @Value
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_ADVICE_ITEM_LIST_ASSESSMENT_ID_NOT_NULL)
