@@ -25,7 +25,7 @@ public class CreateAdviceItemRestController {
                                             @RequestBody CreateAdviceItemRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         Param param = toParam(assessmentId, requestDto, currentUserId);
-        return new ResponseEntity<>(useCase.createAdviceItem(param), HttpStatus.OK);
+        return new ResponseEntity<>(useCase.createAdviceItem(param), HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, CreateAdviceItemRequestDto requestDto, UUID currentUserId) {
