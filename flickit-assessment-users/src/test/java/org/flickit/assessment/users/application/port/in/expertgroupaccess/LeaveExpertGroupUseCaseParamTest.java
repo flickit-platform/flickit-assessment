@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.users.common.ErrorMessageKey.LEAVE_EXPERT_GROUP_ID_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LeaveExpertGroupUseCaseParamTest {
 
@@ -21,7 +21,7 @@ class LeaveExpertGroupUseCaseParamTest {
     }
 
     @Test
-    void testLeaveExpertGroupUseCaseParam_currentViolatesConstraints_ErrorMessage() {
+    void testLeaveExpertGroupUseCaseParam_currentUserIdViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
