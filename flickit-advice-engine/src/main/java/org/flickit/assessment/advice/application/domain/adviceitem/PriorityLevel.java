@@ -15,7 +15,13 @@ public enum PriorityLevel {
 
     private final String title;
 
-    public String getCode() {
-        return name();
+    public static PriorityLevel valueOfById(int id) {
+        if (!isValidId(id))
+            return null;
+        return values()[id];
+    }
+
+    public static boolean isValidId(int id) {
+        return id >= 0 && id < PriorityLevel.values().length;
     }
 }
