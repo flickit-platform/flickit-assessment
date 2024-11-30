@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AdviceItemJpaAdapter implements CreateAdviceItemPort {
+public class AdviceItemPersistenceJpaAdapter implements CreateAdviceItemPort {
 
     private final AdviceItemJpaRepository repository;
 
