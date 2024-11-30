@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum ImpactType {
+public enum ImpactLevel {
 
     LOW("Low"),
     MEDIUM("Medium"),

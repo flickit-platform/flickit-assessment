@@ -13,7 +13,7 @@ public class AdviceItem {
     private final String title;
     private final UUID assessmentResultId;
     private final String description;
-    private final CostType cost;
-    private final ImpactType impact;
-    private final PriorityType priority;
+    private final CostLevel cost;
+    private final ImpactLevel impact;
+    private final PriorityLevel priority;
 }

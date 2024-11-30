@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum PriorityType {
+public enum PriorityLevel {
 
     LOW("Low"),
     MEDIUM("Medium"),
