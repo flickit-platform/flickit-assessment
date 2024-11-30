@@ -63,8 +63,8 @@
             <column name="title" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="varchar(1000)">
-                <constraints nullable="true"/>
+            <column name="description" type="varchar(3000)">
+                <constraints nullable="false"/>
             </column>
             <column name="cost" type="tinyint">
                 <constraints nullable="false"/>
