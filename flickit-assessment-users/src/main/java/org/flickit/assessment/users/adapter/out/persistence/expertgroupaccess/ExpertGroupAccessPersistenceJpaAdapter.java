@@ -90,7 +90,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public Optional<ExpertGroupAccess> loadExpertGroupAccess(long expertGroupId, UUID userId) {
-        return repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
+        return repository.findByExpertGroupIdAndUserId(expertGroupId, userId)
             .map(ExpertGroupAccessMapper::mapToDomain);
     }
 
@@ -101,7 +101,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
 
     @Override
     public void deleteMember(long expertGroupId, UUID userId) {
-        ExpertGroupAccessJpaEntity entity = repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
+        ExpertGroupAccessJpaEntity entity = repository.findByExpertGroupIdAndUserId(expertGroupId, userId)
             .orElseThrow(() -> new ResourceNotFoundException(DELETE_EXPERT_GROUP_MEMBER_USER_ID_NOT_FOUND));
         repository.delete(entity);
     }
