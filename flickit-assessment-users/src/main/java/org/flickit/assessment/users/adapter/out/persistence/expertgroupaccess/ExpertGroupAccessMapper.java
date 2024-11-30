@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.users.expertgroupaccess.ExpertGroupAccessJpaEntity;
 import org.flickit.assessment.users.application.domain.ExpertGroupAccess;
+import org.flickit.assessment.users.application.domain.ExpertGroupAccessStatus;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.CreateExpertGroupAccessPort;
 import org.flickit.assessment.users.application.port.out.expertgroupaccess.InviteExpertGroupMemberPort;
 
@@ -46,10 +47,10 @@ public class ExpertGroupAccessMapper {
         );
     }
 
-    static ExpertGroupAccess mapAccessJpaToExpertGroupAccessModel(ExpertGroupAccessJpaEntity entity) {
+    static ExpertGroupAccess mapToDomain(ExpertGroupAccessJpaEntity entity) {
         return new ExpertGroupAccess(
             entity.getInviteExpirationDate(),
             entity.getInviteToken(),
-            entity.getStatus());
+            ExpertGroupAccessStatus.valueOfById(entity.getStatus()));
     }
 }

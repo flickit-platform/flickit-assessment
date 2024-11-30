@@ -55,8 +55,8 @@ public interface ExpertGroupAccessJpaRepository extends JpaRepository<ExpertGrou
             LEFT JOIN ExpertGroupJpaEntity e on a.expertGroupId = e.id
             WHERE a.expertGroupId = :expertGroupId AND a.userId = :userId AND e.deleted = FALSE
         """)
-    Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndAndUserId(@Param(value = "expertGroupId") long expertGroupId,
-                                                                         @Param(value = "userId") UUID userId);
+    Optional<ExpertGroupAccessJpaEntity> findByExpertGroupIdAndUserId(@Param(value = "expertGroupId") long expertGroupId,
+                                                                      @Param(value = "userId") UUID userId);
 
     @Modifying
     @Query("""
