@@ -5,7 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -28,7 +28,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
     private final LoadKitExpertGroupPort loadKitExpertGroupPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
-    private final LoadAllAttributesPort loadAllAttributesPort;
+    private final LoadAttributesPort loadAttributesPort;
     private final LoadQuestionPort loadQuestionPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
@@ -67,7 +67,7 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
 
         var attributeIds = attributeIdToImpacts.keySet().stream().toList();
 
-        var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
+        var attributeIdToTitleMap = loadAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
             .collect(toMap(Attribute::getId, Attribute::getTitle));
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(

@@ -108,6 +108,10 @@ public class AssessmentKitMother {
     }
 
     public static AssessmentKit kitWithSubjects(List<Subject> subjects) {
+        return kitWithSubjects(subjects, false);
+    }
+
+    public static AssessmentKit kitWithSubjects(List<Subject> subjects, boolean isPrivate) {
         return new AssessmentKit(
             id++,
             CODE + id,
@@ -117,7 +121,7 @@ public class AssessmentKitMother {
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
-            Boolean.FALSE,
+            isPrivate,
             EXPERT_GROUP_ID,
             subjects,
             null,

@@ -10,5 +10,7 @@ public interface LoadAttributesPort {
 
     PaginatedResponse<AttributeWithSubject> loadByKitVersionId(long kitVersionId, int size, int page);
 
+    List<Attribute> loadAllByIdsAndKitVersionId(List<Long> attributeIds, long kitVersionId);
+
     List<Attribute> loadUnimpactedAttributes(long kitVersionId);
 }

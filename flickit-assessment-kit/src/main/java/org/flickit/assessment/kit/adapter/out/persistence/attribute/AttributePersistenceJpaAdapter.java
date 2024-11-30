@@ -32,7 +32,6 @@ public class AttributePersistenceJpaAdapter implements
     CreateAttributePort,
     LoadAttributePort,
     CountAttributeImpactfulQuestionsPort,
-    LoadAllAttributesPort,
     DeleteAttributePort,
     LoadAttributesPort {
 
