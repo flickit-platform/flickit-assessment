@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.port.in.question.GetKitQuestionDetailUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -46,7 +46,7 @@ class GetKitQuestionDetailServiceTest {
     private CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Mock
-    private LoadAllAttributesPort loadAllAttributesPort;
+    private LoadAttributesPort loadAttributesPort;
 
     @Mock
     private LoadQuestionPort loadQuestionPort;
@@ -100,7 +100,7 @@ class GetKitQuestionDetailServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(question.getId(), kitVersionId)).thenReturn(question);
-        when(loadAllAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId)).thenReturn(List.of(attr1, attr2));
+        when(loadAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId)).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
@@ -143,7 +143,7 @@ class GetKitQuestionDetailServiceTest {
         verifyNoInteractions(
             loadActiveKitVersionIdPort,
             checkExpertGroupAccessPort,
-            loadAllAttributesPort
+            loadAttributesPort
         );
     }
 
@@ -163,7 +163,7 @@ class GetKitQuestionDetailServiceTest {
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(QUESTION_ID_NOT_FOUND, exception.getMessage());
         verifyNoInteractions(
-            loadAllAttributesPort
+            loadAttributesPort
         );
     }
 
@@ -178,7 +178,7 @@ class GetKitQuestionDetailServiceTest {
         var exception = assertThrows(AccessDeniedException.class, () -> service.getKitQuestionDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
         verifyNoInteractions(
-            loadAllAttributesPort
+            loadAttributesPort
         );
     }
 }
