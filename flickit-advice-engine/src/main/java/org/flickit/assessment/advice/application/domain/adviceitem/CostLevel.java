@@ -15,7 +15,17 @@ public enum CostLevel {
 
     private final String title;
 
-    public String getCode() {
-        return name();
+    public int getId() {
+        return this.ordinal();
+    }
+
+    public static CostLevel valueOfById(int id) {
+        if (!isValidId(id))
+            return null;
+        return values()[id];
+    }
+
+    public static boolean isValidId(int id) {
+        return id >= 0 && id < CostLevel.values().length;
     }
 }
