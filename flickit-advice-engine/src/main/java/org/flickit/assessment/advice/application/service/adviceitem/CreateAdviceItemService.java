@@ -1,9 +1,9 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
 import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
-import org.flickit.assessment.advice.application.domain.adviceitem.CostType;
-import org.flickit.assessment.advice.application.domain.adviceitem.ImpactType;
-import org.flickit.assessment.advice.application.domain.adviceitem.PriorityType;
+import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -53,9 +53,9 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
             param.getTitle(),
             assessmentResultId,
             param.getDescription(),
-            param.getCost() != null ? CostType.valueOf(param.getCost()) : null,
-            param.getPriority() != null ? PriorityType.valueOf(param.getPriority()) : null,
-            param.getImpact() != null ? ImpactType.valueOf(param.getImpact()) : null,
+            param.getCost() != null ? CostLevel.valueOf(param.getCost()) : null,
+            param.getPriority() != null ? PriorityLevel.valueOf(param.getPriority()) : null,
+            param.getImpact() != null ? ImpactLevel.valueOf(param.getImpact()) : null,
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.getCurrentUserId(),

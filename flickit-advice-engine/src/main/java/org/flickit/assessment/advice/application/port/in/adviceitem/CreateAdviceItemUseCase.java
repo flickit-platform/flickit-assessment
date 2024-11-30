@@ -5,9 +5,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.advice.application.domain.adviceitem.CostType;
-import org.flickit.assessment.advice.application.domain.adviceitem.ImpactType;
-import org.flickit.assessment.advice.application.domain.adviceitem.PriorityType;
+import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.validation.EnumValue;
 
@@ -38,15 +38,15 @@ public interface CreateAdviceItemUseCase {
         String description;
 
         @NotNull(message = CREATE_ADVICE_ITEM_COST_NOT_NULL)
-        @EnumValue(enumClass = CostType.class, message = CREATE_ADVICE_ITEM_COST_INVALID)
+        @EnumValue(enumClass = CostLevel.class, message = CREATE_ADVICE_ITEM_COST_INVALID)
         String cost;
 
         @NotNull(message = CREATE_ADVICE_ITEM_PRIORITY_NOT_NULL)
-        @EnumValue(enumClass = PriorityType.class, message = CREATE_ADVICE_ITEM_PRIORITY_INVALID)
+        @EnumValue(enumClass = PriorityLevel.class, message = CREATE_ADVICE_ITEM_PRIORITY_INVALID)
         String priority;
 
         @NotNull(message = CREATE_ADVICE_ITEM_IMPACT_NOT_NULL)
-        @EnumValue(enumClass = ImpactType.class, message = CREATE_ADVICE_ITEM_IMPACT_INVALID)
+        @EnumValue(enumClass = ImpactLevel.class, message = CREATE_ADVICE_ITEM_IMPACT_INVALID)
         String impact;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
