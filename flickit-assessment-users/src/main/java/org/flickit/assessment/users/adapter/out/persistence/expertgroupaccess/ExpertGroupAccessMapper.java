@@ -47,7 +47,7 @@ public class ExpertGroupAccessMapper {
         );
     }
 
-    static ExpertGroupAccess mapAccessJpaToExpertGroupAccessModel(ExpertGroupAccessJpaEntity entity) {
+    static ExpertGroupAccess mapToDomain(ExpertGroupAccessJpaEntity entity) {
         return new ExpertGroupAccess(
             entity.getInviteExpirationDate(),
             entity.getInviteToken(),

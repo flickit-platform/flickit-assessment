@@ -91,7 +91,7 @@ public class ExpertGroupAccessPersistenceJpaAdapter implements
     @Override
     public Optional<ExpertGroupAccess> loadExpertGroupAccess(long expertGroupId, UUID userId) {
         return repository.findByExpertGroupIdAndAndUserId(expertGroupId, userId)
-            .map(ExpertGroupAccessMapper::mapAccessJpaToExpertGroupAccessModel);
+            .map(ExpertGroupAccessMapper::mapToDomain);
     }
 
     @Override
