@@ -29,6 +29,12 @@ public class CreateAdviceItemRestController {
     }
 
     private Param toParam(UUID assessmentId, CreateAdviceItemRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, requestDto.title(), requestDto.description(), requestDto.cost(), requestDto.priority(), requestDto.impact(), currentUserId);
+        return new Param(assessmentId,
+            requestDto.title(),
+            requestDto.description(),
+            requestDto.cost(),
+            requestDto.priority(),
+            requestDto.impact(),
+            currentUserId);
     }
 }
