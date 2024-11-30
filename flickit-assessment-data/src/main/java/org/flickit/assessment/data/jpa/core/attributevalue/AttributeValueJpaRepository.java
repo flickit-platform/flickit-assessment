@@ -14,6 +14,8 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
 
     List<AttributeValueJpaEntity> findByAssessmentResult_assessment_IdAndAttributeIdIn(UUID assessmentId, Collection<Long> attributeIds);
 
+    List<AttributeValueJpaEntity> findAllByIdIn(Collection<UUID> ids);
+
     AttributeValueJpaEntity findByAttributeIdAndAssessmentResultId(@Param(value = "attributeId") Long attributeId,
                                                                    @Param(value = "assessmentResultId") UUID assessmentResultId);
 

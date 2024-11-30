@@ -3,6 +3,7 @@ package org.flickit.assessment.data.jpa.core.subjectvalue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,6 +13,8 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
     List<SubjectValueJpaEntity> findByAssessmentResultId(UUID resultId);
 
     Optional<SubjectValueJpaEntity> findBySubjectIdAndAssessmentResult_Id(Long subjectId, UUID assessmentResultId);
+
+    List<SubjectValueJpaEntity> findAllByIdIn(Collection<UUID> ids);
 
     @Query("""
             SELECT

@@ -9,16 +9,11 @@ import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedConfidencePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.UpdateCalculatedResultPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributematurityscore.AttributeMaturityScoreJpaRepository;
-import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
-import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,7 +41,7 @@ public class AssessmentCalculateResultPersistAdapter implements
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
         Map<UUID, MaturityLevel> subjectValueIdToLevel = subjectValues.stream()
             .collect(toMap(SubjectValue::getId, SubjectValue::getMaturityLevel));
-        List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findAllById(subjectValueIdToLevel.keySet());
+        var subjectValueEntities = subjectValueRepo.findAllByIdIn(subjectValueIdToLevel.keySet());
 
         subjectValueEntities.forEach(s -> s.setMaturityLevelId(subjectValueIdToLevel.get(s.getId()).getId()));
         subjectValueRepo.saveAll(subjectValueEntities);
@@ -55,7 +50,7 @@ public class AssessmentCalculateResultPersistAdapter implements
             .flatMap(s -> s.getAttributeValues().stream()).toList();
         Map<UUID, MaturityLevel> attributeValueIdToLevel = attributeValue.stream()
             .collect(toMap(AttributeValue::getId, AttributeValue::getMaturityLevel));
-        List<AttributeValueJpaEntity> attributeValueEntities = attributeValueRepo.findAllById(attributeValueIdToLevel.keySet());
+        var attributeValueEntities = attributeValueRepo.findAllByIdIn(attributeValueIdToLevel.keySet());
 
         attributeValueEntities.forEach(a -> a.setMaturityLevelId(attributeValueIdToLevel.get(a.getId()).getId()));
         attributeValueRepo.saveAll(attributeValueEntities);
@@ -78,7 +73,7 @@ public class AssessmentCalculateResultPersistAdapter implements
         List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
         Map<UUID, Double> subjectValueIdToConfidence = subjectValues.stream()
             .collect(toMap(SubjectValue::getId, SubjectValue::getConfidenceValue));
-        List<SubjectValueJpaEntity> subjectValueEntities = subjectValueRepo.findAllById(subjectValueIdToConfidence.keySet());
+        var subjectValueEntities = subjectValueRepo.findAllByIdIn(subjectValueIdToConfidence.keySet());
 
         subjectValueEntities.forEach(s -> s.setConfidenceValue(subjectValueIdToConfidence.get(s.getId())));
         subjectValueRepo.saveAll(subjectValueEntities);
