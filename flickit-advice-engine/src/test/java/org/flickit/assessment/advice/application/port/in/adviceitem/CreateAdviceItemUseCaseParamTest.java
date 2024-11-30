@@ -40,7 +40,11 @@ class CreateAdviceItemUseCaseParamTest {
     @Test
     void testCreateAdviceItemUseCaseParam_descriptionViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.description(RandomStringUtils.random(1001))));
+            () -> createParam(b -> b.description(null)));
+        assertThat(throwable).hasMessage("description: " + CREATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.description(RandomStringUtils.random(3001))));
         assertThat(throwable).hasMessage("description: " + CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,

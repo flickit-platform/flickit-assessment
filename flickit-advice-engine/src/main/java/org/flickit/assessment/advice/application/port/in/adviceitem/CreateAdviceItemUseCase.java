@@ -33,8 +33,9 @@ public interface CreateAdviceItemUseCase {
         @Size(max = 100, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MAX)
         String title;
 
+        @NotNull(message = CREATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL)
         @Size(min = 3, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN)
-        @Size(max = 1000, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX)
+        @Size(max = 3000, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX)
         String description;
 
         @NotNull(message = CREATE_ADVICE_ITEM_COST_NOT_NULL)
