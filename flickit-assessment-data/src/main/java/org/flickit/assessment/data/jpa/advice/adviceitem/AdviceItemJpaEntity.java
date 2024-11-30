@@ -29,7 +29,7 @@ public class AdviceItemJpaEntity {
     @Column(name = "assessment_result_id", nullable = false)
     UUID assessmentResultId;
 
-    @Column(name = "description", length = 500)
+    @Column(name = "description", length = 1000)
     String description;
 
     @Column(name = "cost", nullable = false)

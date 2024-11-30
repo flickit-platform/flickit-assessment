@@ -14,9 +14,9 @@ public class AdviceItem {
     private final String title;
     private final UUID assessmentResultId;
     private final String description;
-    private final CostType cost;
-    private final PriorityType priority;
-    private final ImpactType impact;
+    private final CostLevel cost;
+    private final PriorityLevel priority;
+    private final ImpactLevel impact;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final UUID createdBy;
