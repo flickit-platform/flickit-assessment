@@ -38,7 +38,7 @@ public class AssessmentCalculateResultPersistAdapter implements
             assessmentResult.getLastModificationTime(),
             assessmentResult.getLastCalculationTime());
 
-        List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
+        var subjectValues = assessmentResult.getSubjectValues();
         Map<UUID, MaturityLevel> subjectValueIdToLevel = subjectValues.stream()
             .collect(toMap(SubjectValue::getId, SubjectValue::getMaturityLevel));
         var subjectValueEntities = subjectValueRepo.findAllByIdIn(subjectValueIdToLevel.keySet());
@@ -46,19 +46,21 @@ public class AssessmentCalculateResultPersistAdapter implements
         subjectValueEntities.forEach(s -> s.setMaturityLevelId(subjectValueIdToLevel.get(s.getId()).getId()));
         subjectValueRepo.saveAll(subjectValueEntities);
 
-        List<AttributeValue> attributeValue = subjectValues.stream()
-            .flatMap(s -> s.getAttributeValues().stream()).toList();
-        Map<UUID, MaturityLevel> attributeValueIdToLevel = attributeValue.stream()
+        var attributeValues = subjectValues.stream()
+            .flatMap(s -> s.getAttributeValues().stream())
+            .toList();
+        Map<UUID, MaturityLevel> attributeValueIdToLevel = attributeValues.stream()
             .collect(toMap(AttributeValue::getId, AttributeValue::getMaturityLevel));
         var attributeValueEntities = attributeValueRepo.findAllByIdIn(attributeValueIdToLevel.keySet());
 
         attributeValueEntities.forEach(a -> a.setMaturityLevelId(attributeValueIdToLevel.get(a.getId()).getId()));
         attributeValueRepo.saveAll(attributeValueEntities);
 
-        List<AttributeMaturityScoreJpaEntity> attributeMaturityScores = new ArrayList<>();
-        attributeValue.forEach(qav -> qav.getMaturityScores()
-            .forEach(ms -> attributeMaturityScores.add(AttributeMaturityScoreMapper.mapToJpaEntity(qav.getId(), ms))));
-        attributeMaturityScoreRepository.saveAll(attributeMaturityScores);
+        var attributeMaturityScoreEntities = attributeValues.stream()
+            .flatMap(qav -> qav.getMaturityScores().stream()
+                .map(ms -> AttributeMaturityScoreMapper.mapToJpaEntity(qav.getId(), ms)))
+            .toList();
+        attributeMaturityScoreRepository.saveAll(attributeMaturityScoreEntities);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class AssessmentCalculateResultPersistAdapter implements
             assessmentResult.getLastModificationTime(),
             assessmentResult.getLastConfidenceCalculationTime());
 
-        List<SubjectValue> subjectValues = assessmentResult.getSubjectValues();
+        var subjectValues = assessmentResult.getSubjectValues();
         Map<UUID, Double> subjectValueIdToConfidence = subjectValues.stream()
             .collect(toMap(SubjectValue::getId, SubjectValue::getConfidenceValue));
         var subjectValueEntities = subjectValueRepo.findAllByIdIn(subjectValueIdToConfidence.keySet());
@@ -78,11 +80,12 @@ public class AssessmentCalculateResultPersistAdapter implements
         subjectValueEntities.forEach(s -> s.setConfidenceValue(subjectValueIdToConfidence.get(s.getId())));
         subjectValueRepo.saveAll(subjectValueEntities);
 
-        List<AttributeValue> attributeValue = subjectValues.stream()
-            .flatMap(s -> s.getAttributeValues().stream()).toList();
-        Map<UUID, Double> attributeValueIdToConfidence = attributeValue.stream()
+        var attributeValues = subjectValues.stream()
+            .flatMap(s -> s.getAttributeValues().stream())
+            .toList();
+        Map<UUID, Double> attributeValueIdToConfidence = attributeValues.stream()
             .collect(toMap(AttributeValue::getId, AttributeValue::getConfidenceValue));
-        List<AttributeValueJpaEntity> attributeValueEntities = attributeValueRepo.findAllById(attributeValueIdToConfidence.keySet());
+        var attributeValueEntities = attributeValueRepo.findAllById(attributeValueIdToConfidence.keySet());
 
         attributeValueEntities.forEach(a -> a.setConfidenceValue(attributeValueIdToConfidence.get(a.getId())));
         attributeValueRepo.saveAll(attributeValueEntities);
