@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.application.service.user;
 
+import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -18,10 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.unit.DataSize;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
@@ -53,12 +53,15 @@ class UpdateUserProfilePictureServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
+    private final UUID currentUserId = UUID.randomUUID();
+    private final MockMultipartFile bigPicture = new MockMultipartFile("images", "image1",
+        "image/jpeg", new byte[6 * 1024 * 1024]);
+    private final MockMultipartFile invalidFormatPicture = new MockMultipartFile("images", "image1",
+        "application/zip", new byte[4 * 1024 * 1024]);
+
     @Test
-    void testUpdateProfile_FileSizeIsNotValid_ValidationError() {
-        var currentUserId = UUID.randomUUID();
-        MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", new byte[6 * 1024 * 1024]);
-        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
+    void testUpdateUserProfilePicture_WhenFileSizeIsInvalid_ShouldThrowValidationError() {
+        var param = createParam(b -> b.picture(bigPicture));
 
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
 
@@ -70,11 +73,8 @@ class UpdateUserProfilePictureServiceTest {
     }
 
     @Test
-    void testUpdateProfile_CurrentUserIdIsNotExists_NotFoundError() throws IOException {
-        var currentUserId = UUID.randomUUID();
-        MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", new ByteArrayInputStream("Some content".getBytes()));
-        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
+    void testUpdateUserProfilePicture_WhenCurrentUserIdDoesNotExist_ShouldThrowNotFoundException() {
+        var param = createParam(UpdateUserProfilePictureUseCase.Param.ParamBuilder::build);
 
         when(loadUserPort.loadUser(currentUserId)).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
@@ -88,11 +88,8 @@ class UpdateUserProfilePictureServiceTest {
     }
 
     @Test
-    void testUpdateProfile_ContentTypeIsNotValid_ValidationError() {
-        var currentUserId = UUID.randomUUID();
-        MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "application/zip", new byte[4 * 1024 * 1024]);
-        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
+    void testUpdateUserProfilePicture_WhenContentTypeIsInvalid_ShouldReturnValidationError() {
+        var param = createParam(b -> b.picture(invalidFormatPicture));
 
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
@@ -106,11 +103,8 @@ class UpdateUserProfilePictureServiceTest {
     }
 
     @Test
-    void testUpdateProfile_HavePicture_PictureShouldBeDeleted() {
-        var currentUserId = UUID.randomUUID();
-        MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/jpeg", new byte[4 * 1024 * 1024]);
-        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
+    void testUpdateUserProfilePicture_WhenExistingPicture_DeletesPreviousPicture() {
+        var param = createParam(UpdateUserProfilePictureUseCase.Param.ParamBuilder::build);
         var user = new User(currentUserId, "email", "DisplayName", "bio", "linkedIn", "picturePath");
         var uploadedFilePath = "picture/path";
 
@@ -122,7 +116,7 @@ class UpdateUserProfilePictureServiceTest {
         doNothing().when(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("link/to/file");
 
-        assertDoesNotThrow(() -> service.update(param));
+        service.update(param);
 
         verify(loadUserPort).loadUser(currentUserId);
         verify(fileProperties).getPictureMaxSize();
@@ -134,11 +128,8 @@ class UpdateUserProfilePictureServiceTest {
     }
 
     @Test
-    void testUpdateProfile_DoesNotHavePicture_ShouldSuccessfulWithoutDeletingAnything() {
-        var currentUserId = UUID.randomUUID();
-        MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/jpeg", new byte[4 * 1024 * 1024]);
-        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
+    void testUpdateUserProfilePicture_DoesNotHavePicture_ShouldSuccessfulWithoutDeletingAnything() {
+        var param = createParam(UpdateUserProfilePictureUseCase.Param.ParamBuilder::build);
         var user = new User(currentUserId, "email", "DisplayName", "bio", "linkedIn", null);
         var uploadedFilePath = "picture/path";
 
@@ -149,7 +140,7 @@ class UpdateUserProfilePictureServiceTest {
         doNothing().when(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("link/to/file");
 
-        assertDoesNotThrow(() -> service.update(param));
+        service.update(param);
 
         verify(loadUserPort).loadUser(currentUserId);
         verify(fileProperties).getPictureMaxSize();
@@ -158,5 +149,20 @@ class UpdateUserProfilePictureServiceTest {
         verify(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
         verify(createFileDownloadLinkPort).createDownloadLink(anyString(), any());
         verifyNoInteractions(deleteFilePort);
+    }
+
+    @SneakyThrows
+    private UpdateUserProfilePictureUseCase.Param createParam(Consumer<UpdateUserProfilePictureUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    @SneakyThrows
+    private UpdateUserProfilePictureUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateUserProfilePictureUseCase.Param.builder()
+            .currentUserId(currentUserId)
+            .picture(new MockMultipartFile("images", "image1",
+                "image/jpeg", new byte[4 * 1024 * 1024]));
     }
 }
