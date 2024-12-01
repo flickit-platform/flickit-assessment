@@ -29,7 +29,7 @@ class UpdateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAdviceItemUseCaseParam_titleViolatesConstraints_ErrorMessage() {
+    void testUpdateAdviceItemUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
         assertThat(throwable).hasMessage("title: " + UPDATE_ADVICE_ITEM_TITLE_NOT_NULL);
@@ -44,7 +44,7 @@ class UpdateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAdviceItemUseCaseParam_descriptionViolatesConstraints_ErrorMessage() {
+    void testUpdateAdviceItemUseCaseParam_descriptionParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.description(null)));
         assertThat(throwable).hasMessage("description: " + UPDATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL);
@@ -59,7 +59,7 @@ class UpdateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAdviceItemUseCaseParam_impactViolatesConstraints_ErrorMessage() {
+    void testUpdateAdviceItemUseCaseParam_impactParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.impact(null)));
         assertThat(throwable).hasMessage("impact: " + UPDATE_ADVICE_ITEM_IMPACT_NOT_NULL);
@@ -70,7 +70,7 @@ class UpdateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAdviceItemUseCaseParam_costViolatesConstraints_ErrorMessage() {
+    void testUpdateAdviceItemUseCaseParam_costParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.cost(null)));
         assertThat(throwable).hasMessage("cost: " + UPDATE_ADVICE_ITEM_COST_NOT_NULL);
@@ -81,7 +81,7 @@ class UpdateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAdviceItemUseCaseParam_priorityViolatesConstraints_ErrorMessage() {
+    void testUpdateAdviceItemUseCaseParam_priorityParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.priority(null)));
         assertThat(throwable).hasMessage("priority: " + UPDATE_ADVICE_ITEM_PRIORITY_NOT_NULL);
