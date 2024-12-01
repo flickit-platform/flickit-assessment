@@ -20,8 +20,8 @@ public class UpdateUserPictureRestController {
     private final UpdateUserPictureUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/users/picture")
-    public ResponseEntity<UpdateUserPictureResponseDto> updateUserProfilePicture(@RequestParam MultipartFile pictureFile) {
+    @PutMapping("/user-profile/picture")
+    public ResponseEntity<UpdateUserProfilePictureResponseDto> updateUserProfilePicture(@RequestParam MultipartFile pictureFile) {
         UUID currentUserId = userContext.getUser().id();
         var response = toResponseDto(useCase.update(toParam(currentUserId, pictureFile)));
 
