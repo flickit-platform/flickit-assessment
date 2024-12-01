@@ -1,9 +1,11 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
+import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
+import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -12,9 +14,6 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
-
-import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdviceItemUseCase;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -36,8 +35,10 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
     @Override
     public Result createAdviceItem(Param param) {
         validateUserAccess(param.getAssessmentId(), param.getCurrentUserId());
+
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND));
+
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         return new Result(createAdviceItemPort.persist(toAdviceItem(param, assessmentResult.getId())));
@@ -53,9 +54,9 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
             param.getTitle(),
             assessmentResultId,
             param.getDescription(),
-            param.getCost() != null ? CostLevel.valueOf(param.getCost()) : null,
-            param.getPriority() != null ? PriorityLevel.valueOf(param.getPriority()) : null,
-            param.getImpact() != null ? ImpactLevel.valueOf(param.getImpact()) : null,
+            CostLevel.valueOf(param.getCost()),
+            PriorityLevel.valueOf(param.getPriority()),
+            ImpactLevel.valueOf(param.getImpact()),
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.getCurrentUserId(),
