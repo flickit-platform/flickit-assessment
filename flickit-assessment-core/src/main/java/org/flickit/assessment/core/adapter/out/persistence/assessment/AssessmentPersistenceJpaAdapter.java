@@ -15,8 +15,6 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -53,7 +51,6 @@ public class AssessmentPersistenceJpaAdapter implements
     private final QuestionJpaRepository questionRepository;
     private final AssessmentKitJpaRepository kitRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
-    private final KitVersionJpaRepository kitVersionRepository;
     private final KitCustomJpaRepository kitCustomRepository;
 
     @Override
@@ -132,12 +129,6 @@ public class AssessmentPersistenceJpaAdapter implements
             .map(e -> e.getAssessmentResult().getKitVersionId())
             .collect(toSet());
 
-        List<KitVersionJpaEntity> kitVersionEntities = kitVersionRepository.findAllByIdIn(kitVersionIds);
-
-        //Map kitId to kitVersionId used in assessmentResult, which may not necessarily be the active version.
-        Map<Long, Long> kitIdToKitVersionId = kitVersionEntities.stream()
-            .collect(toMap(e -> e.getKit().getId(), KitVersionJpaEntity::getId));
-
         List<AssessmentKitJpaEntity> kitEntities = kitRepository.findByKitVersionIds(kitVersionIds);
         Map<Long, AssessmentKitJpaEntity> kitIdToKitEntity = kitEntities.stream()
             .collect(toMap(AssessmentKitJpaEntity::getId, Function.identity()));
@@ -146,19 +137,20 @@ public class AssessmentPersistenceJpaAdapter implements
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
             .collect(Collectors.groupingBy(MaturityLevelJpaEntity::getKitVersionId));
 
-        Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevel =
+        Map<MaturityLevelJpaEntity.EntityId, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevel =
             kitMaturityLevelEntities.stream()
-                .collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+                .collect(toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
 
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
                 AssessmentKitJpaEntity kitEntity = kitIdToKitEntity.get(e.getAssessment().getAssessmentKitId());
-                List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(kitIdToKitVersionId.get(kitEntity.getId()));
+                List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(e.getAssessmentResult().getKitVersionId());
                 AssessmentListItem.Kit kit = new AssessmentListItem.Kit(kitEntity.getId(), kitEntity.getTitle(), kitLevelEntities.size());
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
-                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(e.getAssessmentResult().getMaturityLevelId());
+                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
+                        new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
                     maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
                         maturityLevelEntity.getTitle(),
                         maturityLevelEntity.getValue(),
