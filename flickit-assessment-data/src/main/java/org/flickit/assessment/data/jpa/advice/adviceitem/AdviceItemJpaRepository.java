@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEntity, UUID> {
 
-    Page<AdviceItemJpaEntity> findByAssessmentResultId(UUID assessmentResultId, PageRequest pageRequest);
+    Page<AdviceItemJpaEntity> findByAssessmentResultIdOrderByPriorityDescImpactDescCost(UUID assessmentResultId, PageRequest pageRequest);
 }

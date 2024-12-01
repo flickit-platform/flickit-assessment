@@ -29,15 +29,17 @@ public class AdviceItemJpaAdapter implements
 
     @Override
     public PaginatedResponse<AdviceItem> loadAdviceItemList(UUID assessmentResultId, int page, int size) {
-        Sort sort = Sort.by(Sort.Order.desc("priority"), Sort.Order.desc("impact"), Sort.Order.asc("cost"));
-        var pageResult = repository.findByAssessmentResultId(assessmentResultId, PageRequest.of(page, size, sort));
+        var direction = Sort.Direction.DESC;
+        var order = AdviceItemJpaEntity.Fields.lastModificationTime;
+        var pageResult = repository.findByAssessmentResultIdOrderByPriorityDescImpactDescCost(assessmentResultId,
+            PageRequest.of(page, size, direction, order));
 
         return new PaginatedResponse<>(
             pageResult.stream().map(AdviceItemMapper::mapToDomainModel).toList(),
             pageResult.getNumber(),
             pageResult.getSize(),
-            AdviceItemJpaEntity.Fields.lastModificationTime,
-            Sort.Direction.ASC.name().toLowerCase(),
+            order,
+            direction.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
 }
