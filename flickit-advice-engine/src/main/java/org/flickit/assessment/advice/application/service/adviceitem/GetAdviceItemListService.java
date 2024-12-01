@@ -55,6 +55,6 @@ public class GetAdviceItemListService implements GetAdviceItemListUseCase {
             adviceItem.getDescription(),
             adviceItem.getCost().getTitle(),
             adviceItem.getPriority().getTitle(),
-            adviceItem.getPriority().getTitle());
+            adviceItem.getImpact().getTitle());
     }
 }
