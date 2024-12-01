@@ -50,7 +50,7 @@ class GetAdviceItemListServiceTest {
     private final int size = 10;
     private final List<AdviceItem> items = List.of(
         new AdviceItem(UUID.randomUUID(), "title1", UUID.randomUUID(), "description1", CostLevel.HIGH, PriorityLevel.LOW, ImpactLevel.MEDIUM, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()),
-        new AdviceItem(UUID.randomUUID(), "title2", UUID.randomUUID(), "description2", CostLevel.MEDIUM, PriorityLevel.LOW, ImpactLevel.MEDIUM, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()));
+        new AdviceItem(UUID.randomUUID(), "title2", UUID.randomUUID(), "description2", CostLevel.MEDIUM, PriorityLevel.MEDIUM, ImpactLevel.HIGH, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()));
 
     @Test
     void testGetAdviceItemList_whenUserDoesNotHaveAccess_thenThrowAccessDeniedException() {
@@ -77,7 +77,7 @@ class GetAdviceItemListServiceTest {
     void testGetAdviceItemList_whenParametersAreValid_thenReturnsPaginatedAdviceItemList() {
         var param = createParam(GetAdviceItemListUseCase.Param.ParamBuilder::build);
         var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123);
-        var expected = new PaginatedResponse<>(items, page, size, "desc", "creationTime", 2);
+        var expected = new PaginatedResponse<>(items, page, size, "desc", "lastModificationTime", 2);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -85,20 +85,21 @@ class GetAdviceItemListServiceTest {
 
         var result = service.getAdviceItems(param);
         assertEquals(expected.getItems().size(), result.getItems().size());
-        assertEquals(items.getFirst().getId(), expected.getItems().getFirst().getId());
-        assertEquals(items.getLast().getId(), expected.getItems().getLast().getId());
-        assertEquals(items.getFirst().getTitle(), expected.getItems().getFirst().getTitle());
-        assertEquals(items.getLast().getTitle(), expected.getItems().getLast().getTitle());
-        assertEquals(items.getFirst().getAssessmentResultId(), expected.getItems().getFirst().getAssessmentResultId());
-        assertEquals(items.getLast().getAssessmentResultId(), expected.getItems().getLast().getAssessmentResultId());
-        assertEquals(items.getFirst().getDescription(), expected.getItems().getFirst().getDescription());
-        assertEquals(items.getLast().getDescription(), expected.getItems().getLast().getDescription());
-        assertEquals(items.getFirst().getCost(), expected.getItems().getFirst().getCost());
-        assertEquals(items.getLast().getCost(), expected.getItems().getLast().getCost());
-        assertEquals(items.getFirst().getPriority(), expected.getItems().getFirst().getPriority());
-        assertEquals(items.getLast().getPriority(), expected.getItems().getLast().getPriority());
-        assertEquals(items.getFirst().getImpact(), expected.getItems().getFirst().getImpact());
-        assertEquals(items.getLast().getImpact(), expected.getItems().getLast().getImpact());
+        assertEquals(expected.getItems().getFirst().getId(), result.getItems().getFirst().id());
+        assertEquals(expected.getItems().getLast().getId(), result.getItems().getLast().id());
+        assertEquals(expected.getItems().getFirst().getTitle(), result.getItems().getFirst().title());
+        assertEquals(expected.getItems().getLast().getTitle(), result.getItems().getLast().title());
+        assertEquals(expected.getItems().getFirst().getDescription(), result.getItems().getFirst().description());
+        assertEquals(expected.getItems().getLast().getDescription(), result.getItems().getLast().description());
+        assertEquals(expected.getItems().getFirst().getCost().getTitle(), result.getItems().getFirst().cost());
+        assertEquals(expected.getItems().getLast().getCost().getTitle(), result.getItems().getLast().cost());
+        assertEquals(expected.getItems().getFirst().getPriority().getTitle(), result.getItems().getFirst().priority());
+        assertEquals(expected.getItems().getLast().getPriority().getTitle(), result.getItems().getLast().priority());
+        assertEquals(expected.getItems().getFirst().getImpact().getTitle(), result.getItems().getFirst().impact());
+        assertEquals(expected.getItems().getLast().getImpact().getTitle(), result.getItems().getLast().impact());
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(expected.getItems().size(), result.getTotal());
     }
 
     private GetAdviceItemListUseCase.Param createParam(Consumer<GetAdviceItemListUseCase.Param.ParamBuilder> changer) {
