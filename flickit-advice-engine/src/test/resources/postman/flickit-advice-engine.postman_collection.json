@@ -162,6 +162,46 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "AdviceItem",
+			"item": [
+				{
+					"name": "Create Advice Item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"test\",\n    \"description\": \"test\",\n    \"cost\": \"LOW\",\n    \"priority\": \"MEDIUM\",\n    \"impact\": \"HIGH\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/27c48fa6-97ff-4fd6-8c3d-259106468f11/advice-items",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"27c48fa6-97ff-4fd6-8c3d-259106468f11",
+								"advice-items"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
