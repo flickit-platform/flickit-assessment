@@ -41,9 +41,9 @@ public class AssessmentResultMother {
         return assessmentResult;
     }
 
-    public static AssessmentResult validResultWithJustAnId() {
+    public static AssessmentResult validResult() {
         var assessment = AssessmentMother.assessment();
-        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(),
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(),
             assessment,
             assessment.getAssessmentKit().getKitVersion(),
             new ArrayList<>(),

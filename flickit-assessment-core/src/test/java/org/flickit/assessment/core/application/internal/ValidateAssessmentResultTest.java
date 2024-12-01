@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.resultWithValidations;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithJustAnId;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -153,7 +153,7 @@ class ValidateAssessmentResultTest {
 
     @Test
     void testValidate_kitCustomExistsAndCalculationIsBeforeKitCustomModification_isNotValid() {
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         var assessment = assessmentResult.getAssessment();
         var assessmentId = assessment.getId();
 

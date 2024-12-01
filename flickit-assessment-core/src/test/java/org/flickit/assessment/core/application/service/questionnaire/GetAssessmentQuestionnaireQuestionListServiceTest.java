@@ -73,7 +73,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -99,7 +99,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             "asc",
             1
         );
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
             null, null), question.getId(), 1, Boolean.FALSE);
 
@@ -142,7 +142,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             1
         );
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2, null, null), question.getId(), 1, Boolean.TRUE);
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -183,7 +183,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             1
         );
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE);
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
