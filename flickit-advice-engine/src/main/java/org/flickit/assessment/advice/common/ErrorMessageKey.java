@@ -46,4 +46,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ADVICE_ITEM_IMPACT_NOT_NULL = "create-advice-item.impact.notNull";
     public static final String CREATE_ADVICE_ITEM_IMPACT_INVALID = "create-advice-item.impact.invalid";
     public static final String CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "create-advice-item.assessmentResult.notFound";
+
+    public static final String DELETE_ADVICE_ITEM_ID_NOT_NULL = "delete-advice-item.id.notNull";
+    public static final String DELETE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL = "delete-advice-item.assessmentId.notNull";
 }
