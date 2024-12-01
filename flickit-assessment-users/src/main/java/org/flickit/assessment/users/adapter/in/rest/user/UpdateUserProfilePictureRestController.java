@@ -21,18 +21,14 @@ public class UpdateUserProfilePictureRestController {
     private final UserContext userContext;
 
     @PutMapping("/user-profile/picture")
-    public ResponseEntity<UpdateUserProfilePictureResponseDto> updateUserProfilePicture(@RequestParam MultipartFile pictureFile) {
+    public ResponseEntity<Result> updateUserProfilePicture(@RequestParam MultipartFile pictureFile) {
         UUID currentUserId = userContext.getUser().id();
-        var response = toResponseDto(useCase.update(toParam(currentUserId, pictureFile)));
+        var response = useCase.update(toParam(currentUserId, pictureFile));
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private Param toParam(UUID userId, MultipartFile pictureFile) {
-        return new Param(userId, pictureFile);
-    }
-
-    private UpdateUserProfilePictureResponseDto toResponseDto(Result result) {
-        return new UpdateUserProfilePictureResponseDto(result.pictureLink());
+    private Param toParam(UUID currentUserId, MultipartFile pictureFile) {
+        return new Param(currentUserId, pictureFile);
     }
 }
