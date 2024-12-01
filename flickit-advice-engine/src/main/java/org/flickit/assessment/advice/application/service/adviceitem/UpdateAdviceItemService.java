@@ -1,9 +1,6 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
-import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.*;
 import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -14,7 +11,6 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -51,6 +47,7 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
     }
 
     private AdviceItem toAdviceItem(UpdateAdviceItemUseCase.Param param, UUID assessmentResultId) {
+        var currentDateTime = LocalDateTime.now();
         return new AdviceItem(param.getAdviceItemId(),
             param.getTitle(),
             assessmentResultId,
@@ -58,8 +55,8 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
             CostLevel.valueOf(param.getCost()),
             PriorityLevel.valueOf(param.getPriority()),
             ImpactLevel.valueOf(param.getImpact()),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            currentDateTime,
+            currentDateTime,
             param.getCurrentUserId(),
             param.getCurrentUserId());
     }
