@@ -27,7 +27,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithJustAnId;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -85,7 +85,7 @@ class GetAttributeInsightServiceTest {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         Attribute attribute = AttributeMother.simpleAttribute();
 
 
@@ -112,7 +112,7 @@ class GetAttributeInsightServiceTest {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -132,7 +132,7 @@ class GetAttributeInsightServiceTest {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(false);
@@ -152,7 +152,7 @@ class GetAttributeInsightServiceTest {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         var attributeInsight = new AttributeInsight(assessmentResult.getId(),
             attributeId,
             "ai insight ",
@@ -181,7 +181,7 @@ class GetAttributeInsightServiceTest {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         var attributeInsight = new AttributeInsight(assessmentResult.getId(),
             attributeId,
             "ai insight ",
@@ -210,7 +210,7 @@ class GetAttributeInsightServiceTest {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         var attributeInsight = new AttributeInsight(assessmentResult.getId(),
             attributeId,
             "ai insight ",
@@ -239,7 +239,7 @@ class GetAttributeInsightServiceTest {
         var attributeId = 1L;
         var currentUserId = UUID.randomUUID();
         var param = new GetAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         var attributeInsight = new AttributeInsight(assessmentResult.getId(),
             attributeId,
             "ai insight ",
