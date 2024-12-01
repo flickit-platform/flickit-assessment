@@ -20,13 +20,13 @@ public interface UpdateUserProfilePictureUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
-        UUID userId;
+        UUID currentUserId;
 
         @NotNull(message = UPDATE_USER_PROFILE_PICTURE_NOT_NULL)
         MultipartFile picture;
 
-        public Param(UUID userId, MultipartFile picture) {
-            this.userId = userId;
+        public Param(UUID currentUserId, MultipartFile picture) {
+            this.currentUserId = currentUserId;
             this.picture = picture == null || picture.isEmpty() ? null : picture;
             this.validateSelf();
         }

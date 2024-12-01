@@ -119,7 +119,7 @@ class UpdateUserProfilePictureServiceTest {
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
         doNothing().when(deleteFilePort).deletePicture(user.getPicturePath());
         when(uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture())).thenReturn(uploadedFilePath);
-        doNothing().when(updateUserPicturePort).updatePicture(param.getUserId(), uploadedFilePath);
+        doNothing().when(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("link/to/file");
 
         assertDoesNotThrow(() -> service.update(param));
@@ -129,7 +129,7 @@ class UpdateUserProfilePictureServiceTest {
         verify(fileProperties).getPictureContentTypes();
         verify(deleteFilePort).deletePicture(user.getPicturePath());
         verify(uploadUserProfilePicturePort).uploadUserProfilePicture(param.getPicture());
-        verify(updateUserPicturePort).updatePicture(param.getUserId(), uploadedFilePath);
+        verify(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
         verify(createFileDownloadLinkPort).createDownloadLink(anyString(), any());
     }
 
@@ -146,7 +146,7 @@ class UpdateUserProfilePictureServiceTest {
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
         when(uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture())).thenReturn(uploadedFilePath);
-        doNothing().when(updateUserPicturePort).updatePicture(param.getUserId(), uploadedFilePath);
+        doNothing().when(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
         when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("link/to/file");
 
         assertDoesNotThrow(() -> service.update(param));
@@ -155,7 +155,7 @@ class UpdateUserProfilePictureServiceTest {
         verify(fileProperties).getPictureMaxSize();
         verify(fileProperties).getPictureContentTypes();
         verify(uploadUserProfilePicturePort).uploadUserProfilePicture(param.getPicture());
-        verify(updateUserPicturePort).updatePicture(param.getUserId(), uploadedFilePath);
+        verify(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
         verify(createFileDownloadLinkPort).createDownloadLink(anyString(), any());
         verifyNoInteractions(deleteFilePort);
     }

@@ -35,7 +35,7 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
     @Override
     public Result update(Param param) {
         validatePicture(param.getPicture());
-        var user = loadUserPort.loadUser(param.getUserId());
+        var user = loadUserPort.loadUser(param.getCurrentUserId());
 
         if (user.getPicturePath() != null && !user.getPicturePath().isEmpty())
             deleteFilePort.deletePicture(user.getPicturePath());
@@ -43,7 +43,7 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
         String filePath = uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture());
 
         var pictureLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
-        updateUserPicturePort.updatePicture(param.getUserId(), filePath);
+        updateUserPicturePort.updatePicture(param.getCurrentUserId(), filePath);
 
         return new Result(pictureLink);
     }
