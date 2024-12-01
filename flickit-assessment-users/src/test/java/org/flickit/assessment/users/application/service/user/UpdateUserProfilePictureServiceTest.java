@@ -4,7 +4,7 @@ import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.users.application.domain.User;
-import org.flickit.assessment.users.application.port.in.user.UpdateUserPictureUseCase;
+import org.flickit.assessment.users.application.port.in.user.UpdateUserProfilePictureUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 class UpdateUserProfilePictureServiceTest {
 
     @InjectMocks
-    UpdateUserPictureService service;
+    UpdateUserProfilePictureService service;
 
     @Mock
     private LoadUserPort loadUserPort;
@@ -58,7 +58,7 @@ class UpdateUserProfilePictureServiceTest {
         var currentUserId = UUID.randomUUID();
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", new byte[6 * 1024 * 1024]);
-        var param = new UpdateUserPictureUseCase.Param(currentUserId, picture);
+        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
 
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
 
@@ -74,7 +74,7 @@ class UpdateUserProfilePictureServiceTest {
         var currentUserId = UUID.randomUUID();
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", new ByteArrayInputStream("Some content".getBytes()));
-        var param = new UpdateUserPictureUseCase.Param(currentUserId, picture);
+        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
 
         when(loadUserPort.loadUser(currentUserId)).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
@@ -92,7 +92,7 @@ class UpdateUserProfilePictureServiceTest {
         var currentUserId = UUID.randomUUID();
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "application/zip", new byte[4 * 1024 * 1024]);
-        var param = new UpdateUserPictureUseCase.Param(currentUserId, picture);
+        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
 
         when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
@@ -110,7 +110,7 @@ class UpdateUserProfilePictureServiceTest {
         var currentUserId = UUID.randomUUID();
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/jpeg", new byte[4 * 1024 * 1024]);
-        var param = new UpdateUserPictureUseCase.Param(currentUserId, picture);
+        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
         var user = new User(currentUserId, "email", "DisplayName", "bio", "linkedIn", "picturePath");
         var uploadedFilePath = "picture/path";
 
@@ -138,7 +138,7 @@ class UpdateUserProfilePictureServiceTest {
         var currentUserId = UUID.randomUUID();
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/jpeg", new byte[4 * 1024 * 1024]);
-        var param = new UpdateUserPictureUseCase.Param(currentUserId, picture);
+        var param = new UpdateUserProfilePictureUseCase.Param(currentUserId, picture);
         var user = new User(currentUserId, "email", "DisplayName", "bio", "linkedIn", null);
         var uploadedFilePath = "picture/path";
 

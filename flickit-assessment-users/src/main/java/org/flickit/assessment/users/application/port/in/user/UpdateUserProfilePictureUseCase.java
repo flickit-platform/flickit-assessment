@@ -9,9 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_PICTURE_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.UPDATE_USER_PROFILE_PICTURE_NOT_NULL;
 
-public interface UpdateUserPictureUseCase {
+public interface UpdateUserProfilePictureUseCase {
 
     Result update(Param param);
 
@@ -22,7 +22,7 @@ public interface UpdateUserPictureUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID userId;
 
-        @NotNull(message = UPDATE_USER_PICTURE_NOT_NULL)
+        @NotNull(message = UPDATE_USER_PROFILE_PICTURE_NOT_NULL)
         MultipartFile picture;
 
         public Param(UUID userId, MultipartFile picture) {

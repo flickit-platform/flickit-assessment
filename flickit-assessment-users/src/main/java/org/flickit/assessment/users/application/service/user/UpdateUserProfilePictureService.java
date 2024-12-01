@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.users.application.port.in.user.UpdateUserPictureUseCase;
+import org.flickit.assessment.users.application.port.in.user.UpdateUserProfilePictureUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
@@ -21,7 +21,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PI
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UpdateUserPictureService implements UpdateUserPictureUseCase {
+public class UpdateUserProfilePictureService implements UpdateUserProfilePictureUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
