@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.port.in.user;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -25,6 +26,7 @@ public interface UpdateUserProfilePictureUseCase {
         @NotNull(message = UPDATE_USER_PROFILE_PICTURE_NOT_NULL)
         MultipartFile picture;
 
+        @Builder
         public Param(UUID currentUserId, MultipartFile picture) {
             this.currentUserId = currentUserId;
             this.picture = picture == null || picture.isEmpty() ? null : picture;

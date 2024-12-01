@@ -1,12 +1,13 @@
 package org.flickit.assessment.users.application.port.in.user;
 
 import jakarta.validation.ConstraintViolationException;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static io.jsonwebtoken.lang.Classes.getResourceAsStream;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,29 +18,38 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UpdateUserProfilePictureUseCaseParamTest {
 
     @Test
-    void testUpdateUserPictureParam_pictureIsNull_ErrorMessage() {
-        UUID currentUserId = UUID.randomUUID();
+    @SneakyThrows
+    void testUpdateUserProfilePictureParam_pictureParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateUserProfilePictureUseCase.Param(currentUserId, null));
+            () -> createParam(b -> b.picture(null)));
         assertThat(throwable).hasMessage("picture: " + UPDATE_USER_PROFILE_PICTURE_NOT_NULL);
-    }
 
-    @Test
-    void testUpdateUserPictureParam_pictureIsEmpty_ErrorMessage() throws IOException {
-        UUID currentUserId = UUID.randomUUID();
         MockMultipartFile picture = new MockMultipartFile("images", "image1",
             "image/png", getResourceAsStream("/no-where/nothing.png"));
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateUserProfilePictureUseCase.Param(currentUserId, picture));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.picture(picture)));
         assertThat(throwable).hasMessage("picture: " + UPDATE_USER_PROFILE_PICTURE_NOT_NULL);
     }
 
     @Test
-    void testUpdateUserPictureParam_currentUserIdIsNull_ErrorMessage() throws IOException {
-        MockMultipartFile picture = new MockMultipartFile("images", "image1",
-            "image/png", new ByteArrayInputStream("Some content".getBytes()));
+    void testUpdateUserProfilePictureParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new UpdateUserProfilePictureUseCase.Param(null, picture));
-        assertThat(throwable).hasMessage("userId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+            () -> createParam(b -> b.currentUserId(null)));
+        assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    @SneakyThrows
+    private void createParam(Consumer<UpdateUserProfilePictureUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    @SneakyThrows
+    private UpdateUserProfilePictureUseCase.Param.ParamBuilder paramBuilder() {
+        return UpdateUserProfilePictureUseCase.Param.builder()
+            .currentUserId(UUID.randomUUID())
+            .picture(new MockMultipartFile("images", "image1",
+                "image/png", new ByteArrayInputStream("Some content".getBytes())));
     }
 }
