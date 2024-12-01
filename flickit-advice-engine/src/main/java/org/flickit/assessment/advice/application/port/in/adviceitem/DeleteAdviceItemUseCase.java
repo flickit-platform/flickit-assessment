@@ -14,7 +14,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 
 public interface DeleteAdviceItemUseCase {
 
-    Result createAdviceItem(Param param);
+    void deleteAdviceItem(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -37,8 +37,5 @@ public interface DeleteAdviceItemUseCase {
             this.validateSelf();
         }
 
-    }
-
-    record Result(UUID id) {
     }
 }
