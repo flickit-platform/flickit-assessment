@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.resultWithValidations;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithJustAnId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -35,12 +38,17 @@ class ValidateAssessmentResultTest {
     @Mock
     private LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
 
+    @Mock
+    private LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
+
     @Test
     void testValidate_assessmentResult_isValid() {
         UUID assessmentId = UUID.randomUUID();
         AssessmentResult assessmentResult = AssessmentResultMother.resultWithValidations(Boolean.TRUE, Boolean.TRUE, LocalDateTime.now(), LocalDateTime.now());
+
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(LocalDateTime.now().minusDays(1));
+        when(loadKitCustomLastModificationTimePort.loadLastModificationTime(anyLong())).thenReturn(LocalDateTime.now().minusDays(1));
 
         service.validate(assessmentId);
     }
@@ -143,5 +151,37 @@ class ValidateAssessmentResultTest {
         assertEquals(COMMON_ASSESSMENT_RESULT_KIT_VERSION_DEPRECATED, exception.getMessage());
 
         verifyNoInteractions(loadKitLastMajorModificationTimePort);
+    }
+
+    @Test
+    void testValidate_kitCustomExistsAndCalculationIsBeforeKitCustomModification_isNotValid() {
+        var assessmentResult = validResultWithJustAnId();
+        var assessment = assessmentResult.getAssessment();
+        var assessmentId = assessment.getId();
+
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessment.getAssessmentKit().getId()))
+            .thenReturn(LocalDateTime.now().minusDays(1));
+        when(loadKitCustomLastModificationTimePort.loadLastModificationTime(assessment.getKitCustomId()))
+            .thenReturn(LocalDateTime.now().plusDays(1));
+
+        var exception = assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, exception.getMessage());
+    }
+
+    @Test
+    void testValidate_kitCustomExistsAndConCalculationIsBeforeKitCustomModification_isNotValid() {
+        var assessmentResult = resultWithValidations(true, true, LocalDateTime.now(), LocalDateTime.now().minusDays(2));
+        var assessment = assessmentResult.getAssessment();
+        var assessmentId = assessment.getId();
+
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(assessment.getAssessmentKit().getId()))
+            .thenReturn(LocalDateTime.now().minusDays(3));
+        when(loadKitCustomLastModificationTimePort.loadLastModificationTime(assessment.getKitCustomId()))
+            .thenReturn(LocalDateTime.now().minusDays(1));
+
+        var exception = assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, exception.getMessage());
     }
 }

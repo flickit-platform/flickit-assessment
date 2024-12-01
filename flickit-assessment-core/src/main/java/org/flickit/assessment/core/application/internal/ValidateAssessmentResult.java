@@ -11,6 +11,7 @@ import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.kitcustom.LoadKitCustomLastModificationTimePort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class ValidateAssessmentResult implements ValidateAssessmentResultPort {
 
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadKitLastMajorModificationTimePort loadKitLastMajorModificationTimePort;
+    private final LoadKitCustomLastModificationTimePort loadKitCustomLastModificationTimePort;
 
     @Override
     public void validate(UUID assessmentId) {
@@ -52,10 +54,24 @@ public class ValidateAssessmentResult implements ValidateAssessmentResultPort {
             log.warn("The calculated confidence value is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResult.getId());
             throw new ConfidenceCalculationNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID);
         }
+
+        if (assessmentResult.getAssessment().getKitCustomId() != null) {
+            var kitCustomId = assessmentResult.getAssessment().getKitCustomId();
+            var kitCustomLastUpdate = loadKitCustomLastModificationTimePort.loadLastModificationTime(kitCustomId);
+
+            if (!isCalculationTimeValid(assessmentResult.getLastCalculationTime(), kitCustomLastUpdate)) {
+                log.warn("The calculated result is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResult.getId());
+                throw new CalculateNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID);
+            }
+
+            if (!isCalculationTimeValid(assessmentResult.getLastConfidenceCalculationTime(), kitCustomLastUpdate)) {
+                log.warn("The calculated confidence value is not valid for [assessmentId={}, resultId={}].", assessmentId, assessmentResult.getId());
+                throw new ConfidenceCalculationNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID);
+            }
+        }
     }
 
     private boolean isCalculationTimeValid(LocalDateTime calculationTime, LocalDateTime kitLastMajorModificationTime) {
-        return calculationTime != null &&
-            calculationTime.isAfter(kitLastMajorModificationTime);
+        return calculationTime != null && calculationTime.isAfter(kitLastMajorModificationTime);
     }
 }
