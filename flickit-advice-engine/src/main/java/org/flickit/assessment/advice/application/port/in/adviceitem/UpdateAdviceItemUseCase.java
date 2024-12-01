@@ -60,7 +60,7 @@ public interface UpdateAdviceItemUseCase {
             this.adviceItemId = adviceItemId;
             this.assessmentId = assessmentId;
             this.title = title != null && !title.isBlank() ? title.strip() : null;
-            this.description = description != null ? description.strip() : null;
+            this.description = description != null && !description.isBlank() ? description.strip() : null;
             this.cost = cost;
             this.priority = priority;
             this.impact = impact;
