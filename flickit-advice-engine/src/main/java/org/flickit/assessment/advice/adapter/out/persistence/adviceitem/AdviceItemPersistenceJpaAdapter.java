@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class AdviceItemJpaAdapter implements
+public class AdviceItemPersistenceJpaAdapter implements
     CreateAdviceItemPort,
     LoadAdviceItemListPort {
 
