@@ -6,10 +6,7 @@ import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdvice
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -20,7 +17,7 @@ public class UpdateAdviceItemRestController {
     private final UserContext userContext;
     private final UpdateAdviceItemUseCase useCase;
 
-    @PostMapping("/assessments/{assessmentId}/advice-items/{adviceItemId}")
+    @PutMapping("/assessments/{assessmentId}/advice-items/{adviceItemId}")
     ResponseEntity<Void> updateAdviceItem(@PathVariable("assessmentId") UUID assessmentId,
                                           @PathVariable("adviceItemId") UUID adviceItemId,
                                           @RequestBody UpdateAdviceItemRequestDto requestDto) {
@@ -30,8 +27,8 @@ public class UpdateAdviceItemRestController {
     }
 
     private Param toParam(UUID assessmentId, UUID adviceItemId, UpdateAdviceItemRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId,
-            adviceItemId,
+        return new Param(adviceItemId,
+            assessmentId,
             requestDto.title(),
             requestDto.description(),
             requestDto.cost(),
