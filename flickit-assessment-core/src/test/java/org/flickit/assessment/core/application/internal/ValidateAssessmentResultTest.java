@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.internal;
 
 import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.ConfidenceCalculationNotValidException;
+import org.flickit.assessment.common.exception.DeprecatedVersionException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.out.assessmentkit.LoadKitLastMajorModificationTimePort;
@@ -17,8 +18,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -50,8 +51,10 @@ class ValidateAssessmentResultTest {
         doThrow(new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND))
             .when(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_FOUND);
-        verify(loadAssessmentResultPort, times(1)).loadByAssessmentId(assessmentId);
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(loadKitLastMajorModificationTimePort);
     }
 
     @Test
@@ -60,12 +63,14 @@ class ValidateAssessmentResultTest {
         AssessmentResult assessmentResult1 = AssessmentResultMother.resultWithValidations(null, Boolean.TRUE, LocalDateTime.now(), LocalDateTime.now());
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult1));
 
-        assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+        var throwable = assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
         AssessmentResult assessmentResult2 = AssessmentResultMother.resultWithValidations(Boolean.FALSE, Boolean.TRUE, LocalDateTime.now(), LocalDateTime.now());
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult2));
 
-        assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+        throwable = assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
     }
 
     @Test
@@ -75,13 +80,15 @@ class ValidateAssessmentResultTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult1));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(LocalDateTime.now().minusDays(1));
 
-        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+        var throwable = assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
         AssessmentResult assessmentResult2 = AssessmentResultMother.resultWithValidations(Boolean.TRUE, Boolean.FALSE, LocalDateTime.now(), LocalDateTime.now());
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult2));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(LocalDateTime.now().minusDays(1));
 
-        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+        throwable = assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
     }
 
     @Test
@@ -91,7 +98,8 @@ class ValidateAssessmentResultTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult1));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(LocalDateTime.now());
 
-        assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+        var throwable = assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
         LocalDateTime lastKitMajorModificationTime = LocalDateTime.now();
         LocalDateTime lastCalculationTime = lastKitMajorModificationTime.minusDays(1);
@@ -99,7 +107,8 @@ class ValidateAssessmentResultTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult2));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(lastKitMajorModificationTime);
 
-        assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+        throwable = assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
     }
 
     @Test
@@ -112,13 +121,27 @@ class ValidateAssessmentResultTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(lastKitMajorModificationTime);
 
-        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+        var throwable = assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
         LocalDateTime lastConfCalcTime = lastKitMajorModificationTime.minusDays(1);
         AssessmentResult assessmentResult2 = AssessmentResultMother.resultWithValidations(Boolean.TRUE, Boolean.TRUE, lastCalculationTime, lastConfCalcTime);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult2));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(lastKitMajorModificationTime);
 
-        assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId), COMMON_ASSESSMENT_RESULT_NOT_VALID);
+        throwable = assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
+    }
+
+    @Test
+    void testValidate_assessmentResultKitVersionIsDeprecated_isNotValid() {
+        UUID assessmentId = UUID.randomUUID();
+        AssessmentResult assessmentResult = AssessmentResultMother.resultWithDeprecatedKitVersion(Boolean.TRUE, Boolean.TRUE, LocalDateTime.now(), LocalDateTime.now());
+        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+
+        var exception = assertThrows(DeprecatedVersionException.class, () -> service.validate(assessmentId));
+        assertEquals(COMMON_ASSESSMENT_RESULT_KIT_VERSION_DEPRECATED, exception.getMessage());
+
+        verifyNoInteractions(loadKitLastMajorModificationTimePort);
     }
 }

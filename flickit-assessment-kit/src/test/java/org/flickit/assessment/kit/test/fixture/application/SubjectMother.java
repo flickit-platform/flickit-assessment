@@ -5,11 +5,13 @@ import org.flickit.assessment.kit.application.domain.Subject;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public class SubjectMother {
 
     private static Long id = 134L;
     private static int index = 1;
+    private static int weight = 1;
 
     public static Subject subjectWithTitle(String title) {
         return new Subject(
@@ -17,8 +19,10 @@ public class SubjectMother {
             "c-" + title,
             title,
             index++,
+            weight++,
             "Description",
-            null,
+            UUID.randomUUID(),
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now()
         );
@@ -30,8 +34,11 @@ public class SubjectMother {
             "c-" + title,
             title,
             index++,
+            weight++,
             "Description",
             attributes,
+            UUID.randomUUID(),
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now()
         );
@@ -43,8 +50,11 @@ public class SubjectMother {
             "c-" + title,
             title,
             index++,
+            weight++,
             "Description",
             attributes,
+            UUID.randomUUID(),
+            UUID.randomUUID(),
             LocalDateTime.now(),
             LocalDateTime.now()
         );

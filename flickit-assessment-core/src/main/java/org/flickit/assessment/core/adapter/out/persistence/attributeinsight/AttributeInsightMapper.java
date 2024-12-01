@@ -20,7 +20,7 @@ public class AttributeInsightMapper {
 
     public static AttributeInsightJpaEntity mapToJpaEntity(AttributeInsight attributeInsight) {
         return new AttributeInsightJpaEntity(
-            attributeInsight.getAttributeResultId(),
+            attributeInsight.getAssessmentResultId(),
             attributeInsight.getAttributeId(),
             attributeInsight.getAiInsight(),
             attributeInsight.getAssessorInsight(),

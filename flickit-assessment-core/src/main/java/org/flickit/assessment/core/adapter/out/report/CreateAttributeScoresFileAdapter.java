@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,12 +29,14 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
 
     @SneakyThrows
     @Override
-    public InputStream generateFile(AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
+    public Result generateFile(AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
         Workbook workbook = new XSSFWorkbook();
         createQuestionsSheet(attributeValue, workbook);
         createAttributeSheet(attributeValue, workbook);
         createMaturityLevelsSheet(maturityLevels, workbook);
-        return convertWorkbookToInputStream(workbook);
+        var stream = convertWorkbookToInputStream(workbook);
+        var text = convertWorkbookToText(workbook);
+        return new Result(stream, text);
     }
 
     private void createQuestionsSheet(AttributeValue attributeValue, Workbook workbook) {
@@ -184,6 +185,10 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         cell = row.createCell(1);
         cell.setCellValue(maturityLevel.getIndex());
         cell.setCellStyle(style);
+
+        cell = row.createCell(2);
+        cell.setCellValue(maturityLevel.getDescription());
+        cell.setCellStyle(style);
     }
 
     public ByteArrayInputStream convertWorkbookToInputStream(Workbook workbook) throws IOException {
@@ -191,5 +196,53 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         workbook.write(outputStream);
         workbook.close();
         return new ByteArrayInputStream(outputStream.toByteArray());
+    }
+
+    public String convertWorkbookToText(Workbook workbook) throws IOException {
+        StringBuilder textBuilder = new StringBuilder();
+
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            textBuilder.append("Sheet: ").append(sheet.getSheetName()).append("\n");
+
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    String cellValue = getCellValue(cell);
+                    textBuilder.append(cellValue).append("\t");
+                }
+                textBuilder.append("\n");
+            }
+            textBuilder.append("\n");
+        }
+
+        workbook.close();
+        return textBuilder.toString();
+    }
+
+    private String getCellValue(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
+        switch (cell.getCellType()) {
+            case STRING -> {
+                return cell.getStringCellValue();
+            }
+            case NUMERIC -> {
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            }
+            case BOOLEAN -> {
+                return String.valueOf(cell.getBooleanCellValue());
+            }
+            case FORMULA -> {
+                return cell.getCellFormula();
+            }
+            default -> {
+                return "";
+            }
+        }
     }
 }

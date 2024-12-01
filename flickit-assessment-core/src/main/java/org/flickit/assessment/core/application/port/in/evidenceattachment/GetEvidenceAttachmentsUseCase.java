@@ -6,11 +6,12 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.core.application.domain.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_EVIDENCE_ATTACHMENTS_EVIDENCE_ID_NULL;
 
 public interface GetEvidenceAttachmentsUseCase {
 
@@ -33,5 +34,11 @@ public interface GetEvidenceAttachmentsUseCase {
         }
     }
 
-    record Attachment(UUID id, String link, String description, User createdBy) {}
+    record Attachment(
+        UUID id,
+        String link,
+        String description,
+        User createdBy,
+        LocalDateTime creationTime) {
+    }
 }

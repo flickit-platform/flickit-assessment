@@ -42,7 +42,7 @@ public class AttributeValue {
             .flatMap(ml ->
                 attribute.getQuestions().stream()
                     .filter(question -> !isMarkedAsNotApplicable(question.getId()))
-                    .map(question -> question.findImpactByMaturityLevel(ml))
+                    .map(question -> question.findImpactByAttributeAndMaturityLevel(this.getAttribute(), ml))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.getWeight()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
@@ -103,6 +103,19 @@ public class AttributeValue {
     public int getWeightedLevel() {
         Assert.notNull(maturityLevel, () -> "maturityLevel should not be null");
         return maturityLevel.getValue() * attribute.getWeight();
+    }
+
+    public Map<Long, Double> getWeightedScore() {
+        Map<Long, Double> weightedScores = new HashMap<>();
+
+        for (MaturityScore maturityScore : maturityScores) {
+            Long maturityLevelId = maturityScore.getMaturityLevelId();
+            double score = maturityScore.getScore() == null ? 0 : maturityScore.getScore(); //todo:redundant nullability check
+            double weightedScore = score * (attribute.getWeight());
+            weightedScores.put(maturityLevelId, weightedScore);
+        }
+
+        return weightedScores;
     }
 
     public void calculateConfidenceValue() {

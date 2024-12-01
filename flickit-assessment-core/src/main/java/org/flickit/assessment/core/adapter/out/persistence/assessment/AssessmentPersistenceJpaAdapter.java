@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.core.application.port.out.assessment.CheckAssessmentSpaceMembershipPort;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
@@ -15,6 +14,8 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -24,10 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -52,6 +50,7 @@ public class AssessmentPersistenceJpaAdapter implements
     private final QuestionJpaRepository questionRepository;
     private final AssessmentKitJpaRepository kitRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
+    private final KitVersionJpaRepository kitVersionRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -64,9 +63,10 @@ public class AssessmentPersistenceJpaAdapter implements
     public PaginatedResponse<AssessmentListItem> loadComparableAssessments(Long kitId, UUID userId, int page, int size) {
         var pageResult = repository.findComparableAssessments(kitId, userId, ASSOCIATE.getId(), PageRequest.of(page, size));
 
-        List<Long> kitVersionIds = pageResult.getContent().stream()
+        Set<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentKit().getKitVersionId())
-            .toList();
+            .collect(Collectors.toSet());
+
         List<MaturityLevelJpaEntity> kitMaturityLevelEntities = maturityLevelRepository.findAllByKitVersionIdIn(kitVersionIds);
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
             .collect(Collectors.groupingBy(MaturityLevelJpaEntity::getKitVersionId));
@@ -102,6 +102,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     space,
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
+                    e.getAssessmentResult().getConfidenceValue(),
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
                     null,
@@ -123,11 +124,17 @@ public class AssessmentPersistenceJpaAdapter implements
         var pageResult = repository.findBySpaceId(spaceId, MANAGER.getId(), userId,
             PageRequest.of(page, size, Sort.Direction.DESC, AssessmentResultJpaEntity.Fields.LAST_MODIFICATION_TIME));
 
-        List<Long> kitVersionIds = pageResult.getContent().stream()
+        Set<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentResult().getKitVersionId())
-            .toList();
+            .collect(Collectors.toSet());
 
-        List<AssessmentKitJpaEntity> kitEntities = kitRepository.findAllByKitVersionIdIn(kitVersionIds);
+        List<KitVersionJpaEntity> kitVersionEntities = kitVersionRepository.findAllByIdIn(kitVersionIds);
+
+        //Map kitId to kitVersionId used in assessmentResult, which may not necessarily be the active version.
+        Map<Long, Long> kitIdToKitVersionId = kitVersionEntities.stream()
+            .collect(Collectors.toMap(e -> e.getKit().getId(), KitVersionJpaEntity::getId));
+
+        List<AssessmentKitJpaEntity> kitEntities = kitRepository.findByKitVersionIds(kitVersionIds);
         Map<Long, AssessmentKitJpaEntity> kitIdToKitEntity = kitEntities.stream()
             .collect(Collectors.toMap(AssessmentKitJpaEntity::getId, Function.identity()));
 
@@ -142,7 +149,7 @@ public class AssessmentPersistenceJpaAdapter implements
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
                 AssessmentKitJpaEntity kitEntity = kitIdToKitEntity.get(e.getAssessment().getAssessmentKitId());
-                List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(kitEntity.getKitVersionId());
+                List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(kitIdToKitVersionId.get(kitEntity.getId()));
                 AssessmentListItem.Kit kit = new AssessmentListItem.Kit(kitEntity.getId(), kitEntity.getTitle(), kitLevelEntities.size());
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
@@ -160,6 +167,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     space,
                     e.getAssessment().getLastModificationTime(),
                     maturityLevel,
+                    e.getAssessmentResult().getConfidenceValue(),
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
                     e.getManageable(),
@@ -185,6 +193,7 @@ public class AssessmentPersistenceJpaAdapter implements
         repository.update(
             param.id(),
             param.title(),
+            param.shortTitle(),
             param.code(),
             param.lastModificationTime(),
             param.lastModifiedBy());

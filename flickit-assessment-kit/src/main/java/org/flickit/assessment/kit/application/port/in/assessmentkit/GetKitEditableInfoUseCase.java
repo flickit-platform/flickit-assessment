@@ -42,6 +42,7 @@ public interface GetKitEditableInfoUseCase {
         Double price,
         String about,
         List<KitTag> tags,
-        boolean editable) {
+        boolean editable,
+        boolean hasActiveVersion) {
     }
 }

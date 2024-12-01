@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+    <changeSet id="0.35-01" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_attribute" constraintName="uq_fak_attribute_code_subjectid"/>
+    </changeSet>
+
+    <changeSet id="0.35-02" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,code,subject_id"
+                             constraintName="uq_fak_attribute_kitversionid_code_subjectid"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.35-03" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_attribute" constraintName="uq_fak_attribute_index_subjectid"/>
+    </changeSet>
+
+    <changeSet id="0.35-04" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_attribute" columnNames="kit_version_id,index,subject_id"
+                             constraintName="uq_fak_attribute_kitversionid_index_subjectid"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+
+    <changeSet id="0.35-05" author="Ali Sedaghat">
+        <dropUniqueConstraint tableName="fak_answer_option" constraintName="uq_fak_answeroption_index_questionid"/>
+    </changeSet>
+
+    <changeSet id="0.35-06" author="Maziyar Gerami">
+        <createTable tableName="fak_answer_range">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="kit_version_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)"/>
+            <column name="reusable" type="boolean">
+                    <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.35-07" author="Maziyar Gerami">
+        <addPrimaryKey tableName="fak_answer_range"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_answer_range"/>
+    </changeSet>
+
+    <changeSet id="0.35-08" author="Maziyar Gerami">
+        <createSequence sequenceName="fak_answer_range_id_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.35-09" author="Mahnaz Khorsandi">
+        <addForeignKeyConstraint baseTableName="fak_answer_range"
+                                 baseColumnNames="kit_version_id"
+                                 constraintName="fk_fak_answerrange_kitversion"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.35-10" author="Ali Sedaghat">
+        <addColumn tableName="fak_question">
+            <column name="answer_range_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.35-11" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_question"
+                                 baseColumnNames="answer_range_id, kit_version_id"
+                                 constraintName="fk_fak_question_answerrange"
+                                 referencedTableName="fak_answer_range"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.35-12" author="Ali Sedaghat">
+        <addColumn tableName="fak_answer_option">
+            <column name="answer_range_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.35-13" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_answer_option"
+                                 baseColumnNames="answer_range_id, kit_version_id"
+                                 constraintName="fk_fak_answeroption_answerrange"
+                                 referencedTableName="fak_answer_range"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.35-14" author="Ali Sedaghat">
+        <addColumn tableName="fak_answer_range">
+            <column name="temp_question_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.35-15" author="Ali Sedaghat">
+        <sql>
+            insert into fak_answer_range(kit_version_id, reusable, creation_time, last_modification_time, created_by, last_modified_by, temp_question_id)
+            select q.kit_version_id, 'false', q.creation_time, q.last_modification_time, q.created_by, q.last_modified_by, q.id
+            from fak_question q
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.35-16" author="Ali Sedaghat">
+        <update tableName="fak_question">
+            <column name="answer_range_id" valueComputed="fak_answer_range.id FROM fak_answer_range WHERE
+            fak_answer_range.temp_question_id = fak_question.id and fak_answer_range.kit_version_id = fak_question.kit_version_id"/>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.35-17" author="Ali Sedaghat">
+       <update tableName="fak_answer_option">
+           <column name="answer_range_id" valueComputed="fak_answer_range.id FROM fak_answer_range WHERE
+           fak_answer_range.temp_question_id = question_id and fak_answer_range.kit_version_id = fak_answer_option.kit_version_id"/>
+       </update>
+    </changeSet>
+
+    <changeSet id="0.35-18" author="Ali Sedaghat">
+        <dropColumn tableName="fak_answer_range" columnName="temp_question_id"/>
+    </changeSet>
+
+    <changeSet id="0.35-19" author="mahdi Rezazadeh">
+        <addColumn tableName="fak_answer_option">
+            <column name="value" type="double" valueComputed="index">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.35-20" author="mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fak_answer_option_impact" columnName="value"/>
+    </changeSet>
+
+    <changeSet id="0.35-21" author="Mahdi Rezazadeh">
+        <dropColumn tableName="fak_answer_option" columnName="question_id"/>
+    </changeSet>
+
+    <changeSet id="0.35-22" author="Mahdi Rezazadeh">
+        <preConditions onFail="MARK_RAN">
+            <uniqueConstraintExists tableName="fak_answer_option"
+                                    constraintName="uq_fak_answeroption_index_kitversionid_questionid"/>
+        </preConditions>
+        <dropUniqueConstraint tableName="fak_answer_option"
+                              constraintName="uq_fak_answeroption_index_kitversionid_questionid"/>
+    </changeSet>
+
+    <changeSet id="0.35-23" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fak_answer_option"
+                             columnNames="kit_version_id, index, answer_range_id"
+                             constraintName="uq_fak_answeroption_index_kitversionid_answerrangeid"/>
+    </changeSet>
+
+    <changeSet id="0.35-24" author="Mahdi Rezazadeh">
+        <modifyDataType tableName="fak_answer_option" columnName="title" newDataType="VARCHAR(100)"/>
+    </changeSet>
+
+    <changeSet id="0.35-25" author="Ali Sedaghat">
+        <update tableName="fak_subject">
+            <column name="weight" value="1"/>
+            <where>weight=0</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

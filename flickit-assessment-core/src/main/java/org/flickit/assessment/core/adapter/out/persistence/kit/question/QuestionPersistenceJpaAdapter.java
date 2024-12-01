@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
-import org.flickit.assessment.core.adapter.out.persistence.questionnaire.QuestionnaireMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionMayNotBeApplicablePort;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreQuestionPersistenceJpaAdapter")
@@ -47,15 +48,15 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<Question> loadByQuestionnaireId(Long questionnaireId, Long kitVersionId, int size, int page) {
         var pageResult = repository.findAllByQuestionnaireIdAndKitVersionIdOrderByIndex(questionnaireId, kitVersionId, PageRequest.of(page, size));
-        List<Long> ids = pageResult.getContent().stream()
-            .map(QuestionJpaEntity::getId)
+        List<Long> answerRangeIds = pageResult.getContent().stream()
+            .map(QuestionJpaEntity::getAnswerRangeId)
             .toList();
-        var questionIdToAnswerOptionsMap = answerOptionRepository.findAllByQuestionIdInAndKitVersionIdOrderByQuestionIdIndex(ids, kitVersionId).stream()
-            .collect(groupingBy(AnswerOptionJpaEntity::getQuestionId));
+        var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeIds, kitVersionId, Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
+            .collect(groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, toList()));
 
         var items = pageResult.getContent().stream()
             .map(q -> {
-                List<AnswerOption> answerOptions = questionIdToAnswerOptionsMap.get(q.getId()).stream()
+                List<AnswerOption> answerOptions = answerRangeIdToAnswerOptionsMap.get(q.getAnswerRangeId()).stream()
                     .map(AnswerOptionMapper::mapToDomainModelWithNoImpact)
                     .toList();
                 Question question = QuestionMapper.mapToDomainModel(q, null);

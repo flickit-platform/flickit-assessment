@@ -32,12 +32,17 @@ public interface UpdateAssessmentUseCase {
         @Size(max = 100, message = UPDATE_ASSESSMENT_TITLE_SIZE_MAX)
         String title;
 
+        @Size(min = 3, message = UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MIN)
+        @Size(max = 20, message = UPDATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX)
+        String shortTitle;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID id, String title, UUID currentUserId) {
+        public Param(UUID id, String title, String shortTitle, UUID currentUserId) {
             this.id = id;
             this.title = title;
+            this.shortTitle = shortTitle;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

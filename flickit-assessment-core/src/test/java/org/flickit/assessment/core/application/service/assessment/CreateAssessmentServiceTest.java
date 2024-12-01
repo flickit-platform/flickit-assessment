@@ -77,6 +77,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             currentUserId
         );
@@ -109,9 +110,9 @@ class CreateAssessmentServiceTest {
             grantPortUserId.capture(),
             grantPortRoleId.capture());
 
-        assertEquals(expectedId, grantPortAssessmentId.getAllValues().get(0));
-        assertEquals(spaceOwnerId, grantPortUserId.getAllValues().get(0));
-        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().get(0));
+        assertEquals(expectedId, grantPortAssessmentId.getAllValues().getFirst());
+        assertEquals(spaceOwnerId, grantPortUserId.getAllValues().getFirst());
+        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().getFirst());
 
         assertEquals(expectedId, grantPortAssessmentId.getAllValues().get(1));
         assertEquals(param.getCurrentUserId(), grantPortUserId.getAllValues().get(1));
@@ -124,6 +125,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             currentUserId
         );
@@ -155,9 +157,9 @@ class CreateAssessmentServiceTest {
             grantPortUserId.capture(),
             grantPortRoleId.capture());
 
-        assertEquals(expectedId, grantPortAssessmentId.getAllValues().get(0));
-        assertEquals(currentUserId, grantPortUserId.getAllValues().get(0));
-        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().get(0));
+        assertEquals(expectedId, grantPortAssessmentId.getAllValues().getFirst());
+        assertEquals(currentUserId, grantPortUserId.getAllValues().getFirst());
+        assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().getFirst());
     }
 
     @Test
@@ -166,6 +168,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             createdBy
         );
@@ -198,6 +201,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             assessmentKitId,
             createdBy
         );
@@ -209,9 +213,9 @@ class CreateAssessmentServiceTest {
         Attribute qa5 = AttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
-            new Subject(2L, "subject2", List.of(qa3, qa4)),
-            new Subject(1L, "subject1", List.of(qa1, qa2)),
-            new Subject(3L, "subject3", List.of(qa5))
+            new Subject(2L, "subject2", 1, List.of(qa3, qa4)),
+            new Subject(1L, "subject1", 1, List.of(qa1, qa2)),
+            new Subject(3L, "subject3", 1, List.of(qa5))
         );
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
@@ -234,6 +238,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             assessmentKitId,
             currentUserId
         );
@@ -244,9 +249,9 @@ class CreateAssessmentServiceTest {
         Attribute qa5 = AttributeMother.simpleAttribute();
 
         List<Subject> expectedSubjects = List.of(
-            new Subject(1L, "subject2", List.of(qa1, qa2)),
-            new Subject(2L, "subject1", List.of(qa3, qa4)),
-            new Subject(3L, "subject3", List.of(qa5))
+            new Subject(1L, "subject2", 1, List.of(qa1, qa2)),
+            new Subject(2L, "subject1", 1, List.of(qa3, qa4)),
+            new Subject(3L, "subject3", 1, List.of(qa5))
         );
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
@@ -268,6 +273,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             currentUserId
         );
@@ -284,6 +290,7 @@ class CreateAssessmentServiceTest {
         Param param = new Param(
             1L,
             "title example",
+            "short title",
             1L,
             currentUserId
         );

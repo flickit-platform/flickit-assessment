@@ -5,7 +5,7 @@ volumes:
 
 services:
   dsl:
-    image: ghcr.io/flickit-platform-dev/flickit-dsl-parser:1.7.0
+    image: ghcr.io/flickit-platform/flickit-dsl-parser:1.8.0
     restart: on-failure
     ports:
       - 8080:8080

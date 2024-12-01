@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
+import static org.flickit.assessment.advice.application.service.advice.PlanConstraintProvider.SOFT_SCORE_FACTOR;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Component
@@ -38,19 +39,19 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
     public Plan loadAdviceCalculationInfo(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         List<AttributeLevelScore> attributeLevelScores = new ArrayList<>();
         Map<Long, Question> idToQuestions = new HashMap<>();
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
 
         for (AttributeLevelTarget attributeLevelTarget : attributeLevelTargets) {
             Long attributeId = attributeLevelTarget.getAttributeId();
             Long maturityLevelId = attributeLevelTarget.getMaturityLevelId();
 
             List<LevelCompetenceJpaEntity> levelCompetenceEntities =
-                levelCompetenceRepository.findByAffectedLevelId(maturityLevelId);
+                levelCompetenceRepository.findByAffectedLevelIdAndKitVersionId(maturityLevelId, assessmentResult.getKitVersionId());
             for (LevelCompetenceJpaEntity levelCompetenceEntity : levelCompetenceEntities) {
                 Long effectiveLevelId = levelCompetenceEntity.getEffectiveLevelId();
-                var assessmentResultJpaEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-                    .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ASSESSMENT_RESULT_NOT_FOUND));
                 AttributeValueJpaEntity attributeValueEntity =
-                    attributeValueRepository.findByAttributeIdAndAssessmentResultId(attributeId, assessmentResultJpaEntity.getId());
+                    attributeValueRepository.findByAttributeIdAndAssessmentResultId(attributeId, assessmentResult.getId());
 
                 Double gainedScorePercentage = attributeMaturityScoreRepository
                     .findByAttributeValueIdAndMaturityLevelId(attributeValueEntity.getId(), effectiveLevelId)
@@ -58,7 +59,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                     .orElse(DEFAULT_ATTRIBUTE_MATURITY_SCORE);
 
                 List<ImprovableImpactfulQuestionView> impactfulQuestions =
-                    questionRepository.findImprovableImpactfulQuestions(assessmentId, attributeId, effectiveLevelId);
+                    questionRepository.findAdvisableImprovableImpactfulQuestions(assessmentId, attributeId, effectiveLevelId);
 
                 Map<Long, Integer> impactfulQuestionIdToQuestionImpact = mapImpactfulQuestionIdToWeight(impactfulQuestions);
                 int totalScore = calculateTotalScore(impactfulQuestionIdToQuestionImpact);
@@ -102,7 +103,8 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                     impactfulQuestion -> new ImpactfulQuestionOption(
                         impactfulQuestion.getOptionId(),
                         impactfulQuestion.getOptionIndex(),
-                        impactfulQuestion.getOptionImpactValue()
+                        impactfulQuestion.getOptionImpactValue() != null ?
+                            impactfulQuestion.getOptionImpactValue() : impactfulQuestion.getOptionValue()
                     ),
                     toList()
                 )));
@@ -144,7 +146,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
                                           List<ImpactfulQuestionOption> impactfulQuestionOptions,
                                           AttributeLevelScore attributeLevelScore) {
         List<Option> options = mapToOptions(impactfulQuestionOptions, attributeLevelScore);
-        return new Question(impactfulQuestionId, DEFAULT_QUESTION_COST, options, answeredOptionIndex);
+        return new Question(impactfulQuestionId, DEFAULT_QUESTION_COST * SOFT_SCORE_FACTOR, options, answeredOptionIndex);
     }
 
     private static List<Option> mapToOptions(List<ImpactfulQuestionOption> impactfulQuestionOptions,

@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.domain;
 
 import org.junit.jupiter.api.Test;
 
-import static org.flickit.assessment.core.application.domain.Assessment.generateSlugCode;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AssessmentTest {

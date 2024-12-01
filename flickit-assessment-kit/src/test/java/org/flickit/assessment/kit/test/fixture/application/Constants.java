@@ -32,4 +32,7 @@ public class Constants {
     public static Integer OPTION_INDEX2 = 2;
     public static Integer OPTION_INDEX3 = 3;
     public static Integer OPTION_INDEX4 = 4;
+
+    public static final double OPTION_VALUE1 = 0;
+    public static final double OPTION_VALUE2 = 1;
 }

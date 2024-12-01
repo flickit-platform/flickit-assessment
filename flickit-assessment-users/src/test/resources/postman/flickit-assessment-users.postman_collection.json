@@ -7,1052 +7,1040 @@
 	},
 	"item": [
 		{
-			"name": "Invite Member to Expert Group",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "ExpertGroup",
+			"item": [
+				{
+					"name": "Get Expert Group",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}",
-						"invite"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Member to Space",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}",
-						"invite"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Confirm Expert Group Invitation",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite/{{inviteToken}}/confirm",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}",
-						"invite",
-						"{{inviteToken}}",
-						"confirm"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Expert Group List",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups?page=0&size=20",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
+				{
+					"name": "Create Expert Group",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title",
+									"type": "text"
+								},
+								{
+									"key": "bio",
+									"value": "bio",
+									"type": "text"
+								},
+								{
+									"key": "about",
+									"value": "about",
+									"type": "text"
+								},
+								{
+									"key": "website",
+									"value": "http://www.website.com",
+									"type": "text"
+								},
+								{
+									"key": "picture",
+									"type": "file",
+									"src": "/home/maziyar/Pictures/sample.png"
+								}
+							]
 						},
-						{
-							"key": "size",
-							"value": "20"
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups"
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Expert Group",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "title",
-							"value": "title",
-							"type": "text"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Expert Group Picture",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}",
+								"picture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Expert Group",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Expert Group List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups?page=0&size=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Expert Group Picture",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "pictureFile",
+									"type": "file",
+									"src": "/home/maziyar/Pictures/index.jpeg"
+								}
+							]
 						},
-						{
-							"key": "bio",
-							"value": "bio",
-							"type": "text"
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}",
+								"picture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Expert Group",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"title\",\n    \"bio\": \"bio\",\n    \"about\": \"about\",\n    \"website\" : \"https://www.webite.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "about",
-							"value": "about",
-							"type": "text"
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ExpertGroupAccess",
+			"item": [
+				{
+					"name": "Invite Expert Group Member",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"69f63c1b-6e4c-4cf6-83c6-d8a25fa602ab\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "website",
-							"value": "http://www.website.com",
-							"type": "text"
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}",
+								"invite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Expert Group Invitation",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "picture",
-							"type": "file",
-							"src": "/home/maziyar/Pictures/sample.png"
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/invite/{{inviteToken}}/confirm",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}",
+								"invite",
+								"{{inviteToken}}",
+								"confirm"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Expert Group",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Space",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces",
-						"{{id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Expert Group",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Expert Group Members",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/members",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}",
-						"members"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Expert Group Member",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/members/{{userId}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}",
-						"members",
-						"{{userId}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Member to Space",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"email@email.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Delete Expert Group Member",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/members/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}",
+								"members",
+								"{{userId}}"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/6/members",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces",
-						"6",
-						"members"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Invite to Space",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"maziyar.grami@yahoo.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get Expert Group Members",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/members",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}",
+								"members"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/invite",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces",
-						"{{id}}",
-						"invite"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Space Members",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"space",
-						"{{id}}",
-						"members"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Accept Space Invitations",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"userId\": \"431e6979-6407-42ab-97ca-e9fd5bc2a9c2\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Update ExpertGroup LastSeen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/seen",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}",
+								"seen"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces-accept-invitations",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces-accept-invitations"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Create Space",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"title\" : \"title\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Notification",
+			"item": [
+				{
+					"name": "Get Notification Platform Setting",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/notification-platform-settings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"notification-platform-settings"
+							]
 						}
-					}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Space",
+			"item": [
+				{
+					"name": "Delete Space",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/space/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"space",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Space Member",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members/{{userId}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces",
-						"{{id}}",
-						"members",
-						"{{userId}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Space List",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces?page=0&size=5",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
+				{
+					"name": "Create Space",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\" : \"title\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "size",
-							"value": "5"
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces"
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Space LastSeen",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/seen",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces",
-						"{{id}}",
-						"seen"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Space",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"title\": \"new title\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces",
-						"{{id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Space",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/space/{{id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"space",
-						"{{id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Space Invitation",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/space-invitations/{{inviteId}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"space-invitations",
-						"{{inviteId}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Space Invitees",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/invitees?page=0&size=3",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces",
-						"{{id}}",
-						"invitees"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
+				{
+					"name": "Get Space List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces?page=0&size=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Space",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces",
+								"{{id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Space",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"new title\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "size",
-							"value": "3"
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces",
+								"{{id}}"
+							]
 						}
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Leave Space",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/leave",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"spaces",
-						"{{id}}",
-						"leave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update ExpertGroup LastSeen",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/seen",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}",
-						"seen"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Expert Group",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"title\": \"title\",\n    \"bio\": \"bio\",\n    \"about\": \"about\",\n    \"website\" : \"https://www.webite.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "SpaceInvitee",
+			"item": [
+				{
+					"name": "Delete Space Invitation",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/space-invitations/{{inviteId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"space-invitations",
+								"{{inviteId}}"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Expert Group Picture",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "pictureFile",
-							"type": "file",
-							"src": "/home/maziyar/Pictures/index.jpeg"
+				{
+					"name": "Accept Space Invitations",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"431e6979-6407-42ab-97ca-e9fd5bc2a9c2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces-accept-invitations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces-accept-invitations"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}",
-						"picture"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete Expert Group Picture",
-			"request": {
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/picture",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"expert-groups",
-						"{{id}}",
-						"picture"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Tenant Info",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/tenant/info",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"tenant",
-						"info"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Tenant Logo",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/tenant/logo",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"tenant",
-						"logo"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get User Profile",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/user-profile",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"user-profile"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update User Profile",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"displayName\": \"Ali Sdg\",\n    \"bio\": \"Ali's bio\",\n    \"linkedin\": \"linkedin.com/in/alisedaghat\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get Space Invitees",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/invitees?page=0&size=3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces",
+								"{{id}}",
+								"invitees"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "3"
+								}
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/user-profile",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"user-profile"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Create User",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"id\": \"28001724-d5b3-42f8-978f-90216cd7f573\",\n    \"email\": \"alisdg@gmail.com\",\n    \"displayName\": \"Ali Sedaghat\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "SpaceUserAccess",
+			"item": [
+				{
+					"name": "Update Space LastSeen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/seen",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces",
+								"{{id}}",
+								"seen"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/users",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"users"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Users Me",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}"
-					}
-				],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/users/me",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"users",
-						"me"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get User By Email",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/users/email/admin@asta.ir",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"users",
-						"email",
-						"admin@asta.ir"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update Users Picture",
-			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
-			},
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "{{authorization_header}}",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "pictureFile",
-							"type": "file",
-							"src": "/home/maziyar/Pictures/index.png"
+				{
+					"name": "Add Space Member",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"email@email.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces/6/members",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces",
+								"6",
+								"members"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "{{base_url}}/{{api_path}}/users/picture",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"{{api_path}}",
-						"users",
-						"picture"
-					]
+				{
+					"name": "Delete Space Member",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/members/{{userId}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces",
+								"{{id}}",
+								"members",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Space Members",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/space/{{id}}/members",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"space",
+								"{{id}}",
+								"members"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invite Space Member",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"maziyar.grami@yahoo.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/invite",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces",
+								"{{id}}",
+								"invite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Leave Space",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/spaces/{{id}}/leave",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"spaces",
+								"{{id}}",
+								"leave"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		},
+		{
+			"name": "Tenant",
+			"item": [
+				{
+					"name": "Get Tenant Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/tenant/info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"tenant",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tenant Logo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/tenant/logo",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"tenant",
+								"logo"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/user-profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"user-profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"28001724-d5b3-42f8-978f-90216cd7f573\",\n    \"email\": \"alisdg@gmail.com\",\n    \"displayName\": \"Ali Sedaghat\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/users/email/admin@asta.ir",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"users",
+								"email",
+								"admin@asta.ir"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/users/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"displayName\": \"Ali Sdg\",\n    \"bio\": \"Ali's bio\",\n    \"linkedin\": \"linkedin.com/in/alisedaghat\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/user-profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"user-profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [

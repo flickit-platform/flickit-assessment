@@ -29,9 +29,29 @@ public class AssessmentResultMother {
         return assessmentResult;
     }
 
+    public static AssessmentResult validResultWithSubjectValuesAndMaturityLevelAndConfidenceValue(List<SubjectValue> subjectValues, MaturityLevel maturityLevel, double confidenceValue) {
+        Assessment assessment = AssessmentMother.assessment();
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), assessment, assessment.getAssessmentKit().getKitVersion(),
+            subjectValues, LocalDateTime.now(), LocalDateTime.now());
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setMaturityLevel(maturityLevel);
+        assessmentResult.setLastCalculationTime(LocalDateTime.now());
+        assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
+        assessmentResult.setConfidenceValue(confidenceValue);
+        return assessmentResult;
+    }
+
     public static AssessmentResult validResultWithJustAnId() {
         AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessment(), 123L, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setIsConfidenceValid(true);
+        return assessmentResult;
+    }
+
+    public static AssessmentResult validResultWithoutActiveVersion() {
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), AssessmentMother.assessmentWithoutActiveVersion(), 123L, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setIsConfidenceValid(true);
         return assessmentResult;
     }
 
@@ -39,6 +59,18 @@ public class AssessmentResultMother {
                                                          LocalDateTime lastCalculationTime, LocalDateTime lastConfCalculationTime) {
         Assessment assessment = AssessmentMother.assessment();
         AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(),assessment, assessment.getAssessmentKit().getKitVersion(),
+            List.of(), LocalDateTime.now(), LocalDateTime.now());
+        assessmentResult.setIsCalculateValid(isCalculateValid);
+        assessmentResult.setIsConfidenceValid(isConfCalculationValid);
+        assessmentResult.setLastCalculationTime(lastCalculationTime);
+        assessmentResult.setLastConfidenceCalculationTime(lastConfCalculationTime);
+        return assessmentResult;
+    }
+
+    public static AssessmentResult resultWithDeprecatedKitVersion(Boolean isCalculateValid, Boolean isConfCalculationValid,
+                                                                  LocalDateTime lastCalculationTime, LocalDateTime lastConfCalculationTime) {
+        Assessment assessment = AssessmentMother.assessment();
+        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), assessment, assessment.getAssessmentKit().getKitVersion() - 1,
             List.of(), LocalDateTime.now(), LocalDateTime.now());
         assessmentResult.setIsCalculateValid(isCalculateValid);
         assessmentResult.setIsConfidenceValid(isConfCalculationValid);

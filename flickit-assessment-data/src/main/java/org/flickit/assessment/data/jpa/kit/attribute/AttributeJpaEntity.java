@@ -3,6 +3,7 @@ package org.flickit.assessment.data.jpa.kit.attribute;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,13 +15,12 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AttributeJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_attribute_id_seq")
-    @SequenceGenerator(name = "fak_attribute_id_seq", sequenceName = "fak_attribute_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -29,7 +29,7 @@ public class AttributeJpaEntity {
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
-    @Column(name = "code", length = 50, nullable = false)
+    @Column(name = "code", length = 100, nullable = false)
     private String code;
 
     @Column(name = "index", nullable = false)
@@ -59,28 +59,6 @@ public class AttributeJpaEntity {
     @Column(name = "subject_id", nullable = false)
     private Long subjectId;
 
-    public AttributeJpaEntity(Long id,
-                              long kitVersionId,
-                              String code,
-                              String title,
-                              Integer index,
-                              String description,
-                              Integer weight,
-                              LocalDateTime creationTime,
-                              LocalDateTime lastModificationTime,
-                              long subjectId) {
-        this.id = id;
-        this.kitVersionId = kitVersionId;
-        this.code = code;
-        this.title = title;
-        this.index = index;
-        this.description = description;
-        this.weight = weight;
-        this.creationTime = creationTime;
-        this.lastModificationTime = lastModificationTime;
-        this.subjectId = subjectId;
-    }
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -88,5 +66,13 @@ public class AttributeJpaEntity {
 
         private Long id;
         private Long kitVersionId;
+    }
+
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
     }
 }

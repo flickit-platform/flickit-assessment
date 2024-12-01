@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@IdClass(LevelCompetenceJpaEntity.EntityId.class)
 @Table(name = "fak_level_competence")
 @Getter
 @Setter
@@ -17,10 +18,13 @@ public class LevelCompetenceJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_level_competence_id_seq")
-    @SequenceGenerator(name = "fak_level_competence_id_seq", sequenceName = "fak_level_competence_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
+
+    @Id
+    @EqualsAndHashCode.Include
+    @Column(name = "kit_version_id", nullable = false)
+    private Long kitVersionId;
 
     @Column(name = "affected_level_id", nullable = false)
     private Long affectedLevelId;
@@ -30,9 +34,6 @@ public class LevelCompetenceJpaEntity {
 
     @Column(name = "value", nullable = false)
     private Integer value;
-
-    @Column(name = "kit_version_id", nullable = false)
-    private Long kitVersionId;
 
     @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
@@ -45,4 +46,21 @@ public class LevelCompetenceJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EntityId {
+
+        private Long id;
+        private Long kitVersionId;
+    }
+
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
+    }
 }

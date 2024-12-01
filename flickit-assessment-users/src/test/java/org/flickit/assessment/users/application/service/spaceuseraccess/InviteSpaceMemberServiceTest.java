@@ -1,25 +1,29 @@
 package org.flickit.assessment.users.application.service.spaceuseraccess;
 
+import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.port.out.SendEmailPort;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.spaceuseraccess.InviteSpaceMemberUseCase;
-import org.flickit.assessment.users.application.port.out.mail.SendFlickitInviteMailPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.InviteSpaceMemberPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,83 +47,127 @@ class InviteSpaceMemberServiceTest {
     InviteSpaceMemberPort inviteSpaceMemberPort;
 
     @Mock
-    SendFlickitInviteMailPort SendFlickitInviteMailPort;
+    SendEmailPort sendEmailPort;
+
+    @Spy // @Spy added for injecting this field in #service
+    AppSpecProperties appSpecProperties = appSpecProperties();
 
     @Test
-    @DisplayName("Inviting member to a space by a non-member should cause AccessDeniedException")
-    void inviteMember_inviterIsNotMember_AccessDeniedException() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
-        var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(false);
+    void testInviteMember_inviterIsNotMember_AccessDeniedException() {
+        var param = createParam(InviteSpaceMemberUseCase.Param.ParamBuilder::build);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.inviteMember(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
-        verifyNoInteractions(loadUserPort);
-        verifyNoInteractions(inviteSpaceMemberPort);
-        verifyNoInteractions(SendFlickitInviteMailPort);
+        verifyNoInteractions(loadUserPort, inviteSpaceMemberPort, sendEmailPort);
     }
 
     @Test
-    @DisplayName("Inviting space member to a space should cause ResourceAlreadyExistException")
-    void inviteMember_inviteeIsMember_ResourceAlreadyExistException() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
+    void testInviteMember_inviteeIsMember_ResourceAlreadyExistException() {
         UUID inviteeUserId = UUID.randomUUID();
-        var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(inviteeUserId));
-        when(checkSpaceAccessPort.checkIsMember(spaceId, inviteeUserId)).thenReturn(true);
+        var param = createParam(InviteSpaceMemberUseCase.Param.ParamBuilder::build);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.of(inviteeUserId));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), inviteeUserId)).thenReturn(true);
+
         var throwable = assertThrows(ResourceAlreadyExistsException.class, () -> service.inviteMember(param));
         assertEquals(INVITE_SPACE_MEMBER_SPACE_USER_DUPLICATE, throwable.getMessage());
 
-        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
-        verify(loadUserPort).loadUserIdByEmail(email);
-        verifyNoInteractions(inviteSpaceMemberPort);
-        verifyNoInteractions(SendFlickitInviteMailPort);
+        verifyNoInteractions(inviteSpaceMemberPort, sendEmailPort);
     }
 
     @Test
-    @DisplayName("Inviting non-member flickit user to a space should cause successful insertion in SpaceUserAccess")
-    void inviteMember_inviteeIsFlickitUser_AddAsSpaceMember() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
+    void testnviteMember_inviteeIsAnApplicationUser_AddAsSpaceMember() {
         UUID inviteeUserId = UUID.randomUUID();
-        var param = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.of(inviteeUserId));
-        when(checkSpaceAccessPort.checkIsMember(spaceId, inviteeUserId)).thenReturn(false);
-        doNothing().when(createSpaceUserAccessPort).persist(isA(SpaceUserAccess.class));
-        assertDoesNotThrow(() -> service.inviteMember(param));
+        var param = createParam(InviteSpaceMemberUseCase.Param.ParamBuilder::build);
 
-        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
-        verify(loadUserPort).loadUserIdByEmail(email);
-        verifyNoInteractions(inviteSpaceMemberPort);
-        verifyNoInteractions(SendFlickitInviteMailPort);
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.of(inviteeUserId));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), inviteeUserId)).thenReturn(false);
+        doNothing().when(createSpaceUserAccessPort).persist(any());
+
+        service.inviteMember(param);
+
+        ArgumentCaptor<SpaceUserAccess> spaceUserAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
+        verify(createSpaceUserAccessPort).persist(spaceUserAccessCaptor.capture());
+        assertEquals(param.getSpaceId(), spaceUserAccessCaptor.getValue().getSpaceId());
+        assertEquals(inviteeUserId, spaceUserAccessCaptor.getValue().getUserId());
+        assertEquals(param.getCurrentUserId(), spaceUserAccessCaptor.getValue().getCreatedBy());
+        assertNotNull(spaceUserAccessCaptor.getValue().getCreationTime());
+
+        verifyNoInteractions(inviteSpaceMemberPort, sendEmailPort);
     }
 
     @Test
-    @DisplayName("Inviting non-user to a valid space should cause successful insertion")
-    void inviteMember_validParameters_successful() {
-        long spaceId = 0;
-        String email = "admin@asta.org";
-        UUID currentUserId = UUID.randomUUID();
-        var usecaseParam = new InviteSpaceMemberUseCase.Param(spaceId, email, currentUserId);
-        when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
-        when(loadUserPort.loadUserIdByEmail(email)).thenReturn(Optional.empty());
-        doNothing().when(inviteSpaceMemberPort).invite(isA(InviteSpaceMemberPort.Param.class));
-        doNothing().when(SendFlickitInviteMailPort).inviteToFlickit(email);
+    void testInviteMember_validParametersInviteeIsNotAnApplicationUser_CreateInvitation() {
+        var param = createParam(InviteSpaceMemberUseCase.Param.ParamBuilder::build);
 
-        assertDoesNotThrow(() -> service.inviteMember(usecaseParam));
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.empty());
+        doNothing().when(sendEmailPort).send(anyString(), anyString(), anyString());
+        doNothing().when(inviteSpaceMemberPort).invite(any());
 
-        verify(checkSpaceAccessPort).checkIsMember(spaceId, currentUserId);
-        verify(loadUserPort).loadUserIdByEmail(email);
-        verify(inviteSpaceMemberPort).invite(any(InviteSpaceMemberPort.Param.class));
-        verify(SendFlickitInviteMailPort).inviteToFlickit(email);
+        service.inviteMember(param);
+
+        ArgumentCaptor<InviteSpaceMemberPort.Param> invitePortParamCaptor = ArgumentCaptor.forClass(InviteSpaceMemberPort.Param.class);
+        verify(inviteSpaceMemberPort).invite(invitePortParamCaptor.capture());
+        assertEquals(param.getSpaceId(), invitePortParamCaptor.getValue().spaceId());
+        assertEquals(param.getEmail(), invitePortParamCaptor.getValue().email());
+        assertEquals(param.getCurrentUserId(), invitePortParamCaptor.getValue().createdBy());
+        assertNotNull(invitePortParamCaptor.getValue().creationTime());
+        assertEquals(invitePortParamCaptor.getValue().creationTime().plusDays(7), invitePortParamCaptor.getValue().expirationDate());
+
+        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
+        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY,
+            appSpecProperties.getHost(),
+            appSpecProperties.getName(),
+            appSpecProperties.getSupportEmail());
+        verify(sendEmailPort).send(param.getEmail(), subject, body);
+    }
+
+    @Test
+    void testInviteMember_validParametersInviteeIsNotAnApplicationUser_SendInvitationWithoutSupportEmail() {
+        var param = createParam(InviteSpaceMemberUseCase.Param.ParamBuilder::build);
+
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadUserPort.loadUserIdByEmail(param.getEmail())).thenReturn(Optional.empty());
+        doNothing().when(sendEmailPort).send(anyString(), anyString(), anyString());
+        doNothing().when(inviteSpaceMemberPort).invite(any());
+
+        appSpecProperties.setSupportEmail(" ");
+
+        service.inviteMember(param);
+
+        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
+        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL,
+            appSpecProperties.getHost(),
+            appSpecProperties.getName());
+        verify(sendEmailPort).send(param.getEmail(), subject, body);
+    }
+
+    private AppSpecProperties appSpecProperties() {
+        var properties = new AppSpecProperties();
+        properties.setEmail(new AppSpecProperties.Email());
+        properties.getEmail().setFromDisplayName("Assessment Platform");
+        properties.setHost("platform.org");
+        properties.setName("AssessmentPlatform");
+        properties.setSupportEmail("support@platform.org");
+        return properties;
+    }
+
+    private InviteSpaceMemberUseCase.Param createParam(Consumer<InviteSpaceMemberUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private InviteSpaceMemberUseCase.Param.ParamBuilder paramBuilder() {
+        return InviteSpaceMemberUseCase.Param.builder()
+            .spaceId(123L)
+            .email("user@email.com")
+            .currentUserId(UUID.randomUUID());
     }
 }

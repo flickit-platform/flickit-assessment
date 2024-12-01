@@ -10,9 +10,12 @@ public class ErrorMessageKey {
     public static final String COMMON_CURRENT_USER_ID_NOT_NULL = "common.currentUserId.notNull";
     public static final String COMMON_HEADER_AUTHORIZATION_NOT_NULL = "common.header.authorization.notNull";
     public static final String COMMON_CURRENT_USER_NOT_FOUND = "common.currentUser.notFound";
+    public static final String COMMON_USER_NOT_FOUND = "common.user.notFound";
 
     public static final String COMMON_ASSESSMENT_RESULT_NOT_FOUND = "common.assessmentResult.notFound";
     public static final String COMMON_ASSESSMENT_RESULT_NOT_VALID = "common.assessmentResult.notValid";
+    public static final String COMMON_ASSESSMENT_KIT_NOT_FOUND = "common.assessmentKit.notFound";
+    public static final String COMMON_ASSESSMENT_RESULT_KIT_VERSION_DEPRECATED = "common.assessmentResult.kitVersion.deprecated";
 
     public static final String UPLOAD_FILE_PICTURE_SIZE_MAX = "upload-file.picture-size.max";
     public static final String UPLOAD_FILE_DSL_SIZE_MAX = "upload-file.dsl-size.max";
@@ -27,4 +30,5 @@ public class ErrorMessageKey {
 
     public static final String INVITE_TO_REGISTER_EMAIL_SUBJECT = "invite-to-register.email.subject";
     public static final String INVITE_TO_REGISTER_EMAIL_BODY = "invite-to-register.email.body";
+    public static final String INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL = "invite-to-register.email.body.without.support.email";
 }

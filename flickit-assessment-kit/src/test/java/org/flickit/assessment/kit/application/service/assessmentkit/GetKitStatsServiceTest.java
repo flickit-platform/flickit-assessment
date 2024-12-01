@@ -27,9 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPERT_GROUP_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithKitVersionId;
 import static org.flickit.assessment.kit.test.fixture.application.ExpertGroupMother.createExpertGroup;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -100,18 +100,39 @@ class GetKitStatsServiceTest {
 
     @Test
     void testGetKitStats_ExpertGroupNotFound_ErrorMessage() {
-        ExpertGroup expertGroup = createExpertGroup();
         long kitId = 1L;
         Param param = new Param(kitId, UUID.randomUUID());
 
-        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
-        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
-
-        when(countKitStatsPort.countKitStats(kitId)).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenThrow(new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class,
             () -> service.getKitStats(param));
         assertThat(throwable).hasMessage(EXPERT_GROUP_ID_NOT_FOUND);
+    }
+
+    @Test
+    void testGetKitStats_WhenActiveKitNotExist_ThrowsException() {
+        ExpertGroup expertGroup = createExpertGroup();
+        AssessmentKit assessmentKit = kitWithKitVersionId(null);
+        Param param = new Param(assessmentKit.getId(), UUID.randomUUID());
+
+        when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
+        when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(assessmentKit);
+
+        var result = service.getKitStats(param);
+
+        assertEquals(assessmentKit.getCreationTime(), result.creationTime());
+        assertEquals(assessmentKit.getLastModificationTime(), result.lastModificationTime());
+        assertNull(result.questionnairesCount());
+        assertNull(result.attributesCount());
+        assertNull(result.questionsCount());
+        assertNull(result.maturityLevelsCount());
+        assertNull(result.likes());
+        assertNull(result.assessmentCounts());
+        assertNull(result.subjects());
+        assertEquals(expertGroup.getId(), result.expertGroup().id());
+        assertEquals(expertGroup.getTitle(), result.expertGroup().title());
     }
 
     @Test

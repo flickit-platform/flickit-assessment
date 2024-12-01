@@ -2,12 +2,11 @@ package org.flickit.assessment.data.jpa.kit.questionnaire;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @IdClass(QuestionnaireJpaEntity.EntityId.class)
@@ -16,13 +15,12 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class QuestionnaireJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "fak_questionnaire_id_seq")
-    @SequenceGenerator(name = "fak_questionnaire_id_seq", sequenceName = "fak_questionnaire_id_seq", allocationSize = 1)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
@@ -31,7 +29,7 @@ public class QuestionnaireJpaEntity {
     @Column(name = "kit_version_id", nullable = false)
     private Long kitVersionId;
 
-    @Column(name = "code", length = 50, nullable = false)
+    @Column(name = "code", length = 100, nullable = false)
     private String code;
 
     @Column(name = "index", nullable = false)
@@ -40,7 +38,7 @@ public class QuestionnaireJpaEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", length = 500, nullable = false)
     private String description;
 
     @Column(name = "creation_time", nullable = false)
@@ -64,8 +62,11 @@ public class QuestionnaireJpaEntity {
         private long kitVersionId;
     }
 
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String INDEX = "index";
+    public void prepareForClone(long updatingKitVersionId, UUID clonedBy, LocalDateTime cloneTime) {
+        setKitVersionId(updatingKitVersionId);
+        setCreationTime(cloneTime);
+        setLastModificationTime(cloneTime);
+        setCreatedBy(clonedBy);
+        setLastModifiedBy(clonedBy);
     }
 }

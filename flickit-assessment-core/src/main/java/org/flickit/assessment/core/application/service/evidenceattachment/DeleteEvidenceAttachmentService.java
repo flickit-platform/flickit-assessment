@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.port.in.evidenceattachment.Delete
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencePort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.DeleteEvidenceAttachmentPort;
 import org.flickit.assessment.core.application.port.out.evidenceattachment.LoadEvidenceAttachmentFilePathPort;
-import org.flickit.assessment.core.application.port.out.minio.DeleteEvidenceAttachmentFilePort;
+import org.flickit.assessment.core.application.port.out.minio.DeleteFilePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +23,7 @@ public class DeleteEvidenceAttachmentService implements DeleteEvidenceAttachment
     private final LoadEvidencePort loadEvidencePort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadEvidenceAttachmentFilePathPort loadEvidenceAttachmentFilePathPort;
-    private final DeleteEvidenceAttachmentFilePort deleteEvidenceAttachmentFilePort;
+    private final DeleteFilePort deleteFilePort;
     private final DeleteEvidenceAttachmentPort deleteEvidenceAttachmentPort;
 
     @Override
@@ -33,7 +33,7 @@ public class DeleteEvidenceAttachmentService implements DeleteEvidenceAttachment
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         String filePath = loadEvidenceAttachmentFilePathPort.loadEvidenceAttachmentFilePath(param.getAttachmentId());
-        deleteEvidenceAttachmentFilePort.deleteEvidenceAttachmentFile(filePath);
+        deleteFilePort.deleteFile(filePath);
         deleteEvidenceAttachmentPort.deleteEvidenceAttachment(param.getAttachmentId());
     }
 }
