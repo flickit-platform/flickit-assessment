@@ -49,7 +49,7 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
     }
 
     private void validatePicture(MultipartFile picture) {
-        if (picture.getSize() >= fileProperties.getPictureMaxSize().toBytes())
+        if (picture.getSize() > fileProperties.getPictureMaxSize().toBytes())
             throw new ValidationException(UPLOAD_FILE_PICTURE_SIZE_MAX);
 
         if (!fileProperties.getPictureContentTypes().contains(picture.getContentType()))
