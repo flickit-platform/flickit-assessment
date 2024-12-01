@@ -25,7 +25,7 @@ public interface UpdateAdviceItemUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = UPDATE_ADVICE_ITEM_ID_NOT_NULL)
-        UUID adviceId;
+        UUID adviceItemId;
 
         @NotNull(message = UPDATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
@@ -56,15 +56,16 @@ public interface UpdateAdviceItemUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(UUID adviceId, UUID assessmentId, String title, String description, String cost, String priority, String impact, UUID currentUserId) {
-            this.adviceId = adviceId;
+        public Param(UUID adviceItemId, UUID assessmentId, String title, String description, String cost, String priority, String impact, UUID currentUserId) {
+            this.adviceItemId = adviceItemId;
             this.assessmentId = assessmentId;
-            this.title = title;
-            this.description = description;
+            this.title = title != null && !title.isBlank() ? title.strip() : null;
+            this.description = description != null ? description.strip() : null;
             this.cost = cost;
             this.priority = priority;
             this.impact = impact;
             this.currentUserId = currentUserId;
+            this.validateSelf();
         }
     }
 }
