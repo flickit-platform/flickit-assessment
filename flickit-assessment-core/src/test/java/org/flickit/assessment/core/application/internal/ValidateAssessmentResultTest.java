@@ -68,7 +68,7 @@ class ValidateAssessmentResultTest {
     @Test
     void testValidate_assessmentResultIsCalculationValid_isNotValid() {
         UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult1 = AssessmentResultMother.resultWithValidations(null, Boolean.TRUE, LocalDateTime.now(), LocalDateTime.now());
+        var assessmentResult1 = AssessmentResultMother.resultWithValidations(null, Boolean.TRUE, LocalDateTime.now(), LocalDateTime.now());
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult1));
 
         var throwable = assertThrows(CalculateNotValidException.class, () -> service.validate(assessmentId));
@@ -84,16 +84,14 @@ class ValidateAssessmentResultTest {
     @Test
     void testValidate_assessmentResultIsConfCalculationValid_isNotValid() {
         UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult1 = AssessmentResultMother.resultWithValidations(Boolean.TRUE, null, LocalDateTime.now(), LocalDateTime.now());
+        var assessmentResult1 = AssessmentResultMother.resultWithValidations(Boolean.TRUE, null, LocalDateTime.now(), LocalDateTime.now());
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult1));
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(LocalDateTime.now().minusDays(1));
 
         var throwable = assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
         AssessmentResult assessmentResult2 = AssessmentResultMother.resultWithValidations(Boolean.TRUE, Boolean.FALSE, LocalDateTime.now(), LocalDateTime.now());
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult2));
-        when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(LocalDateTime.now().minusDays(1));
 
         throwable = assertThrows(ConfidenceCalculationNotValidException.class, () -> service.validate(assessmentId));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
@@ -102,7 +100,7 @@ class ValidateAssessmentResultTest {
     @Test
     void testValidate_assessmentResultLastCalculationTime_isNotValid() {
         UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult1 = AssessmentResultMother.resultWithValidations(Boolean.TRUE, Boolean.TRUE, null, LocalDateTime.now());
+        var assessmentResult1 = AssessmentResultMother.resultWithValidations(Boolean.TRUE, Boolean.TRUE, null, LocalDateTime.now());
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult1));
         when(loadKitLastMajorModificationTimePort.loadLastMajorModificationTime(anyLong())).thenReturn(LocalDateTime.now());
 
