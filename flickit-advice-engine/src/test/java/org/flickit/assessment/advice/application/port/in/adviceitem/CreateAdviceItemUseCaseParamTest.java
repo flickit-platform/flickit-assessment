@@ -9,9 +9,8 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
-import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ITEM_TITLE_SIZE_MAX;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateAdviceItemUseCaseParamTest {
 
@@ -40,7 +39,11 @@ class CreateAdviceItemUseCaseParamTest {
     @Test
     void testCreateAdviceItemUseCaseParam_descriptionViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.description(RandomStringUtils.random(1001))));
+            () -> createParam(b -> b.description(null)));
+        assertThat(throwable).hasMessage("description: " + CREATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.description(RandomStringUtils.random(3001))));
         assertThat(throwable).hasMessage("description: " + CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
@@ -55,7 +58,7 @@ class CreateAdviceItemUseCaseParamTest {
         assertThat(throwable).hasMessage("impact: " + CREATE_ADVICE_ITEM_IMPACT_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.impact("h")));
+            () -> createParam(b -> b.impact("impact")));
         assertThat(throwable).hasMessage("impact: " + CREATE_ADVICE_ITEM_IMPACT_INVALID);
     }
 
@@ -66,7 +69,7 @@ class CreateAdviceItemUseCaseParamTest {
         assertThat(throwable).hasMessage("cost: " + CREATE_ADVICE_ITEM_COST_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.cost("h")));
+            () -> createParam(b -> b.cost("cost")));
         assertThat(throwable).hasMessage("cost: " + CREATE_ADVICE_ITEM_COST_INVALID);
     }
 
@@ -77,7 +80,7 @@ class CreateAdviceItemUseCaseParamTest {
         assertThat(throwable).hasMessage("priority: " + CREATE_ADVICE_ITEM_PRIORITY_NOT_NULL);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.priority("h")));
+            () -> createParam(b -> b.priority("priority")));
         assertThat(throwable).hasMessage("priority: " + CREATE_ADVICE_ITEM_PRIORITY_INVALID);
     }
 

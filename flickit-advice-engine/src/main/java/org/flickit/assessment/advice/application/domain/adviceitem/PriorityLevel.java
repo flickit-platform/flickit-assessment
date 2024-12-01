@@ -15,6 +15,10 @@ public enum PriorityLevel {
 
     private final String title;
 
+    public int getId() {
+        return this.ordinal();
+    }
+
     public static PriorityLevel valueOfById(int id) {
         if (!isValidId(id))
             return null;

@@ -78,7 +78,7 @@ class UpdateAttributeInsightServiceTest {
         var content = "content";
         var currentUserId = UUID.randomUUID();
         var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, content, currentUserId);
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -96,7 +96,7 @@ class UpdateAttributeInsightServiceTest {
         var content = "content";
         var currentUserId = UUID.randomUUID();
         var param = new UpdateAttributeInsightUseCase.Param(UUID.randomUUID(), attributeId, content, currentUserId);
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         var attributeInsight = AttributeInsightMother.simpleAttributeAiInsight();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);

@@ -54,7 +54,7 @@ class CreateSubjectInsightServiceTest {
             115L,
             "insight",
             UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
@@ -84,7 +84,7 @@ class CreateSubjectInsightServiceTest {
             115L,
             "insight",
             UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         SubjectInsight subjectInsight = new SubjectInsight(assessmentResult.getId(),
             param.getSubjectId(),
             "old insight",

@@ -13,8 +13,8 @@ import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
 
 public interface CreateAdviceItemUseCase {
@@ -33,8 +33,9 @@ public interface CreateAdviceItemUseCase {
         @Size(max = 100, message = CREATE_ADVICE_ITEM_TITLE_SIZE_MAX)
         String title;
 
+        @NotNull(message = CREATE_ADVICE_ITEM_DESCRIPTION_NOT_NULL)
         @Size(min = 3, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MIN)
-        @Size(max = 1000, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX)
+        @Size(max = 3000, message = CREATE_ADVICE_ITEM_DESCRIPTION_SIZE_MAX)
         String description;
 
         @NotNull(message = CREATE_ADVICE_ITEM_COST_NOT_NULL)
@@ -56,7 +57,7 @@ public interface CreateAdviceItemUseCase {
         public Param(UUID assessmentId, String title, String description, String cost, String priority, String impact, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.title = title != null && !title.isBlank() ? title.strip() : null;
-            this.description = description != null ? description.strip() : null;
+            this.description = description != null && !description.isBlank() ? description.strip() : null;
             this.cost = cost;
             this.priority = priority;
             this.impact = impact;

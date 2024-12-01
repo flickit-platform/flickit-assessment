@@ -6,6 +6,7 @@ import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdvic
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemListPort;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaEntity;
+import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemListPort;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

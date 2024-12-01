@@ -31,4 +31,11 @@ public interface KitCustomJpaRepository extends JpaRepository<KitCustomJpaEntity
                 @Param("customData") String customData,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Query("""
+            SELECT k.lastModificationTime
+            FROM KitCustomJpaEntity k
+            WHERE k.id = :kitCustomId
+        """)
+    LocalDateTime loadLastModificationTime(@Param("kitCustomId") Long kitCustomId);
 }

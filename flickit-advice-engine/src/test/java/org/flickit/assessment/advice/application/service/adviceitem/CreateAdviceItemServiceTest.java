@@ -85,9 +85,9 @@ class CreateAdviceItemServiceTest {
         assertEquals(param.getTitle(), argumentCaptor.getValue().getTitle());
         assertEquals(assessmentResult.getId(), argumentCaptor.getValue().getAssessmentResultId());
         assertEquals(param.getDescription(), argumentCaptor.getValue().getDescription());
-        assertEquals("Low", argumentCaptor.getValue().getCost().getTitle());
-        assertEquals("Medium", argumentCaptor.getValue().getImpact().getTitle());
-        assertEquals("High", argumentCaptor.getValue().getPriority().getTitle());
+        assertEquals(param.getCost(), argumentCaptor.getValue().getCost().name());
+        assertEquals(param.getImpact(), argumentCaptor.getValue().getImpact().name());
+        assertEquals(param.getPriority(), argumentCaptor.getValue().getPriority().name());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getCreatedBy());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getLastModifiedBy());
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -83,11 +84,11 @@ public class AssessmentCalculateResultPersistAdapter implements
         var attributeValues = subjectValues.stream()
             .flatMap(s -> s.getAttributeValues().stream())
             .toList();
-        Map<UUID, Double> attributeValueIdToConfidence = attributeValues.stream()
-            .collect(toMap(AttributeValue::getId, AttributeValue::getConfidenceValue));
+        Map<UUID, AttributeValue> attributeValueIdToConfidence = attributeValues.stream()
+            .collect(toMap(AttributeValue::getId, Function.identity()));
         var attributeValueEntities = attributeValueRepo.findAllById(attributeValueIdToConfidence.keySet());
 
-        attributeValueEntities.forEach(a -> a.setConfidenceValue(attributeValueIdToConfidence.get(a.getId())));
+        attributeValueEntities.forEach(a -> a.setConfidenceValue(attributeValueIdToConfidence.get(a.getId()).getConfidenceValue()));
         attributeValueRepo.saveAll(attributeValueEntities);
     }
 }
