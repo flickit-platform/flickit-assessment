@@ -49,8 +49,10 @@ class GetAdviceItemListServiceTest {
     private final int page = 0;
     private final int size = 10;
     private final List<AdviceItem> items = List.of(
-        new AdviceItem(UUID.randomUUID(), "title1", UUID.randomUUID(), "description1", CostLevel.HIGH, PriorityLevel.LOW, ImpactLevel.MEDIUM, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()),
-        new AdviceItem(UUID.randomUUID(), "title2", UUID.randomUUID(), "description2", CostLevel.MEDIUM, PriorityLevel.MEDIUM, ImpactLevel.HIGH, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()));
+        new AdviceItem(UUID.randomUUID(), "title1", UUID.randomUUID(), "description1",
+            CostLevel.HIGH, PriorityLevel.LOW, ImpactLevel.MEDIUM, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()),
+        new AdviceItem(UUID.randomUUID(), "title2", UUID.randomUUID(), "description2",
+            CostLevel.MEDIUM, PriorityLevel.MEDIUM, ImpactLevel.HIGH, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()));
 
     @Test
     void testGetAdviceItemList_whenUserDoesNotHaveAccess_thenThrowAccessDeniedException() {
