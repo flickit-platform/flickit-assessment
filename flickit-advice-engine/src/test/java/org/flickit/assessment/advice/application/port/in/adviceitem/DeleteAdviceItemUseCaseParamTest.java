@@ -15,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeleteAdviceItemUseCaseParamTest {
 
     @Test
-    void testDeleteAdviceItemParam_adviceItemIdParamViolatesConstraint_ErrorMessage() {
+    void testDeleteAdviceItemUseCaseParam_adviceItemIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.adviceItemId(null)));
         assertThat(throwable).hasMessage("adviceItemId: " + DELETE_ADVICE_ITEM_ID_NOT_NULL);
     }
 
     @Test
-    void testDeleteAdviceItemParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
+    void testDeleteAdviceItemUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + DELETE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testDeleteAdviceItemParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
+    void testDeleteAdviceItemUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
