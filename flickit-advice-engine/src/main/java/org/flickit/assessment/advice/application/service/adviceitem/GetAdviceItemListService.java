@@ -35,8 +35,12 @@ public class GetAdviceItemListService implements GetAdviceItemListUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(GET_ADVICE_ITEM_LIST_ASSESSMENT_RESULT_NOT_FOUND));
 
         var portResult = loadAdviceItemListPort.loadAdviceItemList(assessmentResult.getId(), param.getPage(), param.getSize());
+        var adviceItemList = portResult.getItems()
+            .stream()
+            .map(GetAdviceItemListService::toAdviceListItem)
+            .toList();
 
-        return new PaginatedResponse<>(portResult.getItems().stream().map(GetAdviceItemListService::toAdviceListItem).toList(),
+        return new PaginatedResponse<>(adviceItemList,
             param.getPage(),
             param.getSize(),
             portResult.getSort(),
