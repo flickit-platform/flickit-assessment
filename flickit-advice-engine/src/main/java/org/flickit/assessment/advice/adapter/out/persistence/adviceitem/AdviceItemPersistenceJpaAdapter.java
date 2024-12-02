@@ -29,17 +29,33 @@ public class AdviceItemPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AdviceItem> loadAdviceItemList(UUID assessmentResultId, int page, int size) {
-        var direction = Sort.Direction.DESC;
-        var order = AdviceItemJpaEntity.Fields.lastModificationTime;
-        var pageResult = repository.findByAssessmentResultIdOrderByPriorityDescImpactDescCost(assessmentResultId,
-            PageRequest.of(page, size, direction, order));
+        Sort sort = Sort.by(
+            Sort.Order.desc(AdviceItemJpaEntity.Fields.priority),
+            Sort.Order.desc(AdviceItemJpaEntity.Fields.impact),
+            Sort.Order.asc(AdviceItemJpaEntity.Fields.cost)
+        );
+
+        var pageResult = repository.findByAssessmentResultId(assessmentResultId,
+            PageRequest.of(page, size, sort));
+
+        String sortFields = String.join(",",
+            AdviceItemJpaEntity.Fields.priority,
+            AdviceItemJpaEntity.Fields.impact,
+            AdviceItemJpaEntity.Fields.cost
+        );
+
+        String sortDirections = String.join(",",
+            Sort.Direction.DESC.name().toLowerCase(),
+            Sort.Direction.DESC.name().toLowerCase(),
+            Sort.Direction.ASC.name().toLowerCase()
+        );
 
         return new PaginatedResponse<>(
             pageResult.stream().map(AdviceItemMapper::mapToDomainModel).toList(),
             pageResult.getNumber(),
             pageResult.getSize(),
-            order,
-            direction.name().toLowerCase(),
+            sortFields,
+            sortDirections,
             (int) pageResult.getTotalElements());
     }
 }
