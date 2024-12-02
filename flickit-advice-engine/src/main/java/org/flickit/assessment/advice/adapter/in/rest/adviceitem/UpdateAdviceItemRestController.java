@@ -17,18 +17,16 @@ public class UpdateAdviceItemRestController {
     private final UserContext userContext;
     private final UpdateAdviceItemUseCase useCase;
 
-    @PutMapping("/assessments/{assessmentId}/advice-items/{adviceItemId}")
-    ResponseEntity<Void> updateAdviceItem(@PathVariable("assessmentId") UUID assessmentId,
-                                          @PathVariable("adviceItemId") UUID adviceItemId,
+    @PutMapping("/advice-items/{adviceItemId}")
+    ResponseEntity<Void> updateAdviceItem(@PathVariable("adviceItemId") UUID adviceItemId,
                                           @RequestBody UpdateAdviceItemRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.updateAdviceItem(toParam(assessmentId, adviceItemId, requestDto, currentUserId));
+        useCase.updateAdviceItem(toParam(adviceItemId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, UUID adviceItemId, UpdateAdviceItemRequestDto requestDto, UUID currentUserId) {
+    private Param toParam(UUID adviceItemId, UpdateAdviceItemRequestDto requestDto, UUID currentUserId) {
         return new Param(adviceItemId,
-            assessmentId,
             requestDto.title(),
             requestDto.description(),
             requestDto.cost(),
