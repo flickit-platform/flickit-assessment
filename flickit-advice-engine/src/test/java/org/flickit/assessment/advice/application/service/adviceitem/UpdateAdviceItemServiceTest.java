@@ -5,7 +5,6 @@ import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdvice
 import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -39,9 +38,6 @@ class UpdateAdviceItemServiceTest {
     AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    ValidateAssessmentResultPort validateAssessmentResultPort;
-
-    @Mock
     UpdateAdviceItemPort updateAdviceItemPort;
 
     @Test
@@ -53,7 +49,7 @@ class UpdateAdviceItemServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAdviceItem(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, validateAssessmentResultPort, updateAdviceItemPort);
+        verifyNoInteractions(loadAssessmentResultPort, updateAdviceItemPort);
     }
 
     @Test
@@ -66,7 +62,7 @@ class UpdateAdviceItemServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
         assertEquals(UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(validateAssessmentResultPort, updateAdviceItemPort);
+        verifyNoInteractions(updateAdviceItemPort);
     }
 
     @Test
@@ -88,8 +84,6 @@ class UpdateAdviceItemServiceTest {
         assertEquals(param.getImpact(), argumentCaptor.getValue().impact().name());
         assertEquals(param.getPriority(), argumentCaptor.getValue().priority().name());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().lastModifiedBy());
-
-        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
     }
 
 

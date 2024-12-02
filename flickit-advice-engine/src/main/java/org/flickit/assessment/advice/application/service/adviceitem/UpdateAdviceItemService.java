@@ -1,16 +1,17 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.adviceitem.*;
+import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,7 +27,6 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final UpdateAdviceItemPort updateAdviceItemPort;
 
     @Override
@@ -35,8 +35,6 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND));
-
-        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         updateAdviceItemPort.updateAdviceItem(toParam(param, assessmentResult.getId()));
     }

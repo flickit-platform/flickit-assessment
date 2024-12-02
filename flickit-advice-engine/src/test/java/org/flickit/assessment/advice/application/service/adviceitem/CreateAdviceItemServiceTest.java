@@ -6,7 +6,6 @@ import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdvice
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -40,9 +39,6 @@ class CreateAdviceItemServiceTest {
     AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    ValidateAssessmentResultPort validateAssessmentResultPort;
-
-    @Mock
     CreateAdviceItemPort createAdviceItemPort;
 
     @Test
@@ -54,7 +50,7 @@ class CreateAdviceItemServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAdviceItem(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, validateAssessmentResultPort, createAdviceItemPort);
+        verifyNoInteractions(loadAssessmentResultPort, createAdviceItemPort);
     }
 
     @Test
@@ -67,7 +63,7 @@ class CreateAdviceItemServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAdviceItem(param));
         assertEquals(CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(validateAssessmentResultPort, createAdviceItemPort);
+        verifyNoInteractions(createAdviceItemPort);
     }
 
     @Test
@@ -90,8 +86,6 @@ class CreateAdviceItemServiceTest {
         assertEquals(param.getPriority(), argumentCaptor.getValue().getPriority().name());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getCreatedBy());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getLastModifiedBy());
-
-        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
     }
 
     private CreateAdviceItemUseCase.Param createParam(Consumer<CreateAdviceItemUseCase.Param.ParamBuilder> changer) {

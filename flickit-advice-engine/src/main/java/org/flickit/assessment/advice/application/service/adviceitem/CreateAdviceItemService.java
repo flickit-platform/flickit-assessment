@@ -9,7 +9,6 @@ import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdvice
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,6 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final CreateAdviceItemPort createAdviceItemPort;
 
     @Override
@@ -38,8 +36,6 @@ public class CreateAdviceItemService implements CreateAdviceItemUseCase {
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND));
-
-        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         return new Result(createAdviceItemPort.persist(toAdviceItem(param, assessmentResult.getId())));
     }
