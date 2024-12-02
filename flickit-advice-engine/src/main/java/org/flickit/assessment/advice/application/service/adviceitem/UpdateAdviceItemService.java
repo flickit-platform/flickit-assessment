@@ -38,7 +38,7 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        updateAdviceItemPort.updateAdviceItem(toAdviceItem(param, assessmentResult.getId()));
+        updateAdviceItemPort.updateAdviceItem(toParam(param, assessmentResult.getId()));
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
@@ -46,18 +46,15 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private AdviceItem toAdviceItem(UpdateAdviceItemUseCase.Param param, UUID assessmentResultId) {
-        var currentDateTime = LocalDateTime.now();
-        return new AdviceItem(param.getAdviceItemId(),
+    private UpdateAdviceItemPort.Param toParam(Param param, UUID assessmentResultId) {
+        return new UpdateAdviceItemPort.Param(param.getAdviceItemId(),
             param.getTitle(),
             assessmentResultId,
             param.getDescription(),
             CostLevel.valueOf(param.getCost()),
             PriorityLevel.valueOf(param.getPriority()),
             ImpactLevel.valueOf(param.getImpact()),
-            currentDateTime,
-            currentDateTime,
-            param.getCurrentUserId(),
+            LocalDateTime.now(),
             param.getCurrentUserId());
     }
 }
