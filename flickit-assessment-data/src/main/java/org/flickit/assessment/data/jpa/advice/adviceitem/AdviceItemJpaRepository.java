@@ -24,12 +24,12 @@ public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEnti
                 a.lastModifiedBy = :lastModifiedBy
             WHERE a.id = :id
         """)
-    void updateById(UUID id,
-                    @Param("title") String title,
-                    @Param("description") String description,
-                    @Param("cost") int cost,
-                    @Param("priority") int priority,
-                    @Param("impact") int impact,
-                    @Param("lastModificationTime") LocalDateTime lastModificationTime,
-                    @Param("lastModifiedBy") UUID lastModifiedBy);
+    void update(UUID id,
+                @Param("title") String title,
+                @Param("description") String description,
+                @Param("cost") int cost,
+                @Param("priority") int priority,
+                @Param("impact") int impact,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 }
