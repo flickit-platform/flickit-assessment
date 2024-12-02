@@ -1,9 +1,11 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdviceItemUseCase;
+import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.test.fixture.application.AdviceItemMother;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -28,8 +30,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UpdateAdviceItemServiceTest {
 
+
     @InjectMocks
     UpdateAdviceItemService service;
+
+    @Mock
+    LoadAdviceItemPort loadAdviceItemPort;
 
     @Mock
     LoadAssessmentResultPort loadAssessmentResultPort;
@@ -41,23 +47,12 @@ class UpdateAdviceItemServiceTest {
     UpdateAdviceItemPort updateAdviceItemPort;
 
     @Test
-    void testUpdateAdviceItem_whenUserIsNotAuthorized_thenThrowAccessDeniedException() {
-        var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
-
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAdviceItem(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
-
-        verifyNoInteractions(loadAssessmentResultPort, updateAdviceItemPort);
-    }
-
-    @Test
     void testUpdateAdviceItem_whenAssessmentResultNotExist_thenThrowResourceException() {
         var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
+        var adviceItem = AdviceItemMother.adviceItem();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
+        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAssessmentResultPort.loadById(adviceItem.getId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
         assertEquals(UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
@@ -66,12 +61,30 @@ class UpdateAdviceItemServiceTest {
     }
 
     @Test
+    void testUpdateAdviceItem_whenUserIsNotAuthorized_thenThrowAccessDeniedException() {
+        var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
+        var adviceItem = AdviceItemMother.adviceItem();
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
+
+        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAssessmentResultPort.loadById(adviceItem.getId())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAdviceItem(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadAssessmentResultPort, updateAdviceItemPort);
+    }
+
+    @Test
     void testUpdateAdviceItem_whenValidParameter_thenUpdatesAdviceItemSuccessfully() {
         var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 1L);
+        var adviceItem = AdviceItemMother.adviceItem();
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
 
         service.updateAdviceItem(param);
 
@@ -96,7 +109,6 @@ class UpdateAdviceItemServiceTest {
     private UpdateAdviceItemUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateAdviceItemUseCase.Param.builder()
             .adviceItemId(UUID.randomUUID())
-            .assessmentId(UUID.randomUUID())
             .title("title")
             .description("description")
             .cost("LOW")

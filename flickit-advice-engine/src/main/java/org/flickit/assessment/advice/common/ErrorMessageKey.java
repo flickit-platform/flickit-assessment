@@ -67,5 +67,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_ADVICE_ITEM_PRIORITY_INVALID = "update-advice-item.priority.invalid";
     public static final String UPDATE_ADVICE_ITEM_IMPACT_NOT_NULL = "update-advice-item.impact.notNull";
     public static final String UPDATE_ADVICE_ITEM_IMPACT_INVALID = "update-advice-item.impact.invalid";
+    public static final String UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND = "update-advice-item.adviceItem.notFound";
     public static final String UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "update-advice-item.assessmentResult.notFound";
 }
