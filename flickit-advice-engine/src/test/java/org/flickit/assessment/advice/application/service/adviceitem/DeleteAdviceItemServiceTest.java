@@ -43,7 +43,7 @@ class DeleteAdviceItemServiceTest {
     }
 
     @Test
-    void testDeleteAdviceItem_whenParametersAreValid_thenThrowAccessDeniedException() {
+    void testDeleteAdviceItem_whenParamsAreValid_thenSuccessfulDeleteAdviceItem() {
         var param = createParam(DeleteAdviceItemUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
