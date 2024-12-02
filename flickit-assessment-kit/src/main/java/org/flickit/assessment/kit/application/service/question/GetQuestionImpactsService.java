@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -30,7 +30,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadQuestionPort loadQuestionPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final LoadAllAttributesPort loadAllAttributesPort;
+    private final LoadAttributesPort loadAttributesPort;
 
     @Override
     public Result getQuestionImpacts(Param param) {
@@ -39,6 +39,9 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         Question question = loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId());
+
+        if (question.getImpacts() == null)
+            return new Result(List.of());
 
         var maturityLevelsMap = loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId()).stream()
             .collect(toMap(MaturityLevel::getId, e -> e));
@@ -57,7 +60,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
 
         var attributeIds = attributeIdToImpacts.keySet().stream().toList();
 
-        var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
+        var attributeIdToTitleMap = loadAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
             .collect(toMap(Attribute::getId, Attribute::getTitle));
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(

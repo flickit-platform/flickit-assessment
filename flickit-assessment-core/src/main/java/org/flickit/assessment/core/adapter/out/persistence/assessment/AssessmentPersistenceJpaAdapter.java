@@ -14,8 +14,7 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -29,6 +28,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.ASSOCIATE;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -40,7 +41,7 @@ public class AssessmentPersistenceJpaAdapter implements
     LoadAssessmentListPort,
     UpdateAssessmentPort,
     GetAssessmentProgressPort,
-    GetAssessmentPort,
+    LoadAssessmentPort,
     DeleteAssessmentPort,
     CheckAssessmentSpaceMembershipPort {
 
@@ -50,7 +51,7 @@ public class AssessmentPersistenceJpaAdapter implements
     private final QuestionJpaRepository questionRepository;
     private final AssessmentKitJpaRepository kitRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
-    private final KitVersionJpaRepository kitVersionRepository;
+    private final KitCustomJpaRepository kitCustomRepository;
 
     @Override
     public UUID persist(CreateAssessmentPort.Param param) {
@@ -65,7 +66,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
         Set<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentKit().getKitVersionId())
-            .collect(Collectors.toSet());
+            .collect(toSet());
 
         List<MaturityLevelJpaEntity> kitMaturityLevelEntities = maturityLevelRepository.findAllByKitVersionIdIn(kitVersionIds);
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
@@ -73,11 +74,11 @@ public class AssessmentPersistenceJpaAdapter implements
 
         var assessmentMaturityLevelIds = pageResult.getContent().stream()
             .map(e -> new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentKit().getKitVersionId()))
-            .collect(Collectors.toSet());
+            .collect(toSet());
 
-        var maturityLevelIdToMaturityLevel =
-            maturityLevelRepository.findAllById(assessmentMaturityLevelIds).stream()
-                .collect(Collectors.toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
+        var maturityLevelIdToMaturityLevel = kitMaturityLevelEntities.stream()
+            .filter(e -> assessmentMaturityLevelIds.contains(new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId())))
+            .collect(toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
 
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
@@ -89,7 +90,7 @@ public class AssessmentPersistenceJpaAdapter implements
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
                     MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel
-                        .get(new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
+                        .get(new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentKit().getKitVersionId()));
                     maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
                         maturityLevelEntity.getTitle(),
                         maturityLevelEntity.getValue(),
@@ -113,7 +114,7 @@ public class AssessmentPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -126,35 +127,30 @@ public class AssessmentPersistenceJpaAdapter implements
 
         Set<Long> kitVersionIds = pageResult.getContent().stream()
             .map(e -> e.getAssessmentResult().getKitVersionId())
-            .collect(Collectors.toSet());
-
-        List<KitVersionJpaEntity> kitVersionEntities = kitVersionRepository.findAllByIdIn(kitVersionIds);
-
-        //Map kitId to kitVersionId used in assessmentResult, which may not necessarily be the active version.
-        Map<Long, Long> kitIdToKitVersionId = kitVersionEntities.stream()
-            .collect(Collectors.toMap(e -> e.getKit().getId(), KitVersionJpaEntity::getId));
+            .collect(toSet());
 
         List<AssessmentKitJpaEntity> kitEntities = kitRepository.findByKitVersionIds(kitVersionIds);
         Map<Long, AssessmentKitJpaEntity> kitIdToKitEntity = kitEntities.stream()
-            .collect(Collectors.toMap(AssessmentKitJpaEntity::getId, Function.identity()));
+            .collect(toMap(AssessmentKitJpaEntity::getId, Function.identity()));
 
         List<MaturityLevelJpaEntity> kitMaturityLevelEntities = maturityLevelRepository.findAllByKitVersionIdIn(kitVersionIds);
         Map<Long, List<MaturityLevelJpaEntity>> kitVersionIdToMaturityLevelEntities = kitMaturityLevelEntities.stream()
             .collect(Collectors.groupingBy(MaturityLevelJpaEntity::getKitVersionId));
 
-        Map<Long, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevel =
+        Map<MaturityLevelJpaEntity.EntityId, MaturityLevelJpaEntity> maturityLevelIdToMaturityLevel =
             kitMaturityLevelEntities.stream()
-                .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+                .collect(toMap(e -> new MaturityLevelJpaEntity.EntityId(e.getId(), e.getKitVersionId()), Function.identity()));
 
         List<AssessmentListItem> items = pageResult.getContent().stream()
             .map(e -> {
                 AssessmentKitJpaEntity kitEntity = kitIdToKitEntity.get(e.getAssessment().getAssessmentKitId());
-                List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(kitIdToKitVersionId.get(kitEntity.getId()));
+                List<MaturityLevelJpaEntity> kitLevelEntities = kitVersionIdToMaturityLevelEntities.get(e.getAssessmentResult().getKitVersionId());
                 AssessmentListItem.Kit kit = new AssessmentListItem.Kit(kitEntity.getId(), kitEntity.getTitle(), kitLevelEntities.size());
                 AssessmentListItem.Space space = null;
                 AssessmentListItem.MaturityLevel maturityLevel = null;
                 if (Boolean.TRUE.equals(e.getAssessmentResult().getIsCalculateValid())) {
-                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(e.getAssessmentResult().getMaturityLevelId());
+                    MaturityLevelJpaEntity maturityLevelEntity = maturityLevelIdToMaturityLevel.get(
+                        new MaturityLevelJpaEntity.EntityId(e.getAssessmentResult().getMaturityLevelId(), e.getAssessmentResult().getKitVersionId()));
                     maturityLevel = new AssessmentListItem.MaturityLevel(maturityLevelEntity.getId(),
                         maturityLevelEntity.getTitle(),
                         maturityLevelEntity.getValue(),
@@ -179,7 +175,7 @@ public class AssessmentPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -229,6 +225,17 @@ public class AssessmentPersistenceJpaAdapter implements
     @Override
     public void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime) {
         repository.updateLastModificationTime(id, lastModificationTime);
+    }
+
+    @Override
+    public void updateKitCustomId(UUID id, long kitCustomId) {
+        AssessmentKitSpaceJoinView view = repository.findByIdAndDeletedFalse(id)
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+
+        if (!kitCustomRepository.existsByIdAndKitId(kitCustomId, view.getKit().getId()))
+            throw new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND);
+
+        repository.updateKitCustomId(id, kitCustomId);
     }
 
     @Override

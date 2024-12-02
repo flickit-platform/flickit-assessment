@@ -14,4 +14,10 @@
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.flickit</groupId>
+      <artifactId>flickit-assessment-common</artifactId>
+    </dependency>
+  </dependencies>
 </project>

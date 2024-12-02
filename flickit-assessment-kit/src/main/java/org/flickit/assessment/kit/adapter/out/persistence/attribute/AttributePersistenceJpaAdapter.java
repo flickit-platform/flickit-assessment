@@ -32,7 +32,6 @@ public class AttributePersistenceJpaAdapter implements
     CreateAttributePort,
     LoadAttributePort,
     CountAttributeImpactfulQuestionsPort,
-    LoadAllAttributesPort,
     DeleteAttributePort,
     LoadAttributesPort {
 
@@ -98,6 +97,14 @@ public class AttributePersistenceJpaAdapter implements
         var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_KIT_ATTRIBUTE_DETAIL_ATTRIBUTE_ID_NOT_FOUND));
         return mapToDomainModel(attribute);
+    }
+
+    @Override
+    public List<Attribute> loadUnimpactedAttributes(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
+            .stream()
+            .map(AttributeMapper::mapToDomainModel)
+            .toList();
     }
 
     @Override

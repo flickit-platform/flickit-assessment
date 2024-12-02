@@ -190,7 +190,7 @@ class CreateAttributeAiInsightServiceTest {
     void testCreateAttributeAiInsight_AiInsightDoesNotExistAndAiEnabled_GenerateAndPersistAiInsight() {
         UUID currentUserId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         Param param = new Param(UUID.randomUUID(), attribute.getId(), currentUserId);
         String fileContent = "file content";
         var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
@@ -208,7 +208,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
-        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
+        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), assessmentResult.getAssessment().getShortTitle(), file.text())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(aiReport);
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
@@ -228,7 +228,7 @@ class CreateAttributeAiInsightServiceTest {
     void testCreateAttributeAiInsight_AiInsightDoesNotExistAndAiEnabledAndSaveFilesDisabled_GenerateAndNotSaveFileAndPersistInsight() {
         UUID currentUserId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         Param param = new Param(UUID.randomUUID(), attribute.getId(), currentUserId);
         String fileContent = "file content";
         var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
@@ -245,7 +245,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
-        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
+        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), assessmentResult.getAssessment().getShortTitle(), file.text())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(aiReport);
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
@@ -264,7 +264,7 @@ class CreateAttributeAiInsightServiceTest {
     void testCreateAttributeAiInsight_AiInsightDoesNotExistAndAiDisabled_ReturnConstantMessage() {
         UUID currentUserId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         Param param = new Param(UUID.randomUUID(), attribute.getId(), currentUserId);
         AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, attribute.getId());
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
@@ -293,7 +293,7 @@ class CreateAttributeAiInsightServiceTest {
     void testCreateAttributeAiInsight_AiInsightExistsAndInsightTimeIsAfterCalculationTime_ReturnExistedInsight() {
         UUID currentUserId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         Param param = new Param(UUID.randomUUID(), attribute.getId(), currentUserId);
         var attributeInsight = AttributeInsightMother.simpleAttributeAiInsight();
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
@@ -317,7 +317,7 @@ class CreateAttributeAiInsightServiceTest {
     @Test
     void testCreateAttributeAiInsight_AiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiEnabled_RegenerateAndUpdateInsight() {
         var attribute = AttributeMother.simpleAttribute();
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         Param param = new Param(UUID.randomUUID(), attribute.getId(), UUID.randomUUID());
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
         String fileContent = "file content";
@@ -334,7 +334,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
+        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), assessmentResult.getAssessment().getShortTitle(), file.text())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(attributeInsight.getAiInsight());
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
@@ -353,7 +353,7 @@ class CreateAttributeAiInsightServiceTest {
     @Test
     void testCreateAttributeAiInsight_AiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiEnabledSaveFilesDisabled_RegenerateAndNotSaveFileAndUpdateInsight() {
         var attribute = AttributeMother.simpleAttribute();
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         var assessment = assessmentResult.getAssessment();
         Param param = new Param(assessment.getId(), attribute.getId(), UUID.randomUUID());
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
@@ -370,7 +370,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(assessment.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), file.text())).thenReturn(prompt);
+        when(openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), assessmentResult.getAssessment().getShortTitle(), file.text())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt)).thenReturn(attributeInsight.getAiInsight());
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
@@ -389,7 +389,7 @@ class CreateAttributeAiInsightServiceTest {
     void testCreateAttributeAiInsight_AiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiDisabled_ReturnConstantMessage() {
         UUID currentUserId = UUID.randomUUID();
         var attribute = AttributeMother.simpleAttribute();
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         Param param = new Param(UUID.randomUUID(), attribute.getId(), currentUserId);
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);

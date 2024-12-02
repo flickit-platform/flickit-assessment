@@ -10,6 +10,7 @@ import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpact
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuestionsView;
+import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -44,9 +46,11 @@ public class QuestionPersistenceJpaAdapter implements
     CreateQuestionPort,
     CountSubjectQuestionsPort,
     LoadQuestionPort,
+    LoadQuestionsPort,
     LoadAttributeLevelQuestionsPort,
     DeleteQuestionPort,
-    LoadQuestionnaireQuestionsPort {
+    LoadQuestionnaireQuestionsPort,
+    CheckQuestionExistencePort {
 
     private final QuestionJpaRepository repository;
     private final QuestionImpactJpaRepository questionImpactRepository;
@@ -109,6 +113,44 @@ public class QuestionPersistenceJpaAdapter implements
         return question;
     }
 
+    @Override
+    public List<Question> loadAllByKitVersionId(long kitVersionId) {
+        var questionWithImpactsViews = repository.loadByKitVersionId(kitVersionId);
+        var questionEntityToViews = questionWithImpactsViews.stream()
+            .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
+
+        return questionEntityToViews.entrySet().stream()
+            .map(e -> {
+                Question question = QuestionMapper.mapToDomainModel(e.getKey());
+                List<QuestionImpact> qImpacts = e.getValue().stream()
+                    .map(v -> {
+                        if (v.getQuestionImpact() == null)
+                            return null;
+                        return QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact());
+                    })
+                    .toList();
+                question.setImpacts(qImpacts);
+                return question;
+            })
+            .toList();
+    }
+
+    @Override
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutAnswerRange(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutAnswerRange(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToPortResult)
+            .toList();
+    }
+
+    @Override
+    public List<LoadQuestionsPort.Result> loadQuestionsWithoutImpact(long kitVersionId) {
+        return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToPortResult)
+            .toList();
+    }
+
     private QuestionImpact setOptionImpacts(QuestionImpact impact, List<AnswerOptionJpaEntity> optionEntities) {
         var optionImpactsEntities = answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId());
         var optionIdToOptionValueMap = optionEntities.stream()
@@ -140,7 +182,10 @@ public class QuestionPersistenceJpaAdapter implements
                 var answerOptionEntities = entry.getValue().stream()
                     .collect(toMap(e -> e.getAnswerOption().getId(), AttributeLevelImpactfulQuestionsView::getAnswerOption,
                         (existing, replacement) -> existing))
-                    .values();
+                    .values()
+                    .stream()
+                    .sorted(Comparator.comparing(AnswerOptionJpaEntity::getIndex))
+                    .toList();
                 var optionIdToOptionValueMap = answerOptionEntities.stream()
                     .collect(toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getValue));
                 var options = answerOptionEntities.stream().map(AnswerOptionMapper::mapToDomainModel).toList();
@@ -156,7 +201,7 @@ public class QuestionPersistenceJpaAdapter implements
                 question.setImpacts(List.of(impact));
                 question.setOptions(options);
 
-                return new Result(question, questionnaire);
+                return new LoadAttributeLevelQuestionsPort.Result(question, questionnaire);
             }).toList();
     }
 
@@ -222,5 +267,10 @@ public class QuestionPersistenceJpaAdapter implements
             QuestionJpaEntity.Fields.INDEX,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
+    }
+
+    @Override
+    public boolean existsByAnswerRange(long answerRangeId, long kitVersionId) {
+        return repository.existsByAnswerRangeIdAndKitVersionId(answerRangeId, kitVersionId);
     }
 }

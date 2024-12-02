@@ -355,6 +355,31 @@
 					"response": []
 				},
 				{
+					"name": "Leave Expert Group",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/expert-groups/{{id}}/leave",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"expert-groups",
+								"{{id}}",
+								"leave"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Expert Group Members",
 					"request": {
 						"method": "GET",

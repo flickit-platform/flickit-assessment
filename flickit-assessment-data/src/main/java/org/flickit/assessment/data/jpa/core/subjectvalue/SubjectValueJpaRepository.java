@@ -1,10 +1,9 @@
 package org.flickit.assessment.data.jpa.core.subjectvalue;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,20 +14,15 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
 
     Optional<SubjectValueJpaEntity> findBySubjectIdAndAssessmentResult_Id(Long subjectId, UUID assessmentResultId);
 
-    @Modifying
-    @Query("""
-            UPDATE SubjectValueJpaEntity a SET a.maturityLevelId = :maturityLevelId
-            WHERE a.id = :id
-        """)
-    void updateMaturityLevelById(@Param(value = "id") UUID id,
-                                 @Param(value = "maturityLevelId") Long maturityLevelId);
+    List<SubjectValueJpaEntity> findAllByIdIn(Collection<UUID> ids);
 
-    @Modifying
     @Query("""
-            UPDATE SubjectValueJpaEntity a SET a.confidenceValue = :confidenceValue
-            WHERE a.id = :id
+            SELECT
+                sv as subjectValue,
+                s as subject
+            FROM SubjectValueJpaEntity sv
+            JOIN SubjectJpaEntity s ON sv.subjectId = s.id AND sv.assessmentResult.kitVersionId = s.kitVersionId
+            WHERE sv.assessmentResult.id = :assessmentResultId
         """)
-    void updateConfidenceValueById(@Param(value = "id") UUID id,
-                                   @Param(value = "confidenceValue") Double confidenceValue);
-
+    List<SubjectValueWithSubjectView> findAllWithSubjectByAssessmentResultId(UUID assessmentResultId);
 }

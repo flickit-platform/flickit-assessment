@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+    <changeSet id="0.36-01" author="Ali Sedaghat">
+        <createTable tableName="fak_kit_custom">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fak_kit_custom"/>
+            </column>
+            <column name="kit_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="custom_data" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.36-02" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_kit_custom" columnNames="title,kit_id"
+                             constraintName="uq_fak_kitcustom_title_kitid"/>
+    </changeSet>
+
+    <changeSet id="0.36-03" author="Ali Sedaghat">
+        <addUniqueConstraint tableName="fak_kit_custom" columnNames="code,kit_id"
+                             constraintName="uq_fak_kitcustom_code_kitid"/>
+    </changeSet>
+
+    <changeSet id="0.36-04" author="Ali Sedaghat">
+        <addForeignKeyConstraint baseTableName="fak_kit_custom" baseColumnNames="kit_id"
+                                 constraintName="fk_fak_kitcustom_kit"
+                                 referencedTableName="fak_assessment_kit"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="0.36-05" author="Ali Sedaghat">
+        <addColumn tableName="fac_assessment">
+            <column name="kit_custom_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.36-06" author="Mahdi Rezazadeh">
+        <addUniqueConstraint tableName="fac_attribute_value" columnNames="assessment_result_id, attribute_id"
+                             constraintName="uq_fac_attribute_value_assessmentresultid_attributeid"
+                             deferrable="true" initiallyDeferred="true"/>
+    </changeSet>
+</databaseChangeLog>

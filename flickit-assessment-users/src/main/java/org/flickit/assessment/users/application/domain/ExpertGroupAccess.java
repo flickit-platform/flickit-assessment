@@ -14,5 +14,5 @@ public class ExpertGroupAccess {
 
     private final UUID inviteToken;
 
-    private final int status;
+    private final ExpertGroupAccessStatus status;
 }

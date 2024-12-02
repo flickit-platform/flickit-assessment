@@ -15,6 +15,8 @@ import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
 
+    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
+
     @Query("""
             SELECT
                 a as assessment,
@@ -31,6 +33,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 AND (a.assessmentKitId = :kitId OR :kitId IS NULL)
                 AND a.deleted = FALSE
                 AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
+                AND r.kitVersionId = k.kitVersionId
                 AND (s.ownerId = :userId OR (ur.roleId is not null AND ur.roleId != :associateRoleId))
             ORDER BY a.lastModificationTime DESC
         """)
@@ -87,8 +90,6 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         """)
     void delete(@Param(value = "id") UUID id, @Param(value = "deletionTime") Long deletionTime);
 
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
-
     @Query("""
             SELECT
                 a AS assessment,
@@ -143,6 +144,14 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         AND level.id in :levelIds
     """)
     Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
+
+    @Modifying
+    @Query("""
+        UPDATE AssessmentJpaEntity a SET
+         a.kitCustomId = :kitCustomId
+        WHERE a.id = :id
+        """)
+    void updateKitCustomId(@Param("id") UUID id, @Param("kitCustomId") long kitCustomId);
 }
 
 

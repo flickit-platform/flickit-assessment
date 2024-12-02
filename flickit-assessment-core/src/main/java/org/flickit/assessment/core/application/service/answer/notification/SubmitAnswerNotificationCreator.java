@@ -7,7 +7,7 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.notification.SubmitAnswerNotificationCmd;
-import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentPort;
+import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.flickit.assessment.core.application.service.answer.notification.SubmitAnswerNotificationPayload.AssessmentModel;
@@ -27,7 +27,7 @@ public class SubmitAnswerNotificationCreator implements
     NotificationCreator<SubmitAnswerNotificationCmd> {
 
     private final GetAssessmentProgressPort getAssessmentProgressPort;
-    private final GetAssessmentPort getAssessmentPort;
+    private final LoadAssessmentPort loadAssessmentPort;
     private final LoadUserPort loadUserPort;
 
     @Override
@@ -35,7 +35,7 @@ public class SubmitAnswerNotificationCreator implements
         if (!cmd.hasProgressed())
             return List.of();
 
-        var assessment = getAssessmentPort.getAssessmentById(cmd.assessmentId());
+        var assessment = loadAssessmentPort.getAssessmentById(cmd.assessmentId());
         var user = loadUserPort.loadById(cmd.assessorId());
         if (assessment.isEmpty() || user.isEmpty()) {
             log.warn("assessment or user not found");

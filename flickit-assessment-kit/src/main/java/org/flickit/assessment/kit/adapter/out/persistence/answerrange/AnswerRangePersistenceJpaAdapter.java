@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJoinOptionView;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
@@ -19,7 +20,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -47,8 +52,8 @@ public class AnswerRangePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<AnswerRange> loadByKitVersionId(long kitVersionId, int page, int size) {
-        var order = AnswerRangeJpaEntity.Fields.creationTime;
-        var sort = Sort.Direction.ASC;
+        var order = AnswerRangeJpaEntity.Fields.lastModificationTime;
+        var sort = Sort.Direction.DESC;
         var pageResult = repository.findByKitVersionIdAndReusableTrue(kitVersionId, PageRequest.of(page, size, sort, order));
         List<Long> answerRangeEntityIds = pageResult.getContent().stream().map(AnswerRangeJpaEntity::getId).toList();
         var answerRangeIdToAnswerOptionsMap = answerOptionRepository.findAllByAnswerRangeIdInAndKitVersionId(answerRangeEntityIds, kitVersionId,
@@ -57,11 +62,14 @@ public class AnswerRangePersistenceJpaAdapter implements
 
         var answerRanges = pageResult.getContent().stream()
             .map(entity -> {
-                List<AnswerOption> options = answerRangeIdToAnswerOptionsMap.get(entity.getId()).stream()
+                List<AnswerOption> options = Optional.ofNullable(answerRangeIdToAnswerOptionsMap.get(entity.getId()))
+                    .orElse(Collections.emptyList())
+                    .stream()
                     .map(AnswerOptionMapper::mapToDomainModel)
                     .toList();
                 return toDomainModel(entity, options);
-            }).toList();
+            })
+            .toList();
 
         return new PaginatedResponse<>(
             answerRanges,
@@ -74,6 +82,22 @@ public class AnswerRangePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<AnswerRange> loadAnswerRangesWithNotEnoughOptions(long kitVersionId) {
+        var rangeViews = repository.findAllWithOptionsByKitVersionId(kitVersionId);
+
+        Map<AnswerRangeJpaEntity, List<AnswerOptionJpaEntity>> answerRangeToOptions = rangeViews.stream()
+            .collect(Collectors.groupingBy(
+                AnswerRangeJoinOptionView::getAnswerRange,
+                Collectors.mapping(AnswerRangeJoinOptionView::getAnswerOption, Collectors.toList())
+            ));
+
+        return answerRangeToOptions.entrySet().stream()
+            .filter(entry -> entry.getValue().size() < 2) // Filter AnswerRanges with zero or one option
+            .map(entry -> AnswerRangeMapper.toDomainModel(entry.getKey(), null))
+            .toList();
+    }
+
+    @Override
     public void update(UpdateAnswerRangePort.Param param) {
         if (!repository.existsByIdAndKitVersionId(param.answerRangeId(), param.kitVersionId()))
             throw new ResourceNotFoundException(ANSWER_RANGE_ID_NOT_FOUND);
@@ -81,6 +105,7 @@ public class AnswerRangePersistenceJpaAdapter implements
         repository.update(param.answerRangeId(),
             param.kitVersionId(),
             param.title(),
+            param.code(),
             param.reusable(),
             param.lastModificationTime(),
             param.lastModifiedBy());

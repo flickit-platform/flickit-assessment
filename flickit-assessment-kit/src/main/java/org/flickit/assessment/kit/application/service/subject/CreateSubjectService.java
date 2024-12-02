@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 
 @Service
 @Transactional
@@ -31,7 +31,7 @@ public class CreateSubjectService implements CreateSubjectUseCase {
         if (!ownerId.equals(param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        String code = generateSlugCode(param.getTitle());
+        String code = generateCode(param.getTitle());
 
         return createSubjectPort.persist(new CreateSubjectPort.Param(code,
             param.getTitle(),

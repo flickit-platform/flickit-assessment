@@ -437,7 +437,42 @@
 								"{{api_path}}",
 								"assessments",
 								"ff1b2ae3-92b7-437d-b321-539753b71608",
-                                "migrate-kit-version"
+								"migrate-kit-version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Kit Custom",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"kitCustomId\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/893a0f3b-5dcf-4713-8e84-2747fed5b96f/assign-kit-custom",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"893a0f3b-5dcf-4713-8e84-2747fed5b96f",
+								"assign-kit-custom"
 							]
 						}
 					},
@@ -1134,47 +1169,6 @@
 					"response": []
 				},
 				{
-					"name": "Get Attribute Evidence List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/attributes/1564/evidences?type=NEGATIVE&size=10&page=0",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"625e6194-b710-4ed4-90e5-d6372ee3cb96",
-								"attributes",
-								"1564",
-								"evidences"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "NEGATIVE"
-								},
-								{
-									"key": "size",
-									"value": "10"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get Evidence List",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
@@ -1605,7 +1599,7 @@
 				{
 					"name": "Get Subject Insight",
 					"request": {
-						"method": "Get",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",

@@ -62,7 +62,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
         List<AttributeLevelTarget> attributeLevelTargets = param.getAttributeLevelTargets();
         validateAssessmentAttributeRelation(assessmentId, attributeLevelTargets);
         validateAssessmentLevelRelation(assessmentId, attributeLevelTargets);
-        var validAttributeLevelTargets = filterValidAttributeLevelTargets(param.getAssessmentId(), param.getAttributeLevelTargets());
+        var validAttributeLevelTargets = filterValidAttributeLevelTargets(assessmentId, param.getAttributeLevelTargets());
 
         var problem = loadAdviceCalculationInfoPort.loadAdviceCalculationInfo(assessmentId, validAttributeLevelTargets);
         var solution = solverManager.solve(UUID.randomUUID(), problem);

@@ -18,7 +18,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
 
     Page<MaturityLevelJpaEntity> findByKitVersionId(Long kitVersionId, Pageable pageable);
 
-    List<MaturityLevelJpaEntity> findAllByKitVersionIdAndIdIn(long kitVersionId, Collection<Long> ids);
+    List<MaturityLevelJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
@@ -60,12 +60,6 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
                 @Param("value") Integer value,
                 @Param("lastModificationTime") LocalDateTime lastModificationTime,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
-
-    @Query("""
-            FROM MaturityLevelJpaEntity ml
-            WHERE ml.kitVersionId = (SELECT l.kitVersionId FROM MaturityLevelJpaEntity AS l WHERE l.id = :id)
-        """)
-    List<MaturityLevelJpaEntity> findAllInKitVersionWithOneId(@Param(value = "id") Long id);
 
     @Query("""
             SELECT

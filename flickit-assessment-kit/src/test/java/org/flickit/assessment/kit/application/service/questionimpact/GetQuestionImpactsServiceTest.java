@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.KitVersion;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -55,7 +55,7 @@ class GetQuestionImpactsServiceTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
-    private LoadAllAttributesPort loadAllAttributesPort;
+    private LoadAttributesPort loadAttributesPort;
 
     private final KitVersion kitVersion = KitVersionMother.createKitVersion(simpleKit());
 
@@ -68,7 +68,7 @@ class GetQuestionImpactsServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionImpacts(param));
         assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(checkExpertGroupAccessPort, loadQuestionPort, loadMaturityLevelsPort, loadAllAttributesPort);
+        verifyNoInteractions(checkExpertGroupAccessPort, loadQuestionPort, loadMaturityLevelsPort, loadAttributesPort);
     }
 
     @Test
@@ -81,7 +81,7 @@ class GetQuestionImpactsServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionImpacts(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadQuestionPort, loadMaturityLevelsPort, loadAllAttributesPort);
+        verifyNoInteractions(loadQuestionPort, loadMaturityLevelsPort, loadAttributesPort);
     }
 
     @Test
@@ -95,7 +95,7 @@ class GetQuestionImpactsServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionImpacts(param));
         assertEquals(QUESTION_ID_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(loadMaturityLevelsPort, loadAllAttributesPort);
+        verifyNoInteractions(loadMaturityLevelsPort, loadAttributesPort);
     }
 
     @Test
@@ -134,7 +134,7 @@ class GetQuestionImpactsServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
-        when(loadAllAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), param.getKitVersionId())).thenReturn(List.of(attr1, attr2));
+        when(loadAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), param.getKitVersionId())).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadAllByKitVersionId(param.getKitVersionId())).thenReturn(maturityLevels);
 
         var result = service.getQuestionImpacts(param);
@@ -161,6 +161,22 @@ class GetQuestionImpactsServiceTest {
         assertEquals(impact3.getAttributeId(), attributeImpact2.attributeId());
         assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().maturityLevelId());
         assertEquals(optionImpacts.size(), attr2AffectedLevel1.optionValues().size());
+    }
+
+    @Test
+    void testGetQuestionImpacts_WhenQuestionNoImpacts_ThenReturnEmptyResult() {
+        var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
+
+        var question = createQuestion();
+
+        when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
+        when(checkExpertGroupAccessPort.checkIsMember(kitVersion.getKit().getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
+        when(loadQuestionPort.load(param.getQuestionId(), param.getKitVersionId())).thenReturn(question);
+
+        var result = service.getQuestionImpacts(param);
+        assertEquals(0, result.attributeImpacts().size());
+
+        verifyNoInteractions(loadMaturityLevelsPort, loadAttributesPort);
     }
 
     private GetQuestionImpactsUseCase.Param createParam(Consumer<GetQuestionImpactsUseCase.Param.ParamBuilder> changer) {

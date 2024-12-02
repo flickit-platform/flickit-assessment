@@ -23,7 +23,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ACTIVE_VERSION_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.MIGRATE_ASSESSMENT_RESULT_KIT_VERSION_ASSESSMENT_RESULT_ID_NOT_FOUND;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithJustAnId;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithoutActiveVersion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,7 +91,7 @@ class MigrateAssessmentResultKitVersionServiceTest {
 
     @Test
     void testMigrateAssessmentResultKitVersionService_ValidParameters_SuccessfulUpdate() {
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         var activeKitVersionId = assessmentResult.getAssessment().getAssessmentKit().getKitVersion();
 
         var param = createParam(b -> b.assessmentId(assessmentResult.getAssessment().getId()));

@@ -27,7 +27,7 @@
     </modules>
 
 	<properties>
-		<revision>0.35.1-SNAPSHOT</revision>
+		<revision>0.38.0-SNAPSHOT</revision>
 
 		<java.version>21</java.version>
 		<spring-boot.version>3.2.8</spring-boot.version>
@@ -42,6 +42,8 @@
 		<poi.version>5.3.0</poi.version>
 		<novu.version>1.6.0</novu.version>
         <spring-ai.version>1.0.0-M2</spring-ai.version>
+        <testcontainers.version>1.20.2</testcontainers.version>
+        <guava.version>33.3.1-jre</guava.version>
 
 		<sonar.organization>flickit-platform</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -203,7 +205,36 @@
 			<artifactId>novu-java</artifactId>
 			<version>${novu.version}</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>minio</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

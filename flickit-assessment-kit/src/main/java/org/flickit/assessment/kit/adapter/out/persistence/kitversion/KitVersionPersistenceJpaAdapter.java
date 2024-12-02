@@ -20,7 +20,8 @@ public class KitVersionPersistenceJpaAdapter implements
     CreateKitVersionPort,
     UpdateKitVersionStatusPort,
     DeleteKitVersionPort,
-    CheckKitVersionExistencePort {
+    CheckKitVersionExistencePort,
+    CountKitVersionStatsPort {
 
     private final KitVersionJpaRepository repository;
     private final AssessmentKitJpaRepository kitRepository;
@@ -38,14 +39,15 @@ public class KitVersionPersistenceJpaAdapter implements
         var kitEntity = kitRepository.findById(param.kitId())
             .orElseThrow(() -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
 
-        var versionEntity = KitVersionMapper.createParamToJpaEntity(kitEntity, param);
-        versionEntity.setId(sequenceGenerators.generateKitVersionId());
+        var id = sequenceGenerators.generateKitVersionId();
+        var versionEntity = KitVersionMapper.createParamToJpaEntity(id, kitEntity, param);
         return repository.save(versionEntity).getId();
     }
 
     @Override
     public void updateStatus(long kitVersionId, KitVersionStatus newStatus) {
-        repository.updateStatus(kitVersionId, newStatus.getId());
+        long statusVersion = newStatus == KitVersionStatus.ARCHIVE ? -kitVersionId : newStatus.getId();
+        repository.updateStatus(kitVersionId, newStatus.getId(), statusVersion);
     }
 
     @Override
@@ -56,5 +58,14 @@ public class KitVersionPersistenceJpaAdapter implements
     @Override
     public void delete(long kitVersionId) {
         repository.deleteById(kitVersionId);
+    }
+
+    @Override
+    public CountKitVersionStatsPort.Result countKitVersionStats(long kitVersionId) {
+        var entity = repository.countKitVersionStat(kitVersionId);
+        return new Result(entity.getSubjectCount(),
+            entity.getQuestionnaireCount(),
+            entity.getQuestionCount(),
+            entity.getMaturityLevelCount());
     }
 }

@@ -74,7 +74,7 @@ class GetSpaceAssessmentListServiceTest {
             List.of(assessment1, assessment2),
             0,
             20,
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             2
         );
@@ -110,7 +110,7 @@ class GetSpaceAssessmentListServiceTest {
         assertEquals(0, assessments.getPage());
         assertEquals(2, assessments.getTotal());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
-        assertEquals(AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME, assessments.getSort());
+        assertEquals(AssessmentJpaEntity.Fields.lastModificationTime, assessments.getSort());
 
         verify(loadAssessmentPort, times(1)).loadSpaceAssessments(any(), any(), anyInt(), anyInt());
     }
@@ -124,7 +124,7 @@ class GetSpaceAssessmentListServiceTest {
             List.of(assessment1),
             0,
             20,
-            AssessmentJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             1
         );

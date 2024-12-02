@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 
 @Service
 @Transactional
@@ -38,7 +38,7 @@ public class UpdateAttributeService implements UpdateAttributeUseCase {
     private UpdateAttributePort.Param toParam(Param param) {
         return new UpdateAttributePort.Param(param.getAttributeId(),
             param.getKitVersionId(),
-            generateSlugCode(param.getTitle()),
+            generateCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),

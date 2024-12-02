@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
+import static org.flickit.assessment.common.util.GenerateHashCodeUtil.generateCode;
 
 @Service
 @Transactional
@@ -34,7 +34,7 @@ public class CreateQuestionnaireService implements CreateQuestionnaireUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         Questionnaire questionnaire = new Questionnaire(null,
-            generateSlugCode(param.getTitle()),
+            generateCode(param.getTitle()),
             param.getTitle(),
             param.getIndex(),
             param.getDescription(),

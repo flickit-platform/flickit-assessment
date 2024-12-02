@@ -32,7 +32,6 @@ class AssessmentPermissionTest {
             Map.entry(UPDATE_EVIDENCE, "updateEvidence"),
             Map.entry(DELETE_EVIDENCE, "deleteEvidence"),
             Map.entry(VIEW_EVIDENCE_LIST, "viewEvidenceList"),
-            Map.entry(VIEW_ATTRIBUTE_EVIDENCE_LIST, "viewAttributeEvidenceList"),
             Map.entry(ADD_EVIDENCE_ATTACHMENT, "addEvidenceAttachment"),
             Map.entry(VIEW_EVIDENCE_ATTACHMENT, "viewEvidenceAttachment"),
             Map.entry(DELETE_EVIDENCE_ATTACHMENT, "deleteEvidenceAttachment"),
@@ -51,7 +50,8 @@ class AssessmentPermissionTest {
             Map.entry(DELETE_ASSESSMENT_INVITE, "deleteAssessmentInvite"),
             Map.entry(CREATE_ASSESSMENT_INSIGHT, "createAssessmentInsight"),
             Map.entry(CREATE_SUBJECT_INSIGHT, "createSubjectInsight"),
-            Map.entry(MANAGE_ADD_ON, "manageAddOn"));
+            Map.entry(MANAGE_ADD_ON, "manageAddOn"),
+            Map.entry(MANAGE_KIT_CUSTOM, "manageKitCustom"));
 
         permissionCodesMap.forEach((key, value) -> assertEquals(value, key.getCode()));
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
