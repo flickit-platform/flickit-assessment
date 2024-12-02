@@ -31,7 +31,7 @@ class DeleteAdviceItemServiceTest {
     DeleteAdviceItemPort deleteAdviceItemPort;
 
     @Test
-    void testDeleteAdviceItem_whenUserIsNotAuthorized_thenThrowAccessDeniedException() {
+    void testDeleteAdviceItem_whenUserNotAuthorized_thenThrowAccessDeniedException() {
         var param = createParam(DeleteAdviceItemUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
@@ -43,7 +43,7 @@ class DeleteAdviceItemServiceTest {
     }
 
     @Test
-    void testDeleteAdviceItem_whenParamsAreValid_thenSuccessfulDeleteAdviceItem() {
+    void testDeleteAdviceItem_whenValidParams_thenSuccess() {
         var param = createParam(DeleteAdviceItemUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
