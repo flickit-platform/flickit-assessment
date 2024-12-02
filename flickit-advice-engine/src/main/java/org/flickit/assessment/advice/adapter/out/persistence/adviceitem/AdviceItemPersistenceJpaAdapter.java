@@ -27,17 +27,17 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateAdviceItem(AdviceItem adviceItem) {
-        if (!repository.existsByIdAndAssessmentResultId(adviceItem.getId(), adviceItem.getAssessmentResultId()))
+    public void updateAdviceItem(UpdateAdviceItemPort.Param param) {
+        if (!repository.existsByIdAndAssessmentResultId(param.id(), param.assessmentResultId()))
             throw new ResourceNotFoundException(ADVICE_ITEM_ID_NOT_FOUND);
 
-        repository.updateById(adviceItem.getId(),
-            adviceItem.getTitle(),
-            adviceItem.getDescription(),
-            adviceItem.getCost().getId(),
-            adviceItem.getPriority().getId(),
-            adviceItem.getImpact().getId(),
-            adviceItem.getLastModificationTime(),
-            adviceItem.getLastModifiedBy());
+        repository.update(param.id(),
+            param.title(),
+            param.description(),
+            param.cost().getId(),
+            param.priority().getId(),
+            param.impact().getId(),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
     }
 }
