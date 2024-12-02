@@ -14,21 +14,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class GetAdviceItemListUseCaseParamTest {
 
     @Test
-    void testGetAdviceItemListParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
+    void testGetAdviceItemListUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + GET_ADVICE_ITEM_LIST_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testGetAdviceItemListParam_pageParamViolatesConstraint_ErrorMessage() {
+    void testGetAdviceItemListUseCaseParam_pageParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.page(-1)));
         assertThat(throwable).hasMessage("page: " + GET_ADVICE_ITEM_LIST_PAGE_MIN);
     }
 
     @Test
-    void testGetAdviceItemListParam_sizeParamViolatesConstraint_ErrorMessage() {
+    void testGetAdviceItemListUseCaseParam_sizeParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.size(0)));
         assertThat(throwable).hasMessage("size: " + GET_ADVICE_ITEM_LIST_SIZE_MIN);
@@ -39,7 +39,7 @@ class GetAdviceItemListUseCaseParamTest {
     }
 
     @Test
-    void testGetAdviceItemListParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
+    void testGetAdviceItemListUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
