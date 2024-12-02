@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.GET_ADVICE_ITEM_LIST_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -77,29 +78,25 @@ class GetAdviceItemListServiceTest {
             new AdviceItem(UUID.randomUUID(), "title2", UUID.randomUUID(), "description2",
                 CostLevel.MEDIUM, PriorityLevel.MEDIUM, ImpactLevel.HIGH, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()));
 
-        var expected = new PaginatedResponse<>(items, param.getPage(), param.getSize(), "desc", "lastModificationTime", 2);
+        var expectedResult = new PaginatedResponse<>(items, param.getPage(), param.getSize(), "desc", "lastModificationTime", 2);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAdviceItemListPort.loadAdviceItemList(assessmentResult.getId(), param.getPage(), param.getSize())).thenReturn(expected);
+        when(loadAdviceItemListPort.loadAdviceItemList(assessmentResult.getId(), param.getPage(), param.getSize())).thenReturn(expectedResult);
 
         var result = service.getAdviceItems(param);
-        assertEquals(expected.getItems().size(), result.getItems().size());
-        assertEquals(expected.getItems().getFirst().getId(), result.getItems().getFirst().id());
-        assertEquals(expected.getItems().getLast().getId(), result.getItems().getLast().id());
-        assertEquals(expected.getItems().getFirst().getTitle(), result.getItems().getFirst().title());
-        assertEquals(expected.getItems().getLast().getTitle(), result.getItems().getLast().title());
-        assertEquals(expected.getItems().getFirst().getDescription(), result.getItems().getFirst().description());
-        assertEquals(expected.getItems().getLast().getDescription(), result.getItems().getLast().description());
-        assertEquals(expected.getItems().getFirst().getCost().getTitle(), result.getItems().getFirst().cost());
-        assertEquals(expected.getItems().getLast().getCost().getTitle(), result.getItems().getLast().cost());
-        assertEquals(expected.getItems().getFirst().getPriority().getTitle(), result.getItems().getFirst().priority());
-        assertEquals(expected.getItems().getLast().getPriority().getTitle(), result.getItems().getLast().priority());
-        assertEquals(expected.getItems().getFirst().getImpact().getTitle(), result.getItems().getFirst().impact());
-        assertEquals(expected.getItems().getLast().getImpact().getTitle(), result.getItems().getLast().impact());
+        assertThat(result.getItems())
+            .zipSatisfy(expectedResult.getItems(), (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.getDescription(), actual.description());
+                assertEquals(expected.getCost().getTitle(), actual.cost());
+                assertEquals(expected.getPriority().getTitle(), actual.priority());
+                assertEquals(expected.getImpact().getTitle(), actual.impact());
+            });
         assertEquals(param.getPage(), result.getPage());
         assertEquals(param.getSize(), result.getSize());
-        assertEquals(expected.getItems().size(), result.getTotal());
+        assertEquals(expectedResult.getItems().size(), result.getTotal());
     }
 
     private GetAdviceItemListUseCase.Param createParam(Consumer<GetAdviceItemListUseCase.Param.ParamBuilder> changer) {
