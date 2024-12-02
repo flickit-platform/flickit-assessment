@@ -65,5 +65,4 @@ class DeleteAdviceItemServiceTest {
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
-
 }
