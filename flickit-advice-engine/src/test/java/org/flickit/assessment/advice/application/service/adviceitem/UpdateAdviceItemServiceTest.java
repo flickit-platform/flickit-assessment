@@ -1,7 +1,6 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
 import org.flickit.assessment.advice.application.domain.AssessmentResult;
-import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -80,16 +79,15 @@ class UpdateAdviceItemServiceTest {
 
         service.updateAdviceItem(param);
 
-        ArgumentCaptor<AdviceItem> argumentCaptor = ArgumentCaptor.forClass(AdviceItem.class);
+        ArgumentCaptor<UpdateAdviceItemPort.Param> argumentCaptor = ArgumentCaptor.forClass(UpdateAdviceItemPort.Param.class);
         verify(updateAdviceItemPort).updateAdviceItem(argumentCaptor.capture());
-        assertEquals(param.getTitle(), argumentCaptor.getValue().getTitle());
-        assertEquals(assessmentResult.getId(), argumentCaptor.getValue().getAssessmentResultId());
-        assertEquals(param.getDescription(), argumentCaptor.getValue().getDescription());
-        assertEquals(param.getCost(), argumentCaptor.getValue().getCost().name());
-        assertEquals(param.getImpact(), argumentCaptor.getValue().getImpact().name());
-        assertEquals(param.getPriority(), argumentCaptor.getValue().getPriority().name());
-        assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getCreatedBy());
-        assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getLastModifiedBy());
+        assertEquals(param.getTitle(), argumentCaptor.getValue().title());
+        assertEquals(assessmentResult.getId(), argumentCaptor.getValue().assessmentResultId());
+        assertEquals(param.getDescription(), argumentCaptor.getValue().description());
+        assertEquals(param.getCost(), argumentCaptor.getValue().cost().name());
+        assertEquals(param.getImpact(), argumentCaptor.getValue().impact().name());
+        assertEquals(param.getPriority(), argumentCaptor.getValue().priority().name());
+        assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().lastModifiedBy());
 
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
     }
