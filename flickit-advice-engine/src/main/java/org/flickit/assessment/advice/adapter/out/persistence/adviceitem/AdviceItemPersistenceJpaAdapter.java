@@ -34,9 +34,9 @@ public class AdviceItemPersistenceJpaAdapter implements
         repository.updateById(adviceItem.getId(),
             adviceItem.getTitle(),
             adviceItem.getDescription(),
-            adviceItem.getCost().ordinal(),
-            adviceItem.getPriority().ordinal(),
-            adviceItem.getImpact().ordinal(),
+            adviceItem.getCost().getId(),
+            adviceItem.getPriority().getId(),
+            adviceItem.getImpact().getId(),
             adviceItem.getLastModificationTime(),
             adviceItem.getLastModifiedBy());
     }
