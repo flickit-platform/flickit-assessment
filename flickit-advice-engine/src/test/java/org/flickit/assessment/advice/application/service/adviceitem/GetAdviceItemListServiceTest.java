@@ -46,14 +46,6 @@ class GetAdviceItemListServiceTest {
     @Mock
     private LoadAdviceItemListPort loadAdviceItemListPort;
 
-    private final int page = 0;
-    private final int size = 10;
-    private final List<AdviceItem> items = List.of(
-        new AdviceItem(UUID.randomUUID(), "title1", UUID.randomUUID(), "description1",
-            CostLevel.HIGH, PriorityLevel.LOW, ImpactLevel.MEDIUM, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()),
-        new AdviceItem(UUID.randomUUID(), "title2", UUID.randomUUID(), "description2",
-            CostLevel.MEDIUM, PriorityLevel.MEDIUM, ImpactLevel.HIGH, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()));
-
     @Test
     void testGetAdviceItemList_whenUserDoesNotHaveAccess_thenThrowAccessDeniedException() {
         var param = createParam(GetAdviceItemListUseCase.Param.ParamBuilder::build);
@@ -79,7 +71,13 @@ class GetAdviceItemListServiceTest {
     void testGetAdviceItemList_whenParametersAreValid_thenReturnsPaginatedAdviceItemList() {
         var param = createParam(GetAdviceItemListUseCase.Param.ParamBuilder::build);
         var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123);
-        var expected = new PaginatedResponse<>(items, page, size, "desc", "lastModificationTime", 2);
+        var items = List.of(
+            new AdviceItem(UUID.randomUUID(), "title1", UUID.randomUUID(), "description1",
+                CostLevel.HIGH, PriorityLevel.LOW, ImpactLevel.MEDIUM, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()),
+            new AdviceItem(UUID.randomUUID(), "title2", UUID.randomUUID(), "description2",
+                CostLevel.MEDIUM, PriorityLevel.MEDIUM, ImpactLevel.HIGH, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), UUID.randomUUID()));
+
+        var expected = new PaginatedResponse<>(items, param.getPage(), param.getSize(), "desc", "lastModificationTime", 2);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -113,8 +111,8 @@ class GetAdviceItemListServiceTest {
     private GetAdviceItemListUseCase.Param.ParamBuilder paramBuilder() {
         return GetAdviceItemListUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .page(page)
-            .size(size)
+            .page(0)
+            .size(10)
             .currentUserId(UUID.randomUUID());
     }
 }
