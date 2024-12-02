@@ -11,7 +11,6 @@ import java.util.UUID;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
-
 public interface DeleteAdviceItemUseCase {
 
     void deleteAdviceItem(Param param);
@@ -36,6 +35,5 @@ public interface DeleteAdviceItemUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-
     }
 }
