@@ -93,7 +93,8 @@ public enum AssessmentUserRole {
             CREATE_ASSESSMENT_INSIGHT,
             CREATE_SUBJECT_INSIGHT,
             MANAGE_ADD_ON,
-            MANAGE_KIT_CUSTOM)),
+            MANAGE_KIT_CUSTOM,
+            MANAGE_ADVICE_ITEM)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -103,8 +104,7 @@ public enum AssessmentUserRole {
             DELETE_USER_ASSESSMENT_ROLE,
             VIEW_ASSESSMENT_USER_LIST,
             VIEW_ASSESSMENT_INVITEE_LIST,
-            DELETE_ASSESSMENT_INVITE,
-            MANAGE_ADVICE_ITEM)),
+            DELETE_ASSESSMENT_INVITE)),
         ASSOCIATE_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
