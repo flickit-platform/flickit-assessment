@@ -25,8 +25,9 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_FORMAT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.UPLOAD_FILE_PICTURE_SIZE_MAX;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.flickit.assessment.users.common.ErrorMessageKey.USER_ID_NOT_FOUND;
+import static org.flickit.assessment.users.test.fixture.application.UserMother.createUser;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,7 +106,7 @@ class UpdateUserProfilePictureServiceTest {
     @Test
     void testUpdateUserProfilePicture_WhenExistingPicture_DeletesPreviousPicture() {
         var param = createParam(UpdateUserProfilePictureUseCase.Param.ParamBuilder::build);
-        var user = new User(currentUserId, "email", "DisplayName", "bio", "linkedIn", "picturePath");
+        var user = createUser(param.getCurrentUserId(), "picture/old-path");
         var uploadedFilePath = "picture/path";
 
         when(loadUserPort.loadUser(currentUserId)).thenReturn(user);
@@ -130,7 +131,7 @@ class UpdateUserProfilePictureServiceTest {
     @Test
     void testUpdateUserProfilePicture_DoesNotHavePicture_ShouldSuccessfulWithoutDeletingAnything() {
         var param = createParam(UpdateUserProfilePictureUseCase.Param.ParamBuilder::build);
-        var user = new User(currentUserId, "email", "DisplayName", "bio", "linkedIn", null);
+        var user = createUser(param.getCurrentUserId(), null);
         var uploadedFilePath = "picture/path";
 
         when(loadUserPort.loadUser(currentUserId)).thenReturn(user);
