@@ -295,16 +295,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/2527d16d-dfe3-49c7-86bb-bb624b9a6164/advice-items/07ef1279-ea74-4d6c-8ef5-cb93c4b34dca",
+							"raw": "{{base_url}}/{{api_path}}/advice-items/9b629459-34f2-407d-abe8-eb7681e17066",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-								"assessments",
-								"2527d16d-dfe3-49c7-86bb-bb624b9a6164",
 								"advice-items",
-								"07ef1279-ea74-4d6c-8ef5-cb93c4b34dca"
+								"9b629459-34f2-407d-abe8-eb7681e17066"
 							]
 						}
 					},
