@@ -2,7 +2,7 @@ package org.flickit.assessment.advice.application.port.in.adviceitem;
 
 import java.util.List;
 
-public interface LoadAdviceItemCostLevelUseCase {
+public interface GetAdviceItemCostLevelUseCase {
 
     Result getCostLevels();
 

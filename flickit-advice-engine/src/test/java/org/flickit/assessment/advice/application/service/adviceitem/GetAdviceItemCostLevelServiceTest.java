@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
 import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
-import org.flickit.assessment.advice.application.port.in.adviceitem.LoadAdviceItemCostLevelUseCase;
+import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemCostLevelUseCase;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -15,10 +15,10 @@ class GetAdviceItemCostLevelServiceTest {
 
     @Test
     void testGetAdviceCostLevel() {
-        List<LoadAdviceItemCostLevelUseCase.AdviceItemCostLevel> items = Arrays.stream(CostLevel.values())
-            .map(e -> new LoadAdviceItemCostLevelUseCase.AdviceItemCostLevel(e.getCode(), e.getTitle()))
+        List<GetAdviceItemCostLevelUseCase.AdviceItemCostLevel> items = Arrays.stream(CostLevel.values())
+            .map(e -> new GetAdviceItemCostLevelUseCase.AdviceItemCostLevel(e.getCode(), e.getTitle()))
             .toList();
 
-        assertEquals(new LoadAdviceItemCostLevelUseCase.Result(items), service.getCostLevels());
+        assertEquals(new GetAdviceItemCostLevelUseCase.Result(items), service.getCostLevels());
     }
 }
