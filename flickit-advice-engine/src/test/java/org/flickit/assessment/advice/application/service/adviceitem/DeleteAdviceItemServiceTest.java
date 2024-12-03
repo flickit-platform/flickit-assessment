@@ -57,7 +57,7 @@ class DeleteAdviceItemServiceTest {
     }
 
     @Test
-    void testDeleteAdviceItem_whenAssessmentResultNotExist_thenThrowResourceNotFoundException() {
+    void testDeleteAdviceItem_whenAssessmentResultNotExists_thenThrowResourceNotFoundException() {
         var param = createParam(DeleteAdviceItemUseCase.Param.ParamBuilder::build);
         var adviceItem = AdviceItemMother.adviceItem();
 
