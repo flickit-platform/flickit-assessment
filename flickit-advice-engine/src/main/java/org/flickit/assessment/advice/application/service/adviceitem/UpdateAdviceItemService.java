@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ADVICE_ITEM;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -45,7 +45,7 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
-        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ADVICE))
+        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, MANAGE_ADVICE_ITEM))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
