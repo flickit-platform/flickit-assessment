@@ -19,6 +19,10 @@ public enum CostLevel {
         return this.ordinal();
     }
 
+    public String getCode() {
+        return name();
+    }
+
     public static CostLevel valueOfById(int id) {
         if (!isValidId(id))
             return null;
