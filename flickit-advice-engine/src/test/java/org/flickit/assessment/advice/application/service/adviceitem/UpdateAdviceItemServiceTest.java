@@ -30,7 +30,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class UpdateAdviceItemServiceTest {
 
-
     @InjectMocks
     UpdateAdviceItemService service;
 
@@ -52,7 +51,7 @@ class UpdateAdviceItemServiceTest {
         var adviceItem = AdviceItemMother.adviceItem();
 
         when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
-        when(loadAssessmentResultPort.loadById(adviceItem.getId())).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
         assertEquals(UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
@@ -67,13 +66,13 @@ class UpdateAdviceItemServiceTest {
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
 
         when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
-        when(loadAssessmentResultPort.loadById(adviceItem.getId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAdviceItem(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, updateAdviceItemPort);
+        verifyNoInteractions(updateAdviceItemPort);
     }
 
     @Test
