@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.advice.common.ErrorMessageKey.ADVICE_ITEM_ID_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
 public class AdviceItemPersistenceJpaAdapter implements
