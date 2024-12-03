@@ -1,10 +1,10 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -69,7 +69,7 @@ class CreateAdviceItemServiceTest {
     @Test
     void testCreateAdviceItem_whenValidParameter_thenCreatesAdviceItemSuccessfully() {
         var param = createParam(CreateAdviceItemUseCase.Param.ParamBuilder::build);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 1L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));

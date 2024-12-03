@@ -22,13 +22,6 @@ class UpdateAdviceItemUseCaseParamTest {
     }
 
     @Test
-    void testUpdateAdviceItemUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.assessmentId(null)));
-        assertThat(throwable).hasMessage("assessmentId: " + UPDATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL);
-    }
-
-    @Test
     void testUpdateAdviceItemUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
@@ -107,7 +100,6 @@ class UpdateAdviceItemUseCaseParamTest {
     private UpdateAdviceItemUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateAdviceItemUseCase.Param.builder()
             .adviceItemId(UUID.randomUUID())
-            .assessmentId(UUID.randomUUID())
             .title("title")
             .description("description")
             .cost("LOW")

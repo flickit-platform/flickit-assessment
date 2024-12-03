@@ -27,9 +27,6 @@ public interface UpdateAdviceItemUseCase {
         @NotNull(message = UPDATE_ADVICE_ITEM_ID_NOT_NULL)
         UUID adviceItemId;
 
-        @NotNull(message = UPDATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
-
         @NotNull(message = UPDATE_ADVICE_ITEM_TITLE_NOT_NULL)
         @Size(min = 3, message = UPDATE_ADVICE_ITEM_TITLE_SIZE_MIN)
         @Size(max = 100, message = UPDATE_ADVICE_ITEM_TITLE_SIZE_MAX)
@@ -56,9 +53,8 @@ public interface UpdateAdviceItemUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(UUID adviceItemId, UUID assessmentId, String title, String description, String cost, String priority, String impact, UUID currentUserId) {
+        public Param(UUID adviceItemId, String title, String description, String cost, String priority, String impact, UUID currentUserId) {
             this.adviceItemId = adviceItemId;
-            this.assessmentId = assessmentId;
             this.title = title != null && !title.isBlank() ? title.strip() : null;
             this.description = description != null && !description.isBlank() ? description.strip() : null;
             this.cost = cost;

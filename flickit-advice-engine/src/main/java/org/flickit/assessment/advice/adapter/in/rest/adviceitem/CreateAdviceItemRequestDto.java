@@ -1,6 +1,9 @@
 package org.flickit.assessment.advice.adapter.in.rest.adviceitem;
 
-public record CreateAdviceItemRequestDto(String title,
+import java.util.UUID;
+
+public record CreateAdviceItemRequestDto(UUID assessmentId,
+                                         String title,
                                          String description,
                                          String cost,
                                          String priority,

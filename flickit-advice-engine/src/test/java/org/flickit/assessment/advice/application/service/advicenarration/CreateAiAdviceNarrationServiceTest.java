@@ -1,7 +1,6 @@
 package org.flickit.assessment.advice.application.service.advicenarration;
 
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
-import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
@@ -13,6 +12,7 @@ import org.flickit.assessment.advice.application.port.out.atribute.LoadAttribute
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.advice.test.fixture.application.AssessmentMother;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
@@ -170,7 +170,7 @@ class CreateAiAdviceNarrationServiceTest {
         var adviceListItems = List.of(createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
         var currentUserId = UUID.randomUUID();
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
         var param = new CreateAiAdviceNarrationUseCase.Param(assessmentId, adviceListItems, attributeLevelTargets, currentUserId);
         var aiNarration = "aiNarration";
         var prompt = new Prompt("AI prompt");
@@ -209,7 +209,7 @@ class CreateAiAdviceNarrationServiceTest {
         var adviceListItems = List.of(createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
         var currentUserId = UUID.randomUUID();
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
         var param = new CreateAiAdviceNarrationUseCase.Param(assessmentId, adviceListItems, attributeLevelTargets, currentUserId);
         var aiNarration = "aiNarration";
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
@@ -249,7 +249,7 @@ class CreateAiAdviceNarrationServiceTest {
         var adviceListItems = List.of(createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
         var currentUserId = UUID.randomUUID();
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
         var param = new CreateAiAdviceNarrationUseCase.Param(assessmentId, adviceListItems, attributeLevelTargets, currentUserId);
         var aiNarration = "aiNarration";
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
@@ -289,7 +289,7 @@ class CreateAiAdviceNarrationServiceTest {
         var adviceListItems = List.of(createSimpleAdviceListItem());
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
         var currentUserId = UUID.randomUUID();
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
         var param = new CreateAiAdviceNarrationUseCase.Param(assessmentId, adviceListItems, attributeLevelTargets, currentUserId);
         var aiNarration = "aiNarration";
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());

@@ -55,7 +55,6 @@ public class ErrorMessageKey {
     public static final String GET_ADVICE_ITEM_LIST_ASSESSMENT_RESULT_NOT_FOUND = "get-advice-item-list.assessmentResult.notFound";
 
     public static final String UPDATE_ADVICE_ITEM_ID_NOT_NULL = "update-advice-item.id.notNull";
-    public static final String UPDATE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL = "update-advice-item.assessmentId.notNull";
     public static final String UPDATE_ADVICE_ITEM_TITLE_NOT_NULL = "update-advice-item.title.notNull";
     public static final String UPDATE_ADVICE_ITEM_TITLE_SIZE_MIN = "update-advice-item.title.size.min";
     public static final String UPDATE_ADVICE_ITEM_TITLE_SIZE_MAX = "update-advice-item.title.size.max";
@@ -68,5 +67,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_ADVICE_ITEM_PRIORITY_INVALID = "update-advice-item.priority.invalid";
     public static final String UPDATE_ADVICE_ITEM_IMPACT_NOT_NULL = "update-advice-item.impact.notNull";
     public static final String UPDATE_ADVICE_ITEM_IMPACT_INVALID = "update-advice-item.impact.invalid";
+    public static final String UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND = "update-advice-item.adviceItem.notFound";
     public static final String UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND = "update-advice-item.assessmentResult.notFound";
 }

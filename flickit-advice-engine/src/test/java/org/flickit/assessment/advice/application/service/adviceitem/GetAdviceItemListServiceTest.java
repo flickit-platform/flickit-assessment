@@ -1,9 +1,9 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemListUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemListPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -67,7 +67,7 @@ class GetAdviceItemListServiceTest {
     @Test
     void testGetAdviceItemList_whenParametersAreValid_thenReturnsPaginatedAdviceItemList() {
         var param = createParam(GetAdviceItemListUseCase.Param.ParamBuilder::build);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
         var items = List.of(adviceItem(), adviceItem());
 
         var expectedResult = new PaginatedResponse<>(items,
