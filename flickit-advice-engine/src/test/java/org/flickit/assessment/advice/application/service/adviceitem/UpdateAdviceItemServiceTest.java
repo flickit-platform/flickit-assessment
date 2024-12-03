@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -46,7 +47,20 @@ class UpdateAdviceItemServiceTest {
     UpdateAdviceItemPort updateAdviceItemPort;
 
     @Test
-    void testUpdateAdviceItem_whenAssessmentResultNotExist_thenThrowResourceException() {
+    void testUpdateAdviceItem_whenAdviceItemNotExist_thenThrowResourceNotFoundException() {
+        var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
+
+        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.empty());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
+        assertEquals(UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(loadAssessmentResultPort, assessmentAccessChecker, updateAdviceItemPort);
+    }
+
+
+    @Test
+    void testUpdateAdviceItem_whenAssessmentResultNotExist_thenThrowResourceNotFoundException() {
         var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
         var adviceItem = AdviceItemMother.adviceItem();
 
@@ -56,7 +70,7 @@ class UpdateAdviceItemServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
         assertEquals(UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(updateAdviceItemPort);
+        verifyNoInteractions(assessmentAccessChecker, updateAdviceItemPort);
     }
 
     @Test
