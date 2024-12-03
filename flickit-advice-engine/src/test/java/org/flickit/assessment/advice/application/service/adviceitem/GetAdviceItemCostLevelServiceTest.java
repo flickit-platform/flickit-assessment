@@ -9,9 +9,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LoadAdviceItemCostLevelServiceTest {
+class GetAdviceItemCostLevelServiceTest {
 
-    private final LoadAdviceItemCostLevelService service = new LoadAdviceItemCostLevelService();
+    private final GetAdviceItemCostLevelService service = new GetAdviceItemCostLevelService();
 
     @Test
     void testGetAdviceCostLevel() {

@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class LoadAdviceItemCostLevelService implements LoadAdviceItemCostLevelUseCase {
+public class GetAdviceItemCostLevelService implements LoadAdviceItemCostLevelUseCase {
 
     @Override
     public Result getCostLevels() {
