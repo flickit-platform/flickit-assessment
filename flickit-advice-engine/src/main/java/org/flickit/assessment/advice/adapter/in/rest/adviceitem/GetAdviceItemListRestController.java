@@ -18,10 +18,11 @@ public class GetAdviceItemListRestController {
     private final UserContext userContext;
     private final GetAdviceItemListUseCase useCase;
 
-    @GetMapping("/assessments/{assessmentId}/advice-items")
-    ResponseEntity<PaginatedResponse<AdviceItemListItem>> getAdviceItemList(@PathVariable("assessmentId") UUID assessmentId,
-                                                                            @RequestParam(defaultValue = "50") int size,
-                                                                            @RequestParam(defaultValue = "0") int page) {
+    @GetMapping("/advice-items")
+    ResponseEntity<PaginatedResponse<AdviceItemListItem>> getAdviceItemList(
+        @RequestParam(value = "assessmentId", required = false) UUID assessmentId, // validated in the use-case param
+        @RequestParam(defaultValue = "50") int size,
+        @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
         Param param = toParam(assessmentId, size, page, currentUserId);
         return new ResponseEntity<>(useCase.getAdviceItems(param), HttpStatus.OK);
