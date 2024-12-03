@@ -1,5 +1,7 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
+import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.advice.application.port.in.adviceitem.DeleteAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -8,9 +10,6 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
-
-import org.flickit.assessment.advice.application.port.in.adviceitem.DeleteAdviceItemUseCase;
 
 import java.util.UUID;
 
@@ -31,14 +30,14 @@ public class DeleteAdviceItemService implements DeleteAdviceItemUseCase {
 
     @Override
     public void deleteAdviceItem(Param param) {
-        var adviceItem = loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())
+        var adviceItem = loadAdviceItemPort.load(param.getAdviceItemId())
             .orElseThrow(() -> new ResourceNotFoundException(DELETE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND));
         var assessmentResult = loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())
             .orElseThrow(() -> new ResourceNotFoundException(DELETE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND));
 
         validateUserAccess(assessmentResult.getAssessmentId(), param.getCurrentUserId());
 
-        deleteAdviceItemPort.deleteAdviceItem(param.getAdviceItemId());
+        deleteAdviceItemPort.delete(param.getAdviceItemId());
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {

@@ -6,7 +6,6 @@ import org.flickit.assessment.advice.application.port.out.adviceitem.*;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaEntity;
-import org.flickit.assessment.advice.application.port.out.adviceitem.DeleteAdviceItemPort;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -35,7 +34,7 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<AdviceItem> loadAdviceItemList(UUID assessmentResultId, int page, int size) {
+    public PaginatedResponse<AdviceItem> loadAll(UUID assessmentResultId, int page, int size) {
         Sort sort = Sort.by(
             Sort.Order.desc(AdviceItemJpaEntity.Fields.priority),
             Sort.Order.desc(AdviceItemJpaEntity.Fields.impact),
@@ -67,7 +66,7 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateAdviceItem(UpdateAdviceItemPort.Param param) {
+    public void update(UpdateAdviceItemPort.Param param) {
         repository.update(param.id(),
             param.title(),
             param.description(),
@@ -79,12 +78,12 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
-    public Optional<AdviceItem> loadAdviceItem(UUID id) {
+    public Optional<AdviceItem> load(UUID id) {
         return repository.findById(id).map(AdviceItemMapper::mapToDomainModel);
     }
 
     @Override
-    public void deleteAdviceItem(UUID id) {
+    public void delete(UUID id) {
         if (!repository.existsById(id))
             throw new ResourceNotFoundException(ADVICE_ITEM_ID_NOT_FOUND);
 

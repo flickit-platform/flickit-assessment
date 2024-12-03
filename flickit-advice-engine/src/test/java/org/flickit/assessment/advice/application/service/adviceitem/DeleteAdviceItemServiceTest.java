@@ -23,7 +23,8 @@ import static org.flickit.assessment.advice.common.ErrorMessageKey.DELETE_ADVICE
 import static org.flickit.assessment.advice.common.ErrorMessageKey.DELETE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ADVICE_ITEM;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +49,7 @@ class DeleteAdviceItemServiceTest {
     void testDeleteAdviceItem_whenAdviceItemNotExists_thenThrowResourceNotFoundException() {
         var param = createParam(DeleteAdviceItemUseCase.Param.ParamBuilder::build);
 
-        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.empty());
+        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.deleteAdviceItem(param));
         assertEquals(DELETE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND, throwable.getMessage());
@@ -61,7 +62,7 @@ class DeleteAdviceItemServiceTest {
         var param = createParam(DeleteAdviceItemUseCase.Param.ParamBuilder::build);
         var adviceItem = AdviceItemMother.adviceItem();
 
-        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
         when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.deleteAdviceItem(param));
@@ -76,7 +77,7 @@ class DeleteAdviceItemServiceTest {
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
         var adviceItem = AdviceItemMother.adviceItem();
 
-        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
         when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(false);
 
@@ -92,13 +93,13 @@ class DeleteAdviceItemServiceTest {
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
         var adviceItem = AdviceItemMother.adviceItem();
 
-        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
         when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(true);
 
         service.deleteAdviceItem(param);
 
-        verify(deleteAdviceItemPort).deleteAdviceItem(param.getAdviceItemId());
+        verify(deleteAdviceItemPort).delete(param.getAdviceItemId());
     }
 
     private DeleteAdviceItemUseCase.Param createParam(Consumer<DeleteAdviceItemUseCase.Param.ParamBuilder> changer) {

@@ -34,14 +34,14 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
 
     @Override
     public void updateAdviceItem(Param param) {
-        var adviceItem = loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())
+        var adviceItem = loadAdviceItemPort.load(param.getAdviceItemId())
                 .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND));
         var assessmentResult = loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())
                 .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND));
 
         validateUserAccess(assessmentResult.getAssessmentId(), param.getCurrentUserId());
 
-        updateAdviceItemPort.updateAdviceItem(toParam(param));
+        updateAdviceItemPort.update(toParam(param));
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {

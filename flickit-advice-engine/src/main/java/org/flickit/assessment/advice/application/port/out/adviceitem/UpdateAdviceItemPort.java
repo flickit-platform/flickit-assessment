@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface UpdateAdviceItemPort {
 
-    void updateAdviceItem(Param param);
+    void update(Param param);
 
     record Param(UUID id,
                  String title,
