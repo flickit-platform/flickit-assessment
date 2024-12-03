@@ -13,7 +13,6 @@ public interface UpdateAdviceItemPort {
 
     record Param(UUID id,
                  String title,
-                 UUID assessmentResultId,
                  String description,
                  CostLevel cost,
                  PriorityLevel priority,

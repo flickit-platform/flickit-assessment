@@ -41,7 +41,7 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
 
         validateUserAccess(assessmentResult.getAssessmentId(), param.getCurrentUserId());
 
-        updateAdviceItemPort.updateAdviceItem(toParam(param, assessmentResult.getId()));
+        updateAdviceItemPort.updateAdviceItem(toParam(param));
     }
 
     private void validateUserAccess(UUID assessmentId, UUID currentUserId) {
@@ -49,10 +49,9 @@ public class UpdateAdviceItemService implements UpdateAdviceItemUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private UpdateAdviceItemPort.Param toParam(Param param, UUID assessmentResultId) {
+    private UpdateAdviceItemPort.Param toParam(Param param) {
         return new UpdateAdviceItemPort.Param(param.getAdviceItemId(),
             param.getTitle(),
-            assessmentResultId,
             param.getDescription(),
             CostLevel.valueOf(param.getCost()),
             PriorityLevel.valueOf(param.getPriority()),

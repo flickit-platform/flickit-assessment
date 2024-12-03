@@ -5,16 +5,13 @@ import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemListPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaEntity;
-import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
-
-import static org.flickit.assessment.advice.common.ErrorMessageKey.ADVICE_ITEM_ID_NOT_FOUND;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -69,9 +66,6 @@ public class AdviceItemPersistenceJpaAdapter implements
 
     @Override
     public void updateAdviceItem(UpdateAdviceItemPort.Param param) {
-        if (!repository.existsByIdAndAssessmentResultId(param.id(), param.assessmentResultId()))
-            throw new ResourceNotFoundException(ADVICE_ITEM_ID_NOT_FOUND);
-
         repository.update(param.id(),
             param.title(),
             param.description(),

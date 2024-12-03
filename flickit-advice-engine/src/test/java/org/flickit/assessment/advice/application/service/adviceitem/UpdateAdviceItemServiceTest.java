@@ -104,7 +104,6 @@ class UpdateAdviceItemServiceTest {
         ArgumentCaptor<UpdateAdviceItemPort.Param> argumentCaptor = ArgumentCaptor.forClass(UpdateAdviceItemPort.Param.class);
         verify(updateAdviceItemPort).updateAdviceItem(argumentCaptor.capture());
         assertEquals(param.getTitle(), argumentCaptor.getValue().title());
-        assertEquals(assessmentResult.getId(), argumentCaptor.getValue().assessmentResultId());
         assertEquals(param.getDescription(), argumentCaptor.getValue().description());
         assertEquals(param.getCost(), argumentCaptor.getValue().cost().name());
         assertEquals(param.getImpact(), argumentCaptor.getValue().impact().name());
