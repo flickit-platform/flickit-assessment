@@ -11,6 +11,7 @@ import org.flickit.assessment.data.config.MinioConfigProperties;
 import org.flickit.assessment.users.application.port.out.expertgroup.UploadExpertGroupPicturePort;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
+import org.flickit.assessment.users.application.port.out.user.UploadUserProfilePicturePort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +27,8 @@ import static org.flickit.assessment.users.adapter.out.minio.MinioConstants.PIC_
 public class MinioAdapter implements
     UploadExpertGroupPicturePort,
     CreateFileDownloadLinkPort,
-    DeleteFilePort {
+    DeleteFilePort,
+    UploadUserProfilePicturePort {
 
     public static final String SLASH = "/";
     public static final String DOT = ".";
@@ -117,5 +119,18 @@ public class MinioAdapter implements
             .object(objectName)
             .versionId(latestVersionId)
             .build());
+    }
+
+    @SneakyThrows
+    @Override
+    public String uploadUserProfilePicture(MultipartFile pictureFile) {
+        String bucketName = properties.getBucketNames().getAvatar();
+        UUID uniqueDir = UUID.randomUUID();
+
+        String extension = FileNameUtils.getExtension(pictureFile.getOriginalFilename());
+
+        String objectName = uniqueDir + PIC_FILE_NAME + DOT + extension;
+        writeFile(bucketName, objectName, pictureFile.getInputStream(), pictureFile.getContentType());
+        return bucketName + SLASH + objectName;
     }
 }

@@ -149,4 +149,5 @@ public class ErrorMessageKey {
     public static final String LEAVE_EXPERT_GROUP_ID_NOT_NULL = "leave-expert-group.expertGroupId.notNull";
     public static final String LEAVE_EXPERT_GROUP_NOT_ALLOWED = "leave-expert-group.owner.notAllowed";
 
+    public static final String UPDATE_USER_PROFILE_PICTURE_NOT_NULL = "update-user-profile-picture.picture.notNull";
 }

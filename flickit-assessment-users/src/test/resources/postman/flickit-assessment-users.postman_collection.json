@@ -1064,6 +1064,40 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update User Profile Picture",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "pictureFile",
+									"type": "file",
+									"src": "/home/maziyar/Pictures/image.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/user-profile/picture",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"user-profile",
+								"picture"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
