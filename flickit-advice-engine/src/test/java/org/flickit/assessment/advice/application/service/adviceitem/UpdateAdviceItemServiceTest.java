@@ -50,7 +50,7 @@ class UpdateAdviceItemServiceTest {
     void testUpdateAdviceItem_whenAdviceItemNotExist_thenThrowResourceNotFoundException() {
         var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
 
-        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.empty());
+        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
         assertEquals(UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND, throwable.getMessage());
@@ -64,7 +64,7 @@ class UpdateAdviceItemServiceTest {
         var param = createParam(UpdateAdviceItemUseCase.Param.ParamBuilder::build);
         var adviceItem = AdviceItemMother.adviceItem();
 
-        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
         when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAdviceItem(param));
@@ -79,7 +79,7 @@ class UpdateAdviceItemServiceTest {
         var adviceItem = AdviceItemMother.adviceItem();
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
 
-        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
         when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(false);
 
@@ -95,14 +95,14 @@ class UpdateAdviceItemServiceTest {
         var adviceItem = AdviceItemMother.adviceItem();
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
 
-        when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
+        when(loadAdviceItemPort.load(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
         when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
         when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(true);
 
         service.updateAdviceItem(param);
 
         ArgumentCaptor<UpdateAdviceItemPort.Param> argumentCaptor = ArgumentCaptor.forClass(UpdateAdviceItemPort.Param.class);
-        verify(updateAdviceItemPort).updateAdviceItem(argumentCaptor.capture());
+        verify(updateAdviceItemPort).update(argumentCaptor.capture());
         assertEquals(param.getTitle(), argumentCaptor.getValue().title());
         assertEquals(param.getDescription(), argumentCaptor.getValue().description());
         assertEquals(param.getCost(), argumentCaptor.getValue().cost().name());

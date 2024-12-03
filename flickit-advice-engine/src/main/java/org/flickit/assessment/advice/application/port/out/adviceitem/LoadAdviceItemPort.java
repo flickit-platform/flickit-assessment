@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadAdviceItemPort {
 
-    Optional<AdviceItem> loadAdviceItem(UUID id);
+    Optional<AdviceItem> load(UUID id);
 }

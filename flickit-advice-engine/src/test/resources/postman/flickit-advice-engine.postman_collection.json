@@ -282,6 +282,31 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Delete Advice Item",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/advice-items/9b629459-34f2-407d-abe8-eb7681e17066",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"advice-items",
+								"9b629459-34f2-407d-abe8-eb7681e17066"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

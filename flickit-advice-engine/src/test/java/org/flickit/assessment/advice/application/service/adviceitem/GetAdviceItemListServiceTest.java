@@ -79,7 +79,7 @@ class GetAdviceItemListServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAdviceItemListPort.loadAdviceItemList(assessmentResult.getId(), param.getPage(), param.getSize())).thenReturn(expectedResult);
+        when(loadAdviceItemListPort.loadAll(assessmentResult.getId(), param.getPage(), param.getSize())).thenReturn(expectedResult);
 
         var result = service.getAdviceItems(param);
         assertEquals(param.getPage(), result.getPage());
