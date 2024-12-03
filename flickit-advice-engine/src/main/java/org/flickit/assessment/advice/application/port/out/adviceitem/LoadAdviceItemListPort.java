@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadAdviceItemListPort {
 
-    PaginatedResponse<AdviceItem> loadAdviceItemList(UUID assessmentResultId, int page, int size);
+    PaginatedResponse<AdviceItem> loadAll(UUID assessmentResultId, int page, int size);
 }
