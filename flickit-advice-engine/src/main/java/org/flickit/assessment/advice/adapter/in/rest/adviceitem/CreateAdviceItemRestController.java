@@ -6,7 +6,6 @@ import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdvice
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
