@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ADVICE_ITEM_NOT_FOUND;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.UPDATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ADVICE_ITEM;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -81,7 +81,7 @@ class UpdateAdviceItemServiceTest {
 
         when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
         when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.updateAdviceItem(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -97,7 +97,7 @@ class UpdateAdviceItemServiceTest {
 
         when(loadAdviceItemPort.loadAdviceItem(param.getAdviceItemId())).thenReturn(Optional.of(adviceItem));
         when(loadAssessmentResultPort.loadById(adviceItem.getAssessmentResultId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentResult.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(true);
 
         service.updateAdviceItem(param);
 
