@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "17fd9565-1423-44f4-a57b-b2b85d4e2968",
+		"_postman_id": "95227cb0-8745-4012-94a6-049990843c39",
 		"name": "flickit-advice-engine",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "18899907"
+		"_exporter_id": "11099181"
 	},
 	"item": [
 		{
@@ -179,7 +179,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"test\",\n    \"description\": \"test\",\n    \"cost\": \"LOW\",\n    \"priority\": \"MEDIUM\",\n    \"impact\": \"HIGH\"\n}",
+							"raw": "{\n    \"assessmentId\" : \"27c48fa6-97ff-4fd6-8c3d-259106468f11\",\n    \"title\": \"test\",\n    \"description\": \"test\",\n    \"cost\": \"MEDIUM\",\n    \"priority\": \"LOW\",\n    \"impact\": \"HIGH\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -187,14 +187,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/27c48fa6-97ff-4fd6-8c3d-259106468f11/advice-items",
+							"raw": "{{base_url}}/{{api_path}}/advice-items",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-								"assessments",
-								"27c48fa6-97ff-4fd6-8c3d-259106468f11",
 								"advice-items"
 							]
 						}
@@ -225,14 +223,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/8a3d29e2-a0c1-46b1-b50a-154b91b3ebc1/advice-items?page=1&size=5",
+							"raw": "{{base_url}}/{{api_path}}/advice-items?page=1&size=5&assessmentId=27c48fa6-97ff-4fd6-8c3d-259106468f11",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-								"assessments",
-								"8a3d29e2-a0c1-46b1-b50a-154b91b3ebc1",
 								"advice-items"
 							],
 							"query": [
@@ -243,48 +239,50 @@
 								{
 									"key": "size",
 									"value": "5"
+								},
+								{
+									"key": "assessmentId",
+									"value": "27c48fa6-97ff-4fd6-8c3d-259106468f11"
 								}
 							]
 						}
 					},
 					"response": []
 				},
-                {
-                  "name": "Update Advice Item",
-                  "request": {
-                    "method": "PUT",
-                    "header": [
-                      {
-                        "key": "Authorization",
-                        "value": "{{authorization_header}}",
-                        "type": "text"
-                      }
-                    ],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\n    \"title\": \"new 1\",\n    \"description\": \"new 1\",\n    \"cost\": \"HIGH\",\n    \"priority\": \"LOW\",\n    \"impact\": \"MEDIUM\"\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{base_url}}/{{api_path}}/assessments/2527d16d-dfe3-49c7-86bb-bb624b9a6164/advice-items/07ef1279-ea74-4d6c-8ef5-cb93c4b34dca",
-                      "host": [
-                        "{{base_url}}"
-                      ],
-                      "path": [
-                        "{{api_path}}",
-                        "assessments",
-                        "2527d16d-dfe3-49c7-86bb-bb624b9a6164",
-                        "advice-items",
-                        "07ef1279-ea74-4d6c-8ef5-cb93c4b34dca"
-                      ]
-                    }
-                  },
-                  "response": []
-                }
+				{
+					"name": "Update Advice Item",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"new test\",\n    \"description\": \"new test\",\n    \"cost\": \"HIGH\",\n    \"priority\": \"HIGH\",\n    \"impact\": \"HIGH\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/advice-items/9b629459-34f2-407d-abe8-eb7681e17066",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"advice-items",
+								"9b629459-34f2-407d-abe8-eb7681e17066"
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		}
 	],
