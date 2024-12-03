@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemCostLevelUseCase;
+import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemCostLevelsUseCase;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetAdviceItemCostLevelService implements GetAdviceItemCostLevelUseCase {
+public class GetAdviceItemCostLevelsService implements GetAdviceItemCostLevelsUseCase {
 
     @Override
     public Result getCostLevels() {
