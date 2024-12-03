@@ -19,7 +19,7 @@ class UpdateUserProfilePictureUseCaseParamTest {
 
     @Test
     @SneakyThrows
-    void testUpdateUserProfilePictureParam_pictureParamViolatesConstraints_ErrorMessage() {
+    void testUpdateUserProfilePictureUseCaseParam_pictureParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.picture(null)));
         assertThat(throwable).hasMessage("picture: " + UPDATE_USER_PROFILE_PICTURE_NOT_NULL);
@@ -32,7 +32,7 @@ class UpdateUserProfilePictureUseCaseParamTest {
     }
 
     @Test
-    void testUpdateUserProfilePictureParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
+    void testUpdateUserProfilePictureUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

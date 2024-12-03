@@ -41,10 +41,9 @@ public class UpdateUserProfilePictureService implements UpdateUserProfilePicture
             deleteFilePort.deletePicture(user.getPicturePath());
 
         String filePath = uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture());
-
-        var pictureLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
         updateUserPicturePort.updatePicture(param.getCurrentUserId(), filePath);
 
+        var pictureLink = createFileDownloadLinkPort.createDownloadLink(filePath, EXPIRY_DURATION);
         return new Result(pictureLink);
     }
 

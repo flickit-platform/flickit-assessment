@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.config.FileProperties;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.users.application.domain.User;
 import org.flickit.assessment.users.application.port.in.user.UpdateUserProfilePictureUseCase;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.flickit.assessment.users.application.port.out.minio.DeleteFilePort;
@@ -19,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.unit.DataSize;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -54,22 +54,32 @@ class UpdateUserProfilePictureServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-    private final UUID currentUserId = UUID.randomUUID();
-    private final MockMultipartFile bigPicture = new MockMultipartFile("images", "image1",
-        "image/jpeg", new byte[6 * 1024 * 1024]);
-    private final MockMultipartFile invalidFormatPicture = new MockMultipartFile("images", "image1",
-        "application/zip", new byte[4 * 1024 * 1024]);
-
     @Test
     void testUpdateUserProfilePicture_WhenFileSizeIsInvalid_ShouldThrowValidationError() {
+        MockMultipartFile bigPicture = new MockMultipartFile("images", "image1",
+            "image/jpeg", new byte[2]);
         var param = createParam(b -> b.picture(bigPicture));
 
-        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(1));
 
         var throwable = assertThrows(ValidationException.class, () -> service.update(param));
         assertEquals(UPLOAD_FILE_PICTURE_SIZE_MAX, throwable.getMessageKey());
 
-        verify(fileProperties, times(1)).getPictureMaxSize();
+        verifyNoInteractions(deleteFilePort, uploadUserProfilePicturePort, updateUserPicturePort);
+    }
+
+    @Test
+    void testUpdateUserProfilePicture_WhenContentTypeIsInvalid_ShouldReturnValidationError() {
+        MockMultipartFile invalidFormatPicture = new MockMultipartFile("images", "image1",
+            "application/zip", new byte[1]);
+        var param = createParam(b -> b.picture(invalidFormatPicture));
+
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(2));
+        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.update(param));
+        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
+
         verifyNoInteractions(deleteFilePort, uploadUserProfilePicturePort, updateUserPicturePort);
     }
 
@@ -77,29 +87,13 @@ class UpdateUserProfilePictureServiceTest {
     void testUpdateUserProfilePicture_WhenCurrentUserIdDoesNotExist_ShouldThrowNotFoundException() {
         var param = createParam(UpdateUserProfilePictureUseCase.Param.ParamBuilder::build);
 
-        when(loadUserPort.loadUser(currentUserId)).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
-        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(2));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenThrow(new ResourceNotFoundException(USER_ID_NOT_FOUND));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.update(param));
         assertEquals(USER_ID_NOT_FOUND, throwable.getMessage());
 
-        verify(loadUserPort).loadUser(currentUserId);
-        verifyNoInteractions(deleteFilePort, uploadUserProfilePicturePort, updateUserPicturePort);
-    }
-
-    @Test
-    void testUpdateUserProfilePicture_WhenContentTypeIsInvalid_ShouldReturnValidationError() {
-        var param = createParam(b -> b.picture(invalidFormatPicture));
-
-        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
-        when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
-
-        var throwable = assertThrows(ValidationException.class, () -> service.update(param));
-        assertEquals(UPLOAD_FILE_FORMAT_NOT_VALID, throwable.getMessageKey());
-
-        verify(fileProperties).getPictureMaxSize();
-        verify(fileProperties).getPictureContentTypes();
         verifyNoInteractions(deleteFilePort, uploadUserProfilePicturePort, updateUserPicturePort);
     }
 
@@ -109,23 +103,15 @@ class UpdateUserProfilePictureServiceTest {
         var user = createUser(param.getCurrentUserId(), "picture/old-path");
         var uploadedFilePath = "picture/path";
 
-        when(loadUserPort.loadUser(currentUserId)).thenReturn(user);
-        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(user);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(2));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
         doNothing().when(deleteFilePort).deletePicture(user.getPicturePath());
         when(uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture())).thenReturn(uploadedFilePath);
         doNothing().when(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
-        when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("link/to/file");
+        when(createFileDownloadLinkPort.createDownloadLink(uploadedFilePath, Duration.ofDays(1))).thenReturn("link/to/file");
 
-        service.update(param);
-
-        verify(loadUserPort).loadUser(currentUserId);
-        verify(fileProperties).getPictureMaxSize();
-        verify(fileProperties).getPictureContentTypes();
-        verify(deleteFilePort).deletePicture(user.getPicturePath());
-        verify(uploadUserProfilePicturePort).uploadUserProfilePicture(param.getPicture());
-        verify(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
-        verify(createFileDownloadLinkPort).createDownloadLink(anyString(), any());
+        assertDoesNotThrow(() ->service.update(param));
     }
 
     @Test
@@ -134,21 +120,15 @@ class UpdateUserProfilePictureServiceTest {
         var user = createUser(param.getCurrentUserId(), null);
         var uploadedFilePath = "picture/path";
 
-        when(loadUserPort.loadUser(currentUserId)).thenReturn(user);
-        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofMegabytes(5));
+        when(loadUserPort.loadUser(param.getCurrentUserId())).thenReturn(user);
+        when(fileProperties.getPictureMaxSize()).thenReturn(DataSize.ofBytes(2));
         when(fileProperties.getPictureContentTypes()).thenReturn(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/bmp"));
         when(uploadUserProfilePicturePort.uploadUserProfilePicture(param.getPicture())).thenReturn(uploadedFilePath);
         doNothing().when(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
-        when(createFileDownloadLinkPort.createDownloadLink(anyString(), any())).thenReturn("link/to/file");
+        when(createFileDownloadLinkPort.createDownloadLink(uploadedFilePath, Duration.ofDays(1))).thenReturn("link/to/file");
 
         service.update(param);
 
-        verify(loadUserPort).loadUser(currentUserId);
-        verify(fileProperties).getPictureMaxSize();
-        verify(fileProperties).getPictureContentTypes();
-        verify(uploadUserProfilePicturePort).uploadUserProfilePicture(param.getPicture());
-        verify(updateUserPicturePort).updatePicture(param.getCurrentUserId(), uploadedFilePath);
-        verify(createFileDownloadLinkPort).createDownloadLink(anyString(), any());
         verifyNoInteractions(deleteFilePort);
     }
 
@@ -162,8 +142,8 @@ class UpdateUserProfilePictureServiceTest {
     @SneakyThrows
     private UpdateUserProfilePictureUseCase.Param.ParamBuilder paramBuilder() {
         return UpdateUserProfilePictureUseCase.Param.builder()
-            .currentUserId(currentUserId)
+            .currentUserId(UUID.randomUUID())
             .picture(new MockMultipartFile("images", "image1",
-                "image/jpeg", new byte[4 * 1024 * 1024]));
+                "image/jpeg", new byte[1]));
     }
 }
