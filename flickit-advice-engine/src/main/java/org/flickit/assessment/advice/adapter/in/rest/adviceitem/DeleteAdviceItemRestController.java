@@ -17,17 +17,15 @@ public class DeleteAdviceItemRestController {
     private final UserContext userContext;
     private final DeleteAdviceItemUseCase useCase;
 
-    @DeleteMapping("/assessments/{assessmentId}/advice-items/{adviceItemId}")
-    ResponseEntity<Void> createAdviceItem(@PathVariable("assessmentId") UUID assessmentId,
-                                          @PathVariable("adviceItemId") UUID adviceItemId) {
+    @DeleteMapping("/advice-items/{adviceItemId}")
+    ResponseEntity<Void> createAdviceItem(@PathVariable("adviceItemId") UUID adviceItemId) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.deleteAdviceItem(toParam(assessmentId, adviceItemId, currentUserId));
+        useCase.deleteAdviceItem(toParam(adviceItemId, currentUserId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    private Param toParam(UUID assessmentId, UUID adviceItemId, UUID currentUserId) {
+    private Param toParam(UUID adviceItemId, UUID currentUserId) {
         return new Param(adviceItemId,
-            assessmentId,
             currentUserId);
     }
 }

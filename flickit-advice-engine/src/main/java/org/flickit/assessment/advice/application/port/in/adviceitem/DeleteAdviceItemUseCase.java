@@ -22,16 +22,12 @@ public interface DeleteAdviceItemUseCase {
         @NotNull(message = DELETE_ADVICE_ITEM_ID_NOT_NULL)
         UUID adviceItemId;
 
-        @NotNull(message = DELETE_ADVICE_ITEM_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
-
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(UUID adviceItemId, UUID assessmentId, UUID currentUserId) {
+        public Param(UUID adviceItemId, UUID currentUserId) {
             this.adviceItemId = adviceItemId;
-            this.assessmentId = assessmentId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
