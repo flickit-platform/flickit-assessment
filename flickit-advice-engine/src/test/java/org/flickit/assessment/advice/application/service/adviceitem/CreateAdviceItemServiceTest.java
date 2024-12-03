@@ -1,12 +1,11 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_ADVICE_ITEM;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,42 +39,39 @@ class CreateAdviceItemServiceTest {
     AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    ValidateAssessmentResultPort validateAssessmentResultPort;
-
-    @Mock
     CreateAdviceItemPort createAdviceItemPort;
 
     @Test
     void testCreateAdviceItem_whenUserIsNotAuthorized_thenThrowAccessDeniedException() {
         var param = createParam(CreateAdviceItemUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAdviceItem(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, validateAssessmentResultPort, createAdviceItemPort);
+        verifyNoInteractions(loadAssessmentResultPort, createAdviceItemPort);
     }
 
     @Test
     void testCreateAdviceItem_whenAssessmentResultNotExist_thenThrowResourceException() {
         var param = createParam(CreateAdviceItemUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAdviceItem(param));
         assertEquals(CREATE_ADVICE_ITEM_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(validateAssessmentResultPort, createAdviceItemPort);
+        verifyNoInteractions(createAdviceItemPort);
     }
 
     @Test
     void testCreateAdviceItem_whenValidParameter_thenCreatesAdviceItemSuccessfully() {
         var param = createParam(CreateAdviceItemUseCase.Param.ParamBuilder::build);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 1L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_ADVICE_ITEM)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
 
         service.createAdviceItem(param);
@@ -90,8 +86,6 @@ class CreateAdviceItemServiceTest {
         assertEquals(param.getPriority(), argumentCaptor.getValue().getPriority().name());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getCreatedBy());
         assertEquals(param.getCurrentUserId(), argumentCaptor.getValue().getLastModifiedBy());
-
-        verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
     }
 
     private CreateAdviceItemUseCase.Param createParam(Consumer<CreateAdviceItemUseCase.Param.ParamBuilder> changer) {
