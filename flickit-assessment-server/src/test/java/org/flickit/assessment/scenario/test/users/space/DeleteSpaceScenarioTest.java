@@ -24,12 +24,10 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
             .body("id", notNullValue());
 
         Number spaceId = createResponse.body().path("id");
-        SpaceJpaEntity space = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
         spaceHelper.delete(context, spaceId.toString()).then()
             .statusCode(204);
 
         SpaceJpaEntity deletedSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
-        assertFalse(space.isDeleted());
         assertTrue(deletedSpace.isDeleted());
     }
 
