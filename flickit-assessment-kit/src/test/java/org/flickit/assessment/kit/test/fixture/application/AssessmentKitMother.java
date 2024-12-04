@@ -116,6 +116,25 @@ public class AssessmentKitMother {
         return kitWithSubjects(subjects, false);
     }
 
+    public static AssessmentKit kitWithAnswerRanges(List<AnswerRange> answerRanges) {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.FALSE,
+            EXPERT_GROUP_ID,
+            null,
+            null,
+            null,
+            answerRanges,
+            id++);
+    }
+
     public static AssessmentKit kitWithSubjects(List<Subject> subjects, boolean isPrivate) {
         return new AssessmentKit(
             id++,
