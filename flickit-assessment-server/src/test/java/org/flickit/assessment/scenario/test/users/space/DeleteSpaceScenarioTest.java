@@ -32,4 +32,24 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
         assertFalse(space.isDeleted());
         assertTrue(deletedSpace.isDeleted());
     }
+
+    @Test
+    void deleteSpaceByNonOwnerUser() {
+        var createRequest = createSpaceRequestDto();
+        var createResponse = spaceHelper.create(context, createRequest);
+
+        createResponse.then()
+            .statusCode(201)
+            .body("id", notNullValue());
+
+        Number spaceId = createResponse.body().path("id");
+        context.getNextCurrentUser();
+        var deleteResponse = spaceHelper.delete(context, spaceId.toString());
+
+        deleteResponse.then()
+            .statusCode(403);
+
+        SpaceJpaEntity space = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
+        assertFalse(space.isDeleted());
+    }
 }
