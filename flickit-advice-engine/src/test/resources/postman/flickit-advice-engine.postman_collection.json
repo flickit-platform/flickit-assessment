@@ -310,9 +310,6 @@
 				},
 				{
 					"name": "Load Advice Item Cost Levels",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -322,15 +319,6 @@
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\": \"test\",\n    \"description\": \"test\",\n    \"cost\": \"LOW\",\n    \"priority\": \"MEDIUM\",\n    \"impact\": \"HIGH\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "{{base_url}}/{{api_path}}/advice-item-cost-levels",
 							"host": [
@@ -339,6 +327,30 @@
 							"path": [
 								"{{api_path}}",
 								"advice-item-cost-levels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Load Advice Item Impact Levels",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/advice-item-impact-levels",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"advice-item-impact-levels"
 							]
 						}
 					},

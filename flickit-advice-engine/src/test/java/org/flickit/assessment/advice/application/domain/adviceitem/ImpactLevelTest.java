@@ -24,4 +24,13 @@ class ImpactLevelTest {
     void testImpactLevel_SizeOfItemsShouldNotBeChanged() {
         assertEquals(3, ImpactLevel.values().length);
     }
+
+    /**
+     *  If the className has changed, messages with the ImpactLevel prefix
+     *  (in the messages.properties file) should also be updated
+     */
+    @Test
+    void testImpactLevel_ClassNameShouldNotBeChanged() {
+        assertEquals("ImpactLevel", ImpactLevel.class.getSimpleName());
+    }
 }
