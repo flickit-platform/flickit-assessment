@@ -1,9 +1,6 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.MaturityLevel;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
-import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.domain.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +29,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
+            null,
             id++);
     }
 
@@ -50,10 +48,14 @@ public class AssessmentKitMother {
             null,
             null,
             null,
+            null,
             id++);
     }
 
-    public static AssessmentKit completeKit(List<Subject> subjects, List<MaturityLevel> maturityLevels, List<Questionnaire> questionnaires) {
+    public static AssessmentKit completeKit(List<Subject> subjects,
+                                            List<MaturityLevel> maturityLevels,
+                                            List<Questionnaire> questionnaires,
+                                            List<AnswerRange> reusableAnswerRanges) {
         return new AssessmentKit(
             id++,
             CODE + id,
@@ -68,6 +70,7 @@ public class AssessmentKitMother {
             subjects,
             maturityLevels,
             questionnaires,
+            reusableAnswerRanges,
             id++);
     }
 
@@ -85,6 +88,7 @@ public class AssessmentKitMother {
             EXPERT_GROUP_ID,
             null,
             maturityLevels,
+            null,
             null,
             id++);
     }
@@ -104,6 +108,7 @@ public class AssessmentKitMother {
             null,
             null,
             questionnaires,
+            null,
             id++);
     }
 
@@ -126,6 +131,7 @@ public class AssessmentKitMother {
             subjects,
             null,
             null,
+            null,
             id++);
     }
 
@@ -144,6 +150,7 @@ public class AssessmentKitMother {
             subjects,
             null,
             questionnaires,
+            null,
             id++);
     }
 
@@ -162,6 +169,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
+            null,
             id++);
     }
 
@@ -177,6 +185,7 @@ public class AssessmentKitMother {
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
+            null,
             null,
             null,
             null,

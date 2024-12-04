@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
@@ -16,6 +18,7 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaReposit
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRangeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper;
@@ -51,6 +54,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
+    private final AnswerRangeJpaRepository answerRangeRepository;
 
     @Override
     public AssessmentKit load(Long kitId) {
@@ -87,6 +91,16 @@ public class LoadAssessmentKitFullInfoAdapter implements
             .toList();
         setQuestions(questionnaires, questions);
 
+        List<AnswerRange> reusableAnswerRanges = answerRangeRepository.findAllByKitVersionId(activeVersionId).stream()
+            .filter(AnswerRangeJpaEntity::isReusable)
+            .map(a -> {
+                var options = answerRangeIdToAnswerOptionsMap.get(a.getId()).stream()
+                    .map(AnswerOptionMapper::mapToDomainModel)
+                    .toList();
+                return AnswerRangeMapper.toDomainModel(a, options);
+            })
+            .toList();
+
         return new AssessmentKit(
             kitId,
             entity.getCode(),
@@ -101,6 +115,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             subjects,
             levels,
             questionnaires,
+            reusableAnswerRanges,
             activeVersionId);
     }
 

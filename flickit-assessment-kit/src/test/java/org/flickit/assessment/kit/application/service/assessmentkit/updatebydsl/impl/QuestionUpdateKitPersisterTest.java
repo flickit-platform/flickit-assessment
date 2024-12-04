@@ -94,7 +94,10 @@ class QuestionUpdateKitPersisterTest {
     @Test
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
         KitContext kitContext = createKitContext();
-        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
+        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
+            List.of(kitContext.level()),
+            List.of(kitContext.questionnaire()),
+            List.of());
 
         AssessmentKitDslModel dslKit = createKitDslModel(QUESTION_TITLE1, 1, 1, OPTION_TITLE);
 
@@ -123,7 +126,7 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_QuestionAddedWithNewQuestionnaire_AddQuestionAndOptionsToDatabase() {
         var savedQuestionnaire1 = questionnaireWithTitle(QUESTIONNAIRE_TITLE2);
         savedQuestionnaire1.setQuestions(List.of());
-        AssessmentKit savedKit = completeKit(List.of(), List.of(), List.of(savedQuestionnaire1));
+        AssessmentKit savedKit = completeKit(List.of(), List.of(), List.of(savedQuestionnaire1), List.of());
 
         KitContext kitContext = createKitContext();
 
@@ -180,7 +183,10 @@ class QuestionUpdateKitPersisterTest {
     @Test
     void testQuestionUpdateKitPersister_QuestionUpdated_UpdateInDatabase() {
         KitContext kitContext = createKitContext();
-        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
+        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
+            List.of(kitContext.level()),
+            List.of(kitContext.questionnaire()),
+            List.of());
 
         doNothing().when(updateQuestionPort).update(any(UpdateQuestionPort.Param.class));
 
@@ -225,7 +231,10 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_QuestionImpactAdded_AddToDatabase() {
         var levelThree = levelThree();
         KitContext kitContext = createKitContext();
-        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level(), levelThree), List.of(kitContext.questionnaire()));
+        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
+            List.of(kitContext.level(), levelThree),
+            List.of(kitContext.questionnaire()),
+            List.of());
 
         var expectedQuestionImpactId = 413591L;
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(expectedQuestionImpactId);
@@ -286,7 +295,10 @@ class QuestionUpdateKitPersisterTest {
         var savedOptionImpact4 = createAnswerOptionImpact(kitContext.answerOption2().getId(), 0.75);
         savedImpact2.setOptionImpacts(List.of(savedOptionImpact3, savedOptionImpact4));
         kitContext.question().setImpacts(List.of(kitContext.impact(), savedImpact2));
-        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level(), levelThree), List.of(kitContext.questionnaire()));
+        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
+            List.of(kitContext.level(), levelThree),
+            List.of(kitContext.questionnaire()),
+            List.of());
 
         doNothing().when(deleteQuestionImpactPort).delete(savedImpact2.getId(), savedImpact2.getKitVersionId());
 
@@ -317,7 +329,10 @@ class QuestionUpdateKitPersisterTest {
     @Test
     void testQuestionUpdateKitPersister_QuestionImpactUpdated_UpdateInDatabase() {
         KitContext kitContext = createKitContext();
-        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
+        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
+            List.of(kitContext.level()),
+            List.of(kitContext.questionnaire()),
+            List.of());
 
         AssessmentKitDslModel dslKit = createKitDslModel(QUESTION_TITLE1, 2, 1, OPTION_TITLE);
 
@@ -355,7 +370,10 @@ class QuestionUpdateKitPersisterTest {
     @Test
     void testQuestionUpdateKitPersister_AnswerOptionImpactUpdated_UpdateInDatabase() {
         KitContext kitContext = createKitContext();
-        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
+        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
+            List.of(kitContext.level()),
+            List.of(kitContext.questionnaire()),
+            List.of());
 
         doNothing().when(updateAnswerOptionImpactPort).update(any(UpdateAnswerOptionImpactPort.Param.class));
 
@@ -393,7 +411,10 @@ class QuestionUpdateKitPersisterTest {
     @Test
     void testQuestionUpdateKitPersister_AnswerOptionUpdated_UpdateInDatabase() {
         KitContext kitContext = createKitContext();
-        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
+        AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
+            List.of(kitContext.level()),
+            List.of(kitContext.questionnaire()),
+            List.of());
 
         doNothing().when(updateAnswerOptionPort).updateTitle(any(UpdateAnswerOptionPort.UpdateTitleParam.class));
 
@@ -432,7 +453,7 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_QuestionAddedWithOldQuestionnaire_SaveQuestionWithItsOptions() {
         KitContext kitContext = createKitContext();
         kitContext.questionnaire().setQuestions(List.of());
-        var savedKit = AssessmentKitMother.completeKit(List.of(), List.of(kitContext.level()), List.of(kitContext.questionnaire()));
+        var savedKit = AssessmentKitMother.completeKit(List.of(), List.of(kitContext.level()), List.of(kitContext.questionnaire()), List.of());
 
         var dslKit = createKitDslModel(QUESTION_TITLE1, 1, 1, OPTION_TITLE);
 
