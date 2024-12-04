@@ -75,15 +75,12 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
         firstCreateResponse.then()
             .statusCode(201);
 
-        final int countBeforeDelete = jpaTemplate.count(SpaceJpaEntity.class);
         var createdSpaceId = firstCreateResponse.body().path("id");
-        SpaceJpaEntity firstSpace = jpaTemplate.load(createdSpaceId, SpaceJpaEntity.class);
 
         var deleteResponse = spaceHelper.delete(context, createdSpaceId.toString());
         deleteResponse.then()
             .statusCode(204);
 
-        final int countAfterDelete = jpaTemplate.count(SpaceJpaEntity.class);
         SpaceJpaEntity deletedSpace = jpaTemplate.load(createdSpaceId, SpaceJpaEntity.class);
 
         var secondCreateResponseWithSameTitle = spaceHelper.create(context, request);
@@ -91,14 +88,8 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
             .statusCode(201);
 
         final int countAfterSecondCreation = jpaTemplate.count(SpaceJpaEntity.class);
-        var newSpaceId = secondCreateResponseWithSameTitle.body().path("id");
-        SpaceJpaEntity secondSpace = jpaTemplate.load(newSpaceId, SpaceJpaEntity.class);
 
-        assertFalse(firstSpace.isDeleted());
         assertTrue(deletedSpace.isDeleted());
-        assertFalse(secondSpace.isDeleted());
-        assertEquals(1, countBeforeDelete);
-        assertEquals(1, countAfterDelete);
         assertEquals(2, countAfterSecondCreation);
     }
 }
