@@ -2,7 +2,7 @@ package org.flickit.assessment.advice.application.domain.adviceitem;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CostLevelTest {
 
@@ -23,5 +23,14 @@ class CostLevelTest {
     @Test
     void testCostLevel_SizeOfItemsShouldNotBeChanged() {
         assertEquals(3, CostLevel.values().length);
+    }
+
+    /**
+     *  If the className has changed, messages with the CostLevel prefix
+     *  (in the messages.properties file) should also be updated
+     */
+    @Test
+    void testCostLevel_ClassNameShouldNotBeChanged() {
+        assertEquals("CostLevel", CostLevel.class.getSimpleName());
     }
 }
