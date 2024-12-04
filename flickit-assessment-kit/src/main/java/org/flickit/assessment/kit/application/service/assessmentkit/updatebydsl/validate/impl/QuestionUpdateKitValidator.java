@@ -76,7 +76,7 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
                 .collect(toSet());
 
             var newOptions = dslOptionIndexMap.entrySet().stream()
-                .filter(savedOption -> !savedOptionIndexMap.containsKey(savedOption.getKey()))
+                .filter(dslOption -> !savedOptionIndexMap.containsKey(dslOption.getKey()))
                 .map(answerOption -> answerOption.getValue().getCaption())
                 .collect(toSet());
 
