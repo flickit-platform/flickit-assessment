@@ -30,7 +30,7 @@ class PriorityLevelTest {
      *  (in the messages.properties file) should also be updated
      */
     @Test
-    void testCostLevel_ClassNameShouldNotBeChanged() {
+    void testPriorityLevel_ClassNameShouldNotBeChanged() {
         assertEquals("PriorityLevel", PriorityLevel.class.getSimpleName());
     }
 }

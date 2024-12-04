@@ -344,13 +344,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/advice-item-cost-levels",
+							"raw": "{{base_url}}/{{api_path}}/advice-item-priority-levels",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
-								"advice-item-cost-levels"
+								"advice-item-priority-levels"
 							]
 						}
 					},

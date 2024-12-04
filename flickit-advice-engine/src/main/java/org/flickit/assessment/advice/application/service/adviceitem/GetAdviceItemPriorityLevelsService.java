@@ -1,7 +1,6 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemPriorityLevelsUseCase;
 import org.springframework.stereotype.Service;
