@@ -5,6 +5,7 @@ import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,6 +30,7 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
 
         SpaceJpaEntity deletedSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
         assertTrue(deletedSpace.isDeleted());
+        assertThat(deletedSpace.getDeletionTime()).isPositive();
     }
 
     @Test
