@@ -89,7 +89,7 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerNotExistAndOptionIdIsNotNull_SavesAnswerAndInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         UUID savedAnswerId = UUID.randomUUID();
         UUID savedAnswerHistoryId = UUID.randomUUID();
@@ -140,7 +140,7 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerNotExistAndOptionIdIsNullAndIsNotApplicableIsFalse_DontSavesAnswerAndDontInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
         var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, null, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
@@ -163,7 +163,7 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerNotExistsAndIsNotApplicableTrue_SavesAnswerAndInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID savedAnswerId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         Long answerOptionId = 1L;
@@ -215,7 +215,7 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerExistsAnswerOptionChanged_UpdatesAnswerAndInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
         Long newAnswerOptionId = AnswerOptionMother.optionTwo().getId();
@@ -268,7 +268,7 @@ class SubmitAnswerServiceTest {
     void testSubmitAnswer_AnswerExistsAndIsNotApplicableTrue_SavesAndInvalidatesAssessmentResult() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         Boolean isNotApplicable = Boolean.TRUE;
         AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
         Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
@@ -310,7 +310,7 @@ class SubmitAnswerServiceTest {
     void testSubmitAnswer_AnswerExistsAndIsNotApplicableTrueNewConfidenceChanges_SavesAndInvalidatesAssessmentResult() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         Boolean isNotApplicable = Boolean.TRUE;
         AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
         Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
@@ -352,7 +352,7 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerWithSameAnswerOption_DoNotInvalidateAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         AnswerOption sameAnswerOption = AnswerOptionMother.optionTwo();
         Answer existAnswer = AnswerMother.answerWithNullNotApplicable(sameAnswerOption);
@@ -379,7 +379,7 @@ class SubmitAnswerServiceTest {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         UUID savedAnswerHistoryId = UUID.randomUUID();
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         Boolean newIsNotApplicable = Boolean.FALSE;
         AnswerOption answerOption = AnswerOptionMother.optionOne();
         Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(answerOption);
@@ -420,7 +420,7 @@ class SubmitAnswerServiceTest {
     void testSubmitAnswer_AnswerIsNotApplicableAndQuestionNotMayNotBeApplicable_ThrowsException() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         Boolean newIsNotApplicable = Boolean.TRUE;
         AnswerOption answerOption = AnswerOptionMother.optionOne();
         var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, currentUserId);
@@ -443,7 +443,7 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerWithSameIsNotApplicableExists_DoNotInvalidateAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(null);
         var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, null, existAnswer.getConfidenceLevelId(), Boolean.TRUE, UUID.randomUUID());
@@ -468,7 +468,7 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerExistsConfidenceLevelChanged_UpdatesAnswerAndInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
         Integer newConfidenceLevelId = 3;

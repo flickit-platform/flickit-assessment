@@ -12,4 +12,6 @@ public class AssessmentResult {
     private final UUID id;
 
     private final long kitVersionId;
+
+    private final UUID assessmentId;
 }

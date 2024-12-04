@@ -131,7 +131,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
             1,
             UUID.randomUUID()
         );
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         var inputPath = "path/to/input";
         String inputFileLink = "https://file/link";
 
@@ -167,7 +167,7 @@ class AddAssessmentAnalysisInputFileServiceTest {
             1,
             UUID.randomUUID()
         );
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         AssessmentAnalysis assessmentAnalysis = AssessmentAnalysisMother.assessmentAnalysis();
         var inputPath = "path/to/input";
         String inputFileLink = "https://file/link";

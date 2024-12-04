@@ -90,7 +90,7 @@ class GetAssessmentInsightServiceTest {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         var assessmentInsight = createWithAssessmentResultId(assessmentResult.getId());
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
@@ -114,7 +114,7 @@ class GetAssessmentInsightServiceTest {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, currentUserId);
-        var assessmentResult = validResultWithJustAnId();
+        var assessmentResult = validResult();
         var assessmentInsight = new AssessmentInsight(UUID.randomUUID(),
             assessmentResult.getId(),
             "insight",

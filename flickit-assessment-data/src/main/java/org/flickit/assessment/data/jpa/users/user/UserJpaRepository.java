@@ -36,4 +36,12 @@ public interface UserJpaRepository extends JpaRepository<UserJpaEntity, UUID> {
         """)
     void update(@Param("id") UUID id, @Param("displayName") String displayName,
                 @Param("bio") String bio, @Param("linkedin") String linkedin);
+
+    @Modifying
+    @Query("""
+            UPDATE UserJpaEntity a
+            SET a.picture = :picture
+            WHERE a.id = :id
+        """)
+    void updatePicture(@Param("id") UUID id, @Param("picture") String picture);
 }

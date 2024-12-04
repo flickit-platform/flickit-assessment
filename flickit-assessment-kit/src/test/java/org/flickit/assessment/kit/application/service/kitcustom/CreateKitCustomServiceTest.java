@@ -2,12 +2,10 @@ package org.flickit.assessment.kit.application.service.kitcustom;
 
 import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.kitcustom.CreateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustomPort;
 import org.flickit.assessment.kit.application.port.out.kituseraccess.CheckKitUserAccessPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,6 +19,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKit;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -46,7 +46,7 @@ class CreateKitCustomServiceTest {
     @Test
     void testCreateKitCustom_WhenKitIsPublic_ThenCreateKitCustom() {
         var param = createParam(CreateKitCustomUseCase.Param.ParamBuilder::build);
-        AssessmentKit kit = AssessmentKitMother.simpleKit();
+        var kit = simpleKit();
         long kitCustomId = 1;
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -63,7 +63,7 @@ class CreateKitCustomServiceTest {
     @Test
     void testCreateKitCustom_WhenKitIsPrivateAndCurrentUserHasNoAccessToKit_ThenThrowAccessDeniedException() {
         var param = createParam(CreateKitCustomUseCase.Param.ParamBuilder::build);
-        AssessmentKit kit = AssessmentKitMother.privateKit();
+        var kit = privateKit();
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkKitUserAccessPort.hasAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(false);
@@ -77,7 +77,7 @@ class CreateKitCustomServiceTest {
     @Test
     void testCreateKitCustom_WhenKitIsPrivateAndCurrentUserHasAccessToKit_ThenCreateKitCustom() {
         var param = createParam(CreateKitCustomUseCase.Param.ParamBuilder::build);
-        AssessmentKit kit = AssessmentKitMother.privateKit();
+        var kit = privateKit();
         long kitCustomId = 1;
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);

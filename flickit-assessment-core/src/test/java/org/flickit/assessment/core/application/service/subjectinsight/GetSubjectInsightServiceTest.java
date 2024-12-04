@@ -73,7 +73,7 @@ class GetSubjectInsightServiceTest {
     @Test
     void testGetSubjectInsight_SubjectInsightExistsAndIsValidAndEditable_ReturnAssessorInsight() {
         GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         SubjectInsight subjectInsight = SubjectInsightMother.subjectInsight();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -99,7 +99,7 @@ class GetSubjectInsightServiceTest {
     @Test
     void testGetSubjectInsight_SubjectInsightExistsAndIsNotValidAndNotEditable_ReturnAssessorInsight() {
         GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         SubjectInsight subjectInsight = new SubjectInsight(assessmentResult.getId(), param.getSubjectId(),
             "assessor insight",
             assessmentResult.getLastCalculationTime().minusDays(1),
@@ -129,7 +129,7 @@ class GetSubjectInsightServiceTest {
     @Test
     void testGetSubjectInsight_SubjectInsightDoesNotExist_ReturnDefaultInsight() {
         GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
         var subjectReport = createSubjectReportInfo();
 
@@ -165,7 +165,7 @@ class GetSubjectInsightServiceTest {
     @Test
     void testGetSubjectInsight_SubjectHasNoAttribute_ReturnBlankDefaultInsight() {
         GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
         var subjectReport = createSubjectWithNullMaturityLevelReportInfo();
 
