@@ -56,33 +56,33 @@ public class LoadAssessmentKitFullInfoAdapter implements
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-        Long kitVersionId = entity.getKitVersionId();
+        Long activeVersionId = entity.getKitVersionId();
 
-        List<Subject> subjects = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+        List<Subject> subjects = subjectRepository.findAllByKitVersionIdOrderByIndex(activeVersionId).stream()
             .map(e -> {
-                List<Attribute> attributes = attributeRepository.findAllBySubjectIdAndKitVersionId(e.getId(), kitVersionId).stream()
+                List<Attribute> attributes = attributeRepository.findAllBySubjectIdAndKitVersionId(e.getId(), activeVersionId).stream()
                     .map(AttributeMapper::mapToDomainModel)
                     .toList();
                 return SubjectMapper.mapToDomainModel(e, attributes);})
             .toList();
 
-        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(activeVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
-        setLevelCompetences(levels, kitVersionId);
+        setLevelCompetences(levels, activeVersionId);
 
-        List<Question> questions = questionRepository.findAllByKitVersionId(kitVersionId).stream()
+        List<Question> questions = questionRepository.findAllByKitVersionId(activeVersionId).stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
 
         Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToAnswerOptionsMap = answerOptionRepository
-            .findAllByKitVersionId(kitVersionId, Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
+            .findAllByKitVersionId(activeVersionId, Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
             .collect(Collectors.groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, LinkedHashMap::new, Collectors.toList()));
 
-        setQuestionImpacts(questions, kitVersionId, answerRangeIdToAnswerOptionsMap);
+        setQuestionImpacts(questions, activeVersionId, answerRangeIdToAnswerOptionsMap);
         setQuestionOptions(questions, answerRangeIdToAnswerOptionsMap);
 
-        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(activeVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
         setQuestions(questionnaires, questions);
@@ -101,7 +101,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             subjects,
             levels,
             questionnaires,
-            kitVersionId);
+            activeVersionId);
     }
 
     private void setLevelCompetences(List<MaturityLevel> levels, Long kitVersionId) {
