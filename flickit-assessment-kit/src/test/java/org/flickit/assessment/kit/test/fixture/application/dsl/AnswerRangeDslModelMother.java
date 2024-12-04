@@ -16,15 +16,17 @@ public class AnswerRangeDslModelMother {
                                                        Consumer<AnswerRangeDslModel.AnswerRangeDslModelBuilder<?, ?>> changer) {
         var builder = domainToDslModelBuilder(answerRange);
         changer.accept(builder);
-        return builder
-            .answerOptions(null)
-            .build();
+        return builder.build();
     }
 
     private static AnswerRangeDslModel.AnswerRangeDslModelBuilder<?, ?> domainToDslModelBuilder(AnswerRange answerRange) {
+        var options = answerRange.getAnswerOptions().stream()
+            .map(AnswerOptionDslModelMother::domainToDslModel)
+            .toList();
         return AnswerRangeDslModel.builder()
             .code(answerRange.getCode())
             .title(answerRange.getTitle())
+            .answerOptions(options)
             .index(null)
             .description(null);
     }
