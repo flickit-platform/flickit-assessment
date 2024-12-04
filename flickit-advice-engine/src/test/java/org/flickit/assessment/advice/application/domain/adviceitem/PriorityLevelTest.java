@@ -24,4 +24,13 @@ class PriorityLevelTest {
     void testPriorityLevel_SizeOfItemsShouldNotBeChanged() {
         assertEquals(3, PriorityLevel.values().length);
     }
+
+    /**
+     *  If the className has changed, messages with the PriorityLevel prefix
+     *  (in the messages.properties file) should also be updated
+     */
+    @Test
+    void testPriorityLevel_ClassNameShouldNotBeChanged() {
+        assertEquals("PriorityLevel", PriorityLevel.class.getSimpleName());
+    }
 }
