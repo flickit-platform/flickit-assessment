@@ -14,6 +14,7 @@ public class AnswerRangeMother {
         return new AnswerRange(
             id++,
             "title" + id,
+            "title" + id,
             true,
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
         );
@@ -22,6 +23,7 @@ public class AnswerRangeMother {
     public static AnswerRange createAnswerRangeWithFourOptions() {
         return new AnswerRange(
             id++,
+            "title" + id,
             "title" + id,
             true,
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption(), createSimpleAnswerOption(), createSimpleAnswerOption())
@@ -32,6 +34,7 @@ public class AnswerRangeMother {
         return new AnswerRange(
             id++,
             "title" + id,
+            "title" + id,
             false,
             List.of(createSimpleAnswerOption(), createSimpleAnswerOption())
         );
@@ -40,6 +43,7 @@ public class AnswerRangeMother {
     public static AnswerRange createReusableAnswerRangeWithNoOptions() {
         return new AnswerRange(
             id++,
+            "title" + id,
             "title" + id,
             true,
             null
