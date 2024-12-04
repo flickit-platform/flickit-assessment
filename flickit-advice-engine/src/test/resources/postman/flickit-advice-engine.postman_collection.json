@@ -331,6 +331,30 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Load Advice Item Priority Levels",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/advice-item-priority-levels",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"advice-item-priority-levels"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
