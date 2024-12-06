@@ -85,6 +85,18 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
+    public void persistAll(List<CreateAnswerOptionPort.Param> params) {
+        List<AnswerOptionJpaEntity> entities = params.stream()
+            .map(e -> {
+                var entity = AnswerOptionMapper.mapToJpaEntity(e);
+                entity.setId(sequenceGenerators.generateAnswerOptionId());
+                return entity;
+            })
+            .toList();
+        repository.saveAll(entities);
+    }
+
+    @Override
     public void delete(Long answerOptionId, Long kitVersionId) {
         if(!repository.existsByIdAndKitVersionId(answerOptionId, kitVersionId))
             throw new ResourceNotFoundException(ANSWER_OPTION_ID_NOT_FOUND);

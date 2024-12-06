@@ -20,10 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -48,6 +45,21 @@ public class AnswerRangePersistenceJpaAdapter implements
         var entity = AnswerRangeMapper.toJpaEntity(param);
         entity.setId(sequenceGenerators.generateAnswerRangeId());
         return repository.save(entity).getId();
+    }
+
+    @Override
+    public Map<String, Long> persistAll(List<CreateAnswerRangePort.Param> params) {
+        Map<String, Long> codeToId = new HashMap<>();
+        List<AnswerRangeJpaEntity> entities = params.stream()
+            .map(e -> {
+                var entity = AnswerRangeMapper.toJpaEntity(e);
+                entity.setId(sequenceGenerators.generateAnswerRangeId());
+                codeToId.put(entity.getCode(), entity.getId());
+                return entity;
+            }).toList();
+        repository.saveAll(entities);
+
+        return codeToId;
     }
 
     @Override

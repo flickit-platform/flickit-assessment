@@ -55,7 +55,7 @@ class QuestionCreateKitPersisterTest {
 
     @Test
     void testOrder() {
-        Assertions.assertEquals(5, persister.order());
+        Assertions.assertEquals(6, persister.order());
     }
 
     @Test
