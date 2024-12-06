@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_ANSWER_RANGES;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.*;
 
 @Slf4j
@@ -47,6 +48,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         Map<String, Long> questionnaires = ctx.get(KEY_QUESTIONNAIRES);
         Map<String, Long> attributes = ctx.get(KEY_ATTRIBUTES);
         Map<String, Long> maturityLevels = ctx.get(KEY_MATURITY_LEVELS);
+        Map<String, Long> answerRanges = ctx.get(KEY_ANSWER_RANGES);
 
         Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap = dslKit.getQuestions().stream()
             .collect(groupingBy(QuestionDslModel::getQuestionnaireCode, toMap(QuestionDslModel::getCode, model -> model)));
@@ -57,6 +59,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                 questionnaires.get(code),
                 attributes,
                 maturityLevels,
+                answerRanges,
                 kitVersionId,
                 currentUserId
             ));
@@ -67,6 +70,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                  Long questionnaireId,
                                  Map<String, Long> attributes,
                                  Map<String, Long> maturityLevels,
+                                 Map<String, Long> answerRanges,
                                  Long kitVersionId,
                                  UUID currentUserId) {
 
@@ -74,7 +78,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             return;
 
         dslQuestions.values().forEach(dslQuestion ->
-            createQuestion(dslQuestion, questionnaireId, attributes, maturityLevels, kitVersionId, currentUserId)
+            createQuestion(dslQuestion, questionnaireId, attributes, maturityLevels, answerRanges, kitVersionId, currentUserId)
         );
     }
 
@@ -82,10 +86,17 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                 Long questionnaireId,
                                 Map<String, Long> attributes,
                                 Map<String, Long> maturityLevels,
+                                Map<String, Long> answerRanges,
                                 Long kitVersionId,
                                 UUID currentUserId) {
         var param = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
-        long answerRangeId = createAnswerRangePort.persist(param);
+        long answerRangeId;
+        if (dslQuestion.getAnswerRangeCode() == null)
+            answerRangeId = createAnswerRangePort.persist(param);
+        else
+            answerRangeId = answerRanges.get(dslQuestion.getAnswerRangeCode());
+
+
         var createParam = new CreateQuestionPort.Param(
             dslQuestion.getCode(),
             dslQuestion.getTitle(),
