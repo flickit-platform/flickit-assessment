@@ -10,6 +10,7 @@ import java.util.List;
 public class AnswerRange {
 
     private final Long id;
+    private final String code;
     private final String title;
     private final boolean reusable;
     private final List<AnswerOption> answerOptions;
