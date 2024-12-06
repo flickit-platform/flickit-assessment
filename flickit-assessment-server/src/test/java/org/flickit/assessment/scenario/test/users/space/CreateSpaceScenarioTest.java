@@ -38,6 +38,7 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
         assertNotNull(loadedSpace.getCreationTime());
         assertNotNull(loadedSpace.getLastModificationTime());
         assertEquals(0, loadedSpace.getDeletionTime());
+        assertFalse(loadedSpace.isDeleted());
 
         boolean userAccessExists = jpaTemplate.existById(
             new SpaceUserAccessJpaEntity.EntityId(spaceId.longValue(), getCurrentUserId()),
@@ -66,5 +67,36 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
 
         int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
         assertEquals(countBefore, countAfter);
+    }
+
+    @Test
+    void createSpace_withSameTitleAsDeleted() {
+        final var request = createSpaceRequestDto();
+        // First invoke
+        var firstCreateResponse = spaceHelper.create(context, request);
+        firstCreateResponse.then()
+            .statusCode(201);
+
+        var createdSpaceId = firstCreateResponse.body().path("id");
+
+        // Delete created space
+        spaceHelper.delete(context, createdSpaceId.toString())
+            .then()
+            .statusCode(204);
+
+        final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
+        SpaceJpaEntity deletedSpace = jpaTemplate.load(createdSpaceId, SpaceJpaEntity.class);
+
+        // Second invoke with the same request
+        var secondCreateResponse = spaceHelper.create(context, request);
+        secondCreateResponse.then()
+            .statusCode(201);
+
+        final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
+        final int countAfterSecondCreation = jpaTemplate.count(SpaceJpaEntity.class);
+
+        assertEquals(countBefore + 1, countAfter);
+        assertTrue(deletedSpace.isDeleted());
+        assertEquals(2, countAfterSecondCreation);
     }
 }

@@ -22,4 +22,15 @@ public class SpaceTestHelper {
             .extract()
             .response();
     }
+
+    public Response delete(ScenarioContext context, String spaceId) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .delete("/assessment-core/api/spaces/" + spaceId)
+            .then()
+            .extract()
+            .response();
+    }
 }
