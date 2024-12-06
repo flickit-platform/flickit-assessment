@@ -27,6 +27,9 @@ public class AssessmentKitDslModel {
     @JsonProperty("levelModels")
     List<MaturityLevelDslModel> maturityLevels;
 
+    @JsonProperty("answerRangeModels")
+    List<AnswerRangeDslModel> answerRanges;
+
     @JsonProperty("hasError")
     boolean hasError;
 }
