@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAttributeScoreDetailUseCaseTest {
@@ -35,6 +35,14 @@ class GetAttributeScoreDetailUseCaseTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.order("invalid_order")));
         assertThat(throwable).hasMessage("order: " + GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID);
+
+        assertDoesNotThrow(() -> createParam(b->b.order("    weight     ")));
+        assertDoesNotThrow(() -> createParam(b->b.order("    SCORE     ")));
+        assertDoesNotThrow(() -> createParam(b->b.order("    FiNal_ScoRe     ")));
+        assertDoesNotThrow(() -> createParam(b->b.order("    confIDence     ")));
+        var params = assertDoesNotThrow(() -> createParam(b->b.order(null)));
+        assertEquals(GetAttributeScoreDetailUseCase.OrderEnum.DEFAULT.name(), params.getOrder());
+
     }
 
     @Test
@@ -42,6 +50,11 @@ class GetAttributeScoreDetailUseCaseTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.sort("invalid_sort")));
         assertThat(throwable).hasMessage("sort: " + GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID);
+
+        assertDoesNotThrow(() -> createParam(b->b.sort("    asc     ")));
+        assertDoesNotThrow(() -> createParam(b->b.sort("    DESC     ")));
+        var params = assertDoesNotThrow(() -> createParam(b->b.sort(null)));
+        assertEquals(GetAttributeScoreDetailUseCase.SortEnum.DEFAULT.name(), params.getSort());
     }
 
     @Test
@@ -51,10 +64,10 @@ class GetAttributeScoreDetailUseCaseTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private void createParam(Consumer<GetAttributeScoreDetailUseCase.Param.ParamBuilder> changer) {
+    private GetAttributeScoreDetailUseCase.Param createParam(Consumer<GetAttributeScoreDetailUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
-        paramBuilder.build();
+        return paramBuilder.build();
     }
 
     private GetAttributeScoreDetailUseCase.Param.ParamBuilder paramBuilder() {

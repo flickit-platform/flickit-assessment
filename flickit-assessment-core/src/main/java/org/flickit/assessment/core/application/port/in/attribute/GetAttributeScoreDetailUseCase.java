@@ -46,8 +46,8 @@ public interface GetAttributeScoreDetailUseCase {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
-            this.sort = sort != null ? sort.toUpperCase() : SortEnum.DEFAULT.name();
-            this.order = order != null ? order.toUpperCase() : OrderEnum.DEFAULT.name();
+            this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : SortEnum.DEFAULT.name();
+            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : OrderEnum.DEFAULT.name();
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
