@@ -29,12 +29,13 @@ public interface GetAttributeScoreDetailUseCase {
         @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_MATURITY_LEVEL_ID_NOT_NULL)
         Long maturityLevelId;
 
-        @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_NOT_NULL)
-        String sort;
-
         @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_ORDER_NOT_NULL)
         @EnumValue(enumClass = OrderEnum.class, message = GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID)
         String order;
+
+        @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_NOT_NULL)
+        @EnumValue(enumClass = SortEnum.class, message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID)
+        String sort;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
@@ -43,14 +44,22 @@ public interface GetAttributeScoreDetailUseCase {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
-            this.sort = sort != null ? sort.toUpperCase() : null;
-            this.order = order != null ? order.toUpperCase() : String.valueOf(OrderEnum.ASC);
+            this.sort = sort != null ? sort.toUpperCase() : SortEnum.DEFAULT.name();
+            this.order = order != null ? order.toUpperCase() : OrderEnum.DEFAULT.name();
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
     }
 
-    enum OrderEnum {ASC, DESC}
+    enum SortEnum {
+        ASC, DESC;
+        public static final SortEnum DEFAULT = ASC;
+    }
+
+    enum OrderEnum {
+        WEIGHT, SCORE, FINAL_SCORE, CONFIDENCE;
+        public static final OrderEnum DEFAULT = WEIGHT;
+    }
 
     record Result(double maxPossibleScore, double gainedScore, double gainedScorePercentage,
                   int questionsCount, List<Questionnaire> questionnaires) {
