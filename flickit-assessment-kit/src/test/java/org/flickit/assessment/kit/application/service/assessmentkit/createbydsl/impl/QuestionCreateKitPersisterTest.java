@@ -4,6 +4,7 @@ import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
@@ -52,10 +53,12 @@ class QuestionCreateKitPersisterTest {
     private CreateAnswerOptionPort createAnswerOptionPort;
     @Mock
     private CreateAnswerRangePort createAnswerRangePort;
+    @Mock
+    private LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Test
     void testOrder() {
-        Assertions.assertEquals(5, persister.order());
+        Assertions.assertEquals(6, persister.order());
     }
 
     @Test
@@ -86,7 +89,7 @@ class QuestionCreateKitPersisterTest {
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
         var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, Boolean.FALSE, Boolean.TRUE);
+        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, null, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslModel = AssessmentKitDslModel.builder()
             .questions(List.of(dslQuestion))
             .build();

@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
@@ -24,6 +25,7 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_ANSWER_RANGES;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.*;
 
 @Slf4j
@@ -36,10 +38,11 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
     private final CreateAnswerRangePort createAnswerRangePort;
+    private final LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Override
     public int order() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -47,6 +50,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         Map<String, Long> questionnaires = ctx.get(KEY_QUESTIONNAIRES);
         Map<String, Long> attributes = ctx.get(KEY_ATTRIBUTES);
         Map<String, Long> maturityLevels = ctx.get(KEY_MATURITY_LEVELS);
+        Map<String, Long> answerRanges = ctx.get(KEY_ANSWER_RANGES);
 
         Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap = dslKit.getQuestions().stream()
             .collect(groupingBy(QuestionDslModel::getQuestionnaireCode, toMap(QuestionDslModel::getCode, model -> model)));
@@ -57,6 +61,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                 questionnaires.get(code),
                 attributes,
                 maturityLevels,
+                answerRanges,
                 kitVersionId,
                 currentUserId
             ));
@@ -67,6 +72,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                  Long questionnaireId,
                                  Map<String, Long> attributes,
                                  Map<String, Long> maturityLevels,
+                                 Map<String, Long> answerRanges,
                                  Long kitVersionId,
                                  UUID currentUserId) {
 
@@ -74,7 +80,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             return;
 
         dslQuestions.values().forEach(dslQuestion ->
-            createQuestion(dslQuestion, questionnaireId, attributes, maturityLevels, kitVersionId, currentUserId)
+            createQuestion(dslQuestion, questionnaireId, attributes, maturityLevels, answerRanges, kitVersionId, currentUserId)
         );
     }
 
@@ -82,10 +88,16 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                 Long questionnaireId,
                                 Map<String, Long> attributes,
                                 Map<String, Long> maturityLevels,
+                                Map<String, Long> answerRanges,
                                 Long kitVersionId,
                                 UUID currentUserId) {
         var param = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
-        long answerRangeId = createAnswerRangePort.persist(param);
+        long answerRangeId;
+        if (dslQuestion.getAnswerRangeCode() == null)
+            answerRangeId = createAnswerRangePort.persist(param);
+        else
+            answerRangeId = answerRanges.get(dslQuestion.getAnswerRangeCode());
+
         var createParam = new CreateQuestionPort.Param(
             dslQuestion.getCode(),
             dslQuestion.getTitle(),
@@ -117,10 +129,18 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                                    Long kitVersionId,
                                                    UUID currentUserId) {
         Map<Integer, Long> optionIndexToIdMap = new HashMap<>();
-        dslQuestion.getAnswerOptions().forEach(option -> {
-            var answerOption = createAnswerOption(option, answerRangeId, kitVersionId, currentUserId);
-            optionIndexToIdMap.put(answerOption.getIndex(), answerOption.getId());
-        });
+        if (dslQuestion.getAnswerRangeCode() == null)
+            dslQuestion.getAnswerOptions().forEach(option -> {
+                var answerOption = createAnswerOption(option, answerRangeId, kitVersionId, currentUserId);
+                optionIndexToIdMap.put(answerOption.getIndex(), answerOption.getId());
+            });
+        else {
+            var answerOptions = loadAnswerOptionsPort.loadByRangeIdAndKitVersionId(answerRangeId, kitVersionId);
+            answerOptions.forEach(option -> {
+                optionIndexToIdMap.put(option.getIndex(), option.getId());
+            });
+        }
+
         return optionIndexToIdMap;
     }
 
