@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.attribute;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -40,6 +41,7 @@ public interface GetAttributeScoreDetailUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -16,36 +17,39 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetAttributeScoreDetailUseCaseTest {
 
     @Test
-    void testGetAttributeScoreDetail_AssessmentIdIsNull_ErrorMessage() {
-        UUID userId = UUID.randomUUID();
+    void testGetAttributeScoreDetailUseCaseParam_AttributeLevelIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAttributeScoreDetailUseCase.Param(null, 1L, 1L, userId));
-        assertThat(throwable).hasMessage("assessmentId: " + GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_ID_NOT_NULL);
-    }
-
-    @Test
-    void testGetAttributeScoreDetail_AttributeIdIsNull_ErrorMessage() {
-        UUID userId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAttributeScoreDetailUseCase.Param(assessmentId, null, 1L, userId));
+            () -> createParam(b -> b.attributeId(null)));
         assertThat(throwable).hasMessage("attributeId: " + GET_ATTRIBUTE_SCORE_DETAIL_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testGetAttributeScoreDetail_MaturityLevelIdIsNull_ErrorMessage() {
-        UUID userId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
+    void testGetAttributeScoreDetailUseCaseParam_MaturityLevelIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAttributeScoreDetailUseCase.Param(assessmentId, 1L, null, userId));
+            () -> createParam(b -> b.maturityLevelId(null)));
         assertThat(throwable).hasMessage("maturityLevelId: " + GET_ATTRIBUTE_SCORE_DETAIL_MATURITY_LEVEL_ID_NOT_NULL);
     }
 
     @Test
-    void testGetAttributeScoreDetail_CurrentUserIdIsNull_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
+    void testGetAttributeScoreDetailUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new GetAttributeScoreDetailUseCase.Param(assessmentId, 1L, 1L, null));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    private void createParam(Consumer<GetAttributeScoreDetailUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private GetAttributeScoreDetailUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAttributeScoreDetailUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .attributeId(1L)
+            .maturityLevelId(1L)
+            .sort("asc")
+            .order("weight")
+            .currentUserId(UUID.randomUUID());
     }
 }
