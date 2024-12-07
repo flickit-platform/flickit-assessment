@@ -202,7 +202,7 @@ class QuestionCreateKitPersisterTest {
             .build();
 
         when(createQuestionPort.persist(any(CreateQuestionPort.Param.class))).thenReturn(question.getId());
-        when(loadAnswerOptionsPort.loadByRangeIdAndKitVersionId(answerRange.getId(), kitVersionId))
+        when(loadAnswerOptionsPort.loadByRangeId(answerRange.getId(), kitVersionId))
             .thenReturn(List.of(answerOption1, answerOption2));
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(qImpact.getId());
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(anyLong());

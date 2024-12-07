@@ -188,7 +188,7 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
         when(loadQuestionsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(questions);
-        when(loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
+        when(loadAnswerOptionsPort.loadByRangeIds(anySet(), anyLong())).thenReturn(options);
 
         service.activateKitVersion(param);
 
@@ -243,7 +243,7 @@ class ActivateKitVersionServiceTest {
         doNothing().when(updateKitLastMajorModificationTimePort).updateLastMajorModificationTime(eq(kitVersion.getKit().getId()), notNull(LocalDateTime.class));
         when(loadSubjectQuestionnairePort.extractPairs(kitVersionId)).thenReturn(subjectQuestionnaireList);
         when(loadQuestionsPort.loadAllByKitVersionId(anyLong())).thenReturn(questions);
-        when(loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(anySet(), anyLong())).thenReturn(options);
+        when(loadAnswerOptionsPort.loadByRangeIds(anySet(), anyLong())).thenReturn(options);
 
         service.activateKitVersion(param);
 

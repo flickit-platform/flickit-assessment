@@ -135,7 +135,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                 optionIndexToIdMap.put(answerOption.getIndex(), answerOption.getId());
             });
         else {
-            var answerOptions = loadAnswerOptionsPort.loadByRangeIdAndKitVersionId(answerRangeId, kitVersionId);
+            var answerOptions = loadAnswerOptionsPort.loadByRangeId(answerRangeId, kitVersionId);
             answerOptions.forEach(option -> {
                 optionIndexToIdMap.put(option.getIndex(), option.getId());
             });
