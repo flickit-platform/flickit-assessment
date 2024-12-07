@@ -10,7 +10,5 @@ public interface ImpactfulQuestionView {
 
     Integer getQuestionImpactWeight();
 
-    Double getOptionImpactValue();
-
     double getOptionValue();
 }
