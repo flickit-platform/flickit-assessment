@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
@@ -37,6 +38,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
     private final CreateAnswerRangePort createAnswerRangePort;
+    private final LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Override
     public int order() {
@@ -96,7 +98,6 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         else
             answerRangeId = answerRanges.get(dslQuestion.getAnswerRangeCode());
 
-
         var createParam = new CreateQuestionPort.Param(
             dslQuestion.getCode(),
             dslQuestion.getTitle(),
@@ -128,10 +129,18 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                                    Long kitVersionId,
                                                    UUID currentUserId) {
         Map<Integer, Long> optionIndexToIdMap = new HashMap<>();
-        dslQuestion.getAnswerOptions().forEach(option -> {
-            var answerOption = createAnswerOption(option, answerRangeId, kitVersionId, currentUserId);
-            optionIndexToIdMap.put(answerOption.getIndex(), answerOption.getId());
-        });
+        if (dslQuestion.getAnswerRangeCode() == null)
+            dslQuestion.getAnswerOptions().forEach(option -> {
+                var answerOption = createAnswerOption(option, answerRangeId, kitVersionId, currentUserId);
+                optionIndexToIdMap.put(answerOption.getIndex(), answerOption.getId());
+            });
+        else {
+            var answerOptions = loadAnswerOptionsPort.loadByRangeIdAndKitVersionId(answerRangeId, kitVersionId);
+            answerOptions.forEach(option -> {
+                optionIndexToIdMap.put(option.getIndex(), option.getId());
+            });
+        }
+
         return optionIndexToIdMap;
     }
 

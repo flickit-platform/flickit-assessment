@@ -4,6 +4,7 @@ import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
+import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
@@ -52,6 +53,8 @@ class QuestionCreateKitPersisterTest {
     private CreateAnswerOptionPort createAnswerOptionPort;
     @Mock
     private CreateAnswerRangePort createAnswerRangePort;
+    @Mock
+    private LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Test
     void testOrder() {

@@ -78,6 +78,13 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
+    public List<AnswerOption> loadByRangeIdAndKitVersionId(long rangeId, long kitVersionId) {
+        return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(rangeId, kitVersionId).stream()
+            .map(AnswerOptionMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
     public long persist(CreateAnswerOptionPort.Param param) {
         var entity = AnswerOptionMapper.mapToJpaEntity(param);
         entity.setId(sequenceGenerators.generateAnswerOptionId());
