@@ -299,7 +299,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             }
         }
 
-        updateAnswerOptions(savedQuestion, dslQuestion, kitVersionId, currentUserId);
+        if (dslQuestion.getAnswerOptions() != null)
+            updateAnswerOptions(savedQuestion, dslQuestion, kitVersionId, currentUserId);
         boolean isMajorUpdateQuestionImpact = updateQuestionImpacts(savedQuestion,
             dslQuestion,
             kitVersionId,
