@@ -12,6 +12,8 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.ImpactFullQuestionsView;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
@@ -37,7 +39,8 @@ public class AttributePersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionsView = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId);
+        var pageRequest = PageRequest.of(0, 100, Sort.Direction.DESC, "questionIndex");
+        var questionsView = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId, pageRequest);
 
         return questionsView.stream()
             .collect(Collectors.groupingBy(ImpactFullQuestionsView::getQuestionnaireTitle))
@@ -55,7 +58,6 @@ public class AttributePersistenceJpaAdapter implements
                         getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
                         view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOptionValue()) * view.getQuestionImpact().getWeight()
                     ))
-                    .sorted(Comparator.comparingInt(QuestionScore::questionIndex))
                     .toList();
                 return new Questionnaire(questionnaireTitle, questionScores);
             })
