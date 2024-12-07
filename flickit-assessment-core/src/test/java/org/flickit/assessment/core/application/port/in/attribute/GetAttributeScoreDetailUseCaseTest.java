@@ -31,6 +31,20 @@ class GetAttributeScoreDetailUseCaseTest {
     }
 
     @Test
+    void testGetAttributeScoreDetailUseCaseParam_orderParamViolatesConstrains_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.order("invalid_order")));
+        assertThat(throwable).hasMessage("order: " + GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID);
+    }
+
+    @Test
+    void testGetAttributeScoreDetailUseCaseParam_sortParamViolatesConstrains_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.sort("invalid_sort")));
+        assertThat(throwable).hasMessage("sort: " + GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID);
+    }
+
+    @Test
     void testGetAttributeScoreDetailUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
