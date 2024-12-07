@@ -40,16 +40,15 @@ public class QuestionUpdateKitValidator implements UpdateKitValidator {
             Map<String, Question> codeToQuestion = questionnaireEntry.getValue();
             Map<String, QuestionDslModel> codeToDslQuestion = dslQuestionnaireToQuestionsMap.get(questionnaireEntry.getKey());
 
-            if (codeToDslQuestion == null)
+            if (codeToDslQuestion == null) // handled in QuestionnaireUpdateKitValidator
                 continue;
 
             var deletedQuestions = codeToQuestion.keySet().stream()
                 .filter(s -> !codeToDslQuestion.containsKey(s))
                 .collect(toSet());
 
-            if (!deletedQuestions.isEmpty()) {
+            if (!deletedQuestions.isEmpty())
                 notification.add(new InvalidDeletionError(DslFieldNames.QUESTION, deletedQuestions));
-            }
 
             validateAnswerOptions(codeToQuestion, codeToDslQuestion, notification);
         }
