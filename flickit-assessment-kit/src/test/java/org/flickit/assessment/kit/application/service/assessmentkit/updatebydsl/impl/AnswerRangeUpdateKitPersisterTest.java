@@ -1,11 +1,15 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.impl;
 
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerrange.UpdateAnswerRangePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext;
 import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterResult;
+import org.flickit.assessment.kit.test.fixture.application.dsl.AnswerOptionDslModelMother;
+import org.flickit.assessment.kit.test.fixture.application.dsl.AnswerRangeDslModelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -41,6 +45,9 @@ class AnswerRangeUpdateKitPersisterTest {
     @Mock
     private UpdateAnswerRangePort updateAnswerRangePort;
 
+    @Mock
+    private UpdateAnswerOptionPort updateAnswerOptionPort;
+
     @Test
     void testOrder() {
         assertEquals(5, persister.order());
@@ -61,13 +68,13 @@ class AnswerRangeUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
-        ArgumentCaptor<UpdateAnswerRangePort.Param> captor = ArgumentCaptor.forClass(UpdateAnswerRangePort.Param.class);
-        Mockito.verify(updateAnswerRangePort, Mockito.times(0)).update(captor.capture());
         assertFalse(result.isMajorUpdate());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ANSWER_RANGES);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
+
+        verifyNoInteractions(createAnswerRangePort, updateAnswerRangePort, updateAnswerOptionPort);
     }
 
     @Test
@@ -111,6 +118,8 @@ class AnswerRangeUpdateKitPersisterTest {
         Map<String, Long> codeToIdMap = ctx.get(KEY_ANSWER_RANGES);
         assertNotNull(codeToIdMap);
         assertEquals(2, codeToIdMap.keySet().size());
+
+        verifyNoInteractions(createAnswerRangePort, updateAnswerOptionPort);
     }
 
     @Test
@@ -147,11 +156,60 @@ class AnswerRangeUpdateKitPersisterTest {
         assertEquals(savedKit.getActiveVersionId(), createParamCaptor.getValue().kitVersionId());
         assertEquals(currentUserId, createParamCaptor.getValue().createdBy());
         assertTrue(createParamCaptor.getValue().reusable());
-        assertTrue(result.isMajorUpdate());
+        assertFalse(result.isMajorUpdate());
 
         Map<String, Long> codeToIdMap = ctx.get(KEY_ANSWER_RANGES);
         assertNotNull(codeToIdMap);
         assertTrue(codeToIdMap.containsKey(rangeThree.getCode()));
         assertEquals(3, codeToIdMap.keySet().size());
+
+        verifyNoInteractions(updateAnswerRangePort, updateAnswerOptionPort);
     }
+
+    @Test
+    void testPersist_AnswerOptionIsUpdated_Update() {
+        var answerRange = createReusableAnswerRangeWithTwoOptions();
+        var savedKit = kitWithAnswerRanges(List.of(answerRange));
+
+        var newAnswerOption = AnswerOptionDslModel.builder()
+            .caption("new title")
+            .index(answerRange.getAnswerOptions().getLast().getIndex())
+            .value(10D)
+            .build();
+
+        var dslOptions = List.of(AnswerOptionDslModelMother.domainToDslModel(answerRange.getAnswerOptions().getFirst()),
+            newAnswerOption);
+
+        var dslRangeOne = AnswerRangeDslModelMother.domainToDslModel(answerRange, q -> q.answerOptions(dslOptions));
+
+        var dslKit = AssessmentKitDslModel.builder()
+            .answerRanges(List.of(dslRangeOne))
+            .build();
+
+        UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
+        UUID currentUserId = UUID.randomUUID();
+
+        doNothing().when(updateAnswerOptionPort).update(any());
+
+        UpdateKitPersisterResult result = persister.persist(ctx, savedKit, dslKit, currentUserId);
+
+        ArgumentCaptor<UpdateAnswerOptionPort.Param> updateOptionParamCaptor = ArgumentCaptor.forClass(UpdateAnswerOptionPort.Param.class);
+        verify(updateAnswerOptionPort).update(updateOptionParamCaptor.capture());
+
+        assertEquals(answerRange.getAnswerOptions().getLast().getId(), updateOptionParamCaptor.getValue().answerOptionId());
+        assertEquals(savedKit.getActiveVersionId(), updateOptionParamCaptor.getValue().kitVersionId());
+        assertEquals(newAnswerOption.getIndex(), updateOptionParamCaptor.getValue().index());
+        assertEquals(newAnswerOption.getCaption(), updateOptionParamCaptor.getValue().title());
+        assertEquals(newAnswerOption.getValue(), updateOptionParamCaptor.getValue().value());
+        assertNotNull(updateOptionParamCaptor.getValue().lastModificationTime());
+        assertEquals(currentUserId, updateOptionParamCaptor.getValue().lastModifiedBy());
+
+        assertTrue(result.isMajorUpdate());
+        Map<String, Long> codeToIdMap = ctx.get(KEY_ANSWER_RANGES);
+        assertNotNull(codeToIdMap);
+        assertEquals(1, codeToIdMap.keySet().size());
+
+        verifyNoInteractions(createAnswerRangePort, updateAnswerRangePort);
+    }
+
 }

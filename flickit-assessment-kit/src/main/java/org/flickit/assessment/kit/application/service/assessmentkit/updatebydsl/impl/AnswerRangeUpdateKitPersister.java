@@ -50,7 +50,8 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
         Map<String, AnswerRange> savedRangesCodesMap = savedKit.getReusableAnswerRanges().stream().collect(toMap(AnswerRange::getCode, i -> i));
         Map<String, Long> addedCodeToIdMap = new HashMap<>();
 
-        dslKit.getAnswerRanges().forEach(dslRange -> {
+        boolean isMajorUpdate = false;
+        for (AnswerRangeDslModel dslRange : dslKit.getAnswerRanges()) {
             var savedRange = savedRangesCodesMap.get(dslRange.getCode());
 
             if (savedRange == null) {
@@ -62,9 +63,12 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
                     updateAnswerRangePort.update(toUpdateParam(savedRange.getId(), savedKit.getActiveVersionId(), dslRange, currentUserId));
                     log.debug("AnswerRange[id={}, code={}] updated", savedRange.getId(), savedRange.getCode());
                 }
-                updateAnswerOptions(savedRange, dslRange, savedKit.getActiveVersionId(), currentUserId);
+                var isOptionValueChanged = updateAnswerOptions(savedRange, dslRange, savedKit.getActiveVersionId(), currentUserId);
+                if (isOptionValueChanged)
+                    isMajorUpdate = true;
             }
-        });
+        }
+
 
         Map<String, Long> updatedCodeToIdMap = savedRangesCodesMap.entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getId()));
@@ -74,7 +78,7 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
         ctx.put(KEY_ANSWER_RANGES, rangeCodeToIdMap);
         log.debug("Final answer ranges: {}", rangeCodeToIdMap);
 
-        return new UpdateKitPersisterResult(!addedCodeToIdMap.isEmpty());
+        return new UpdateKitPersisterResult(isMajorUpdate);
     }
 
     private CreateAnswerRangePort.Param toCreateParam(AnswerRangeDslModel dslAnswerRange, long kitVersionId, UUID currentUserId) {
@@ -98,26 +102,42 @@ public class AnswerRangeUpdateKitPersister implements UpdateKitPersister {
         );
     }
 
-    private void updateAnswerOptions(AnswerRange savedRange, AnswerRangeDslModel dslRange, Long kitVersionId, UUID currentUserId) {
+    private boolean updateAnswerOptions(AnswerRange savedRange, AnswerRangeDslModel dslRange, Long kitVersionId, UUID currentUserId) {
         Map<Integer, AnswerOption> savedOptionIndexMap = savedRange.getAnswerOptions().stream()
             .collect(toMap(AnswerOption::getIndex, a -> a));
 
         Map<Integer, AnswerOptionDslModel> dslOptionIndexMap = dslRange.getAnswerOptions().stream()
             .collect(toMap(AnswerOptionDslModel::getIndex, a -> a));
 
+        var isOptionValueChanged = false;
+
         for (Map.Entry<Integer, AnswerOption> optionEntry : savedOptionIndexMap.entrySet()) {
-            String savedOptionTitle = optionEntry.getValue().getTitle();
-            String dslOptionTitle = dslOptionIndexMap.get(optionEntry.getKey()).getCaption();
-            if (!savedOptionTitle.equals(dslOptionTitle)) {
-                updateAnswerOptionPort.updateTitle(new UpdateAnswerOptionPort.UpdateTitleParam(
-                    optionEntry.getValue().getId(),
+            var savedOption = optionEntry.getValue();
+            var dslOption = dslOptionIndexMap.get(optionEntry.getKey());
+
+            if (savedOption.getValue() != dslOption.getValue()) {
+                updateAnswerOptionPort.update(new UpdateAnswerOptionPort.Param(
+                    savedOption.getId(),
                     kitVersionId,
-                    dslOptionTitle,
+                    savedOption.getIndex(),
+                    dslOption.getCaption(),
+                    dslOption.getValue(),
                     LocalDateTime.now(),
                     currentUserId));
-                log.debug("AnswerOption[id={}, index={}, newTitle{}, answerRangeId{}] updated.",
-                    optionEntry.getValue().getId(), optionEntry.getKey(), dslOptionTitle, savedRange.getId());
+                isOptionValueChanged = true;
+                log.debug("AnswerOption[id={}, index={}, newTitle{}, value{}, answerRangeId{}] updated.",
+                    savedOption.getId(), savedOption.getIndex(), dslOption.getCaption(), savedOption.getValue(), savedRange.getId());
+            } else if (!savedOption.getTitle().equals(dslOption.getCaption())) {
+                updateAnswerOptionPort.updateTitle(new UpdateAnswerOptionPort.UpdateTitleParam(
+                    savedOption.getId(),
+                    kitVersionId,
+                    dslOption.getCaption(),
+                    LocalDateTime.now(),
+                    currentUserId));
+                log.debug("AnswerOption[id={}, index={}, title{}, newValue{}, answerRangeId{}] updated.",
+                    savedOption.getId(), savedOption.getIndex(), dslOption.getCaption(), dslOption.getValue(), savedRange.getId());
             }
         }
+        return isOptionValueChanged;
     }
 }
