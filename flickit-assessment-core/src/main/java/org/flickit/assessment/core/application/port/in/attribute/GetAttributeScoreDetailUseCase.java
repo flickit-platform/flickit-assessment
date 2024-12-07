@@ -1,5 +1,7 @@
 package org.flickit.assessment.core.application.port.in.attribute;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -38,16 +40,25 @@ public interface GetAttributeScoreDetailUseCase {
         @EnumValue(enumClass = SortEnum.class, message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID)
         String sort;
 
+        @Min(value = 1, message = GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MIN)
+        @Max(value = 100, message = GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MAX)
+        int size;
+
+        @Min(value = 0, message = GET_ATTRIBUTE_SCORE_DETAIL_PAGE_MIN)
+        int page;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, UUID currentUserId) {
+        public Param(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, int size, int page, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
             this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : SortEnum.DEFAULT.name();
             this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : OrderEnum.DEFAULT.name();
+            this.size = size;
+            this.page = page;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
