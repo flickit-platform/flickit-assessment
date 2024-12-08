@@ -45,7 +45,7 @@ class SubjectQuestionnaireUpdateKitPersisterTest {
 
     @Test
     void testOrder() {
-        assertEquals(6, persister.order());
+        assertEquals(7, persister.order());
     }
 
     @Test

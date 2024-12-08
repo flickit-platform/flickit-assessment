@@ -16,9 +16,7 @@ public class SubjectDslModelMother {
                                                    Consumer<SubjectDslModel.SubjectDslModelBuilder<?, ?>> changer) {
         var builder = domainToDslModelBuilder(subject);
         changer.accept(builder);
-        return builder
-            .weight(1)
-            .build();
+        return builder.build();
     }
 
     private static SubjectDslModel.SubjectDslModelBuilder<?, ?> domainToDslModelBuilder(Subject subject) {
@@ -26,6 +24,7 @@ public class SubjectDslModelMother {
             .code(subject.getCode())
             .title(subject.getTitle())
             .index(subject.getIndex())
-            .description(subject.getDescription());
+            .description(subject.getDescription())
+            .weight(1);
     }
 }
