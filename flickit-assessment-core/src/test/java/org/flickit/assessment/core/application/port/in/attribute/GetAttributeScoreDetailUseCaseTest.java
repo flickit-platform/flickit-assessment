@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.application.port.in.attribute;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.common.application.domain.crud.Order;
-import org.flickit.assessment.common.application.domain.crud.Sort;
+import org.flickit.assessment.common.application.domain.crud.OrderEnum;
+import org.flickit.assessment.common.application.domain.crud.SortEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,7 +42,7 @@ class GetAttributeScoreDetailUseCaseTest {
         assertDoesNotThrow(() -> createParam(b -> b.sort("    asc     ")));
         assertDoesNotThrow(() -> createParam(b -> b.sort("    DESC     ")));
         var params = assertDoesNotThrow(() -> createParam(b -> b.sort(null)));
-        assertEquals(Sort.DEFAULT.name(), params.getSort());
+        assertEquals(SortEnum.DEFAULT.name(), params.getSort());
     }
 
     @Test
@@ -56,7 +56,7 @@ class GetAttributeScoreDetailUseCaseTest {
         assertDoesNotThrow(() -> createParam(b -> b.order("    FiNal_ScoRe     ")));
         assertDoesNotThrow(() -> createParam(b -> b.order("    confIDence     ")));
         var params = assertDoesNotThrow(() -> createParam(b -> b.order(null)));
-        assertEquals(Order.DEFAULT.name(), params.getOrder());
+        assertEquals(OrderEnum.DEFAULT.name(), params.getOrder());
     }
 
     @Test

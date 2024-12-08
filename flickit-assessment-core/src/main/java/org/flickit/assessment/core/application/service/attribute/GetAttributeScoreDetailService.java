@@ -2,9 +2,9 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.crud.Order;
+import org.flickit.assessment.common.application.domain.crud.OrderEnum;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.crud.Sort;
+import org.flickit.assessment.common.application.domain.crud.SortEnum;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
@@ -41,7 +41,12 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
         );
 
         var items = result.getItems().stream().map(this::toQuestionScore).toList();
-        return new PaginatedResponse<>(items, result.getPage(), result.getSize(), result.getSort(), result.getOrder(), result.getTotal());
+        return new PaginatedResponse<>(items,
+            result.getPage(),
+            result.getSize(),
+            result.getOrder(),
+            result.getSort(),
+            result.getTotal());
     }
 
     private LoadAttributeScoreDetailPort.Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, int size, int page) {
@@ -49,8 +54,8 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             assessmentId,
             attributeId,
             maturityLevelId,
-            Sort.valueOf(sort),
-            Order.valueOf(order),
+            SortEnum.valueOf(sort),
+            OrderEnum.valueOf(order),
             size,
             page);
     }

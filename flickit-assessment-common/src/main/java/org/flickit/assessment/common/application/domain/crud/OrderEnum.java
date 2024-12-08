@@ -7,11 +7,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum Order {
+public enum OrderEnum {
     ASC("asc"),
     DESC("desc");
 
     private final String title;
 
-    public static final Order DEFAULT = ASC;
+    public static final OrderEnum DEFAULT = ASC;
 }

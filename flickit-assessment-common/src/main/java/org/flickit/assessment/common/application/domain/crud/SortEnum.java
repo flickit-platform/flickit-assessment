@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum Sort {
+public enum SortEnum {
     QUESTIONNAIRE_TITLE("questionnaireTitle"),
     WEIGHT("weight" ),
     SCORE("score" ),
@@ -16,6 +16,6 @@ public enum Sort {
 
     private final String title;
 
-    public static final Sort DEFAULT = WEIGHT;
+    public static final SortEnum DEFAULT = WEIGHT;
 }
 

@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.application.port.out.attribute;
 
-import org.flickit.assessment.common.application.domain.crud.Order;
+import org.flickit.assessment.common.application.domain.crud.OrderEnum;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.crud.Sort;
+import org.flickit.assessment.common.application.domain.crud.SortEnum;
 
 import java.util.UUID;
 
@@ -13,8 +13,8 @@ public interface LoadAttributeScoreDetailPort {
     record Param(UUID assessmentId,
                  long attributeId,
                  long maturityLevelId,
-                 Sort sort,
-                 Order order,
+                 SortEnum sort,
+                 OrderEnum order,
                  int size,
                  int page) {}
 

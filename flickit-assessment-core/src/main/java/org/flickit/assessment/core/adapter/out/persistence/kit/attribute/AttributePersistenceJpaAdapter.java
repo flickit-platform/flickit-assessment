@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.crud.SortEnum;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
@@ -10,9 +11,12 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+
+import org.springframework.data.domain.Sort;
+import org.flickit.assessment.common.application.domain.crud.OrderEnum;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
@@ -32,7 +36,7 @@ public class AttributePersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var pageRequest = PageRequest.of(param.page(), param.size(), Sort.Direction.DESC, AnswerJpaEntity.Fields.QUESTION_INDEX);
+        var pageRequest = makePageRequest(param.page(), param.size(), param.sort(), param.order());
         var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), param.attributeId(), param.maturityLevelId(), pageRequest);
 
         var items =  pageResult.getContent().stream()
@@ -55,6 +59,25 @@ public class AttributePersistenceJpaAdapter implements
             param.sort().getTitle(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    private PageRequest makePageRequest(int page, int size, SortEnum sort, OrderEnum order) {
+        String s = null;
+        Sort.Direction o = switch (order) {
+            case OrderEnum.ASC -> Sort.Direction.ASC;
+            case OrderEnum.DESC -> Sort.Direction.DESC;
+        };
+
+/*        String sortField = switch (sort) {
+            case SortEnum.QUESTIONNAIRE_TITLE -> QuestionnaireJpaEntity.Fields.title;
+            case SortEnum. -> AnswerJpaEntity.Fields.QUESTION_INDEX;
+            case QUESTION_TITLE -> "questionTitle"; // Assuming there's a field for question title
+            case OPTION_TITLE -> "optionTitle"; // Assuming there's a field for option title
+            default -> AnswerJpaEntity.Fields.QUESTION_INDEX; // Default sort field
+        };*/
+
+        return PageRequest.of(page, size, o, AnswerJpaEntity.Fields.QUESTION_INDEX);
+
     }
 
     private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
