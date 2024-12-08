@@ -85,7 +85,7 @@ public class ActivateKitVersionService implements ActivateKitVersionUseCase {
             .filter(q -> q.getAnswerRangeId() != null)
             .collect(toMap(Question::getId, Question::getAnswerRangeId));
 
-        var answerOptions = loadAnswerOptionsPort.loadByRangeIdInAndKitVersionId(new HashSet<>(questionIdToRangeId.values()), kitVersionId);
+        var answerOptions = loadAnswerOptionsPort.loadByRangeIds(new HashSet<>(questionIdToRangeId.values()), kitVersionId);
         Map<Long, List<AnswerOption>> rangeIdToOptions = answerOptions.stream()
             .collect(groupingBy(AnswerOption::getAnswerRangeId));
 

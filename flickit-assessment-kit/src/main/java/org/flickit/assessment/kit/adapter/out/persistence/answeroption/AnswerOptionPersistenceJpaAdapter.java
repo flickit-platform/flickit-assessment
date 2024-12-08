@@ -70,7 +70,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AnswerOption> loadByRangeIdInAndKitVersionId(Set<Long> rangeIds, long kitVersionId) {
+    public List<AnswerOption> loadByRangeIds(Set<Long> rangeIds, long kitVersionId) {
         Sort sortByIndex = Sort.by(AnswerOptionJpaEntity.Fields.index);
         return repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds, kitVersionId, sortByIndex).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
@@ -78,7 +78,7 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AnswerOption> loadByRangeIdAndKitVersionId(long rangeId, long kitVersionId) {
+    public List<AnswerOption> loadByRangeId(long rangeId, long kitVersionId) {
         return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(rangeId, kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
