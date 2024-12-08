@@ -14,8 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND;
@@ -42,19 +40,19 @@ public class AttributePersistenceJpaAdapter implements
                 view.getQuestionTitle(),
                 view.getQuestionIndex(),
                 view.getOptionTitle(),
-                true, //TODO: correct it
+                view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
                 view.getQuestionImpact().getWeight(),
                 getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
                 view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOptionValue()) * view.getQuestionImpact().getWeight(),
-                view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null)) //TODO: correct it
-            .collect(Collectors.toList());
+                view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null))
+            .toList();
 
         return new PaginatedResponse<>(
             items,
             pageRequest.getPageNumber(),
             pageRequest.getPageSize(),
-            "ASC",
-            "questionIndex",
+            param.sort().getTitle(),
+            param.order().getTitle(),
             (int) pageResult.getTotalElements()
         );
     }
