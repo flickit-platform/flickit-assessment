@@ -1,6 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.attribute;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -76,12 +77,12 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
-            ORDER BY qr.title asc, qsn.index asc
         """)
-    List<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
+    Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
                                                                @Param("kitVersionId") long kitVersionId,
                                                                @Param("attributeId") Long attributeId,
-                                                               @Param("maturityLevelId") Long maturityLevelId);
+                                                               @Param("maturityLevelId") Long maturityLevelId,
+                                                               PageRequest pageRequest);
 
     @Query("""
             SELECT COUNT(DISTINCT(q.id))
