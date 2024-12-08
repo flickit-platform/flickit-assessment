@@ -9,7 +9,6 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeS
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
@@ -25,7 +24,7 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
 
     @Override
     public PaginatedResponse<QuestionScore> getAttributeScoreDetail(Param param) {
-        //checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
+        checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
         var result = loadAttributeScoreDetailPort.loadScoreDetail(
             toParam(
@@ -39,24 +38,8 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             )
         );
 
-        double maxPossibleScore = 0.0;
-        double gainedScore = 0.0;
-
-        for (LoadAttributeScoreDetailPort.Result qs : result.getItems()) {
-            if (Boolean.TRUE.equals(qs.answerScore()))
-                continue;
-            maxPossibleScore += qs.questionWeight();
-            if (qs.answerScore() != null)
-                gainedScore += qs.weightedScore();
-        }
-
-        double gainedScorePercentage = maxPossibleScore > 0 ? gainedScore / maxPossibleScore : 0.0;
         var items = result.getItems().stream().map(this::toQuestionScore).toList();
         return new PaginatedResponse<>(items, result.getPage(), result.getSize(), result.getSort(), result.getOrder(), result.getTotal());
-    }
-
-    private QuestionScore toQuestionScore(LoadAttributeScoreDetailPort.Result item) {
-        return new QuestionScore(item.questionnaireTitle(), item.index(), item.questionTitle(), item.questionWeight(), item.index(), item.answer(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore());
     }
 
     private LoadAttributeScoreDetailPort.Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, int size, int page) {
@@ -68,6 +51,10 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             order,
             size,
             page);
+    }
+
+    private QuestionScore toQuestionScore(LoadAttributeScoreDetailPort.Result item) {
+        return new QuestionScore(item.questionnaireTitle(), item.index(), item.questionTitle(), item.questionWeight(), item.index(), item.answer(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore());
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {
