@@ -46,7 +46,7 @@ public class AttributePersistenceJpaAdapter implements
                 view.getQuestionImpact().getWeight(),
                 getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
                 view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOptionValue()) * view.getQuestionImpact().getWeight(),
-                1)) //TODO: correct it
+                view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null)) //TODO: correct it
             .collect(Collectors.toList());
 
         return new PaginatedResponse<>(
