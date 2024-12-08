@@ -71,7 +71,7 @@ public interface GetAttributeScoreDetailUseCase {
     }
 
     enum OrderEnum {
-        WEIGHT, SCORE, FINAL_SCORE, CONFIDENCE;
+        QUESTIONNAIRE_TITLE, WEIGHT, SCORE, FINAL_SCORE, CONFIDENCE;
         public static final OrderEnum DEFAULT = WEIGHT;
     }
 
