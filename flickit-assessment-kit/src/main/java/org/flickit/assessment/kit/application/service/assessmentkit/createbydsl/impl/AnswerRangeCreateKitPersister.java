@@ -50,18 +50,16 @@ public class AnswerRangeCreateKitPersister implements CreateKitPersister {
             .collect(Collectors.toMap(AnswerRangeDslModel::getCode, AnswerRangeDslModel::getAnswerOptions));
 
         var answerOptionParams = codeToId.entrySet().stream()
-            .map(e -> {
-                var answerOptionModels = codeToAnswerOptionModels.get(e.getKey());
-                return answerOptionModels.stream()
-                    .map(x -> new CreateAnswerOptionPort.Param(x.getCaption(),
-                        x.getIndex(),
-                        e.getValue(),
-                        x.getValue(),
-                        kitVersionId,
-                        currentUserId)).toList();
-            }).toList().stream()
-            .flatMap(Collection::stream)
+            .flatMap(entry -> codeToAnswerOptionModels.get(entry.getKey()).stream()
+                .map(x -> new CreateAnswerOptionPort.Param(
+                    x.getCaption(),
+                    x.getIndex(),
+                    entry.getValue(),
+                    x.getValue(),
+                    kitVersionId,
+                    currentUserId)))
             .toList();
+
 
         createAnswerOptionPort.persistAll(answerOptionParams);
     }
