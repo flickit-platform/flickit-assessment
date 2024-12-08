@@ -28,6 +28,7 @@ public class AnswerRangeMapper {
 
     public static AnswerRange toDomainModel(AnswerRangeJpaEntity entity, List<AnswerOption> answerOptions) {
         return new AnswerRange(entity.getId(),
+            entity.getCode(),
             entity.getTitle(),
             entity.isReusable(),
             answerOptions);

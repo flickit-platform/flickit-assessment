@@ -70,9 +70,16 @@ public class AnswerOptionPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<AnswerOption> loadByRangeIdInAndKitVersionId(Set<Long> rangeIds, long kitVersionId) {
+    public List<AnswerOption> loadByRangeIds(Set<Long> rangeIds, long kitVersionId) {
         Sort sortByIndex = Sort.by(AnswerOptionJpaEntity.Fields.index);
         return repository.findAllByAnswerRangeIdInAndKitVersionId(rangeIds, kitVersionId, sortByIndex).stream()
+            .map(AnswerOptionMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
+    public List<AnswerOption> loadByRangeId(long rangeId, long kitVersionId) {
+        return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(rangeId, kitVersionId).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }
@@ -82,6 +89,18 @@ public class AnswerOptionPersistenceJpaAdapter implements
         var entity = AnswerOptionMapper.mapToJpaEntity(param);
         entity.setId(sequenceGenerators.generateAnswerOptionId());
         return repository.save(entity).getId();
+    }
+
+    @Override
+    public void persistAll(List<CreateAnswerOptionPort.Param> params) {
+        List<AnswerOptionJpaEntity> entities = params.stream()
+            .map(e -> {
+                var entity = AnswerOptionMapper.mapToJpaEntity(e);
+                entity.setId(sequenceGenerators.generateAnswerOptionId());
+                return entity;
+            })
+            .toList();
+        repository.saveAll(entities);
     }
 
     @Override
