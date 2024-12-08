@@ -74,6 +74,7 @@ public interface GetAttributeScoreDetailUseCase {
                          String answerOptionTitle,
                          Boolean answerIsNotApplicable,
                          Double answerScore,
-                         Double weightedScore) {
+                         Double weightedScore,
+                         Integer confidenceLevel) {
     }
 }

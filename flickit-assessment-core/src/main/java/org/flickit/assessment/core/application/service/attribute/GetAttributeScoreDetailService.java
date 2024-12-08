@@ -54,7 +54,14 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     }
 
     private QuestionScore toQuestionScore(LoadAttributeScoreDetailPort.Result item) {
-        return new QuestionScore(item.questionnaireTitle(), item.index(), item.questionTitle(), item.questionWeight(), item.index(), item.answer(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore());
+        return new QuestionScore(item.questionnaireTitle(), item.index(), item.questionTitle(),
+            item.questionWeight(),
+            item.index(),
+            item.answer(),
+            item.answerIsNotApplicable(),
+            item.answerScore(),
+            item.weightedScore(),
+            item.confidence());
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {

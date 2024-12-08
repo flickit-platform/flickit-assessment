@@ -24,6 +24,6 @@ public interface LoadAttributeScoreDetailPort {
                   int questionWeight,
                   Double answerScore,
                   double weightedScore,
-                  int confidence) {
+                  Integer confidence) {
     }
 }

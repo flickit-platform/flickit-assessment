@@ -14,7 +14,8 @@ public class QuestionScoreMother {
             "Yes",
             false,
             score,
-            weight * score);
+            weight * score,
+            1);
     }
 
     public static GetAttributeScoreDetailUseCase.QuestionScore questionWithoutAnswer(int weight) {
@@ -27,7 +28,8 @@ public class QuestionScoreMother {
             null,
             false,
             null,
-            0.0);
+            0.0,
+            1);
     }
 
     public static GetAttributeScoreDetailUseCase.QuestionScore questionMarkedAsNotApplicable() {
@@ -40,6 +42,7 @@ public class QuestionScoreMother {
             null,
             true,
             null,
-            0.0);
+            0.0,
+            1);
     }
 }
