@@ -12,13 +12,8 @@ import java.util.List;
 @Jacksonized
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class QuestionDslModel extends BaseDslModel {
+public class AnswerRangeDslModel extends BaseDslModel {
 
-    String questionnaireCode;
-    List<QuestionImpactDslModel> questionImpacts;
-    @JsonProperty("answers")
+    @JsonProperty("options")
     List<AnswerOptionDslModel> answerOptions;
-    String answerRangeCode;
-    boolean mayNotBeApplicable;
-    boolean advisable;
 }

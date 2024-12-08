@@ -20,4 +20,5 @@ public class CreateKitPersisterContext {
     public static final String KEY_QUESTIONNAIRES = "QUESTIONNAIRES";
     public static final String KEY_SUBJECTS = "SUBJECTS";
     public static final String KEY_ATTRIBUTES = "ATTRIBUTES";
+    public static final String KEY_ANSWER_RANGES = "ANSWER_RANGES";
 }

@@ -34,6 +34,10 @@ public class QuestionMother {
     }
 
     public static Question createQuestion(Long answerRangeId) {
+        return createQuestion(answerRangeId, 1L);
+    }
+
+    public static Question createQuestion(Long answerRangeId, Long questionnaireId) {
         return new Question(
             id++,
             "code",
@@ -43,7 +47,7 @@ public class QuestionMother {
             true,
             true,
             answerRangeId,
-            1L,
+            questionnaireId,
             LocalDateTime.now(),
             LocalDateTime.now()
         );

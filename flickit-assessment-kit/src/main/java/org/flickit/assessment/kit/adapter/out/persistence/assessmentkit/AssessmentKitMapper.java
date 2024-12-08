@@ -69,6 +69,7 @@ public class AssessmentKitMapper {
             null,
             null,
             null,
+            null,
             entity.getKitVersionId());
     }
 
@@ -85,6 +86,7 @@ public class AssessmentKitMapper {
             entity.getPublished(),
             entity.getIsPrivate(),
             entity.getExpertGroupId(),
+            null,
             null,
             null,
             null,

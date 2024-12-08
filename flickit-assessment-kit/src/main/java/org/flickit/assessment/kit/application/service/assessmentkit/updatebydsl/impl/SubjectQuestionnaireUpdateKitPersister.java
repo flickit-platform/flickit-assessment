@@ -36,7 +36,7 @@ public class SubjectQuestionnaireUpdateKitPersister implements UpdateKitPersiste
 
     @Override
     public int order() {
-        return 6;
+        return 7;
     }
 
     @Override

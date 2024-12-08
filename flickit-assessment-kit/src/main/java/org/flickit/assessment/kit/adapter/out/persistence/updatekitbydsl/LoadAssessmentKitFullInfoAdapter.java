@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
@@ -16,6 +18,7 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaReposit
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRangeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper;
@@ -51,41 +54,52 @@ public class LoadAssessmentKitFullInfoAdapter implements
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
+    private final AnswerRangeJpaRepository answerRangeRepository;
 
     @Override
     public AssessmentKit load(Long kitId) {
         AssessmentKitJpaEntity entity = repository.findById(kitId).orElseThrow(
             () -> new ResourceNotFoundException(KIT_ID_NOT_FOUND));
-        Long kitVersionId = entity.getKitVersionId();
+        Long activeVersionId = entity.getKitVersionId();
 
-        List<Subject> subjects = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+        List<Subject> subjects = subjectRepository.findAllByKitVersionIdOrderByIndex(activeVersionId).stream()
             .map(e -> {
-                List<Attribute> attributes = attributeRepository.findAllBySubjectIdAndKitVersionId(e.getId(), kitVersionId).stream()
+                List<Attribute> attributes = attributeRepository.findAllBySubjectIdAndKitVersionId(e.getId(), activeVersionId).stream()
                     .map(AttributeMapper::mapToDomainModel)
                     .toList();
                 return SubjectMapper.mapToDomainModel(e, attributes);})
             .toList();
 
-        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+        List<MaturityLevel> levels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(activeVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
-        setLevelCompetences(levels, kitVersionId);
+        setLevelCompetences(levels, activeVersionId);
 
-        List<Question> questions = questionRepository.findAllByKitVersionId(kitVersionId).stream()
+        List<Question> questions = questionRepository.findAllByKitVersionId(activeVersionId).stream()
             .map(QuestionMapper::mapToDomainModel)
             .toList();
 
         Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToAnswerOptionsMap = answerOptionRepository
-            .findAllByKitVersionId(kitVersionId, Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
+            .findAllByKitVersionId(activeVersionId, Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
             .collect(Collectors.groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, LinkedHashMap::new, Collectors.toList()));
 
-        setQuestionImpacts(questions, kitVersionId, answerRangeIdToAnswerOptionsMap);
+        setQuestionImpacts(questions, activeVersionId, answerRangeIdToAnswerOptionsMap);
         setQuestionOptions(questions, answerRangeIdToAnswerOptionsMap);
 
-        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+        List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(activeVersionId).stream()
             .map(QuestionnaireMapper::mapToDomainModel)
             .toList();
         setQuestions(questionnaires, questions);
+
+        List<AnswerRange> reusableAnswerRanges = answerRangeRepository.findAllByKitVersionId(activeVersionId).stream()
+            .filter(AnswerRangeJpaEntity::isReusable)
+            .map(a -> {
+                var options = answerRangeIdToAnswerOptionsMap.get(a.getId()).stream()
+                    .map(AnswerOptionMapper::mapToDomainModel)
+                    .toList();
+                return AnswerRangeMapper.toDomainModel(a, options);
+            })
+            .toList();
 
         return new AssessmentKit(
             kitId,
@@ -101,7 +115,8 @@ public class LoadAssessmentKitFullInfoAdapter implements
             subjects,
             levels,
             questionnaires,
-            kitVersionId);
+            reusableAnswerRanges,
+            activeVersionId);
     }
 
     private void setLevelCompetences(List<MaturityLevel> levels, Long kitVersionId) {
