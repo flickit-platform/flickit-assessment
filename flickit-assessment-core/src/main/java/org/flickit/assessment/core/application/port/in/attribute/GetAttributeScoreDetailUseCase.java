@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAttributeScoreDetailUseCase {
 
-    Result getAttributeScoreDetail(Param param);
+    PaginatedResponse<Result> getAttributeScoreDetail(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -75,10 +76,7 @@ public interface GetAttributeScoreDetailUseCase {
     }
 
     record Result(double maxPossibleScore, double gainedScore, double gainedScorePercentage,
-                  int questionsCount, List<Questionnaire> questionnaires) {
-    }
-
-    record Questionnaire(String title, List<QuestionScore> questionScores) {
+                  int questionsCount, List<QuestionScore> questionScores) {
     }
 
     record QuestionScore(int questionIndex,
