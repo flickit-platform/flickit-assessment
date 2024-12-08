@@ -1,9 +1,9 @@
 package org.flickit.assessment.core.application.port.out.attribute;
 
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface LoadAttributeScoreDetailPort {
@@ -18,8 +18,19 @@ public interface LoadAttributeScoreDetailPort {
      * The list is ordered by questionnaireTitle and questionIndex.
      * @throws ResourceNotFoundException if the assessment result is not found.
      */
-    List<GetAttributeScoreDetailUseCase.Questionnaire> loadScoreDetail(
+    PaginatedResponse<Result> loadScoreDetail(
         UUID assessmentId,
         long attributeId,
         long maturityLevelId);
+
+    record Result(String questionnaireTitle,
+                  String questionTitle,
+                  int index,
+                  String answer,
+                  Boolean answerIsNotApplicable,
+                  int questionWeight,
+                  Double answerScore,
+                  double weightedScore,
+                  int confidence) {
+    }
 }
