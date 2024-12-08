@@ -120,6 +120,6 @@ public class SubjectValue {
                 sum.add(qav.getAttribute().getWeight());
             }
         }
-        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
+        return sum.getValue() == 0 ? 0 : weightedSum.getValue() / sum.getValue();
     }
 }

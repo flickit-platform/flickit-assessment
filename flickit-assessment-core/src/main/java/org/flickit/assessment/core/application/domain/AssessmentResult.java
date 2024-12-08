@@ -141,6 +141,6 @@ public class AssessmentResult {
                 weightedSum.add(x.getWeightedConfidenceValue());
                 sum.add(x.getAttribute().getWeight());
             });
-        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
+        return sum.getValue() == 0 ? 0 : weightedSum.getValue() / sum.getValue();
     }
 }
