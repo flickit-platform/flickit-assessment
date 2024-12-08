@@ -12,7 +12,6 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.crud.Sort;
 import org.flickit.assessment.common.validation.EnumValue;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -65,10 +64,6 @@ public interface GetAttributeScoreDetailUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-    }
-
-    record Result(double maxPossibleScore, double gainedScore, double gainedScorePercentage,
-                  int questionsCount, List<QuestionScore> questionScores) {
     }
 
     record QuestionScore(String questionnaireTitle,
