@@ -51,8 +51,8 @@ public class AttributePersistenceJpaAdapter implements
             items,
             pageRequest.getPageNumber(),
             pageRequest.getPageSize(),
-            param.sort().getTitle(),
             param.order().getTitle(),
+            param.sort().getTitle(),
             (int) pageResult.getTotalElements()
         );
     }

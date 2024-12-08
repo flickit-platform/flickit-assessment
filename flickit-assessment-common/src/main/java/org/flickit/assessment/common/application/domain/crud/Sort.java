@@ -8,11 +8,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Sort {
-    ASC("asc"),
-    DESC("desc");
+    QUESTIONNAIRE_TITLE("questionnaireTitle"),
+    WEIGHT("weight" ),
+    SCORE("score" ),
+    FINAL_SCORE("finalScore"  ),
+    CONFIDENCE("confidence"  ),;
 
     private final String title;
 
-    public static final Sort DEFAULT = ASC;
+    public static final Sort DEFAULT = WEIGHT;
 }
 
