@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
@@ -31,12 +30,12 @@ public class AttributePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public PaginatedResponse<LoadAttributeScoreDetailPort.Result> loadScoreDetail(UUID assessmentId, long attributeId, long maturityLevelId) {
-        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+    public PaginatedResponse<LoadAttributeScoreDetailPort.Result> loadScoreDetail(LoadAttributeScoreDetailPort.Param param) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
         var pageRequest = PageRequest.of(0, 100, Sort.Direction.DESC, "questionIndex");
-        var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId, pageRequest);
+        var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), param.attributeId(), param.maturityLevelId(), pageRequest);
 
         var items =  pageResult.getContent().stream()
             .map(view -> new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireTitle(),

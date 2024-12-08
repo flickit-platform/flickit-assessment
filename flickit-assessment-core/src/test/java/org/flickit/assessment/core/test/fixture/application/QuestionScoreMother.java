@@ -6,6 +6,7 @@ public class QuestionScoreMother {
 
     public static GetAttributeScoreDetailUseCase.QuestionScore questionWithScore(int weight, double score) {
         return new GetAttributeScoreDetailUseCase.QuestionScore(
+            "title",
             1,
             "Do you have CI/CD?",
             weight,
@@ -18,6 +19,7 @@ public class QuestionScoreMother {
 
     public static GetAttributeScoreDetailUseCase.QuestionScore questionWithoutAnswer(int weight) {
         return new GetAttributeScoreDetailUseCase.QuestionScore(
+            "title",
             1,
             "Do you have CI/CD?",
             weight,
@@ -30,6 +32,7 @@ public class QuestionScoreMother {
 
     public static GetAttributeScoreDetailUseCase.QuestionScore questionMarkedAsNotApplicable() {
         return new GetAttributeScoreDetailUseCase.QuestionScore(
+            "title",
             1,
             "Do you have CI/CD?",
             1,

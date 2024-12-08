@@ -18,7 +18,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAttributeScoreDetailUseCase {
 
-    PaginatedResponse<Result> getAttributeScoreDetail(Param param);
+    PaginatedResponse<QuestionScore> getAttributeScoreDetail(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -79,7 +79,8 @@ public interface GetAttributeScoreDetailUseCase {
                   int questionsCount, List<QuestionScore> questionScores) {
     }
 
-    record QuestionScore(int questionIndex,
+    record QuestionScore(String questionnaireTitle,
+                         int questionIndex,
                          String questionTitle,
                          int questionWeight,
                          Integer answerOptionIndex,

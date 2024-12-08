@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeS
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
@@ -23,17 +24,23 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
-    public PaginatedResponse<Result> getAttributeScoreDetail(Param param) {
+    public PaginatedResponse<QuestionScore> getAttributeScoreDetail(Param param) {
         //checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
         var result = loadAttributeScoreDetailPort.loadScoreDetail(
-            param.getAssessmentId(),
-            param.getAttributeId(),
-            param.getMaturityLevelId());
+            toParam(
+                param.getAssessmentId(),
+                param.getAttributeId(),
+                param.getMaturityLevelId(),
+                param.getSort(),
+                param.getOrder(),
+                param.getSize(),
+                param.getPage()
+            )
+        );
 
         double maxPossibleScore = 0.0;
         double gainedScore = 0.0;
-
 
         for (LoadAttributeScoreDetailPort.Result qs : result.getItems()) {
             if (Boolean.TRUE.equals(qs.answerScore()))
@@ -44,8 +51,23 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
         }
 
         double gainedScorePercentage = maxPossibleScore > 0 ? gainedScore / maxPossibleScore : 0.0;
-        //return new Result(maxPossibleScore, gainedScore, gainedScorePercentage, result.getTotal(), questionnaires);
-        return null;
+        var items = result.getItems().stream().map(this::toQuestionScore).toList();
+        return new PaginatedResponse<>(items, result.getPage(), result.getSize(), result.getSort(), result.getOrder(), result.getTotal());
+    }
+
+    private QuestionScore toQuestionScore(LoadAttributeScoreDetailPort.Result item) {
+        return new QuestionScore(item.questionnaireTitle(), item.index(), item.questionTitle(), item.questionWeight(), item.index(), item.answer(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore());
+    }
+
+    private LoadAttributeScoreDetailPort.Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, int size, int page) {
+        return new LoadAttributeScoreDetailPort.Param(
+            assessmentId,
+            attributeId,
+            maturityLevelId,
+            sort,
+            order,
+            size,
+            page);
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {
