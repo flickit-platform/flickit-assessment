@@ -7,7 +7,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.crud.Sort;
 import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.List;
@@ -34,11 +36,11 @@ public interface GetAttributeScoreDetailUseCase {
         Long maturityLevelId;
 
         @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_ORDER_NOT_NULL)
-        @EnumValue(enumClass = OrderEnum.class, message = GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID)
+        @EnumValue(enumClass = Order.class, message = GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID)
         String order;
 
         @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_NOT_NULL)
-        @EnumValue(enumClass = SortEnum.class, message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID)
+        @EnumValue(enumClass = Sort.class, message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID)
         String sort;
 
         @Min(value = 1, message = GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MIN)
@@ -56,23 +58,13 @@ public interface GetAttributeScoreDetailUseCase {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
-            this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : SortEnum.DEFAULT.name();
-            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : OrderEnum.DEFAULT.name();
+            this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : Sort.DEFAULT.name();
+            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DEFAULT.name();
             this.size = size;
             this.page = page;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-    }
-
-    enum SortEnum {
-        ASC, DESC;
-        public static final SortEnum DEFAULT = ASC;
-    }
-
-    enum OrderEnum {
-        QUESTIONNAIRE_TITLE, WEIGHT, SCORE, FINAL_SCORE, CONFIDENCE;
-        public static final OrderEnum DEFAULT = WEIGHT;
     }
 
     record Result(double maxPossibleScore, double gainedScore, double gainedScorePercentage,
