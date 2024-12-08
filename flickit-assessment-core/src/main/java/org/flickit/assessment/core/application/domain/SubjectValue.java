@@ -122,4 +122,8 @@ public class SubjectValue {
         }
         return sum.getValue() == 0 ? 0 : weightedSum.getValue() / sum.getValue();
     }
+
+    public Double getWeightedConfidenceValue() {
+        return confidenceValue * subject.getWeight();
+    }
 }

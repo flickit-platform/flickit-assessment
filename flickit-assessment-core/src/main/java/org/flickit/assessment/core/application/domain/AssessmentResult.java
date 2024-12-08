@@ -121,7 +121,7 @@ public class AssessmentResult {
 
     public Double calculateConfidenceValue() {
         calculateSubjectValuesAndSetConfidenceValue();
-        return calculateWeightedMeanOfAttributeConfidenceValues();
+        return calculateWeightedMeanOfSubjectConfidenceValues();
     }
 
     private void calculateSubjectValuesAndSetConfidenceValue() {
@@ -131,15 +131,14 @@ public class AssessmentResult {
         });
     }
 
-    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
+    private Double calculateWeightedMeanOfSubjectConfidenceValues() {
         MutableDouble weightedSum = new MutableDouble();
         MutableDouble sum = new MutableDouble();
         subjectValues.stream()
-            .flatMap(x -> x.getAttributeValues().stream())
             .filter(x -> x.getConfidenceValue() != null)
             .forEach(x -> {
                 weightedSum.add(x.getWeightedConfidenceValue());
-                sum.add(x.getAttribute().getWeight());
+                sum.add(x.getSubject().getWeight());
             });
         return sum.getValue() == 0 ? 0 : weightedSum.getValue() / sum.getValue();
     }
