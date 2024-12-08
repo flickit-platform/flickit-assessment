@@ -2,13 +2,13 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
@@ -23,10 +23,10 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
-    public Result getAttributeScoreDetail(Param param) {
-        checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
+    public PaginatedResponse<Result> getAttributeScoreDetail(Param param) {
+        //checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        List<Questionnaire> questionnaires = loadAttributeScoreDetailPort.loadScoreDetail(
+        var result = loadAttributeScoreDetailPort.loadScoreDetail(
             param.getAssessmentId(),
             param.getAttributeId(),
             param.getMaturityLevelId());
@@ -34,12 +34,9 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
         double maxPossibleScore = 0.0;
         double gainedScore = 0.0;
 
-        List<QuestionScore> questionScores = questionnaires.stream()
-            .flatMap(a -> a.questionScores().stream())
-            .toList();
 
-        for (QuestionScore qs : questionScores) {
-            if (Boolean.TRUE.equals(qs.answerIsNotApplicable()))
+        for (LoadAttributeScoreDetailPort.Result qs : result.getItems()) {
+            if (Boolean.TRUE.equals(qs.answerScore()))
                 continue;
             maxPossibleScore += qs.questionWeight();
             if (qs.answerScore() != null)
@@ -47,7 +44,8 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
         }
 
         double gainedScorePercentage = maxPossibleScore > 0 ? gainedScore / maxPossibleScore : 0.0;
-        return new Result(maxPossibleScore, gainedScore, gainedScorePercentage, questionScores.size(), questionnaires);
+        //return new Result(maxPossibleScore, gainedScore, gainedScorePercentage, result.getTotal(), questionnaires);
+        return null;
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {

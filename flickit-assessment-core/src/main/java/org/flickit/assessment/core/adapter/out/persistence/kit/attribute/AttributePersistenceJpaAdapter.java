@@ -1,23 +1,19 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.QuestionScore;
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Questionnaire;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
-import org.flickit.assessment.data.jpa.kit.attribute.ImpactFullQuestionsView;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,34 +31,33 @@ public class AttributePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public List<Questionnaire> loadScoreDetail(UUID assessmentId, long attributeId, long maturityLevelId) {
+    public PaginatedResponse<LoadAttributeScoreDetailPort.Result> loadScoreDetail(UUID assessmentId, long attributeId, long maturityLevelId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
         var pageRequest = PageRequest.of(0, 100, Sort.Direction.DESC, "questionIndex");
-        var questionsView = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId, pageRequest);
+        var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId, pageRequest);
 
-        return questionsView.stream()
-            .collect(Collectors.groupingBy(ImpactFullQuestionsView::getQuestionnaireTitle))
-            .entrySet().stream()
-            .map(entry -> {
-                String questionnaireTitle = entry.getKey();
-                List<QuestionScore> questionScores = entry.getValue().stream()
-                    .map(view -> new QuestionScore(
-                        view.getQuestionIndex(),
-                        view.getQuestionTitle(),
-                        view.getQuestionImpact().getWeight(),
-                        view.getOptionIndex(),
-                        view.getOptionTitle(),
-                        view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
-                        getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
-                        view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOptionValue()) * view.getQuestionImpact().getWeight()
-                    ))
-                    .toList();
-                return new Questionnaire(questionnaireTitle, questionScores);
-            })
-            .sorted(Comparator.comparing(Questionnaire::title))
-            .toList();
+        var items =  pageResult.getContent().stream()
+            .map(view -> new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireTitle(),
+                view.getQuestionTitle(),
+                view.getQuestionIndex(),
+                view.getOptionTitle(),
+                true, //TODO: correct it
+                view.getQuestionImpact().getWeight(),
+                getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
+                view.getOptionImpact() == null ? 0 : getValue(view.getOptionImpact(), view.getOptionValue()) * view.getQuestionImpact().getWeight(),
+                1)) //TODO: correct it
+            .collect(Collectors.toList());
+
+        return new PaginatedResponse<>(
+            items,
+            pageRequest.getPageNumber(),
+            pageRequest.getPageSize(),
+            "ASC",
+            "questionIndex",
+            (int) pageResult.getTotalElements()
+        );
     }
 
     private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
