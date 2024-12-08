@@ -1,13 +1,10 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.impl;
 
 import org.flickit.assessment.kit.application.domain.AnswerOption;
-import org.flickit.assessment.kit.application.domain.AnswerRange;
-import org.flickit.assessment.kit.application.domain.dsl.AnswerRangeDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext;
-import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.AnswerOptionDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.AnswerRangeDslModelMother;
 import org.junit.jupiter.api.Test;
@@ -18,14 +15,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AnswerRangeCreateKitPersisterTest {
+class AnswerRangeCreateKitPersisterTest {
 
     @InjectMocks
     private AnswerRangeCreateKitPersister persister;

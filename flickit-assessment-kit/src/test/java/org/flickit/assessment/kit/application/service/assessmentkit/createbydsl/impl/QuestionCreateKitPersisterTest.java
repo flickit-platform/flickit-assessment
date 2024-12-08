@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.impl;
 
-import org.flickit.assessment.kit.application.domain.*;
+import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
@@ -10,7 +10,8 @@ import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPo
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext;
 import org.flickit.assessment.kit.test.fixture.application.*;
-import org.flickit.assessment.kit.test.fixture.application.dsl.*;
+import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
+import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,13 +21,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_ANSWER_RANGES;
+import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_MATURITY_LEVELS;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_ATTRIBUTES;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionImpactMother.createAnswerOptionImpact;
@@ -37,6 +39,8 @@ import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelM
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.AnswerOptionDslModelMother.answerOptionDslModel;
+import static org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother.questionDslModel;
+import static org.flickit.assessment.kit.test.fixture.application.dsl.QuestionImpactDslModelMother.questionImpactDslModel;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -75,7 +79,7 @@ class QuestionCreateKitPersisterTest {
 
     @Test
     void testPersist_ValidInputs_SaveQuestionAndItsRelatedEntities() {
-        Long kitVersionId = 1L;
+        long kitVersionId = 1L;
         long answerRangeId = 1L;
         UUID currentUserId = UUID.randomUUID();
 
@@ -100,52 +104,26 @@ class QuestionCreateKitPersisterTest {
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = QuestionImpactDslModelMother.questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = QuestionDslModelMother.questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1, List.of(dslImpact), dslAnswerOptionList, null, Boolean.FALSE, Boolean.TRUE);
+        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1,
+            List.of(dslImpact), dslAnswerOptionList, null, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslModel = AssessmentKitDslModel.builder()
             .questions(List.of(dslQuestion))
             .build();
 
-        var createQuestionParam = new CreateQuestionPort.Param(
-            dslQuestion.getCode(),
-            dslQuestion.getTitle(),
-            dslQuestion.getIndex(),
-            dslQuestion.getDescription(),
-            dslQuestion.isMayNotBeApplicable(),
-            dslQuestion.isAdvisable(),
-            kitVersionId,
-            questionnaire.getId(),
-            answerRangeId,
-            currentUserId
-        );
-
         var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
 
         when(createAnswerRangePort.persist(createAnswerRangeParam)).thenReturn(answerRangeId);
-        when(createQuestionPort.persist(createQuestionParam)).thenReturn(question.getId());
+        when(createQuestionPort.persist(any())).thenReturn(question.getId());
         var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), answerRangeId, OPTION_VALUE1, kitVersionId, currentUserId);
         var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), answerRangeId, OPTION_VALUE2, kitVersionId, currentUserId);
         when(createAnswerOptionPort.persist(createOption1Param)).thenReturn(answerOption1.getId());
         when(createAnswerOptionPort.persist(createOption2Param)).thenReturn(answerOption2.getId());
 
-        var createImpact = new QuestionImpact(
-            null,
-            attribute.getId(),
-            levelTwo.getId(),
-            dslImpact.getWeight(),
-            kitVersionId,
-            question.getId(),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            currentUserId,
-            currentUserId
-        );
-        when(createQuestionImpactPort.persist(createImpact)).thenReturn(impact.getId());
+        when(createQuestionImpactPort.persist(any())).thenReturn(impact.getId());
 
-        var createOptionImpact1Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact1.getOptionId(), optionImpact1.getValue(), kitVersionId, currentUserId);
-        var createOptionImpact2Param = new CreateAnswerOptionImpactPort.Param(impact.getId(), optionImpact2.getOptionId(), optionImpact2.getValue(), kitVersionId, currentUserId);
-        when(createAnswerOptionImpactPort.persist(createOptionImpact1Param)).thenReturn(optionImpact1.getId());
-        when(createAnswerOptionImpactPort.persist(createOptionImpact2Param)).thenReturn(optionImpact2.getId());
+        when(createAnswerOptionImpactPort.persist(any())).thenReturn(optionImpact1.getId());
+        when(createAnswerOptionImpactPort.persist(any())).thenReturn(optionImpact2.getId());
 
         CreateKitPersisterContext context = new CreateKitPersisterContext();
         context.put(KEY_QUESTIONNAIRES, Map.of(questionnaire.getCode(), questionnaire.getId()));
@@ -154,47 +132,58 @@ class QuestionCreateKitPersisterTest {
 
         persister.persist(context, dslModel, kitVersionId, currentUserId);
 
-        // TODO: assert?
+        verify(createQuestionPort).persist(createQuestionParamCaptor.capture());
+        CreateQuestionPort.Param createQuestionPortParam = createQuestionParamCaptor.getValue();
+        assertCreateQuestionPortParam(createQuestionPortParam, dslQuestion, kitVersionId, questionnaire.getId(), answerRangeId, currentUserId);
+
+        verify(createQuestionImpactPort).persist(questionImpactCaptor.capture());
+        QuestionImpact questionImpactCaptorValue = questionImpactCaptor.getValue();
+        assertCreateQuestionImpactPortParam(questionImpactCaptorValue, attribute.getId(), levelTwo.getId(),
+            dslImpact.getWeight(), kitVersionId, question.getId(), currentUserId);
+
+        verify(createAnswerOptionImpactPort, times(2)).persist(createAnswerOptionImpactParamCaptor.capture());
+        List<CreateAnswerOptionImpactPort.Param> allValues = createAnswerOptionImpactParamCaptor.getAllValues();
+        assertCreateAnswerOptionPortParam(allValues, impact, kitVersionId, currentUserId);
     }
 
     @Test
-    void testQuestionCreateKitPersister_WhenQuestionDslHasAnswerRange_ThenSaveQuestion() {
+    void testPersist_WhenQuestionDslHasAnswerRange_ThenSaveQuestion() {
         long kitVersionId = 1;
         UUID currentUserId = UUID.randomUUID();
 
-        Questionnaire questionnaire = QuestionnaireMother.questionnaireWithTitle("devops");
-        AnswerRange answerRange = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions(1);
-        Question question = QuestionMother.createQuestion(answerRange.getId(), questionnaire.getId());
-        Attribute attr = AttributeMother.attributeWithTitle("flexibility");
-        MaturityLevel mLevel = MaturityLevelMother.levelOne();
-        QuestionImpact qImpact = createQuestionImpact(attr.getId(), mLevel.getId(), 1, question.getId());
-        AnswerOption answerOption1 = answerRange.getAnswerOptions().getFirst();
-        AnswerOption answerOption2 = answerRange.getAnswerOptions().getLast();
-        AnswerOptionImpact aoi1 = AnswerOptionImpactMother.createAnswerOptionImpact(answerOption1.getId(), answerOption1.getValue());
-        AnswerOptionImpact aoi2 = AnswerOptionImpactMother.createAnswerOptionImpact(answerOption2.getId(), answerOption2.getValue());
-        qImpact.setOptionImpacts(List.of(aoi1, aoi2));
-        question.setImpacts(List.of(qImpact));
+        var questionnaire = QuestionnaireMother.questionnaireWithTitle("devops");
+        var answerRange = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions(1);
+        var question = QuestionMother.createQuestion(answerRange.getId(), questionnaire.getId());
+        var attribute = AttributeMother.attributeWithTitle("flexibility");
+        var maturityLevel = MaturityLevelMother.levelOne();
+        var impact = createQuestionImpact(attribute.getId(), maturityLevel.getId(), 1, question.getId());
+        var answerOption1 = answerRange.getAnswerOptions().getFirst();
+        var answerOption2 = answerRange.getAnswerOptions().getLast();
+        var aoi1 = createAnswerOptionImpact(answerOption1.getId(), answerOption1.getValue());
+        var aoi2 = createAnswerOptionImpact(answerOption2.getId(), answerOption2.getValue());
+        impact.setOptionImpacts(List.of(aoi1, aoi2));
+        question.setImpacts(List.of(impact));
         question.setOptions(null);
 
-        MaturityLevelDslModel maturityLevelDslModel = MaturityLevelDslModelMother.domainToDslModel(mLevel);
+        MaturityLevelDslModel maturityLevelDslModel = MaturityLevelDslModelMother.domainToDslModel(maturityLevel);
         Map<Integer, Double> optionIndexToValue = new HashMap<>();
         optionIndexToValue.put(answerOption1.getIndex(), answerOption1.getValue());
         optionIndexToValue.put(answerOption2.getIndex(), answerOption2.getValue());
-        QuestionImpactDslModel questionImpactDslModel = QuestionImpactDslModelMother.questionImpactDslModel(attr.getCode(),
+        QuestionImpactDslModel dslImpact = questionImpactDslModel(attribute.getCode(),
             maturityLevelDslModel,
             null,
             optionIndexToValue,
-            qImpact.getWeight());
+            impact.getWeight());
 
         QuestionDslModel questionDslModel = QuestionDslModelMother.domainToDslModel(question,
-            b -> b.questionImpacts(List.of(questionImpactDslModel))
+            b -> b.questionImpacts(List.of(dslImpact))
                 .answerRangeCode(answerRange.getCode())
                 .questionnaireCode(questionnaire.getCode()));
 
         CreateKitPersisterContext context = new CreateKitPersisterContext();
         context.put(KEY_QUESTIONNAIRES, Map.of(questionnaire.getCode(), questionnaire.getId()));
-        context.put(KEY_ATTRIBUTES, Map.of(attr.getCode(), attr.getId()));
-        context.put(KEY_MATURITY_LEVELS, Map.of(mLevel.getCode(), mLevel.getId()));
+        context.put(KEY_ATTRIBUTES, Map.of(attribute.getCode(), attribute.getId()));
+        context.put(KEY_MATURITY_LEVELS, Map.of(maturityLevel.getCode(), maturityLevel.getId()));
         context.put(KEY_ANSWER_RANGES, Map.of(answerRange.getCode(), answerRange.getId()));
 
         AssessmentKitDslModel kitDslModel = AssessmentKitDslModel.builder()
@@ -204,7 +193,7 @@ class QuestionCreateKitPersisterTest {
         when(createQuestionPort.persist(any(CreateQuestionPort.Param.class))).thenReturn(question.getId());
         when(loadAnswerOptionsPort.loadByRangeId(answerRange.getId(), kitVersionId))
             .thenReturn(List.of(answerOption1, answerOption2));
-        when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(qImpact.getId());
+        when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(impact.getId());
         when(createAnswerOptionImpactPort.persist(any(CreateAnswerOptionImpactPort.Param.class))).thenReturn(anyLong());
 
         persister.persist(context, kitDslModel, kitVersionId, currentUserId);
@@ -212,39 +201,55 @@ class QuestionCreateKitPersisterTest {
         verifyNoInteractions(createAnswerRangePort, createAnswerOptionPort);
 
         verify(createQuestionPort).persist(createQuestionParamCaptor.capture());
-        CreateQuestionPort.Param createQuestionPortParam = createQuestionParamCaptor.getValue();
-        assertEquals(questionDslModel.getCode(), createQuestionPortParam.code());
-        assertEquals(questionDslModel.getTitle(), createQuestionPortParam.title());
-        assertEquals(questionDslModel.getIndex(), createQuestionPortParam.index());
-        assertEquals(questionDslModel.getDescription(), createQuestionPortParam.hint());
-        assertEquals(questionDslModel.isMayNotBeApplicable(), createQuestionPortParam.mayNotBeApplicable());
-        assertEquals(questionDslModel.isAdvisable(), createQuestionPortParam.advisable());
-        assertEquals(kitVersionId, createQuestionPortParam.kitVersionId());
-        assertEquals(questionnaire.getId(), createQuestionPortParam.questionnaireId());
-        assertEquals(answerRange.getId(), createQuestionPortParam.answerRangeId());
-        assertEquals(currentUserId, createQuestionPortParam.createdBy());
+        CreateQuestionPort.Param createQuestionParamCaptorValue = createQuestionParamCaptor.getValue();
+        assertCreateQuestionPortParam(createQuestionParamCaptorValue, questionDslModel, kitVersionId, questionnaire.getId(), answerRange.getId(), currentUserId);
 
         verify(createQuestionImpactPort).persist(questionImpactCaptor.capture());
         QuestionImpact questionImpactCaptorValue = questionImpactCaptor.getValue();
-        assertNull(questionImpactCaptorValue.getId());
-        assertEquals(attr.getId(), questionImpactCaptorValue.getAttributeId());
-        assertEquals(mLevel.getId(), questionImpactCaptorValue.getMaturityLevelId());
-        assertEquals(questionImpactDslModel.getWeight(), questionImpactCaptorValue.getWeight());
-        assertEquals(kitVersionId, questionImpactCaptorValue.getKitVersionId());
-        assertEquals(question.getId(), questionImpactCaptorValue.getQuestionId());
-        assertNotNull(questionImpactCaptorValue.getCreationTime());
-        assertNotNull(questionImpactCaptorValue.getLastModificationTime());
-        assertEquals(currentUserId, questionImpactCaptorValue.getCreatedBy());
-        assertEquals(currentUserId, questionImpactCaptorValue.getLastModifiedBy());
+        assertCreateQuestionImpactPortParam(questionImpactCaptorValue, attribute.getId(), maturityLevel.getId(), dslImpact.getWeight(), kitVersionId, question.getId(), currentUserId);
 
         verify(createAnswerOptionImpactPort, times(2)).persist(createAnswerOptionImpactParamCaptor.capture());
-        List<CreateAnswerOptionImpactPort.Param> allValues = createAnswerOptionImpactParamCaptor.getAllValues();
-        for (int i = 0; i < allValues.size(); i++) {
-            assertEquals(qImpact.getId(), allValues.get(i).questionImpactId());
-            assertEquals(qImpact.getOptionImpacts().get(i).getOptionId(), allValues.get(i).optionId());
-            assertEquals(qImpact.getOptionImpacts().get(i).getValue(), allValues.get(i).value());
-            assertEquals(kitVersionId, allValues.get(i).kitVersionId());
-            assertEquals(currentUserId, allValues.get(i).createdBy());
-        }
+        List<CreateAnswerOptionImpactPort.Param> captorValues = createAnswerOptionImpactParamCaptor.getAllValues();
+        assertCreateAnswerOptionPortParam(captorValues, impact, kitVersionId, currentUserId);
+    }
+
+    private void assertCreateQuestionPortParam(CreateQuestionPort.Param captorValue, QuestionDslModel dslQuestion,
+                                               long kitVersionId, long questionnaireId, long answerRangeId, UUID currentUserId) {
+        assertEquals(dslQuestion.getCode(), captorValue.code());
+        assertEquals(dslQuestion.getTitle(), captorValue.title());
+        assertEquals(dslQuestion.getIndex(), captorValue.index());
+        assertEquals(dslQuestion.getDescription(), captorValue.hint());
+        assertEquals(dslQuestion.isMayNotBeApplicable(), captorValue.mayNotBeApplicable());
+        assertEquals(dslQuestion.isAdvisable(), captorValue.advisable());
+        assertEquals(kitVersionId, captorValue.kitVersionId());
+        assertEquals(questionnaireId, captorValue.questionnaireId());
+        assertEquals(answerRangeId, captorValue.answerRangeId());
+        assertEquals(currentUserId, captorValue.createdBy());
+    }
+
+    private void assertCreateQuestionImpactPortParam(QuestionImpact captorValue, long attributeId, long maturityLevelId,
+                                                     int dslImpactWeight, long kitVersionId,
+                                                     long questionId, UUID currentUserId) {
+        assertNull(captorValue.getId());
+        assertEquals(attributeId, captorValue.getAttributeId());
+        assertEquals(maturityLevelId, captorValue.getMaturityLevelId());
+        assertEquals(dslImpactWeight, captorValue.getWeight());
+        assertEquals(kitVersionId, captorValue.getKitVersionId());
+        assertEquals(questionId, captorValue.getQuestionId());
+        assertNotNull(captorValue.getCreationTime());
+        assertNotNull(captorValue.getLastModificationTime());
+        assertEquals(currentUserId, captorValue.getCreatedBy());
+        assertEquals(currentUserId, captorValue.getLastModifiedBy());
+    }
+
+    private void assertCreateAnswerOptionPortParam(List<CreateAnswerOptionImpactPort.Param> allValues, QuestionImpact qImpact, long kitVersionId, UUID currentUserId) {
+        assertThat(allValues)
+            .zipSatisfy(qImpact.getOptionImpacts(), (param, optionImpact) -> {
+                assertEquals(qImpact.getId(), param.questionImpactId());
+                assertEquals(optionImpact.getOptionId(), param.optionId());
+                assertEquals(optionImpact.getValue(), param.value());
+                assertEquals(kitVersionId, param.kitVersionId());
+                assertEquals(currentUserId, param.createdBy());
+            });
     }
 }
