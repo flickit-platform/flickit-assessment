@@ -22,7 +22,7 @@ public class GetAttributeScoreDetailRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report/attributes/{attributeId}")
-    public ResponseEntity<PaginatedResponse <QuestionScore>> getAttributeScoreDetail(
+    public ResponseEntity<PaginatedResponse<QuestionScore>> getAttributeScoreDetail(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId,
         @RequestParam(value = "maturityLevelId", required = false) Long maturityLevelId,
