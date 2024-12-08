@@ -34,7 +34,7 @@ public class AttributePersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var pageRequest = PageRequest.of(0, 100, Sort.Direction.DESC, "questionIndex");
+        var pageRequest = PageRequest.of(param.page(), param.size(), Sort.Direction.DESC, AnswerJpaEntity.Fields.QUESTION_INDEX);
         var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), param.attributeId(), param.maturityLevelId(), pageRequest);
 
         var items =  pageResult.getContent().stream()
