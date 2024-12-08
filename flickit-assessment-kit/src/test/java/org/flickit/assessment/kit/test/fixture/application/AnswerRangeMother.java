@@ -53,13 +53,17 @@ public class AnswerRangeMother {
         );
     }
 
-    public static AnswerRange createReusableAnswerRangeWithNoOptions() {
+    public static AnswerRange createAnswerRangeWithNoOptions(long id, boolean reusable) {
         return new AnswerRange(
-            id++,
+            id,
             "title" + id,
             "title" + id,
-            true,
+            reusable,
             null
         );
+    }
+
+    public static AnswerRange createReusableAnswerRangeWithNoOptions() {
+        return createAnswerRangeWithNoOptions(id++, true);
     }
 }
