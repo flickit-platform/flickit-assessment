@@ -26,7 +26,7 @@ public class GetAttributeScoreStatsService implements GetAttributeScoreStatsUseC
     public Result getAttributeScoreStats(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        var stats = loadAttributeScoreStatsPort.loadDetails(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId());
+        var stats = loadAttributeScoreStatsPort.loadScoreStats(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId());
 
         double maxPossibleScore = 0.0;
         double gainedScore = 0.0;

@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface LoadAttributeScoreStatsPort {
 
-    List<Result> loadDetails(UUID assessmentId, long attributeId, long maturityLevelId);
+    List<Result> loadScoreStats(UUID assessmentId, long attributeId, long maturityLevelId);
 
     record Result(Long questionId,
                   Double questionWeight,

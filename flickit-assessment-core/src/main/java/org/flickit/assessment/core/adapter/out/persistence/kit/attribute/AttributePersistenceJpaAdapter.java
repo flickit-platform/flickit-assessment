@@ -75,7 +75,7 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadAttributeScoreStatsPort.Result> loadDetails(UUID assessmentId, long attributeId, long maturityLevelId) {
+    public List<LoadAttributeScoreStatsPort.Result> loadScoreStats(UUID assessmentId, long attributeId, long maturityLevelId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND));
 
@@ -86,7 +86,6 @@ public class AttributePersistenceJpaAdapter implements
                 getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
                 view.getAnswer() != null && view.getAnswerIsNotApplicable() != null && view.getAnswer().getIsNotApplicable()))
             .toList();
-
     }
 
     @Override
