@@ -79,7 +79,7 @@ public class AttributePersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND));
 
-        return repository.findDetails(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId)
+        return repository.findScoreStats(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId)
             .stream()
             .map(view -> new LoadAttributeScoreStatsPort.Result(view.getQuestionId(),
                 view.getQuestionWeight(),

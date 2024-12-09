@@ -127,8 +127,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
         """)
-    List<AttributeQuestionView> findDetails(@Param("assessmentResultId") UUID assessmentResultId,
-                                            @Param("kitVersionId") Long kitVersionId,
-                                            @Param("attributeId") Long attributeId,
-                                            @Param("maturityLevelId") Long maturityLevelId);
+    List<AttributeQuestionView> findScoreStats(@Param("assessmentResultId") UUID assessmentResultId,
+                                               @Param("kitVersionId") Long kitVersionId,
+                                               @Param("attributeId") Long attributeId,
+                                               @Param("maturityLevelId") Long maturityLevelId);
 }
