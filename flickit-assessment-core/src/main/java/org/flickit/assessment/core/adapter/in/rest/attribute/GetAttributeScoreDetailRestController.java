@@ -35,7 +35,15 @@ public class GetAttributeScoreDetailRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, Integer size, Integer page, UUID currentUserId) {
-        return new Param(assessmentId, attributeId, maturityLevelId, sort, order, size, page, currentUserId);
+    private Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId,
+                          String sort, String order, Integer size, Integer page, UUID currentUserId) {
+        return new Param(assessmentId,
+            attributeId,
+            maturityLevelId,
+            sort,
+            order,
+            size,
+            page,
+            currentUserId);
     }
 }
