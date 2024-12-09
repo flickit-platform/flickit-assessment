@@ -64,16 +64,6 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
-    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
-        if (answer == null) // if no answer is submitted for the question
-            return 0.0;
-        if(Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
-            return null;
-        if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
-            return 0.0;
-        return getValue(optionImpact, optionValue);
-    }
-
     @Override
     public List<LoadAttributeScoresPort.Result> loadScores(UUID assessmentId, long attributeId, long maturityLevelId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
@@ -88,16 +78,26 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
-    @Override
-    public Attribute load(Long attributeId, Long kitVersionId) {
-        var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
-        return mapToDomainModel(attribute);
+    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
+        if (answer == null) // if no answer is submitted for the question
+            return 0.0;
+        if (Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
+            return null;
+        if (optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
+            return 0.0;
+        return getValue(optionImpact, optionValue);
     }
 
     private Double getValue(AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
         if (optionImpact.getValue() != null)
             return optionImpact.getValue();
         return optionValue != null ? optionValue : 0.0;
+    }
+
+    @Override
+    public Attribute load(Long attributeId, Long kitVersionId) {
+        var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
+        return mapToDomainModel(attribute);
     }
 }

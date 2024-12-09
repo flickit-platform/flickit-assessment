@@ -4,9 +4,9 @@ import org.flickit.assessment.core.application.port.in.attribute.GetAttributeSco
 
 import java.util.List;
 
-record GetAttributeScoreDetailResponseDto(double maxPossibleScore,
-                                          double gainedScore,
-                                          double gainedScorePercentage,
-                                          int questionsCount,
-                                          List<GetAttributeScoreDetailUseCase.Questionnaire> questionnaires) {
+public record GetAttributeScoreDetailResponseDto(double maxPossibleScore,
+                                                 double gainedScore,
+                                                 double gainedScorePercentage,
+                                                 int questionsCount,
+                                                 List<GetAttributeScoreDetailUseCase.Questionnaire> questionnaires) {
 }

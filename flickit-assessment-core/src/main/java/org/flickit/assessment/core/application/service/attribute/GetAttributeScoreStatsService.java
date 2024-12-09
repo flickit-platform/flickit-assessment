@@ -1,13 +1,12 @@
 package org.flickit.assessment.core.application.service.attribute;
 
+import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreStatsPort;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreStatsUseCase;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
-
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreStatsUseCase;
 
 import java.util.UUID;
 

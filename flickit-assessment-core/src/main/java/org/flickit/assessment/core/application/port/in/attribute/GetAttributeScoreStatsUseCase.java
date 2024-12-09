@@ -41,9 +41,6 @@ public interface GetAttributeScoreStatsUseCase {
         }
     }
 
-    record Result(double maxPossibleScore,
-                  double gainedScore,
-                  double gainedScorePercentage,
-                  int questionsCount) {
+    record Result(double maxPossibleScore, double gainedScore, double gainedScorePercentage, int questionsCount) {
     }
 }

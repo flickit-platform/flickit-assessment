@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.attribute;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreStatsUseCase;
-import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreStatsPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -84,17 +85,8 @@ class GetAttributeScoreStatsServiceTest {
         assertNotNull(result);
         assertEquals(0, result.gainedScore());
         assertEquals(0, result.maxPossibleScore());
-    }
-
-    @Test
-    void testGetAttributeScoreStats_InvalidCurrentUser_ThrowsException() {
-        var param = createParam(GetAttributeScoreStatsUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL))
-            .thenReturn(false);
-
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreStats(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        assertEquals(0.0, result.gainedScorePercentage());
+        assertEquals(0, result.questionsCount());
     }
 
     private GetAttributeScoreStatsUseCase.Param createParam(Consumer<GetAttributeScoreStatsUseCase.Param.ParamBuilder> changer) {
