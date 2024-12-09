@@ -110,4 +110,26 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             WHERE at.kitVersionId = :kitVersionId AND qi.id IS NULL
         """)
     List<AttributeJpaEntity> findAllByKitVersionIdAndWithoutImpact(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT
+                qsn.id as questionId,
+                qi.weight as questionWeight,
+                ans as answer,
+                ov as optionImpact,
+                ao.value as optionValue,
+                ans.isNotApplicable as isNotApplicable
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
+            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpactId = qi.id and ov.optionId = ans.answerOptionId AND ov.kitVersionId = qi.kitVersionId
+            WHERE qi.attributeId = :attributeId
+                AND qi.maturityLevelId = :maturityLevelId
+                AND qsn.kitVersionId = :kitVersionId
+        """)
+    List<AttributeQuestionView> findScoreStats(@Param("assessmentResultId") UUID assessmentResultId,
+                                               @Param("kitVersionId") Long kitVersionId,
+                                               @Param("attributeId") Long attributeId,
+                                               @Param("maturityLevelId") Long maturityLevelId);
 }

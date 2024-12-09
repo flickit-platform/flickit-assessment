@@ -1086,6 +1086,40 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Attribute Score Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104/stats?maturityLevelId=1728",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"8280e75b-ed71-4c82-9fac-920c52efb26c",
+								"report",
+								"attributes",
+								"1104",
+								"stats"
+							],
+							"query": [
+								{
+									"key": "maturityLevelId",
+									"value": "1728"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
