@@ -25,7 +25,7 @@ public interface LoadAttributeScoreDetailPort {
                   Boolean answerIsNotApplicable,
                   int questionWeight,
                   Double answerScore,
-                  double weightedScore,
+                  Double weightedScore,
                   Integer confidence) {
     }
 }

@@ -67,7 +67,17 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ov as optionImpact,
                 ao.index as optionIndex,
                 ao.title as optionTitle,
-                ao.value as optionValue
+                ao.value as optionValue,
+                CASE
+                    WHEN ans IS NULL THEN 0.0
+                    WHEN ans.isNotApplicable = true THEN NULL
+                    WHEN ov IS NULL THEN 0.0
+                            ELSE COALESCE(ov.value, COALESCE(ao.value, 0.0))
+                END as answerScore,
+                CASE
+                    WHEN ov IS NULL THEN 0.0
+                    ELSE COALESCE(ov.value, COALESCE(ao.value, 0.0)) * qi.weight
+                END as weightedScore
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
