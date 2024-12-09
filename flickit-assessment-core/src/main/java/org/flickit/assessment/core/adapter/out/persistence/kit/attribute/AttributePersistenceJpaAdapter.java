@@ -75,7 +75,8 @@ public class AttributePersistenceJpaAdapter implements
             case Sort.QUESTIONNAIRE_TITLE -> "qr." + QuestionnaireJpaEntity.Fields.title;
             case Sort.WEIGHT -> "qi." + QuestionImpactJpaEntity.Fields.weight;
             case Sort.CONFIDENCE -> "ans." + AnswerJpaEntity.Fields.confidenceLevelId;
-            default -> QuestionnaireJpaEntity.Fields.title;
+            case Sort.FINAL_SCORE -> "weightedScore";
+            case Sort.SCORE -> "answerScore";
         };
 
         return PageRequest.of(page, size, orderField, sortField);
