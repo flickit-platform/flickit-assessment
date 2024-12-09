@@ -39,8 +39,10 @@ class GetAttributeScoreDetailUseCaseTest {
             () -> createParam(b -> b.sort("invalid_sort")));
         assertThat(throwable).hasMessage("sort: " + GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID);
 
-        assertDoesNotThrow(() -> createParam(b -> b.sort("    asc     ")));
-        assertDoesNotThrow(() -> createParam(b -> b.sort("    DESC     ")));
+        assertDoesNotThrow(() -> createParam(b -> b.sort("    weight     ")));
+        assertDoesNotThrow(() -> createParam(b -> b.sort("    SCORE     ")));
+        assertDoesNotThrow(() -> createParam(b -> b.sort("    FiNal_ScoRe     ")));
+        assertDoesNotThrow(() -> createParam(b -> b.sort("    confIDence     ")));
         var params = assertDoesNotThrow(() -> createParam(b -> b.sort(null)));
         assertEquals(Sort.DEFAULT.name(), params.getSort());
     }
@@ -51,10 +53,9 @@ class GetAttributeScoreDetailUseCaseTest {
             () -> createParam(b -> b.order("invalid_order")));
         assertThat(throwable).hasMessage("order: " + GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID);
 
-        assertDoesNotThrow(() -> createParam(b -> b.order("    weight     ")));
-        assertDoesNotThrow(() -> createParam(b -> b.order("    SCORE     ")));
-        assertDoesNotThrow(() -> createParam(b -> b.order("    FiNal_ScoRe     ")));
-        assertDoesNotThrow(() -> createParam(b -> b.order("    confIDence     ")));
+
+        assertDoesNotThrow(() -> createParam(b -> b.order("    asc     ")));
+        assertDoesNotThrow(() -> createParam(b -> b.order("    DESC     ")));
         var params = assertDoesNotThrow(() -> createParam(b -> b.order(null)));
         assertEquals(Order.DEFAULT.name(), params.getOrder());
     }
@@ -97,8 +98,8 @@ class GetAttributeScoreDetailUseCaseTest {
             .maturityLevelId(1L)
             .size(50)
             .page(0)
-            .sort("asc")
-            .order("weight")
+            .sort("weight")
+            .order("asc")
             .currentUserId(UUID.randomUUID());
     }
 }
