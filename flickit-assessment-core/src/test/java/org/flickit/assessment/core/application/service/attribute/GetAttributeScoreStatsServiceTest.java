@@ -35,24 +35,28 @@ class GetAttributeScoreStatsServiceTest {
     void testGetAttributeScoreStats_ValidParam() {
         var param = createParam(GetAttributeScoreStatsUseCase.Param.ParamBuilder::build);
 
-        List<LoadAttributeScoreStatsPort.Result> mockStats = List.of(
-            new LoadAttributeScoreStatsPort.Result(1L, 5.0, 1.0, false),
-            new LoadAttributeScoreStatsPort.Result(2L, 4.0, 0.5, false),
-            new LoadAttributeScoreStatsPort.Result(3L, 3.0, 0.0, false),
-            new LoadAttributeScoreStatsPort.Result(4L, 3.0, null, false),
-            new LoadAttributeScoreStatsPort.Result(5L, 0.0, null, true)
+        List<LoadAttributeScoresPort.Result> scores = List.of(
+            new LoadAttributeScoresPort.Result(1L, 5, 1.0, false),
+            new LoadAttributeScoresPort.Result(2L, 4, 0.5, false),
+            new LoadAttributeScoresPort.Result(3L, 3, 0.0, false),
+            new LoadAttributeScoresPort.Result(4L, 3, null, false),
+            new LoadAttributeScoresPort.Result(5L, 1, null, true)
         );
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(true);
         when(loadAttributeScoresPort.loadScores(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId())).thenReturn(scores);
 
-        GetAttributeScoreStatsUseCase.Result result = service.getAttributeScoreStats(param);
+        var result = service.getAttributeScoreStats(param);
+
+        var expectedMaxPossibleScore = 5 + 4 + 3 + 3; // Last question is excluded because it's marked as notApplicable.
+        var expectedGainedScore = (5 * 1.0) + (4 * 0.5); // 7.0
+        var expectedGainedScorePercentage = (expectedGainedScore / expectedMaxPossibleScore) * 100;
 
         assertNotNull(result);
-        assertEquals(15.0, result.maxPossibleScore());
-        assertEquals(7.0, result.gainedScore());
-        assertEquals(7.0 / 15.0, result.gainedScorePercentage());
-        assertEquals(5, result.questionsCount());
+        assertEquals(expectedMaxPossibleScore, result.maxPossibleScore());
+        assertEquals(expectedGainedScore, result.gainedScore());
+        assertEquals(expectedGainedScorePercentage, result.gainedScorePercentage());
+        assertEquals(scores.size(), result.questionsCount());
     }
 
     @Test

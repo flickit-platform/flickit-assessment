@@ -37,7 +37,7 @@ public class GetAttributeScoreStatsService implements GetAttributeScoreStatsUseC
             if (result.answerScore() != null)
                 gainedScore += result.questionWeight() * result.answerScore();
         }
-        double gainedScorePercentage = maxPossibleScore > 0 ? gainedScore / maxPossibleScore : 0.0;
+        double gainedScorePercentage = maxPossibleScore > 0 ? (gainedScore / maxPossibleScore) * 100 : 0.0;
 
         return new Result(maxPossibleScore, gainedScore, gainedScorePercentage, stats.size());
     }
