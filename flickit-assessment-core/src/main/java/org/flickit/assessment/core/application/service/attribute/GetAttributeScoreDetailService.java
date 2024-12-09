@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.crud.OrderEnum;
+import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.crud.SortEnum;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -54,8 +54,8 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             assessmentId,
             attributeId,
             maturityLevelId,
-            SortEnum.valueOf(sort),
-            OrderEnum.valueOf(order),
+            Sort.valueOf(sort),
+            Order.valueOf(order),
             size,
             page);
     }

@@ -16,7 +16,7 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
-import org.flickit.assessment.common.application.domain.crud.OrderEnum;
+import org.flickit.assessment.common.application.domain.crud.Order;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
@@ -61,10 +61,10 @@ public class AttributePersistenceJpaAdapter implements
         );
     }
 
-    private PageRequest makePageRequest(int page, int size, Sort sort, OrderEnum order) {
+    private PageRequest makePageRequest(int page, int size, Sort sort, Order order) {
         org.springframework.data.domain.Sort.Direction orderField = switch (order) {
-            case OrderEnum.ASC -> org.springframework.data.domain.Sort.Direction.ASC;
-            case OrderEnum.DESC -> org.springframework.data.domain.Sort.Direction.DESC;
+            case Order.ASC -> org.springframework.data.domain.Sort.Direction.ASC;
+            case Order.DESC -> org.springframework.data.domain.Sort.Direction.DESC;
         };
 
         String sortField = switch (sort) {

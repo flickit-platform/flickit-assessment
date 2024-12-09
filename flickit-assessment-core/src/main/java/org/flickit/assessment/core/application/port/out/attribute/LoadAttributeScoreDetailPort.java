@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.application.port.out.attribute;
 
-import org.flickit.assessment.common.application.domain.crud.OrderEnum;
+import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.crud.Sort;
 
@@ -14,7 +14,7 @@ public interface LoadAttributeScoreDetailPort {
                  long attributeId,
                  long maturityLevelId,
                  Sort sort,
-                 OrderEnum order,
+                 Order order,
                  int size,
                  int page) {}
 

@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.common.application.domain.crud.OrderEnum;
+import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.crud.Sort;
 import org.flickit.assessment.common.validation.EnumValue;
@@ -34,7 +34,7 @@ public interface GetAttributeScoreDetailUseCase {
         @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_MATURITY_LEVEL_ID_NOT_NULL)
         Long maturityLevelId;
 
-        @EnumValue(enumClass = OrderEnum.class, message = GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID)
+        @EnumValue(enumClass = Order.class, message = GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID)
         String order;
 
         @EnumValue(enumClass = Sort.class, message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID)
@@ -56,7 +56,7 @@ public interface GetAttributeScoreDetailUseCase {
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
             this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : Sort.DEFAULT.name();
-            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : OrderEnum.DEFAULT.name();
+            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DEFAULT.name();
             this.size = size != null ? size : 10;
             this.page = page != null ? page : 0;
             this.currentUserId = currentUserId;
