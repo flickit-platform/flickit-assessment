@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.out.attribute.LoadScoreStatsPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreStatsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,18 +20,18 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class GetAttributeScoreStatsService implements GetAttributeScoreStatsUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadScoreStatsPort loadScoreStatsPort;
+    private final LoadAttributeScoreStatsPort loadAttributeScoreStatsPort;
 
     @Override
     public Result getAttributeScoreStats(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        var stats = loadScoreStatsPort.loadDetails(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId());
+        var stats = loadAttributeScoreStatsPort.loadDetails(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId());
 
         double maxPossibleScore = 0.0;
         double gainedScore = 0.0;
 
-        for (LoadScoreStatsPort.Result qs : stats) {
+        for (LoadAttributeScoreStatsPort.Result qs : stats) {
             if (Boolean.TRUE.equals(qs.answerIsNotApplicable()))
                 continue;
             maxPossibleScore += qs.questionWeight();
