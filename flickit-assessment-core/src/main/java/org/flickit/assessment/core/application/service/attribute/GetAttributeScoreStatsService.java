@@ -23,7 +23,7 @@ public class GetAttributeScoreStatsService implements GetAttributeScoreStatsUseC
     private final LoadScoreStatsPort loadScoreStatsPort;
 
     @Override
-    public Result getAttributeScoreStat(Param param) {
+    public Result getAttributeScoreStats(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
         var stats = loadScoreStatsPort.loadDetails(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId());

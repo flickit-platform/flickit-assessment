@@ -25,7 +25,7 @@ public class GetAttributeScoreStatsRestController {
         @PathVariable("attributeId") Long attributeId,
         @RequestParam(value = "maturityLevelId", required = false) Long maturityLevelId) {
         UUID currentUserId = userContext.getUser().id();
-        var response = useCase.getAttributeScoreStat(toParam(assessmentId, attributeId, maturityLevelId, currentUserId));
+        var response = useCase.getAttributeScoreStats(toParam(assessmentId, attributeId, maturityLevelId, currentUserId));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

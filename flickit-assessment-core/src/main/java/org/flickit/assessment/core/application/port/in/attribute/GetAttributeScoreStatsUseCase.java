@@ -12,7 +12,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAttributeScoreStatsUseCase {
 
-    Result getAttributeScoreStat(Param param);
+    Result getAttributeScoreStats(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
