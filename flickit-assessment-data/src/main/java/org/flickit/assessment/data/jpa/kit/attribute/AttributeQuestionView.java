@@ -7,7 +7,7 @@ public interface AttributeQuestionView {
 
     long getQuestionId();
 
-    Double getQuestionWeight();
+    int getQuestionWeight();
 
     AnswerJpaEntity getAnswer();
 

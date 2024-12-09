@@ -7,8 +7,8 @@ public interface LoadAttributeScoresPort {
 
     List<Result> loadScores(UUID assessmentId, long attributeId, long maturityLevelId);
 
-    record Result(Long questionId,
-                  Double questionWeight,
+    record Result(long questionId,
+                  int questionWeight,
                   Double answerScore,
                   Boolean answerIsNotApplicable) {
     }
