@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.port.in.attribute.GetAttributeSco
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Questionnaire;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadScoreStatsPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
@@ -20,14 +21,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreAttributePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class AttributePersistenceJpaAdapter implements
     LoadAttributeScoreDetailPort,
-    LoadAttributePort {
+    LoadAttributePort,
+    LoadScoreStatsPort {
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -84,5 +85,20 @@ public class AttributePersistenceJpaAdapter implements
         if (optionImpact.getValue() != null)
             return optionImpact.getValue();
         return optionValue != null ? optionValue : 0.0;
+    }
+
+    @Override
+    public List<LoadScoreStatsPort.Result> loadDetails(UUID assessmentId, long attributeId, long maturityLevelId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND));
+
+        return repository.findDetails(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId)
+            .stream()
+            .map(view -> new LoadScoreStatsPort.Result(view.getQuestionId(),
+                view.getQuestionWeight(),
+                getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
+                view.getAnswer() != null && view.getAnswerIsNotApplicable() != null && view.getAnswer().getIsNotApplicable()))
+            .toList();
+
     }
 }
