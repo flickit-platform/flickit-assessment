@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class AttributePersistenceJpaAdapter implements
         var pageRequest = makePageRequest(param.page(), param.size(), param.sort(), param.order());
         var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), param.attributeId(), param.maturityLevelId(), pageRequest);
 
-        var items =  pageResult.getContent().stream()
+        var items = pageResult.getContent().stream()
             .map(view -> new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireTitle(),
                 view.getQuestionTitle(),
                 view.getQuestionIndex(),
@@ -62,30 +63,27 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     private PageRequest makePageRequest(int page, int size, SortEnum sort, OrderEnum order) {
-        String s = null;
-        Sort.Direction o = switch (order) {
+        Sort.Direction orderField = switch (order) {
             case OrderEnum.ASC -> Sort.Direction.ASC;
             case OrderEnum.DESC -> Sort.Direction.DESC;
         };
 
-/*        String sortField = switch (sort) {
-            case SortEnum.QUESTIONNAIRE_TITLE -> QuestionnaireJpaEntity.Fields.title;
-            case SortEnum. -> AnswerJpaEntity.Fields.QUESTION_INDEX;
-            case QUESTION_TITLE -> "questionTitle"; // Assuming there's a field for question title
-            case OPTION_TITLE -> "optionTitle"; // Assuming there's a field for option title
-            default -> AnswerJpaEntity.Fields.QUESTION_INDEX; // Default sort field
-        };*/
+        String sortField = switch (sort) {
+            case SortEnum.QUESTIONNAIRE_TITLE -> "qr." + QuestionnaireJpaEntity.Fields.title;
+            case SortEnum.WEIGHT -> "qi." + QuestionImpactJpaEntity.Fields.weight;
+            case SortEnum.CONFIDENCE -> "ans." + AnswerJpaEntity.Fields.confidenceLevelId;
+            default -> QuestionnaireJpaEntity.Fields.title;
+        };
 
-        return PageRequest.of(page, size, o, AnswerJpaEntity.Fields.QUESTION_INDEX);
-
+        return PageRequest.of(page, size, orderField, sortField);
     }
 
     private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
         if (answer == null) // if no answer is submitted for the question
             return 0.0;
-        if(Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
+        if (Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
             return null;
-        if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
+        if (optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
             return 0.0;
         return getValue(optionImpact, optionValue);
     }
