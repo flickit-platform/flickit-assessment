@@ -51,14 +51,14 @@ public interface GetAttributeScoreDetailUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, int size, int page, UUID currentUserId) {
+        public Param(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, Integer size, Integer page, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
             this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : SortEnum.DEFAULT.name();
             this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : OrderEnum.DEFAULT.name();
-            this.size = size;
-            this.page = page;
+            this.size = size != null ? size : 10;
+            this.page = page != null ? page : 0;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
