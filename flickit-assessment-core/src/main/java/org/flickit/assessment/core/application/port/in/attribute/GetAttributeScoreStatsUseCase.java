@@ -44,5 +44,4 @@ public interface GetAttributeScoreStatsUseCase {
                   double gainedScorePercentage,
                   int questionsCount) {
     }
-
 }
