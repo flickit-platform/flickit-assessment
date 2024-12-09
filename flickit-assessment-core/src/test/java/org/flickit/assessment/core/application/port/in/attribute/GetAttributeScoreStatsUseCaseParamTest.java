@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GetAttributeScoreStatsUseCaseParamTest {
 
@@ -21,7 +21,7 @@ class GetAttributeScoreStatsUseCaseParamTest {
     }
 
     @Test
-    void testGetAttributeScoreStatsUseCaseParam_AttributeLevelIdParamViolatesConstraints_ErrorMessage() {
+    void testGetAttributeScoreStatsUseCaseParam_AttributeIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributeId(null)));
         assertThat(throwable).hasMessage("attributeId: " + GET_ATTRIBUTE_SCORE_STATS_ATTRIBUTE_ID_NOT_NULL);
@@ -35,7 +35,7 @@ class GetAttributeScoreStatsUseCaseParamTest {
     }
 
     @Test
-    void testGetAttributeScoreStatsUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
+    void testGetAttributeScoreStatsUseCaseParam_CurrentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

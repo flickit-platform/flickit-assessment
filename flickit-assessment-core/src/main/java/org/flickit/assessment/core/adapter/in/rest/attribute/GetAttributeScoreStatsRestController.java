@@ -21,7 +21,7 @@ public class GetAttributeScoreStatsRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report/attributes/{attributeId}/stats")
-    public ResponseEntity<Result> getAttributeScoreDetail(
+    public ResponseEntity<Result> getAttributeScoreStats(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId,
         @RequestParam(value = "maturityLevelId", required = false) Long maturityLevelId) {

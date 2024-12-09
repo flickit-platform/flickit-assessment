@@ -32,6 +32,19 @@ class GetAttributeScoreStatsServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
+    void testGetAttributeScoreStats_CurrentUserDoesNotHaveRequiredPermission_ThrowsException() {
+        var param = createParam(GetAttributeScoreStatsUseCase.Param.ParamBuilder::build);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL))
+            .thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreStats(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadAttributeScoresPort);
+    }
+
+    @Test
     void testGetAttributeScoreStats_ValidParam() {
         var param = createParam(GetAttributeScoreStatsUseCase.Param.ParamBuilder::build);
 
@@ -83,7 +96,6 @@ class GetAttributeScoreStatsServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreStats(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
-
 
     private GetAttributeScoreStatsUseCase.Param createParam(Consumer<GetAttributeScoreStatsUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
