@@ -26,7 +26,7 @@ class GetAttributeScoreStatsServiceTest {
     private GetAttributeScoreStatsService service;
 
     @Mock
-    private LoadAttributeScoreStatsPort loadAttributeScoreStatsPort;
+    private LoadAttributeScoresPort loadAttributeScoresPort;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -43,8 +43,8 @@ class GetAttributeScoreStatsServiceTest {
             new LoadAttributeScoreStatsPort.Result(5L, 0.0, null, true)
         );
 
-        when(loadAttributeScoreStatsPort.loadScoreStats(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId())).thenReturn(mockStats);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(true);
+        when(loadAttributeScoresPort.loadScores(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId())).thenReturn(scores);
 
         GetAttributeScoreStatsUseCase.Result result = service.getAttributeScoreStats(param);
 
@@ -59,7 +59,7 @@ class GetAttributeScoreStatsServiceTest {
     void testGetAttributeScoreStats_ValidParam_NoQuestionScore() {
         var param = createParam(GetAttributeScoreStatsUseCase.Param.ParamBuilder::build);
 
-        when(loadAttributeScoreStatsPort.loadScoreStats(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId())).thenReturn(List.of());
+        when(loadAttributeScoresPort.loadScores(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId())).thenReturn(List.of());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(true);
 
         var result = service.getAttributeScoreStats(param);

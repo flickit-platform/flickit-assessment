@@ -20,17 +20,17 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class GetAttributeScoreStatsService implements GetAttributeScoreStatsUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadAttributeScoreStatsPort loadAttributeScoreStatsPort;
+    private final LoadAttributeScoresPort loadAttributeScoresPort;
 
     @Override
     public Result getAttributeScoreStats(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        var stats = loadAttributeScoreStatsPort.loadScoreStats(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId());
+        var stats = loadAttributeScoresPort.loadScores(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId());
 
         double maxPossibleScore = 0.0;
         double gainedScore = 0.0;
-        for (LoadAttributeScoreStatsPort.Result result : stats) {
+        for (LoadAttributeScoresPort.Result result : stats) {
             if (Boolean.TRUE.equals(result.answerIsNotApplicable()))
                 continue;
             maxPossibleScore += result.questionWeight();

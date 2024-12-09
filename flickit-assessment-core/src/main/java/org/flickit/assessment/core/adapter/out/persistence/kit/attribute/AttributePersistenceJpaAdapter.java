@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.port.in.attribute.GetAttributeSco
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Questionnaire;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
-import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreStatsPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
@@ -28,7 +28,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 public class AttributePersistenceJpaAdapter implements
     LoadAttributeScoreDetailPort,
     LoadAttributePort,
-    LoadAttributeScoreStatsPort {
+    LoadAttributeScoresPort {
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -75,13 +75,13 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadAttributeScoreStatsPort.Result> loadScoreStats(UUID assessmentId, long attributeId, long maturityLevelId) {
+    public List<LoadAttributeScoresPort.Result> loadScores(UUID assessmentId, long attributeId, long maturityLevelId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND));
 
         return repository.findScoreStats(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId)
             .stream()
-            .map(view -> new LoadAttributeScoreStatsPort.Result(view.getQuestionId(),
+            .map(view -> new LoadAttributeScoresPort.Result(view.getQuestionId(),
                 view.getQuestionWeight(),
                 getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
                 view.getAnswer() != null && view.getAnswerIsNotApplicable() != null && view.getAnswer().getIsNotApplicable()))
