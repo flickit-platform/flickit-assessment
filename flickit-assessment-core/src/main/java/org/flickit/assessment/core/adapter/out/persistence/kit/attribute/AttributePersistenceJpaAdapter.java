@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.port.in.attribute.GetAttributeSco
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Questionnaire;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
@@ -20,14 +21,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component("coreAttributePersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class AttributePersistenceJpaAdapter implements
     LoadAttributeScoreDetailPort,
-    LoadAttributePort {
+    LoadAttributePort,
+    LoadAttributeScoresPort {
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -63,14 +64,34 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
     }
 
+    @Override
+    public List<LoadAttributeScoresPort.Result> loadScores(UUID assessmentId, long attributeId, long maturityLevelId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND));
+
+        return repository.findScoreStats(assessmentResult.getId(), assessmentResult.getKitVersionId(), attributeId, maturityLevelId)
+            .stream()
+            .map(view -> new LoadAttributeScoresPort.Result(view.getQuestionId(),
+                view.getQuestionWeight(),
+                getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
+                view.getAnswer() != null && view.getAnswerIsNotApplicable() != null && view.getAnswer().getIsNotApplicable()))
+            .toList();
+    }
+
     private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
         if (answer == null) // if no answer is submitted for the question
             return 0.0;
-        if(Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
+        if (Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
             return null;
-        if(optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
+        if (optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
             return 0.0;
         return getValue(optionImpact, optionValue);
+    }
+
+    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
+        if (optionImpact.getValue() != null)
+            return optionImpact.getValue();
+        return optionValue != null ? optionValue : 0.0;
     }
 
     @Override
@@ -78,11 +99,5 @@ public class AttributePersistenceJpaAdapter implements
         var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
         return mapToDomainModel(attribute);
-    }
-
-    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
-        if (optionImpact.getValue() != null)
-            return optionImpact.getValue();
-        return optionValue != null ? optionValue : 0.0;
     }
 }

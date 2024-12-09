@@ -250,4 +250,9 @@ public class ErrorMessageKey {
 
     public static final String ASSIGN_KIT_CUSTOM_ASSESSMENT_ID_NOT_NULL = "assign-kit-custom.assessmentId.notNull";
     public static final String ASSIGN_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "assign-kit-custom.kitCustomId.notNull";
+
+    public static final String GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND = "get-attribute-score-stats.assessmentResult.notFound";
+    public static final String GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_ID_NOT_NULL = "get-attribute-score-stats.assessment.id.notNull";
+    public static final String GET_ATTRIBUTE_SCORE_STATS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-score-stats.attribute.id.notNull";
+    public static final String GET_ATTRIBUTE_SCORE_STATS_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-score-stats.maturityLevel.id.notNull";
 }
