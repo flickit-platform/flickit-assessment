@@ -31,12 +31,12 @@ public class GetAttributeScoreStatsService implements GetAttributeScoreStatsUseC
         double maxPossibleScore = 0.0;
         double gainedScore = 0.0;
 
-        for (LoadAttributeScoreStatsPort.Result qs : stats) {
-            if (Boolean.TRUE.equals(qs.answerIsNotApplicable()))
+        for (LoadAttributeScoreStatsPort.Result result : stats) {
+            if (Boolean.TRUE.equals(result.answerIsNotApplicable()))
                 continue;
-            maxPossibleScore += qs.questionWeight();
-            if (qs.answerScore() != null)
-                gainedScore += qs.questionWeight() * qs.answerScore();
+            maxPossibleScore += result.questionWeight();
+            if (result.answerScore() != null)
+                gainedScore += result.questionWeight() * result.answerScore();
         }
         double gainedScorePercentage = maxPossibleScore > 0 ? gainedScore / maxPossibleScore : 0.0;
 
