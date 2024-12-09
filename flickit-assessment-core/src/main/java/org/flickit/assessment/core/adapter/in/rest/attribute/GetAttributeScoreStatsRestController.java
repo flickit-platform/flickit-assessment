@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class GetAttributeScoreStatRestController {
+public class GetAttributeScoreStatsRestController {
 
     private final GetAttributeScoreStatsUseCase useCase;
     private final UserContext userContext;
