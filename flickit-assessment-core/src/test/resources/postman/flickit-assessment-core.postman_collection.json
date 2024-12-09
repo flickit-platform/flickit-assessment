@@ -958,7 +958,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104?maturityLevelId=1728&sort=ASC&order=Weight",
+							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104?maturityLevelId=1728&sort=weight&order=asc&page=0&size=10",
 							"host": [
 								"{{base_url}}"
 							],
@@ -977,11 +977,19 @@
 								},
 								{
 									"key": "sort",
-									"value": "ASC"
+									"value": "weight"
 								},
 								{
 									"key": "order",
-									"value": "Weight"
+									"value": "asc"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
 								}
 							]
 						}
