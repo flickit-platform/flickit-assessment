@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.crud.SortEnum;
+import org.flickit.assessment.common.application.domain.crud.Sort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
@@ -16,7 +16,6 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
-import org.springframework.data.domain.Sort;
 import org.flickit.assessment.common.application.domain.crud.OrderEnum;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
@@ -62,16 +61,16 @@ public class AttributePersistenceJpaAdapter implements
         );
     }
 
-    private PageRequest makePageRequest(int page, int size, SortEnum sort, OrderEnum order) {
-        Sort.Direction orderField = switch (order) {
-            case OrderEnum.ASC -> Sort.Direction.ASC;
-            case OrderEnum.DESC -> Sort.Direction.DESC;
+    private PageRequest makePageRequest(int page, int size, Sort sort, OrderEnum order) {
+        org.springframework.data.domain.Sort.Direction orderField = switch (order) {
+            case OrderEnum.ASC -> org.springframework.data.domain.Sort.Direction.ASC;
+            case OrderEnum.DESC -> org.springframework.data.domain.Sort.Direction.DESC;
         };
 
         String sortField = switch (sort) {
-            case SortEnum.QUESTIONNAIRE_TITLE -> "qr." + QuestionnaireJpaEntity.Fields.title;
-            case SortEnum.WEIGHT -> "qi." + QuestionImpactJpaEntity.Fields.weight;
-            case SortEnum.CONFIDENCE -> "ans." + AnswerJpaEntity.Fields.confidenceLevelId;
+            case Sort.QUESTIONNAIRE_TITLE -> "qr." + QuestionnaireJpaEntity.Fields.title;
+            case Sort.WEIGHT -> "qi." + QuestionImpactJpaEntity.Fields.weight;
+            case Sort.CONFIDENCE -> "ans." + AnswerJpaEntity.Fields.confidenceLevelId;
             default -> QuestionnaireJpaEntity.Fields.title;
         };
 
