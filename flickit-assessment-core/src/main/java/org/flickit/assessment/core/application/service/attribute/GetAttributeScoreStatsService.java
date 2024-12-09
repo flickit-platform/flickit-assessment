@@ -30,7 +30,6 @@ public class GetAttributeScoreStatsService implements GetAttributeScoreStatsUseC
 
         double maxPossibleScore = 0.0;
         double gainedScore = 0.0;
-
         for (LoadAttributeScoreStatsPort.Result result : stats) {
             if (Boolean.TRUE.equals(result.answerIsNotApplicable()))
                 continue;
