@@ -75,19 +75,6 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public Attribute load(Long attributeId, Long kitVersionId) {
-        var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
-            .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
-        return mapToDomainModel(attribute);
-    }
-
-    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
-        if (optionImpact.getValue() != null)
-            return optionImpact.getValue();
-        return optionValue != null ? optionValue : 0.0;
-    }
-
-    @Override
     public List<LoadAttributeScoreStatsPort.Result> loadDetails(UUID assessmentId, long attributeId, long maturityLevelId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND));
@@ -100,5 +87,18 @@ public class AttributePersistenceJpaAdapter implements
                 view.getAnswer() != null && view.getAnswerIsNotApplicable() != null && view.getAnswer().getIsNotApplicable()))
             .toList();
 
+    }
+
+    @Override
+    public Attribute load(Long attributeId, Long kitVersionId) {
+        var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
+            .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
+        return mapToDomainModel(attribute);
+    }
+
+    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
+        if (optionImpact.getValue() != null)
+            return optionImpact.getValue();
+        return optionValue != null ? optionValue : 0.0;
     }
 }
