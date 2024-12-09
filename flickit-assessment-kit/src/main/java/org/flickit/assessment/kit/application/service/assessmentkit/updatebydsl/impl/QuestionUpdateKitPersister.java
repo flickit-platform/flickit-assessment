@@ -47,7 +47,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     @Override
     public int order() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -101,7 +101,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                 QuestionDslModel dslQuestion = codeToDslQuestion.get(questionEntry.getKey());
                 boolean isKitModificationMajor = updateQuestion(
                     question,
-                    savedKit.getActiveVersionId(), dslQuestion,
+                    dslQuestion,
+                    savedKit.getActiveVersionId(),
                     savedAttributeIdToCodeMap,
                     savedLevelIdToCodeMap,
                     postUpdateAttributes,
@@ -265,8 +266,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private boolean updateQuestion(Question savedQuestion,
-                                   Long kitVersionId,
                                    QuestionDslModel dslQuestion,
+                                   Long kitVersionId,
                                    Map<Long, String> savedAttributes,
                                    Map<Long, String> savedLevels,
                                    Map<String, Long> updatedAttributes,
@@ -298,10 +299,11 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             }
         }
 
-        updateAnswerOptions(savedQuestion, dslQuestion, kitVersionId, currentUserId);
+        if (dslQuestion.getAnswerOptions() != null)
+            updateAnswerOptions(savedQuestion, dslQuestion, kitVersionId, currentUserId);
         boolean isMajorUpdateQuestionImpact = updateQuestionImpacts(savedQuestion,
-            kitVersionId,
             dslQuestion,
+            kitVersionId,
             savedAttributes,
             savedLevels,
             updatedAttributes,
@@ -338,8 +340,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private boolean updateQuestionImpacts(Question savedQuestion,
-                                          Long kitVersionId,
                                           QuestionDslModel dslQuestion,
+                                          Long kitVersionId,
                                           Map<Long, String> savedAttributes,
                                           Map<Long, String> savedLevels,
                                           Map<String, Long> updatedAttributes,

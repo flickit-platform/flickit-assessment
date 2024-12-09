@@ -3,15 +3,14 @@ package org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl
 import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
-import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
-import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -21,8 +20,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.validate.impl.DslFieldNames.ANSWER_OPTION;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.validate.impl.DslFieldNames.QUESTION;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithNoOptions;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithQuestionnaires;
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
+import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class QuestionUpdateKitValidatorTest {
@@ -30,15 +34,19 @@ class QuestionUpdateKitValidatorTest {
     @InjectMocks
     private QuestionUpdateKitValidator validator;
 
+    @Mock
+    private LoadAnswerRangePort loadAnswerRangePort;
+
     @Test
     void testValidator_SameQuestionsInDbAndDsl_Valid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
-        var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+        var questionOne = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+        var questionTwo = createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
         questionOne.setOptions(List.of());
         questionTwo.setOptions(List.of());
-        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        var questionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne, questionTwo));
-        var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
+        var savedKit = kitWithQuestionnaires(List.of(questionnaire));
+        var answerRange = createAnswerRangeWithNoOptions(questionOne.getAnswerRangeId(), false);
 
         var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
             .answerOptions(List.of())
@@ -52,6 +60,8 @@ class QuestionUpdateKitValidatorTest {
             .questions(List.of(dslQuestionOne, dslQuestionTwo))
             .build();
 
+        when(loadAnswerRangePort.load(questionOne.getAnswerRangeId(), savedKit.getActiveVersionId())).thenReturn(answerRange);
+
         Notification notification = validator.validate(savedKit, dslKit);
 
         assertFalse(notification.hasErrors());
@@ -59,13 +69,14 @@ class QuestionUpdateKitValidatorTest {
 
     @Test
     void testValidator_dslHasOneQuestionLessThanDb_Invalid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
-        var questionTwo = QuestionMother.createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+        var questionOne = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+        var questionTwo = createQuestion(QUESTION_CODE2, QUESTION_TITLE2, 2, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
         questionOne.setOptions(List.of());
         questionTwo.setOptions(List.of());
-        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        var questionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne, questionTwo));
-        var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
+        var savedKit = kitWithQuestionnaires(List.of(questionnaire));
+        var answerRange = createAnswerRangeWithNoOptions(questionOne.getAnswerRangeId(), false);
 
         var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
             .answerOptions(List.of())
@@ -75,6 +86,8 @@ class QuestionUpdateKitValidatorTest {
             .questionnaires(List.of(dslQuestionnaires))
             .questions(List.of(dslQuestionOne))
             .build();
+
+        when(loadAnswerRangePort.load(questionOne.getAnswerRangeId(), savedKit.getActiveVersionId())).thenReturn(answerRange);
 
         Notification notification = validator.validate(savedKit, dslKit);
 
@@ -90,11 +103,12 @@ class QuestionUpdateKitValidatorTest {
 
     @Test
     void testValidator_dslHasOneNewAnswerOption_Invalid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+        var questionOne = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
         questionOne.setOptions(List.of());
-        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        var questionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne));
-        var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
+        var savedKit = kitWithQuestionnaires(List.of(questionnaire));
+        var answerRange = createAnswerRangeWithNoOptions(questionOne.getAnswerRangeId(), false);
 
         var newAnswerOption = AnswerOptionDslModel.builder()
             .caption(OPTION_TITLE)
@@ -103,12 +117,15 @@ class QuestionUpdateKitValidatorTest {
             .build();
         var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
             .answerOptions(List.of(newAnswerOption))
-            .questionnaireCode(questionnaire.getCode()));
+            .questionnaireCode(questionnaire.getCode())
+            .answerRangeCode(answerRange.getCode()));
         var dslQuestionnaires = QuestionnaireDslModelMother.domainToDslModel(questionnaire);
         var dslKit = AssessmentKitDslModel.builder()
             .questionnaires(List.of(dslQuestionnaires))
             .questions(List.of(dslQuestionOne))
             .build();
+
+        when(loadAnswerRangePort.load(questionOne.getAnswerRangeId(), savedKit.getActiveVersionId())).thenReturn(answerRange);
 
         Notification notification = validator.validate(savedKit, dslKit);
 
@@ -123,13 +140,14 @@ class QuestionUpdateKitValidatorTest {
     }
 
     @Test
-    void testValidator_dslHasOneNewAnswerOptionLessThanDb_Invalid() {
-        var questionOne = QuestionMother.createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
+    void testValidator_dslHasOneAnswerOptionLessThanDb_Invalid() {
+        var questionOne = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
         var deletedAnswerOption = AnswerOptionMother.createAnswerOption(questionOne.getAnswerRangeId(), OPTION_TITLE, 1);
         questionOne.setOptions(List.of(deletedAnswerOption));
-        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        var questionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne));
-        var savedKit = AssessmentKitMother.kitWithQuestionnaires(List.of(questionnaire));
+        var savedKit = kitWithQuestionnaires(List.of(questionnaire));
+        var answerRange = createAnswerRangeWithNoOptions(questionOne.getAnswerRangeId(), false);
 
         var dslQuestionOne = QuestionDslModelMother.domainToDslModel(questionOne, q -> q
             .answerOptions(List.of())
@@ -139,6 +157,8 @@ class QuestionUpdateKitValidatorTest {
             .questionnaires(List.of(dslQuestionnaires))
             .questions(List.of(dslQuestionOne))
             .build();
+
+        when(loadAnswerRangePort.load(questionOne.getAnswerRangeId(), savedKit.getActiveVersionId())).thenReturn(answerRange);
 
         Notification notification = validator.validate(savedKit, dslKit);
 

@@ -11,4 +11,5 @@ public class DslFieldNames {
     public static final String QUESTIONNAIRE = "questionnaire";
     public static final String QUESTION = "question";
     public static final String ANSWER_OPTION = "answer option";
+    public static final String ANSWER_RANGE = "answer range";
 }
