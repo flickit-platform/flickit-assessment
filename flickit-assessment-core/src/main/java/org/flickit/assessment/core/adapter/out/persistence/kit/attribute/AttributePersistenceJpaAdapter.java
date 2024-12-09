@@ -19,6 +19,9 @@ import org.springframework.stereotype.Component;
 
 import org.flickit.assessment.common.application.domain.crud.Order;
 
+import java.util.List;
+import java.util.UUID;
+
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
