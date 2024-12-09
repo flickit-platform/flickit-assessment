@@ -11,7 +11,7 @@ public enum Sort {
     QUESTIONNAIRE_TITLE("questionnaire_title"),
     WEIGHT("weight"),
     SCORE("score"),
-    FINAL_SCORE("finalScore"),
+    FINAL_SCORE("final_score"),
     CONFIDENCE("confidence");
 
     private final String title;
