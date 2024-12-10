@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.port.in.attribute;
 
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.assessment.common.application.domain.crud.Order;
-import org.flickit.assessment.core.application.domain.Sort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -44,7 +43,7 @@ class GetAttributeScoreDetailUseCaseTest {
         assertDoesNotThrow(() -> createParam(b -> b.sort("    FiNal_ScoRe     ")));
         assertDoesNotThrow(() -> createParam(b -> b.sort("    confIDence     ")));
         var params = assertDoesNotThrow(() -> createParam(b -> b.sort(null)));
-        assertEquals(Sort.DEFAULT.name(), params.getSort());
+        assertEquals(GetAttributeScoreDetailUseCase.Param.Sort.DEFAULT.name(), params.getSort());
     }
 
     @Test

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.core.application.domain.Sort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
@@ -54,7 +53,7 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             assessmentId,
             attributeId,
             maturityLevelId,
-            Sort.valueOf(sort),
+            Param.Sort.valueOf(sort),
             Order.valueOf(order),
             size,
             page);

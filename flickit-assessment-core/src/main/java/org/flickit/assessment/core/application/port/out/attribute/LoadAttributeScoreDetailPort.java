@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.port.out.attribute;
 
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.core.application.domain.Sort;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ public interface LoadAttributeScoreDetailPort {
     record Param(UUID assessmentId,
                  long attributeId,
                  long maturityLevelId,
-                 Sort sort,
+                 GetAttributeScoreDetailUseCase.Param.Sort sort,
                  Order order,
                  int size,
                  int page) {}

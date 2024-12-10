@@ -62,6 +62,22 @@ public interface GetAttributeScoreDetailUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+
+        @Getter
+        @RequiredArgsConstructor
+        @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+        public enum Sort {
+            QUESTIONNAIRE("questionnaire"),
+            WEIGHT("weight"),
+            SCORE("score"),
+            WEIGHTED_SCORE("weightedScore"),
+            CONFIDENCE("confidence"),
+            EVIDENCE_COUNT("evidenceCount");
+
+            private final String title;
+
+            public static final Sort DEFAULT = QUESTIONNAIRE;
+        }
     }
 
     record QuestionScore(String questionnaireTitle,
