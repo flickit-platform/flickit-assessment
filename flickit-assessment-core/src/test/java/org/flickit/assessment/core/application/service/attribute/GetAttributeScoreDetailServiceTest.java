@@ -103,8 +103,8 @@ class GetAttributeScoreDetailServiceTest {
             .assessmentId(UUID.randomUUID())
             .attributeId(1L)
             .maturityLevelId(1L)
-            .sort("asc")
-            .order("weight")
+            .sort("weight")
+            .order("asc")
             .currentUserId(UUID.randomUUID());
     }
 

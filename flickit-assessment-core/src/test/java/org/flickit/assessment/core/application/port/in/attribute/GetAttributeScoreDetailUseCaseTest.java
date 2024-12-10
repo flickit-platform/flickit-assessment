@@ -39,8 +39,9 @@ class GetAttributeScoreDetailUseCaseTest {
 
         assertDoesNotThrow(() -> createParam(b -> b.sort("    weight     ")));
         assertDoesNotThrow(() -> createParam(b -> b.sort("    SCORE     ")));
-        assertDoesNotThrow(() -> createParam(b -> b.sort("    FiNal_ScoRe     ")));
+        assertDoesNotThrow(() -> createParam(b -> b.sort("    weighted_Score     ")));
         assertDoesNotThrow(() -> createParam(b -> b.sort("    confIDence     ")));
+        assertDoesNotThrow(() -> createParam(b -> b.sort("    eviDence_CounT     ")));
         var params = assertDoesNotThrow(() -> createParam(b -> b.sort(null)));
         assertEquals(GetAttributeScoreDetailUseCase.Param.Sort.DEFAULT.name(), params.getSort());
     }
