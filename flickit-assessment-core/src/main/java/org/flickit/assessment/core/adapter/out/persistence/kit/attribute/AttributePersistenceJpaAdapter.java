@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.crud.Sort;
+import org.flickit.assessment.core.application.domain.Sort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;

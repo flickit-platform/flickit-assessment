@@ -1,4 +1,4 @@
-package org.flickit.assessment.common.application.domain.crud;
+package org.flickit.assessment.core.application.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

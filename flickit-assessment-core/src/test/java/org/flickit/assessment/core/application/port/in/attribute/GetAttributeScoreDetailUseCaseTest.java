@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.port.in.attribute;
 
 import jakarta.validation.ConstraintViolationException;
 import org.flickit.assessment.common.application.domain.crud.Order;
-import org.flickit.assessment.common.application.domain.crud.Sort;
+import org.flickit.assessment.core.application.domain.Sort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

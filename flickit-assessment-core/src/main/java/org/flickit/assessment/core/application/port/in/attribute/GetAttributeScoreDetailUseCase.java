@@ -9,7 +9,7 @@ import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.crud.Sort;
+import org.flickit.assessment.core.application.domain.Sort;
 import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.UUID;
