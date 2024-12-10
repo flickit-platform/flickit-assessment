@@ -25,4 +25,8 @@ public interface ImpactFullQuestionsView {
     String getOptionTitle();
 
     Double getOptionValue();
+
+    Double getAnswerScore();
+
+    Double getWeightedScore();
 }

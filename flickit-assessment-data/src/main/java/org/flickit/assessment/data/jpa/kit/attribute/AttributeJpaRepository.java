@@ -1,6 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.attribute;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -66,7 +67,17 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ov as optionImpact,
                 ao.index as optionIndex,
                 ao.title as optionTitle,
-                ao.value as optionValue
+                ao.value as optionValue,
+                CASE
+                    WHEN ans IS NULL THEN 0.0
+                    WHEN ans.isNotApplicable = true THEN NULL
+                    WHEN ov IS NULL THEN 0.0
+                            ELSE COALESCE(ov.value, COALESCE(ao.value, 0.0))
+                END as answerScore,
+                CASE
+                    WHEN ov IS NULL THEN 0.0
+                    ELSE COALESCE(ov.value, COALESCE(ao.value, 0.0)) * qi.weight
+                END as weightedScore
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
@@ -76,12 +87,12 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
-            ORDER BY qr.title asc, qsn.index asc
         """)
-    List<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
+    Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
                                                                @Param("kitVersionId") long kitVersionId,
                                                                @Param("attributeId") Long attributeId,
-                                                               @Param("maturityLevelId") Long maturityLevelId);
+                                                               @Param("maturityLevelId") Long maturityLevelId,
+                                                               PageRequest pageRequest);
 
     @Query("""
             SELECT COUNT(DISTINCT(q.id))
