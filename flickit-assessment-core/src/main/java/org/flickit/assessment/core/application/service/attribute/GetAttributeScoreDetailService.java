@@ -24,7 +24,7 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
-    public PaginatedResponse<QuestionScore> getAttributeScoreDetail(Param param) {
+    public PaginatedResponse<Result> getAttributeScoreDetail(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
         var result = loadAttributeScoreDetailPort.loadScoreDetail(
@@ -39,7 +39,7 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             )
         );
 
-        var items = result.getItems().stream().map(this::toQuestionScore).toList();
+        var items = result.getItems().stream().map(this::toResult).toList();
         return new PaginatedResponse<>(items,
             result.getPage(),
             result.getSize(),
@@ -59,15 +59,11 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             page);
     }
 
-    private QuestionScore toQuestionScore(LoadAttributeScoreDetailPort.Result item) {
-        return new QuestionScore(item.questionnaireTitle(), item.index(), item.questionTitle(),
-            item.questionWeight(),
-            item.index(),
-            item.answer(),
-            item.answerIsNotApplicable(),
-            item.answerScore(),
-            item.weightedScore(),
-            item.confidence());
+    private Result toResult(LoadAttributeScoreDetailPort.Result item) {
+        return new Result(
+            item.questionnaireTitle(),
+            new Result.Question(item.questionIndex(), item.questionTitle(), item.questionWeight(), 0),
+            new Result.Answer(item.optionIndex(), item.optionTitle(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore(), item.confidence()));
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {

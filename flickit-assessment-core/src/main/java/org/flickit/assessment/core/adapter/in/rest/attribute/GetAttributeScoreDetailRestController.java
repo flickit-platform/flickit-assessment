@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.*;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ public class GetAttributeScoreDetailRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report/attributes/{attributeId}")
-    public ResponseEntity<PaginatedResponse<QuestionScore>> getAttributeScoreDetail(
+    public ResponseEntity<PaginatedResponse<Result>> getAttributeScoreDetail(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId,
         @RequestParam(value = "maturityLevelId", required = false) Long maturityLevelId,

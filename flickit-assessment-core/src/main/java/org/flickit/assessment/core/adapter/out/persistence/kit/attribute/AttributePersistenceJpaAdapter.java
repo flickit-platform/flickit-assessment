@@ -1,10 +1,11 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.core.application.domain.Sort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
@@ -15,9 +16,8 @@ import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
-
-import org.flickit.assessment.common.application.domain.crud.Order;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,16 +40,21 @@ public class AttributePersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(param.assessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var pageRequest = makePageRequest(param.page(), param.size(), param.sort(), param.order());
-        var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(), assessmentResult.getKitVersionId(), param.attributeId(), param.maturityLevelId(), pageRequest);
+        var pageRequest = buildPageRequest(param.page(), param.size(), param.sort(), param.order());
+        var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(),
+            assessmentResult.getKitVersionId(),
+            param.attributeId(),
+            param.maturityLevelId(),
+            pageRequest);
 
         var items = pageResult.getContent().stream()
             .map(view -> new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireTitle(),
-                view.getQuestionTitle(),
                 view.getQuestionIndex(),
+                view.getQuestionTitle(),
+                view.getQuestionImpact().getWeight(),
+                view.getOptionIndex(),
                 view.getOptionTitle(),
                 view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
-                view.getQuestionImpact().getWeight(),
                 view.getAnswerScore(),
                 view.getWeightedScore(),
                 view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null))
@@ -65,21 +70,23 @@ public class AttributePersistenceJpaAdapter implements
         );
     }
 
-    private PageRequest makePageRequest(int page, int size, Sort sort, Order order) {
-        org.springframework.data.domain.Sort.Direction orderField = switch (order) {
-            case Order.ASC -> org.springframework.data.domain.Sort.Direction.ASC;
-            case Order.DESC -> org.springframework.data.domain.Sort.Direction.DESC;
+    private PageRequest buildPageRequest(int page, int size, GetAttributeScoreDetailUseCase.Param.Sort sort, Order order) {
+        var orderDir = switch (order) {
+            case Order.ASC -> Sort.Direction.ASC;
+            case Order.DESC -> Sort.Direction.DESC;
         };
 
         String sortField = switch (sort) {
-            case Sort.QUESTIONNAIRE_TITLE -> "qr." + QuestionnaireJpaEntity.Fields.title;
-            case Sort.WEIGHT -> "qi." + QuestionImpactJpaEntity.Fields.weight;
-            case Sort.CONFIDENCE -> "ans." + AnswerJpaEntity.Fields.confidenceLevelId;
-            case Sort.FINAL_SCORE -> "weightedScore";
-            case Sort.SCORE -> "answerScore";
+            case GetAttributeScoreDetailUseCase.Param.Sort.QUESTIONNAIRE -> "qr." + QuestionnaireJpaEntity.Fields.title;
+            case GetAttributeScoreDetailUseCase.Param.Sort.WEIGHT -> "qi." + QuestionImpactJpaEntity.Fields.weight;
+            case GetAttributeScoreDetailUseCase.Param.Sort.CONFIDENCE ->
+                "ans." + AnswerJpaEntity.Fields.confidenceLevelId;
+            case GetAttributeScoreDetailUseCase.Param.Sort.WEIGHTED_SCORE -> "weightedScore";
+            case GetAttributeScoreDetailUseCase.Param.Sort.SCORE -> "answerScore";
+            case GetAttributeScoreDetailUseCase.Param.Sort.EVIDENCE_COUNT -> "evidenceCount";
         };
 
-        return PageRequest.of(page, size, orderField, sortField);
+        return PageRequest.of(page, size, orderDir, sortField);
     }
 
     @Override

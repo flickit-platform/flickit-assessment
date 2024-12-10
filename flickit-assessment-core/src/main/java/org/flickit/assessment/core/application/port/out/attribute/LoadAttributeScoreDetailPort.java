@@ -19,11 +19,12 @@ public interface LoadAttributeScoreDetailPort {
                  int page) {}
 
     record Result(String questionnaireTitle,
+                  int questionIndex,
                   String questionTitle,
-                  int index,
-                  String answer,
-                  Boolean answerIsNotApplicable,
                   int questionWeight,
+                  Integer optionIndex,
+                  String optionTitle,
+                  Boolean answerIsNotApplicable,
                   Double answerScore,
                   Double weightedScore,
                   Integer confidence) {

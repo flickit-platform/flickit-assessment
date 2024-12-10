@@ -1,15 +1,13 @@
 package org.flickit.assessment.core.application.port.in.attribute;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.*;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.core.application.domain.Sort;
 import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.UUID;
@@ -19,7 +17,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAttributeScoreDetailUseCase {
 
-    PaginatedResponse<QuestionScore> getAttributeScoreDetail(Param param);
+    PaginatedResponse<Result> getAttributeScoreDetail(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -80,15 +78,13 @@ public interface GetAttributeScoreDetailUseCase {
         }
     }
 
-    record QuestionScore(String questionnaireTitle,
-                         int questionIndex,
-                         String questionTitle,
-                         int questionWeight,
-                         Integer answerOptionIndex,
-                         String answerOptionTitle,
-                         Boolean answerIsNotApplicable,
-                         Double answerScore,
-                         Double weightedScore,
-                         Integer confidenceLevel) {
+    record Result(String questionnaire, Question question, Answer answer) {
+
+        public record Question(int index, String title, int weight, int evidenceCount) {
+        }
+
+        public record Answer(int index, String title, boolean isNotApplicable, Double score, Double weightedScore,
+                             Integer confidenceLevel) {
+        }
     }
 }
