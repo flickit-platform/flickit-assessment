@@ -18,13 +18,9 @@ public interface ImpactFullQuestionsView {
 
     QuestionImpactJpaEntity getQuestionImpact();
 
-    AnswerOptionImpactJpaEntity getOptionImpact();
-
     Integer getOptionIndex();
 
     String getOptionTitle();
-
-    Double getOptionValue();
 
     Double getAnswerScore();
 
