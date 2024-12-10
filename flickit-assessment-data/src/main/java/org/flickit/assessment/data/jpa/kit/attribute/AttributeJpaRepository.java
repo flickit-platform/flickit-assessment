@@ -72,14 +72,16 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                     WHEN ans IS NULL THEN 0.0
                     WHEN ans.isNotApplicable = true THEN NULL
                     WHEN ov IS NULL THEN 0.0
-                            ELSE COALESCE(ov.value, COALESCE(ao.value, 0.0))
+                    ELSE COALESCE(ov.value, COALESCE(ao.value, 0.0))
                 END as answerScore,
                 CASE
                     WHEN ov IS NULL THEN 0.0
                     ELSE COALESCE(ov.value, COALESCE(ao.value, 0.0)) * qi.weight
-                END as weightedScore
+                END as weightedScore,
+                COUNT(e.id) as evidenceCount
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN EvidenceJpaEntity e on ans.questionId = e.questionId and e.assessmentId = :assessmentId and e.deleted = false and e.type IS NOT NULL
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id and qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
@@ -87,8 +89,18 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
+            GROUP BY
+                qr.title, qsn.id, qsn.index, qsn.title,
+                ans.id, ans.answerOptionId, ans.assessmentResult.id, ans.confidenceLevelId, ans.createdBy, ans.isNotApplicable,
+                ans.lastModifiedBy, ans.questionId, ans.questionnaireId,
+                qi.id, qi.kitVersionId, qi.attributeId, qi.createdBy, qi.creationTime, qi.lastModificationTime,
+                qi.lastModifiedBy, qi.maturityLevelId, qi.questionId, qi.weight,
+                ov.id, ov.kitVersionId, ov.createdBy, ov.creationTime, ov.lastModificationTime, ov.lastModifiedBy,
+                ov.optionId, ov.questionImpactId, ov.value,
+                ao.index, ao.title, ao.value
         """)
-    Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
+    Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentId") UUID assessmentId,
+                                                               @Param("assessmentResultId") UUID assessmentResultId,
                                                                @Param("kitVersionId") long kitVersionId,
                                                                @Param("attributeId") Long attributeId,
                                                                @Param("maturityLevelId") Long maturityLevelId,

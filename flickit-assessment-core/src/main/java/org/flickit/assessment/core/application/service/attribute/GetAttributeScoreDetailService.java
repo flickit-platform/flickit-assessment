@@ -62,7 +62,7 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     private Result toResult(LoadAttributeScoreDetailPort.Result item) {
         return new Result(
             item.questionnaireTitle(),
-            new Result.Question(item.questionIndex(), item.questionTitle(), item.questionWeight(), 0),
+            new Result.Question(item.questionIndex(), item.questionTitle(), item.questionWeight(), item.evidenceCount()),
             new Result.Answer(item.optionIndex(), item.optionTitle(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore(), item.confidence()));
     }
 

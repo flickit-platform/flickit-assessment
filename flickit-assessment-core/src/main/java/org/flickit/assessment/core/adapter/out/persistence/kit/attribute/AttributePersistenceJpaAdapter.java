@@ -41,7 +41,9 @@ public class AttributePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_RESULT_NOT_FOUND));
 
         var pageRequest = buildPageRequest(param.page(), param.size(), param.sort(), param.order());
-        var pageResult = repository.findImpactFullQuestionsScore(assessmentResult.getId(),
+        var pageResult = repository.findImpactFullQuestionsScore(
+            assessmentResult.getAssessment().getId(),
+            assessmentResult.getId(),
             assessmentResult.getKitVersionId(),
             param.attributeId(),
             param.maturityLevelId(),
@@ -57,7 +59,8 @@ public class AttributePersistenceJpaAdapter implements
                 view.getAnswer() == null ? null : view.getAnswer().getIsNotApplicable(),
                 view.getAnswerScore(),
                 view.getWeightedScore(),
-                view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null))
+                view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null,
+                view.getEvidenceCount()))
             .toList();
 
         return new PaginatedResponse<>(

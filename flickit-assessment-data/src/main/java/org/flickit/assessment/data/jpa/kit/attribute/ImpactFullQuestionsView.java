@@ -29,4 +29,6 @@ public interface ImpactFullQuestionsView {
     Double getAnswerScore();
 
     Double getWeightedScore();
+
+    int getEvidenceCount();
 }
