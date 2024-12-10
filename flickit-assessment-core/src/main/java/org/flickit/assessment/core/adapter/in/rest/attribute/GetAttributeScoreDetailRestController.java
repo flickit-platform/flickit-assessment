@@ -1,8 +1,11 @@
 package org.flickit.assessment.core.adapter.in.rest.attribute;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
+import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,25 +23,28 @@ public class GetAttributeScoreDetailRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report/attributes/{attributeId}")
-    public ResponseEntity<GetAttributeScoreDetailResponseDto> getAttributeScoreDetail(
+    public ResponseEntity<PaginatedResponse<Result>> getAttributeScoreDetail(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId,
-        @RequestParam(value = "maturityLevelId", required = false) Long maturityLevelId) {
+        @RequestParam(value = "maturityLevelId", required = false) Long maturityLevelId,
+        @RequestParam(value = "sort", required = false) String sort,
+        @RequestParam(value = "order", required = false) String order,
+        @RequestParam(value = "size", required = false) Integer size,
+        @RequestParam(value = "page", required = false) Integer page) {
         UUID currentUserId = userContext.getUser().id();
-        var response = toResponse(useCase.getAttributeScoreDetail(toParam(assessmentId, attributeId, maturityLevelId, currentUserId)));
+        var response = useCase.getAttributeScoreDetail(toParam(assessmentId, attributeId, maturityLevelId, sort, order, size, page, currentUserId));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private GetAttributeScoreDetailUseCase.Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId, UUID currentUserId) {
-        return new GetAttributeScoreDetailUseCase.Param(assessmentId, attributeId, maturityLevelId, currentUserId);
-    }
-
-    private GetAttributeScoreDetailResponseDto toResponse(GetAttributeScoreDetailUseCase.Result result) {
-        return new GetAttributeScoreDetailResponseDto(
-            result.maxPossibleScore(),
-            result.gainedScore(),
-            result.gainedScorePercentage(),
-            result.questionsCount(),
-            result.questionnaires());
+    private Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId,
+                          String sort, String order, Integer size, Integer page, UUID currentUserId) {
+        return new Param(assessmentId,
+            attributeId,
+            maturityLevelId,
+            sort,
+            order,
+            size,
+            page,
+            currentUserId);
     }
 }

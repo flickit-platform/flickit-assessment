@@ -1,11 +1,15 @@
 package org.flickit.assessment.core.application.port.in.attribute;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.*;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.crud.Order;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.validation.EnumValue;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -13,7 +17,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetAttributeScoreDetailUseCase {
 
-    Result getAttributeScoreDetail(Param param);
+    PaginatedResponse<Result> getAttributeScoreDetail(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -28,32 +32,63 @@ public interface GetAttributeScoreDetailUseCase {
         @NotNull(message = GET_ATTRIBUTE_SCORE_DETAIL_MATURITY_LEVEL_ID_NOT_NULL)
         Long maturityLevelId;
 
+        @EnumValue(enumClass = Order.class, message = GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID)
+        String order;
+
+        @EnumValue(enumClass = Sort.class, message = GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID)
+        String sort;
+
+        @Min(value = 1, message = GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MIN)
+        @Max(value = 100, message = GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MAX)
+        int size;
+
+        @Min(value = 0, message = GET_ATTRIBUTE_SCORE_DETAIL_PAGE_MIN)
+        int page;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(UUID assessmentId, Long attributeId, Long maturityLevelId, UUID currentUserId) {
+        @Builder
+        public Param(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, Integer size, Integer page, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
+            this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : Sort.DEFAULT.name();
+            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DEFAULT.name();
+            this.size = size != null ? size : 10;
+            this.page = page != null ? page : 0;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+
+        @Getter
+        @RequiredArgsConstructor
+        @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+        public enum Sort {
+            QUESTIONNAIRE("questionnaire"),
+            WEIGHT("weight"),
+            SCORE("score"),
+            WEIGHTED_SCORE("weightedScore"),
+            CONFIDENCE("confidence"),
+            EVIDENCE_COUNT("evidenceCount");
+
+            private final String title;
+
+            public static final Sort DEFAULT = QUESTIONNAIRE;
+        }
     }
 
-    record Result(double maxPossibleScore, double gainedScore, double gainedScorePercentage,
-                  int questionsCount, List<Questionnaire> questionnaires) {
-    }
+    record Result(String questionnaire, Question question, Answer answer) {
 
-    record Questionnaire(String title, List<QuestionScore> questionScores) {
-    }
+        public record Question(int index, String title, int weight, int evidenceCount) {
+        }
 
-    record QuestionScore(int questionIndex,
-                         String questionTitle,
-                         int questionWeight,
-                         Integer answerOptionIndex,
-                         String answerOptionTitle,
-                         Boolean answerIsNotApplicable,
-                         Double answerScore,
-                         Double weightedScore) {
+        public record Answer(Integer index,
+                             String title,
+                             Boolean isNotApplicable,
+                             Double score,
+                             Double weightedScore,
+                             Integer confidenceLevel) {
+        }
     }
 }

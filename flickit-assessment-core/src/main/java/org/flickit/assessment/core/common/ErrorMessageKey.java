@@ -122,6 +122,11 @@ public class ErrorMessageKey {
     public static final String GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_ID_NOT_NULL = "get-attribute-score-detail.assessment.id.notNull";
     public static final String GET_ATTRIBUTE_SCORE_DETAIL_ATTRIBUTE_ID_NOT_NULL = "get-attribute-score-detail.attribute.id.notNull";
     public static final String GET_ATTRIBUTE_SCORE_DETAIL_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-score-detail.maturityLevel.id.notNull";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID = "get-attribute-score-detail.sort.invalid";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID = "get-attribute-score-detail.order.invalid";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MIN = "get-attribute-score-detail.size.min";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MAX = "get-attribute-score-detail.size.max";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_PAGE_MIN = "get-attribute-score-detail.page.min";
 
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_ID_NOT_NULL = "get-assessment-questionnaire-list.assessmentId.notNull";
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_LIST_CURRENT_USER_ID_NOT_NULL = "get-assessment-questionnaire-list.currentUserId.notNull";

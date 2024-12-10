@@ -2,13 +2,14 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.crud.Order;
+import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
@@ -23,31 +24,46 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     private final AssessmentAccessChecker assessmentAccessChecker;
 
     @Override
-    public Result getAttributeScoreDetail(Param param) {
+    public PaginatedResponse<Result> getAttributeScoreDetail(Param param) {
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
-        List<Questionnaire> questionnaires = loadAttributeScoreDetailPort.loadScoreDetail(
-            param.getAssessmentId(),
-            param.getAttributeId(),
-            param.getMaturityLevelId());
+        var result = loadAttributeScoreDetailPort.loadScoreDetail(
+            toParam(
+                param.getAssessmentId(),
+                param.getAttributeId(),
+                param.getMaturityLevelId(),
+                param.getSort(),
+                param.getOrder(),
+                param.getSize(),
+                param.getPage()
+            )
+        );
 
-        double maxPossibleScore = 0.0;
-        double gainedScore = 0.0;
+        var items = result.getItems().stream().map(this::toResult).toList();
+        return new PaginatedResponse<>(items,
+            result.getPage(),
+            result.getSize(),
+            result.getOrder(),
+            result.getSort(),
+            result.getTotal());
+    }
 
-        List<QuestionScore> questionScores = questionnaires.stream()
-            .flatMap(a -> a.questionScores().stream())
-            .toList();
+    private LoadAttributeScoreDetailPort.Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, int size, int page) {
+        return new LoadAttributeScoreDetailPort.Param(
+            assessmentId,
+            attributeId,
+            maturityLevelId,
+            Param.Sort.valueOf(sort),
+            Order.valueOf(order),
+            size,
+            page);
+    }
 
-        for (QuestionScore qs : questionScores) {
-            if (Boolean.TRUE.equals(qs.answerIsNotApplicable()))
-                continue;
-            maxPossibleScore += qs.questionWeight();
-            if (qs.answerScore() != null)
-                gainedScore += qs.weightedScore();
-        }
-
-        double gainedScorePercentage = maxPossibleScore > 0 ? gainedScore / maxPossibleScore : 0.0;
-        return new Result(maxPossibleScore, gainedScore, gainedScorePercentage, questionScores.size(), questionnaires);
+    private Result toResult(LoadAttributeScoreDetailPort.Result item) {
+        return new Result(
+            item.questionnaireTitle(),
+            new Result.Question(item.questionIndex(), item.questionTitle(), item.questionWeight(), 0),
+            new Result.Answer(item.optionIndex(), item.optionTitle(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore(), item.confidence()));
     }
 
     private void checkUserAccess(UUID assessmentId, UUID currentUserId) {
