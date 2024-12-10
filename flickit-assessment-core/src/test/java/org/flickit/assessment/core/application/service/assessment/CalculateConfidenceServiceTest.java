@@ -186,7 +186,7 @@ class CalculateConfidenceServiceTest {
         var sValue1ConfidenceLevel = (((5.0 / 30.0) * 2) + ((25.0 / 30.0) * 2) + ((15.0 / 30.0) * 3) + ((25.0 / 30.0) * 3)) / 10;
         var sValue2ConfidenceLevel = (((15.0 / 30.0) * 4) + ((25.0 / 30.0) * 1) + ((15.0 / 30.0) * 4) )/ 9;
         var sValue3ConfidenceLevel = 0; // Because of sum.getValue() == 0 ? 0 : weightedSum.getValue() / sum.getValue() in attrVal
-        var resultCl = ((sValue1ConfidenceLevel * 1 + sValue2ConfidenceLevel * 1 + 0) / 3) * 100;
+        var resultCl = ((sValue1ConfidenceLevel * 1 + sValue2ConfidenceLevel * 1 + sValue3ConfidenceLevel) / 3) * 100;
         assertEquals(resultCl, result.confidenceValue(), 0.01);
     }
 }
