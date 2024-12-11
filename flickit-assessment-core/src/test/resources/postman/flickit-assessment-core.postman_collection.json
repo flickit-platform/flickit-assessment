@@ -958,7 +958,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104?maturityLevelId=1728",
+							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104?maturityLevelId=1728&sort=weight&order=asc&page=0&size=10",
 							"host": [
 								"{{base_url}}"
 							],
@@ -974,6 +974,22 @@
 								{
 									"key": "maturityLevelId",
 									"value": "1728"
+								},
+								{
+									"key": "sort",
+									"value": "weight"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
 								}
 							]
 						}
@@ -1066,6 +1082,40 @@
 								"ai-report",
 								"attributes",
 								"1961"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attribute Score Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104/stats?maturityLevelId=1728",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"8280e75b-ed71-4c82-9fac-920c52efb26c",
+								"report",
+								"attributes",
+								"1104",
+								"stats"
+							],
+							"query": [
+								{
+									"key": "maturityLevelId",
+									"value": "1728"
+								}
 							]
 						}
 					},
