@@ -22,7 +22,7 @@ public class SpaceJpaEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "code", length = 50, nullable = false)
+    @Column(name = "code", length = 100, nullable = false)
     private String code;
 
     @Column(name = "title", length = 100, nullable = false)
