@@ -83,6 +83,31 @@ class GetAttributeScoreDetailUseCaseTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
+    @Test
+    void testGetAttributeScoreDetailUseCaseParam_SortItemNamesShouldNotBeChanged() {
+        assertEquals("QUESTIONNAIRE", GetAttributeScoreDetailUseCase.Param.Sort.QUESTIONNAIRE.name());
+        assertEquals("WEIGHT", GetAttributeScoreDetailUseCase.Param.Sort.WEIGHT.name());
+        assertEquals("SCORE", GetAttributeScoreDetailUseCase.Param.Sort.SCORE.name());
+        assertEquals("WEIGHTED_SCORE", GetAttributeScoreDetailUseCase.Param.Sort.WEIGHTED_SCORE.name());
+        assertEquals("CONFIDENCE", GetAttributeScoreDetailUseCase.Param.Sort.CONFIDENCE.name());
+        assertEquals("EVIDENCE_COUNT", GetAttributeScoreDetailUseCase.Param.Sort.EVIDENCE_COUNT.name());
+    }
+
+    @Test
+    void testGetAttributeScoreDetailUseCaseParam_SortItemTitlesShouldNotBeChanged() {
+        assertEquals("questionnaire", GetAttributeScoreDetailUseCase.Param.Sort.QUESTIONNAIRE.getTitle());
+        assertEquals("weight", GetAttributeScoreDetailUseCase.Param.Sort.WEIGHT.getTitle());
+        assertEquals("score", GetAttributeScoreDetailUseCase.Param.Sort.SCORE.getTitle());
+        assertEquals("weightedScore", GetAttributeScoreDetailUseCase.Param.Sort.WEIGHTED_SCORE.getTitle());
+        assertEquals("confidence", GetAttributeScoreDetailUseCase.Param.Sort.CONFIDENCE.getTitle());
+        assertEquals("evidenceCount", GetAttributeScoreDetailUseCase.Param.Sort.EVIDENCE_COUNT.getTitle());
+    }
+
+    @Test
+    void testGetAttributeScoreDetailUseCaseParam_SortItemSizeShouldNotBeChanged() {
+        assertEquals(6, GetAttributeScoreDetailUseCase.Param.Sort.values().length);
+    }
+
     private GetAttributeScoreDetailUseCase.Param createParam(Consumer<GetAttributeScoreDetailUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
