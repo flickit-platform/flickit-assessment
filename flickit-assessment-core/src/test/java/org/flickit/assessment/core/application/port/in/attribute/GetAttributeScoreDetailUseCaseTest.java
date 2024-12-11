@@ -32,7 +32,7 @@ class GetAttributeScoreDetailUseCaseTest {
     }
 
     @Test
-    void testGetAttributeScoreDetailUseCaseParam_sortParamViolatesConstrains_ErrorMessage() {
+    void testGetAttributeScoreDetailUseCaseParam_SortParamViolatesConstrains_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.sort("invalid_sort")));
         assertThat(throwable).hasMessage("sort: " + GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID);
@@ -47,11 +47,10 @@ class GetAttributeScoreDetailUseCaseTest {
     }
 
     @Test
-    void testGetAttributeScoreDetailUseCaseParam_orderParamViolatesConstrains_ErrorMessage() {
+    void testGetAttributeScoreDetailUseCaseParam_OrderParamViolatesConstrains_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.order("invalid_order")));
         assertThat(throwable).hasMessage("order: " + GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID);
-
 
         assertDoesNotThrow(() -> createParam(b -> b.order("    asc     ")));
         assertDoesNotThrow(() -> createParam(b -> b.order("    DESC     ")));
@@ -60,7 +59,7 @@ class GetAttributeScoreDetailUseCaseTest {
     }
 
     @Test
-    void testGetAttributeScoreDetailUseCaseParam_sizeParamViolatesConstraints_ErrorMessage() {
+    void testGetAttributeScoreDetailUseCaseParam_SizeParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.size(-1)));
         assertThat(throwable).hasMessage("size: " + GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MIN);
@@ -71,14 +70,14 @@ class GetAttributeScoreDetailUseCaseTest {
     }
 
     @Test
-    void testGetAttributeScoreDetailUseCaseParam_pageParamViolatesConstraints_ErrorMessage() {
+    void testGetAttributeScoreDetailUseCaseParam_PageParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.page(-1)));
         assertThat(throwable).hasMessage("page: " + GET_ATTRIBUTE_SCORE_DETAIL_PAGE_MIN);
     }
 
     @Test
-    void testGetAttributeScoreDetailUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
+    void testGetAttributeScoreDetailUseCaseParam_CurrentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

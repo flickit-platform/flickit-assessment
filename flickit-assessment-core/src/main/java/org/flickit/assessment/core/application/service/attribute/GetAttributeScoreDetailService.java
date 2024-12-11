@@ -48,6 +48,11 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             result.getTotal());
     }
 
+    private void checkUserAccess(UUID assessmentId, UUID currentUserId) {
+        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_SCORE_DETAIL))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+    }
+
     private LoadAttributeScoreDetailPort.Param toParam(UUID assessmentId, Long attributeId, Long maturityLevelId, String sort, String order, int size, int page) {
         return new LoadAttributeScoreDetailPort.Param(
             assessmentId,
@@ -64,10 +69,5 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
             item.questionnaireTitle(),
             new Result.Question(item.questionIndex(), item.questionTitle(), item.questionWeight(), item.evidenceCount()),
             new Result.Answer(item.optionIndex(), item.optionTitle(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore(), item.confidence()));
-    }
-
-    private void checkUserAccess(UUID assessmentId, UUID currentUserId) {
-        if (!assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ATTRIBUTE_SCORE_DETAIL))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 }
