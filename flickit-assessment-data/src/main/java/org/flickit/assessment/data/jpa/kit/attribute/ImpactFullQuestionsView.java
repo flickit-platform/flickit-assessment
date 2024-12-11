@@ -1,7 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.attribute;
 
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 
 public interface ImpactFullQuestionsView {
@@ -18,15 +17,13 @@ public interface ImpactFullQuestionsView {
 
     QuestionImpactJpaEntity getQuestionImpact();
 
-    AnswerOptionImpactJpaEntity getOptionImpact();
-
     Integer getOptionIndex();
 
     String getOptionTitle();
 
-    Double getOptionValue();
-
     Double getAnswerScore();
 
     Double getWeightedScore();
+
+    int getEvidenceCount();
 }
