@@ -45,11 +45,8 @@ public interface GetQuestionImpactsUseCase {
     record AttributeImpact(long attributeId, String title, List<Impact> impacts) {
     }
 
-    record Impact(long questionImpactId, int weight, MaturityLevel maturityLevel, List<OptionValue> optionValues) {
+    record Impact(long questionImpactId, int weight, MaturityLevel maturityLevel) {
         public record MaturityLevel(long maturityLevelId, String title) {
-        }
-
-        public record OptionValue(long optionId, double value) {
         }
     }
 }

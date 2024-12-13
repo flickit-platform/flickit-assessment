@@ -82,15 +82,10 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
     }
 
     private Impact toImpact(QuestionImpact attributeImpact, MaturityLevel maturityLevel) {
-        List<Impact.OptionValue> optionValues = attributeImpact.getOptionImpacts().stream()
-            .map(answer -> new Impact.OptionValue(answer.getOptionId(), answer.getValue()))
-            .toList();
-
         return new Impact(
             attributeImpact.getId(),
             attributeImpact.getWeight(),
-            new Impact.MaturityLevel(maturityLevel.getId(), maturityLevel.getTitle()),
-            optionValues
+            new Impact.MaturityLevel(maturityLevel.getId(), maturityLevel.getTitle())
         );
     }
 }
