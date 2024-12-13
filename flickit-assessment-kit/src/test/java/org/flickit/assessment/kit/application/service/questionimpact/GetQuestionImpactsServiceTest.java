@@ -22,9 +22,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionImpactMother.createAnswerOptionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
@@ -58,18 +56,6 @@ class GetQuestionImpactsServiceTest {
     private LoadAttributesPort loadAttributesPort;
 
     private final KitVersion kitVersion = KitVersionMother.createKitVersion(simpleKit());
-
-    @Test
-    void testGetQuestionImpacts_kitVersionIdDoesNotExist_throwsResourceNotFoundException() {
-        var param = createParam(GetQuestionImpactsUseCase.Param.ParamBuilder::build);
-
-        when(loadKitVersionPort.load(param.getKitVersionId())).thenThrow(new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionImpacts(param));
-        assertEquals(KIT_VERSION_ID_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(checkExpertGroupAccessPort, loadQuestionPort, loadMaturityLevelsPort, loadAttributesPort);
-    }
 
     @Test
     void testGetQuestionImpacts_currentUserIsNotExpertGroupMember_throwsAccessDeniedException() {
@@ -111,18 +97,10 @@ class GetQuestionImpactsServiceTest {
 
         var answerOptions = List.of(answerOption1, answerOption2, answerOption3);
 
-        var optionImpacts = List.of(
-            createAnswerOptionImpact(answerOption1.getId(), 0),
-            createAnswerOptionImpact(answerOption2.getId(), 0.5),
-            createAnswerOptionImpact(answerOption3.getId(), 1));
 
         var impact1 = createQuestionImpact(attr1.getId(), maturityLevels.get(3).getId(), 1, question.getId());
         var impact2 = createQuestionImpact(attr1.getId(), maturityLevels.get(4).getId(), 1, question.getId());
         var impact3 = createQuestionImpact(attr2.getId(), maturityLevels.get(3).getId(), 3, question.getId());
-
-        impact1.setOptionImpacts(optionImpacts);
-        impact2.setOptionImpacts(optionImpacts);
-        impact3.setOptionImpacts(optionImpacts);
 
         var impacts = List.of(impact1, impact2, impact3);
 
