@@ -29,7 +29,6 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.creat
 import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_MATURITY_LEVELS;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_ATTRIBUTES;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionImpactMother.createAnswerOptionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.createAttribute;
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
@@ -83,9 +82,6 @@ class QuestionCreateKitPersisterTest {
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
         var answerOption1 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
         var answerOption2 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
-        var optionImpact1 = createAnswerOptionImpact(answerOption1.getId(), 0);
-        var optionImpact2 = createAnswerOptionImpact(answerOption2.getId(), 1);
-        impact.setOptionImpacts(List.of(optionImpact1, optionImpact2));
         question.setOptions(List.of(answerOption1, answerOption2));
         question.setImpacts(List.of(impact));
         questionnaire.setQuestions(List.of(question));
@@ -146,9 +142,6 @@ class QuestionCreateKitPersisterTest {
         var impact = createQuestionImpact(attribute.getId(), maturityLevel.getId(), 1, question.getId());
         var answerOption1 = answerRange.getAnswerOptions().getFirst();
         var answerOption2 = answerRange.getAnswerOptions().getLast();
-        var aoi1 = createAnswerOptionImpact(answerOption1.getId(), answerOption1.getValue());
-        var aoi2 = createAnswerOptionImpact(answerOption2.getId(), answerOption2.getValue());
-        impact.setOptionImpacts(List.of(aoi1, aoi2));
         question.setImpacts(List.of(impact));
         question.setOptions(null);
 
