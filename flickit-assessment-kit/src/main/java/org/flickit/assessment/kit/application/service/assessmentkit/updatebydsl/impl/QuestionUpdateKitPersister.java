@@ -2,12 +2,10 @@ package org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.UpdateQuestionPort;
@@ -24,7 +22,6 @@ import java.util.*;
 
 import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.*;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -36,7 +33,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final CreateQuestionImpactPort createQuestionImpactPort;
     private final DeleteQuestionImpactPort deleteQuestionImpactPort;
     private final UpdateQuestionImpactPort updateQuestionImpactPort;
-    private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
     private final CreateAnswerRangePort createAnswerRangePort;
@@ -405,61 +401,6 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             isMajorUpdate = true;
         }
 
-        boolean isMajorUpdateOptionImpact = updateOptionImpacts(savedQuestion, savedImpact, dslImpact, currentUserId);
-
-        return isMajorUpdate || isMajorUpdateOptionImpact;
-    }
-
-    private boolean updateOptionImpacts(Question savedQuestion,
-                                        QuestionImpact savedImpact,
-                                        QuestionImpactDslModel dslImpact,
-                                        UUID currentUserId) {
-        boolean isMajorUpdate = false;
-        Map<Long, AnswerOption> optionMap = savedQuestion.getOptions().stream().collect(toMap(AnswerOption::getId, i -> i));
-
-        Map<Integer, AnswerOptionImpact> savedOptionImpactMap = savedImpact.getOptionImpacts().stream()
-            .collect(toMap(a -> optionMap.get(a.getOptionId()).getIndex(), a -> a));
-
-        Map<Integer, AnswerOptionImpact> dslOptionImpactMap = dslImpact.getOptionsIndextoValueMap().entrySet().stream()
-            .collect(toMap(Map.Entry::getKey,
-                entry -> buildOptionImpact(savedQuestion, entry.getKey(), dslImpact.getOptionsIndextoValueMap().get(entry.getKey()))));
-
-        for (Map.Entry<Integer, AnswerOptionImpact> entry : savedOptionImpactMap.entrySet()) {
-            AnswerOptionImpact savedOptionImpact = entry.getValue();
-            AnswerOptionImpact newOptionImpact = dslOptionImpactMap.get(entry.getKey());
-
-            if (savedOptionImpact.getValue() != newOptionImpact.getValue()) {
-                updateAnswerOptionImpact(savedImpact.getKitVersionId(), savedOptionImpact, newOptionImpact, currentUserId);
-                isMajorUpdate = true;
-            }
-        }
         return isMajorUpdate;
-    }
-
-    private AnswerOptionImpact buildOptionImpact(Question savedQuestion, Integer index, Double value) {
-        Optional<AnswerOption> answerOption = savedQuestion.getOptions().stream()
-            .filter(o -> o.getIndex() == index)
-            .findFirst();
-        return new AnswerOptionImpact(
-            null,
-            answerOption.orElseThrow(() -> new ResourceNotFoundException(UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND)).getId(),
-            value
-        );
-    }
-
-    private void updateAnswerOptionImpact(long kitVersionId,
-                                          AnswerOptionImpact savedOptionImpact,
-                                          AnswerOptionImpact dslOptionImpact,
-                                          UUID currentUserId) {
-        var updateParam = new UpdateAnswerOptionImpactPort.Param(
-            savedOptionImpact.getId(),
-            kitVersionId,
-            dslOptionImpact.getValue(),
-            LocalDateTime.now(),
-            currentUserId
-        );
-        updateAnswerOptionImpactPort.update(updateParam);
-        log.debug("AnswerOptionImpact[id={}, optionId={}, newValue={}] updated.",
-            savedOptionImpact.getId(), savedOptionImpact.getOptionId(), dslOptionImpact.getValue());
     }
 }
