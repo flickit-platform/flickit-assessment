@@ -6,9 +6,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.*;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answeroption.UpdateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answeroptionimpact.UpdateAnswerOptionImpactPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
@@ -38,10 +36,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private final CreateQuestionImpactPort createQuestionImpactPort;
     private final DeleteQuestionImpactPort deleteQuestionImpactPort;
     private final UpdateQuestionImpactPort updateQuestionImpactPort;
-    private final CreateAnswerOptionImpactPort createAnswerOptionImpactPort;
     private final UpdateAnswerOptionImpactPort updateAnswerOptionImpactPort;
     private final UpdateAnswerOptionPort updateAnswerOptionPort;
-    private final LoadAnswerOptionsPort loadAnswerOptionsPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
     private final CreateAnswerRangePort createAnswerRangePort;
 
@@ -245,25 +241,8 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         );
         Long impactId = createQuestionImpactPort.persist(newQuestionImpact);
         log.debug("QuestionImpact[impactId={}, questionId={}] created.", impactId, questionId);
-
-        Map<Integer, Long> optionIndexToIdMap = loadAnswerOptionsPort.loadByQuestionId(questionId, kitVersionId).stream()
-            .collect(toMap(AnswerOption::getIndex, AnswerOption::getId));
-
-        dslQuestionImpact.getOptionsIndextoValueMap().keySet().forEach(
-            index -> createAnswerOptionImpact(
-                impactId,
-                optionIndexToIdMap.get(index),
-                dslQuestionImpact.getOptionsIndextoValueMap().get(index),
-                kitVersionId,
-                currentUserId)
-        );
     }
 
-    private void createAnswerOptionImpact(Long questionImpactId, Long optionId, Double value, Long kitVersionId, UUID currentUserId) {
-        var createParam = new CreateAnswerOptionImpactPort.Param(questionImpactId, optionId, value, kitVersionId, currentUserId);
-        Long optionImpactId = createAnswerOptionImpactPort.persist(createParam);
-        log.debug("AnswerOptionImpact[id={}, questionImpactId={}, optionId={}] created.", optionImpactId, questionImpactId, optionId);
-    }
 
     private boolean updateQuestion(Question savedQuestion,
                                    QuestionDslModel dslQuestion,

@@ -4,9 +4,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
-import org.flickit.assessment.kit.application.port.out.answeroptionimpact.CreateAnswerOptionImpactPort;
-
-import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerOptionImpactMapper {
@@ -16,21 +13,6 @@ public class AnswerOptionImpactMapper {
             entity.getId(),
             entity.getOptionId(),
             entity.getValue() != null ? entity.getValue() : optionValue
-        );
-    }
-
-    public static AnswerOptionImpactJpaEntity mapToJpaEntity(CreateAnswerOptionImpactPort.Param param) {
-        LocalDateTime creationTime = LocalDateTime.now();
-        return new AnswerOptionImpactJpaEntity(
-            null,
-            param.kitVersionId(),
-            param.optionId(),
-            param.questionImpactId(),
-            param.value(),
-            creationTime,
-            creationTime,
-            param.createdBy(),
-            param.createdBy()
         );
     }
 }
