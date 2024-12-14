@@ -55,8 +55,8 @@ public interface GetAttributeScoreDetailUseCase {
             this.maturityLevelId = maturityLevelId;
             this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : Sort.DEFAULT.name();
             this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DEFAULT.name();
-            this.size = size != null ? size : 10;
-            this.page = page != null ? page : 0;
+            this.size = size;
+            this.page = page;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

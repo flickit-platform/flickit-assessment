@@ -105,6 +105,8 @@ class GetAttributeScoreDetailServiceTest {
             .maturityLevelId(1L)
             .sort("weight")
             .order("asc")
+            .size(50)
+            .page(0)
             .currentUserId(UUID.randomUUID());
     }
 
@@ -119,7 +121,8 @@ class GetAttributeScoreDetailServiceTest {
             false,
             score,
             weight * score,
-            1);
+            1,
+            2);
     }
 
     private LoadAttributeScoreDetailPort.Result questionWithoutAnswer() {
@@ -133,7 +136,8 @@ class GetAttributeScoreDetailServiceTest {
             false,
             null,
             0.0,
-            1);
+            1,
+            3);
     }
 
     private LoadAttributeScoreDetailPort.Result questionMarkedAsNotApplicable() {
@@ -147,6 +151,7 @@ class GetAttributeScoreDetailServiceTest {
             true,
             null,
             0.0,
-            1);
+            1,
+            0);
     }
 }

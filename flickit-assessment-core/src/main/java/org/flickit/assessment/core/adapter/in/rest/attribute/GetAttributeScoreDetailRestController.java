@@ -29,8 +29,8 @@ public class GetAttributeScoreDetailRestController {
         @RequestParam(value = "maturityLevelId", required = false) Long maturityLevelId,
         @RequestParam(value = "sort", required = false) String sort,
         @RequestParam(value = "order", required = false) String order,
-        @RequestParam(value = "size", required = false) Integer size,
-        @RequestParam(value = "page", required = false) Integer page) {
+        @RequestParam(value = "size", defaultValue = "50") Integer size,
+        @RequestParam(value = "page", defaultValue = "0") Integer page) {
         UUID currentUserId = userContext.getUser().id();
         var response = useCase.getAttributeScoreDetail(toParam(assessmentId, attributeId, maturityLevelId, sort, order, size, page, currentUserId));
         return new ResponseEntity<>(response, HttpStatus.OK);
