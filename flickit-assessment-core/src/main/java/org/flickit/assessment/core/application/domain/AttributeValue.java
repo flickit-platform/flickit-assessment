@@ -55,20 +55,25 @@ public class AttributeValue {
 
     private Map<Long, Double> calcGainedScore(List<MaturityLevel> maturityLevels) {
         return maturityLevels.stream()
-            .flatMap(e -> {
+            .flatMap(ml -> {
                 assert attribute.getQuestions() != null;
-                var questionIdToQuestionImpact = attribute.getQuestions().stream()
-                    .filter(q -> !isMarkedAsNotApplicable(q.getId()) &&
-                        q.findImpactByAttributeAndMaturityLevel(this.getAttribute(), e) != null)
-                    .collect(toMap(Question::getId, q -> q.findImpactByAttributeAndMaturityLevel(this.getAttribute(), e)));
+                Map<Long, QuestionImpact> questionIdToQuestionImpact = new HashMap<>();
+                for (Question q : attribute.getQuestions()) {
+                    var impact = q.findImpactByAttributeAndMaturityLevel(this.getAttribute(), ml);
+                    if (impact != null) // Only add non-null impacts to the map
+                        questionIdToQuestionImpact.put(q.getId(), impact);
+                }
 
-               return answers.stream()
-                    .filter(a ->  !Boolean.TRUE.equals(a.getIsNotApplicable()) && a.getSelectedOption() != null)
-                    .map(a -> {
-                        QuestionImpact questionImpact = questionIdToQuestionImpact.get(a.getQuestionId());
-                        return new MaturityLevelScore(e, questionImpact.getWeight() * a.getSelectedOption().getValue());
+                return answers.stream()
+                    .filter(answer -> !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
+                    .map(answer -> {
+                        var score = 0.0;
+                        var impact = questionIdToQuestionImpact.get(answer.getQuestionId());
+                        if (impact != null)
+                            score = answer.getSelectedOption().getValue() * impact.getWeight();
+                        return new MaturityLevelScore(ml, score);
                     });
-            }).collect(groupingBy(x -> x.maturityLevel.getId(), summingDouble(MaturityLevelScore::score)));
+            }).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
     }
 
     private Map<Long, Double> calcPercent(Map<Long, Double> totalScore, Map<Long, Double> gainedScore) {
