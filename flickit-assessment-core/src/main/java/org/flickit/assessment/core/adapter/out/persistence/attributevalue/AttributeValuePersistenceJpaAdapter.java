@@ -22,7 +22,6 @@ import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEnti
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
@@ -53,7 +52,6 @@ public class AttributeValuePersistenceJpaAdapter implements
     private final QuestionJpaRepository questionRepository;
     private final AnswerJpaRepository answerRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
-    private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
 
     @Override
     public List<AttributeValue> persistAll(Set<Long> attributeIds, UUID assessmentResultId) {
