@@ -143,9 +143,8 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         cell.setCellStyle(style);
 
         double score = 0;
-        if (answer != null && answer.getSelectedOption() != null) {
+        if (answer != null && answer.getSelectedOption() != null)
             score = answer.getSelectedOption().getValue();
-        }
 
         cell = row.createCell(3);
         cell.setCellValue(score);

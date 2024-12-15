@@ -65,6 +65,8 @@ public class AttributeValue {
                     if (impact != null) // Only add non-null impacts to the map
                         questionIdToQuestionImpact.put(q.getId(), impact);
                 }
+                if (questionIdToQuestionImpact.isEmpty())
+                    return Stream.of(new MaturityLevelScore(ml, 0.0));
 
                 return answers.stream()
                     .filter(answer -> !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
