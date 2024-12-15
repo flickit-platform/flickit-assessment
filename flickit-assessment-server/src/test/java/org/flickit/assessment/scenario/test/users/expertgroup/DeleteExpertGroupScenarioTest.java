@@ -9,13 +9,13 @@ import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupR
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DeleteExpertGroupScenarioTest extends AbstractScenarioTest {
+class DeleteExpertGroupScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     ExpertGroupTestHelper expertGroupHelper;
 
     @Test
-    void deleteExpertGroup() {
+    void deleteExpertGroup_whenCurrenUserIsExpertGroupOwner_thenDeleteExpertGroup() {
         var request = createExpertGroupRequestDto();
         var response = expertGroupHelper.create(context, request);
 
@@ -31,9 +31,22 @@ public class DeleteExpertGroupScenarioTest extends AbstractScenarioTest {
 
         ExpertGroupJpaEntity expertGroupEntity = jpaTemplate.load(expertGroupId, ExpertGroupJpaEntity.class);
         assertTrue(expertGroupEntity.isDeleted());
+    }
 
-        expertGroupHelper.create(context, request).then()
+    @Test
+    void deleteExpertGroup_whenCurrentUserIsNotExpertGroupOwner_thenThrowAccessDeniedException() {
+        var request = createExpertGroupRequestDto();
+        var response = expertGroupHelper.create(context, request);
+
+        response.then()
             .statusCode(201)
             .body("id", notNullValue());
+
+        final Number expertGroupId = response.path("id");
+        context.getNextCurrentUser();
+
+        var deleteResponse = expertGroupHelper.delete(context, expertGroupId.longValue());
+        deleteResponse.then()
+            .statusCode(403);
     }
 }
