@@ -55,13 +55,20 @@ public class AttributeValue {
 
     private Map<Long, Double> calcGainedScore(List<MaturityLevel> maturityLevels) {
         return maturityLevels.stream()
-            .flatMap(ml ->
-                answers.stream()
-                    .filter(answer ->  !Boolean.TRUE.equals(answer.getIsNotApplicable()) && answer.getSelectedOption() != null)
-                    .map(answer -> answer.findImpactByAttributeAndMaturityLevel(this.getAttribute(), ml))
-                    .filter(Objects::nonNull)
-                    .map(impact -> new MaturityLevelScore(ml, impact.calculateScore()))
-            ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
+            .flatMap(e -> {
+                assert attribute.getQuestions() != null;
+                var questionIdToQuestionImpact = attribute.getQuestions().stream()
+                    .filter(q -> !isMarkedAsNotApplicable(q.getId()) &&
+                        q.findImpactByAttributeAndMaturityLevel(this.getAttribute(), e) != null)
+                    .collect(toMap(Question::getId, q -> q.findImpactByAttributeAndMaturityLevel(this.getAttribute(), e)));
+
+               return answers.stream()
+                    .filter(a ->  !Boolean.TRUE.equals(a.getIsNotApplicable()) && a.getSelectedOption() != null)
+                    .map(a -> {
+                        QuestionImpact questionImpact = questionIdToQuestionImpact.get(a.getQuestionId());
+                        return new MaturityLevelScore(e, questionImpact.getWeight() * a.getSelectedOption().getValue());
+                    });
+            }).collect(groupingBy(x -> x.maturityLevel.getId(), summingDouble(MaturityLevelScore::score)));
     }
 
     private Map<Long, Double> calcPercent(Map<Long, Double> totalScore, Map<Long, Double> gainedScore) {

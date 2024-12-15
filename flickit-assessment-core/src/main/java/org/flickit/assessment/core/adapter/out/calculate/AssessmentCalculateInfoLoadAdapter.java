@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
@@ -259,18 +258,14 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .map(Question::getId)
             .collect(toSet());
         Map<Long, AnswerOptionJpaEntity> idToAnswerOptionEntity = context.allAnswerOptionsEntities.stream()
-            .collect(toMap(AnswerOptionJpaEntity::getId, x -> x));
+            .collect(toMap(AnswerOptionJpaEntity::getId, Function.identity()));
         return context.allAnswerEntities.stream()
             .filter(a -> impactfulQuestionIds.contains(a.getQuestionId()))
             .map(entity -> {
-                AnswerOptionJpaEntity option = idToAnswerOptionEntity.get(entity.getAnswerOptionId());
+                AnswerOptionJpaEntity optionEntity = idToAnswerOptionEntity.get(entity.getAnswerOptionId());
                 AnswerOption answerOption = null;
-                if (option != null) {
-                    var impactsEntities = context.optionIdToAnswerOptionImpactsMap.get(option.getId());
-                    var optionImpacts = impactsEntities.stream()
-                        .map(e -> AnswerOptionImpactMapper.mapToDomainModel(e.getOptionImpact(), e.getQuestionImpact(), option.getValue()))
-                        .toList();
-                    answerOption = AnswerOptionMapper.mapToDomainModel(option, optionImpacts);
+                if (optionEntity != null) {
+                    answerOption = AnswerOptionMapper.mapToDomainModel(optionEntity);
                 }
                 return new Answer(
                     entity.getId(),
