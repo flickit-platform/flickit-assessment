@@ -18,8 +18,6 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.OptionImpactWithQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaEntity;
@@ -401,24 +399,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
                     @Override
                     public QuestionImpactJpaEntity getQuestionImpact() {
                         return x;
-                    }
-                };
-                return view;
-            }).toList();
-    }
-
-    private static List<OptionImpactWithQuestionImpactView> optionImpactWithQuestionImpactView(Map<AnswerOptionImpactJpaEntity, QuestionImpactJpaEntity> optionImpactToQuestionImpactMap) {
-        return optionImpactToQuestionImpactMap.entrySet().stream()
-            .map(x -> {
-                OptionImpactWithQuestionImpactView view = new OptionImpactWithQuestionImpactView() {
-                    @Override
-                    public AnswerOptionImpactJpaEntity getOptionImpact() {
-                        return x.getKey();
-                    }
-
-                    @Override
-                    public QuestionImpactJpaEntity getQuestionImpact() {
-                        return x.getValue();
                     }
                 };
                 return view;
