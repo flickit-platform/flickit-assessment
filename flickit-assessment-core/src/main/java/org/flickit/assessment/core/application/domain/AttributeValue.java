@@ -7,9 +7,11 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.*;
+import static org.flickit.assessment.common.util.NumberUtils.isLessThanWithPrecision;
 
 @Getter
 @AllArgsConstructor
@@ -99,14 +101,15 @@ public class AttributeValue {
         return result;
     }
 
-    private boolean passLevel(Map<Long, Double> percentScore, MaturityLevel ml) {
+    private boolean passLevel(Map<Long, Double> percentScores, MaturityLevel ml) {
         List<LevelCompetence> levelCompetences = ml.getLevelCompetences();
 
-        return levelCompetences.isEmpty() || levelCompetences.stream()
-            .allMatch(levelCompetence -> {
-                Long mlId = levelCompetence.getEffectiveLevelId();
-                return !percentScore.containsKey(mlId) || percentScore.get(mlId) >= levelCompetence.getValue();
-            });
+        for (LevelCompetence levelCompetence : levelCompetences) {
+            Long mlId = levelCompetence.getEffectiveLevelId();
+            if (percentScores.containsKey(mlId) && isLessThanWithPrecision(percentScores.get(mlId), levelCompetence.getValue()))
+                return false;
+        }
+        return true;
     }
 
     private record MaturityLevelScore(MaturityLevel maturityLevel, double score) {
