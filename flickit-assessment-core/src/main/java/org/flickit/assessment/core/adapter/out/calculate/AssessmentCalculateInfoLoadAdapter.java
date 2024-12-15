@@ -24,8 +24,6 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.OptionImpactWithQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
@@ -41,7 +39,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.core.adapter.out.persistence.assessment.AssessmentMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.KIT_CUSTOM_ID_NOT_FOUND;
@@ -58,14 +57,12 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private final QuestionJpaRepository questionRepository;
     private final AttributeJpaRepository attributeRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
-    private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
     private final KitCustomJpaRepository kitCustomRepository;
     private final ObjectMapper objectMapper;
 
     record Context(List<AnswerJpaEntity> allAnswerEntities,
                    List<AnswerOptionJpaEntity> allAnswerOptionsEntities,
-                   Map<Long, List<OptionImpactWithQuestionImpactView>> optionIdToAnswerOptionImpactsMap,
                    List<AttributeValueJpaEntity> allAttributeValueEntities,
                    Map<Long, Map<Long, QuestionWithImpacts>> impactfulQuestions) {
     }
@@ -114,13 +111,10 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
         */
         var allAnswerOptionIds = allAnswerEntities.stream().map(AnswerJpaEntity::getAnswerOptionId).toList();
         var allAnswerOptionEntities = answerOptionRepository.findAllByIdInAndKitVersionId(allAnswerOptionIds, kitVersionId);
-        var optionIdToAnswerOptionImpactEntitiesMap = answerOptionImpactRepository.findAllByOptionIdInAndKitVersionId(allAnswerOptionIds, kitVersionId).stream()
-            .collect(groupingBy(e -> e.getOptionImpact().getOptionId()));
 
         Context context = new Context(
             allAnswerEntities,
             allAnswerOptionEntities,
-            optionIdToAnswerOptionImpactEntitiesMap,
             allAttributeValueEntities,
             impactfulQuestions);
 
@@ -264,9 +258,9 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             .map(entity -> {
                 AnswerOptionJpaEntity optionEntity = idToAnswerOptionEntity.get(entity.getAnswerOptionId());
                 AnswerOption answerOption = null;
-                if (optionEntity != null) {
+                if (optionEntity != null)
                     answerOption = AnswerOptionMapper.mapToDomainModel(optionEntity);
-                }
+
                 return new Answer(
                     entity.getId(),
                     answerOption,

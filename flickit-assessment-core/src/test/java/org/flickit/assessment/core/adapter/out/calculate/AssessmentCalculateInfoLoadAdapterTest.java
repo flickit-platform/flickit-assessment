@@ -19,7 +19,6 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaReposito
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.OptionImpactWithQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
@@ -53,7 +52,8 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEnt
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,8 +77,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
     private AttributeJpaRepository attributeRepository;
     @Mock
     private AnswerOptionJpaRepository answerOptionRepository;
-    @Mock
-    private AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
     @Mock
@@ -352,15 +350,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, null, null, null, null, null, null);
         List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
 
-        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, kitVersionId, 1L, impact11.getId(), 1D, null, null, null, null);
-        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, kitVersionId, 2L, impact21.getId(), 1D, null, null, null, null);
-        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, kitVersionId, 5L, impact31.getId(), 1D, null, null, null, null);
-
-        var optionImpactToQuestionImpactMap = Map.of(answerImpact11, impact11,
-            answerImpact21, impact21,
-            answerImpact31, impact31);
-        List<OptionImpactWithQuestionImpactView> answerOptionImpactEntities = optionImpactWithQuestionImpactView(optionImpactToQuestionImpactMap);
-
         return new Context(
             assessmentResultEntity,
             subjectValues,
@@ -371,7 +360,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
             questionIdToImpactsMap,
             answerEntities,
             answerOptionEntities,
-            answerOptionImpactEntities,
             kitCustomEntity);
     }
 
@@ -392,8 +380,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.answerEntities());
         when(answerOptionRepository.findAllByIdInAndKitVersionId(any(), anyLong()))
             .thenReturn(context.answerOptionEntities());
-        when(answerOptionImpactRepository.findAllByOptionIdInAndKitVersionId(any(), eq(kitVersionId)))
-            .thenReturn(context.answerOptionImpactEntities);
         when(kitCustomRepository.findByIdAndKitId(anyLong(), anyLong()))
             .thenReturn(Optional.of(context.kitCustomEntity));
     }
@@ -449,7 +435,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,
         List<AnswerJpaEntity> answerEntities,
         List<AnswerOptionJpaEntity> answerOptionEntities,
-        List<OptionImpactWithQuestionImpactView> answerOptionImpactEntities,
         KitCustomJpaEntity kitCustomEntity) {
     }
 }
