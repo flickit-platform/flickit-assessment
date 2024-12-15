@@ -11,7 +11,6 @@ import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeS
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
@@ -101,25 +100,17 @@ public class AttributePersistenceJpaAdapter implements
             .stream()
             .map(view -> new LoadAttributeScoresPort.Result(view.getQuestionId(),
                 view.getQuestionWeight(),
-                getScore(view.getAnswer(), view.getOptionImpact(), view.getOptionValue()),
+                getScore(view.getAnswer(), view.getOptionValue()),
                 view.getAnswer() != null && view.getAnswerIsNotApplicable() != null && view.getAnswer().getIsNotApplicable()))
             .toList();
     }
 
-    private Double getScore(AnswerJpaEntity answer, AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
+    private Double getScore(AnswerJpaEntity answer, Double optionValue) {
         if (answer == null) // if no answer is submitted for the question
             return 0.0;
         if (Boolean.TRUE.equals(answer.getIsNotApplicable())) // if there is an answer and notApplicable == true
             return null;
-        if (optionImpact == null) // if there exists an answer and notApplicable != true and no option is selected
-            return 0.0;
-        return getValue(optionImpact, optionValue);
-    }
-
-    private Double getValue(AnswerOptionImpactJpaEntity optionImpact, Double optionValue) {
-        if (optionImpact.getValue() != null)
-            return optionImpact.getValue();
-        return optionValue != null ? optionValue : 0.0;
+        return optionValue;
     }
 
     @Override
