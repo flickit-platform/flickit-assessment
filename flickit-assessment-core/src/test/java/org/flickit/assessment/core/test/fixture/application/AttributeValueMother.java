@@ -24,12 +24,12 @@ public class AttributeValueMother {
             QuestionMother.withImpactsOnLevel45(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.noScoreOnLevel4(attributeId));
+            AnswerMother.fullScore(questions.get(0).getId()),
+            AnswerMother.fullScore(questions.get(1).getId()),
+            AnswerMother.fullScore(questions.get(2).getId()),
+            AnswerMother.fullScore(questions.get(3).getId()),
+            AnswerMother.fullScore(questions.get(4).getId()),
+            AnswerMother.noScore(questions.get(5).getId()));
 
         return new AttributeValue(UUID.randomUUID(),
             AttributeMother.withIdQuestionsAndWeight(attributeId, questions, weight),
@@ -38,20 +38,26 @@ public class AttributeValueMother {
 
     public static AttributeValue hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(int weight, long attributeId) {
         List<Question> questions = List.of(
-            QuestionMother.withImpactsOnLevel23(attributeId),
-            QuestionMother.withImpactsOnLevel23(attributeId),
-            QuestionMother.withImpactsOnLevel23(attributeId),
-            QuestionMother.withImpactsOnLevel23(attributeId),
-            QuestionMother.withImpactsOnLevel23(attributeId),
-            QuestionMother.withImpactsOnLevel45(attributeId));
+            QuestionMother.withImpactsOnLevel2(attributeId),
+            QuestionMother.withImpactsOnLevel2(attributeId),
+            QuestionMother.withImpactsOnLevel2(attributeId),
+            QuestionMother.withImpactsOnLevel2(attributeId),
+            QuestionMother.withImpactsOnLevel2(attributeId),
+            QuestionMother.withImpactsOnLevel2(attributeId),
+            QuestionMother.withImpactsOnLevel3(attributeId),
+            QuestionMother.withImpactsOnLevel3(attributeId),
+            QuestionMother.withImpactsOnLevel3(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
-            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
-            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
-            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
-            AnswerMother.partialScoreOnLevel2AndFullScoreOnLevel3(attributeId),
-            AnswerMother.noScoreOnLevel4(attributeId));
+            AnswerMother.partialScore(questions.get(0).getId(), 0.7),
+            AnswerMother.partialScore(questions.get(1).getId(), 0.7),
+            AnswerMother.partialScore(questions.get(2).getId(), 0.7),
+            AnswerMother.partialScore(questions.get(3).getId(), 0.7),
+            AnswerMother.partialScore(questions.get(4).getId(), 0.7),
+            AnswerMother.partialScore(questions.get(5).getId(), 0.7),
+            AnswerMother.fullScore(questions.get(6).getId()),
+            AnswerMother.fullScore(questions.get(7).getId()),
+            AnswerMother.fullScore(questions.get(8).getId()));
 
         return new AttributeValue(UUID.randomUUID(),
             AttributeMother.withIdQuestionsAndWeight(attributeId, questions, weight),
@@ -65,15 +71,15 @@ public class AttributeValueMother {
             QuestionMother.withImpactsOnLevel24(attributeId),
             QuestionMother.withImpactsOnLevel24(attributeId),
             QuestionMother.withImpactsOnLevel24(attributeId),
-            QuestionMother.withImpactsOnLevel45(attributeId));
+            QuestionMother.withImpactsOnLevel24(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5(attributeId));
+            AnswerMother.fullScore(questions.get(0).getId()),
+            AnswerMother.fullScore(questions.get(1).getId()),
+            AnswerMother.fullScore(questions.get(2).getId()),
+            AnswerMother.fullScore(questions.get(3).getId()),
+            AnswerMother.fullScore(questions.get(4).getId()),
+            AnswerMother.fullScore(questions.get(5).getId()));
 
 
         return new AttributeValue(UUID.randomUUID(),
@@ -92,11 +98,11 @@ public class AttributeValueMother {
         List<Question> questions = List.of(q1, q2, q3, q4, q5, q6);
 
         List<Answer> answers = List.of(
-            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q1.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q2.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q3.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q4.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q5.getId(), attributeId));
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q1.getId()),
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q2.getId()),
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q3.getId()),
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q4.getId()),
+            AnswerMother.answerWithConfidenceLevel(confidenceLevelId, q5.getId()));
 
         return new AttributeValue(UUID.randomUUID(),
             AttributeMother.withIdQuestionsAndWeight(attributeId, questions, weight),

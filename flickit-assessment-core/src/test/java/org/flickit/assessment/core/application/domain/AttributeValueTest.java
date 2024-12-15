@@ -1,6 +1,9 @@
 package org.flickit.assessment.core.application.domain;
 
-import org.flickit.assessment.core.test.fixture.application.*;
+import org.flickit.assessment.core.test.fixture.application.AnswerMother;
+import org.flickit.assessment.core.test.fixture.application.AttributeMother;
+import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
+import org.flickit.assessment.core.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -28,18 +31,17 @@ class AttributeValueTest {
             QuestionMother.withImpactsOnLevel45(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels34(attributeId),
-            AnswerMother.fullScoreOnLevels45(attributeId),
-            AnswerMother.fullScoreOnLevels45(attributeId));
+            AnswerMother.fullScore(questions.get(0).getId()),
+            AnswerMother.fullScore(questions.get(1).getId()),
+            AnswerMother.fullScore(questions.get(2).getId()),
+            AnswerMother.fullScore(questions.get(3).getId()),
+            AnswerMother.fullScore(questions.get(4).getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculate(allLevels());
+        attributeValue.calculate(allLevels());
 
-        assertEquals(levelFive().getValue(), qav.getMaturityLevel().getValue());
+        assertEquals(levelFive().getValue(), attributeValue.getMaturityLevel().getValue());
     }
 
     @Test
@@ -54,19 +56,18 @@ class AttributeValueTest {
             QuestionMother.withImpactsOnLevel45(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.fullScoreOnLevels23(attributeId),
-            AnswerMother.noScoreOnLevel4(attributeId));
+            AnswerMother.fullScore(questions.get(0).getId()),
+            AnswerMother.fullScore(questions.get(1).getId()),
+            AnswerMother.fullScore(questions.get(2).getId()),
+            AnswerMother.fullScore(questions.get(3).getId()),
+            AnswerMother.fullScore(questions.get(4).getId()),
+            AnswerMother.noScore(questions.get(5).getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculate(allLevels());
+        attributeValue.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelThree().getValue(), qav.getMaturityLevel().getValue());
+        assertEquals(MaturityLevelMother.levelThree().getValue(), attributeValue.getMaturityLevel().getValue());
     }
 
     @Test
@@ -80,21 +81,20 @@ class AttributeValueTest {
             QuestionMother.withImpactsOnLevel45(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.fullScoreOnLevels45(attributeId),
-            AnswerMother.fullScoreOnLevels45(attributeId),
-            AnswerMother.fullScoreOnLevels45(attributeId),
-            AnswerMother.fullScoreOnLevels45(attributeId),
-            AnswerMother.fullScoreOnLevels45(attributeId));
+            AnswerMother.fullScore(questions.get(0).getId()),
+            AnswerMother.fullScore(questions.get(1).getId()),
+            AnswerMother.fullScore(questions.get(2).getId()),
+            AnswerMother.fullScore(questions.get(3).getId()),
+            AnswerMother.fullScore(questions.get(4).getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculate(allLevels());
+        attributeValue.calculate(allLevels());
 
-        assertEquals(levelFive().getValue(), qav.getMaturityLevel().getValue());
-        assertEquals(allLevels().size(), qav.getMaturityScores().size());
+        assertEquals(levelFive().getValue(), attributeValue.getMaturityLevel().getValue());
+        assertEquals(allLevels().size(), attributeValue.getMaturityScores().size());
 
-        List<MaturityScore> matchingScores = qav.getMaturityScores().stream()
+        List<MaturityScore> matchingScores = attributeValue.getMaturityScores().stream()
             .filter(score -> allLevels().stream()
                 .anyMatch(level -> level.getId() == score.getMaturityLevelId()))
             .toList();
@@ -113,19 +113,18 @@ class AttributeValueTest {
             QuestionMother.withImpactsOnLevel45(attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5(attributeId));
+            AnswerMother.fullScore(questions.get(0).getId()),
+            AnswerMother.fullScore(questions.get(1).getId()),
+            AnswerMother.fullScore(questions.get(2).getId()),
+            AnswerMother.fullScore(questions.get(3).getId()),
+            AnswerMother.fullScore(questions.get(4).getId()),
+            AnswerMother.noScore(questions.get(5).getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculate(allLevels());
+        attributeValue.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFour().getValue(), qav.getMaturityLevel().getValue());
+        assertEquals(MaturityLevelMother.levelFour().getValue(), attributeValue.getMaturityLevel().getValue());
     }
 
     @Test
@@ -143,16 +142,15 @@ class AttributeValueTest {
             AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.getFirst().getId()),
             AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(1).getId()),
             AnswerMother.answerWithQuestionIdAndNotApplicableTrue(questions.get(2).getId()),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevels24(attributeId),
-            AnswerMother.fullScoreOnLevel4AndNoScoreOnLevel5(attributeId));
+            AnswerMother.fullScore(questions.get(3).getId()),
+            AnswerMother.fullScore(questions.get(4).getId()),
+            AnswerMother.noScore(questions.get(5).getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculate(allLevels());
+        attributeValue.calculate(allLevels());
 
-        assertEquals(MaturityLevelMother.levelFour().getValue(), qav.getMaturityLevel().getValue());
+        assertEquals(MaturityLevelMother.levelFour().getValue(), attributeValue.getMaturityLevel().getValue());
     }
 
     @Test
@@ -166,18 +164,17 @@ class AttributeValueTest {
         List<Question> questions = List.of(q1, q2, q3, q4, q5);
 
         List<Answer> answers = List.of(
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q1.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q2.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q3.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q4.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q5.getId(), attributeId));
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q1.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q2.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q3.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q4.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q5.getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculateConfidenceValue();
+        attributeValue.calculateConfidenceValue();
 
-        assertEquals(100.0, qav.getConfidenceValue());
+        assertEquals(100.0, attributeValue.getConfidenceValue());
     }
 
     @Test
@@ -188,22 +185,22 @@ class AttributeValueTest {
         Question q3 = QuestionMother.withImpactsOnLevel34(attributeId);
         Question q4 = withImpactsOnLevel45(attributeId);
         Question q5 = withImpactsOnLevel45(attributeId);
-        List<Question> questions = List.of(q1, q2, q3, q4, q5); //all questions have weight = 1;
+        List<Question> questions = List.of(q1, q2, q3, q4, q5);
 
         List<Answer> answers = List.of(
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q1.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.SOMEWHAT_UNSURE.getId(), q2.getId(), attributeId),
-            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId(), q3.getId(), attributeId));
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.COMPLETELY_SURE.getId(), q1.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.SOMEWHAT_UNSURE.getId(), q2.getId()),
+            AnswerMother.answerWithConfidenceLevel(ConfidenceLevel.FAIRLY_SURE.getId(), q3.getId()));
 
-        AttributeValue qav = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculateConfidenceValue();
+        attributeValue.calculateConfidenceValue();
 
         double maxPossibleSumConfidence = 25;
         double gainedSumConfidence = 5 + 3 + 4;
         double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
 
-        assertEquals(confidenceValue, qav.getConfidenceValue());
+        assertEquals(confidenceValue, attributeValue.getConfidenceValue());
     }
 
     @Test
@@ -214,19 +211,19 @@ class AttributeValueTest {
         Question q3 = QuestionMother.withImpactsOnLevel34(attributeId);
         Question q4 = withImpactsOnLevel45(attributeId);
         Question q5 = withImpactsOnLevel45(attributeId);
-        List<Question> questions = List.of(q1, q2, q3, q4, q5); //all questions have weight = 1;
+        List<Question> questions = List.of(q1, q2, q3, q4, q5);
 
         List<Answer> answers = List.of();
 
-        AttributeValue qav = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculateConfidenceValue();
+        attributeValue.calculateConfidenceValue();
 
         double maxPossibleSumConfidence = 25;
         double gainedSumConfidence = 0;
         double confidenceValue = (gainedSumConfidence / maxPossibleSumConfidence) * 100;
 
-        assertEquals(confidenceValue, qav.getConfidenceValue());
+        assertEquals(confidenceValue, attributeValue.getConfidenceValue());
     }
 
     @Test
@@ -238,10 +235,9 @@ class AttributeValueTest {
 
         List<Answer> answers = List.of();
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        Map<Long, Double> totalScore = ReflectionTestUtils.invokeMethod(qav, "calcTotalScore", allLevels());
+        Map<Long, Double> totalScore = ReflectionTestUtils.invokeMethod(attributeValue, "calcTotalScore", allLevels());
         assertNotNull(totalScore);
         Double attributeTotalImpactOnLevelFour = totalScore.get(MaturityLevelMother.LEVEL_FOUR_ID);
         assertNull(attributeTotalImpactOnLevelFour);
@@ -260,10 +256,9 @@ class AttributeValueTest {
 
         List<Answer> answers = List.of();
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        Map<Long, Double> totalScore = ReflectionTestUtils.invokeMethod(qav, "calcTotalScore", allLevels());
+        Map<Long, Double> totalScore = ReflectionTestUtils.invokeMethod(attributeValue, "calcTotalScore", allLevels());
         assertNotNull(totalScore);
         Double attributeTotalImpactOnLevelFour = totalScore.get(MaturityLevelMother.LEVEL_FOUR_ID);
         assertEquals(1, attributeTotalImpactOnLevelFour);
@@ -273,23 +268,22 @@ class AttributeValueTest {
     }
 
     @Test
-    void testCalculate_onlyImpactOnLevel3_gainedScoreOnLevel4ShouldBeNull() {
+    void testCalculate_onlyImpactOnLevel3_gainedScoreOnLevel4ShouldBeZero() {
         long attributeId = 256L;
         long anotherAttributeId = 257L;
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId));
+            AnswerMother.fullScore(questions.getFirst().getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        Map<Long, Double> gainedScore = ReflectionTestUtils.invokeMethod(qav, "calcGainedScore", allLevels());
+        Map<Long, Double> gainedScore = ReflectionTestUtils.invokeMethod(attributeValue, "calcGainedScore", allLevels());
         assertNotNull(gainedScore);
 
         Double attributeGainedScoreOnLevel4 = gainedScore.get(MaturityLevelMother.LEVEL_FOUR_ID);
-        assertNull(attributeGainedScoreOnLevel4);
+        assertEquals(0.0, attributeGainedScoreOnLevel4);
 
         Double attributeGainedScoreOnLevel3 = gainedScore.get(MaturityLevelMother.LEVEL_THREE_ID);
         assertEquals(1, attributeGainedScoreOnLevel3);
@@ -304,13 +298,12 @@ class AttributeValueTest {
             QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId),
-            AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
+            AnswerMother.fullScore(questions.get(0).getId()),
+            AnswerMother.fullScore(questions.get(1).getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        Map<Long, Double> gainedScore = ReflectionTestUtils.invokeMethod(qav, "calcGainedScore", allLevels());
+        Map<Long, Double> gainedScore = ReflectionTestUtils.invokeMethod(attributeValue, "calcGainedScore", allLevels());
         assertNotNull(gainedScore);
 
         Double attributeGainedScoreOnLevel4 = gainedScore.get(MaturityLevelMother.LEVEL_FOUR_ID);
@@ -327,14 +320,13 @@ class AttributeValueTest {
         List<Question> questions = List.of(
             QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, anotherAttributeId));
 
-        List<Answer> answers = List.of();
+        List<Answer> answers = List.of(AnswerMother.fullScore(questions.getFirst().getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculate(allLevels());
+        attributeValue.calculate(allLevels());
 
-        Set<MaturityScore> maturityScores = qav.getMaturityScores();
+        Set<MaturityScore> maturityScores = attributeValue.getMaturityScores();
 
         var maturityScoreOnLevel4 = maturityScores.stream()
             .filter(m -> Objects.equals(m.getMaturityLevelId(), MaturityLevelMother.LEVEL_FOUR_ID))
@@ -358,15 +350,14 @@ class AttributeValueTest {
             QuestionMother.withImpactsOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
 
         List<Answer> answers = List.of(
-            AnswerMother.noScoreOnLevel3AndFullScoreOnAnotherAttributeLevel4(attributeId, anotherAttributeId),
-            AnswerMother.fullScoreOnLevel3AndAnotherAttributeLevel4(attributeId, attributeId));
+            AnswerMother.noScore(questions.get(0).getId()),
+            AnswerMother.fullScore(questions.get(1).getId()));
 
-        AttributeValue qav = AttributeValueMother.toBeCalcWithAttributeAndAnswers(
-            AttributeMother.withIdAndQuestions(attributeId, questions), answers);
+        var attributeValue = toBeCalcWithAttributeAndAnswers(AttributeMother.withIdAndQuestions(attributeId, questions), answers);
 
-        qav.calculate(allLevels());
+        attributeValue.calculate(allLevels());
 
-        Set<MaturityScore> maturityScores = qav.getMaturityScores();
+        Set<MaturityScore> maturityScores = attributeValue.getMaturityScores();
 
         var maturityScoreOnLevel4 = maturityScores.stream()
             .filter(m -> Objects.equals(m.getMaturityLevelId(), MaturityLevelMother.LEVEL_FOUR_ID))
