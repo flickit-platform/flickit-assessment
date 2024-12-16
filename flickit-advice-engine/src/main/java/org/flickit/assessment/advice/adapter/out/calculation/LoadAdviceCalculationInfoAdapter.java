@@ -147,7 +147,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
         question.getOptions().forEach(op -> {
             ImpactfulQuestionOption option = idToOption.get(op.getId());
             if (option != null)
-                op.getPromisedScores().put(attributeLevelScore, option.impactfulOptionImpactValue);
+                op.getPromisedScores().put(attributeLevelScore, option.impactfulOptionValue);
         });
     }
 
@@ -164,7 +164,7 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
         return impactfulQuestionOptions.stream().map(e -> {
             double progress = (e.impactfulOptionIndex() - 1) * (1.0/(impactfulQuestionOptions.size() - 1));
             Map<AttributeLevelScore, Double> promisedScores = new HashMap<>();
-            promisedScores.put(attributeLevelScore, e.impactfulOptionImpactValue());
+            promisedScores.put(attributeLevelScore, e.impactfulOptionValue());
             return new Option(e.impactfulOptionId(),
                 e.impactfulOptionIndex(),
                 promisedScores,
@@ -198,5 +198,6 @@ public class LoadAdviceCalculationInfoAdapter implements LoadAdviceCalculationIn
 
     private record ImpactfulQuestionOption(Long impactfulOptionId,
                                            Integer impactfulOptionIndex,
-                                           double impactfulOptionImpactValue) {}
+                                           double impactfulOptionValue) {
+    }
 }
