@@ -1,13 +1,10 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.ExportKitDslUseCase;
-import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
-import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
-import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
+import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +16,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPORT_KIT_DSL_NOT_ALLOWED;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -33,25 +31,15 @@ class ExportKitDslServiceTest {
     private LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Mock
-    private LoadActiveKitVersionIdPort loadActiveKitVersionIdPort;
-
-    @Mock
-    private LoadSubjectsPort loadSubjectsPort;
-
-    @Mock
-    private LoadAttributesPort loadAttributesPort;
-
-    @Mock
-    LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-
-    private final AssessmentKit kit = AssessmentKitMother.simpleKit();
+    CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Test
     void testExportKitDsl_userIsNotExpertGroupOwner_throwsAccessDeniedException() {
         var param = createParam(ExportKitDslUseCase.Param.ParamBuilder::build);
+        var kit = AssessmentKitMother.simpleKit();
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(UUID.randomUUID());
+        when(checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.export(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -60,11 +48,13 @@ class ExportKitDslServiceTest {
     @Test
     void testExportKitDsl_activeKitVersionNotFound_throwsAccessDeniedException() {
         var param = createParam(ExportKitDslUseCase.Param.ParamBuilder::build);
+        var kit = AssessmentKitMother.kitWithKitVersionId(null);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
-        when(loadExpertGroupOwnerPort.loadOwnerId(kit.getExpertGroupId())).thenReturn(param.getCurrentUserId());
+        when(checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
 
-        assertThrows(AccessDeniedException.class, () -> service.export(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.export(param));
+        assertEquals(EXPORT_KIT_DSL_NOT_ALLOWED, throwable.getMessageKey());
     }
 
     private ExportKitDslUseCase.Param createParam(Consumer<ExportKitDslUseCase.Param.ParamBuilder> changer) {
