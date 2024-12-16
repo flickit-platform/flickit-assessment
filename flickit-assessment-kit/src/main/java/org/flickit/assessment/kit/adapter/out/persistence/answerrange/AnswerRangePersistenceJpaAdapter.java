@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -112,13 +113,13 @@ public class AnswerRangePersistenceJpaAdapter implements
 
     @Override
     public List<AnswerRangeDslModel> loadDslModels(Long kitVersionId) {
-        var answerOptions = answerOptionRepository.findAllByKitVersionId(kitVersionId)
-            .stream()
-            .toList();
+        List<AnswerOptionJpaEntity> answerOptionsStream = answerOptionRepository.findAllByKitVersionId(kitVersionId);
 
         return repository.findAllByKitVersionId(kitVersionId)
             .stream()
-            .map(e -> AnswerRangeMapper.mapToDslModel(e, answerOptions))
+            .flatMap(answerRange ->
+                Stream.of(AnswerRangeMapper.mapToDslModel(answerRange, answerOptionsStream.stream().filter(option -> option.getAnswerRangeId().equals(answerRange.getId()))))
+            )
             .toList();
     }
 

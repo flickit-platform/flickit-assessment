@@ -12,6 +12,7 @@ import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerR
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerRangeMapper {
@@ -37,16 +38,11 @@ public class AnswerRangeMapper {
             answerOptions);
     }
 
-    public static AnswerRangeDslModel mapToDslModel(AnswerRangeJpaEntity entity, List<AnswerOptionJpaEntity> answerOptions) {
-        var matchingAnswerOptions = answerOptions
-            .stream()
-            .filter(ao -> ao.getAnswerRangeId().equals(entity.getId()))
-            .toList();
-
+    public static AnswerRangeDslModel mapToDslModel(AnswerRangeJpaEntity entity, Stream<AnswerOptionJpaEntity> answerOptionsStream) {
         return AnswerRangeDslModel.builder()
             .code(entity.getCode())
             .title(entity.getTitle())
-            .answerOptions(matchingAnswerOptions.stream().map(AnswerOptionMapper::mapToDslModel).toList())
+            .answerOptions(answerOptionsStream.map(AnswerOptionMapper::mapToDslModel).toList())
             .build();
     }
 }
