@@ -19,7 +19,7 @@ public class ExportKitDslRestController {
     private final ExportKitDslUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/assessment-kits/{kitId}/export")
+    @GetMapping("/assessment-kits/{kitId}/dsl")
     ResponseEntity<Result> exportKitDsl(@PathVariable Long kitId) {
         Result result = useCase.export(toParam(kitId, userContext.getUser().id()));
         return new ResponseEntity<>(result, HttpStatus.OK);
