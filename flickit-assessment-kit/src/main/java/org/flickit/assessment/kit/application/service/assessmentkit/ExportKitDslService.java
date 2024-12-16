@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.ExportKitDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
@@ -38,7 +39,9 @@ public class ExportKitDslService implements ExportKitDslUseCase {
 
         var attributes = loadAttributesPort.loadDslModels(activeVersionId);
 
-        return null;
+        var assessmentKitDslModel = AssessmentKitDslModel.builder().attributes(attributes).build();
+
+        return new Result(assessmentKitDslModel);
     }
 
     private void validateCurrentUser(Long expertGroupId, UUID currentUserId) {
