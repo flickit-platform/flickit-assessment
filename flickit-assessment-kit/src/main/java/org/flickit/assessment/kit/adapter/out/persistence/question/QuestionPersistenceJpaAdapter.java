@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuest
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
@@ -51,6 +52,7 @@ public class QuestionPersistenceJpaAdapter implements
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final QuestionImpactJpaRepository questionImpactRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
@@ -95,6 +97,12 @@ public class QuestionPersistenceJpaAdapter implements
         var options = optionEntities.stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
+
+        var impacts = questionImpactRepository.findAllByQuestionIdAndKitVersionId(id, kitVersionId).stream()
+            .map(QuestionImpactMapper::mapToDomainModel)
+            .toList();
+
+        question.setImpacts(impacts);
 
         question.setOptions(options);
         return question;
