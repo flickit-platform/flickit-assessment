@@ -143,13 +143,8 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         cell.setCellStyle(style);
 
         double score = 0;
-        if (answer != null && answer.getSelectedOption() != null && answer.getSelectedOption().getImpacts() != null) {
-            score = answer.getSelectedOption().getImpacts().stream()
-                .filter(ai -> ai.getQuestionImpact().getAttributeId() == attributeId)
-                .findFirst()
-                .map(AnswerOptionImpact::getValue)// This isn't perfectly accurate. Use weighted scoring for a more accurate result.
-                .orElse(0.0);
-        }
+        if (answer != null && answer.getSelectedOption() != null)
+            score = answer.getSelectedOption().getValue();
 
         cell = row.createCell(3);
         cell.setCellValue(score);

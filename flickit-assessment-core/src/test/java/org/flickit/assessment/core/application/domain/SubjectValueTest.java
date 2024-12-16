@@ -69,7 +69,7 @@ class SubjectValueTest {
             av3.getId(), av3.getWeightedScore().get(levelTwo().getId()));
 
         // WeightedMeanScore of attributes on level two is 75 which passes the competence of level three
-        assertEquals(75.0, (map.get(av1.getId()) + map.get(av2.getId()) + map.get(av3.getId())) / 12);
+        assertEquals(75.0, (map.get(av1.getId()) + map.get(av2.getId()) + map.get(av3.getId())) / 12, 0.1);
         assertEquals(MaturityLevelMother.levelThree().getValue(), subjectMaturityLevel.getValue());
     }
 

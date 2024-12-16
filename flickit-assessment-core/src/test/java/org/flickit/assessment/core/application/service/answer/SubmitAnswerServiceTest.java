@@ -218,7 +218,7 @@ class SubmitAnswerServiceTest {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
-        Long newAnswerOptionId = AnswerOptionMother.optionTwo().getId();
+        Long newAnswerOptionId = AnswerOptionMother.optionFour().getId();
         AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
         Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
         UUID savedAnswerHistoryId = UUID.randomUUID();
@@ -354,7 +354,7 @@ class SubmitAnswerServiceTest {
     void testSubmitAnswer_AnswerWithSameAnswerOption_DoNotInvalidateAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
-        AnswerOption sameAnswerOption = AnswerOptionMother.optionTwo();
+        AnswerOption sameAnswerOption = AnswerOptionMother.optionFour();
         Answer existAnswer = AnswerMother.answerWithNullNotApplicable(sameAnswerOption);
         var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, sameAnswerOption.getId(), existAnswer.getConfidenceLevelId(), null, UUID.randomUUID());
 
