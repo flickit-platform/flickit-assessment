@@ -8,6 +8,8 @@ import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDslUse
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
+import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class GetKitDslService implements GetKitDslUseCase {
 
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
+    private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadAttributesPort loadAttributesPort;
     private final LoadSubjectsPort loadSubjectsPort;
 
@@ -35,10 +38,12 @@ public class GetKitDslService implements GetKitDslUseCase {
         if (activeVersionId == null)
             throw new ValidationException(GET_KIT_DSL_NOT_ALLOWED);
 
+        var questionnaires = loadQuestionnairesPort.loadDslModels(activeVersionId);
         var attributes = loadAttributesPort.loadDslModels(activeVersionId);
         var subjects = loadSubjectsPort.loadDslModels(activeVersionId);
 
         var assessmentKitDslModel = AssessmentKitDslModel.builder()
+            .questionnaires(questionnaires)
             .attributes(attributes)
             .subjects(subjects)
             .build();

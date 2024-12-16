@@ -14,6 +14,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.questionnaire.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -118,6 +119,13 @@ public class QuestionnairePersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public List<QuestionnaireDslModel> loadDslModels(long kitVersionId) {
+        return repository.findAllByKitVersionId(kitVersionId)
+            .stream().map(QuestionnaireMapper::mapToDslModel)
+            .toList();
     }
 
     @Override
