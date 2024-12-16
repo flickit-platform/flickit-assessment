@@ -26,9 +26,16 @@ public class AnswerOptionMother {
             value += 0.1);
     }
 
+    public static AnswerOption optionOne() {
+        return optionOne(111L);
+    }
 
     public static AnswerOption optionOne(long answerRangeId) {
         return new AnswerOption(id++, "one", 1, answerRangeId, 0.0);
+    }
+
+    public static AnswerOption optionTwo() {
+        return optionTwo(111L);
     }
 
     public static AnswerOption optionTwo(long answerRangeId) {
