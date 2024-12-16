@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
-import org.flickit.assessment.core.adapter.out.persistence.kit.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
@@ -23,7 +22,6 @@ import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaEnti
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
@@ -54,7 +52,6 @@ public class AttributeValuePersistenceJpaAdapter implements
     private final QuestionJpaRepository questionRepository;
     private final AnswerJpaRepository answerRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
-    private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
 
     @Override
     public List<AttributeValue> persistAll(Set<Long> attributeIds, UUID assessmentResultId) {
@@ -128,23 +125,12 @@ public class AttributeValuePersistenceJpaAdapter implements
         var optionIdToOptionEntityMap = answerOptionEntities.stream()
             .collect(toMap(AnswerOptionJpaEntity::getId, Function.identity()));
 
-        var optionIds = answerOptionEntities.stream()
-            .map(AnswerOptionJpaEntity::getId)
-            .toList();
-        var answerImpacts = answerOptionImpactRepository.findAllByOptionIdInAndKitVersionId(optionIds, kitVersionId);
-        var optionIdToImpactMap = answerImpacts.stream()
-            .collect(groupingBy(e -> e.getOptionImpact().getOptionId()));
-
         return answerEntities.stream()
             .map(answerEntity -> {
                 AnswerOption answerOption = null;
                 if (answerEntity.getAnswerOptionId() != null) {
                     var answerOptionEntity = optionIdToOptionEntityMap.get(answerEntity.getAnswerOptionId());
-                    var optionImpactEntity = optionIdToImpactMap.get(answerOptionEntity.getId());
-                    var optionImpacts = optionImpactEntity.stream()
-                        .map(e -> AnswerOptionImpactMapper.mapToDomainModel(e.getOptionImpact(), e.getQuestionImpact(), answerOptionEntity.getValue()))
-                        .toList();
-                    answerOption = AnswerOptionMapper.mapToDomainModel(answerOptionEntity, optionImpacts);
+                    answerOption = AnswerOptionMapper.mapToDomainModel(answerOptionEntity);
                 }
                 return AnswerMapper.mapToDomainModel(answerEntity, answerOption);
             })

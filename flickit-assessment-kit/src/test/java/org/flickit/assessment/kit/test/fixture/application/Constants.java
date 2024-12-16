@@ -15,7 +15,6 @@ public class Constants {
 
 
     public static final String QUESTIONNAIRE_TITLE1 = "Clean Architecture";
-    public static final String QUESTIONNAIRE_TITLE2 = "Clean Architecture2";
 
     public static final String QUESTION_CODE1 = "m1";
     public static final String QUESTION_CODE2 = "m2";

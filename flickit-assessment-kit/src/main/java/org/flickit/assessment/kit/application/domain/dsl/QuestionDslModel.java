@@ -18,6 +18,7 @@ public class QuestionDslModel extends BaseDslModel {
     List<QuestionImpactDslModel> questionImpacts;
     @JsonProperty("answers")
     List<AnswerOptionDslModel> answerOptions;
+    String answerRangeCode;
     boolean mayNotBeApplicable;
     boolean advisable;
 }

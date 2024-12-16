@@ -8,10 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
+
+    boolean existsByIdAndDeletedFalse(UUID evidenceId);
+
+    Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
 
     @Query("""
             SELECT
@@ -29,8 +35,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentId(@Param("questionId") Long questionId,
                                                                            @Param("assessmentId") UUID assessmentId,
                                                                            Pageable pageable);
-
-    Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
 
     @Modifying
     @Query("""
@@ -57,27 +61,15 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     @Query("""
             SELECT
-                evd.id as id,
-                evd.description as description,
-                COUNT(eva.evidenceId) as attachmentsCount,
-                evd.lastModificationTime as lastModificationTime
-            FROM QuestionJpaEntity q
-            LEFT JOIN EvidenceJpaEntity evd ON q.id = evd.questionId
-            LEFT JOIN EvidenceAttachmentJpaEntity eva ON evd.id = eva.evidenceId
-            WHERE evd.assessmentId = :assessmentId
-                AND evd.type = :type
-                AND evd.deleted = false
-                AND q.id IN (SELECT qs.id
-                             FROM QuestionJpaEntity qs
-                             LEFT JOIN AssessmentResultJpaEntity ar ON qs.kitVersionId = ar.kitVersionId
-                             LEFT JOIN QuestionImpactJpaEntity qi ON qs.id = qi.questionId AND qs.kitVersionId = qi.kitVersionId
-                             WHERE qi.attributeId = :attributeId AND ar.assessment.id = :assessmentId)
-            GROUP BY evd.description, evd.lastModificationTime, evd.id
+                qsn.id as questionId,
+                COUNT(e.id) as evidenceCount
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN EvidenceJpaEntity e on qsn.id = e.questionId
+            WHERE qsn.id IN :questionIds
+                AND e.assessmentId = :assessmentId
+                AND e.deleted = false
+                AND e.type IS NOT NULL
         """)
-    Page<MinimalEvidenceView> findAssessmentAttributeEvidencesByType(@Param(value = "assessmentId") UUID assessmentId,
-                                                                     @Param(value = "attributeId") Long attributeId,
-                                                                     @Param(value = "type") Integer type,
-                                                                     Pageable pageable);
-
-    boolean existsByIdAndDeletedFalse(UUID evidenceId);
+    List<CountQuestionEvidenceView> countByAssessmentIdAndQuestionIds(@Param("assessmentId") UUID assessmentId,
+                                                                      @Param("questionIds") Collection<Long> questionIds);
 }

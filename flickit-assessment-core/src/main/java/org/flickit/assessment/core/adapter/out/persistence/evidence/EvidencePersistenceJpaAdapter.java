@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Evidence;
-import org.flickit.assessment.core.application.port.in.evidence.GetAttributeEvidenceListUseCase.AttributeEvidenceListItem;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
@@ -34,7 +33,6 @@ public class EvidencePersistenceJpaAdapter implements
     LoadEvidencesPort,
     UpdateEvidencePort,
     DeleteEvidencePort,
-    LoadAttributeEvidencesPort,
     LoadEvidencePort {
 
     private final EvidenceJpaRepository repository;
@@ -101,31 +99,6 @@ public class EvidencePersistenceJpaAdapter implements
     @Override
     public void deleteById(UUID id) {
         repository.delete(id);
-    }
-
-    @Override
-    public PaginatedResponse<AttributeEvidenceListItem> loadAttributeEvidences(UUID assessmentId, Long attributeId,
-                                                                               Integer type, int page, int size) {
-        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
-            throw new ResourceNotFoundException(GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND);
-
-        var order = EvidenceJpaEntity.Fields.lastModificationTime;
-        var sort = Sort.Direction.DESC;
-        var pageResult = repository.findAssessmentAttributeEvidencesByType(
-            assessmentId, attributeId, type, PageRequest.of(page, size, sort, order));
-
-        var items = pageResult.getContent().stream()
-            .map(e -> new AttributeEvidenceListItem(e.getId(), e.getDescription(), e.getAttachmentsCount()))
-            .toList();
-
-        return new PaginatedResponse<>(
-            items,
-            pageResult.getNumber(),
-            pageResult.getSize(),
-            order,
-            sort.name().toLowerCase(),
-            (int) pageResult.getTotalElements()
-        );
     }
 
     @Override

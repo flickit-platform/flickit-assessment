@@ -2,9 +2,7 @@ package org.flickit.assessment.kit.application.service.attribute;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
-import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.port.in.attribute.GetKitAttributeLevelQuestionsDetailUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadActiveKitVersionIdPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -23,7 +21,6 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.ATTRIBUTE_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionImpactMother.createAnswerOptionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -131,10 +128,6 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         var impact2 = createQuestionImpact(attr1.getId(), maturityLevel2.getId(), 1, question2.getId());
         var impact3 = createQuestionImpact(attr2.getId(), maturityLevel3.getId(), 3, question3.getId());
 
-        impact1.setOptionImpacts(buildAnswerOptionImpacts(question1));
-        impact2.setOptionImpacts(buildAnswerOptionImpacts(question2));
-        impact3.setOptionImpacts(buildAnswerOptionImpacts(question3));
-
         question1.setImpacts(List.of(impact1));
         question2.setImpacts(List.of(impact2));
         question3.setImpacts(List.of(impact3));
@@ -173,14 +166,6 @@ class GetKitAttributeLevelQuestionsDetailServiceTest {
         assertEquals(question1.getOptions().size(), resultQuestion1.answerOptions().size());
         assertEquals(question1.getOptions().getFirst().getTitle(), question1AnswerOption.title());
         assertEquals(question1.getOptions().getFirst().getIndex(), question1AnswerOption.index());
-        assertEquals(impact1.getOptionImpacts().getFirst().getValue(), question1AnswerOption.value());
-    }
-
-    private static List<AnswerOptionImpact> buildAnswerOptionImpacts(Question question) {
-        return List.of(
-            createAnswerOptionImpact(question.getOptions().getFirst().getId(), 0),
-            createAnswerOptionImpact(question.getOptions().get(1).getId(), 0.5),
-            createAnswerOptionImpact(question.getOptions().get(2).getId(), 1)
-        );
+        assertEquals(question1.getOptions().getFirst().getValue(), question1AnswerOption.value());
     }
 }

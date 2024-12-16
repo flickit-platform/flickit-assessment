@@ -1,10 +1,10 @@
 package org.flickit.assessment.kit.application.service.kitcustom;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.util.SlugCodeUtil;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.KitCustomData;
 import org.flickit.assessment.kit.application.port.in.kitcustom.CreateKitCustomUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.kitcustom.CreateKitCustomPort;
@@ -22,8 +22,8 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 public class CreateKitCustomService implements CreateKitCustomUseCase {
 
     private final CreateKitCustomPort createKitCustomPort;
-    private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckKitUserAccessPort checkKitUserAccessPort;
+    private final LoadAssessmentKitPort loadAssessmentKitPort;
 
     @Override
     public long createKitCustom(Param param) {

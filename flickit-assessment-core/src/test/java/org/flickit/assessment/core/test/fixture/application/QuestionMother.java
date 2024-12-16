@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.test.fixture.application;
 
-import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Question;
 
 import java.util.List;
@@ -10,8 +9,20 @@ public class QuestionMother {
     private static long id = 134L;
     private static int index = 1;
 
-    public static Question withImpactsOnLevel23(long attributeId) {
+    public static Question withImpactsOnLevel2(long attributeId) {
         return new Question(id++, "question" + id, index++, null, Boolean.FALSE,
+            List.of(QuestionImpactMother.onLevelTwo(1, attributeId)),
+            QuestionnaireMother.createQuestionnaire());
+    }
+
+    public static Question withImpactsOnLevel3(long attributeId) {
+        return new Question(id++, "question" + id, index++, null, Boolean.FALSE,
+            List.of(QuestionImpactMother.onLevelThree(1, attributeId)),
+            QuestionnaireMother.createQuestionnaire());
+    }
+
+    public static Question withImpactsOnLevel23(long attributeId) {
+        return new Question(id++, "question" + id, index++, "hint", Boolean.FALSE,
             List.of(QuestionImpactMother.onLevelTwo(1, attributeId), QuestionImpactMother.onLevelThree(1, attributeId)),
             QuestionnaireMother.createQuestionnaire());
     }
@@ -40,13 +51,8 @@ public class QuestionMother {
 
     public static Question withOptions() {
         Question question = new Question(id++, "question" + id, index++, null, Boolean.FALSE, null, QuestionnaireMother.createQuestionnaire());
-        Attribute attribute = AttributeMother.simpleAttribute();
-        question.setOptions(List.of(AnswerOptionMother.optionOne(attribute.getId()), AnswerOptionMother.optionTwo(attribute.getId())));
+        question.setOptions(List.of(AnswerOptionMother.optionOne(), AnswerOptionMother.optionFour()));
         return question;
-    }
-
-    public static Question withIdAndImpactsOnLevel23(long id, long attributeId) {
-        return new Question(id, "question" + id, null, "question hint", Boolean.FALSE, List.of(QuestionImpactMother.onLevelTwo(1, attributeId), QuestionImpactMother.onLevelThree(1, attributeId)), QuestionnaireMother.createQuestionnaire());
     }
 
     public static Question withImpactsOnLevel3AndAnotherAttributeLevel4(long attributeId, long anotherAttributeId) {

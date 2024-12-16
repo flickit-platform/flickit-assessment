@@ -16,6 +16,7 @@ public class ErrorMessageKey {
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";
     public static final String ASSESSMENT_INVITE_ID_NOT_FOUND = "assessment-invite.id.notFound";
     public static final String ANALYSIS_TYPE_ID_NOT_VALID = "analysis-type.id.notValid";
+    public static final String KIT_CUSTOM_ID_NOT_FOUND = "kit-custom.id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -71,15 +72,6 @@ public class ErrorMessageKey {
     public static final String CALCULATE_ASSESSMENT_ID_NOT_NULL = "calculate-assessment.assessment.id.notNull";
     public static final String CALCULATE_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND = "calculate-assessment.assessmentResult.notFount";
 
-    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL = "get-attribute-evidence-list.assessmentId.notNull";
-    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ATTRIBUTE_ID_NOT_NULL = "get-attribute-evidence-list.attributeId.notNull";
-    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_ASSESSMENT_ID_NOT_FOUND = "get-attribute-evidence-list.assessmentId.notFound";
-    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_TYPE_INVALID = "get-attribute-evidence-list.type.invalid";
-    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_TYPE_NOT_NULL = "get-attribute-evidence-list.type.notNull";
-    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_SIZE_MIN = "get-attribute-evidence-list.size.min";
-    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_SIZE_MAX = "get-attribute-evidence-list.size.max";
-    public static final String GET_ATTRIBUTE_EVIDENCE_LIST_PAGE_MIN = "get-attribute-evidence-list.page.min";
-
     public static final String GET_EVIDENCE_LIST_QUESTION_ID_NOT_NULL = "get-evidence-list.questionId.notNull";
     public static final String GET_EVIDENCE_LIST_ASSESSMENT_ID_NOT_NULL = "get-evidence-list.assessmentId.notNull";
     public static final String GET_EVIDENCE_LIST_SIZE_MIN = "get-evidence-list.size.min";
@@ -130,6 +122,11 @@ public class ErrorMessageKey {
     public static final String GET_ATTRIBUTE_SCORE_DETAIL_ASSESSMENT_ID_NOT_NULL = "get-attribute-score-detail.assessment.id.notNull";
     public static final String GET_ATTRIBUTE_SCORE_DETAIL_ATTRIBUTE_ID_NOT_NULL = "get-attribute-score-detail.attribute.id.notNull";
     public static final String GET_ATTRIBUTE_SCORE_DETAIL_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-score-detail.maturityLevel.id.notNull";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_SORT_INVALID = "get-attribute-score-detail.sort.invalid";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_ORDER_INVALID = "get-attribute-score-detail.order.invalid";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MIN = "get-attribute-score-detail.size.min";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_SIZE_MAX = "get-attribute-score-detail.size.max";
+    public static final String GET_ATTRIBUTE_SCORE_DETAIL_PAGE_MIN = "get-attribute-score-detail.page.min";
 
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_ID_NOT_NULL = "get-assessment-questionnaire-list.assessmentId.notNull";
     public static final String GET_ASSESSMENT_QUESTIONNAIRE_LIST_CURRENT_USER_ID_NOT_NULL = "get-assessment-questionnaire-list.currentUserId.notNull";
@@ -258,4 +255,9 @@ public class ErrorMessageKey {
 
     public static final String ASSIGN_KIT_CUSTOM_ASSESSMENT_ID_NOT_NULL = "assign-kit-custom.assessmentId.notNull";
     public static final String ASSIGN_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "assign-kit-custom.kitCustomId.notNull";
+
+    public static final String GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND = "get-attribute-score-stats.assessmentResult.notFound";
+    public static final String GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_ID_NOT_NULL = "get-attribute-score-stats.assessment.id.notNull";
+    public static final String GET_ATTRIBUTE_SCORE_STATS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-score-stats.attribute.id.notNull";
+    public static final String GET_ATTRIBUTE_SCORE_STATS_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-score-stats.maturityLevel.id.notNull";
 }

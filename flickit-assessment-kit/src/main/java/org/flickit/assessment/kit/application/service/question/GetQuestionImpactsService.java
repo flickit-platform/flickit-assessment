@@ -7,7 +7,7 @@ import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.port.in.questionimpact.GetQuestionImpactsUseCase;
-import org.flickit.assessment.kit.application.port.out.attribute.LoadAllAttributesPort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -30,7 +30,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadQuestionPort loadQuestionPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
-    private final LoadAllAttributesPort loadAllAttributesPort;
+    private final LoadAttributesPort loadAttributesPort;
 
     @Override
     public Result getQuestionImpacts(Param param) {
@@ -60,7 +60,7 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
 
         var attributeIds = attributeIdToImpacts.keySet().stream().toList();
 
-        var attributeIdToTitleMap = loadAllAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
+        var attributeIdToTitleMap = loadAttributesPort.loadAllByIdsAndKitVersionId(attributeIds, kitVersionId).stream()
             .collect(toMap(Attribute::getId, Attribute::getTitle));
         return attributeIds.stream()
             .map(attributeId -> toAttributeImpact(
@@ -82,15 +82,10 @@ public class GetQuestionImpactsService implements GetQuestionImpactsUseCase {
     }
 
     private Impact toImpact(QuestionImpact attributeImpact, MaturityLevel maturityLevel) {
-        List<Impact.OptionValue> optionValues = attributeImpact.getOptionImpacts().stream()
-            .map(answer -> new Impact.OptionValue(answer.getOptionId(), answer.getValue()))
-            .toList();
-
         return new Impact(
             attributeImpact.getId(),
             attributeImpact.getWeight(),
-            new Impact.MaturityLevel(maturityLevel.getId(), maturityLevel.getTitle()),
-            optionValues
+            new Impact.MaturityLevel(maturityLevel.getId(), maturityLevel.getTitle())
         );
     }
 }

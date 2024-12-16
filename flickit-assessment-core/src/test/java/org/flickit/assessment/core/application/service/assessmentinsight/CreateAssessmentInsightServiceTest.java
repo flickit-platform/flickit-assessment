@@ -83,7 +83,7 @@ class CreateAssessmentInsightServiceTest {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, "assessment insight", currentUserId);
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         var assessmentInsightId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
@@ -104,7 +104,7 @@ class CreateAssessmentInsightServiceTest {
         var assessmentId = UUID.randomUUID();
         var currentUserId = UUID.randomUUID();
         var param = new Param(assessmentId, "assessment insight", currentUserId);
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         var assessmentInsight = AssessmentInsightMother.createWithAssessmentResultId(assessmentResult.getId());
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);

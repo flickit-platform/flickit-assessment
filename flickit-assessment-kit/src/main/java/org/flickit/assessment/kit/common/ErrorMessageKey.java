@@ -26,7 +26,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_BY_DSL_KIT_DSL_ID_NOT_NULL = "update-kit-by-dsl.kit-dsl-id.notNull";
     public static final String UPDATE_KIT_BY_DSL_ADDITION_UNSUPPORTED = "update-kit-by-dsl.addition.unsupported";
     public static final String UPDATE_KIT_BY_DSL_DELETION_UNSUPPORTED = "update-kit-by-dsl.deletion.unsupported";
-    public static final String UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND = "update-kit-by-dsl.answer-option.notFound";
+    public static final String UPDATE_KIT_BY_DSL_CHANGE_UNSUPPORTED = "update-kit-by-dsl.change.unsupported";
 
     public static final String GET_KIT_DSL_DOWNLOAD_LINK_FILE_PATH_NOT_FOUND = "get-kit-dsl-download-link.filePath.notFound";
     public static final String GET_KIT_DSL_DOWNLOAD_LINK_KIT_ID_NOT_NULL =  "get-kit-dsl-download-link.kitId.notNull";
@@ -235,6 +235,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_EXPERT_GROUP_ID_NOT_NULL = "create-assessment-kit.expertGroupId.notNull";
     public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
     public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
+    public static final String CREATE_ASSESSMENT_KIT_STATUS_DUPLICATE = "create-assessment-kit.kitStatus.duplicate";
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
     public static final String ACTIVATE_KIT_VERSION_STATUS_INVALID = "activate-kit-version.status.invalid";
@@ -438,6 +439,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ANSWER_RANGE_TITLE_NOT_BLANK = "create-answer-range.title.notBlank";
     public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MIN = "create-answer-range.title.size.min";
     public static final String CREATE_ANSWER_RANGE_TITLE_SIZE_MAX = "create-answer-range.title.size.max";
+    public static final String CREATE_ANSWER_RANGE_TITLE_DUPLICATE = "create-answer-range.title.duplicate";
 
     public static final String CREATE_ANSWER_RANGE_OPTION_KIT_VERSION_ID_NOT_NULL = "create-answer-range-option.kitVersionId.notNull";
     public static final String CREATE_ANSWER_RANGE_OPTION_ANSWER_RANGE_ID_NOT_NULL = "create-answer-range-option.answerRangeId.notNull";
@@ -465,6 +467,11 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_ANSWER_RANGE_LOW_OPTIONS = "validate-kit-version.answerRange.lowOptions";
     public static final String VALIDATE_KIT_VERSION_ATTRIBUTE_QUESTION_IMPACT_NOT_NULL = "validate-kit-version.attribute-question-impact.notNull";
     public static final String VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL = "validate-kit-version.subject-attribute.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL = "validate-kit-version.questionnaire-question.notNull";
+    public static final String VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL = "validate-kit-version.subject.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTION_NOT_NULL= "validate-kit-version.question.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL= "validate-kit-version.questionnaire.notNull";
+    public static final String VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL= "validate-kit-version.maturityLevel.notNull";
 
     public static final String UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "update-kit-custom.kitCustomId.notNull";
     public static final String UPDATE_KIT_CUSTOM_KIT_ID_NOT_NULL = "update-kit-custom.kitId.notNull";

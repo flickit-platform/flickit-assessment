@@ -437,7 +437,7 @@
 								"{{api_path}}",
 								"assessments",
 								"ff1b2ae3-92b7-437d-b321-539753b71608",
-                                "migrate-kit-version"
+								"migrate-kit-version"
 							]
 						}
 					},
@@ -958,7 +958,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104?maturityLevelId=1728",
+							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104?maturityLevelId=1728&sort=weight&order=asc&page=0&size=10",
 							"host": [
 								"{{base_url}}"
 							],
@@ -974,6 +974,22 @@
 								{
 									"key": "maturityLevelId",
 									"value": "1728"
+								},
+								{
+									"key": "sort",
+									"value": "weight"
+								},
+								{
+									"key": "order",
+									"value": "asc"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
 								}
 							]
 						}
@@ -1066,6 +1082,40 @@
 								"ai-report",
 								"attributes",
 								"1961"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attribute Score Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/report/attributes/1104/stats?maturityLevelId=1728",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"8280e75b-ed71-4c82-9fac-920c52efb26c",
+								"report",
+								"attributes",
+								"1104",
+								"stats"
+							],
+							"query": [
+								{
+									"key": "maturityLevelId",
+									"value": "1728"
+								}
 							]
 						}
 					},
@@ -1163,47 +1213,6 @@
 								"{{api_path}}",
 								"evidences",
 								"9f9cd530-73a0-4adc-863a-4b455c9488e1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Attribute Evidence List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/625e6194-b710-4ed4-90e5-d6372ee3cb96/attributes/1564/evidences?type=NEGATIVE&size=10&page=0",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"625e6194-b710-4ed4-90e5-d6372ee3cb96",
-								"attributes",
-								"1564",
-								"evidences"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "NEGATIVE"
-								},
-								{
-									"key": "size",
-									"value": "10"
-								},
-								{
-									"key": "page",
-									"value": "0"
-								}
 							]
 						}
 					},
@@ -1640,7 +1649,7 @@
 				{
 					"name": "Get Subject Insight",
 					"request": {
-						"method": "Get",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",

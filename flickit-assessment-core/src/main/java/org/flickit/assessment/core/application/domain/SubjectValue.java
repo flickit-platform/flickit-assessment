@@ -8,6 +8,8 @@ import org.apache.commons.lang3.mutable.MutableDouble;
 
 import java.util.*;
 
+import static org.flickit.assessment.common.util.NumberUtils.isLessThanWithPrecision;
+
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -100,7 +102,7 @@ public class SubjectValue {
 
         for (LevelCompetence levelCompetence : levelCompetences) {
             Long mlId = levelCompetence.getEffectiveLevelId();
-            if (percentScores.containsKey(mlId) && percentScores.get(mlId) < levelCompetence.getValue())
+            if (percentScores.containsKey(mlId) && isLessThanWithPrecision(percentScores.get(mlId), levelCompetence.getValue()))
                 return false;
         }
         return true;
@@ -120,6 +122,10 @@ public class SubjectValue {
                 sum.add(qav.getAttribute().getWeight());
             }
         }
-        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
+        return sum.getValue() == 0 ? 0 : weightedSum.getValue() / sum.getValue();
+    }
+
+    public Double getWeightedConfidenceValue() {
+        return confidenceValue * subject.getWeight();
     }
 }

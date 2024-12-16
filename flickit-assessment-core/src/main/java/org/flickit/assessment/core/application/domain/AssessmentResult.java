@@ -10,6 +10,8 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static org.flickit.assessment.common.util.NumberUtils.isLessThanWithPrecision;
+
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -113,7 +115,7 @@ public class AssessmentResult {
 
         for (LevelCompetence levelCompetence : levelCompetences) {
             Long mlId = levelCompetence.getEffectiveLevelId();
-            if (percentScores.containsKey(mlId) && percentScores.get(mlId) < levelCompetence.getValue())
+            if (percentScores.containsKey(mlId) && isLessThanWithPrecision(percentScores.get(mlId), levelCompetence.getValue()))
                 return false;
         }
         return true;
@@ -121,7 +123,7 @@ public class AssessmentResult {
 
     public Double calculateConfidenceValue() {
         calculateSubjectValuesAndSetConfidenceValue();
-        return calculateWeightedMeanOfAttributeConfidenceValues();
+        return calculateWeightedMeanOfSubjectConfidenceValues();
     }
 
     private void calculateSubjectValuesAndSetConfidenceValue() {
@@ -131,16 +133,15 @@ public class AssessmentResult {
         });
     }
 
-    private Double calculateWeightedMeanOfAttributeConfidenceValues() {
+    private Double calculateWeightedMeanOfSubjectConfidenceValues() {
         MutableDouble weightedSum = new MutableDouble();
         MutableDouble sum = new MutableDouble();
         subjectValues.stream()
-            .flatMap(x -> x.getAttributeValues().stream())
             .filter(x -> x.getConfidenceValue() != null)
             .forEach(x -> {
                 weightedSum.add(x.getWeightedConfidenceValue());
-                sum.add(x.getAttribute().getWeight());
+                sum.add(x.getSubject().getWeight());
             });
-        return sum.getValue() == 0 ? null : weightedSum.getValue() / sum.getValue();
+        return sum.getValue() == 0 ? 0 : weightedSum.getValue() / sum.getValue();
     }
 }

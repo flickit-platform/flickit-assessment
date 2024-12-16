@@ -1,6 +1,7 @@
 package org.flickit.assessment.data.jpa.kit.attribute;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -63,25 +64,38 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 qsn.title as questionTitle,
                 ans as answer,
                 qi as questionImpact,
-                ov as optionImpact,
                 ao.index as optionIndex,
                 ao.title as optionTitle,
-                ao.value as optionValue
+                ao.value as optionValue,
+                CASE
+                    WHEN ans IS NULL THEN 0.0
+                    WHEN ans.isNotApplicable = true THEN NULL
+                    ELSE ao.value
+                END as answerScore,
+                CASE
+                    WHEN ans.isNotApplicable = true THEN NULL
+                    ELSE COALESCE(ao.value, 0.0) * qi.weight
+                END as weightedScore,
+                COUNT(e.id) as evidenceCount
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN EvidenceJpaEntity e on ans.questionId = e.questionId and e.assessmentId = :assessmentId and e.deleted = false and e.type IS NOT NULL
             LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id and qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
-            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpactId = qi.id and ov.optionId = ans.answerOptionId AND ov.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
-            ORDER BY qr.title asc, qsn.index asc
+            GROUP BY
+                qr.title, qsn.id, qsn.index, qsn.title,
+                ans, qi, ao.index, ao.title, ao.value
         """)
-    List<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentResultId") UUID assessmentResultId,
+    Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentId") UUID assessmentId,
+                                                               @Param("assessmentResultId") UUID assessmentResultId,
                                                                @Param("kitVersionId") long kitVersionId,
                                                                @Param("attributeId") Long attributeId,
-                                                               @Param("maturityLevelId") Long maturityLevelId);
+                                                               @Param("maturityLevelId") Long maturityLevelId,
+                                                               PageRequest pageRequest);
 
     @Query("""
             SELECT COUNT(DISTINCT(q.id))
@@ -109,4 +123,24 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             WHERE at.kitVersionId = :kitVersionId AND qi.id IS NULL
         """)
     List<AttributeJpaEntity> findAllByKitVersionIdAndWithoutImpact(@Param("kitVersionId") long kitVersionId);
+
+    @Query("""
+            SELECT
+                qsn.id as questionId,
+                qi.weight as questionWeight,
+                ans as answer,
+                ao.value as optionValue,
+                ans.isNotApplicable as isNotApplicable
+            FROM QuestionJpaEntity qsn
+            LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
+            LEFT JOIN AnswerOptionJpaEntity ao on ans.answerOptionId = ao.id and ao.kitVersionId = :kitVersionId
+            LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId and qsn.kitVersionId = qi.kitVersionId
+            WHERE qi.attributeId = :attributeId
+                AND qi.maturityLevelId = :maturityLevelId
+                AND qsn.kitVersionId = :kitVersionId
+        """)
+    List<AttributeQuestionView> findScoreStats(@Param("assessmentResultId") UUID assessmentResultId,
+                                               @Param("kitVersionId") Long kitVersionId,
+                                               @Param("attributeId") Long attributeId,
+                                               @Param("maturityLevelId") Long maturityLevelId);
 }

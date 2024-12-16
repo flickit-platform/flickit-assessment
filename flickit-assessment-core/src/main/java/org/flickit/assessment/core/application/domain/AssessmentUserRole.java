@@ -78,7 +78,6 @@ public enum AssessmentUserRole {
         COMMENTER_PERMISSIONS(Set.of(
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
-            VIEW_ATTRIBUTE_EVIDENCE_LIST,
             VIEW_EVIDENCE_LIST,
             UPDATE_EVIDENCE,
             ADD_EVIDENCE_ATTACHMENT,
@@ -94,7 +93,8 @@ public enum AssessmentUserRole {
             CREATE_ASSESSMENT_INSIGHT,
             CREATE_SUBJECT_INSIGHT,
             MANAGE_ADD_ON,
-            MANAGE_KIT_CUSTOM)),
+            MANAGE_KIT_CUSTOM,
+            MANAGE_ADVICE_ITEM)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,

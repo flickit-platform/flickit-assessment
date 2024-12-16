@@ -101,7 +101,7 @@ class GetEvidenceServiceTest {
         var evidence = EvidenceMother.simpleEvidence();
         var currentUserId = UUID.randomUUID();
         var param = new Param(id, currentUserId);
-        var assessmentResult = AssessmentResultMother.validResultWithJustAnId();
+        var assessmentResult = AssessmentResultMother.validResult();
         Question question = QuestionMother.withOptions();
         User user = new User(evidence.getCreatedById(), "displayName", "user@mail.com");
         Answer answer = AnswerMother.answerWithNullNotApplicable(question.getOptions().getFirst());

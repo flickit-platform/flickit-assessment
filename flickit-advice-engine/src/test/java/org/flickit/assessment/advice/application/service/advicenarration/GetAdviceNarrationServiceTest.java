@@ -1,10 +1,10 @@
 package org.flickit.assessment.advice.application.service.advicenarration;
 
 import org.flickit.assessment.advice.application.domain.AdviceNarration;
-import org.flickit.assessment.advice.application.domain.AssessmentResult;
 import org.flickit.assessment.advice.application.port.in.advicenarration.GetAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -72,7 +72,7 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -94,7 +94,7 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
         LocalDateTime aiNarrationTime = LocalDateTime.now();
         var adviceNarration = new AdviceNarration(UUID.randomUUID(),
             assessmentResult.getId(),
@@ -126,7 +126,7 @@ class GetAdviceNarrationServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
-        var assessmentResult = new AssessmentResult(UUID.randomUUID(), 123L);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
         LocalDateTime assessorNarrationTime = LocalDateTime.now();
         var adviceNarration = new AdviceNarration(UUID.randomUUID(),
             assessmentResult.getId(),

@@ -18,7 +18,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
 
     Page<MaturityLevelJpaEntity> findByKitVersionId(Long kitVersionId, Pageable pageable);
 
-    List<MaturityLevelJpaEntity> findAllByKitVersionIdAndIdIn(long kitVersionId, Collection<Long> ids);
+    List<MaturityLevelJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 

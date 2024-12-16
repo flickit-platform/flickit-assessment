@@ -18,15 +18,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -120,12 +118,14 @@ public class SubjectPersistenceJpaAdapter implements
             .map(e -> {
                 List<Attribute> attributes = e.getValue().stream()
                     .map(x -> AttributeMapper.mapToDomainModel(x.getAttribute()))
+                    .sorted(Comparator.comparing(Attribute::getIndex))
                     .toList();
                 return mapToDomainModel(e.getKey(), attributes);
             })
             .collect(Collectors.toMap(Subject::getId, Function.identity()));
 
-        Page<SubjectJpaEntity> subjectEntitesPage = repository.findByKitVersionId(kitVersionId, PageRequest.of(page, size));
+        Page<SubjectJpaEntity> subjectEntitesPage = repository.findByKitVersionId(kitVersionId,
+            PageRequest.of(page, size, Sort.Direction.ASC, SubjectJpaEntity.Fields.index));
         List<Subject> items = subjectEntitesPage.getContent().stream()
             .map(e -> subjectIdToSubject.get(e.getId()))
             .toList();
@@ -166,17 +166,17 @@ public class SubjectPersistenceJpaAdapter implements
 
     @Override
     public void updateOrders(UpdateOrderParam param) {
-        Map<SubjectJpaEntity.EntityId, Integer> idToIndex = param.orders().stream()
+        Map<Long, Integer> idToIndex = param.orders().stream()
             .collect(Collectors.toMap(
-                ml -> new SubjectJpaEntity.EntityId(ml.subjectId(), param.kitVersionId()),
-                UpdateOrderParam.SubjectOrder::index
-            ));
-        List<SubjectJpaEntity> entities = repository.findAllById(idToIndex.keySet());
+                UpdateOrderParam.SubjectOrder::subjectId,
+                UpdateOrderParam.SubjectOrder::index));
+
+        List<SubjectJpaEntity> entities = repository.findAllByIdInAndKitVersionId(idToIndex.keySet(), param.kitVersionId());
         if (entities.size() != param.orders().size())
             throw new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND);
 
         entities.forEach(x -> {
-            int newIndex = idToIndex.get(new SubjectJpaEntity.EntityId(x.getId(), param.kitVersionId()));
+            int newIndex = idToIndex.get(x.getId());
             x.setIndex(newIndex);
             x.setLastModificationTime(param.lastModificationTime());
             x.setLastModifiedBy(param.lastModifiedBy());

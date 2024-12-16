@@ -8,6 +8,7 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.Create
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -79,13 +80,12 @@ class CreateAssessorAdviceNarrationServiceTest {
     @Test
     void testCreateAssessorAdviceNarration_WhenAdviceNarrationDoesNotExist_ThenCreateNewOne() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
-        UUID assessmentResultId = UUID.randomUUID();
-        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, 123L);
+        AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResultId)).thenReturn(Optional.empty());
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
 
         service.createAssessorAdviceNarration(param);
@@ -97,7 +97,7 @@ class CreateAssessorAdviceNarrationServiceTest {
     void testCreateAssessorAdviceNarration_WhenAdviceExists_ThenUpdateItsAssessorNarration() {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
         UUID assessmentResultId = UUID.randomUUID();
-        AssessmentResult assessmentResult = new AssessmentResult(assessmentResultId, 123L);
+        AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
         AdviceNarration adviceNarration = new AdviceNarration(null,
             assessmentResultId,
             "aiNarration",

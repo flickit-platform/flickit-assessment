@@ -45,8 +45,8 @@ public class GetKitAttributeLevelQuestionsDetailService implements GetKitAttribu
     }
 
     private Result.Question mapToResultQuestion(Question question, Questionnaire questionnaire) {
-        var impact = question.getImpacts().get(0);
-        List<Result.Question.AnswerOption> options = mapToAnswerOptions(question, impact);
+        var impact = question.getImpacts().getFirst();
+        List<Result.Question.AnswerOption> options = mapToAnswerOptions(question);
         return new Result.Question(
             question.getIndex(),
             question.getTitle(),
@@ -58,22 +58,17 @@ public class GetKitAttributeLevelQuestionsDetailService implements GetKitAttribu
         );
     }
 
-    private List<Result.Question.AnswerOption> mapToAnswerOptions(Question question, QuestionImpact impact) {
+    private List<Result.Question.AnswerOption> mapToAnswerOptions(Question question) {
         return question.getOptions().stream()
-            .map(option -> mapToAnswerOption(option, impact))
+            .map(this::mapToAnswerOption)
             .toList();
     }
 
-    private Result.Question.AnswerOption mapToAnswerOption(AnswerOption option, QuestionImpact impact) {
-        double optionImpactValue = impact.getOptionImpacts().stream()
-            .filter(i -> i.getOptionId() == option.getId())
-            .map(AnswerOptionImpact::getValue)
-            .findFirst()
-            .orElseThrow();
+    private Result.Question.AnswerOption mapToAnswerOption(AnswerOption option) {
         return new Result.Question.AnswerOption(
             option.getIndex(),
             option.getTitle(),
-            optionImpactValue
+            option.getValue()
         );
     }
 }

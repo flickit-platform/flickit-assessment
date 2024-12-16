@@ -1,7 +1,11 @@
 package org.flickit.assessment.core.adapter.out.calculate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
 import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.test.fixture.adapter.jpa.KitCustomJpaEntityMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -14,11 +18,10 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.OptionImpactWithQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -34,6 +37,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.AnswerJpaEntityMother.*;
@@ -46,7 +50,8 @@ import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectJpaEnt
 import static org.flickit.assessment.core.test.fixture.adapter.jpa.SubjectValueJpaEntityMother.subjectValueWithNullMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,10 +76,17 @@ class AssessmentCalculateInfoLoadAdapterTest {
     @Mock
     private AnswerOptionJpaRepository answerOptionRepository;
     @Mock
-    private AnswerOptionImpactJpaRepository answerOptionImpactRepository;
-    @Mock
     private MaturityLevelPersistenceJpaAdapter maturityLevelJpaAdapter;
+    @Mock
+    private KitCustomJpaRepository kitCustomRepository;
+    @Mock
+    private ObjectMapper objectMapper;
 
+    private String customJson;
+    private KitCustomData customData;
+
+
+    @SneakyThrows
     @Test
     void testLoad() {
         Context context = createContext();
@@ -82,8 +94,9 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         doMocks(context, kitVersionId);
         List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-        when(maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId))
-            .thenReturn(maturityLevels);
+
+        when(maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId)).thenReturn(maturityLevels);
+        when(objectMapper.readValue(customJson, KitCustomData.class)).thenReturn(customData);
 
         var loadedAssessmentResult = adapter.load(context.assessmentResultEntity().getAssessment().getId());
 
@@ -91,12 +104,12 @@ class AssessmentCalculateInfoLoadAdapterTest {
 
         assertAssessment(context.assessmentResultEntity().getAssessment(), loadedAssessmentResult.getAssessment());
 
-        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues());
+        assertSubjectValues(context.subjectValues, loadedAssessmentResult.getSubjectValues(), context.subjects);
 
         var resultAttributeValues = loadedAssessmentResult.getSubjectValues().stream()
             .flatMap(sv -> sv.getAttributeValues().stream())
             .toList();
-        assertAttributeValues(context.attributeValues, resultAttributeValues);
+        assertAttributeValues(context.attributeValues, resultAttributeValues, context.attributes);
 
         List<Answer> answers = new ArrayList<>(resultAttributeValues.stream()
             .flatMap(qav -> qav.getAnswers().stream())
@@ -112,7 +125,10 @@ class AssessmentCalculateInfoLoadAdapterTest {
         assertEquals(allLevels().size(), resultAssessment.getAssessmentKit().getMaturityLevels().size());
     }
 
-    private static void assertSubjectValues(List<SubjectValueJpaEntity> subjectValueEntities, List<SubjectValue> resultSubjectValues) {
+    @SneakyThrows
+    private void assertSubjectValues(List<SubjectValueJpaEntity> subjectValueEntities,
+                                     List<SubjectValue> resultSubjectValues,
+                                     List<SubjectJpaEntity> subjects) {
         subjectValueEntities.forEach(entity ->
             resultSubjectValues.stream()
                 .filter(sv -> sv.getId() == entity.getId())
@@ -122,9 +138,27 @@ class AssessmentCalculateInfoLoadAdapterTest {
                     Assertions::fail
                 )
         );
+
+        var customSubjects = customData.subjects().stream()
+            .collect(Collectors.toMap(KitCustomData.Subject::id, KitCustomData.Subject::weight));
+        resultSubjectValues.forEach(sv ->
+            subjects.stream()
+                .filter(sb -> sb.getId() == sv.getSubject().getId())
+                .findFirst()
+                .ifPresentOrElse(
+                    sb -> {
+                        if (customSubjects.get(sv.getSubject().getId()) != null)
+                            assertEquals(customSubjects.get(sv.getSubject().getId()), sb.getWeight());
+                        assertEquals(sb.getWeight(), sv.getSubject().getWeight());
+                    },
+                    Assertions::fail
+                )
+        );
     }
 
-    private static void assertAttributeValues(List<AttributeValueJpaEntity> attributeValueJpaEntities, List<AttributeValue> resultAttributeValues) {
+    private void assertAttributeValues(List<AttributeValueJpaEntity> attributeValueJpaEntities,
+                                       List<AttributeValue> resultAttributeValues,
+                                       List<AttributeJpaEntity> attributes) {
         attributeValueJpaEntities.forEach(entity ->
             resultAttributeValues.stream()
                 .filter(av -> av.getId() == entity.getId())
@@ -134,6 +168,22 @@ class AssessmentCalculateInfoLoadAdapterTest {
                         assertNotNull(av.getAttribute());
                         assertNotNull(av.getAttribute().getQuestions());
                         assertEquals(5, av.getAttribute().getQuestions().size());
+                    },
+                    Assertions::fail
+                )
+        );
+
+        var customSubjects = customData.attributes().stream()
+            .collect(Collectors.toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+        resultAttributeValues.forEach(av ->
+            attributes.stream()
+                .filter(sb -> sb.getId() == av.getAttribute().getId())
+                .findFirst()
+                .ifPresentOrElse(
+                    sb -> {
+                        if (customSubjects.get(av.getAttribute().getId()) != null)
+                            assertEquals(customSubjects.get(av.getAttribute().getId()), sb.getWeight());
+                        assertEquals(sb.getWeight(), av.getAttribute().getWeight());
                     },
                     Assertions::fail
                 )
@@ -163,7 +213,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
         );
     }
 
-    private static Context createContext() {
+    @SneakyThrows
+    private Context createContext() {
         var assessmentResultEntity = validSimpleAssessmentResultEntity(null, Boolean.FALSE, Boolean.FALSE);
         Long kitVersionId = assessmentResultEntity.getKitVersionId();
 
@@ -188,6 +239,12 @@ class AssessmentCalculateInfoLoadAdapterTest {
         AttributeJpaEntity attribute6 = createAttributeEntity(attribute6Id, 6, kitVersionId, subjectValue3.getSubjectId());
         List<AttributeJpaEntity> attributes = List.of(attribute1, attribute2, attribute3, attribute4, attribute5, attribute6);
 
+        customData = new KitCustomData(List.of(new KitCustomData.Subject(subjectValue1.getSubjectId(), 10)),
+            List.of(new KitCustomData.Attribute(attribute1.getId(), 10), new KitCustomData.Attribute(attribute2.getId(), 20)));
+        ObjectMapper om = new ObjectMapper();
+        customJson = om.writeValueAsString(customData);
+        var kitCustomEntity = KitCustomJpaEntityMother.createKitCustom(customJson);
+
         var qav1 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute1Id);
         var qav2 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute2Id);
         var qav3 = attributeValueWithNullMaturityLevel(assessmentResultEntity, attribute3Id);
@@ -197,8 +254,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
         List<AttributeValueJpaEntity> attributeValues = List.of(qav1, qav2, qav3, qav4, qav5, qav6);
 
         var subject1 = subjectWithAttributes(subjectValue1.getSubjectId(), kitVersionId, 1);
-        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), kitVersionId, 1);
-        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), kitVersionId, 1);
+        var subject2 = subjectWithAttributes(subjectValue2.getSubjectId(), kitVersionId, 2);
+        var subject3 = subjectWithAttributes(subjectValue3.getSubjectId(), kitVersionId, 3);
         List<SubjectJpaEntity> subjects = List.of(subject1, subject2, subject3);
 
         var question1 = questionEntity(1L, kitVersionId, 1L, Boolean.FALSE, Boolean.TRUE);
@@ -291,15 +348,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
         var answerOptionEntity3 = new AnswerOptionJpaEntity(5L, null, null, null, null, null, null, null, null, null);
         List<AnswerOptionJpaEntity> answerOptionEntities = new ArrayList<>(List.of(answerOptionEntity1, answerOptionEntity2, answerOptionEntity3));
 
-        var answerImpact11 = new AnswerOptionImpactJpaEntity(1L, kitVersionId, 1L, impact11.getId(), 1D, null, null, null, null);
-        var answerImpact21 = new AnswerOptionImpactJpaEntity(2L, kitVersionId, 2L, impact21.getId(), 1D, null, null, null, null);
-        var answerImpact31 = new AnswerOptionImpactJpaEntity(3L, kitVersionId, 5L, impact31.getId(), 1D, null, null, null, null);
-
-        var optionImpactToQuestionImpactMap = Map.of(answerImpact11, impact11,
-            answerImpact21, impact21,
-            answerImpact31, impact31);
-        List<OptionImpactWithQuestionImpactView> answerOptionImpactEntities = optionImpactWithQuestionImpactView(optionImpactToQuestionImpactMap);
-
         return new Context(
             assessmentResultEntity,
             subjectValues,
@@ -310,8 +358,7 @@ class AssessmentCalculateInfoLoadAdapterTest {
             questionIdToImpactsMap,
             answerEntities,
             answerOptionEntities,
-            answerOptionImpactEntities
-        );
+            kitCustomEntity);
     }
 
     private void doMocks(Context context, long kitVersionId) {
@@ -331,8 +378,8 @@ class AssessmentCalculateInfoLoadAdapterTest {
             .thenReturn(context.answerEntities());
         when(answerOptionRepository.findAllByIdInAndKitVersionId(any(), anyLong()))
             .thenReturn(context.answerOptionEntities());
-        when(answerOptionImpactRepository.findAllByOptionIdInAndKitVersionId(any(), eq(kitVersionId)))
-            .thenReturn(context.answerOptionImpactEntities);
+        when(kitCustomRepository.findByIdAndKitId(anyLong(), anyLong()))
+            .thenReturn(Optional.of(context.kitCustomEntity));
     }
 
     private List<QuestionJoinQuestionImpactView> questionJoinImpactView(List<QuestionJpaEntity> questionEntities, Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap) {
@@ -358,24 +405,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
             }).toList();
     }
 
-    private static List<OptionImpactWithQuestionImpactView> optionImpactWithQuestionImpactView(Map<AnswerOptionImpactJpaEntity, QuestionImpactJpaEntity> optionImpactToQuestionImpactMap) {
-        return optionImpactToQuestionImpactMap.entrySet().stream()
-            .map(x -> {
-                OptionImpactWithQuestionImpactView view = new OptionImpactWithQuestionImpactView() {
-                    @Override
-                    public AnswerOptionImpactJpaEntity getOptionImpact() {
-                        return x.getKey();
-                    }
-
-                    @Override
-                    public QuestionImpactJpaEntity getQuestionImpact() {
-                        return x.getValue();
-                    }
-                };
-                return view;
-            }).toList();
-    }
-
     record Context(
         AssessmentResultJpaEntity assessmentResultEntity,
         List<SubjectValueJpaEntity> subjectValues,
@@ -386,6 +415,6 @@ class AssessmentCalculateInfoLoadAdapterTest {
         Map<Long, List<QuestionImpactJpaEntity>> questionIdToImpactsMap,
         List<AnswerJpaEntity> answerEntities,
         List<AnswerOptionJpaEntity> answerOptionEntities,
-        List<OptionImpactWithQuestionImpactView> answerOptionImpactEntities) {
+        KitCustomJpaEntity kitCustomEntity) {
     }
 }
