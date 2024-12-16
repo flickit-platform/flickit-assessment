@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPORT_KIT_DSL_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_NOT_ALLOWED;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -54,7 +54,7 @@ class ExportKitDslServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.export(param));
-        assertEquals(EXPORT_KIT_DSL_NOT_ALLOWED, throwable.getMessageKey());
+        assertEquals(GET_KIT_DSL_NOT_ALLOWED, throwable.getMessageKey());
     }
 
     private ExportKitDslUseCase.Param createParam(Consumer<ExportKitDslUseCase.Param.ParamBuilder> changer) {

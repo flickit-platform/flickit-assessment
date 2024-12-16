@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPORT_KIT_DSL_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_NOT_ALLOWED;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,7 +32,7 @@ public class ExportKitDslService implements ExportKitDslUseCase {
 
         Long activeVersionId = kit.getActiveVersionId();
         if (activeVersionId == null)
-            throw new ValidationException(EXPORT_KIT_DSL_NOT_ALLOWED);
+            throw new ValidationException(GET_KIT_DSL_NOT_ALLOWED);
 
         var attributes = loadAttributesPort.loadDslModels(activeVersionId);
 
