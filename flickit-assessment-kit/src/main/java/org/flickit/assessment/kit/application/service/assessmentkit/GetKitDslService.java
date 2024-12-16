@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDslUseCase;
+import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -27,6 +28,7 @@ public class GetKitDslService implements GetKitDslUseCase {
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadAttributesPort loadAttributesPort;
     private final LoadSubjectsPort loadSubjectsPort;
+    private final LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Override
     public Result export(Param param) {
@@ -41,11 +43,13 @@ public class GetKitDslService implements GetKitDslUseCase {
         var questionnaires = loadQuestionnairesPort.loadDslModels(activeVersionId);
         var attributes = loadAttributesPort.loadDslModels(activeVersionId);
         var subjects = loadSubjectsPort.loadDslModels(activeVersionId);
+        var answerRanges = loadAnswerRangesPort.loadDslModels(activeVersionId);
 
         var assessmentKitDslModel = AssessmentKitDslModel.builder()
             .questionnaires(questionnaires)
             .attributes(attributes)
             .subjects(subjects)
+            .answerRanges(answerRanges)
             .build();
 
         return new Result(assessmentKitDslModel);

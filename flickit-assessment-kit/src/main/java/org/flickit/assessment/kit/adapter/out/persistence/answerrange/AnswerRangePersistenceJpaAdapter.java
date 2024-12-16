@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerRangeDslModel;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangesPort;
@@ -106,6 +107,18 @@ public class AnswerRangePersistenceJpaAdapter implements
         return answerRangeToOptions.entrySet().stream()
             .filter(entry -> entry.getValue().size() < 2) // Filter AnswerRanges with zero or one option
             .map(entry -> AnswerRangeMapper.toDomainModel(entry.getKey(), null))
+            .toList();
+    }
+
+    @Override
+    public List<AnswerRangeDslModel> loadDslModels(Long kitVersionId) {
+        var answerOptions = answerOptionRepository.findAllByKitVersionId(kitVersionId)
+            .stream()
+            .toList();
+
+        return repository.findAllByKitVersionId(kitVersionId)
+            .stream()
+            .map(e -> AnswerRangeMapper.mapToDslModel(e, answerOptions))
             .toList();
     }
 
