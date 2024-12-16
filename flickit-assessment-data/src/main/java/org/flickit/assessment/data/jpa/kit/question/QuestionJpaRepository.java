@@ -89,12 +89,10 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 qanso.id AS optionId,
                 qanso.index AS optionIndex,
                 qi.weight AS questionImpactWeight,
-                ansoi.value AS optionImpactValue,
                 qanso.value AS optionValue
             FROM QuestionJpaEntity q
             JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
             JOIN AnswerOptionJpaEntity qanso ON q.answerRangeId = qanso.answerRangeId AND q.kitVersionId = qanso.kitVersionId
-            LEFT JOIN AnswerOptionImpactJpaEntity ansoi ON qanso.id = ansoi.optionId AND qi.id = ansoi.questionImpactId AND ansoi.kitVersionId = q.kitVersionId
             WHERE
                 q.advisable = TRUE
                 AND q.kitVersionId = :kitVersionId
@@ -136,8 +134,7 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
             FROM QuestionJpaEntity q
             JOIN AnswerOptionJpaEntity ao ON q.answerRangeId = ao.answerRangeId AND q.kitVersionId = ao.kitVersionId
             JOIN QuestionnaireJpaEntity qsnnr ON q.questionnaireId = qsnnr.id AND q.kitVersionId = qsnnr.kitVersionId
-            JOIN AnswerOptionImpactJpaEntity impact ON ao.id = impact.optionId AND ao.kitVersionId = impact.kitVersionId
-            JOIN QuestionImpactJpaEntity qi ON qi.id = impact.questionImpactId AND qi.kitVersionId = impact.kitVersionId
+            JOIN QuestionImpactJpaEntity qi ON qi.questionId = q.id AND qi.kitVersionId = q.kitVersionId
             JOIN AttributeJpaEntity atr ON qi.attributeId = atr.id AND qi.kitVersionId = atr.kitVersionId
             WHERE q.id IN :ids AND q.kitVersionId = :kitVersionId
         """)
@@ -171,13 +168,11 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
                 qr as questionnaire,
                 qsn as question,
                 qi as questionImpact,
-                ov as optionImpact,
                 ao as answerOption
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerOptionJpaEntity ao on qsn.answerRangeId = ao.answerRangeId AND qsn.kitVersionId = ao.kitVersionId
             LEFT JOIN QuestionnaireJpaEntity qr on qsn.questionnaireId = qr.id AND qsn.kitVersionId = qr.kitVersionId
             LEFT JOIN QuestionImpactJpaEntity qi on qsn.id = qi.questionId AND qsn.kitVersionId = qi.kitVersionId
-            LEFT JOIN AnswerOptionImpactJpaEntity ov on ov.questionImpactId = qi.id AND ov.kitVersionId = qi.kitVersionId
             WHERE qi.attributeId = :attributeId
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qi.kitVersionId = :kitVersionId
