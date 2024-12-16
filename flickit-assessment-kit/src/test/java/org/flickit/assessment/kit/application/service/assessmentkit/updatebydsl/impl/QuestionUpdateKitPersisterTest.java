@@ -108,7 +108,7 @@ class QuestionUpdateKitPersisterTest {
 
     @Test
     void testQuestionUpdateKitPersister_QuestionAddedWithNewQuestionnaire_AddQuestionAndOptionsToDatabase() {
-        var savedQuestionnaire1 = questionnaireWithTitle(QUESTIONNAIRE_TITLE2);
+        var savedQuestionnaire1 = questionnaireWithTitle("DevOps");
         savedQuestionnaire1.setQuestions(List.of());
         AssessmentKit savedKit = completeKit(List.of(), List.of(), List.of(savedQuestionnaire1), List.of());
 

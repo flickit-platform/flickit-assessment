@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.impl;
 
+import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
@@ -7,9 +8,13 @@ import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerR
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext;
-import org.flickit.assessment.kit.test.fixture.application.*;
+import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
+import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
+import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
+import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,9 +33,9 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.creat
 import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_MATURITY_LEVELS;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_ATTRIBUTES;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
-import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.createAttribute;
-import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.optionOne;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.optionTwo;
+import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelTwo;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
@@ -77,25 +82,25 @@ class QuestionCreateKitPersisterTest {
         UUID currentUserId = UUID.randomUUID();
 
         var levelTwo = levelTwo();
-        var questionnaire = QuestionnaireMother.questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
-        var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, Boolean.FALSE, Boolean.TRUE, 153L, questionnaire.getId());
-        var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
+        var questionnaire = QuestionnaireMother.questionnaireWithTitle("DevOps");
+        var question = createQuestion(answerRangeId, questionnaire.getId());
+        var attribute = attributeWithTitle("Agility");
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
-        var answerOption1 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX1);
-        var answerOption2 = createAnswerOption(question.getAnswerRangeId(), OPTION_TITLE, OPTION_INDEX2);
-        question.setOptions(List.of(answerOption1, answerOption2));
+        var optionOne = optionOne(question.getAnswerRangeId());
+        var optionTwo = optionTwo(question.getAnswerRangeId());
+        question.setOptions(List.of(optionOne, optionTwo));
         question.setImpacts(List.of(impact));
         questionnaire.setQuestions(List.of(question));
 
         var dslMaturityLevelTwo = MaturityLevelDslModelMother.domainToDslModel(levelTwo());
-        var dslAnswerOption1 = answerOptionDslModel(1, OPTION_TITLE, OPTION_VALUE1);
-        var dslAnswerOption2 = answerOptionDslModel(2, OPTION_TITLE, OPTION_VALUE2);
+        var dslAnswerOption1 = answerOptionDslModel(1, optionOne.getTitle(), optionOne.getValue());
+        var dslAnswerOption2 = answerOptionDslModel(2, optionTwo.getTitle(), optionTwo.getValue());
         List<AnswerOptionDslModel> dslAnswerOptionList = List.of(dslAnswerOption1, dslAnswerOption2);
         Map<Integer, Double> optionsIndexToValueMap = new HashMap<>();
         optionsIndexToValueMap.put(dslAnswerOption1.getIndex(), 0D);
         optionsIndexToValueMap.put(dslAnswerOption2.getIndex(), 1D);
-        var dslImpact = questionImpactDslModel(ATTRIBUTE_CODE1, dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
-        var dslQuestion = questionDslModel(QUESTION_CODE1, 1, QUESTION_TITLE1, null, "c-" + QUESTIONNAIRE_TITLE1,
+        var dslImpact = questionImpactDslModel(attribute.getCode(), dslMaturityLevelTwo, null, optionsIndexToValueMap, 1);
+        var dslQuestion = questionDslModel(question.getCode(), 1, question.getTitle(), null, questionnaire.getCode(),
             List.of(dslImpact), dslAnswerOptionList, null, Boolean.FALSE, Boolean.TRUE);
         AssessmentKitDslModel dslModel = AssessmentKitDslModel.builder()
             .questions(List.of(dslQuestion))
@@ -105,13 +110,13 @@ class QuestionCreateKitPersisterTest {
 
         when(createAnswerRangePort.persist(createAnswerRangeParam)).thenReturn(answerRangeId);
         when(createQuestionPort.persist(any())).thenReturn(question.getId());
-        var createOption1Param = new CreateAnswerOptionPort.Param(answerOption1.getTitle(), answerOption1.getIndex(), answerRangeId, OPTION_VALUE1, kitVersionId, currentUserId);
-        var createOption2Param = new CreateAnswerOptionPort.Param(answerOption2.getTitle(), answerOption2.getIndex(), answerRangeId, OPTION_VALUE2, kitVersionId, currentUserId);
-        when(createAnswerOptionPort.persist(createOption1Param)).thenReturn(answerOption1.getId());
-        when(createAnswerOptionPort.persist(createOption2Param)).thenReturn(answerOption2.getId());
+        var createOption1Param = createOptionPortParam(optionOne, kitVersionId, currentUserId);
+        var createOption2Param = createOptionPortParam(optionTwo, kitVersionId, currentUserId);
+
+        when(createAnswerOptionPort.persist(createOption1Param)).thenReturn(optionOne.getId());
+        when(createAnswerOptionPort.persist(createOption2Param)).thenReturn(optionTwo.getId());
 
         when(createQuestionImpactPort.persist(any())).thenReturn(impact.getId());
-
 
         CreateKitPersisterContext context = new CreateKitPersisterContext();
         context.put(KEY_QUESTIONNAIRES, Map.of(questionnaire.getCode(), questionnaire.getId()));
@@ -138,7 +143,7 @@ class QuestionCreateKitPersisterTest {
         var questionnaire = QuestionnaireMother.questionnaireWithTitle("devops");
         var answerRange = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions(1);
         var question = QuestionMother.createQuestion(answerRange.getId(), questionnaire.getId());
-        var attribute = AttributeMother.attributeWithTitle("flexibility");
+        var attribute = attributeWithTitle("flexibility");
         var maturityLevel = MaturityLevelMother.levelOne();
         var impact = createQuestionImpact(attribute.getId(), maturityLevel.getId(), 1, question.getId());
         var answerOption1 = answerRange.getAnswerOptions().getFirst();
@@ -185,6 +190,16 @@ class QuestionCreateKitPersisterTest {
         verify(createQuestionImpactPort).persist(questionImpactCaptor.capture());
         QuestionImpact questionImpactCaptorValue = questionImpactCaptor.getValue();
         assertCreateQuestionImpactPortParam(questionImpactCaptorValue, attribute.getId(), maturityLevel.getId(), dslImpact.getWeight(), kitVersionId, question.getId(), currentUserId);
+    }
+
+    @NotNull
+    private static CreateAnswerOptionPort.Param createOptionPortParam(AnswerOption option, long kitVersionId, UUID currentUserId) {
+        return new CreateAnswerOptionPort.Param(option.getTitle(),
+            option.getIndex(),
+            option.getAnswerRangeId(),
+            option.getValue(),
+            kitVersionId,
+            currentUserId);
     }
 
     private void assertCreateQuestionPortParam(CreateQuestionPort.Param captorValue, QuestionDslModel dslQuestion,
