@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.ExportKitDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
+import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class ExportKitDslService implements ExportKitDslUseCase {
 
     LoadAssessmentKitPort loadAssessmentKitPort;
     LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    LoadAttributesPort loadAttributesPort;
 
     @Override
     public Result export(Param param) {
@@ -33,6 +35,8 @@ public class ExportKitDslService implements ExportKitDslUseCase {
         Long activeVersionId = kit.getActiveVersionId();
         if (activeVersionId == null)
             throw new ValidationException(EXPORT_KIT_DSL_NOT_ALLOWED);
+
+        var attributes = loadAttributesPort.loadDslModels(activeVersionId);
 
         return null;
     }
