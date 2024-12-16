@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.attribute;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJoinSubjectView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
@@ -41,7 +42,14 @@ public class AttributeMapper {
             subjectJpaEntity.getId());
     }
 
-    public static AttributeDslModel mapToDslModel(AttributeJpaEntity entity) {
-        return new AttributeDslModel(entity.getCode(), entity.getWeight());
+    public static AttributeDslModel mapToDslModel(AttributeJoinSubjectView view) {
+        return AttributeDslModel.builder()
+            .subjectCode(view.getSubject().getCode())
+            .code(view.getAttribute().getCode())
+            .index(view.getAttribute().getIndex())
+            .title(view.getAttribute().getTitle())
+            .description(view.getAttribute().getDescription())
+            .weight(view.getAttribute().getWeight())
+            .build();
     }
 }
