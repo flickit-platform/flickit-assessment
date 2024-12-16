@@ -23,6 +23,7 @@ public class GetKitDslService implements GetKitDslUseCase {
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadAttributesPort loadAttributesPort;
+    private final LoadSubjectsPort loadSubjectsPort;
 
     @Override
     public Result export(Param param) {
@@ -35,9 +36,12 @@ public class GetKitDslService implements GetKitDslUseCase {
             throw new ValidationException(GET_KIT_DSL_NOT_ALLOWED);
 
         var attributes = loadAttributesPort.loadDslModels(activeVersionId);
+        var subjects = loadSubjectsPort.loadDslModels(activeVersionId);
 
         var assessmentKitDslModel = AssessmentKitDslModel.builder()
-            .attributes(attributes).build();
+            .attributes(attributes)
+            .subjects(subjects)
+            .build();
 
         return new Result(assessmentKitDslModel);
     }
