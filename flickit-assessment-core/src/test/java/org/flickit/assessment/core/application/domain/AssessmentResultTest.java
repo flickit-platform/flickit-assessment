@@ -27,7 +27,6 @@ class AssessmentResultTest {
         ), 3);
         List<SubjectValue> subjectValues = List.of(sv1, sv2);
 
-
         AssessmentResult assessmentResult = invalidResultWithSubjectValues(subjectValues);
 
         MaturityLevel assessmentMaturityLevel = assessmentResult.calculate();
