@@ -23,9 +23,9 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPORT_KIT_DSL_N
 @RequiredArgsConstructor
 public class ExportKitDslService implements ExportKitDslUseCase {
 
-    LoadAssessmentKitPort loadAssessmentKitPort;
-    LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
-    LoadAttributesPort loadAttributesPort;
+    private final LoadAssessmentKitPort loadAssessmentKitPort;
+    private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final LoadAttributesPort loadAttributesPort;
 
     @Override
     public Result export(Param param) {
