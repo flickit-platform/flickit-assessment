@@ -75,17 +75,18 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
                 answerIdToIndexMap,
                 attributeIdToTitleMap.get(attributeId),
                 attributeIdToImpacts.get(attributeId),
-                maturityLevelsMap))
+                maturityLevelsMap,
+                question))
             .toList();
     }
 
     private Impact toAttributeImpact(long attributeId, Map<Long, Integer> answerIdToIndexMap, String attributeTitle,
-                                     List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap) {
+                                     List<QuestionImpact> attributeImpacts, Map<Long, MaturityLevel> maturityLevelsMap, Question question) {
         var affectedLevels = attributeImpacts.stream()
             .map(impact -> toAffectedLevel(
                 answerIdToIndexMap,
                 impact,
-                maturityLevelsMap.get(impact.getMaturityLevelId())))
+                maturityLevelsMap.get(impact.getMaturityLevelId()), question))
             .toList();
         return new Impact(attributeId,
             attributeTitle,
@@ -94,9 +95,9 @@ public class GetKitQuestionDetailService implements GetKitQuestionDetailUseCase 
     }
 
     private AffectedLevel toAffectedLevel(Map<Long, Integer> answerIdToIndexMap, QuestionImpact attributeImpact,
-                                          MaturityLevel maturityLevel) {
-        List<AffectedLevel.OptionValue> optionValues = attributeImpact.getOptionImpacts().stream()
-            .map(answer -> new AffectedLevel.OptionValue(answer.getOptionId(), answerIdToIndexMap.get(answer.getOptionId()), answer.getValue()))
+                                          MaturityLevel maturityLevel, Question question) {
+        List<AffectedLevel.OptionValue> optionValues = question.getOptions().stream()
+            .map(answer -> new AffectedLevel.OptionValue(answer.getId(), answerIdToIndexMap.get(answer.getId()), answer.getValue()))
             .toList();
 
         return new AffectedLevel(
