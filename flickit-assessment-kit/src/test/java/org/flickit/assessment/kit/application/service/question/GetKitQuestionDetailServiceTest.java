@@ -80,10 +80,6 @@ class GetKitQuestionDetailServiceTest {
         var impact2 = createQuestionImpact(attr1.getId(), maturityLevels.get(4).getId(), 1, question.getId());
         var impact3 = createQuestionImpact(attr2.getId(), maturityLevels.get(3).getId(), 3, question.getId());
 
-        impact1.setOptionImpacts(List.of());
-        impact2.setOptionImpacts(List.of());
-        impact3.setOptionImpacts(List.of());
-
         var impacts = List.of(impact1, impact2, impact3);
 
         var param = new Param(kitId, question.getId(), UUID.randomUUID());
