@@ -3,7 +3,6 @@ package org.flickit.assessment.data.jpa.kit.attribute;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,8 +31,6 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
     void deleteByIdAndKitVersionId(long id, long kitVersionId);
 
     List<AttributeJpaEntity> findAllByIdInAndKitVersionIdAndSubjectId(List<Long> ids, long kitVersionId, long subjectId);
-
-    List<AttributeJpaEntity> findByKitVersionId(long kitVersionId, Sort by);
 
     @Modifying
     @Query("""
