@@ -110,7 +110,7 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public List<AttributeDslModel> loadDslModels(long kitVersionId) {
-        return repository.findByKitVersionId(kitVersionId, Sort.by(Fields.index))
+        return repository.findAllByKitVersionId(kitVersionId, null)
             .stream()
             .map(AttributeMapper::mapToDslModel)
             .toList();
