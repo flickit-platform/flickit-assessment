@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
+import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AttributeMapper {
@@ -38,5 +39,9 @@ public class AttributeMapper {
             attribute.getCreatedBy(),
             attribute.getLastModifiedBy(),
             subjectJpaEntity.getId());
+    }
+
+    public static AttributeDslModel mapToDslModel(AttributeJpaEntity entity) {
+        return new AttributeDslModel(entity.getCode(), entity.getWeight());
     }
 }
