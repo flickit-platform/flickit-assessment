@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
+import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -104,6 +105,14 @@ public class AttributePersistenceJpaAdapter implements
         return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
             .stream()
             .map(AttributeMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
+    public List<AttributeDslModel> loadDslModels(long kitVersionId) {
+        return repository.findByKitVersionId(kitVersionId, Sort.by(Fields.index))
+            .stream()
+            .map(AttributeMapper::mapToDslModel)
             .toList();
     }
 
