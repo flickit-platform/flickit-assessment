@@ -3,7 +3,6 @@ package org.flickit.assessment.kit.application.service.assessmentkit.createbydsl
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -47,16 +46,18 @@ class QuestionCreateKitPersisterTest {
 
     @InjectMocks
     private QuestionCreateKitPersister persister;
+
     @Mock
     private CreateQuestionPort createQuestionPort;
+
     @Mock
     private CreateQuestionImpactPort createQuestionImpactPort;
+
     @Mock
     private CreateAnswerOptionPort createAnswerOptionPort;
+
     @Mock
     private CreateAnswerRangePort createAnswerRangePort;
-    @Mock
-    private LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Captor
     private ArgumentCaptor<CreateQuestionPort.Param> createQuestionParamCaptor;
@@ -171,8 +172,6 @@ class QuestionCreateKitPersisterTest {
             .build();
 
         when(createQuestionPort.persist(any(CreateQuestionPort.Param.class))).thenReturn(question.getId());
-        when(loadAnswerOptionsPort.loadByRangeId(answerRange.getId(), kitVersionId))
-            .thenReturn(List.of(answerOption1, answerOption2));
         when(createQuestionImpactPort.persist(any(QuestionImpact.class))).thenReturn(impact.getId());
 
         persister.persist(context, kitDslModel, kitVersionId, currentUserId);

@@ -3,12 +3,10 @@ package org.flickit.assessment.kit.application.service.assessmentkit.createbydsl
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
-import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
-import org.flickit.assessment.kit.application.port.out.answeroption.LoadAnswerOptionsPort;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
@@ -34,7 +32,6 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     private final CreateQuestionImpactPort createQuestionImpactPort;
     private final CreateAnswerOptionPort createAnswerOptionPort;
     private final CreateAnswerRangePort createAnswerRangePort;
-    private final LoadAnswerOptionsPort loadAnswerOptionsPort;
 
     @Override
     public int order() {
@@ -89,9 +86,10 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
                                 UUID currentUserId) {
         var param = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
         long answerRangeId;
-        if (dslQuestion.getAnswerRangeCode() == null)
+        if (dslQuestion.getAnswerRangeCode() == null) {
             answerRangeId = createAnswerRangePort.persist(param);
-        else
+            createAnswerOptions(dslQuestion, answerRangeId, kitVersionId, currentUserId);
+        } else
             answerRangeId = answerRanges.get(dslQuestion.getAnswerRangeCode());
 
         var createParam = new CreateQuestionPort.Param(
@@ -111,8 +109,6 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
             questionId, dslQuestion.getCode(), dslQuestion.getQuestionnaireCode());
 
-        createAnswerOptions(dslQuestion, answerRangeId, kitVersionId, currentUserId);
-
         dslQuestion.getQuestionImpacts().forEach(impact -> {
             Long attributeId = attributes.get(impact.getAttributeCode());
             Long maturityLevelId = maturityLevels.get(impact.getMaturityLevel().getCode());
@@ -120,31 +116,19 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
         });
     }
 
-    private void createAnswerOptions(QuestionDslModel dslQuestion,
-                                     Long answerRangeId,
-                                     Long kitVersionId,
-                                     UUID currentUserId) {
-        if (dslQuestion.getAnswerRangeCode() == null)
-            dslQuestion.getAnswerOptions().forEach(option ->
-                createAnswerOption(option, answerRangeId, kitVersionId, currentUserId));
-        else
-            loadAnswerOptionsPort.loadByRangeId(answerRangeId, kitVersionId);
-    }
+    private void createAnswerOptions(QuestionDslModel dslQuestion, Long answerRangeId, Long kitVersionId, UUID currentUserId) {
+        dslQuestion.getAnswerOptions().forEach(option -> {
+            var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(),
+                option.getIndex(),
+                answerRangeId,
+                option.getValue(),
+                kitVersionId,
+                currentUserId);
 
-    private void createAnswerOption(AnswerOptionDslModel option,
-                                    Long answerRangeId,
-                                    Long kitVersionId,
-                                    UUID currentUserId) {
-        var createOptionParam = new CreateAnswerOptionPort.Param(option.getCaption(),
-            option.getIndex(),
-            answerRangeId,
-            option.getValue(),
-            kitVersionId,
-            currentUserId);
-
-        var optionId = createAnswerOptionPort.persist(createOptionParam);
-        log.debug("AnswerOption[Id={}, index={}, title={}, answerRangeId={}] created.",
-            optionId, option.getIndex(), option.getCaption(), answerRangeId);
+            var optionId = createAnswerOptionPort.persist(createOptionParam);
+            log.debug("AnswerOption[Id={}, index={}, title={}, answerRangeId={}] created.",
+                optionId, option.getIndex(), option.getCaption(), answerRangeId);
+        });
     }
 
     private void createImpact(QuestionImpactDslModel dslQuestionImpact,
