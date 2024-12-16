@@ -2,8 +2,8 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.ExportKitDslUseCase;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.ExportKitDslUseCase.*;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDslUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDslUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +14,9 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class ExportKitDslRestController {
+public class GetKitDslRestController {
 
-    private final ExportKitDslUseCase useCase;
+    private final GetKitDslUseCase useCase;
     private final UserContext userContext;
 
     @GetMapping("/assessment-kits/{kitId}/dsl")

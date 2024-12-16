@@ -27,14 +27,14 @@ class ExportKitDslUseCaseParamTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private void createParam(Consumer<ExportKitDslUseCase.Param.ParamBuilder> changer) {
+    private void createParam(Consumer<GetKitDslUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         paramBuilder.build();
     }
 
-    private ExportKitDslUseCase.Param.ParamBuilder paramBuilder() {
-        return ExportKitDslUseCase.Param.builder()
+    private GetKitDslUseCase.Param.ParamBuilder paramBuilder() {
+        return GetKitDslUseCase.Param.builder()
             .kitId(123L)
             .currentUserId(UUID.randomUUID());
     }

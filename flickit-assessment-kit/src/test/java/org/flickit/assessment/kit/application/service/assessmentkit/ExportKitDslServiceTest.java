@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.ExportKitDslUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class ExportKitDslServiceTest {
 
     @InjectMocks
-    private ExportKitDslService service;
+    private GetKitDslService service;
 
     @Mock
     private LoadAssessmentKitPort loadAssessmentKitPort;
@@ -34,8 +34,8 @@ class ExportKitDslServiceTest {
     CheckExpertGroupAccessPort checkExpertGroupAccessPort;
 
     @Test
-    void testExportKitDsl_userIsNotExpertGroupOwner_throwsAccessDeniedException() {
-        var param = createParam(ExportKitDslUseCase.Param.ParamBuilder::build);
+    void testGetKitDsl_userIsNotExpertGroupOwner_throwsAccessDeniedException() {
+        var param = createParam(GetKitDslUseCase.Param.ParamBuilder::build);
         var kit = AssessmentKitMother.simpleKit();
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -46,8 +46,8 @@ class ExportKitDslServiceTest {
     }
 
     @Test
-    void testExportKitDsl_activeKitVersionNotFound_throwsAccessDeniedException() {
-        var param = createParam(ExportKitDslUseCase.Param.ParamBuilder::build);
+    void testGetKitDsl_activeKitVersionNotFound_throwsAccessDeniedException() {
+        var param = createParam(GetKitDslUseCase.Param.ParamBuilder::build);
         var kit = AssessmentKitMother.kitWithKitVersionId(null);
 
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
@@ -57,14 +57,14 @@ class ExportKitDslServiceTest {
         assertEquals(GET_KIT_DSL_NOT_ALLOWED, throwable.getMessageKey());
     }
 
-    private ExportKitDslUseCase.Param createParam(Consumer<ExportKitDslUseCase.Param.ParamBuilder> changer) {
+    private GetKitDslUseCase.Param createParam(Consumer<GetKitDslUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private ExportKitDslUseCase.Param.ParamBuilder paramBuilder() {
-        return ExportKitDslUseCase.Param.builder()
+    private GetKitDslUseCase.Param.ParamBuilder paramBuilder() {
+        return GetKitDslUseCase.Param.builder()
             .kitId(123L)
             .currentUserId(UUID.randomUUID());
     }

@@ -4,7 +4,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.port.in.assessmentkit.ExportKitDslUseCase;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDslUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
@@ -18,7 +18,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_NOT_
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ExportKitDslService implements ExportKitDslUseCase {
+public class GetKitDslService implements GetKitDslUseCase {
 
     private final LoadAssessmentKitPort loadAssessmentKitPort;
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
