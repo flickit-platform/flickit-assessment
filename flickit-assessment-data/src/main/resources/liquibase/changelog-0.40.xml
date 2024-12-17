@@ -12,4 +12,12 @@
         <modifyDataType tableName="fau_space" columnName="code" newDataType="varchar(100)"/>
     </changeSet>
 
+    <changeSet id="0.40-03" author="Ali Sedaghat">
+        <addColumn tableName="fac_evidence">
+            <column name="resolved" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
