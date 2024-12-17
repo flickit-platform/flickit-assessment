@@ -3,7 +3,10 @@ package org.flickit.assessment.kit.adapter.out.persistence.question;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.question.QuestionQuestionnaireDslView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionQuestionnaireView;
+import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
@@ -53,7 +56,7 @@ public class QuestionMapper {
         );
     }
 
-    public static QuestionDslModel mapToDslModel(QuestionQuestionnaireView view) {
+    public static QuestionDslModel mapToDslModel(QuestionQuestionnaireDslView view) {
         return QuestionDslModel.builder()
             .code(view.getQuestion().getCode())
             .index(view.getQuestion().getIndex())
@@ -61,6 +64,9 @@ public class QuestionMapper {
             .mayNotBeApplicable(view.getQuestion().getMayNotBeApplicable())
             .advisable(view.getQuestion().getAdvisable())
             .questionnaireCode(view.getQuestionnaire().getCode())
+            .answerRangeCode(view.getAnswerRangeCode())
+            .answerOptions(view.getAnswerOptions().stream().map(AnswerOptionMapper::mapToDslModel).toList())
+            .questionImpacts(view.getQuestionImpacts().stream().map(QuestionImpactMapper::mapToDsLModel).toList())
             .build();
     }
 }

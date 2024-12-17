@@ -233,10 +233,19 @@ public interface QuestionJpaRepository extends JpaRepository<QuestionJpaEntity, 
     List<QuestionQuestionnaireView> findAllByKitVersionIdAndWithoutImpact(@Param("kitVersionId") long kitVersionId);
 
     @Query("""
-            SELECT q as question, qr as questionnaire
+            SELECT
+                q as question,
+                qr as questionnaire,
+                ar.code as answerRangeCode,
+                qi as questionImpacts,
+                ao as answerOptions
             FROM QuestionJpaEntity q
             JOIN QuestionnaireJpaEntity qr on q.questionnaireId = qr.id AND qr.kitVersionId = q.kitVersionId
+            JOIN QuestionImpactJpaEntity qi ON q.id = qi.questionId AND q.kitVersionId = qi.kitVersionId
+            JOIN AnswerRangeJpaEntity ar ON q.answerRangeId = ar.id AND ar.kitVersionId = q.kitVersionId
+            JOIN AnswerOptionJpaEntity ao ON q.answerRangeId = ao.answerRangeId AND q.kitVersionId = ao.kitVersionId
+            JOIN AttributeJpaEntity at ON at.id = qi.attributeId AND at.kitVersionId = qi.kitVersionId
             WHERE q.kitVersionId = :kitVersionId
         """)
-    List<QuestionQuestionnaireView> findAllQuestionQuestionnairesByKitVersionId(long kitVersionId);
+    List<QuestionQuestionnaireDslView> findAllQuestionQuestionnairesByKitVersionId(long kitVersionId);
 }
