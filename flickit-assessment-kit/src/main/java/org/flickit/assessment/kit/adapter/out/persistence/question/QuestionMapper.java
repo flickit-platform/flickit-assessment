@@ -60,6 +60,7 @@ public class QuestionMapper {
             .title(view.getQuestion().getTitle())
             .mayNotBeApplicable(view.getQuestion().getMayNotBeApplicable())
             .advisable(view.getQuestion().getAdvisable())
+            .questionnaireCode(view.getQuestionnaire().getCode())
             .build();
     }
 }
