@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
@@ -160,8 +161,16 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public List<MaturityLevelDslModel> loadDslModels(long kitVersionId) {
-        return repository.findAllByKitVersionId(kitVersionId).stream()
-            .map(MaturityLevelMapper::mapToDslModel)
-            .toList();
+        var levelCompetences = levelCompetenceRepository.findAllByKitVersionId(kitVersionId);
+        var maturityLevels = repository.findAllByKitVersionId(kitVersionId);
+
+        return maturityLevels
+            .stream()
+            .flatMap(maturityLevel ->
+                Stream.of(MaturityLevelMapper.mapToDslModel(maturityLevel,
+                    maturityLevels.stream(),
+                    levelCompetences.stream().filter(lc -> lc.getAffectedLevelId().equals(maturityLevel.getId()))))
+            ).toList();
+
     }
 }
