@@ -7,6 +7,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
+import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -62,5 +63,16 @@ public class MaturityLevelMapper {
             createdBy,
             createdBy
         );
+    }
+
+    public static MaturityLevelDslModel mapToDslModel(MaturityLevelJpaEntity entity) {
+        return MaturityLevelDslModel.builder()
+            .code(entity.getCode())
+            .index(entity.getIndex())
+            .title(entity.getTitle())
+            .description(entity.getDescription())
+            .value(entity.getValue()) //TODO: Add level Competences
+            .build();
+
     }
 }

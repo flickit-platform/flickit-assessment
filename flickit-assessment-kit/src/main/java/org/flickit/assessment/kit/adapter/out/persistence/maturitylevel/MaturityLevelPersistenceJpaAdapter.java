@@ -9,6 +9,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -154,6 +155,13 @@ public class MaturityLevelPersistenceJpaAdapter implements
     public List<MaturityLevel> loadByKitVersionId(long kitVersionId, Collection<Long> ids) {
         return repository.findAllByIdInAndKitVersionId(ids, kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
+    public List<MaturityLevelDslModel> loadDslModels(long kitVersionId) {
+        return repository.findAllByKitVersionId(kitVersionId).stream()
+            .map(MaturityLevelMapper::mapToDslModel)
             .toList();
     }
 }

@@ -9,6 +9,7 @@ import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRan
 import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
+import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class GetKitDslService implements GetKitDslUseCase {
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadAttributesPort loadAttributesPort;
     private final LoadSubjectsPort loadSubjectsPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Override
@@ -43,6 +45,7 @@ public class GetKitDslService implements GetKitDslUseCase {
         var questionnaires = loadQuestionnairesPort.loadDslModels(activeVersionId);
         var attributes = loadAttributesPort.loadDslModels(activeVersionId);
         var subjects = loadSubjectsPort.loadDslModels(activeVersionId);
+        var maturityLevels = loadMaturityLevelsPort.loadDslModels(activeVersionId);
         var answerRanges = loadAnswerRangesPort.loadDslModels(activeVersionId);
 
         var assessmentKitDslModel = AssessmentKitDslModel.builder()
@@ -50,6 +53,7 @@ public class GetKitDslService implements GetKitDslUseCase {
             .attributes(attributes)
             .subjects(subjects)
             .answerRanges(answerRanges)
+            .maturityLevels(maturityLevels)
             .build();
 
         return new Result(assessmentKitDslModel);
