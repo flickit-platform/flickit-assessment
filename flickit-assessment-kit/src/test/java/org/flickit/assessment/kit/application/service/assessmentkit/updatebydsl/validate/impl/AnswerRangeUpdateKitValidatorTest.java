@@ -21,7 +21,6 @@ import static org.flickit.assessment.kit.application.service.assessmentkit.updat
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.validate.impl.DslFieldNames.ANSWER_RANGE;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithAnswerRanges;
-import static org.flickit.assessment.kit.test.fixture.application.Constants.OPTION_TITLE;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.AnswerRangeDslModelMother.domainToDslModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -109,7 +108,7 @@ class AnswerRangeUpdateKitValidatorTest {
         var savedKit = kitWithAnswerRanges(List.of(answerRange));
 
         var newAnswerOption = AnswerOptionDslModel.builder()
-            .caption(OPTION_TITLE)
+            .caption("option title")
             .index(3)
             .value(1D)
             .build();
