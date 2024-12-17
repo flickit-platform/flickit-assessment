@@ -25,7 +25,6 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
-import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionImpactMother.createAnswerOptionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,18 +76,9 @@ class GetKitQuestionDetailServiceTest {
             answerOption3
         );
 
-        var optionImpacts = List.of(
-            createAnswerOptionImpact(answerOption1.getId(), 0),
-            createAnswerOptionImpact(answerOption2.getId(), 0.5),
-            createAnswerOptionImpact(answerOption3.getId(), 1)
-        );
         var impact1 = createQuestionImpact(attr1.getId(), maturityLevels.get(3).getId(), 1, question.getId());
         var impact2 = createQuestionImpact(attr1.getId(), maturityLevels.get(4).getId(), 1, question.getId());
         var impact3 = createQuestionImpact(attr2.getId(), maturityLevels.get(3).getId(), 3, question.getId());
-
-        impact1.setOptionImpacts(optionImpacts);
-        impact2.setOptionImpacts(optionImpacts);
-        impact3.setOptionImpacts(optionImpacts);
 
         var impacts = List.of(impact1, impact2, impact3);
 
@@ -117,18 +107,15 @@ class GetKitQuestionDetailServiceTest {
         var attr1AffectedLevel1 = attributeImpact1.affectedLevels().getFirst();
         assertEquals(impact1.getAttributeId(), attributeImpact1.id());
         assertEquals(impact1.getMaturityLevelId(), attr1AffectedLevel1.maturityLevel().id());
-        assertEquals(optionImpacts.size(), attr1AffectedLevel1.optionValues().size());
 
         var attr1AffectedLevel2 = attributeImpact1.affectedLevels().get(1);
         assertEquals(impact2.getAttributeId(), attributeImpact1.id());
         assertEquals(impact2.getMaturityLevelId(), attr1AffectedLevel2.maturityLevel().id());
-        assertEquals(optionImpacts.size(), attr1AffectedLevel2.optionValues().size());
 
         var attributeImpact2 = result.attributeImpacts().get(1);
         var attr2AffectedLevel1 = attributeImpact1.affectedLevels().getFirst();
         assertEquals(impact3.getAttributeId(), attributeImpact2.id());
         assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().id());
-        assertEquals(optionImpacts.size(), attr2AffectedLevel1.optionValues().size());
     }
 
     @Test

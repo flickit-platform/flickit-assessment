@@ -5,8 +5,6 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaEntity;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuestionsView;
@@ -16,9 +14,7 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
-import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
-import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
@@ -54,11 +50,10 @@ public class QuestionPersistenceJpaAdapter implements
     CheckQuestionExistencePort {
 
     private final QuestionJpaRepository repository;
-    private final QuestionImpactJpaRepository questionImpactRepository;
-    private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final QuestionImpactJpaRepository questionImpactRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
 
     @Override
@@ -106,10 +101,10 @@ public class QuestionPersistenceJpaAdapter implements
 
         var impacts = questionImpactRepository.findAllByQuestionIdAndKitVersionId(id, kitVersionId).stream()
             .map(QuestionImpactMapper::mapToDomainModel)
-            .map(impact -> setOptionImpacts(impact, optionEntities))
             .toList();
 
         question.setImpacts(impacts);
+
         question.setOptions(options);
         return question;
     }
@@ -160,16 +155,6 @@ public class QuestionPersistenceJpaAdapter implements
             .toList();
     }
 
-    private QuestionImpact setOptionImpacts(QuestionImpact impact, List<AnswerOptionJpaEntity> optionEntities) {
-        var optionImpactsEntities = answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId());
-        var optionIdToOptionValueMap = optionEntities.stream()
-            .collect(toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getValue));
-        var optionImpacts = optionImpactsEntities.stream()
-            .map(entity -> AnswerOptionImpactMapper.mapToDomainModel(entity, optionIdToOptionValueMap.get(entity.getOptionId())))
-            .toList();
-        impact.setOptionImpacts(optionImpacts);
-        return impact;
-    }
 
     @Override
     public List<LoadAttributeLevelQuestionsPort.Result> loadAttributeLevelQuestions(long kitVersionId, long attributeId, long maturityLevelId) {
@@ -195,18 +180,10 @@ public class QuestionPersistenceJpaAdapter implements
                     .stream()
                     .sorted(Comparator.comparing(AnswerOptionJpaEntity::getIndex))
                     .toList();
-                var optionIdToOptionValueMap = answerOptionEntities.stream()
-                    .collect(toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getValue));
+
                 var options = answerOptionEntities.stream().map(AnswerOptionMapper::mapToDomainModel).toList();
 
                 QuestionImpact impact = QuestionImpactMapper.mapToDomainModel(entry.getValue().getFirst().getQuestionImpact());
-                Map<Long, AnswerOptionImpactJpaEntity> optionMap = entry.getValue().stream()
-                    .collect(toMap(e -> e.getOptionImpact().getId(), AttributeLevelImpactfulQuestionsView::getOptionImpact,
-                        (existing, replacement) -> existing));
-                List<AnswerOptionImpact> optionImpacts = optionMap.values().stream()
-                    .map(entity -> AnswerOptionImpactMapper.mapToDomainModel(entity, optionIdToOptionValueMap.get(entity.getOptionId())))
-                    .toList();
-                impact.setOptionImpacts(optionImpacts);
                 question.setImpacts(List.of(impact));
                 question.setOptions(options);
 

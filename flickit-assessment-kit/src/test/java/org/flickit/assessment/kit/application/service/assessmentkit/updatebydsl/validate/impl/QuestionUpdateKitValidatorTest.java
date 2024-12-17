@@ -4,7 +4,6 @@ import org.flickit.assessment.common.exception.api.Notification;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.out.answerrange.LoadAnswerRangePort;
-import org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.validate.impl.DslFieldNames.ANSWER_OPTION;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.validate.impl.DslFieldNames.QUESTION;
+import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.optionOne;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createAnswerRangeWithNoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.kitWithQuestionnaires;
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
@@ -111,7 +111,7 @@ class QuestionUpdateKitValidatorTest {
         var answerRange = createAnswerRangeWithNoOptions(questionOne.getAnswerRangeId(), false);
 
         var newAnswerOption = AnswerOptionDslModel.builder()
-            .caption(OPTION_TITLE)
+            .caption("one")
             .index(1)
             .value(1D)
             .build();
@@ -142,7 +142,7 @@ class QuestionUpdateKitValidatorTest {
     @Test
     void testValidator_dslHasOneAnswerOptionLessThanDb_Invalid() {
         var questionOne = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, "", Boolean.FALSE, Boolean.TRUE, 153L, 1L);
-        var deletedAnswerOption = AnswerOptionMother.createAnswerOption(questionOne.getAnswerRangeId(), OPTION_TITLE, 1);
+        var deletedAnswerOption = optionOne(questionOne.getAnswerRangeId());
         questionOne.setOptions(List.of(deletedAnswerOption));
         var questionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
         questionnaire.setQuestions(List.of(questionOne));

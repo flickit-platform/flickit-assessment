@@ -27,7 +27,6 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_BY_DSL_ADDITION_UNSUPPORTED = "update-kit-by-dsl.addition.unsupported";
     public static final String UPDATE_KIT_BY_DSL_DELETION_UNSUPPORTED = "update-kit-by-dsl.deletion.unsupported";
     public static final String UPDATE_KIT_BY_DSL_CHANGE_UNSUPPORTED = "update-kit-by-dsl.change.unsupported";
-    public static final String UPDATE_KIT_BY_DSL_ANSWER_OPTION_NOT_FOUND = "update-kit-by-dsl.answer-option.notFound";
 
     public static final String GET_KIT_DSL_DOWNLOAD_LINK_FILE_PATH_NOT_FOUND = "get-kit-dsl-download-link.filePath.notFound";
     public static final String GET_KIT_DSL_DOWNLOAD_LINK_KIT_ID_NOT_NULL =  "get-kit-dsl-download-link.kitId.notNull";

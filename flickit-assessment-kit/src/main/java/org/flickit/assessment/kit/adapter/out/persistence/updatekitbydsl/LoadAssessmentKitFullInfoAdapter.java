@@ -6,7 +6,6 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
-import org.flickit.assessment.data.jpa.kit.asnweroptionimpact.AnswerOptionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
@@ -17,7 +16,6 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepos
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
-import org.flickit.assessment.kit.adapter.out.persistence.answeroptionimpact.AnswerOptionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRangeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
@@ -36,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 
 @Component
@@ -52,7 +49,6 @@ public class LoadAssessmentKitFullInfoAdapter implements
     private final QuestionnaireJpaRepository questionnaireRepository;
     private final QuestionJpaRepository questionRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
-    private final AnswerOptionImpactJpaRepository answerOptionImpactRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
     private final AnswerRangeJpaRepository answerRangeRepository;
 
@@ -83,7 +79,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             .findAllByKitVersionId(activeVersionId, Sort.by(AnswerOptionJpaEntity.Fields.index)).stream()
             .collect(Collectors.groupingBy(AnswerOptionJpaEntity::getAnswerRangeId, LinkedHashMap::new, Collectors.toList()));
 
-        setQuestionImpacts(questions, activeVersionId, answerRangeIdToAnswerOptionsMap);
+        setQuestionImpacts(questions, activeVersionId);
         setQuestionOptions(questions, answerRangeIdToAnswerOptionsMap);
 
         List<Questionnaire> questionnaires = questionnaireRepository.findAllByKitVersionIdOrderByIndex(activeVersionId).stream()
@@ -126,11 +122,10 @@ public class LoadAssessmentKitFullInfoAdapter implements
                 .toList()));
     }
 
-    private void setQuestionImpacts(List<Question> questions, long kitVersionId, Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToAnswerOptionsMap) {
+    private void setQuestionImpacts(List<Question> questions, long kitVersionId) {
         questions.forEach(question -> question.setImpacts(
             questionImpactRepository.findAllByQuestionIdAndKitVersionId(question.getId(), kitVersionId).stream()
                 .map(QuestionImpactMapper::mapToDomainModel)
-                .map(impact -> setOptionImpacts(impact, answerRangeIdToAnswerOptionsMap.get(question.getAnswerRangeId())))
                 .toList()
         ));
     }
@@ -139,17 +134,6 @@ public class LoadAssessmentKitFullInfoAdapter implements
         questions.forEach(q -> q.setOptions(answerRangeIdToAnswerOptionsMap.get(q.getAnswerRangeId()).stream()
             .map(AnswerOptionMapper::mapToDomainModel)
             .toList()));
-    }
-
-    private QuestionImpact setOptionImpacts(QuestionImpact impact, List<AnswerOptionJpaEntity> answerOptions) {
-        Map<Long, Double> optionIdToValueMap = answerOptions.stream()
-            .collect(toMap(AnswerOptionJpaEntity::getId, AnswerOptionJpaEntity::getValue));
-        impact.setOptionImpacts(
-            answerOptionImpactRepository.findAllByQuestionImpactIdAndKitVersionId(impact.getId(), impact.getKitVersionId()).stream()
-                .map(entity -> AnswerOptionImpactMapper.mapToDomainModel(entity, optionIdToValueMap.get(entity.getOptionId())))
-                .toList()
-        );
-        return impact;
     }
 
     private void setQuestions(List<Questionnaire> questionnaires, List<Question> questions) {

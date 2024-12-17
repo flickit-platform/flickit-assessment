@@ -25,7 +25,7 @@ public class AnswerOptionPersistenceJpaAdapter implements LoadAnswerOptionsByQue
             .orElseThrow(() -> new ResourceNotFoundException(QUESTION_ID_NOT_FOUND));
 
         return repository.findAllByAnswerRangeIdAndKitVersionIdOrderByIndex(question.getAnswerRangeId(), kitVersionId).stream()
-            .map(AnswerOptionMapper::mapToDomainModelWithNoImpact)
+            .map(AnswerOptionMapper::mapToDomainModel)
             .toList();
     }
 }
