@@ -77,6 +77,7 @@ public class MaturityLevelMapper {
                 entry -> maturityLevelIdToCodeMap.get(entry.getKey()),
                 Map.Entry::getValue
             ));
+        competencesCodeToValueMap = competencesCodeToValueMap.isEmpty() ? null : competencesCodeToValueMap;
 
         return MaturityLevelDslModel.builder()
             .code(entity.getCode())
