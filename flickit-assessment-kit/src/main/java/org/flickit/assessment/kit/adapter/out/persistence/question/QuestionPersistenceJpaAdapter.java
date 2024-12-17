@@ -22,6 +22,7 @@ import org.flickit.assessment.kit.application.domain.AnswerOptionImpact;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.port.out.question.*;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
 import org.springframework.data.domain.PageRequest;
@@ -148,6 +149,14 @@ public class QuestionPersistenceJpaAdapter implements
         return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
             .stream()
             .map(QuestionMapper::mapToPortResult)
+            .toList();
+    }
+
+    @Override
+    public List<QuestionDslModel> loadDslModels(long kitVersionId) {
+        return repository.findAllQuestionQuestionnairesByKitVersionId(kitVersionId)
+            .stream()
+            .map(QuestionMapper::mapToDslModel)
             .toList();
     }
 

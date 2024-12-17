@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionQuestionnaireView;
 import org.flickit.assessment.kit.application.domain.Question;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 
@@ -50,5 +51,15 @@ public class QuestionMapper {
             param.createdBy(),
             param.createdBy()
         );
+    }
+
+    public static QuestionDslModel mapToDslModel(QuestionQuestionnaireView view) {
+        return QuestionDslModel.builder()
+            .code(view.getQuestion().getCode())
+            .index(view.getQuestion().getIndex())
+            .title(view.getQuestion().getTitle())
+            .mayNotBeApplicable(view.getQuestion().getMayNotBeApplicable())
+            .advisable(view.getQuestion().getAdvisable())
+            .build();
     }
 }

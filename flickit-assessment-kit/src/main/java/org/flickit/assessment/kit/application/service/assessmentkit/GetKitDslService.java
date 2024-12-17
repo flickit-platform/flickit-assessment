@@ -10,6 +10,7 @@ import org.flickit.assessment.kit.application.port.out.assessmentkit.LoadAssessm
 import org.flickit.assessment.kit.application.port.out.attribute.LoadAttributesPort;
 import org.flickit.assessment.kit.application.port.out.expertgroupaccess.CheckExpertGroupAccessPort;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairesPort;
 import org.flickit.assessment.kit.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class GetKitDslService implements GetKitDslUseCase {
     private final CheckExpertGroupAccessPort checkExpertGroupAccessPort;
     private final LoadQuestionnairesPort loadQuestionnairesPort;
     private final LoadAttributesPort loadAttributesPort;
+    private final LoadQuestionsPort loadQuestionsPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAnswerRangesPort loadAnswerRangesPort;
@@ -44,6 +46,7 @@ public class GetKitDslService implements GetKitDslUseCase {
 
         var questionnaires = loadQuestionnairesPort.loadDslModels(activeVersionId);
         var attributes = loadAttributesPort.loadDslModels(activeVersionId);
+        var questions = loadQuestionsPort.loadDslModels(activeVersionId);
         var subjects = loadSubjectsPort.loadDslModels(activeVersionId);
         var maturityLevels = loadMaturityLevelsPort.loadDslModels(activeVersionId);
         var answerRanges = loadAnswerRangesPort.loadDslModels(activeVersionId);
@@ -51,6 +54,7 @@ public class GetKitDslService implements GetKitDslUseCase {
         var assessmentKitDslModel = AssessmentKitDslModel.builder()
             .questionnaires(questionnaires)
             .attributes(attributes)
+            .questions(questions)
             .subjects(subjects)
             .answerRanges(answerRanges)
             .maturityLevels(maturityLevels)
