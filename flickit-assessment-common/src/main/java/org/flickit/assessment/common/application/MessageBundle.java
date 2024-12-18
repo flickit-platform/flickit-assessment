@@ -1,8 +1,8 @@
 package org.flickit.assessment.common.application;
 
 import lombok.experimental.UtilityClass;
-import org.flickit.assessment.common.config.locale.UserLocaleContext;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.Locale;
@@ -13,7 +13,7 @@ public class MessageBundle {
     private static final MessageSource messageSource = messageSource();
 
     public static String message(String key, Object... args) {
-        return message(key, UserLocaleContext.getLocale(), args);
+        return message(key, LocaleContextHolder.getLocale(), args);
     }
 
     private static String message(String key, Locale locale, Object... args) {
