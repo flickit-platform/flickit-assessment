@@ -50,4 +50,7 @@ public class EvidenceJpaEntity {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
+
+    @Column(name = "resolved")
+    private Boolean resolved;
 }
