@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -36,5 +37,11 @@ public class QuestionImpactMapper {
             impact.getCreatedBy(),
             impact.getLastModifiedBy()
         );
+    }
+
+    public static QuestionImpactDslModel mapToDsLModel(QuestionImpactJpaEntity entity) {
+        return QuestionImpactDslModel.builder()
+            .weight(entity.getWeight())
+            .build();
     }
 }

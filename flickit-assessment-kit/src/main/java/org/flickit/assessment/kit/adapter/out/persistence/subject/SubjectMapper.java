@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.Subject;
+import org.flickit.assessment.kit.application.domain.dsl.SubjectDslModel;
 import org.flickit.assessment.kit.application.port.out.subject.CreateSubjectPort;
 
 import java.time.LocalDateTime;
@@ -43,6 +44,16 @@ public class SubjectMapper {
             creationTime,
             param.createdBy(),
             param.createdBy());
+    }
+
+    public static SubjectDslModel mapToDslModel(SubjectJpaEntity e) {
+        return SubjectDslModel.builder()
+            .code(e.getCode())
+            .index(e.getIndex())
+            .title(e.getTitle())
+            .description(e.getDescription())
+            .weight(e.getWeight())
+            .build();
     }
 }
 

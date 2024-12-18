@@ -9,6 +9,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
@@ -155,5 +157,20 @@ public class MaturityLevelPersistenceJpaAdapter implements
         return repository.findAllByIdInAndKitVersionId(ids, kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
             .toList();
+    }
+
+    @Override
+    public List<MaturityLevelDslModel> loadDslModels(long kitVersionId) {
+        var levelCompetences = levelCompetenceRepository.findAllByKitVersionId(kitVersionId);
+        var maturityLevels = repository.findAllByKitVersionId(kitVersionId);
+
+        return maturityLevels
+            .stream()
+            .flatMap(maturityLevel ->
+                Stream.of(MaturityLevelMapper.mapToDslModel(maturityLevel,
+                    maturityLevels.stream(),
+                    levelCompetences.stream().filter(lc -> lc.getAffectedLevelId().equals(maturityLevel.getId()))))
+            ).toList();
+
     }
 }

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 
 import java.util.UUID;
 
@@ -35,5 +36,14 @@ public class QuestionnaireMapper {
             createdBy,
             createdBy
         );
+    }
+
+    public static QuestionnaireDslModel mapToDslModel(QuestionnaireJpaEntity entity) {
+        return QuestionnaireDslModel.builder()
+            .code(entity.getCode())
+            .index(entity.getIndex())
+            .title(entity.getTitle())
+            .description(entity.getDescription())
+            .build();
     }
 }

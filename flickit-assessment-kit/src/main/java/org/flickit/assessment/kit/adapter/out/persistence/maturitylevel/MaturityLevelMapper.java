@@ -7,12 +7,12 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
 import org.flickit.assessment.kit.application.domain.MaturityLevelCompetence;
+import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MaturityLevelMapper {
@@ -62,5 +62,31 @@ public class MaturityLevelMapper {
             createdBy,
             createdBy
         );
+    }
+
+    public static MaturityLevelDslModel mapToDslModel(MaturityLevelJpaEntity entity, Stream<MaturityLevelJpaEntity> maturityLevelStream, Stream<LevelCompetenceJpaEntity> levelCompetenceEntities) {
+        Map<Long, Integer> competencesIdToValueMap = levelCompetenceEntities
+            .collect(Collectors.toMap(LevelCompetenceJpaEntity::getEffectiveLevelId, LevelCompetenceJpaEntity::getValue));
+
+        Map<Long, String> maturityLevelIdToCodeMap = maturityLevelStream
+            .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, MaturityLevelJpaEntity::getCode));
+
+        Map<String, Integer> competencesCodeToValueMap = competencesIdToValueMap.entrySet().stream()
+            .filter(entry -> maturityLevelIdToCodeMap.containsKey(entry.getKey()))
+            .collect(Collectors.toMap(
+                entry -> maturityLevelIdToCodeMap.get(entry.getKey()),
+                Map.Entry::getValue
+            ));
+        competencesCodeToValueMap = competencesCodeToValueMap.isEmpty() ? null : competencesCodeToValueMap;
+
+        return MaturityLevelDslModel.builder()
+            .code(entity.getCode())
+            .index(entity.getIndex())
+            .title(entity.getTitle())
+            .description(entity.getDescription())
+            .value(entity.getValue())
+            .competencesCodeToValueMap(competencesCodeToValueMap)
+            .build();
+
     }
 }

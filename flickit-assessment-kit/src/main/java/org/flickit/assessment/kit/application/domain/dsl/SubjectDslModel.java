@@ -13,6 +13,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class SubjectDslModel extends BaseDslModel {
 
-    Integer weight; //TODO Always is zero and it is ignored
+    Integer weight;
     List<String> questionnaireCodes; //TODO Always null
 }

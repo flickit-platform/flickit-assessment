@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.port.out.answeroption.CreateAnswerOptionPort;
 
 import java.time.LocalDateTime;
@@ -35,5 +36,13 @@ public class AnswerOptionMapper {
             param.createdBy(),
             param.createdBy()
         );
+    }
+
+    public static AnswerOptionDslModel mapToDslModel(AnswerOptionJpaEntity entity) {
+        return AnswerOptionDslModel.builder()
+            .index(entity.getIndex())
+            .caption(entity.getTitle())
+            .value(entity.getValue())
+            .build();
     }
 }
