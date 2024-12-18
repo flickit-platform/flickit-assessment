@@ -1341,6 +1341,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Resolve Comment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/evidences/29cc6345-b1e7-4d4c-a049-74ec4e275dfb/resolve",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"evidences",
+								"29cc6345-b1e7-4d4c-a049-74ec4e275dfb",
+								"resolve"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

@@ -94,7 +94,8 @@ public enum AssessmentUserRole {
             CREATE_SUBJECT_INSIGHT,
             MANAGE_ADD_ON,
             MANAGE_KIT_CUSTOM,
-            MANAGE_ADVICE_ITEM)),
+            MANAGE_ADVICE_ITEM,
+            RESOLVE_COMMENT)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -120,7 +121,8 @@ public enum AssessmentUserRole {
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_QUESTIONNAIRE_QUESTIONS,
             ANSWER_QUESTION,
-            VIEW_EVIDENCE));
+            VIEW_EVIDENCE,
+            RESOLVE_COMMENT));
 
         private final Set<AssessmentPermission> permissions;
     }
