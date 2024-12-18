@@ -12,9 +12,11 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactVi
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,6 +59,7 @@ public class QuestionPersistenceJpaAdapter implements
     private final AttributeJpaRepository attributeRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
+    private final QuestionnaireJpaRepository questionnaireJpaRepository;
 
     @Override
     public void update(UpdateQuestionPort.Param param) {
@@ -150,10 +154,22 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public List<QuestionDslModel> loadDslModels(long kitVersionId) {
-        var questionImpacts = questionImpactRepository.findAllByKitVersionId(kitVersionId);
-        return repository.findAllQuestionQuestionnaireDslViewByKitVersionId(kitVersionId)
+        var questions = loadAllByKitVersionId(kitVersionId);
+        var questionnaireEntities = questionnaireJpaRepository.findAllByKitVersionId(kitVersionId);
+
+        return questions
             .stream()
-            .flatMap(q -> Stream.of(QuestionMapper.mapToDslModel(q, questionImpacts.stream().filter(qi -> qi.getQuestionId().equals(q.getQuestion().getId())))) )
+            .flatMap(question -> {
+                Questionnaire questionnaire = questionnaireEntities.stream()
+                    .filter(q -> Objects.equals(q.getId(), question.getQuestionnaireId()))
+                    .findFirst()
+                    .map(QuestionnaireMapper::mapToDomainModel)
+                    .orElse(null);
+
+                assert questionnaire != null;
+                return Stream.of(QuestionMapper.mapToDslModel(
+                        question, questionnaire.getCode()));
+            })
             .toList();
     }
 

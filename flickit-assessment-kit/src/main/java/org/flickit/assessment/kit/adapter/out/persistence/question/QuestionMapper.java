@@ -3,17 +3,13 @@ package org.flickit.assessment.kit.adapter.out.persistence.question;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
-import org.flickit.assessment.data.jpa.kit.question.QuestionQuestionnaireDslView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionQuestionnaireView;
-import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
-import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 
 import java.time.LocalDateTime;
-import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionMapper {
@@ -57,17 +53,16 @@ public class QuestionMapper {
         );
     }
 
-    public static QuestionDslModel mapToDslModel(QuestionQuestionnaireDslView view, Stream<QuestionImpactJpaEntity> questionImpactsStream) {
+    public static QuestionDslModel mapToDslModel(Question question, String questionnaireCode) {
         return QuestionDslModel.builder()
-            .code(view.getQuestion().getCode())
-            .index(view.getQuestion().getIndex())
-            .title(view.getQuestion().getTitle())
-            .description(view.getQuestion().getHint())
-            .questionnaireCode(view.getQuestionnaireCode())
-            .answerRangeCode(view.getAnswerRangeCode())
-            .questionImpacts(questionImpactsStream.map(QuestionImpactMapper::mapToDsLModel).toList())
-            .mayNotBeApplicable(view.getQuestion().getMayNotBeApplicable())
-            .advisable(view.getQuestion().getAdvisable())
+            .code(question.getCode())
+            .index(question.getIndex())
+            .title(question.getTitle())
+            .description(question.getHint())
+            .questionnaireCode(questionnaireCode)
+            .answerRangeCode("question.getAnswerRangeId()")
+            .mayNotBeApplicable(question.getMayNotBeApplicable())
+            .advisable(question.getAdvisable())
             .build();
     }
 }
