@@ -61,6 +61,7 @@ public class QuestionMapper {
             .code(view.getQuestion().getCode())
             .index(view.getQuestion().getIndex())
             .title(view.getQuestion().getTitle())
+            .description(view.getQuestion().getHint())
             .mayNotBeApplicable(view.getQuestion().getMayNotBeApplicable())
             .advisable(view.getQuestion().getAdvisable())
             .questionnaireCode(view.getQuestionnaire().getCode())
