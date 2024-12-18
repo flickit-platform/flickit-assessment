@@ -161,7 +161,7 @@ public class QuestionPersistenceJpaAdapter implements
         var questionEntityToViews = questionWithImpactsViews.stream()
             .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
 
-        var questions = questionEntityToViews.entrySet().stream()
+        var questionsStream = questionEntityToViews.entrySet().stream()
             .map(e -> {
                 Question question = QuestionMapper.mapToDomainModel(e.getKey());
                 List<QuestionImpact> qImpacts = e.getValue().stream()
@@ -173,14 +173,12 @@ public class QuestionPersistenceJpaAdapter implements
                     .toList();
                 question.setImpacts(qImpacts);
                 return question;
-            })
-            .toList();
+            });
 
         var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(kitVersionId);
         var answerRangesEntities = answerRangeRepository.findAllByKitVersionId(kitVersionId);
 
-        return questions
-            .stream()
+        return questionsStream
             .flatMap(question -> {
                 String questionnaireCode = questionnaireEntities.stream()
                     .filter(q -> Objects.equals(q.getId(), question.getQuestionnaireId()))
@@ -196,7 +194,7 @@ public class QuestionPersistenceJpaAdapter implements
 
                 assert questionnaireCode != null;
                 return Stream.of(QuestionMapper.mapToDslModel(
-                        question, questionnaireCode, answerRangeCode));
+                    question, questionnaireCode, answerRangeCode));
             })
             .toList();
     }
