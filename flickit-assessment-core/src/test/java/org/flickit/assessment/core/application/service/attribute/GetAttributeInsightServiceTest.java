@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.attribute;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.config.AppAiProperties;
+import org.flickit.assessment.common.config.locale.UserLocaleContext;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
@@ -16,12 +17,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.util.Locale.ENGLISH;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ATTRIBUTE_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_SUBJECT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -29,8 +32,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_I
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAttributeInsightServiceTest {
@@ -88,16 +90,17 @@ class GetAttributeInsightServiceTest {
         var assessmentResult = validResult();
         Attribute attribute = AttributeMother.simpleAttribute();
 
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
         when(appAiProperties.isEnabled()).thenReturn(false);
-
         when(loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
+        MockedStatic<UserLocaleContext> mockedStatic = mockStatic(UserLocaleContext.class);
+        mockedStatic.when(UserLocaleContext::getLocale).thenReturn(ENGLISH);
 
         var result = assertDoesNotThrow(() -> service.getInsight(param));
+
         assertNotNull(result);
         assertNotNull(result.aiInsight());
         assertEquals(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()), result.aiInsight().insight());
