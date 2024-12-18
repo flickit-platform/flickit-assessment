@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper.mapToJpaEntity;
@@ -149,9 +150,10 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public List<QuestionDslModel> loadDslModels(long kitVersionId) {
+        var questionImpacts = questionImpactRepository.findAllByKitVersionId(kitVersionId);
         return repository.findAllQuestionQuestionnaireDslViewByKitVersionId(kitVersionId)
             .stream()
-            .map(QuestionMapper::mapToDslModel)
+            .flatMap(q -> Stream.of(QuestionMapper.mapToDslModel(q, questionImpacts.stream().filter(qi -> qi.getQuestionId().equals(q.getQuestion().getId())))) )
             .toList();
     }
 
