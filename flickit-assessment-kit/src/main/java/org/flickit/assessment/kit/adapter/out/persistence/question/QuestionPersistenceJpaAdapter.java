@@ -149,7 +149,7 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public List<QuestionDslModel> loadDslModels(long kitVersionId) {
-        return repository.findAllQuestionQuestionnairesByKitVersionId(kitVersionId)
+        return repository.findAllQuestionQuestionnaireDslViewByKitVersionId(kitVersionId)
             .stream()
             .map(QuestionMapper::mapToDslModel)
             .toList();
