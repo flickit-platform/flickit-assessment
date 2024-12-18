@@ -179,7 +179,9 @@ public class QuestionPersistenceJpaAdapter implements
             ));
 
         var answerRangeIdToView = rangeViews.stream()
-            .collect(toMap(v -> v.getAnswerRange().getId(), AnswerRangeJoinOptionView::getAnswerRange));
+            .collect(toMap(v -> v.getAnswerRange().getId(), AnswerRangeJoinOptionView::getAnswerRange,
+                (existing, duplicate) -> existing
+            ));
 
         return questionEntityToViews.entrySet().stream()
             .map(entry -> {
