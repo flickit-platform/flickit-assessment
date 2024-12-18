@@ -53,14 +53,14 @@ public class QuestionMapper {
         );
     }
 
-    public static QuestionDslModel mapToDslModel(Question question, String questionnaireCode) {
+    public static QuestionDslModel mapToDslModel(Question question, String questionnaireCode, String answerRangeCode) {
         return QuestionDslModel.builder()
             .code(question.getCode())
             .index(question.getIndex())
             .title(question.getTitle())
             .description(question.getHint())
             .questionnaireCode(questionnaireCode)
-            .answerRangeCode("question.getAnswerRangeId()")
+            .answerRangeCode(answerRangeCode)
             .mayNotBeApplicable(question.getMayNotBeApplicable())
             .advisable(question.getAdvisable())
             .build();

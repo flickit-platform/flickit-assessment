@@ -5,6 +5,8 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuestionsView;
@@ -12,11 +14,11 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactVi
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
-import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
@@ -59,7 +61,8 @@ public class QuestionPersistenceJpaAdapter implements
     private final AttributeJpaRepository attributeRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final KitDbSequenceGenerators sequenceGenerators;
-    private final QuestionnaireJpaRepository questionnaireJpaRepository;
+    private final QuestionnaireJpaRepository questionnaireRepository;
+    private final AnswerRangeJpaRepository answerRangeRepository;
 
     @Override
     public void update(UpdateQuestionPort.Param param) {
@@ -155,24 +158,30 @@ public class QuestionPersistenceJpaAdapter implements
     @Override
     public List<QuestionDslModel> loadDslModels(long kitVersionId) {
         var questions = loadAllByKitVersionId(kitVersionId);
-        var questionnaireEntities = questionnaireJpaRepository.findAllByKitVersionId(kitVersionId);
+        var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(kitVersionId);
+        var answerRangesEntities = answerRangeRepository.findAllByKitVersionId(kitVersionId);
 
         return questions
             .stream()
             .flatMap(question -> {
-                Questionnaire questionnaire = questionnaireEntities.stream()
+                String questionnaireCode = questionnaireEntities.stream()
                     .filter(q -> Objects.equals(q.getId(), question.getQuestionnaireId()))
                     .findFirst()
-                    .map(QuestionnaireMapper::mapToDomainModel)
+                    .map(QuestionnaireJpaEntity::getCode)
                     .orElse(null);
 
-                assert questionnaire != null;
+                String answerRangeCode = answerRangesEntities.stream()
+                    .filter(ar -> Objects.equals(ar.getId(), question.getAnswerRangeId()))
+                    .findFirst()
+                    .map(AnswerRangeJpaEntity::getCode)
+                    .orElse(null);
+
+                assert questionnaireCode != null;
                 return Stream.of(QuestionMapper.mapToDslModel(
-                        question, questionnaire.getCode()));
+                        question, questionnaireCode, answerRangeCode));
             })
             .toList();
     }
-
 
     @Override
     public List<LoadAttributeLevelQuestionsPort.Result> loadAttributeLevelQuestions(long kitVersionId, long attributeId, long maturityLevelId) {
