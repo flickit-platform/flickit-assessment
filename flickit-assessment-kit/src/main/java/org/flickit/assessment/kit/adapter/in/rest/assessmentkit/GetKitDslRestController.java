@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
+import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDslUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitDslUseCase.*;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,8 @@ public class GetKitDslRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessment-kits/{kitId}/dsl")
-    ResponseEntity<Result> exportKitDsl(@PathVariable Long kitId) {
-        Result result = useCase.export(toParam(kitId, userContext.getUser().id()));
+    ResponseEntity<AssessmentKitDslModel> exportKitDsl(@PathVariable Long kitId) {
+        AssessmentKitDslModel result = useCase.export(toParam(kitId, userContext.getUser().id()));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

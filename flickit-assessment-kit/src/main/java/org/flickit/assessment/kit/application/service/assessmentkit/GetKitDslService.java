@@ -35,7 +35,7 @@ public class GetKitDslService implements GetKitDslUseCase {
     private final LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Override
-    public Result export(Param param) {
+    public AssessmentKitDslModel export(Param param) {
         AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -51,7 +51,7 @@ public class GetKitDslService implements GetKitDslUseCase {
         var maturityLevels = loadMaturityLevelsPort.loadDslModels(activeVersionId);
         var answerRanges = loadAnswerRangesPort.loadDslModels(activeVersionId);
 
-        var assessmentKitDslModel = AssessmentKitDslModel.builder()
+        return AssessmentKitDslModel.builder()
             .questionnaires(questionnaires)
             .attributes(attributes)
             .questions(questions)
@@ -59,7 +59,5 @@ public class GetKitDslService implements GetKitDslUseCase {
             .answerRanges(answerRanges)
             .maturityLevels(maturityLevels)
             .build();
-
-        return new Result(assessmentKitDslModel);
     }
 }

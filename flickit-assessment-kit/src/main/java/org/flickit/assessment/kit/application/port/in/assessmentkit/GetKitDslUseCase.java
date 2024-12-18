@@ -14,7 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPORT_KIT_DSL_K
 
 public interface GetKitDslUseCase {
 
-    Result export(Param param);
+    AssessmentKitDslModel export(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -32,8 +32,5 @@ public interface GetKitDslUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
-    }
-
-    record Result(AssessmentKitDslModel dsl) {
     }
 }

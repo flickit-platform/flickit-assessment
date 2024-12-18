@@ -157,7 +157,25 @@ public class QuestionPersistenceJpaAdapter implements
 
     @Override
     public List<QuestionDslModel> loadDslModels(long kitVersionId) {
-        var questions = loadAllByKitVersionId(kitVersionId);
+        var questionWithImpactsViews = repository.loadByKitVersionId(kitVersionId);
+        var questionEntityToViews = questionWithImpactsViews.stream()
+            .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
+
+        var questions = questionEntityToViews.entrySet().stream()
+            .map(e -> {
+                Question question = QuestionMapper.mapToDomainModel(e.getKey());
+                List<QuestionImpact> qImpacts = e.getValue().stream()
+                    .map(v -> {
+                        if (v.getQuestionImpact() == null)
+                            return null;
+                        return QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact());
+                    })
+                    .toList();
+                question.setImpacts(qImpacts);
+                return question;
+            })
+            .toList();
+
         var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(kitVersionId);
         var answerRangesEntities = answerRangeRepository.findAllByKitVersionId(kitVersionId);
 
