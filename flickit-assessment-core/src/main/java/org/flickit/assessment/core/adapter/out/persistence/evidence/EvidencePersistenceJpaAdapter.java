@@ -33,7 +33,8 @@ public class EvidencePersistenceJpaAdapter implements
     LoadEvidencesPort,
     UpdateEvidencePort,
     DeleteEvidencePort,
-    LoadEvidencePort {
+    LoadEvidencePort,
+    ResolveCommentPort {
 
     private final EvidenceJpaRepository repository;
     private final AssessmentJpaRepository assessmentRepository;
@@ -53,7 +54,7 @@ public class EvidencePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND));
         if (!Objects.equals(assessmentKitVersionId, question.getKitVersionId()))
             throw new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND);
-        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param);
+        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param, null);
         EvidenceJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();
     }
@@ -106,5 +107,11 @@ public class EvidencePersistenceJpaAdapter implements
         return repository.findByIdAndDeletedFalse(id)
             .map(EvidenceMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public void resolveComment(Evidence evidence) {
+        EvidenceJpaEntity entity = EvidenceMapper.mapToEvidenceJpaEntity(evidence, true);
+        repository.save(entity);
     }
 }

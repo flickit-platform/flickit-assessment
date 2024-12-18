@@ -14,7 +14,7 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
 
-    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param) {
+    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param, Boolean resolved) {
         return new EvidenceJpaEntity(
             null,
             param.description(),
@@ -26,7 +26,7 @@ public class EvidenceMapper {
             param.questionId(),
             param.type(),
             false,
-            null
+            resolved
         );
     }
 
@@ -55,6 +55,22 @@ public class EvidenceMapper {
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.isDeleted()
+        );
+    }
+
+    public static EvidenceJpaEntity mapToEvidenceJpaEntity(Evidence evidence, boolean resolved) {
+        return new EvidenceJpaEntity(
+            evidence.getId(),
+            evidence.getDescription(),
+            evidence.getCreationTime(),
+            evidence.getLastModificationTime(),
+            evidence.getCreatedById(),
+            evidence.getLastModifiedById(),
+            evidence.getAssessmentId(),
+            evidence.getQuestionId(),
+            evidence.getType(),
+            evidence.isDeleted(),
+            resolved
         );
     }
 }
