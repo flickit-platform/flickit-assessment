@@ -17,6 +17,7 @@ public class ErrorMessageKey {
     public static final String ASSESSMENT_INVITE_ID_NOT_FOUND = "assessment-invite.id.notFound";
     public static final String ANALYSIS_TYPE_ID_NOT_VALID = "analysis-type.id.notValid";
     public static final String KIT_CUSTOM_ID_NOT_FOUND = "kit-custom.id.notFound";
+    public static final String ASSESSMENT_USER_ROLE_ID_NOT_FOUND = "assessment-user-role.id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
