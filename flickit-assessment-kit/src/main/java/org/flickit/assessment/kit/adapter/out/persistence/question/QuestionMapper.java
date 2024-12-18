@@ -6,10 +6,12 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionQuestionnaireView;
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.question.LoadQuestionsPort;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuestionMapper {
@@ -53,7 +55,10 @@ public class QuestionMapper {
         );
     }
 
-    public static QuestionDslModel mapToDslModel(Question question, String questionnaireCode, String answerRangeCode) {
+    public static QuestionDslModel mapToDslModel(QuestionJpaEntity question,
+                                                 String questionnaireCode,
+                                                 String answerRangeCode,
+                                                 List<QuestionImpactDslModel> impacts) {
         return QuestionDslModel.builder()
             .code(question.getCode())
             .index(question.getIndex())
@@ -63,6 +68,7 @@ public class QuestionMapper {
             .answerRangeCode(answerRangeCode)
             .mayNotBeApplicable(question.getMayNotBeApplicable())
             .advisable(question.getAdvisable())
+            .questionImpacts(impacts)
             .build();
     }
 }

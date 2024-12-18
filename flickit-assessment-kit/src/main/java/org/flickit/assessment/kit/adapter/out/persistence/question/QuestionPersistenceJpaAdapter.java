@@ -5,9 +5,11 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
-import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJoinOptionView;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeLevelImpactfulQuestionsView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJoinQuestionImpactView;
@@ -22,7 +24,9 @@ import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.Questio
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
 import org.flickit.assessment.kit.application.port.out.question.*;
 import org.flickit.assessment.kit.application.port.out.subject.CountSubjectQuestionsPort;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +39,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper.mapToJpaEntity;
@@ -161,40 +164,54 @@ public class QuestionPersistenceJpaAdapter implements
         var questionEntityToViews = questionWithImpactsViews.stream()
             .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
 
-        var questionsStream = questionEntityToViews.entrySet().stream()
-            .map(e -> {
-                Question question = QuestionMapper.mapToDomainModel(e.getKey());
-                List<QuestionImpact> qImpacts = e.getValue().stream()
-                    .map(v -> {
-                        if (v.getQuestionImpact() == null)
-                            return null;
-                        return QuestionImpactMapper.mapToDomainModel(v.getQuestionImpact());
-                    })
-                    .toList();
-                question.setImpacts(qImpacts);
-                return question;
-            });
-
         var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(kitVersionId);
-        var answerRangesEntities = answerRangeRepository.findAllByKitVersionId(kitVersionId);
+        var maturityLevelIdMap = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
+            .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+        var attributeIdMap = attributeRepository.findAllByKitVersionId(kitVersionId).stream()
+            .collect(Collectors.toMap(AttributeJpaEntity::getId, Function.identity()));
 
-        return questionsStream
-            .flatMap(question -> {
+        var rangeViews = answerRangeRepository.findAllWithOptionsByKitVersionId(kitVersionId);
+
+        Map<Long, List<AnswerOptionJpaEntity>> answerRangeToOptions = rangeViews.stream()
+            .collect(Collectors.groupingBy(
+                a -> a.getAnswerRange().getId(),
+                Collectors.mapping(AnswerRangeJoinOptionView::getAnswerOption, Collectors.toList())
+            ));
+
+        var answerRangeIdToView = rangeViews.stream()
+            .collect(toMap(v -> v.getAnswerRange().getId(), AnswerRangeJoinOptionView::getAnswerRange));
+
+        return questionEntityToViews.entrySet().stream()
+            .map(entry -> {
+                var questionEntity = entry.getKey();
+                var impactEntities = entry.getValue().stream().map(QuestionJoinQuestionImpactView::getQuestionImpact).toList();
+                var optionIndexToValue = answerRangeToOptions.get(questionEntity.getAnswerRangeId()).stream()
+                    .collect(Collectors.toMap(AnswerOptionJpaEntity::getIndex, AnswerOptionJpaEntity::getValue));
+
                 String questionnaireCode = questionnaireEntities.stream()
-                    .filter(q -> Objects.equals(q.getId(), question.getQuestionnaireId()))
+                    .filter(q -> Objects.equals(q.getId(), questionEntity.getQuestionnaireId()))
                     .findFirst()
                     .map(QuestionnaireJpaEntity::getCode)
                     .orElse(null);
 
-                String answerRangeCode = answerRangesEntities.stream()
-                    .filter(ar -> Objects.equals(ar.getId(), question.getAnswerRangeId()))
-                    .findFirst()
-                    .map(AnswerRangeJpaEntity::getCode)
-                    .orElse(null);
+                List<QuestionImpactDslModel> impacts = impactEntities.stream()
+                    .map(im ->
+                        QuestionImpactDslModel.builder()
+                            .attributeCode(attributeIdMap.get(im.getAttributeId()).getCode())
+                            .maturityLevel(MaturityLevelDslModel.builder()
+                                .code(maturityLevelIdMap.get(im.getMaturityLevelId()).getCode())
+                                .title(maturityLevelIdMap.get(im.getMaturityLevelId()).getTitle())
+                                .build())
+                            .weight(im.getWeight())
+                            .optionsIndextoValueMap(optionIndexToValue)
+                            .build()
+                    ).toList();
+
+                String answerRangeCode = answerRangeIdToView.get(questionEntity.getAnswerRangeId()).getCode();
 
                 assert questionnaireCode != null;
-                return Stream.of(QuestionMapper.mapToDslModel(
-                    question, questionnaireCode, answerRangeCode));
+                return QuestionMapper.mapToDslModel(
+                    questionEntity, questionnaireCode, answerRangeCode, impacts);
             })
             .toList();
     }
