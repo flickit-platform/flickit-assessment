@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
@@ -173,7 +174,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
                 Stream.of(MaturityLevelMapper.mapToDslModel(maturityLevel,
                     maturityLevelIdToEntityMap.values().stream(),
                     levelCompetences.stream().filter(lc -> lc.getAffectedLevelId().equals(maturityLevel.getId()))))
-            ).sorted(Comparator.comparingInt(MaturityLevelDslModel::getIndex))
+            ).sorted(comparingInt(MaturityLevelDslModel::getIndex))
             .toList();
     }
 }

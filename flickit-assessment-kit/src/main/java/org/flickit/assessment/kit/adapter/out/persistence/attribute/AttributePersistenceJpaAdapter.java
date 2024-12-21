@@ -18,11 +18,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingInt;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -114,7 +114,7 @@ public class AttributePersistenceJpaAdapter implements
         return repository.findAllByKitVersionId(kitVersionId, null)
             .stream()
             .map(AttributeMapper::mapToDslModel)
-            .sorted(Comparator.comparingInt(AttributeDslModel::getIndex))
+            .sorted(comparingInt(AttributeDslModel::getIndex))
             .toList();
     }
 

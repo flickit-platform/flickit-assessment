@@ -33,13 +33,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper.mapToJpaEntity;
 import static org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper.mapToDomainModel;
@@ -166,7 +166,7 @@ public class QuestionPersistenceJpaAdapter implements
 
         var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(kitVersionId)
             .stream()
-            .sorted(Comparator.comparing(QuestionnaireJpaEntity::getCode))
+            .sorted(comparing(QuestionnaireJpaEntity::getCode))
             .toList();
         var maturityLevelIdMap = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
             .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
@@ -220,7 +220,7 @@ public class QuestionPersistenceJpaAdapter implements
                 return QuestionMapper.mapToDslModel(
                     questionEntity, questionnaireCode, answerRangeCode, impacts);
             })
-            .sorted(Comparator.comparing(QuestionDslModel::getQuestionnaireCode)
+            .sorted(comparing(QuestionDslModel::getQuestionnaireCode)
                 .thenComparing(QuestionDslModel::getIndex))
             .toList();
     }
@@ -247,7 +247,7 @@ public class QuestionPersistenceJpaAdapter implements
                         (existing, replacement) -> existing))
                     .values()
                     .stream()
-                    .sorted(Comparator.comparing(AnswerOptionJpaEntity::getIndex))
+                    .sorted(comparing(AnswerOptionJpaEntity::getIndex))
                     .toList();
 
                 var options = answerOptionEntities.stream().map(AnswerOptionMapper::mapToDomainModel).toList();

@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingInt;
 import static org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_SUBJECT_DETAIL_SUBJECT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.SUBJECT_ID_NOT_FOUND;
@@ -146,7 +147,7 @@ public class SubjectPersistenceJpaAdapter implements
         return repository.findByKitVersionId(kitVersionId, null)
             .stream()
             .map(SubjectMapper::mapToDslModel)
-            .sorted(Comparator.comparingInt(SubjectDslModel::getIndex))
+            .sorted(comparingInt(SubjectDslModel::getIndex))
             .toList();
     }
 

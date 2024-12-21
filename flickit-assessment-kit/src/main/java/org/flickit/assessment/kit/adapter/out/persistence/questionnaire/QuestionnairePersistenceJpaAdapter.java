@@ -20,11 +20,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTIONNAIRE_ID_NOT_FOUND;
@@ -126,7 +126,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     public List<QuestionnaireDslModel> loadDslModels(long kitVersionId) {
         return repository.findAllByKitVersionId(kitVersionId)
             .stream().map(QuestionnaireMapper::mapToDslModel)
-            .sorted(Comparator.comparingInt(QuestionnaireDslModel::getIndex))
+            .sorted(comparingInt(QuestionnaireDslModel::getIndex))
             .toList();
     }
 
