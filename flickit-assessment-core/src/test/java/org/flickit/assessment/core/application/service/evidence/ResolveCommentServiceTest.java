@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.evidence;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.Evidence;
@@ -13,10 +12,12 @@ import org.flickit.assessment.core.application.port.out.evidence.ResolveCommentP
 import org.flickit.assessment.core.test.fixture.application.EvidenceMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,7 +25,6 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.RESOLVE_COMMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_USER_ROLE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.RESOLVE_COMMENT_INCORRECT_EVIDENCE_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -47,10 +47,11 @@ class ResolveCommentServiceTest {
     @Mock
     private LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
+    private final Evidence evidence = EvidenceMother.evidenceAsComment();
+
     @Test
-    void testResolveComment_whenCurrentUserDoesntHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testResolveComment_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(ResolveCommentUseCase.Param.ParamBuilder::build);
-        Evidence evidence = EvidenceMother.simpleEvidence();
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(false);
@@ -64,7 +65,6 @@ class ResolveCommentServiceTest {
     @Test
     void testResolveComment_whenAssessmentUserRoleDoesNotExist_thenThrowAccessDeniedException() {
         var param = createParam(ResolveCommentUseCase.Param.ParamBuilder::build);
-        Evidence evidence = EvidenceMother.simpleEvidence();
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
@@ -78,8 +78,7 @@ class ResolveCommentServiceTest {
 
     @Test
     void testResolveComment_whenUserWithAssociateRoleResolvedOtherUsersComment_thenThrowAccessDeniedException() {
-        var param = createParam(ResolveCommentUseCase.Param.ParamBuilder::build);
-        Evidence evidence = EvidenceMother.simpleEvidence();
+        var param = createParam(b -> b.currentUserId(UUID.randomUUID()));
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
@@ -93,12 +92,12 @@ class ResolveCommentServiceTest {
 
     @Test
     void testResolveComment_whenEvidenceHasPositiveOrNegativeType_thenThrowValidationException() {
-        Evidence evidence = EvidenceMother.simpleEvidence();
-        var param = createParam(b -> b.currentUserId(evidence.getCreatedById()));
+        Evidence nonCommentEevidence = EvidenceMother.simpleEvidence();
+        var param = createParam(b -> b.currentUserId(nonCommentEevidence.getCreatedById()));
 
-        when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
-        when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
-        when(loadUserRoleForAssessmentPort.load(evidence.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.ASSOCIATE));
+        when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(nonCommentEevidence);
+        when(assessmentAccessChecker.isAuthorized(nonCommentEevidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
+        when(loadUserRoleForAssessmentPort.load(nonCommentEevidence.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.ASSOCIATE));
 
         var throwable = assertThrows(ValidationException.class, () -> service.resolveComment(param));
         assertEquals(RESOLVE_COMMENT_INCORRECT_EVIDENCE_TYPE, throwable.getMessageKey());
@@ -108,8 +107,7 @@ class ResolveCommentServiceTest {
 
     @Test
     void testResolveComment_whenUserWithAssociateRoleTriedToResolveTheirComment_thenResolveComment() {
-        Evidence evidence = EvidenceMother.evidenceAsComment();
-        var param = createParam(b -> b.currentUserId(evidence.getCreatedById()));
+        var param = createParam(ResolveCommentUseCase.Param.ParamBuilder::build);
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
@@ -118,13 +116,12 @@ class ResolveCommentServiceTest {
 
         service.resolveComment(param);
 
-        verify(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
+        verifyResolveCommentPortParams(param.getId(), param.getCurrentUserId());
     }
 
     @Test
     void testResolveComment_whenUserWithAssessorRoleTriedToResolveComment_thenResolveComment() {
-        Evidence evidence = EvidenceMother.evidenceAsComment();
-        var param = createParam(b -> b.currentUserId(evidence.getCreatedById()));
+        var param = createParam(b -> b.currentUserId(UUID.randomUUID()));
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
@@ -133,13 +130,12 @@ class ResolveCommentServiceTest {
 
         service.resolveComment(param);
 
-        verify(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
+        verifyResolveCommentPortParams(param.getId(), param.getCurrentUserId());
     }
 
     @Test
     void testResolveComment_whenUserWithManagerRoleTriedToResolveComment_thenResolveComment() {
-        Evidence evidence = EvidenceMother.evidenceAsComment();
-        var param = createParam(b -> b.currentUserId(evidence.getCreatedById()));
+        var param = createParam(b -> b.currentUserId(UUID.randomUUID()));
 
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
@@ -148,7 +144,15 @@ class ResolveCommentServiceTest {
 
         service.resolveComment(param);
 
-        verify(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
+        verifyResolveCommentPortParams(param.getId(), param.getCurrentUserId());
+    }
+
+    private void verifyResolveCommentPortParams(UUID commentId, UUID currentUserId) {
+        ArgumentCaptor<LocalDateTime> timeCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
+        verify(resolveCommentPort).resolveComment(eq(commentId), eq(currentUserId), timeCaptor.capture());
+        assertNotNull(timeCaptor.getValue());
+        assertTrue(Duration.between(timeCaptor.getValue(), LocalDateTime.now()).getSeconds() < 1,
+            "lastModificationTime should be close to the current time");
     }
 
     private ResolveCommentUseCase.Param createParam(Consumer<ResolveCommentUseCase.Param.ParamBuilder> changer) {
@@ -159,7 +163,7 @@ class ResolveCommentServiceTest {
 
     private ResolveCommentUseCase.Param.ParamBuilder paramBuilder() {
         return ResolveCommentUseCase.Param.builder()
-            .id(UUID.randomUUID())
-            .currentUserId(UUID.randomUUID());
+            .id(evidence.getId())
+            .currentUserId(evidence.getCreatedById());
     }
 }
