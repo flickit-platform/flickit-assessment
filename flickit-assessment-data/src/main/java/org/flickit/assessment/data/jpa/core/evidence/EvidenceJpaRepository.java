@@ -26,7 +26,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 e.lastModificationTime as lastModificationTime,
                 COUNT (a) as attachmentsCount
             FROM EvidenceJpaEntity e
-            LEFT JOIN EvidenceAttachmentJpaEntity a on e.id = a.evidenceId
+            LEFT JOIN EvidenceAttachmentJpaEntity a ON e.id = a.evidenceId
             WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
             GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
         """)
