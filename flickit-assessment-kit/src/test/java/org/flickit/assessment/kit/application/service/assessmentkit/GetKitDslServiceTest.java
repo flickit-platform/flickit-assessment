@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ExportKitDslServiceTest {
+class GetKitDslServiceTest {
 
     @InjectMocks
     private GetKitDslService service;
@@ -69,7 +69,7 @@ class ExportKitDslServiceTest {
     LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Test
-    void testGetKitDsl_userIsNotExpertGroupOwner_throwsAccessDeniedException() {
+    void testGetKitDsl_userIsNotExpertGroupMember_throwsAccessDeniedException() {
         var param = createParam(GetKitDslUseCase.Param.ParamBuilder::build);
         var kit = AssessmentKitMother.simpleKit();
 
