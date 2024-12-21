@@ -62,7 +62,7 @@ class ResolveCommentServiceTest {
     }
 
     @Test
-    void testResolveComment_whenAssessmentUserRoleDoesNotExist_thenThrowResourceNotFoundException() {
+    void testResolveComment_whenAssessmentUserRoleDoesNotExist_thenThrowAccessDeniedException() {
         var param = createParam(ResolveCommentUseCase.Param.ParamBuilder::build);
         Evidence evidence = EvidenceMother.simpleEvidence();
 
@@ -70,8 +70,8 @@ class ResolveCommentServiceTest {
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
         when(loadUserRoleForAssessmentPort.load(evidence.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.empty());
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.resolveComment(param));
-        assertEquals(ASSESSMENT_USER_ROLE_ID_NOT_FOUND, throwable.getMessage());
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.resolveComment(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(resolveCommentPort);
     }

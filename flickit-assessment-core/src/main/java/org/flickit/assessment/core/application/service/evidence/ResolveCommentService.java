@@ -43,7 +43,7 @@ public class ResolveCommentService implements ResolveCommentUseCase {
         }
 
         var role = loadUserRoleForAssessmentPort.load(evidence.getAssessmentId(), param.getCurrentUserId())
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_USER_ROLE_ID_NOT_FOUND));
+            .orElseThrow(() -> new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED));
         if (AssessmentUserRole.ASSOCIATE.equals(role) && !evidence.getCreatedById().equals(param.getCurrentUserId())) {
             log.warn("User {} with ASSOCIATE role cannot resolve others comment", param.getCurrentUserId());
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
