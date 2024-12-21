@@ -37,15 +37,13 @@ public class ResolveCommentService implements ResolveCommentUseCase {
     @Override
     public void resolveComment(Param param) {
         Evidence evidence = loadEvidencePort.loadNotDeletedEvidence(param.getId());
-        if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)) {
-            log.warn("User {} is not authorized to resolve comment", param.getCurrentUserId());
+        if (!assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-        }
 
         var role = loadUserRoleForAssessmentPort.load(evidence.getAssessmentId(), param.getCurrentUserId())
             .orElseThrow(() -> new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED));
         if (AssessmentUserRole.ASSOCIATE.equals(role) && !evidence.getCreatedById().equals(param.getCurrentUserId())) {
-            log.warn("User {} with ASSOCIATE role cannot resolve others comment", param.getCurrentUserId());
+            log.warn("User {} with ASSOCIATE role cannot resolve others' comments", param.getCurrentUserId());
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         }
 
