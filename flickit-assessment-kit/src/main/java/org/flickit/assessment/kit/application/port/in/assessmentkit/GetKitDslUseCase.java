@@ -14,7 +14,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_KIT_
 
 public interface GetKitDslUseCase {
 
-    AssessmentKitDslModel export(Param param);
+    AssessmentKitDslModel getKitDsl(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

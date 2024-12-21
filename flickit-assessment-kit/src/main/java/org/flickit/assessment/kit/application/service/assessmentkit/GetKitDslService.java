@@ -35,7 +35,7 @@ public class GetKitDslService implements GetKitDslUseCase {
     private final LoadAnswerRangesPort loadAnswerRangesPort;
 
     @Override
-    public AssessmentKitDslModel export(Param param) {
+    public AssessmentKitDslModel getKitDsl(Param param) {
         AssessmentKit kit = loadAssessmentKitPort.load(param.getKitId());
         if (!checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);

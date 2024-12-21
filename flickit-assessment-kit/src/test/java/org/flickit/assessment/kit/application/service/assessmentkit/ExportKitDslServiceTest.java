@@ -41,7 +41,7 @@ class ExportKitDslServiceTest {
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.export(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getKitDsl(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
@@ -53,7 +53,7 @@ class ExportKitDslServiceTest {
         when(loadAssessmentKitPort.load(param.getKitId())).thenReturn(kit);
         when(checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
 
-        var throwable = assertThrows(ValidationException.class, () -> service.export(param));
+        var throwable = assertThrows(ValidationException.class, () -> service.getKitDsl(param));
         assertEquals(GET_KIT_DSL_NOT_ALLOWED, throwable.getMessageKey());
     }
 
