@@ -1,8 +1,9 @@
 package org.flickit.assessment.core.application.port.out.evidence;
 
-import org.flickit.assessment.core.application.domain.Evidence;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface ResolveCommentPort {
 
-    void resolveComment(Evidence evidence);
+    void resolveComment(UUID commentId, UUID lastModifiedBy, LocalDateTime lastModificationTime);
 }

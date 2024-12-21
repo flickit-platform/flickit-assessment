@@ -16,6 +16,8 @@ import org.flickit.assessment.core.application.port.out.evidence.ResolveCommentP
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.RESOLVE_COMMENT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_USER_ROLE_ID_NOT_FOUND;
@@ -53,6 +55,6 @@ public class ResolveCommentService implements ResolveCommentUseCase {
         if (type != null && (type == positive || type == negative))
             throw new ValidationException(RESOLVE_COMMENT_INCORRECT_EVIDENCE_TYPE);
 
-        resolveCommentPort.resolveComment(evidence);
+        resolveCommentPort.resolveComment(evidence.getId(), param.getCurrentUserId(), LocalDateTime.now());
     }
 }

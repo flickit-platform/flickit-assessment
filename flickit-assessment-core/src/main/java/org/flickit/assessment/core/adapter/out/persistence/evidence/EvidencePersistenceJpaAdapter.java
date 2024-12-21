@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
@@ -110,8 +111,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public void resolveComment(Evidence evidence) {
-        EvidenceJpaEntity entity = EvidenceMapper.mapToEvidenceJpaEntity(evidence, true);
-        repository.save(entity);
+    public void resolveComment(UUID commentId, UUID lastModifiedBy, LocalDateTime lastModificationTime) {
+        repository.resolveComment(commentId, lastModifiedBy, lastModificationTime);
     }
 }

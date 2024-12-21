@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -113,11 +114,11 @@ class ResolveCommentServiceTest {
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
         when(loadUserRoleForAssessmentPort.load(evidence.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.ASSOCIATE));
-        doNothing().when(resolveCommentPort).resolveComment(evidence);
+        doNothing().when(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
 
         service.resolveComment(param);
 
-        verify(resolveCommentPort).resolveComment(evidence);
+        verify(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
     }
 
     @Test
@@ -128,11 +129,11 @@ class ResolveCommentServiceTest {
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
         when(loadUserRoleForAssessmentPort.load(evidence.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.ASSESSOR));
-        doNothing().when(resolveCommentPort).resolveComment(evidence);
+        doNothing().when(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
 
         service.resolveComment(param);
 
-        verify(resolveCommentPort).resolveComment(evidence);
+        verify(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
     }
 
     @Test
@@ -143,11 +144,11 @@ class ResolveCommentServiceTest {
         when(loadEvidencePort.loadNotDeletedEvidence(param.getId())).thenReturn(evidence);
         when(assessmentAccessChecker.isAuthorized(evidence.getAssessmentId(), param.getCurrentUserId(), RESOLVE_COMMENT)).thenReturn(true);
         when(loadUserRoleForAssessmentPort.load(evidence.getAssessmentId(), param.getCurrentUserId())).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
-        doNothing().when(resolveCommentPort).resolveComment(evidence);
+        doNothing().when(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
 
         service.resolveComment(param);
 
-        verify(resolveCommentPort).resolveComment(evidence);
+        verify(resolveCommentPort).resolveComment(any(UUID.class), any(UUID.class), any(LocalDateTime.class));
     }
 
     private ResolveCommentUseCase.Param createParam(Consumer<ResolveCommentUseCase.Param.ParamBuilder> changer) {
