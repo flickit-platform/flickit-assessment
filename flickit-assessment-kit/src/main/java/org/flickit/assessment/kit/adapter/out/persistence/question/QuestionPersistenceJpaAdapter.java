@@ -164,7 +164,10 @@ public class QuestionPersistenceJpaAdapter implements
         var questionEntityToViews = questionWithImpactsViews.stream()
             .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion));
 
-        var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(kitVersionId);
+        var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(kitVersionId)
+            .stream()
+            .sorted(Comparator.comparing(QuestionnaireJpaEntity::getCode))
+            .toList();
         var maturityLevelIdMap = maturityLevelRepository.findAllByKitVersionId(kitVersionId).stream()
             .collect(Collectors.toMap(MaturityLevelJpaEntity::getId, Function.identity()));
         var attributeIdMap = attributeRepository.findAllByKitVersionId(kitVersionId).stream()
@@ -184,6 +187,7 @@ public class QuestionPersistenceJpaAdapter implements
             ));
 
         return questionEntityToViews.entrySet().stream()
+            //.sorted(Comparator.comparingInt(e -> e.getKey().getIndex()))
             .map(entry -> {
                 var questionEntity = entry.getKey();
                 var impactEntities = entry.getValue().stream().map(QuestionJoinQuestionImpactView::getQuestionImpact).toList();
@@ -191,6 +195,7 @@ public class QuestionPersistenceJpaAdapter implements
                     .collect(Collectors.toMap(AnswerOptionJpaEntity::getIndex, AnswerOptionJpaEntity::getValue));
 
                 String questionnaireCode = questionnaireEntities.stream()
+                    //.sorted(Comparator.comparing(QuestionnaireJpaEntity::getCode))
                     .filter(q -> Objects.equals(q.getId(), questionEntity.getQuestionnaireId()))
                     .findFirst()
                     .map(QuestionnaireJpaEntity::getCode)
@@ -215,6 +220,8 @@ public class QuestionPersistenceJpaAdapter implements
                 return QuestionMapper.mapToDslModel(
                     questionEntity, questionnaireCode, answerRangeCode, impacts);
             })
+            .sorted(Comparator.comparing(QuestionDslModel::getQuestionnaireCode)
+                .thenComparing(QuestionDslModel::getIndex))
             .toList();
     }
 
