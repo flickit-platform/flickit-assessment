@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -113,13 +112,21 @@ public class AnswerRangePersistenceJpaAdapter implements
 
     @Override
     public List<AnswerRangeDslModel> loadDslModels(Long kitVersionId) {
-        List<AnswerOptionJpaEntity> answerOptionsStream = answerOptionRepository.findAllByKitVersionId(kitVersionId);
+        var rangeViews = repository.findAllReusableWithOptionsByKitVersionId(kitVersionId);
 
-        return repository.findAllByKitVersionId(kitVersionId)
-            .stream()
-            .flatMap(answerRange ->
-                Stream.of(AnswerRangeMapper.mapToDslModel(
-                    answerRange, answerOptionsStream.stream().filter(option -> option.getAnswerRangeId().equals(answerRange.getId()))))
+        Map<AnswerRangeJpaEntity, List<AnswerOptionJpaEntity>> answerRangeToOptions = rangeViews.stream()
+            .collect(Collectors.groupingBy(
+                AnswerRangeJoinOptionView::getAnswerRange,
+                Collectors.mapping(AnswerRangeJoinOptionView::getAnswerOption, Collectors.toList())
+            ));
+
+        return answerRangeToOptions.entrySet().stream()
+            .map(entry -> {
+                    var dslOptions = entry.getValue().stream()
+                        .map(AnswerOptionMapper::mapToDslModel)
+                        .toList();
+                    return AnswerRangeMapper.mapToDslModel(entry.getKey(), dslOptions);
+                }
             )
             .toList();
     }

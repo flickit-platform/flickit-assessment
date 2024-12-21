@@ -2,17 +2,15 @@ package org.flickit.assessment.kit.adapter.out.persistence.answerrange;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
-import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.application.domain.AnswerOption;
 import org.flickit.assessment.kit.application.domain.AnswerRange;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.AnswerRangeDslModel;
 import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerRangePort;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerRangeMapper {
@@ -38,11 +36,11 @@ public class AnswerRangeMapper {
             answerOptions);
     }
 
-    public static AnswerRangeDslModel mapToDslModel(AnswerRangeJpaEntity entity, Stream<AnswerOptionJpaEntity> answerOptionsStream) {
+    public static AnswerRangeDslModel mapToDslModel(AnswerRangeJpaEntity entity, List<AnswerOptionDslModel> answerOptions) {
         return AnswerRangeDslModel.builder()
             .code(entity.getCode())
             .title(entity.getTitle())
-            .answerOptions(answerOptionsStream.map(AnswerOptionMapper::mapToDslModel).toList())
+            .answerOptions(answerOptions)
             .build();
     }
 }
