@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_NOT_AVAILABLE;
 
 @Service
 @Transactional(readOnly = true)
@@ -42,7 +42,7 @@ public class GetKitDslService implements GetKitDslUseCase {
 
         Long activeVersionId = kit.getActiveVersionId();
         if (activeVersionId == null)
-            throw new ValidationException(GET_KIT_DSL_NOT_ALLOWED);
+            throw new ValidationException(GET_KIT_DSL_NOT_AVAILABLE);
 
         var questionnaires = loadQuestionnairesPort.loadDslModels(activeVersionId);
         var attributes = loadAttributesPort.loadDslModels(activeVersionId);
