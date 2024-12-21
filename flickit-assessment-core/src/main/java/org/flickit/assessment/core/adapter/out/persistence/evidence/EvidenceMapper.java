@@ -57,20 +57,4 @@ public class EvidenceMapper {
             entity.isDeleted()
         );
     }
-
-    public static EvidenceJpaEntity mapToEvidenceJpaEntity(Evidence evidence, boolean resolved) {
-        return new EvidenceJpaEntity(
-            evidence.getId(),
-            evidence.getDescription(),
-            evidence.getCreationTime(),
-            evidence.getLastModificationTime(),
-            evidence.getCreatedById(),
-            evidence.getLastModifiedById(),
-            evidence.getAssessmentId(),
-            evidence.getQuestionId(),
-            evidence.getType(),
-            evidence.isDeleted(),
-            resolved
-        );
-    }
 }
