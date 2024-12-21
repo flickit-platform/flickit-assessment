@@ -8,7 +8,6 @@ import java.util.UUID;
 public class QuestionImpactMother {
 
     private static Long id = 1340L;
-    private static final Long kitVersionId = 302L;
 
     public static QuestionImpact createQuestionImpact(Long attributeId, Long maturityLevelId, int weight, Long questionId) {
         return new QuestionImpact(
@@ -16,7 +15,7 @@ public class QuestionImpactMother {
             attributeId,
             maturityLevelId,
             weight,
-            kitVersionId,
+            302L,
             questionId,
             LocalDateTime.now(),
             LocalDateTime.now(),
