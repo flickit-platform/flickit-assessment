@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -113,6 +114,7 @@ public class AttributePersistenceJpaAdapter implements
         return repository.findAllByKitVersionId(kitVersionId, null)
             .stream()
             .map(AttributeMapper::mapToDslModel)
+            .sorted(Comparator.comparingInt(AttributeDslModel::getIndex))
             .toList();
     }
 
