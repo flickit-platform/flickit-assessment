@@ -11,17 +11,17 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_KIT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ExportKitDslUseCaseParamTest {
+class GetKitDslUseCaseParamTest {
 
     @Test
-    void testExportKitDslUseCaseParam_KitIdParamIsNull_ErrorMessage() {
+    void testGetKitDslUseCaseParam_KitIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.kitId(null)));
         assertThat(throwable).hasMessage("kitId: " + GET_KIT_DSL_KIT_ID_NOT_NULL);
     }
 
     @Test
-    void testExportKitDslUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
+    void testGetKitDslUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
