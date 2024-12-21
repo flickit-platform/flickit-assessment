@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
@@ -33,7 +34,8 @@ public class EvidencePersistenceJpaAdapter implements
     LoadEvidencesPort,
     UpdateEvidencePort,
     DeleteEvidencePort,
-    LoadEvidencePort {
+    LoadEvidencePort,
+    ResolveCommentPort {
 
     private final EvidenceJpaRepository repository;
     private final AssessmentJpaRepository assessmentRepository;
@@ -106,5 +108,10 @@ public class EvidencePersistenceJpaAdapter implements
         return repository.findByIdAndDeletedFalse(id)
             .map(EvidenceMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public void resolveComment(UUID commentId, UUID lastModifiedBy, LocalDateTime lastModificationTime) {
+        repository.resolveComment(commentId, lastModifiedBy, lastModificationTime);
     }
 }

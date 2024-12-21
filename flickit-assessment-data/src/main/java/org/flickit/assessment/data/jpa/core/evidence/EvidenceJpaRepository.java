@@ -72,4 +72,16 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     List<CountQuestionEvidenceView> countByAssessmentIdAndQuestionIds(@Param("assessmentId") UUID assessmentId,
                                                                       @Param("questionIds") Collection<Long> questionIds);
+
+    @Modifying
+    @Query("""
+            UPDATE EvidenceJpaEntity e
+            SET e.resolved = true,
+                e.lastModifiedBy = :lastModifiedBy,
+                e.lastModificationTime = :lastModificationTime
+            WHERE e.id = :evidenceId
+        """)
+    void resolveComment(@Param("evidenceId") UUID evidenceId,
+                        @Param("lastModifiedBy") UUID lastModifiedBy,
+                        @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }
