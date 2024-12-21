@@ -164,14 +164,16 @@ public class MaturityLevelPersistenceJpaAdapter implements
         var levelCompetences = levelCompetenceRepository.findAllByKitVersionId(kitVersionId);
         var maturityLevels = repository.findAllByKitVersionId(kitVersionId);
 
+        Map<Long, MaturityLevelJpaEntity> maturityLevelIdToEntityMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevelJpaEntity::getId, ml -> ml));
+
         return maturityLevels
             .stream()
             .flatMap(maturityLevel ->
                 Stream.of(MaturityLevelMapper.mapToDslModel(maturityLevel,
-                    maturityLevels.stream(),
+                    maturityLevelIdToEntityMap.values().stream(),
                     levelCompetences.stream().filter(lc -> lc.getAffectedLevelId().equals(maturityLevel.getId()))))
             ).sorted(Comparator.comparingInt(MaturityLevelDslModel::getIndex))
             .toList();
-
     }
 }
