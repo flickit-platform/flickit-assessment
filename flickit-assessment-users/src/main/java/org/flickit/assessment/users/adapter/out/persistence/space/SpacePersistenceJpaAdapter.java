@@ -49,7 +49,7 @@ public class SpacePersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
+            SpaceUserAccessJpaEntity.Fields.lastSeen,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );

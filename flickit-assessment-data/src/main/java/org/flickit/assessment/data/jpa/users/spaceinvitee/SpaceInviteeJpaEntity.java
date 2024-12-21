@@ -2,12 +2,11 @@ package org.flickit.assessment.data.jpa.users.spaceinvitee;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fau_space_invitee")
@@ -15,6 +14,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SpaceInviteeJpaEntity {
 
@@ -39,9 +39,4 @@ public class SpaceInviteeJpaEntity {
 
     @Column(name = "expiration_date", nullable = false)
     LocalDateTime expirationDate;
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String CREATION_TIME = "creationTime";
-    }
 }

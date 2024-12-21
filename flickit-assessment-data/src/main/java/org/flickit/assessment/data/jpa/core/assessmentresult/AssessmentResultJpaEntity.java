@@ -2,13 +2,12 @@ package org.flickit.assessment.data.jpa.core.assessmentresult;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fac_assessment_result")
@@ -16,6 +15,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AssessmentResultJpaEntity {
 
@@ -53,14 +53,4 @@ public class AssessmentResultJpaEntity {
 
     @Column(name = "last_confidence_calculation_time")
     private LocalDateTime lastConfidenceCalculationTime;
-
-    @Override
-    public String toString() {
-        return id.toString();
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
-    }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.*;
+import static org.flickit.assessment.users.common.ErrorMessageKey.SPACE_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -63,7 +63,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
             throw new ResourceNotFoundException(SPACE_ID_NOT_FOUND);
 
         var pageResult = repository.findBySpaceId(spaceId, LocalDateTime.now(),
-            PageRequest.of(page, size, Sort.Direction.DESC, SpaceInviteeJpaEntity.Fields.CREATION_TIME));
+            PageRequest.of(page, size, Sort.Direction.DESC, SpaceInviteeJpaEntity.Fields.creationTime));
 
         var items = pageResult
             .stream()
@@ -74,7 +74,7 @@ public class SpaceInviteePersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            SpaceInviteeJpaEntity.Fields.CREATION_TIME,
+            SpaceInviteeJpaEntity.Fields.creationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
