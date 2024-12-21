@@ -23,7 +23,7 @@ public interface LoadQuestionnairesPort {
 
     PaginatedResponse<Result> loadAllByKitVersionId(long kitVersionId, int page, int size);
 
-    List<QuestionnaireDslModel> loadDslModels(long kitVersionId);
-
     record Result(Questionnaire questionnaire, int questionsCount) {}
+
+    List<QuestionnaireDslModel> loadDslModels(long kitVersionId);
 }

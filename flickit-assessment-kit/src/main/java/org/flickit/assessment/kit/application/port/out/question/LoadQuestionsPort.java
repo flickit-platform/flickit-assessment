@@ -13,8 +13,8 @@ public interface LoadQuestionsPort {
 
     List<Result> loadQuestionsWithoutImpact(long kitVersionId);
 
-    List<QuestionDslModel> loadDslModels(long activeVersionId);
-
     record Result(int questionIndex, long questionnaireId, String questionnaireTitle) {
     }
+
+    List<QuestionDslModel> loadDslModels(long activeVersionId);
 }
