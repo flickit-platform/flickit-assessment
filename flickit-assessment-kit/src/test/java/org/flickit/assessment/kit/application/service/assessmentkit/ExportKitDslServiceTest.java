@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_NOT_ALLOWED;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_NOT_AVAILABLE;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother.createReusableAnswerRangeWithTwoOptions;
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelThree;
@@ -89,7 +89,7 @@ class ExportKitDslServiceTest {
         when(checkExpertGroupAccessPort.checkIsMember(kit.getExpertGroupId(), param.getCurrentUserId())).thenReturn(true);
 
         var throwable = assertThrows(ValidationException.class, () -> service.getKitDsl(param));
-        assertEquals(GET_KIT_DSL_NOT_ALLOWED, throwable.getMessageKey());
+        assertEquals(GET_KIT_DSL_NOT_AVAILABLE, throwable.getMessageKey());
     }
 
     @Test

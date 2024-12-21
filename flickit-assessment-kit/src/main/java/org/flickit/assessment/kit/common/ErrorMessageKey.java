@@ -493,7 +493,7 @@ public class ErrorMessageKey {
     public static final String GET_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "get-kit-custom.kitCustomId.notNull";
 
     public static final String GET_KIT_DSL_KIT_ID_NOT_NULL = "get-kit-dsl.kitId.notNull";
-    public static final String GET_KIT_DSL_NOT_ALLOWED = "get-kit-dsl.notAllowed";
+    public static final String GET_KIT_DSL_NOT_AVAILABLE = "get-kit-dsl.notAvailable";
 
     public static String entityNameSingleFirst(String fieldName) {
         return "entities.%s.single.first".formatted(fieldName);
