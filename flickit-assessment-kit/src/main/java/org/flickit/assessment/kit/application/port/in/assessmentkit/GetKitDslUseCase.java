@@ -10,7 +10,7 @@ import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.kit.common.ErrorMessageKey.EXPORT_KIT_DSL_KIT_ID_NOT_NULL;
+import static org.flickit.assessment.kit.common.ErrorMessageKey.GET_KIT_DSL_KIT_ID_NOT_NULL;
 
 public interface GetKitDslUseCase {
 
@@ -20,7 +20,7 @@ public interface GetKitDslUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = EXPORT_KIT_DSL_KIT_ID_NOT_NULL)
+        @NotNull(message = GET_KIT_DSL_KIT_ID_NOT_NULL)
         Long kitId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
