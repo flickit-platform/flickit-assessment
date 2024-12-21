@@ -146,6 +146,7 @@ public class SubjectPersistenceJpaAdapter implements
         return repository.findByKitVersionId(kitVersionId, null)
             .stream()
             .map(SubjectMapper::mapToDslModel)
+            .sorted(Comparator.comparingInt(SubjectDslModel::getIndex))
             .toList();
     }
 
