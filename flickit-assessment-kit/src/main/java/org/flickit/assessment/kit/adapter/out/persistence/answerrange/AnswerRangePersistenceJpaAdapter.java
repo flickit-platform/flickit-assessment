@@ -97,7 +97,7 @@ public class AnswerRangePersistenceJpaAdapter implements
 
     @Override
     public List<AnswerRange> loadAnswerRangesWithNotEnoughOptions(long kitVersionId) {
-        var rangeViews = repository.findAllWithOptionsByKitVersionId(kitVersionId);
+        var rangeViews = repository.findAllReusableWithOptionsByKitVersionId(kitVersionId);
 
         Map<AnswerRangeJpaEntity, List<AnswerOptionJpaEntity>> answerRangeToOptions = rangeViews.stream()
             .collect(Collectors.groupingBy(
