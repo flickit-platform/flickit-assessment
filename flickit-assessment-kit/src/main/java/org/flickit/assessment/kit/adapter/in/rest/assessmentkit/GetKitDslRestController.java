@@ -17,8 +17,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetKitDslRestController {
 
-    private final GetKitDslUseCase useCase;
     private final UserContext userContext;
+    private final GetKitDslUseCase useCase;
 
     @GetMapping("/assessment-kits/{kitId}/dsl")
     ResponseEntity<AssessmentKitDslModel> exportKitDsl(@PathVariable Long kitId) {

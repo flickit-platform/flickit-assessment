@@ -118,7 +118,8 @@ public class AnswerRangePersistenceJpaAdapter implements
         return repository.findAllByKitVersionId(kitVersionId)
             .stream()
             .flatMap(answerRange ->
-                Stream.of(AnswerRangeMapper.mapToDslModel(answerRange, answerOptionsStream.stream().filter(option -> option.getAnswerRangeId().equals(answerRange.getId()))))
+                Stream.of(AnswerRangeMapper.mapToDslModel(
+                    answerRange, answerOptionsStream.stream().filter(option -> option.getAnswerRangeId().equals(answerRange.getId()))))
             )
             .toList();
     }
