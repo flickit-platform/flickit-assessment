@@ -55,7 +55,7 @@ public class EvidencePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND));
         if (!Objects.equals(assessmentKitVersionId, question.getKitVersionId()))
             throw new ResourceNotFoundException(ADD_EVIDENCE_QUESTION_ID_NOT_FOUND);
-        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param, null);
+        var unsavedEntity = EvidenceMapper.mapCreateParamToJpaEntity(param);
         EvidenceJpaEntity entity = repository.save(unsavedEntity);
         return entity.getId();
     }

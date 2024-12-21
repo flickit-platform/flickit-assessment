@@ -14,7 +14,7 @@ import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EvidenceMapper {
 
-    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param, Boolean resolved) {
+    public static EvidenceJpaEntity mapCreateParamToJpaEntity(CreateEvidencePort.Param param) {
         return new EvidenceJpaEntity(
             null,
             param.description(),
@@ -26,7 +26,7 @@ public class EvidenceMapper {
             param.questionId(),
             param.type(),
             false,
-            resolved
+            null
         );
     }
 
