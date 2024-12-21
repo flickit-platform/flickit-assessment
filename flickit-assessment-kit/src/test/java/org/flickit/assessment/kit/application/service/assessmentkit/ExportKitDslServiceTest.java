@@ -46,7 +46,7 @@ class ExportKitDslServiceTest {
     }
 
     @Test
-    void testGetKitDsl_activeKitVersionNotFound_throwsAccessDeniedException() {
+    void testGetKitDsl_activeKitVersionNotFound_throwsValidationException() {
         var param = createParam(GetKitDslUseCase.Param.ParamBuilder::build);
         var kit = AssessmentKitMother.kitWithKitVersionId(null);
 
