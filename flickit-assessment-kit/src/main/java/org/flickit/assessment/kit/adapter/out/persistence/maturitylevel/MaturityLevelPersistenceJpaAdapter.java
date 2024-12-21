@@ -47,7 +47,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void delete(Long id, Long kitVersionId) {
-        if(!repository.existsByIdAndKitVersionId(id, kitVersionId))
+        if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
         repository.deleteByIdAndKitVersionId(id, kitVersionId);
     }
@@ -79,7 +79,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy ) {
+    public void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy) {
         if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
@@ -170,7 +170,8 @@ public class MaturityLevelPersistenceJpaAdapter implements
                 Stream.of(MaturityLevelMapper.mapToDslModel(maturityLevel,
                     maturityLevels.stream(),
                     levelCompetences.stream().filter(lc -> lc.getAffectedLevelId().equals(maturityLevel.getId()))))
-            ).toList();
+            ).sorted(Comparator.comparingInt(MaturityLevelDslModel::getIndex))
+            .toList();
 
     }
 }
