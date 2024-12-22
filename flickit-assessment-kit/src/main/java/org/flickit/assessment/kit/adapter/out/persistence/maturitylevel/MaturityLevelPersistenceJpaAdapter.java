@@ -3,7 +3,9 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityJoinCompetenceView;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
@@ -18,10 +20,9 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
@@ -162,19 +163,30 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public List<MaturityLevelDslModel> loadDslModels(long kitVersionId) {
-        var levelCompetences = levelCompetenceRepository.findAllByKitVersionId(kitVersionId);
-        var maturityLevels = repository.findAllByKitVersionId(kitVersionId);
+        List<MaturityJoinCompetenceView> levelsWithCompetence = repository.findAllByKitVersionIdWithCompetence(kitVersionId);
 
-        Map<Long, MaturityLevelJpaEntity> maturityLevelIdToEntityMap = maturityLevels.stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId, ml -> ml));
+        Map<MaturityLevelJpaEntity, List<LevelCompetenceJpaEntity>> levelIdToCompetencesMap = levelsWithCompetence.stream()
+            .collect(Collectors.groupingBy(
+                MaturityJoinCompetenceView::getMaturityLevel,
+                mapping(MaturityJoinCompetenceView::getLevelCompetence, toList())
+            ));
 
-        return maturityLevels
-            .stream()
-            .flatMap(maturityLevel ->
-                Stream.of(MaturityLevelMapper.mapToDslModel(maturityLevel,
-                    maturityLevelIdToEntityMap.values().stream(),
-                    levelCompetences.stream().filter(lc -> lc.getAffectedLevelId().equals(maturityLevel.getId()))))
-            ).sorted(comparingInt(MaturityLevelDslModel::getIndex))
+        var maturityLevelIdToCodeMap = levelsWithCompetence.stream()
+            .collect(toMap(ml -> ml.getMaturityLevel().getId(), ml -> ml.getMaturityLevel().getCode(),
+                (existing, duplicate) -> existing
+            ));
+
+        return levelIdToCompetencesMap.entrySet().stream()
+            .map(entry -> {
+                Map<String, Integer> competencesCodeToValueMap = entry.getValue().stream()
+                    .filter(Objects::nonNull)
+                    .collect(toMap(
+                        c -> maturityLevelIdToCodeMap.get(c.getEffectiveLevelId()),
+                        LevelCompetenceJpaEntity::getValue
+                    ));
+                return MaturityLevelMapper.mapToDslModel(entry.getKey(), competencesCodeToValueMap);
+            })
+            .sorted(comparingInt(MaturityLevelDslModel::getIndex))
             .toList();
     }
 }
