@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.data.jpa.core.attributeinsight.AttributeInsightJpaRepository;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,8 @@ import java.util.UUID;
 public class AttributeInsightPersistenceJpaAdapter implements
     LoadAttributeInsightPort,
     CreateAttributeInsightPort,
-    UpdateAttributeInsightPort {
+    UpdateAttributeInsightPort,
+    LoadInsightsDashboardPort {
 
     private final AttributeInsightJpaRepository repository;
 
@@ -49,5 +51,10 @@ public class AttributeInsightPersistenceJpaAdapter implements
             attributeInsight.getAssessorInsight(),
             attributeInsight.getAssessorInsightTime()
         );
+    }
+
+    @Override
+    public Result loadInsights(int kitVersionId) {
+        return null;
     }
 }
