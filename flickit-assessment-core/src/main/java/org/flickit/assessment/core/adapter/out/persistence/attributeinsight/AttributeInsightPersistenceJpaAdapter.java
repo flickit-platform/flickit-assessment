@@ -54,7 +54,7 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadInsights(int kitVersionId) {
+    public Result loadInsights(long kitVersionId) {
         return null;
     }
 }

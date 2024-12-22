@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public interface LoadInsightsDashboardPort {
 
-    Result loadInsights(int kitVersionId);
+    Result loadInsights(long kitVersionId);
 
     record Result(long total, List<Insight> insights) {
 
