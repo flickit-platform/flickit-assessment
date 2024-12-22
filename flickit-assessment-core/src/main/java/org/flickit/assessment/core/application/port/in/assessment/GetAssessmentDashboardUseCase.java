@@ -33,6 +33,23 @@ public interface GetAssessmentDashboardUseCase {
         }
     }
 
-    record Result() {
+    record Result(Questions questions, Insights insights, Advices advices) {
+
+        public record Questions(long total,
+                                long answered,
+                                long unanswered,
+                                long hasLowConfidence,
+                                long hasNoEvidence,
+                                long hasUnresolvedComments) {
+        }
+
+        public record Insights(long total,
+                               long notGenerated,
+                               long unApproved,
+                               long expired) {
+        }
+
+        public record Advices(long total) {
+        }
     }
 }
