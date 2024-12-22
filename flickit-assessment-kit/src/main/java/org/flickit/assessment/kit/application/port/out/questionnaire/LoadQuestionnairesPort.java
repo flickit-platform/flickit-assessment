@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.port.out.questionnaire;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface LoadQuestionnairesPort {
     PaginatedResponse<Result> loadAllByKitVersionId(long kitVersionId, int page, int size);
 
     record Result(Questionnaire questionnaire, int questionsCount) {}
+
+    List<QuestionnaireDslModel> loadDslModels(long kitVersionId);
 }

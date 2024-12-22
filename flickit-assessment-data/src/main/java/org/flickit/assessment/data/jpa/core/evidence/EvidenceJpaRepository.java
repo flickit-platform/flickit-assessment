@@ -56,4 +56,16 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             WHERE e.id = :id
         """)
     void delete(@Param(value = "id") UUID id);
+
+    @Modifying
+    @Query("""
+            UPDATE EvidenceJpaEntity e
+            SET e.resolved = true,
+                e.lastModifiedBy = :lastModifiedBy,
+                e.lastModificationTime = :lastModificationTime
+            WHERE e.id = :evidenceId
+        """)
+    void resolveComment(@Param("evidenceId") UUID evidenceId,
+                        @Param("lastModifiedBy") UUID lastModifiedBy,
+                        @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }

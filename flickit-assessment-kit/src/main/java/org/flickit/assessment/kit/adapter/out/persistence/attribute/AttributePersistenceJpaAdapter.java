@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.Attribute;
 import org.flickit.assessment.kit.application.domain.AttributeWithSubject;
+import org.flickit.assessment.kit.application.domain.dsl.AttributeDslModel;
 import org.flickit.assessment.kit.application.port.out.attribute.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingInt;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper.mapToJpaEntity;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
@@ -104,6 +106,15 @@ public class AttributePersistenceJpaAdapter implements
         return repository.findAllByKitVersionIdAndWithoutImpact(kitVersionId)
             .stream()
             .map(AttributeMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
+    public List<AttributeDslModel> loadDslModels(long kitVersionId) {
+        return repository.findAllByKitVersionId(kitVersionId, null)
+            .stream()
+            .map(AttributeMapper::mapToDslModel)
+            .sorted(comparingInt(AttributeDslModel::getIndex))
             .toList();
     }
 

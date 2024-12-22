@@ -25,7 +25,8 @@ public class EvidenceMapper {
             param.assessmentId(),
             param.questionId(),
             param.type(),
-            false
+            false,
+            null
         );
     }
 
