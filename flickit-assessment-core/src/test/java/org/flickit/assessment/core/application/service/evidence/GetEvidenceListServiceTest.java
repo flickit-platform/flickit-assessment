@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,12 +86,12 @@ class GetEvidenceListServiceTest {
 
     @Test
     void testGetEvidenceList_ResultsFound_NoItemReturned() {
-        Long QUESTION2_ID = 2L;
+        Long questionId = 2L;
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_EVIDENCE_LIST)).thenReturn(true);
-        when(loadEvidencesPort.loadNotDeletedEvidences(QUESTION2_ID, assessmentId, 0, 10))
+        when(loadEvidencesPort.loadNotDeletedEvidences(questionId, assessmentId, 0, 10))
             .thenReturn(new PaginatedResponse<>(
                 new ArrayList<>(),
                 0,
@@ -99,7 +100,7 @@ class GetEvidenceListServiceTest {
                 "DESC",
                 0));
 
-        PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(QUESTION2_ID, assessmentId, 10, 0, currentUserId));
+        PaginatedResponse<EvidenceListItem> result = service.getEvidenceList(new Param(questionId, assessmentId, 10, 0, currentUserId));
 
         assertEquals(0, result.getItems().size());
         verifyNoInteractions(createFileDownloadLinkPort);
@@ -122,7 +123,7 @@ class GetEvidenceListServiceTest {
             "desc",
             type,
             LocalDateTime.now(),
-            (int) (Math.random() * 5) + 1,
+            current().nextInt(1, 6),
             new GetEvidenceListUseCase.User(createdBy, "user1", "pictureLink"),
             null,
             null

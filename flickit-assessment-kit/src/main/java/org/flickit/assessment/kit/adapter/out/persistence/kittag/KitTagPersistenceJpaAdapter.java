@@ -45,7 +45,7 @@ public class KitTagPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            KitTagJpaEntity.Fields.CODE,
+            KitTagJpaEntity.Fields.code,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );

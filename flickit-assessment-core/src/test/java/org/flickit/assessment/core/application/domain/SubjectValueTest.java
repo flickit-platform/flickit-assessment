@@ -62,7 +62,7 @@ class SubjectValueTest {
         assertEquals(levelTwo().getValue(), av3.getMaturityLevel().getValue());
 
         // WeightedMeanLevel is equal to level two
-        assertEquals(levelTwo().getValue(), Math.round((double) ((av1.getWeightedLevel() + av2.getWeightedLevel() + av3.getWeightedLevel()) / 12)));
+        assertEquals(levelTwo().getValue(), (av1.getWeightedLevel() + av2.getWeightedLevel() + av3.getWeightedLevel()) / 12);
         Map<UUID, Double> map = Map.of(
             av1.getId(), av1.getWeightedScore().get(levelTwo().getId()),
             av2.getId(), av2.getWeightedScore().get(levelTwo().getId()),

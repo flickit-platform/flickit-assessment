@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +26,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 e.lastModificationTime as lastModificationTime,
                 COUNT (a) as attachmentsCount
             FROM EvidenceJpaEntity e
-            LEFT JOIN EvidenceAttachmentJpaEntity a on e.id = a.evidenceId
+            LEFT JOIN EvidenceAttachmentJpaEntity a ON e.id = a.evidenceId
             WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
             GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
         """)
@@ -58,20 +56,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             WHERE e.id = :id
         """)
     void delete(@Param(value = "id") UUID id);
-
-    @Query("""
-            SELECT
-                qsn.id as questionId,
-                COUNT(e.id) as evidenceCount
-            FROM QuestionJpaEntity qsn
-            LEFT JOIN EvidenceJpaEntity e on qsn.id = e.questionId
-            WHERE qsn.id IN :questionIds
-                AND e.assessmentId = :assessmentId
-                AND e.deleted = false
-                AND e.type IS NOT NULL
-        """)
-    List<CountQuestionEvidenceView> countByAssessmentIdAndQuestionIds(@Param("assessmentId") UUID assessmentId,
-                                                                      @Param("questionIds") Collection<Long> questionIds);
 
     @Modifying
     @Query("""

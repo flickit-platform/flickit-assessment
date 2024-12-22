@@ -43,5 +43,4 @@ public class KitDslJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
 }

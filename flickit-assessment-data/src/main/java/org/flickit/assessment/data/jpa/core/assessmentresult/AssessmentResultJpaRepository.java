@@ -11,32 +11,32 @@ import java.util.UUID;
 
 public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentResultJpaEntity, UUID> {
 
+    Optional<AssessmentResultJpaEntity> findFirstByAssessment_IdOrderByLastModificationTimeDesc(UUID assessmentId);
+
     @Modifying
     @Query("""
-        UPDATE AssessmentResultJpaEntity a SET
-        a.isCalculateValid = FALSE
-        WHERE a.id = :id
+            UPDATE AssessmentResultJpaEntity a
+            SET a.isCalculateValid = FALSE
+            WHERE a.id = :id
         """)
     void invalidateCalculateById(@Param(value = "id") UUID id);
 
     @Modifying
     @Query("""
-        UPDATE AssessmentResultJpaEntity a SET
-        a.isConfidenceValid = FALSE
-        WHERE a.id = :id
+            UPDATE AssessmentResultJpaEntity a SET
+            a.isConfidenceValid = FALSE
+            WHERE a.id = :id
         """)
     void invalidateConfidenceById(@Param(value = "id") UUID id);
 
-    Optional<AssessmentResultJpaEntity> findFirstByAssessment_IdOrderByLastModificationTimeDesc(UUID assessmentId);
-
     @Modifying
     @Query("""
-        UPDATE AssessmentResultJpaEntity a SET
-        a.maturityLevelId = :maturityLevelId,
-        a.isCalculateValid = :isCalculateValid,
-        a.lastModificationTime = :lastModificationTime,
-        a.lastCalculationTime = :lastCalculationTime
-        WHERE a.id = :id
+            UPDATE AssessmentResultJpaEntity a
+            SET a.maturityLevelId = :maturityLevelId,
+                a.isCalculateValid = :isCalculateValid,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastCalculationTime = :lastCalculationTime
+            WHERE a.id = :id
         """)
     void updateAfterCalculate(@Param(value = "id") UUID id,
                               @Param(value = "maturityLevelId") Long maturityLevelId,
@@ -46,12 +46,12 @@ public interface AssessmentResultJpaRepository extends JpaRepository<AssessmentR
 
     @Modifying
     @Query("""
-        UPDATE AssessmentResultJpaEntity a SET
-        a.confidenceValue = :confidenceValue,
-        a.isConfidenceValid = :isConfidenceValid,
-        a.lastModificationTime = :lastModificationTime,
-        a.lastConfidenceCalculationTime = :lastConfidenceCalculationTime \
-        WHERE a.id = :id
+            UPDATE AssessmentResultJpaEntity a
+            SET a.confidenceValue = :confidenceValue,
+                a.isConfidenceValid = :isConfidenceValid,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastConfidenceCalculationTime = :lastConfidenceCalculationTime
+            WHERE a.id = :id
         """)
     void updateAfterCalculateConfidence(@Param(value = "id") UUID id,
                                         @Param(value = "confidenceValue") Double confidenceValue,

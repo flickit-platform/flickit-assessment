@@ -14,6 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class QuestionImpactJpaEntity {
@@ -51,28 +52,6 @@ public class QuestionImpactJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    public QuestionImpactJpaEntity(Long id,
-                                   Long kitVersionId,
-                                   Integer weight,
-                                   Long questionId,
-                                   Long attributeId,
-                                   Long maturityLevelId,
-                                   LocalDateTime creationTime,
-                                   LocalDateTime lastModificationTime,
-                                   UUID createdBy,
-                                   UUID lastModifiedBy) {
-        this.id = id;
-        this.kitVersionId = kitVersionId;
-        this.weight = weight;
-        this.questionId = questionId;
-        this.attributeId = attributeId;
-        this.maturityLevelId = maturityLevelId;
-        this.creationTime = creationTime;
-        this.lastModificationTime = lastModificationTime;
-        this.createdBy = createdBy;
-        this.lastModifiedBy = lastModifiedBy;
-    }
 
     @Data
     @NoArgsConstructor

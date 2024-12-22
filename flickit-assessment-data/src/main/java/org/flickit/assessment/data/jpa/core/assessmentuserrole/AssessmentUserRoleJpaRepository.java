@@ -13,19 +13,19 @@ import java.util.UUID;
 
 public interface AssessmentUserRoleJpaRepository extends JpaRepository<AssessmentUserRoleJpaEntity, EntityId> {
 
-    Optional<AssessmentUserRoleIdView> findByAssessmentIdAndUserId(UUID assessmentId, UUID currentUserId);
+    Optional<AssessmentUserRoleJpaEntity> findByAssessmentIdAndUserId(UUID assessmentId, UUID currentUserId);
+
+    void deleteByAssessmentIdAndUserId(UUID assessmentId, UUID userId);
 
     boolean existsByAssessmentIdAndUserId(UUID assessmentId, UUID userId);
 
     @Modifying
     @Query("""
-            UPDATE AssessmentUserRoleJpaEntity a SET
-                a.roleId = :roleId
+            UPDATE AssessmentUserRoleJpaEntity a
+            SET a.roleId = :roleId
             WHERE a.assessmentId = :assessmentId AND a.userId = :userId
         """)
     void update(@Param("assessmentId") UUID assessmentId, @Param("userId") UUID userId, @Param("roleId") int roleId);
-
-    void deleteByAssessmentIdAndUserId(UUID assessmentId, UUID userId);
 
     @Query("""
             SELECT

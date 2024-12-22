@@ -61,7 +61,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
         var spaceOwnerId = spaceRepository.loadOwnerIdById(spaceId)
             .orElseThrow(() -> new ResourceNotFoundException(SPACE_ID_NOT_FOUND));
         var pageResult = repository.findMembers(spaceId,
-            PageRequest.of(page, size, Sort.Direction.DESC, SpaceUserAccessJpaEntity.Fields.LAST_SEEN));
+            PageRequest.of(page, size, Sort.Direction.DESC, SpaceUserAccessJpaEntity.Fields.lastSeen));
 
         var items = pageResult.getContent()
             .stream()
@@ -72,7 +72,7 @@ public class SpaceUserAccessPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
+            SpaceUserAccessJpaEntity.Fields.lastSeen,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );

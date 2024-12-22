@@ -54,7 +54,7 @@ class GetKitListServiceTest {
             List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
             0,
             10,
-            AssessmentKitJpaEntity.Fields.TITLE,
+            AssessmentKitJpaEntity.Fields.title,
             Sort.Direction.ASC.name().toLowerCase(),
             1
         );
@@ -104,7 +104,7 @@ class GetKitListServiceTest {
             List.of(new LoadPublishedKitListPort.Result(assessmentKit, expertGroup)),
             0,
             10,
-            AssessmentKitJpaEntity.Fields.TITLE,
+            AssessmentKitJpaEntity.Fields.title,
             Sort.Direction.ASC.name().toLowerCase(),
             1
         );
@@ -149,7 +149,7 @@ class GetKitListServiceTest {
         var expectedKitsPage = new PaginatedResponse<LoadPublishedKitListPort.Result>(List.of(),
             0,
             10,
-            AssessmentKitJpaEntity.Fields.TITLE,
+            AssessmentKitJpaEntity.Fields.title,
             Sort.Direction.ASC.name().toLowerCase(),
             0
         );
