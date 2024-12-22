@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.assessmentdashboard.Questions;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
@@ -44,14 +45,14 @@ class GetAssessmentDashboardServiceTest {
 
     private final int totalQuestions = 20;
     private final int totalEvidences = 10;
-    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers1 = new LoadQuestionsAnswerDashboardPort.Result.Answer(1L, 1);
-    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers2 = new LoadQuestionsAnswerDashboardPort.Result.Answer(2L, 2);
-    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers3 = new LoadQuestionsAnswerDashboardPort.Result.Answer(3L, 3);
-    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence1 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 124L);
-    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence2 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 1, null, 125L);
-    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence3 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 125L);
-    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence4 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), null, null,125L);
-    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence5 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), null, null, 126);
+    private final Questions.Answer questionAnswers1 = new Questions.Answer(1L, 1);
+    private final Questions.Answer questionAnswers2 = new Questions.Answer(2L, 2);
+    private final Questions.Answer questionAnswers3 = new Questions.Answer(3L, 3);
+    private final Questions.Evidence evidence1 = new Questions.Evidence(UUID.randomUUID(), 0, null, 124L);
+    private final Questions.Evidence evidence2 = new Questions.Evidence(UUID.randomUUID(), 1, null, 125L);
+    private final Questions.Evidence evidence3 = new Questions.Evidence(UUID.randomUUID(), 0, null, 125L);
+    private final Questions.Evidence evidence4 = new Questions.Evidence(UUID.randomUUID(), null, null,125L);
+    private final Questions.Evidence evidence5 = new Questions.Evidence(UUID.randomUUID(), null, null, 126);
 
     @Test
     void testGetAssessmentDashboard_userDoesNotHaveAccess_throwsAccessDeniedException() {
@@ -72,7 +73,7 @@ class GetAssessmentDashboardServiceTest {
         var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
 
 
-        var questionsPortResult = new LoadQuestionsAnswerDashboardPort.Result(questionAnswers,questionsEvidences, totalQuestions, totalEvidences);
+        var questionsPortResult = new Questions(questionAnswers,questionsEvidences, totalQuestions, totalEvidences);
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));

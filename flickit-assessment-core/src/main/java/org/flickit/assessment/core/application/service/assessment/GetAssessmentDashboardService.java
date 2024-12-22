@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.assessmentdashboard.Questions;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.springframework.stereotype.Service;
@@ -38,13 +39,13 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         return new Result(questionsResult, null, null);
     }
 
-    private Result.Questions buildQuestionsResult(LoadQuestionsAnswerDashboardPort.Result result) {
+    private Result.Questions buildQuestionsResult(Questions result) {
         return new Result.Questions(result.totalQuestion(),
             result.answers().size(),
             result.totalQuestion() - result.answers().size(),
             result.answers().stream().filter(e -> e.confidence() <= 2).count(),
             result.totalQuestion() -
-                result.evidences().stream().filter(e -> e.type() != null).map(LoadQuestionsAnswerDashboardPort.Result.Evidence::questionId).distinct().count(),
+                result.evidences().stream().filter(e -> e.type() != null).map(Questions.Evidence::questionId).distinct().count(),
             result.evidences().stream().filter(e -> e.resolved() == null).count());
     }
 }
