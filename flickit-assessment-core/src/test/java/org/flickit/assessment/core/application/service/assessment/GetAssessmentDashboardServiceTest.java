@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,21 @@ class GetAssessmentDashboardServiceTest {
     @Mock
     private LoadQuestionsAnswerDashboardPort loadQuestionsAnswerDashboardPort;
 
+    @Mock
+    private LoadInsightsDashboardPort loadInsightsDashboardPort;
+
+
+    private final int totalQuestions = 20;
+    private final int totalEvidences = 10;
+    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers1 = new LoadQuestionsAnswerDashboardPort.Result.Answer(1L, 1);
+    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers2 = new LoadQuestionsAnswerDashboardPort.Result.Answer(2L, 2);
+    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers3 = new LoadQuestionsAnswerDashboardPort.Result.Answer(3L, 3);
+    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence1 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 124L);
+    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence2 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 1, null, 125L);
+    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence3 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 125L);
+    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence4 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), null, null,125L);
+    private final LoadQuestionsAnswerDashboardPort.Result.Evidence evidence5 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), null, null, 126);
+
     @Test
     void testGetAssessmentDashboard_userDoesNotHaveAccess_throwsAccessDeniedException() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
@@ -52,31 +68,27 @@ class GetAssessmentDashboardServiceTest {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
 
-        int totalQuestions = 20;
-        int totalEvidences = 10;
-        var questionAnswers1 = new LoadQuestionsAnswerDashboardPort.Result.Answer(1L, 1);
-        var questionAnswers2 = new LoadQuestionsAnswerDashboardPort.Result.Answer(2L, 2);
-        var questionAnswers3 = new LoadQuestionsAnswerDashboardPort.Result.Answer(3L, 3);
         var questionAnswers = List.of(questionAnswers1, questionAnswers2, questionAnswers3);
-        var evidence1 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 124L);
-        var evidence2 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 1, null, 125L);
-        var evidence3 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 125L);
-        var evidence4 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), null, null,125L);
-        var evidence5 = new LoadQuestionsAnswerDashboardPort.Result.Evidence(UUID.randomUUID(), null, null, 126);
         var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
+
+
         var questionsPortResult = new LoadQuestionsAnswerDashboardPort.Result(questionAnswers,questionsEvidences, totalQuestions, totalEvidences);
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getKitVersionId())).thenReturn(questionsPortResult);
+        when(loadInsightsDashboardPort.loadInsights(assessmentResult.getKitVersionId())).thenReturn(null);
 
         var result = service.getAssessmentDashboard(param);
+        //questions
         assertEquals(totalQuestions, result.questions().total());
         assertEquals(questionAnswers.size(), result.questions().answered());
         assertEquals(17, result.questions().unanswered());
         assertEquals(2, result.questions().hasLowConfidence());
         assertEquals(18, result.questions().hasNoEvidence());
         assertEquals(5, result.questions().hasUnresolvedComments());
+        //insights
+
     }
 
     private GetAssessmentDashboardUseCase.Param createParam(Consumer<GetAssessmentDashboardUseCase.Param.ParamBuilder> changer) {
