@@ -13,7 +13,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 
 public interface GetAssessmentDashboardUseCase {
 
-    Result getMainData(Param param);
+    Result getAssessmentDashboard(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

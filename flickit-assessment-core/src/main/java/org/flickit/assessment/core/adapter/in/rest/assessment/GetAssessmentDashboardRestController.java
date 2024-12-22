@@ -23,7 +23,7 @@ public class GetAssessmentDashboardRestController {
     public ResponseEntity<Result> getAssessmentDashboard(@PathVariable UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
 
-        var result = useCase.getMainData(toParam(assessmentId, currentUserId));
+        var result = useCase.getAssessmentDashboard(toParam(assessmentId, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
