@@ -16,8 +16,8 @@ class GetAssessmentDashboardUseCaseParamTest {
     @Test
     void testGetAssessmentDashboardUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
         ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.assessmentId(null)));
-        assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL);
+            () -> createParam(b -> b.id(null)));
+        assertThat(throwable).hasMessage("id: " + GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
@@ -35,7 +35,7 @@ class GetAssessmentDashboardUseCaseParamTest {
 
     private GetAssessmentDashboardUseCase.Param.ParamBuilder paramBuilder() {
         return GetAssessmentDashboardUseCase.Param.builder()
-            .assessmentId(UUID.randomUUID())
+            .id(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
 }

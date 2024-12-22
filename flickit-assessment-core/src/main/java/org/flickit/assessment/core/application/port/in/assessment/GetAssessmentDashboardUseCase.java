@@ -20,14 +20,14 @@ public interface GetAssessmentDashboardUseCase {
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
+        UUID id;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, UUID currentUserId) {
-            this.assessmentId = assessmentId;
+        public Param(UUID id, UUID currentUserId) {
+            this.id = id;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

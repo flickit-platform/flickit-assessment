@@ -29,7 +29,7 @@ public class GetAssessmentDashboardRestController {
 
     private Param toParam(UUID assessmentId, UUID currentUserId) {
         return Param.builder()
-            .assessmentId(assessmentId)
+            .id(assessmentId)
             .currentUserId(currentUserId)
             .build();
     }
