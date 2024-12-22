@@ -262,4 +262,5 @@ public class ErrorMessageKey {
     public static final String GET_ATTRIBUTE_SCORE_STATS_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-score-stats.maturityLevel.id.notNull";
 
     public static final String GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL = "get-assessment-dashboard.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-dashboard.assessmentResult.notFound";
 }
