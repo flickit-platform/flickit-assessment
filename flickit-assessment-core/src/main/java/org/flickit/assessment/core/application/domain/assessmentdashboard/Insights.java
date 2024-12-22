@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record Insights(long total, List<Insight> insights) {
+public record Insights(List<Insight> insights, long attributesCount, long subjectsCount) {
 
-    public record Insight(UUID id, LocalDateTime ai_insight_time, LocalDateTime assessor_insight_time) {
+    public record Insight(UUID id, LocalDateTime insight_time) {
     }
 }

@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.assessmentdashboard.Insights;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.Questions;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,6 +55,8 @@ class GetAssessmentDashboardServiceTest {
     private final Questions.Evidence evidence3 = new Questions.Evidence(UUID.randomUUID(), 0, null, 125L);
     private final Questions.Evidence evidence4 = new Questions.Evidence(UUID.randomUUID(), null, null,125L);
     private final Questions.Evidence evidence5 = new Questions.Evidence(UUID.randomUUID(), null, null, 126);
+    private final Insights.Insight insight1 = new Insights.Insight(UUID.randomUUID(), LocalDateTime.MAX);
+    private final Insights.Insight insight2 = new Insights.Insight(UUID.randomUUID(), LocalDateTime.MIN);
 
     @Test
     void testGetAssessmentDashboard_userDoesNotHaveAccess_throwsAccessDeniedException() {
@@ -71,14 +75,18 @@ class GetAssessmentDashboardServiceTest {
 
         var questionAnswers = List.of(questionAnswers1, questionAnswers2, questionAnswers3);
         var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
-
+        var insights = List.of(insight1, insight2);
+        long attributeCount = 7;
+        long subjectsCount = 2;
 
         var questionsPortResult = new Questions(questionAnswers,questionsEvidences, totalQuestions, totalEvidences);
+        var insightsPortResul = new Insights(insights, attributeCount, subjectsCount);
+
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getKitVersionId())).thenReturn(questionsPortResult);
-        when(loadInsightsDashboardPort.loadInsights(assessmentResult.getKitVersionId())).thenReturn(null);
+        when(loadInsightsDashboardPort.loadInsights(assessmentResult.getKitVersionId())).thenReturn(insightsPortResul);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -89,7 +97,9 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(18, result.questions().hasNoEvidence());
         assertEquals(5, result.questions().hasUnresolvedComments());
         //insights
-
+        assertEquals(10, result.insights().total());
+        assertEquals(8, result.insights().notGenerated());
+        assertEquals(1, result.insights().expired());
     }
 
     private GetAssessmentDashboardUseCase.Param createParam(Consumer<GetAssessmentDashboardUseCase.Param.ParamBuilder> changer) {

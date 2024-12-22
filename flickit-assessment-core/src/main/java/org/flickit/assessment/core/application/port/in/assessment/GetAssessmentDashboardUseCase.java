@@ -45,7 +45,7 @@ public interface GetAssessmentDashboardUseCase {
 
         public record Insights(long total,
                                long notGenerated,
-                               long unApproved,
+                               Long unApproved,
                                long expired) {
         }
 
