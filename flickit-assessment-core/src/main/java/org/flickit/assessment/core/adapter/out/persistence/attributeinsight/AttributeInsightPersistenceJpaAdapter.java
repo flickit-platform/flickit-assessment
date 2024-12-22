@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
+import org.flickit.assessment.core.application.domain.assessmentdashboard.Insights;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
@@ -54,7 +55,7 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadInsights(long kitVersionId) {
+    public Insights loadInsights(long kitVersionId) {
         return null;
     }
 }
