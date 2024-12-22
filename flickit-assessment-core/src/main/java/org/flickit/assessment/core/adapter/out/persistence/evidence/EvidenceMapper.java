@@ -4,9 +4,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.domain.EvidenceType;
-import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
-import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.CreateEvidencePort;
+import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesPort;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithAttachmentsCountView;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
@@ -30,14 +29,14 @@ public class EvidenceMapper {
         );
     }
 
-    public static EvidenceListItem toEvidenceListItem(EvidenceWithAttachmentsCountView view, UserJpaEntity user) {
-        return new EvidenceListItem(
+    public static LoadEvidencesPort.EvidenceListItem toEvidenceListItem(EvidenceWithAttachmentsCountView view, UserJpaEntity user) {
+        return new LoadEvidencesPort.EvidenceListItem(
             view.getId(),
             view.getDescription(),
             view.getType() != null ? EvidenceType.values()[view.getType()].getTitle() : null,
             view.getLastModificationTime(),
             view.getAttachmentsCount(),
-            new GetEvidenceListUseCase.User(user.getId(), user.getDisplayName(), user.getPicture()),
+            new LoadEvidencesPort.User(user.getId(), user.getDisplayName(), user.getPicture()),
             null,
             null
         );

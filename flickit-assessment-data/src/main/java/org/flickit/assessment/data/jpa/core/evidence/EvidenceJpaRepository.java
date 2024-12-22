@@ -28,6 +28,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             FROM EvidenceJpaEntity e
             LEFT JOIN EvidenceAttachmentJpaEntity a ON e.id = a.evidenceId
             WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
+                    AND ((e.type is null AND e.resolved = false) OR (e.type IS NOT NULL AND e.resolved IS NULL))
             GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
         """)
     Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentId(@Param("questionId") Long questionId,

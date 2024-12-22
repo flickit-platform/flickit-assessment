@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
     private final LoadEvidencesPort loadEvidencesPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
+    private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
     @Override
     public PaginatedResponse<EvidenceListItem> getEvidenceList(GetEvidenceListUseCase.Param param) {
@@ -50,20 +53,32 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
         );
     }
 
-    private List<EvidenceListItem> enrichEvidenceItems(List<EvidenceListItem> items, Param param) {
-        return items.stream().map(e -> new EvidenceListItem(
-            e.id(),
-            e.description(),
-            e.type(),
-            e.lastModificationTime(),
-            e.attachmentsCount(),
-            addPictureLinkToUser(e.createdBy()),
-            Objects.equals(e.createdBy().id(), param.getCurrentUserId()),
-            Objects.equals(e.createdBy().id(), param.getCurrentUserId())
-        )).toList();
+    private List<EvidenceListItem> enrichEvidenceItems(List<LoadEvidencesPort.EvidenceListItem> items, Param param) {
+        var role = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())
+            .orElseThrow(() -> new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED));
+
+        return items.stream().map(e -> {
+            boolean resolvable = AssessmentUserRole.MANAGER.equals(role) ||
+                AssessmentUserRole.ASSESSOR.equals(role) ||
+                (AssessmentUserRole.ASSOCIATE.equals(role) && e.createdBy().id().equals(param.getCurrentUserId()));
+
+            if (e.type() != null)
+                resolvable = false;
+
+            return new EvidenceListItem(
+                e.id(),
+                e.description(),
+                e.type(),
+                e.lastModificationTime(),
+                e.attachmentsCount(),
+                addPictureLinkToUser(e.createdBy()),
+                Objects.equals(e.createdBy().id(), param.getCurrentUserId()),
+                Objects.equals(e.createdBy().id(), param.getCurrentUserId()),
+                resolvable);
+        }).toList();
     }
 
-    private User addPictureLinkToUser(User user) {
+    private User addPictureLinkToUser(LoadEvidencesPort.User user) {
         return new User(user.id(),
             user.displayName(),
             createFileDownloadLinkPort.createDownloadLink(user.pictureLink(), EXPIRY_DURATION));
