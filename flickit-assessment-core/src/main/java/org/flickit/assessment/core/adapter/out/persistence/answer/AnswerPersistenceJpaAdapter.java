@@ -26,7 +26,8 @@ public class AnswerPersistenceJpaAdapter implements
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
     UpdateAnswerPort,
-    LoadQuestionsAnswerListPort {
+    LoadQuestionsAnswerListPort,
+    LoadQuestionsAnswerDashboardPort{
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -92,5 +93,10 @@ public class AnswerPersistenceJpaAdapter implements
         return repository.findByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
             .map(AnswerMapper::mapToDomainModel)
             .toList();
+    }
+
+    @Override
+    public Result loadQuestionsDashboard(long kitVersionId) {
+        return null;
     }
 }
