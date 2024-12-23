@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.domain.assessmentdashboard.Dashbo
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardInsights;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAnswersQuestions;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
-import org.flickit.assessment.core.application.port.out.advice.CountAdvicesDashboardPort;
+import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
@@ -51,7 +51,7 @@ class GetAssessmentDashboardServiceTest {
     private LoadInsightsDashboardPort loadInsightsDashboardPort;
 
     @Mock
-    private CountAdvicesDashboardPort loadAdvicesDashboardPort;
+    private CountAdviceItemsPort loadAdvicesDashboardPort;
 
     @Mock
     private LoadEvidencesDashboardPort loadEvidencesDashboardPort;
@@ -102,7 +102,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId(), assessmentResult.getKitVersionId())).thenReturn(questionAnswerPortResult);
         when(loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId())).thenReturn(evidencesPortResult);
         when(loadInsightsDashboardPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(insight1, insight2));
-        when(loadAdvicesDashboardPort.loadAdviceDashboard(assessmentResult.getId())).thenReturn(new DashboardAdvices(2));
+        when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new DashboardAdvices(2));
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
         when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
 

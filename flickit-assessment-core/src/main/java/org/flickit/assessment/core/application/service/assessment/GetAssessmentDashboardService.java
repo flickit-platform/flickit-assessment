@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.assessmentdashboard.Dashbo
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardEvidences;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardInsights;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAnswersQuestions;
-import org.flickit.assessment.core.application.port.out.advice.CountAdvicesDashboardPort;
+import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
@@ -36,7 +36,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionsAnswerDashboardPort loadQuestionsAnswerDashboardPort;
     private final LoadInsightsDashboardPort loadInsightsDashboardPort;
-    private final CountAdvicesDashboardPort loadAdvicesDashboardPort;
+    private final CountAdviceItemsPort loadAdvicesDashboardPort;
     private final LoadEvidencesDashboardPort loadEvidencesDashboardPort;
     private final CountAttributesPort countAttributesPort;
     private final CountSubjectsPort countSubjectsPort;
@@ -54,7 +54,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var insightsResult = loadInsightsDashboardPort.loadInsights(assessmentResult.getId());
         var attributesCount = countAttributesPort.countAttributes(assessmentResult.getKitVersionId());
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
-        var advicesResult = loadAdvicesDashboardPort.loadAdviceDashboard(assessmentResult.getId());
+        var advicesResult = loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId());
 
         return new Result(buildQuestionsResult(questionsPortResult, evidencesResult),
             buildInsightsResult(insightsResult, assessmentResult.getLastCalculationTime(), attributesCount, subjectsCount),
@@ -63,7 +63,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     }
 
     private Result.Insights buildInsightsResult(List<DashboardInsights.InsightTime> insightsResult, LocalDateTime lastCalculationTime, int attributesCount, int subjectsCount) {
-        long total = attributesCount + subjectsCount + 1;
+        int total = attributesCount + subjectsCount + 1;
         var expired = insightsResult.stream().filter(e -> e.insightTime().isBefore(lastCalculationTime)).count();
         return new Result.Insights(total,
             total - insightsResult.size(),
