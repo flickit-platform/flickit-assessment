@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAdvices;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardEvidences;
@@ -22,6 +23,8 @@ import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentD
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
@@ -40,8 +43,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
     @Override
     public Result getAssessmentDashboard(Param param) {
-        /*if (!assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), VIEW_DASHBOARD))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);*/
+        if (!assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getId()).
             orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND));
