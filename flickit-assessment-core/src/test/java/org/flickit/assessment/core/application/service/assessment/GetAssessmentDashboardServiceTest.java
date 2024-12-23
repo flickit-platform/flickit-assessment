@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.assessmentdashboard.Dashbo
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardInsights;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAnswersQuestions;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
-import org.flickit.assessment.core.application.port.out.advice.LoadAdvicesDashboardPort;
+import org.flickit.assessment.core.application.port.out.advice.CountAdvicesDashboardPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
@@ -50,7 +50,7 @@ class GetAssessmentDashboardServiceTest {
     private LoadInsightsDashboardPort loadInsightsDashboardPort;
 
     @Mock
-    private LoadAdvicesDashboardPort loadAdvicesDashboardPort;
+    private CountAdvicesDashboardPort loadAdvicesDashboardPort;
 
     @Mock
     private LoadEvidencesDashboardPort loadEvidencesDashboardPort;

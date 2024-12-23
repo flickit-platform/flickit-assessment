@@ -14,6 +14,8 @@ public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEnti
 
     Page<AdviceItemJpaEntity> findByAssessmentResultId(UUID assessmentResultId, PageRequest pageRequest);
 
+    int countByAssessmentResultId(UUID assessmentResultId);
+
     boolean existsByIdAndAssessmentResultId(UUID id, UUID assessmentResultId);
 
     @Modifying
