@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateA
 import org.flickit.assessment.data.jpa.core.attributeinsight.AttributeInsightJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,7 +56,13 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public DashboardInsights loadInsights(long kitVersionId) {
-        return null;
+    public List<DashboardInsights.InsightTime> loadInsights(UUID assessmentResultId) {
+        return repository.findByAssessmentResultId(assessmentResultId)
+            .stream()
+            .map(e -> {
+                var insightTime = e.getAssessorInsightTime() == null ? e.getAiInsightTime() : e.getAssessorInsightTime();
+                return new DashboardInsights.InsightTime(insightTime);
+            })
+            .toList();
     }
 }

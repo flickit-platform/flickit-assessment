@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,4 +41,7 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
                                @Param("attributeId") Long attributeId,
                                @Param("assessorInsight") String assessorInsight,
                                @Param("assessorInsightTime") LocalDateTime assessorInsightTime);
+
+
+    List<AttributeInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 }

@@ -29,6 +29,8 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
 
     List<SubjectJpaEntity> findAllByKitVersionId(long kitVersionId);
 
+    int countByKitVersionId(long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE SubjectJpaEntity s
