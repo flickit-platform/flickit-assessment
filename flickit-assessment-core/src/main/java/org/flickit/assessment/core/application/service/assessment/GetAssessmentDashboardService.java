@@ -3,8 +3,10 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.assessmentdashboard.Advices;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.Insights;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.Questions;
+import org.flickit.assessment.core.application.port.out.advice.LoadAdvicesDashboardPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
@@ -29,6 +31,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionsAnswerDashboardPort loadQuestionsAnswerDashboardPort;
     private final LoadInsightsDashboardPort loadInsightsDashboardPort;
+    private final LoadAdvicesDashboardPort loadAdvicesDashboardPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -40,10 +43,11 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
         var questionsPortResult = loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getKitVersionId());
         var insightsResult = loadInsightsDashboardPort.loadInsights(assessmentResult.getKitVersionId());
+        var advicesResult = loadAdvicesDashboardPort.loadAdviceDashboard();
 
         return new Result(buildQuestionsResult(questionsPortResult),
             buildInsightsResult(insightsResult, assessmentResult.getLastCalculationTime()),
-            null);
+            buildAdvices(advicesResult));
     }
 
     private Result.Questions buildQuestionsResult(Questions result) {
@@ -64,5 +68,9 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             null,
             expired
         );
+    }
+
+    private Result.Advices buildAdvices(Advices advicesResult) {
+        return new Result.Advices(advicesResult.total());
     }
 }
