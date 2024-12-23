@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAdvices;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardEvidences;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardInsights;
 import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAnswersQuestions;
@@ -68,7 +69,7 @@ class GetAssessmentDashboardServiceTest {
     private final DashboardEvidences.Evidence evidence1 = new DashboardEvidences.Evidence(UUID.randomUUID(), 0, null, 124L);
     private final DashboardEvidences.Evidence evidence2 = new DashboardEvidences.Evidence(UUID.randomUUID(), 1, null, 125L);
     private final DashboardEvidences.Evidence evidence3 = new DashboardEvidences.Evidence(UUID.randomUUID(), 0, null, 125L);
-    private final DashboardEvidences.Evidence evidence4 = new DashboardEvidences.Evidence(UUID.randomUUID(), null, null,125L);
+    private final DashboardEvidences.Evidence evidence4 = new DashboardEvidences.Evidence(UUID.randomUUID(), null, null, 125L);
     private final DashboardEvidences.Evidence evidence5 = new DashboardEvidences.Evidence(UUID.randomUUID(), null, true, 126);
     private final DashboardInsights.InsightTime insight1 = new DashboardInsights.InsightTime(LocalDateTime.MAX);
     private final DashboardInsights.InsightTime insight2 = new DashboardInsights.InsightTime(LocalDateTime.MIN);
@@ -90,7 +91,6 @@ class GetAssessmentDashboardServiceTest {
 
         var questionAnswers = List.of(questionAnswers1, questionAnswers2, questionAnswers3);
         var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
-        var insights = List.of(insight1, insight2);
         int attributeCount = 7;
         int subjectsCount = 2;
         long totalQuestions = 20;
@@ -102,7 +102,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId(), assessmentResult.getKitVersionId())).thenReturn(questionAnswerPortResult);
         when(loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId())).thenReturn(evidencesPortResult);
         when(loadInsightsDashboardPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(insight1, insight2));
-        //when(loadAdvicesDashboardPort.loadAdviceDashboard()).thenReturn(new DashboardAdvices(2));
+        when(loadAdvicesDashboardPort.loadAdviceDashboard(assessmentResult.getId())).thenReturn(new DashboardAdvices(2));
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
         when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
 
@@ -119,7 +119,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(8, result.insights().notGenerated());
         assertEquals(1, result.insights().expired());
         //advices
-        //assertEquals(2, result.advices().total());
+        assertEquals(2, result.advices().total());
     }
 
     private GetAssessmentDashboardUseCase.Param createParam(Consumer<GetAssessmentDashboardUseCase.Param.ParamBuilder> changer) {
