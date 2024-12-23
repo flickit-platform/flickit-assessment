@@ -1,4 +1,4 @@
 package org.flickit.assessment.core.application.domain.assessmentdashboard;
 
-public class Advices {
+public record Advices(long total) {
 }
