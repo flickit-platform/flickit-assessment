@@ -2,7 +2,6 @@ package org.flickit.assessment.core.adapter.out.persistence.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardInsights;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
@@ -56,10 +55,13 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<DashboardInsights.InsightTime> loadInsights(UUID assessmentResultId) {
+    public List<LoadInsightsDashboardPort.Result.InsightTime> loadInsights(UUID assessmentResultId) {
         return repository.findByAssessmentResultId(assessmentResultId)
             .stream()
-            .map(AttributeInsightMapper::mapToAttributeInsightTime)
+            .map(e -> {
+                var insightTime = e.getAssessorInsightTime() == null ? e.getAiInsightTime() : e.getAssessorInsightTime();
+                return new LoadInsightsDashboardPort.Result.InsightTime(insightTime);
+            })
             .toList();
     }
 }

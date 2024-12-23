@@ -3,10 +3,6 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAdvices;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardEvidences;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardInsights;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAnswersQuestions;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -63,16 +59,16 @@ class GetAssessmentDashboardServiceTest {
     private CountAttributesPort countAttributesPort;
 
 
-    private final DashboardAnswersQuestions.Answer questionAnswers1 = new DashboardAnswersQuestions.Answer(UUID.randomUUID(), 1);
-    private final DashboardAnswersQuestions.Answer questionAnswers2 = new DashboardAnswersQuestions.Answer(UUID.randomUUID(), 2);
-    private final DashboardAnswersQuestions.Answer questionAnswers3 = new DashboardAnswersQuestions.Answer(UUID.randomUUID(), 3);
-    private final DashboardEvidences.Evidence evidence1 = new DashboardEvidences.Evidence(UUID.randomUUID(), 0, null, 124L);
-    private final DashboardEvidences.Evidence evidence2 = new DashboardEvidences.Evidence(UUID.randomUUID(), 1, null, 125L);
-    private final DashboardEvidences.Evidence evidence3 = new DashboardEvidences.Evidence(UUID.randomUUID(), 0, null, 125L);
-    private final DashboardEvidences.Evidence evidence4 = new DashboardEvidences.Evidence(UUID.randomUUID(), null, null, 125L);
-    private final DashboardEvidences.Evidence evidence5 = new DashboardEvidences.Evidence(UUID.randomUUID(), null, true, 126);
-    private final DashboardInsights.InsightTime insight1 = new DashboardInsights.InsightTime(LocalDateTime.MAX);
-    private final DashboardInsights.InsightTime insight2 = new DashboardInsights.InsightTime(LocalDateTime.MIN);
+    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers1 = new LoadQuestionsAnswerDashboardPort.Result.Answer(UUID.randomUUID(), 1);
+    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers2 = new LoadQuestionsAnswerDashboardPort.Result.Answer(UUID.randomUUID(), 2);
+    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers3 = new LoadQuestionsAnswerDashboardPort.Result.Answer(UUID.randomUUID(), 3);
+    private final LoadEvidencesDashboardPort.Result.Evidence evidence1 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 124L);
+    private final LoadEvidencesDashboardPort.Result.Evidence evidence2 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 1, null, 125L);
+    private final LoadEvidencesDashboardPort.Result.Evidence evidence3 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 125L);
+    private final LoadEvidencesDashboardPort.Result.Evidence evidence4 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), null, null, 125L);
+    private final LoadEvidencesDashboardPort.Result.Evidence evidence5 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), null, true, 126);
+    private final LoadInsightsDashboardPort.Result.InsightTime insight1 = new LoadInsightsDashboardPort.Result.InsightTime(LocalDateTime.MAX);
+    private final LoadInsightsDashboardPort.Result.InsightTime insight2 = new LoadInsightsDashboardPort.Result.InsightTime(LocalDateTime.MIN);
 
     @Test
     void testGetAssessmentDashboard_userDoesNotHaveAccess_throwsAccessDeniedException() {
@@ -94,15 +90,15 @@ class GetAssessmentDashboardServiceTest {
         int attributeCount = 7;
         int subjectsCount = 2;
         long totalQuestions = 20;
-        var questionAnswerPortResult = new DashboardAnswersQuestions(questionAnswers, totalQuestions);
-        var evidencesPortResult = new DashboardEvidences(questionsEvidences);
+        var questionAnswerPortResult = new LoadQuestionsAnswerDashboardPort.Result(questionAnswers, totalQuestions);
+        var evidencesPortResult = new LoadEvidencesDashboardPort.Result(questionsEvidences);
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId(), assessmentResult.getKitVersionId())).thenReturn(questionAnswerPortResult);
         when(loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId())).thenReturn(evidencesPortResult);
         when(loadInsightsDashboardPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(insight1, insight2));
-        when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new DashboardAdvices(2));
+        when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new CountAdviceItemsPort.Result(2));
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
         when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
 

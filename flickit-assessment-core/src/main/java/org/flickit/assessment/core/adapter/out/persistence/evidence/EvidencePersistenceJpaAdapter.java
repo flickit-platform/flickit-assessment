@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Evidence;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardEvidences;
-import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -118,11 +116,11 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public DashboardEvidences loadEvidencesDashboard(UUID assessmentId) {
+    public LoadEvidencesDashboardPort.Result loadEvidencesDashboard(UUID assessmentId) {
         var evidences = repository.findByAssessmentIdAndDeletedFalse(assessmentId)
             .stream()
-            .map(e -> new DashboardEvidences.Evidence(e.getId(), e.getType(), e.getResolved(), e.getQuestionId()))
+            .map(e -> new LoadEvidencesDashboardPort.Result.Evidence(e.getId(), e.getType(), e.getResolved(), e.getQuestionId()))
             .toList();
-        return new DashboardEvidences(evidences);
+        return new LoadEvidencesDashboardPort.Result(evidences);
     }
 }

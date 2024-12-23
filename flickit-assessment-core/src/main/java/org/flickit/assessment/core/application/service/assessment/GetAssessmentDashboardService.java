@@ -3,10 +3,6 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAdvices;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardEvidences;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardInsights;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAnswersQuestions;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
@@ -62,7 +58,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         );
     }
 
-    private Result.Insights buildInsightsResult(List<DashboardInsights.InsightTime> insightsResult, LocalDateTime lastCalculationTime, int attributesCount, int subjectsCount) {
+    private Result.Insights buildInsightsResult(List<LoadInsightsDashboardPort.Result.InsightTime> insightsResult, LocalDateTime lastCalculationTime, int attributesCount, int subjectsCount) {
         int total = attributesCount + subjectsCount + 1;
         var expired = insightsResult.stream().filter(e -> e.insightTime().isBefore(lastCalculationTime)).count();
         return new Result.Insights(total,
@@ -72,17 +68,17 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         );
     }
 
-    private Result.Questions buildQuestionsResult(DashboardAnswersQuestions answerResult, DashboardEvidences evidencesResult) {
+    private Result.Questions buildQuestionsResult(LoadQuestionsAnswerDashboardPort.Result answerResult, LoadEvidencesDashboardPort.Result evidencesResult) {
         return new Result.Questions(answerResult.totalQuestion(),
             answerResult.answers().size(),
             answerResult.totalQuestion() - answerResult.answers().size(),
             answerResult.answers().stream().filter(e -> e.confidence() <= 2).count(),
             answerResult.totalQuestion() -
-                evidencesResult.evidences().stream().filter(e -> e.type() != null).map(DashboardEvidences.Evidence::questionId).distinct().count(),
+                evidencesResult.evidences().stream().filter(e -> e.type() != null).map(LoadEvidencesDashboardPort.Result.Evidence::questionId).distinct().count(),
             evidencesResult.evidences().stream().filter(e -> e.type() == null && e.resolved() == null).count());
     }
 
-    private Result.Advices buildAdvices(DashboardAdvices dashboardAdvicesResult) {
+    private Result.Advices buildAdvices(CountAdviceItemsPort.Result dashboardAdvicesResult) {
         return new Result.Advices(dashboardAdvicesResult.total());
     }
 }

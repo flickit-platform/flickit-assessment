@@ -1,10 +1,15 @@
 package org.flickit.assessment.core.application.port.out.answer;
 
-import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardAnswersQuestions;
-
+import java.util.List;
 import java.util.UUID;
 
 public interface LoadQuestionsAnswerDashboardPort {
 
-    DashboardAnswersQuestions loadQuestionsDashboard(UUID assessmentResultId, long kitVersionId);
+    Result loadQuestionsDashboard(UUID assessmentResultId, long kitVersionId);
+
+    record Result(List<Answer> answers, long totalQuestion) {
+
+        public record Answer(UUID id, int confidence) {
+        }
+    }
 }
