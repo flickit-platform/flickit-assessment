@@ -19,6 +19,8 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
 
+    List<EvidenceJpaEntity> findByAssessmentIdAndDeletedFalse(UUID assessmentId);
+
     @Query("""
             SELECT
                 e.id as id,
