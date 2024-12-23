@@ -12,6 +12,8 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesDashboardPort;
+import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
+import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -35,6 +38,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadInsightsDashboardPort loadInsightsDashboardPort;
     private final LoadAdvicesDashboardPort loadAdvicesDashboardPort;
     private final LoadEvidencesDashboardPort loadEvidencesDashboardPort;
+    private final CountAttributesPort countAttributesPort;
+    private final CountSubjectsPort countSubjectsPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -44,14 +49,28 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getId()).
             orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionsPortResult = loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(param.getId(), assessmentResult.getKitVersionId());
+        var questionsPortResult = loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId(), assessmentResult.getKitVersionId());
         var evidencesResult = loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId());
-        var insightsResult = loadInsightsDashboardPort.loadInsights(assessmentResult.getKitVersionId());
-        var advicesResult = loadAdvicesDashboardPort.loadAdviceDashboard();
+        var insightsResult = loadInsightsDashboardPort.loadInsights(assessmentResult.getId());
+        var attributesCount = countAttributesPort.countAttributes(assessmentResult.getKitVersionId());
+        var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
+        //var advicesResult = loadAdvicesDashboardPort.loadAdviceDashboard();
 
         return new Result(buildQuestionsResult(questionsPortResult, evidencesResult),
-            buildInsightsResult(insightsResult, assessmentResult.getLastCalculationTime()),
-            buildAdvices(advicesResult));
+            buildInsightsResult(insightsResult, assessmentResult.getLastCalculationTime(), attributesCount, subjectsCount),
+            //buildAdvices(advicesResult)
+            null
+        );
+    }
+
+    private Result.Insights buildInsightsResult(List<DashboardInsights.InsightTime> insightsResult, LocalDateTime lastCalculationTime, int attributesCount, int subjectsCount) {
+        long total = attributesCount + subjectsCount + 1;
+        var expired = insightsResult.stream().filter(e -> e.insightTime().isBefore(lastCalculationTime)).count();
+        return new Result.Insights(total,
+            total - insightsResult.size(),
+            null,
+            expired
+        );
     }
 
     private Result.Questions buildQuestionsResult(DashboardAnswersQuestions answerResult, DashboardEvidences evidencesResult) {
