@@ -59,10 +59,7 @@ public class AttributeInsightPersistenceJpaAdapter implements
     public List<DashboardInsights.InsightTime> loadInsights(UUID assessmentResultId) {
         return repository.findByAssessmentResultId(assessmentResultId)
             .stream()
-            .map(e -> {
-                var insightTime = e.getAssessorInsightTime() == null ? e.getAiInsightTime() : e.getAssessorInsightTime();
-                return new DashboardInsights.InsightTime(insightTime);
-            })
+            .map(AttributeInsightMapper::mapToAttributeInsightTime)
             .toList();
     }
 }
