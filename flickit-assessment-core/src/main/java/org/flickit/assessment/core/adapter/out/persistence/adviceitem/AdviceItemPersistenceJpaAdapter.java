@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component
+@Component("coreAdviceItemPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class AdviceItemPersistenceJpaAdapter implements CountAdviceItemsPort {
 
