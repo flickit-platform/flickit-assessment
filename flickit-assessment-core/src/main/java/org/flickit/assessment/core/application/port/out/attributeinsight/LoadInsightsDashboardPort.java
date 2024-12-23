@@ -1,8 +1,8 @@
 package org.flickit.assessment.core.application.port.out.attributeinsight;
 
-import org.flickit.assessment.core.application.domain.assessmentdashboard.Insights;
+import org.flickit.assessment.core.application.domain.assessmentdashboard.DashboardInsights;
 
 public interface LoadInsightsDashboardPort {
 
-    Insights loadInsights(long kitVersionId);
+    DashboardInsights loadInsights(long kitVersionId);
 }
