@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
@@ -58,6 +59,9 @@ class GetAssessmentDashboardServiceTest {
     @Mock
     private CountAttributesPort countAttributesPort;
 
+    @Mock
+    private GetAssessmentProgressPort getAssessmentProgressPort;
+
 
     private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers1 = new LoadQuestionsAnswerDashboardPort.Result.Answer(UUID.randomUUID(), 1);
     private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers2 = new LoadQuestionsAnswerDashboardPort.Result.Answer(UUID.randomUUID(), 2);
@@ -89,8 +93,9 @@ class GetAssessmentDashboardServiceTest {
         var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
         int attributeCount = 7;
         int subjectsCount = 2;
-        long totalQuestions = 20;
-        var questionAnswerPortResult = new LoadQuestionsAnswerDashboardPort.Result(questionAnswers, totalQuestions);
+        int questionCount = 15;
+        int answerCount = 10;
+        var questionAnswerPortResult = new LoadQuestionsAnswerDashboardPort.Result(questionAnswers);
         var evidencesPortResult = new LoadEvidencesDashboardPort.Result(questionsEvidences);
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
@@ -101,14 +106,15 @@ class GetAssessmentDashboardServiceTest {
         when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new CountAdviceItemsPort.Result(2));
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
         when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
+        when(getAssessmentProgressPort.getProgress(param.getId())).thenReturn(new GetAssessmentProgressPort.Result(param.getId(), answerCount, questionCount));
 
         var result = service.getAssessmentDashboard(param);
         //questions
-        assertEquals(totalQuestions, result.questions().total());
-        assertEquals(questionAnswers.size(), result.questions().answered());
-        assertEquals(17, result.questions().unanswered());
+        assertEquals(questionCount, result.questions().total());
+        assertEquals(answerCount, result.questions().answered());
+        assertEquals(5, result.questions().unanswered());
         assertEquals(2, result.questions().hasLowConfidence());
-        assertEquals(18, result.questions().hasNoEvidence());
+        assertEquals(13, result.questions().hasNoEvidence());
         assertEquals(1, result.questions().hasUnresolvedComments());
         //insights
         assertEquals(10, result.insights().total());

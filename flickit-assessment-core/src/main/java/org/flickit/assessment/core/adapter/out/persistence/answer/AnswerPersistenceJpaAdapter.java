@@ -101,9 +101,6 @@ public class AnswerPersistenceJpaAdapter implements
             .stream()
             .map(e -> new Result.Answer(e.getId(), e.getConfidenceLevelId()))
             .toList();
-
-        var totalQuestions =  questionRepository.countByKitVersionId(kitVersionId);
-
-        return new Result(dashboardAnswers, totalQuestions);
+        return new Result(dashboardAnswers);
     }
 }

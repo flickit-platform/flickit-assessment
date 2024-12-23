@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
@@ -36,6 +37,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadEvidencesDashboardPort loadEvidencesDashboardPort;
     private final CountAttributesPort countAttributesPort;
     private final CountSubjectsPort countSubjectsPort;
+    private final GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -46,16 +48,27 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND));
 
         var questionsPortResult = loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId(), assessmentResult.getKitVersionId());
+        var progress = getAssessmentProgressPort.getProgress(param.getId());
         var evidencesResult = loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId());
         var insightsResult = loadInsightsDashboardPort.loadInsights(assessmentResult.getId());
         var attributesCount = countAttributesPort.countAttributes(assessmentResult.getKitVersionId());
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var advicesResult = loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId());
 
-        return new Result(buildQuestionsResult(questionsPortResult, evidencesResult),
+        return new Result(buildQuestionsResult(questionsPortResult, progress, evidencesResult),
             buildInsightsResult(insightsResult, assessmentResult.getLastCalculationTime(), attributesCount, subjectsCount),
             buildAdvices(advicesResult)
         );
+    }
+
+    private Result.Questions buildQuestionsResult(LoadQuestionsAnswerDashboardPort.Result answerResult, GetAssessmentProgressPort.Result progress, LoadEvidencesDashboardPort.Result evidencesResult) {
+        return new Result.Questions(progress.questionsCount(),
+            progress.answersCount(),
+            progress.questionsCount() - progress.answersCount(),
+            answerResult.answers().stream().filter(e -> e.confidence() <= 2).count(),
+            progress.questionsCount() -
+                evidencesResult.evidences().stream().filter(e -> e.type() != null).map(LoadEvidencesDashboardPort.Result.Evidence::questionId).distinct().count(),
+            evidencesResult.evidences().stream().filter(e -> e.type() == null && e.resolved() == null).count());
     }
 
     private Result.Insights buildInsightsResult(List<LoadInsightsDashboardPort.Result.InsightTime> insightsResult, LocalDateTime lastCalculationTime, int attributesCount, int subjectsCount) {
@@ -66,16 +79,6 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             null,
             expired
         );
-    }
-
-    private Result.Questions buildQuestionsResult(LoadQuestionsAnswerDashboardPort.Result answerResult, LoadEvidencesDashboardPort.Result evidencesResult) {
-        return new Result.Questions(answerResult.totalQuestion(),
-            answerResult.answers().size(),
-            answerResult.totalQuestion() - answerResult.answers().size(),
-            answerResult.answers().stream().filter(e -> e.confidence() <= 2).count(),
-            answerResult.totalQuestion() -
-                evidencesResult.evidences().stream().filter(e -> e.type() != null).map(LoadEvidencesDashboardPort.Result.Evidence::questionId).distinct().count(),
-            evidencesResult.evidences().stream().filter(e -> e.type() == null && e.resolved() == null).count());
     }
 
     private Result.Advices buildAdvices(CountAdviceItemsPort.Result dashboardAdvicesResult) {

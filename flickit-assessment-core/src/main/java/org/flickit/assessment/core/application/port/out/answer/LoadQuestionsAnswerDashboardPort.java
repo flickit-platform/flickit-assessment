@@ -7,7 +7,7 @@ public interface LoadQuestionsAnswerDashboardPort {
 
     Result loadQuestionsDashboard(UUID assessmentResultId, long kitVersionId);
 
-    record Result(List<Answer> answers, long totalQuestion) {
+    record Result(List<Answer> answers) {
 
         public record Answer(UUID id, int confidence) {
         }
