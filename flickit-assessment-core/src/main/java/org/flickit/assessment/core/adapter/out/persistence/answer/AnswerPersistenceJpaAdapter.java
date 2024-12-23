@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.domain.assessmentdashboard.Questions;
+import org.flickit.assessment.core.application.domain.assessmentdashboard.AnswersQuestions;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -97,7 +97,14 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public Questions loadQuestionsDashboard(long kitVersionId) {
-        return null;
+    public AnswersQuestions loadQuestionsDashboard(UUID assessmentResultId, long kitVersionId) {
+        var dashboardAnswers = repository.findByAssessmentResultId(assessmentResultId)
+            .stream()
+            .map(e -> new AnswersQuestions.Answer(e.getId(), e.getConfidenceLevelId()))
+            .toList();
+
+        var totalQuestion =  questionRepository.countByKitVersionId(kitVersionId);
+
+        return new AnswersQuestions(dashboardAnswers, totalQuestion);
     }
 }
