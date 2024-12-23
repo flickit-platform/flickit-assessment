@@ -477,6 +477,30 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Assessment Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"3bfa613e-4e50-46a4-96aa-a061f104224e"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
