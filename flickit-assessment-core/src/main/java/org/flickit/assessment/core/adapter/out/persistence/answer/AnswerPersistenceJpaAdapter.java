@@ -103,8 +103,8 @@ public class AnswerPersistenceJpaAdapter implements
             .map(e -> new DashboardAnswersQuestions.Answer(e.getId(), e.getConfidenceLevelId()))
             .toList();
 
-        var totalQuestion =  questionRepository.countByKitVersionId(kitVersionId);
+        var totalQuestions =  questionRepository.countByKitVersionId(kitVersionId);
 
-        return new DashboardAnswersQuestions(dashboardAnswers, totalQuestion);
+        return new DashboardAnswersQuestions(dashboardAnswers, totalQuestions);
     }
 }
