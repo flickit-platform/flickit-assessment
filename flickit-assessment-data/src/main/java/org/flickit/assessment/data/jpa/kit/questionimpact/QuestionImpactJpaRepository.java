@@ -25,8 +25,8 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
 
     @Modifying
     @Query("""
-            UPDATE QuestionImpactJpaEntity q SET
-                q.weight = :weight,
+            UPDATE QuestionImpactJpaEntity q
+            SET q.weight = :weight,
                 q.lastModificationTime = :lastModificationTime,
                 q.lastModifiedBy = :lastModifiedBy
             WHERE q.id = :id AND q.kitVersionId = :kitVersionId AND q.questionId = :questionId
@@ -40,8 +40,8 @@ public interface QuestionImpactJpaRepository extends JpaRepository<QuestionImpac
 
     @Modifying
     @Query("""
-            UPDATE QuestionImpactJpaEntity q SET
-                q.weight = :weight,
+            UPDATE QuestionImpactJpaEntity q
+            SET q.weight = :weight,
                 q.attributeId = :attributeId,
                 q.maturityLevelId = :maturityLevelId,
                 q.lastModificationTime = :lastModificationTime,

@@ -37,7 +37,7 @@ class GetKitTagListServiceTest {
             Collections.emptyList(),
             page,
             size,
-            KitTagJpaEntity.Fields.CODE,
+            KitTagJpaEntity.Fields.code,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
         when(loadKitTagListPort.loadAll(page, size)).thenReturn(paginatedResponse);
@@ -58,7 +58,7 @@ class GetKitTagListServiceTest {
             kitTags,
             page,
             size,
-            KitTagJpaEntity.Fields.CODE,
+            KitTagJpaEntity.Fields.code,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
         when(loadKitTagListPort.loadAll(page, size)).thenReturn(paginatedResponse);

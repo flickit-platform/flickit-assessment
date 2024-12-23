@@ -16,8 +16,6 @@ public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEnti
 
     int countByAssessmentResultId(UUID assessmentResultId);
 
-    boolean existsByIdAndAssessmentResultId(UUID id, UUID assessmentResultId);
-
     @Modifying
     @Query("""
             UPDATE AdviceItemJpaEntity a

@@ -2,12 +2,11 @@ package org.flickit.assessment.data.jpa.users.spaceuseraccess;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @IdClass(SpaceUserAccessJpaEntity.EntityId.class)
@@ -16,6 +15,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SpaceUserAccessJpaEntity {
 
@@ -46,10 +46,4 @@ public class SpaceUserAccessJpaEntity {
         private Long spaceId;
         private UUID userId;
     }
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String LAST_SEEN = "lastSeen";
-    }
-
 }

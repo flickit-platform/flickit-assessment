@@ -18,10 +18,13 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     @Query("""
-        SELECT COUNT(a) as answerCount FROM AnswerJpaEntity a
-        WHERE a.assessmentResult.id=:assessmentResultId AND a.questionId IN :questionIds AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+            SELECT COUNT(a) as answerCount
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id=:assessmentResultId
+                AND a.questionId IN :questionIds
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
         """)
-    int getCountByQuestionIds(UUID assessmentResultId, List<Long> questionIds);
+    int getCountByQuestionIds(@Param("assessmentResultId") UUID assessmentResultId, @Param("questionIds") List<Long> questionIds);
 
     @Query("""
             SELECT COUNT(a)
@@ -33,21 +36,27 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     @Modifying
     @Query("""
-        UPDATE AnswerJpaEntity a SET
-        a.answerOptionId = :answerOptionId,
-        a.confidenceLevelId = :confidenceLevelId,
-        a.isNotApplicable = :isNotApplicable,
-        a.lastModifiedBy = :currentUserId
-        WHERE a.id = :answerId
+            UPDATE AnswerJpaEntity a
+            SET a.answerOptionId = :answerOptionId,
+                a.confidenceLevelId = :confidenceLevelId,
+                a.isNotApplicable = :isNotApplicable,
+                a.lastModifiedBy = :lastModifiedBy
+            WHERE a.id = :answerId
         """)
-    void update(UUID answerId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId);
+    void update(@Param("answerId") UUID answerId,
+                @Param("answerOptionId") Long answerOptionId,
+                @Param("confidenceLevelId") Integer confidenceLevelId,
+                @Param("isNotApplicable") Boolean isNotApplicable,
+                @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""
-        SELECT a.questionnaireId AS questionnaireId, COUNT(a.questionnaireId) AS answerCount
-        FROM AnswerJpaEntity a
-        WHERE a.assessmentResult.id=:assessmentResultId AND a.questionnaireId IN :questionnaireIds
-            AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
-        GROUP BY a.questionnaireId
+            SELECT a.questionnaireId AS questionnaireId,
+                COUNT(a.questionnaireId) AS answerCount
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id=:assessmentResultId
+                AND a.questionnaireId IN :questionnaireIds
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+            GROUP BY a.questionnaireId
         """)
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(
         @Param(value = "assessmentResultId") UUID assessmentResultId,

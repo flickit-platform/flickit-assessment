@@ -19,7 +19,7 @@ public interface EvidenceAttachmentJpaRepository extends JpaRepository<EvidenceA
                 u.displayName as displayName,
                 e.creationTime as creationTime
             FROM EvidenceAttachmentJpaEntity e
-            join UserJpaEntity u ON e.createdBy = u.id
+            JOIN UserJpaEntity u ON e.createdBy = u.id
             WHERE e.evidenceId = :evidenceId
             ORDER BY e.creationTime asc
         """)

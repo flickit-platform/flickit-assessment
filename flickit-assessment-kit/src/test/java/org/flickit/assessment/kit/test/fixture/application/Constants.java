@@ -25,4 +25,5 @@ public class Constants {
     public static final String ATTRIBUTE_CODE1 = "SoftwareMaintainability";
     public static final String ATTRIBUTE_TITLE1 = "SoftwareMaintainability";
 
+    public static final String SUBJECTS_TITLE1 = "Software";
 }

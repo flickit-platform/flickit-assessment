@@ -2,13 +2,12 @@ package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
-
-import static lombok.AccessLevel.PRIVATE;
 
 @Entity
 @Table(name = "fak_assessment_kit")
@@ -16,6 +15,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AssessmentKitJpaEntity {
 
@@ -69,10 +69,4 @@ public class AssessmentKitJpaEntity {
 
     @Column(name = "kit_version_id")
     private Long kitVersionId;
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String TITLE = "title";
-        public static final String LAST_MODIFICATION_TIME = "lastModificationTime";
-    }
 }

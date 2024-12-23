@@ -20,7 +20,7 @@ public class AnswerJpaEntity {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(generator = "UUID")
+    @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.RANDOM)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
@@ -49,9 +49,4 @@ public class AnswerJpaEntity {
 
     @Column(name = "last_modified_by", nullable = false)
     private UUID lastModifiedBy;
-
-    @Override
-    public String toString() {
-        return id.toString();
-    }
 }

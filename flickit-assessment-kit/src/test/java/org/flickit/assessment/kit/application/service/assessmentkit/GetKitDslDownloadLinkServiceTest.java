@@ -42,7 +42,7 @@ class GetKitDslDownloadLinkServiceTest {
     @Mock
     private LoadKitExpertGroupPort loadKitExpertGroupPort;
 
-    private final static Duration EXPIRY_DURATION = Duration.ofHours(1);
+    private static final Duration EXPIRY_DURATION = Duration.ofHours(1);
 
     @Test
     void testGetKitDSLDownloadLink_whenDslFilePathExists_shouldReturnDownloadLink() {

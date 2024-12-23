@@ -46,6 +46,7 @@ public enum AssessmentPermission {
     CREATE_SUBJECT_INSIGHT("createSubjectInsight"),
     MANAGE_ADD_ON("manageAddOn"),
     MANAGE_KIT_CUSTOM("manageKitCustom"),
+    RESOLVE_COMMENT("resolveComment"),
     VIEW_DASHBOARD("viewDashboard"),;
 
     private final String code;

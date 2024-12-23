@@ -84,7 +84,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     @Override
     public PaginatedResponse<AssessmentUser> loadAssessmentUsers(Param param) {
         Page<AssessmentUserView> pageResult = repository.findAssessmentUsers(param.assessmentId(),
-            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, UserJpaEntity.Fields.NAME));
+            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, UserJpaEntity.Fields.displayName));
 
         List<AssessmentUser> assessmentUsers = pageResult.getContent().stream()
             .map(e -> {
@@ -106,7 +106,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
             assessmentUsers,
             pageResult.getNumber(),
             pageResult.getSize(),
-            UserJpaEntity.Fields.NAME,
+            UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );

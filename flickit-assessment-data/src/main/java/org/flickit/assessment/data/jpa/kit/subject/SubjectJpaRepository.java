@@ -106,7 +106,7 @@ public interface SubjectJpaRepository extends JpaRepository<SubjectJpaEntity, Su
         SELECT s as subject,
                a as attribute
         FROM SubjectJpaEntity s
-        JOIN AttributeJpaEntity a ON  s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
+        JOIN AttributeJpaEntity a ON s.id = a.subjectId AND s.kitVersionId = a.kitVersionId
         WHERE s.kitVersionId = :kitVersionId
         """)
     List<SubjectJoinAttributeView> findWithAttributesByKitVersionId(Long kitVersionId);

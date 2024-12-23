@@ -1,10 +1,10 @@
 package org.flickit.assessment.users.application.service.expertgroup;
 
-import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
-import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
+import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase;
 import org.flickit.assessment.users.application.port.in.expertgroup.GetExpertGroupListUseCase.Member;
+import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort;
 import org.flickit.assessment.users.application.port.out.expertgroup.LoadExpertGroupListPort.Result;
 import org.flickit.assessment.users.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ class GetExpertGroupListServiceTest {
             expertGroups,
             page,
             size,
-            UserJpaEntity.Fields.NAME,
+            UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             expertGroups.size());
         when(loadExpertGroupListPort.loadExpertGroupList(any(LoadExpertGroupListPort.Param.class)))
@@ -93,7 +93,7 @@ class GetExpertGroupListServiceTest {
             expertGroupListItems,
             page,
             size,
-            UserJpaEntity.Fields.NAME,
+            UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
         when(loadExpertGroupListPort.loadExpertGroupList(any(LoadExpertGroupListPort.Param.class)))

@@ -46,7 +46,7 @@ class GetSpaceListServiceTest {
             spacePortList,
             page,
             size,
-            SpaceUserAccessJpaEntity.Fields.LAST_SEEN,
+            SpaceUserAccessJpaEntity.Fields.lastSeen,
             Sort.Direction.DESC.name().toLowerCase(),
             spacePortList.size());
 
@@ -87,7 +87,7 @@ class GetSpaceListServiceTest {
             Collections.emptyList(),
             page,
             size,
-            UserJpaEntity.Fields.NAME,
+            UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
         when(loadSpaceListPort.loadSpaceList(currentUserId, page, size)).thenReturn(paginatedResponse);

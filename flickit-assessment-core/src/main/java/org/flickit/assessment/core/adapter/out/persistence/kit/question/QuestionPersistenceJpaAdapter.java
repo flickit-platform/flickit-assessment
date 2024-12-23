@@ -69,7 +69,7 @@ public class QuestionPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            QuestionJpaEntity.Fields.INDEX,
+            QuestionJpaEntity.Fields.index,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
