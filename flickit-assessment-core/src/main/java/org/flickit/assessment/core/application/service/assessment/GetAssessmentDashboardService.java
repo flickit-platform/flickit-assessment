@@ -51,16 +51,16 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
     @Override
     public Result getAssessmentDashboard(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getId()).
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()).
             orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND));
 
         var countLowConfidenceAnswers = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE);
-        var progress = getAssessmentProgressPort.getProgress(param.getId());
-        var questionsWithEvidenceCount = countEvidencesPort.countQuestionsHavingEvidence(param.getId());
-        var commentsCount = countCommentsPort.countUnResolvedResolvedComments(param.getId());
+        var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
+        var evidencesCount = countEvidencesPort.countQuestionsHavingEvidence(param.getAssessmentId());
+        var commentsCount = countCommentsPort.countUnResolvedResolvedComments(param.getAssessmentId());
         var attributeInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
         var subjectsInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()).orElse(null);
@@ -68,7 +68,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var advicesResult = loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId());
 
-        return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, questionsWithEvidenceCount, commentsCount),
+        return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, evidencesCount, commentsCount),
             buildInsightsResult(attributeInsights, subjectsInsights, assessmentResult.getLastCalculationTime(), assessmentInsight, attributesCount, subjectsCount),
             buildAdvices(advicesResult)
         );
