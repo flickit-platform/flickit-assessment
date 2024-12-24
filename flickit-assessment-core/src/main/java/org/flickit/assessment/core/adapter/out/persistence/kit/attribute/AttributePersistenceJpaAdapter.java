@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
+import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
@@ -29,7 +30,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 public class AttributePersistenceJpaAdapter implements
     LoadAttributeScoreDetailPort,
     LoadAttributePort,
-    LoadAttributeScoresPort {
+    LoadAttributeScoresPort,
+    CountAttributesPort {
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -118,5 +120,10 @@ public class AttributePersistenceJpaAdapter implements
         var attribute = repository.findByIdAndKitVersionId(attributeId, kitVersionId)
             .orElseThrow(() -> new ResourceNotFoundException(ATTRIBUTE_ID_NOT_FOUND));
         return mapToDomainModel(attribute);
+    }
+
+    @Override
+    public int countAttributes(long kitVersionId) {
+        return repository.countByKitVersionId(kitVersionId);
     }
 }

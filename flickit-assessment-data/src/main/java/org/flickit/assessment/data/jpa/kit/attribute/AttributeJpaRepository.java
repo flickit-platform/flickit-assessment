@@ -143,4 +143,6 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                @Param("kitVersionId") Long kitVersionId,
                                                @Param("attributeId") Long attributeId,
                                                @Param("maturityLevelId") Long maturityLevelId);
+
+    int countByKitVersionId(long kitVersionId);
 }
