@@ -15,7 +15,8 @@ public class AttributeInsightMother {
             "assessor insight",
             LocalDateTime.now(),
             LocalDateTime.now(),
-            "input path");
+            "input path",
+            false);
     }
 
     public static AttributeInsight simpleAttributeAiInsightMinInsightTime(){
@@ -25,6 +26,7 @@ public class AttributeInsightMother {
             "assessor insight",
             LocalDateTime.MIN,
             LocalDateTime.now(),
-            "input path");
+            "input path",
+            false);
     }
 }

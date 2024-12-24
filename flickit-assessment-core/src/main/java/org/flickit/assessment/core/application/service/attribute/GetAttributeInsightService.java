@@ -47,9 +47,9 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
             if (!appAiProperties.isEnabled()) {
                 var aiInsight = new Result.Insight(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED,
                     attribute.getTitle()), null, true);
-                return new Result(aiInsight, null, false);
+                return new Result(aiInsight, null, false, false);
             }
-            return new Result(null, null, editable);
+            return new Result(null, null, editable, false);
         }
 
         var insight = attributeInsight.get();
@@ -60,11 +60,11 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
             aiInsight = new Result.Insight(insight.getAiInsight(),
                 insight.getAiInsightTime(),
                 assessmentResult.getLastCalculationTime().isBefore(insight.getAiInsightTime()));
-            return new Result(aiInsight, null, editable);
+            return new Result(aiInsight, null, editable, insight.isApproved());
         }
         assessorInsight = new Result.Insight(insight.getAssessorInsight(),
             insight.getAssessorInsightTime(),
             assessmentResult.getLastCalculationTime().isBefore(insight.getAssessorInsightTime()));
-        return new Result(null, assessorInsight, editable);
+        return new Result(null, assessorInsight, editable, insight.isApproved());
     }
 }

@@ -12,4 +12,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.41-02" author="Ali Sedaghat">
+        <addColumn tableName="fac_attribute_insight">
+            <column name="approved" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
