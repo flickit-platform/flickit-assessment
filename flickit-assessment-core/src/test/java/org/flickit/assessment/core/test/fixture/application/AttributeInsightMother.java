@@ -13,8 +13,8 @@ public class AttributeInsightMother {
             new Random().nextLong(),
             "ai insight ",
             "assessor insight",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
+            LocalDateTime.now().plusSeconds(10),
+            LocalDateTime.now().plusSeconds(10),
             "input path");
     }
 
@@ -24,7 +24,7 @@ public class AttributeInsightMother {
             "ai insight ",
             "assessor insight",
             LocalDateTime.MIN,
-            LocalDateTime.now(),
+            LocalDateTime.now().plusSeconds(10),
             "input path");
     }
 

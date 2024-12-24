@@ -10,7 +10,7 @@ public class SubjectInsightMother {
     public static SubjectInsight subjectInsight() {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
-            "insight", LocalDateTime.now().plusSeconds(1),
+            "insight", LocalDateTime.now().plusSeconds(10),
             UUID.randomUUID());
     }
 
