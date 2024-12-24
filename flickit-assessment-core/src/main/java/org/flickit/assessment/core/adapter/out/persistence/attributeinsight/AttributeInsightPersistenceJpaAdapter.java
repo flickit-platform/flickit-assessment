@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.data.jpa.core.attributeinsight.AttributeInsightJpaRepository;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class AttributeInsightPersistenceJpaAdapter implements
     LoadAttributeInsightPort,
     CreateAttributeInsightPort,
     UpdateAttributeInsightPort,
-    LoadInsightsDashboardPort {
+    LoadAttributeInsightsPort {
 
     private final AttributeInsightJpaRepository repository;
 
@@ -55,13 +55,10 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadInsightsDashboardPort.Result.InsightTime> loadInsights(UUID assessmentResultId) {
+    public List<AttributeInsight> loadInsights(UUID assessmentResultId) {
         return repository.findByAssessmentResultId(assessmentResultId)
             .stream()
-            .map(e -> {
-                var insightTime = e.getAssessorInsightTime() == null ? e.getAiInsightTime() : e.getAssessorInsightTime();
-                return new LoadInsightsDashboardPort.Result.InsightTime(insightTime);
-            })
+            .map(AttributeInsightMapper::mapToDomain)
             .toList();
     }
 }
