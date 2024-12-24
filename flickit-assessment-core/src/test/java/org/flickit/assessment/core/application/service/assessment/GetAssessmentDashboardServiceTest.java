@@ -91,7 +91,7 @@ class GetAssessmentDashboardServiceTest {
     }
 
     @Test
-    void testGetAssessmentDashboard_validParams_produceResult() {
+    void testGetAssessmentDashboard_assessmentInsightExists_produceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
 
         var assessmentResult = AssessmentResultMother.validResult();
@@ -136,6 +136,56 @@ class GetAssessmentDashboardServiceTest {
         //insights
         assertEquals(10, result.insights().total());
         assertEquals(3, result.insights().notGenerated());
+        assertEquals(2, result.insights().expired());
+        //advices
+        assertEquals(2, result.advices().total());
+    }
+
+    @Test
+    void testGetAssessmentDashboard_assessmentInsightNotExist_produceResult() {
+        var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
+
+        var assessmentResult = AssessmentResultMother.validResult();
+
+        var attributeInsight1 = AttributeInsightMother.simpleAttributeAiInsight();
+        var attributeInsight2 = AttributeInsightMother.simpleAttributeAiInsightMinInsightTime();
+        var attributeInsight3 = AttributeInsightMother.simpleAttributeAiInsightMinInsightsTime();
+
+        var subjectInsight1 = SubjectInsightMother.subjectInsight();
+        var subjectInsight2 = SubjectInsightMother.subjectInsight();
+        var subjectInsight3 = SubjectInsightMother.subjectInsightMinInsightTime();
+
+
+        var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
+        int attributeCount = 7;
+        int subjectsCount = 2;
+        int questionCount = 15;
+        int answerCount = 10;
+        var evidencesPortResult = new LoadEvidencesDashboardPort.Result(questionsEvidences);
+
+        when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
+        when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE)).thenReturn(2);
+        when(loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId())).thenReturn(evidencesPortResult);
+        when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(attributeInsight1, attributeInsight2, attributeInsight3));
+        when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new CountAdviceItemsPort.Result(2));
+        when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
+        when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
+        when(getAssessmentProgressPort.getProgress(param.getId())).thenReturn(new GetAssessmentProgressPort.Result(param.getId(), answerCount, questionCount));
+        when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
+        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
+
+        var result = service.getAssessmentDashboard(param);
+        //questions
+        assertEquals(questionCount, result.questions().total());
+        assertEquals(answerCount, result.questions().answered());
+        assertEquals(5, result.questions().unanswered());
+        assertEquals(2, result.questions().hasLowConfidence());
+        assertEquals(13, result.questions().hasNoEvidence());
+        assertEquals(1, result.questions().hasUnresolvedComments());
+        //insights
+        assertEquals(10, result.insights().total());
+        assertEquals(4, result.insights().notGenerated());
         assertEquals(2, result.insights().expired());
         //advices
         assertEquals(2, result.advices().total());
