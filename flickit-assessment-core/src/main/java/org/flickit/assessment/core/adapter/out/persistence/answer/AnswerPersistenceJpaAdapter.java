@@ -27,7 +27,7 @@ public class AnswerPersistenceJpaAdapter implements
     LoadAnswerPort,
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
-    LoadQuestionsAnswerDashboardPort{
+    LoadQuestionsAnswerDashboardPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -42,11 +42,11 @@ public class AnswerPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND));
         AnswerOptionJpaEntity answerOption = null;
         if (param.answerOptionId() != null)
-            answerOption = answerOptionRepository.findByIdAndKitVersionId (param.answerOptionId(), assessmentResult.getKitVersionId())
+            answerOption = answerOptionRepository.findByIdAndKitVersionId(param.answerOptionId(), assessmentResult.getKitVersionId())
                 .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
 
         if (!Objects.equals(question.getKitVersionId(), assessmentResult.getKitVersionId()) ||
-            (answerOption!=null && !Objects.equals(question.getAnswerRangeId(), answerOption.getAnswerRangeId())) ||
+            (answerOption != null && !Objects.equals(question.getAnswerRangeId(), answerOption.getAnswerRangeId())) ||
             !Objects.equals(question.getQuestionnaireId(), param.questionnaireId()))
             throw new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND);
 
@@ -96,11 +96,16 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadQuestionsDashboard(UUID assessmentResultId, long kitVersionId) {
-        var dashboardAnswers = repository.findByAssessmentResultId(assessmentResultId)
-            .stream()
-            .map(e -> new Result.Answer(e.getId(), e.getConfidenceLevelId()))
-            .toList();
-        return new Result(dashboardAnswers);
+    public Result loadQuestionsDashboard(UUID assessmentResultId) {
+
+        List<AnswerJpaEntity> dashboardAnswers = repository.findByAssessmentResultId(assessmentResultId);
+
+        if (!dashboardAnswers.isEmpty())
+            return new Result(dashboardAnswers
+                .stream()
+                .map(e -> new Result.Answer(e.getId(), e.getConfidenceLevelId()))
+                .toList());
+
+        return new Result(List.of());
     }
 }

@@ -47,7 +47,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getId()).
             orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionsPortResult = loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId(), assessmentResult.getKitVersionId());
+        var questionsPortResult = loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId());
         var progress = getAssessmentProgressPort.getProgress(param.getId());
         var evidencesResult = loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId());
         var insightsResult = loadInsightsDashboardPort.loadInsights(assessmentResult.getId());

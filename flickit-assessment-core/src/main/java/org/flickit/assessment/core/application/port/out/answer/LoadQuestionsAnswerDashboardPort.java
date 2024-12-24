@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface LoadQuestionsAnswerDashboardPort {
 
-    Result loadQuestionsDashboard(UUID assessmentResultId, long kitVersionId);
+    Result loadQuestionsDashboard(UUID assessmentResultId);
 
     record Result(List<Answer> answers) {
 
