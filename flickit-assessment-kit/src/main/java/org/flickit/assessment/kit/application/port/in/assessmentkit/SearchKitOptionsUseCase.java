@@ -44,5 +44,5 @@ public interface SearchKitOptionsUseCase {
         }
     }
 
-    record KitListItem(long id, String title) {}
+    record KitListItem(long id, String title, boolean isPrivate) {}
 }
