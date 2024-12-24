@@ -35,7 +35,8 @@ public class EvidencePersistenceJpaAdapter implements
     DeleteEvidencePort,
     LoadEvidencePort,
     ResolveCommentPort,
-    LoadEvidencesDashboardPort {
+    CountEvidencesPort,
+    CountCommentsPort {
 
     private final EvidenceJpaRepository repository;
     private final AssessmentJpaRepository assessmentRepository;
@@ -116,11 +117,12 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public LoadEvidencesDashboardPort.Result loadEvidencesDashboard(UUID assessmentId) {
-        var evidences = repository.findByAssessmentIdAndDeletedFalse(assessmentId)
-            .stream()
-            .map(e -> new LoadEvidencesDashboardPort.Result.Evidence(e.getId(), e.getType(), e.getResolved(), e.getQuestionId()))
-            .toList();
-        return new LoadEvidencesDashboardPort.Result(evidences);
+    public int countAssessmentEvidences(UUID assessmentResultId) {
+        return repository.countByAssessmentIdAndDeletedFalseAndTypeIsNotNull(assessmentResultId);
+    }
+
+    @Override
+    public int countUnResolvedResolvedComments(UUID assessmentResultId) {
+        return repository.countByAssessmentIdAndDeletedFalseAndTypeIsNullAndResolvedIsNull(assessmentResultId);
     }
 }

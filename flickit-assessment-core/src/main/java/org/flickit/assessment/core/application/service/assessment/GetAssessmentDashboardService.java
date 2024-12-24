@@ -14,7 +14,8 @@ import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAs
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
-import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesDashboardPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountCommentsPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
     private final CountAdviceItemsPort loadAdvicesDashboardPort;
-    private final LoadEvidencesDashboardPort loadEvidencesDashboardPort;
+    private final CountEvidencesPort countEvidencesPort;
+    private final CountCommentsPort countCommentsPort;
     private final CountAttributesPort countAttributesPort;
     private final CountSubjectsPort countSubjectsPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
@@ -57,7 +59,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
         var countLowConfidenceAnswers = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE);
         var progress = getAssessmentProgressPort.getProgress(param.getId());
-        var evidencesResult = loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId());
+        var evidencesCount = countEvidencesPort.countAssessmentEvidences(param.getId());
+        var commentsCount = countCommentsPort.countUnResolvedResolvedComments(param.getId());
         var attributeInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
         var subjectsInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()).orElse(null);
@@ -65,20 +68,19 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var advicesResult = loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId());
 
-        return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, evidencesResult),
+        return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, evidencesCount, commentsCount),
             buildInsightsResult(attributeInsights, subjectsInsights, assessmentResult.getLastCalculationTime(), assessmentInsight, attributesCount, subjectsCount),
             buildAdvices(advicesResult)
         );
     }
 
-    private Result.Questions buildQuestionsResult(int countLowConfidenceAnswers, GetAssessmentProgressPort.Result progress, LoadEvidencesDashboardPort.Result evidencesResult) {
+    private Result.Questions buildQuestionsResult(int countLowConfidenceAnswers, GetAssessmentProgressPort.Result progress, int evidencesCount, int commentsCount) {
         return new Result.Questions(progress.questionsCount(),
             progress.answersCount(),
             progress.questionsCount() - progress.answersCount(),
             countLowConfidenceAnswers,
-            progress.questionsCount() -
-                evidencesResult.evidences().stream().filter(e -> e.type() != null).map(LoadEvidencesDashboardPort.Result.Evidence::questionId).distinct().count(),
-            evidencesResult.evidences().stream().filter(e -> e.type() == null && e.resolved() == null).count());
+            progress.questionsCount() - evidencesCount,
+            commentsCount);
     }
 
     private Result.Insights buildInsightsResult(List<AttributeInsight> attributeInsights, List<SubjectInsight> subjectsInsights, LocalDateTime lastCalculationTime, AssessmentInsight assessmentInsight, int attributesCount, int subjectsCount) {

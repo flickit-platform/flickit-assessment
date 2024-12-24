@@ -14,7 +14,8 @@ import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAs
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
-import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesDashboardPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountCommentsPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother;
@@ -58,9 +59,6 @@ class GetAssessmentDashboardServiceTest {
     private CountAdviceItemsPort loadAdvicesDashboardPort;
 
     @Mock
-    private LoadEvidencesDashboardPort loadEvidencesDashboardPort;
-
-    @Mock
     private CountSubjectsPort countSubjectsPort;
 
     @Mock
@@ -75,18 +73,18 @@ class GetAssessmentDashboardServiceTest {
     @Mock
     private LoadAssessmentInsightPort loadAssessmentInsightPort;
 
+    @Mock
+    private CountCommentsPort countCommentsPort;
+
+    @Mock
+    private CountEvidencesPort countEvidencesPort;
+
     private final int attributeCount = 7;
     private final int subjectsCount = 2;
     private final int questionCount = 15;
     private final int answerCount = 10;
-
-    private final LoadEvidencesDashboardPort.Result.Evidence evidence1 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 124L);
-    private final LoadEvidencesDashboardPort.Result.Evidence evidence2 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 1, null, 125L);
-    private final LoadEvidencesDashboardPort.Result.Evidence evidence3 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 125L);
-    private final LoadEvidencesDashboardPort.Result.Evidence evidence4 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), null, null, 125L);
-    private final LoadEvidencesDashboardPort.Result.Evidence evidence5 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), null, true, 126);
-    private final LoadEvidencesDashboardPort.Result evidencesPortResult =
-        new LoadEvidencesDashboardPort.Result(List.of(evidence1, evidence2, evidence3, evidence4, evidence5));
+    private final int commentsCount = 1;
+    private final int evidencesCount = 3;
 
     private final AttributeInsight attributeInsight1 = AttributeInsightMother.simpleAttributeAiInsight();
     private final AttributeInsight attributeInsight2 = AttributeInsightMother.simpleAttributeAiInsightMinInsightTime();
@@ -115,7 +113,6 @@ class GetAssessmentDashboardServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE)).thenReturn(2);
-        when(loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId())).thenReturn(evidencesPortResult);
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(attributeInsight1, attributeInsight2, attributeInsight3));
         when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new CountAdviceItemsPort.Result(2));
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
@@ -123,6 +120,8 @@ class GetAssessmentDashboardServiceTest {
         when(getAssessmentProgressPort.getProgress(param.getId())).thenReturn(new GetAssessmentProgressPort.Result(param.getId(), answerCount, questionCount));
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
+        when(countCommentsPort.countUnResolvedResolvedComments(param.getId())).thenReturn(commentsCount);
+        when(countEvidencesPort.countAssessmentEvidences(param.getId())).thenReturn(evidencesCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -130,7 +129,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
         assertEquals(2, result.questions().hasLowConfidence());
-        assertEquals(13, result.questions().hasNoEvidence());
+        assertEquals(12, result.questions().hasNoEvidence());
         assertEquals(1, result.questions().hasUnresolvedComments());
         //insights
         assertEquals(10, result.insights().total());
@@ -148,7 +147,6 @@ class GetAssessmentDashboardServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE)).thenReturn(2);
-        when(loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId())).thenReturn(evidencesPortResult);
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(attributeInsight1, attributeInsight2, attributeInsight3));
         when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new CountAdviceItemsPort.Result(2));
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
@@ -156,6 +154,8 @@ class GetAssessmentDashboardServiceTest {
         when(getAssessmentProgressPort.getProgress(param.getId())).thenReturn(new GetAssessmentProgressPort.Result(param.getId(), answerCount, questionCount));
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
+        when(countCommentsPort.countUnResolvedResolvedComments(param.getId())).thenReturn(commentsCount);
+        when(countEvidencesPort.countAssessmentEvidences(param.getId())).thenReturn(evidencesCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -163,7 +163,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
         assertEquals(2, result.questions().hasLowConfidence());
-        assertEquals(13, result.questions().hasNoEvidence());
+        assertEquals(12, result.questions().hasNoEvidence());
         assertEquals(1, result.questions().hasUnresolvedComments());
         //insights
         assertEquals(10, result.insights().total());
@@ -182,7 +182,6 @@ class GetAssessmentDashboardServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE)).thenReturn(2);
-        when(loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId())).thenReturn(evidencesPortResult);
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(attributeInsight1, attributeInsight2, attributeInsight3));
         when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new CountAdviceItemsPort.Result(2));
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
@@ -190,6 +189,8 @@ class GetAssessmentDashboardServiceTest {
         when(getAssessmentProgressPort.getProgress(param.getId())).thenReturn(new GetAssessmentProgressPort.Result(param.getId(), answerCount, questionCount));
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
+        when(countCommentsPort.countUnResolvedResolvedComments(param.getId())).thenReturn(commentsCount);
+        when(countEvidencesPort.countAssessmentEvidences(param.getId())).thenReturn(evidencesCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -197,7 +198,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
         assertEquals(2, result.questions().hasLowConfidence());
-        assertEquals(13, result.questions().hasNoEvidence());
+        assertEquals(12, result.questions().hasNoEvidence());
         assertEquals(1, result.questions().hasUnresolvedComments());
         //insights
         assertEquals(10, result.insights().total());
