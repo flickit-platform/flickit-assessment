@@ -54,6 +54,7 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
             assessorInsight,
             null,
             LocalDateTime.now(),
-            null);
+            null,
+            true);
     }
 }

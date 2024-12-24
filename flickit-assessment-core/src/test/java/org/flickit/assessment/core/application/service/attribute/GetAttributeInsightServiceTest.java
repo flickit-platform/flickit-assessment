@@ -105,6 +105,7 @@ class GetAttributeInsightServiceTest {
         assertTrue(result.aiInsight().isValid());
         assertNull(result.assessorInsight());
         assertFalse(result.editable());
+        assertFalse(result.approved());
     }
 
     @Test
@@ -125,6 +126,7 @@ class GetAttributeInsightServiceTest {
         assertNull(result.aiInsight());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
+        assertFalse(result.approved());
     }
 
     @Test
@@ -145,6 +147,7 @@ class GetAttributeInsightServiceTest {
         assertNull(result.aiInsight());
         assertNull(result.assessorInsight());
         assertFalse(result.editable());
+        assertFalse(result.approved());
     }
 
     @Test
@@ -159,7 +162,8 @@ class GetAttributeInsightServiceTest {
             "assessor insight",
             LocalDateTime.now(),
             LocalDateTime.now().plusDays(1),
-            "input path");
+            "input path",
+            true);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -174,6 +178,7 @@ class GetAttributeInsightServiceTest {
         assertEquals(attributeInsight.getAssessorInsightTime(), result.assessorInsight().creationTime());
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
+        assertTrue(result.approved());
     }
 
     @Test
@@ -188,7 +193,8 @@ class GetAttributeInsightServiceTest {
             "assessor insight",
             LocalDateTime.now(),
             LocalDateTime.now().minusDays(1),
-            "input path");
+            "input path",
+            true);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -203,6 +209,7 @@ class GetAttributeInsightServiceTest {
         assertEquals(attributeInsight.getAssessorInsightTime(), result.assessorInsight().creationTime());
         assertFalse(result.assessorInsight().isValid());
         assertTrue(result.editable());
+        assertTrue(result.approved());
     }
 
     @Test
@@ -217,7 +224,8 @@ class GetAttributeInsightServiceTest {
             null,
             LocalDateTime.now().minusDays(1),
             null,
-            "input path");
+            "input path",
+            false);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -232,6 +240,7 @@ class GetAttributeInsightServiceTest {
         assertFalse(result.aiInsight().isValid());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
+        assertFalse(result.approved());
     }
 
     @Test
@@ -246,7 +255,8 @@ class GetAttributeInsightServiceTest {
             null,
             LocalDateTime.now().plusDays(1),
             null,
-            "input path");
+            "input path",
+            false);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -261,5 +271,6 @@ class GetAttributeInsightServiceTest {
         assertTrue(result.aiInsight().isValid());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
+        assertFalse(result.approved());
     }
 }

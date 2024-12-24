@@ -135,6 +135,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             null,
             LocalDateTime.now(),
             null,
-            aiInputPath);
+            aiInputPath,
+            false);
     }
 }
