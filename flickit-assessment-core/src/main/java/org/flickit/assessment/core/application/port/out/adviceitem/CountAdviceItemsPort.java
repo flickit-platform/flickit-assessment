@@ -6,6 +6,6 @@ public interface CountAdviceItemsPort {
 
     Result countAdviceItems(UUID assessmentResultId);
 
-    record Result (long total) {
+    record Result(long total) {
     }
 }
