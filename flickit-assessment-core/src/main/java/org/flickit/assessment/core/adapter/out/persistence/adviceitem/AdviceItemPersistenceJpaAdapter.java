@@ -11,11 +11,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AdviceItemPersistenceJpaAdapter implements CountAdviceItemsPort {
 
-    private final AdviceItemJpaRepository adviceItemJpaRepository;
+    private final AdviceItemJpaRepository adviceItemRepository;
 
     @Override
     public CountAdviceItemsPort.Result countAdviceItems(UUID assessmentResultId) {
-        int count = adviceItemJpaRepository.countByAssessmentResultId(assessmentResultId);
+        int count = adviceItemRepository.countByAssessmentResultId(assessmentResultId);
         return new CountAdviceItemsPort.Result(count);
     }
 }
