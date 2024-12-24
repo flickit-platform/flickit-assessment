@@ -489,14 +489,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/3bfa613e-4e50-46a4-96aa-a061f104224e",
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/dashboard",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"3bfa613e-4e50-46a4-96aa-a061f104224e"
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"dashboard"
 							]
 						}
 					},
