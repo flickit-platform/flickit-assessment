@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
@@ -13,6 +14,7 @@ import org.flickit.assessment.core.application.port.out.attribute.CountAttribute
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesDashboardPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
+import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final CountSubjectsPort countSubjectsPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
+    private final LoadSubjectInsightsPort loadSubjectInsightsPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -52,13 +55,14 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var countLowConfidenceAnswers = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE);
         var progress = getAssessmentProgressPort.getProgress(param.getId());
         var evidencesResult = loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId());
-        var insightsResult = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
+        var attributeInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
+        var subjectsInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
         var attributesCount = countAttributesPort.countAttributes(assessmentResult.getKitVersionId());
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var advicesResult = loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId());
 
         return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, evidencesResult),
-            buildInsightsResult(insightsResult, assessmentResult.getLastCalculationTime(), attributesCount, subjectsCount),
+            buildInsightsResult(attributeInsights, subjectsInsights, assessmentResult.getLastCalculationTime(), attributesCount, subjectsCount),
             buildAdvices(advicesResult)
         );
     }
@@ -73,19 +77,24 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             evidencesResult.evidences().stream().filter(e -> e.type() == null && e.resolved() == null).count());
     }
 
-    private Result.Insights buildInsightsResult(List<AttributeInsight> attributeInsights, LocalDateTime lastCalculationTime, int attributesCount, int subjectsCount) {
+    private Result.Insights buildInsightsResult(List<AttributeInsight> attributeInsights, List<SubjectInsight> subjectsInsights, LocalDateTime lastCalculationTime, int attributesCount, int subjectsCount) {
         int total = attributesCount + subjectsCount + 1;
-        var expired = attributeInsights
+        var expiredAttributeInsights = attributeInsights
             .stream()
             .map(e -> e.getAiInsightTime().isBefore(e.getAssessorInsightTime()) ?
                 e.getAssessorInsightTime() : e.getAiInsightTime())
             .filter(e -> e.isBefore(lastCalculationTime))
             .count();
 
+        var expiredSubjectsInsights = subjectsInsights
+            .stream()
+            .filter(e -> e.getInsightTime().isBefore(lastCalculationTime))
+            .count();
+
         return new Result.Insights(total,
-            total - attributeInsights.size(),
+            total - (attributeInsights.size() + subjectsInsights.size()),
             null,
-            expired
+            expiredAttributeInsights + expiredSubjectsInsights
         );
     }
 
