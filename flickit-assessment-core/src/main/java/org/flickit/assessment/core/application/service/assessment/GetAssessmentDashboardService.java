@@ -59,7 +59,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
         var countLowConfidenceAnswers = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE);
         var progress = getAssessmentProgressPort.getProgress(param.getId());
-        var evidencesCount = countEvidencesPort.countAssessmentEvidences(param.getId());
+        var questionsWithEvidenceCount = countEvidencesPort.countQuestionsHavingEvidence(param.getId());
         var commentsCount = countCommentsPort.countUnResolvedResolvedComments(param.getId());
         var attributeInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
         var subjectsInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
@@ -68,7 +68,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var advicesResult = loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId());
 
-        return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, evidencesCount, commentsCount),
+        return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, questionsWithEvidenceCount, commentsCount),
             buildInsightsResult(attributeInsights, subjectsInsights, assessmentResult.getLastCalculationTime(), assessmentInsight, attributesCount, subjectsCount),
             buildAdvices(advicesResult)
         );

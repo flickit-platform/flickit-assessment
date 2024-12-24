@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,10 +16,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     boolean existsByIdAndDeletedFalse(UUID evidenceId);
 
     Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
-
-    List<EvidenceJpaEntity> findByAssessmentIdAndDeletedFalse(UUID assessmentId);
-
-    int countByAssessmentIdAndDeletedFalseAndTypeIsNotNull(UUID assessmentId);
 
     int countByAssessmentIdAndDeletedFalseAndTypeIsNullAndResolvedIsNull(UUID assessmentResultId);
 
@@ -77,4 +72,13 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     void resolveComment(@Param("evidenceId") UUID evidenceId,
                         @Param("lastModifiedBy") UUID lastModifiedBy,
                         @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Query("""
+            SELECT COUNT(DISTINCT e.questionId)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.deleted = false
+                AND e.type IS NOT NULL
+        """)
+    int countQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
 }

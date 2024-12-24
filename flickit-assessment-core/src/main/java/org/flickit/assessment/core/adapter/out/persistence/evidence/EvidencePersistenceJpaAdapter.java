@@ -117,8 +117,8 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public int countAssessmentEvidences(UUID assessmentResultId) {
-        return repository.countByAssessmentIdAndDeletedFalseAndTypeIsNotNull(assessmentResultId);
+    public int countQuestionsHavingEvidence(UUID assessmentId) {
+        return repository.countQuestionsHavingEvidence(assessmentId);
     }
 
     @Override
