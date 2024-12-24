@@ -14,6 +14,8 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
 
     Optional<AttributeInsightJpaEntity> findByAssessmentResultIdAndAttributeId(UUID assessmentResultId, Long attributeId);
 
+    List<AttributeInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+
     @Modifying
     @Query("""
             UPDATE AttributeInsightJpaEntity a
@@ -42,6 +44,4 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
                                @Param("assessorInsight") String assessorInsight,
                                @Param("assessorInsightTime") LocalDateTime assessorInsightTime);
 
-
-    List<AttributeInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 }
