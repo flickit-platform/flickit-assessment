@@ -3,12 +3,14 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
@@ -43,6 +45,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
+    private final LoadAssessmentInsightPort loadAssessmentInsightPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -57,12 +60,13 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var evidencesResult = loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId());
         var attributeInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
         var subjectsInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
+        var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()).orElse(null);
         var attributesCount = countAttributesPort.countAttributes(assessmentResult.getKitVersionId());
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var advicesResult = loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId());
 
         return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, evidencesResult),
-            buildInsightsResult(attributeInsights, subjectsInsights, assessmentResult.getLastCalculationTime(), attributesCount, subjectsCount),
+            buildInsightsResult(attributeInsights, subjectsInsights, assessmentResult.getLastCalculationTime(), assessmentInsight, attributesCount, subjectsCount),
             buildAdvices(advicesResult)
         );
     }
@@ -77,7 +81,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             evidencesResult.evidences().stream().filter(e -> e.type() == null && e.resolved() == null).count());
     }
 
-    private Result.Insights buildInsightsResult(List<AttributeInsight> attributeInsights, List<SubjectInsight> subjectsInsights, LocalDateTime lastCalculationTime, int attributesCount, int subjectsCount) {
+    private Result.Insights buildInsightsResult(List<AttributeInsight> attributeInsights, List<SubjectInsight> subjectsInsights, LocalDateTime lastCalculationTime, AssessmentInsight assessmentInsight, int attributesCount, int subjectsCount) {
         int total = attributesCount + subjectsCount + 1;
         var expiredAttributeInsights = attributeInsights
             .stream()
@@ -91,10 +95,11 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             .filter(e -> e.getInsightTime().isBefore(lastCalculationTime))
             .count();
 
+        var assessmentInsightExpired = assessmentInsight != null && assessmentInsight.getInsightTime().isBefore(lastCalculationTime) ? 1 : 0;
         return new Result.Insights(total,
-            total - (attributeInsights.size() + subjectsInsights.size()),
+            total - (attributeInsights.size() + subjectsInsights.size() + (assessmentInsight == null ? 0 : 1)),
             null,
-            expiredAttributeInsights + expiredSubjectsInsights
+            expiredAttributeInsights + expiredSubjectsInsights + assessmentInsightExpired
         );
     }
 

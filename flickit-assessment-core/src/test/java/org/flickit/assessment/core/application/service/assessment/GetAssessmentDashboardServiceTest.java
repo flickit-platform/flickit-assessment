@@ -8,12 +8,14 @@ import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentD
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
+import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesDashboardPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.AttributeInsightMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
@@ -68,6 +70,9 @@ class GetAssessmentDashboardServiceTest {
     @Mock
     private LoadSubjectInsightsPort loadSubjectInsightsPort;
 
+    @Mock
+    private LoadAssessmentInsightPort loadAssessmentInsightPort;
+
     private final LoadEvidencesDashboardPort.Result.Evidence evidence1 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 124L);
     private final LoadEvidencesDashboardPort.Result.Evidence evidence2 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 1, null, 125L);
     private final LoadEvidencesDashboardPort.Result.Evidence evidence3 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 125L);
@@ -99,6 +104,8 @@ class GetAssessmentDashboardServiceTest {
         var subjectInsight2 = SubjectInsightMother.subjectInsight();
         var subjectInsight3 = SubjectInsightMother.subjectInsightMinInsightTime();
 
+        var assessmentInsight = AssessmentInsightMother.createSimpleAssessmentInsight();
+
         var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
         int attributeCount = 7;
         int subjectsCount = 2;
@@ -116,6 +123,7 @@ class GetAssessmentDashboardServiceTest {
         when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
         when(getAssessmentProgressPort.getProgress(param.getId())).thenReturn(new GetAssessmentProgressPort.Result(param.getId(), answerCount, questionCount));
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
+        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -127,7 +135,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(1, result.questions().hasUnresolvedComments());
         //insights
         assertEquals(10, result.insights().total());
-        assertEquals(4, result.insights().notGenerated());
+        assertEquals(3, result.insights().notGenerated());
         assertEquals(2, result.insights().expired());
         //advices
         assertEquals(2, result.advices().total());
