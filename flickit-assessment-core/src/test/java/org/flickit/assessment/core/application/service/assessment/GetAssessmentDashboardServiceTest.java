@@ -97,6 +97,7 @@ class GetAssessmentDashboardServiceTest {
 
         var subjectInsight1 = SubjectInsightMother.subjectInsight();
         var subjectInsight2 = SubjectInsightMother.subjectInsight();
+        var subjectInsight3 = SubjectInsightMother.subjectInsightMinInsightTime();
 
         var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
         int attributeCount = 7;
@@ -114,7 +115,7 @@ class GetAssessmentDashboardServiceTest {
         when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId())).thenReturn(subjectsCount);
         when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId())).thenReturn(attributeCount);
         when(getAssessmentProgressPort.getProgress(param.getId())).thenReturn(new GetAssessmentProgressPort.Result(param.getId(), answerCount, questionCount));
-        when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2));
+        when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -126,8 +127,8 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(1, result.questions().hasUnresolvedComments());
         //insights
         assertEquals(10, result.insights().total());
-        assertEquals(5, result.insights().notGenerated());
-        assertEquals(1, result.insights().expired());
+        assertEquals(4, result.insights().notGenerated());
+        assertEquals(2, result.insights().expired());
         //advices
         assertEquals(2, result.advices().total());
     }

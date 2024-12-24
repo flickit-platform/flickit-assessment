@@ -8,6 +8,16 @@ import java.util.UUID;
 public class SubjectInsightMother {
 
     public static SubjectInsight subjectInsight() {
-        return new SubjectInsight(UUID.randomUUID(), 2L, "insight", LocalDateTime.now().plusSeconds(1), UUID.randomUUID());
+        return new SubjectInsight(UUID.randomUUID(),
+            2L,
+            "insight", LocalDateTime.now().plusSeconds(1),
+            UUID.randomUUID());
+    }
+
+    public static SubjectInsight subjectInsightMinInsightTime() {
+        return new SubjectInsight(UUID.randomUUID(),
+            2L,
+            "insight", LocalDateTime.MIN,
+            UUID.randomUUID());
     }
 }
