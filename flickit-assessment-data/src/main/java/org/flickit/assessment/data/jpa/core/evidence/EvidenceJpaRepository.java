@@ -17,8 +17,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     Optional<EvidenceJpaEntity> findByIdAndDeletedFalse(UUID id);
 
-    int countByAssessmentIdAndDeletedFalseAndTypeIsNullAndResolvedIsNull(UUID assessmentResultId);
-
     @Query("""
             SELECT
                 e.id as id,
@@ -81,4 +79,14 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND e.type IS NOT NULL
         """)
     int countQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.deleted = false
+                AND e.type IS NULL
+                AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    int countUnresolvedComments(@Param("assessmentId") UUID assessmentId);
 }

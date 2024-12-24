@@ -35,8 +35,7 @@ public class EvidencePersistenceJpaAdapter implements
     DeleteEvidencePort,
     LoadEvidencePort,
     ResolveCommentPort,
-    CountEvidencesPort,
-    CountCommentsPort {
+    CountEvidencesPort {
 
     private final EvidenceJpaRepository repository;
     private final AssessmentJpaRepository assessmentRepository;
@@ -122,7 +121,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public int countUnResolvedResolvedComments(UUID assessmentResultId) {
-        return repository.countByAssessmentIdAndDeletedFalseAndTypeIsNullAndResolvedIsNull(assessmentResultId);
+    public int countUnresolvedComments(UUID assessmentId) {
+        return repository.countUnresolvedComments(assessmentId);
     }
 }

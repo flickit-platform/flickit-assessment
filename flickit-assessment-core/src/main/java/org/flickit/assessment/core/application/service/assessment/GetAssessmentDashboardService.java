@@ -14,7 +14,6 @@ import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAs
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
-import org.flickit.assessment.core.application.port.out.evidence.CountCommentsPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
@@ -41,7 +40,6 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
     private final CountAdviceItemsPort loadAdvicesDashboardPort;
     private final CountEvidencesPort countEvidencesPort;
-    private final CountCommentsPort countCommentsPort;
     private final CountAttributesPort countAttributesPort;
     private final CountSubjectsPort countSubjectsPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
@@ -60,7 +58,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var countLowConfidenceAnswers = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE);
         var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
         var evidencesCount = countEvidencesPort.countQuestionsHavingEvidence(param.getAssessmentId());
-        var commentsCount = countCommentsPort.countUnResolvedResolvedComments(param.getAssessmentId());
+        var commentsCount = countEvidencesPort.countUnresolvedComments(param.getAssessmentId());
         var attributeInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
         var subjectsInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()).orElse(null);

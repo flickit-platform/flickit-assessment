@@ -4,5 +4,7 @@ import java.util.UUID;
 
 public interface CountEvidencesPort {
 
-    int countQuestionsHavingEvidence(UUID assessmentResultId);
+    int countQuestionsHavingEvidence(UUID assessmentId);
+
+    int countUnresolvedComments(UUID assessmentId);
 }
