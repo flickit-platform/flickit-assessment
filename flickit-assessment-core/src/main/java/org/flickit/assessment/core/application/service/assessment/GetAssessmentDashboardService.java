@@ -3,10 +3,11 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesDashboardPort;
@@ -31,13 +32,13 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final LoadQuestionsAnswerDashboardPort loadQuestionsAnswerDashboardPort;
     private final LoadInsightsDashboardPort loadInsightsDashboardPort;
     private final CountAdviceItemsPort loadAdvicesDashboardPort;
     private final LoadEvidencesDashboardPort loadEvidencesDashboardPort;
     private final CountAttributesPort countAttributesPort;
     private final CountSubjectsPort countSubjectsPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
+    private final CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -47,7 +48,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getId()).
             orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var questionsPortResult = loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId());
+        var countLowConfidenceAnswers = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE);
         var progress = getAssessmentProgressPort.getProgress(param.getId());
         var evidencesResult = loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId());
         var insightsResult = loadInsightsDashboardPort.loadInsights(assessmentResult.getId());
@@ -55,17 +56,17 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var advicesResult = loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId());
 
-        return new Result(buildQuestionsResult(questionsPortResult, progress, evidencesResult),
+        return new Result(buildQuestionsResult(countLowConfidenceAnswers, progress, evidencesResult),
             buildInsightsResult(insightsResult, assessmentResult.getLastCalculationTime(), attributesCount, subjectsCount),
             buildAdvices(advicesResult)
         );
     }
 
-    private Result.Questions buildQuestionsResult(LoadQuestionsAnswerDashboardPort.Result answerResult, GetAssessmentProgressPort.Result progress, LoadEvidencesDashboardPort.Result evidencesResult) {
+    private Result.Questions buildQuestionsResult(int countLowConfidenceAnswers, GetAssessmentProgressPort.Result progress, LoadEvidencesDashboardPort.Result evidencesResult) {
         return new Result.Questions(progress.questionsCount(),
             progress.answersCount(),
             progress.questionsCount() - progress.answersCount(),
-            answerResult.answers().stream().filter(e -> e.confidence() <= 2).count(),
+            countLowConfidenceAnswers,
             progress.questionsCount() -
                 evidencesResult.evidences().stream().filter(e -> e.type() != null).map(LoadEvidencesDashboardPort.Result.Evidence::questionId).distinct().count(),
             evidencesResult.evidences().stream().filter(e -> e.type() == null && e.resolved() == null).count());

@@ -3,11 +3,12 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerDashboardPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadInsightsDashboardPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesDashboardPort;
@@ -42,7 +43,7 @@ class GetAssessmentDashboardServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    private LoadQuestionsAnswerDashboardPort loadQuestionsAnswerDashboardPort;
+    private CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
 
     @Mock
     private LoadInsightsDashboardPort loadInsightsDashboardPort;
@@ -62,10 +63,6 @@ class GetAssessmentDashboardServiceTest {
     @Mock
     private GetAssessmentProgressPort getAssessmentProgressPort;
 
-
-    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers1 = new LoadQuestionsAnswerDashboardPort.Result.Answer(UUID.randomUUID(), 1);
-    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers2 = new LoadQuestionsAnswerDashboardPort.Result.Answer(UUID.randomUUID(), 2);
-    private final LoadQuestionsAnswerDashboardPort.Result.Answer questionAnswers3 = new LoadQuestionsAnswerDashboardPort.Result.Answer(UUID.randomUUID(), 3);
     private final LoadEvidencesDashboardPort.Result.Evidence evidence1 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 124L);
     private final LoadEvidencesDashboardPort.Result.Evidence evidence2 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 1, null, 125L);
     private final LoadEvidencesDashboardPort.Result.Evidence evidence3 = new LoadEvidencesDashboardPort.Result.Evidence(UUID.randomUUID(), 0, null, 125L);
@@ -89,18 +86,16 @@ class GetAssessmentDashboardServiceTest {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
 
-        var questionAnswers = List.of(questionAnswers1, questionAnswers2, questionAnswers3);
         var questionsEvidences = List.of(evidence1, evidence2, evidence3, evidence4, evidence5);
         int attributeCount = 7;
         int subjectsCount = 2;
         int questionCount = 15;
         int answerCount = 10;
-        var questionAnswerPortResult = new LoadQuestionsAnswerDashboardPort.Result(questionAnswers);
         var evidencesPortResult = new LoadEvidencesDashboardPort.Result(questionsEvidences);
 
         when(assessmentAccessChecker.isAuthorized(param.getId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionsAnswerDashboardPort.loadQuestionsDashboard(assessmentResult.getId())).thenReturn(questionAnswerPortResult);
+        when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), ConfidenceLevel.SOMEWHAT_UNSURE)).thenReturn(2);
         when(loadEvidencesDashboardPort.loadEvidencesDashboard(param.getId())).thenReturn(evidencesPortResult);
         when(loadInsightsDashboardPort.loadInsights(assessmentResult.getId())).thenReturn(List.of(insight1, insight2));
         when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(new CountAdviceItemsPort.Result(2));

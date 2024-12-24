@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -27,7 +28,7 @@ public class AnswerPersistenceJpaAdapter implements
     LoadAnswerPort,
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
-    LoadQuestionsAnswerDashboardPort {
+    CountLowConfidenceAnswersPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -96,16 +97,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public Result loadQuestionsDashboard(UUID assessmentResultId) {
-
-        List<AnswerJpaEntity> dashboardAnswers = repository.findByAssessmentResultId(assessmentResultId);
-
-        if (!dashboardAnswers.isEmpty())
-            return new Result(dashboardAnswers
-                .stream()
-                .map(e -> new Result.Answer(e.getId(), e.getConfidenceLevelId()))
-                .toList());
-
-        return new Result(List.of());
+    public int countWithConfidenceLessThan(UUID assessmentResultId, ConfidenceLevel confidence) {
+        return repository.countWithConfidenceLessThan(assessmentResultId, confidence.ordinal());
     }
 }
