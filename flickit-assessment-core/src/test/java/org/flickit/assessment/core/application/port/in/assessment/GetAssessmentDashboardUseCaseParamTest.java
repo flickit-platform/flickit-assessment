@@ -9,15 +9,15 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GetAssessmentDashboardUseCaseParamTest {
 
     @Test
     void testGetAssessmentDashboardUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
         ConstraintViolationException throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.id(null)));
-        assertThat(throwable).hasMessage("id: " + GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL);
+            () -> createParam(b -> b.assessmentId(null)));
+        assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
@@ -35,7 +35,7 @@ class GetAssessmentDashboardUseCaseParamTest {
 
     private GetAssessmentDashboardUseCase.Param.ParamBuilder paramBuilder() {
         return GetAssessmentDashboardUseCase.Param.builder()
-            .id(UUID.randomUUID())
+            .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
 }

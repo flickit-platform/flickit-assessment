@@ -104,7 +104,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     }
 
 
-    private Result.Advices buildAdvices(CountAdviceItemsPort.Result dashboardAdvicesResult) {
-        return new Result.Advices(dashboardAdvicesResult.total());
+    private Result.Advices buildAdvices(UUID assessmentResultId) {
+        var adviceItemsCount = loadAdvicesDashboardPort.countAdviceItems(assessmentResultId);
+        return new Result.Advices(adviceItemsCount);
     }
 }

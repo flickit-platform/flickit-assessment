@@ -4,8 +4,5 @@ import java.util.UUID;
 
 public interface CountAdviceItemsPort {
 
-    Result countAdviceItems(UUID assessmentResultId);
-
-    record Result(long total) {
-    }
+    int countAdviceItems(UUID assessmentResultId);
 }

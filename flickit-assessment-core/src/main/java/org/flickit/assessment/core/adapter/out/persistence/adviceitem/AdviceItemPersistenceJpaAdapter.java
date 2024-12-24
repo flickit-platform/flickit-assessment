@@ -14,8 +14,7 @@ public class AdviceItemPersistenceJpaAdapter implements CountAdviceItemsPort {
     private final AdviceItemJpaRepository adviceItemRepository;
 
     @Override
-    public CountAdviceItemsPort.Result countAdviceItems(UUID assessmentResultId) {
-        int count = adviceItemRepository.countByAssessmentResultId(assessmentResultId);
-        return new CountAdviceItemsPort.Result(count);
+    public int countAdviceItems(UUID assessmentResultId) {
+        return adviceItemRepository.countByAssessmentResultId(assessmentResultId);
     }
 }
