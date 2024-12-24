@@ -61,4 +61,14 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<QuestionnaireIdAndAnswerCountView> getQuestionnairesProgressByAssessmentResultId(
         @Param(value = "assessmentResultId") UUID assessmentResultId,
         @Param(value = "questionnaireIds") List<Long> questionnaireIds);
+
+    @Query("""
+            SELECT COUNT(a)
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id=:assessmentResultId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.confidenceLevelId < :confidence
+        """)
+    int countWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
+                                    @Param("confidence") int confidence);
 }
