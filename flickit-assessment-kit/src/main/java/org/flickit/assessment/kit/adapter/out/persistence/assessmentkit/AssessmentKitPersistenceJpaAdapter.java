@@ -66,7 +66,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         PageRequest pageRequest = PageRequest.of(
             param.page(),
             param.size(),
-            Sort.by(Sort.Order.asc(UserJpaEntity.Fields.NAME))
+            Sort.by(Sort.Order.asc(UserJpaEntity.Fields.displayName))
         );
 
         Page<UserJpaEntity> pageResult = repository.findAllKitUsers(param.kitId(), pageRequest);
@@ -79,7 +79,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
             users,
             pageResult.getNumber(),
             pageResult.getSize(),
-            UserJpaEntity.Fields.NAME,
+            UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -191,7 +191,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentKitJpaEntity.Fields.TITLE,
+            AssessmentKitJpaEntity.Fields.title,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -210,7 +210,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
             items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentKitJpaEntity.Fields.TITLE,
+            AssessmentKitJpaEntity.Fields.title,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
@@ -248,7 +248,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         return new PaginatedResponse<>(items,
             pageResult.getNumber(),
             pageResult.getSize(),
-            AssessmentKitJpaEntity.Fields.LAST_MODIFICATION_TIME,
+            AssessmentKitJpaEntity.Fields.lastModificationTime,
             Sort.Direction.DESC.name().toLowerCase(),
             (int) pageResult.getTotalElements());
     }
@@ -258,7 +258,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         String query = param.query() == null ? "" : param.query();
         Page<AssessmentKitJpaEntity> kitEntityPage = repository.findAllByTitleAndUserId(query,
             param.currentUserId(),
-            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, AssessmentKitJpaEntity.Fields.TITLE));
+            PageRequest.of(param.page(), param.size(), Sort.Direction.ASC, AssessmentKitJpaEntity.Fields.title));
 
         List<AssessmentKit> kits = kitEntityPage.getContent().stream()
             .map(AssessmentKitMapper::mapToDomainModel)
@@ -267,7 +267,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         return new PaginatedResponse<>(kits,
             kitEntityPage.getNumber(),
             kitEntityPage.getSize(),
-            AssessmentKitJpaEntity.Fields.TITLE,
+            AssessmentKitJpaEntity.Fields.title,
             Sort.Direction.ASC.name().toLowerCase(),
             (int) kitEntityPage.getTotalElements());
     }

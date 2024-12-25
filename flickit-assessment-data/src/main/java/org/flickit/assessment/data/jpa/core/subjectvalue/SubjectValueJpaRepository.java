@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.core.subjectvalue;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,5 +25,5 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
             JOIN SubjectJpaEntity s ON sv.subjectId = s.id AND sv.assessmentResult.kitVersionId = s.kitVersionId
             WHERE sv.assessmentResult.id = :assessmentResultId
         """)
-    List<SubjectValueWithSubjectView> findAllWithSubjectByAssessmentResultId(UUID assessmentResultId);
+    List<SubjectValueWithSubjectView> findAllWithSubjectByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 }

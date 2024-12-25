@@ -59,8 +59,8 @@ public interface GetEvidenceListUseCase {
                             Integer attachmentsCount,
                             User createdBy,
                             Boolean editable,
-                            Boolean deletable) {
-    }
+                            Boolean deletable,
+                            boolean resolvable) {}
 
     record User(UUID id,
                 String displayName,

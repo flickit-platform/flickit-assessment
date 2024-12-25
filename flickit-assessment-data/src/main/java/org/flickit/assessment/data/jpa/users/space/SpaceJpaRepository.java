@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> {
 
+    boolean existsByIdAndDeletedFalse(long id);
+
     @Query("""
             SELECT s.ownerId
             FROM SpaceJpaEntity as s
@@ -88,8 +90,6 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
             WHERE e.id = :spaceId
         """)
     void delete(@Param("spaceId") long spaceId, @Param("deletionTime") long deletionTime);
-
-    boolean existsByIdAndDeletedFalse(long id);
 
     @Modifying
     @Query("""

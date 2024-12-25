@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
+import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,7 +18,8 @@ import java.util.UUID;
 public class SubjectInsightPersistenceJpaAdapter implements
     LoadSubjectInsightPort,
     CreateSubjectInsightPort,
-    UpdateSubjectInsightPort {
+    UpdateSubjectInsightPort,
+    LoadSubjectInsightsPort {
 
     private final SubjectInsightJpaRepository repository;
 
@@ -38,5 +41,14 @@ public class SubjectInsightPersistenceJpaAdapter implements
             subjectInsight.getInsight(),
             subjectInsight.getInsightTime(),
             subjectInsight.getInsightBy());
+    }
+
+    @Override
+    public List<SubjectInsight> loadSubjectInsights(UUID assessmentResultId) {
+        return repository.findByAssessmentResultId(assessmentResultId)
+            .stream()
+            .map(SubjectInsightMapper::mapToDomainModel)
+            .toList();
+
     }
 }

@@ -2,18 +2,17 @@ package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.UpdateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceOwnerPort;
 import org.flickit.assessment.users.application.port.out.space.UpdateSpacePort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -72,15 +71,18 @@ class UpdateSpaceServiceTest {
         String title = "Test";
         UUID currentUserId = UUID.randomUUID();
         UpdateSpaceUseCase.Param param = new UpdateSpaceUseCase.Param(spaceId, title, currentUserId);
-        Space space = new Space(spaceId, "title", "Title", currentUserId,
-                LocalDateTime.now(),LocalDateTime.now(), UUID.randomUUID(), currentUserId);
 
         when(loadSpaceOwnerPort.loadOwnerId(spaceId)).thenReturn(currentUserId);
         doNothing().when(updateSpacePort).updateSpace(any(UpdateSpacePort.Param.class));
 
         assertDoesNotThrow(()-> service.updateSpace(param));
 
-        verify(loadSpaceOwnerPort).loadOwnerId(anyLong());
-        verify(updateSpacePort).updateSpace(any(UpdateSpacePort.Param.class));
+        ArgumentCaptor<UpdateSpacePort.Param> captor = ArgumentCaptor.forClass(UpdateSpacePort.Param.class);
+        verify(updateSpacePort).updateSpace(captor.capture());
+        assertEquals(spaceId, captor.getValue().id());
+        assertEquals("test", captor.getValue().code());
+        assertEquals(title, captor.getValue().title());
+        assertEquals(currentUserId, captor.getValue().lastModifiedBy());
+        assertNotNull(captor.getValue().lastModificationTime());
     }
 }

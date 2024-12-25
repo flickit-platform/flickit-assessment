@@ -104,52 +104,48 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     @Modifying
     @Query("""
-        UPDATE AssessmentJpaEntity a SET
-        a.lastModificationTime = :lastModificationTime
-        WHERE a.id = :id
+            UPDATE AssessmentJpaEntity a
+            SET a.lastModificationTime = :lastModificationTime
+            WHERE a.id = :id
         """)
     void updateLastModificationTime(UUID id, LocalDateTime lastModificationTime);
 
     @Query("""
             SELECT a.id
             FROM AssessmentJpaEntity a
-            WHERE a.id = :assessmentId AND a.deleted = FALSE AND
-            EXISTS (
-              SELECT 1 FROM SpaceUserAccessJpaEntity su
-              WHERE a.spaceId = su.spaceId AND su.userId = :userId)
+            WHERE a.id = :assessmentId AND a.deleted = FALSE
+                AND EXISTS (
+                    SELECT 1 FROM SpaceUserAccessJpaEntity su
+                    WHERE a.spaceId = su.spaceId AND su.userId = :userId)
         """)
     Optional<UUID> checkIsAssessmentSpaceMember(@Param(value = "assessmentId") UUID assessmentId,
                                                 @Param(value = "userId") UUID userId);
 
     @Query("""
-        SELECT attr.id
-        FROM AssessmentJpaEntity asm
-        JOIN AssessmentKitJpaEntity kit
-        ON asm.assessmentKitId = kit.id
-        JOIN AttributeJpaEntity attr
-        ON attr.kitVersionId = kit.kitVersionId
-        WHERE asm.id = :assessmentId
-        AND attr.id in :attributeIds
-    """)
-    Set<Long> findSelectedAttributeIdsRelatedToAssessment(UUID assessmentId, Set<Long> attributeIds);
+            SELECT attr.id
+            FROM AssessmentJpaEntity asm
+            JOIN AssessmentKitJpaEntity kit ON asm.assessmentKitId = kit.id
+            JOIN AttributeJpaEntity attr ON attr.kitVersionId = kit.kitVersionId
+            WHERE asm.id = :assessmentId AND attr.id in :attributeIds
+        """)
+    Set<Long> findSelectedAttributeIdsRelatedToAssessment(@Param("assessmentId") UUID assessmentId,
+                                                          @Param("attributeIds") Set<Long> attributeIds);
 
     @Query("""
-        SELECT level.id
-        FROM AssessmentJpaEntity asm
-        JOIN AssessmentKitJpaEntity kit
-        ON asm.assessmentKitId = kit.id
-        JOIN MaturityLevelJpaEntity level
-        ON level.kitVersionId = kit.kitVersionId
-        WHERE asm.id = :assessmentId
-        AND level.id in :levelIds
-    """)
-    Set<Long> findSelectedLevelIdsRelatedToAssessment(UUID assessmentId, Set<Long> levelIds);
+            SELECT level.id
+            FROM AssessmentJpaEntity asm
+            JOIN AssessmentKitJpaEntity kit ON asm.assessmentKitId = kit.id
+            JOIN MaturityLevelJpaEntity level ON level.kitVersionId = kit.kitVersionId
+            WHERE asm.id = :assessmentId AND level.id in :levelIds
+        """)
+    Set<Long> findSelectedLevelIdsRelatedToAssessment(@Param("assessmentId") UUID assessmentId,
+                                                      @Param("levelIds") Set<Long> levelIds);
 
     @Modifying
     @Query("""
-        UPDATE AssessmentJpaEntity a SET
-         a.kitCustomId = :kitCustomId
-        WHERE a.id = :id
+            UPDATE AssessmentJpaEntity a
+            SET a.kitCustomId = :kitCustomId
+            WHERE a.id = :id
         """)
     void updateKitCustomId(@Param("id") UUID id, @Param("kitCustomId") long kitCustomId);
 }

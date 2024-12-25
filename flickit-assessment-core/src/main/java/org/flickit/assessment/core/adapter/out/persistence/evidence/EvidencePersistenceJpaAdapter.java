@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Evidence;
-import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.EvidenceListItem;
 import org.flickit.assessment.core.application.port.out.evidence.*;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
@@ -33,7 +33,9 @@ public class EvidencePersistenceJpaAdapter implements
     LoadEvidencesPort,
     UpdateEvidencePort,
     DeleteEvidencePort,
-    LoadEvidencePort {
+    LoadEvidencePort,
+    ResolveCommentPort,
+    CountEvidencesPort {
 
     private final EvidenceJpaRepository repository;
     private final AssessmentJpaRepository assessmentRepository;
@@ -106,5 +108,20 @@ public class EvidencePersistenceJpaAdapter implements
         return repository.findByIdAndDeletedFalse(id)
             .map(EvidenceMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(EVIDENCE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public void resolveComment(UUID commentId, UUID lastModifiedBy, LocalDateTime lastModificationTime) {
+        repository.resolveComment(commentId, lastModifiedBy, lastModificationTime);
+    }
+
+    @Override
+    public int countQuestionsHavingEvidence(UUID assessmentId) {
+        return repository.countQuestionsHavingEvidence(assessmentId);
+    }
+
+    @Override
+    public int countUnresolvedComments(UUID assessmentId) {
+        return repository.countUnresolvedComments(assessmentId);
     }
 }

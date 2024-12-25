@@ -44,7 +44,7 @@ public class AttributeValue {
             .flatMap(ml ->
                 attribute.getQuestions().stream()
                     .filter(question -> !isMarkedAsNotApplicable(question.getId()))
-                    .map(question -> question.findImpactByAttributeAndMaturityLevel(this.getAttribute(), ml))
+                    .map(question -> question.findImpactByAttributeAndMaturityLevel(this.getAttribute().getId(), ml.getId()))
                     .filter(Objects::nonNull)
                     .map(impact -> new MaturityLevelScore(ml, impact.getWeight()))
             ).collect(groupingBy(x -> x.maturityLevel().getId(), summingDouble(MaturityLevelScore::score)));
@@ -61,7 +61,7 @@ public class AttributeValue {
                 assert attribute.getQuestions() != null;
                 Map<Long, QuestionImpact> questionIdToQuestionImpact = new HashMap<>();
                 for (Question q : attribute.getQuestions()) {
-                    var impact = q.findImpactByAttributeAndMaturityLevel(this.getAttribute(), ml);
+                    var impact = q.findImpactByAttributeAndMaturityLevel(this.getAttribute().getId(), ml.getId());
                     if (impact != null) // Only add non-null impacts to the map
                         questionIdToQuestionImpact.put(q.getId(), impact);
                 }

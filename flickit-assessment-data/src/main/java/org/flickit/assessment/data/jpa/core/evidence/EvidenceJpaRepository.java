@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,8 +26,10 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 e.lastModificationTime as lastModificationTime,
                 COUNT (a) as attachmentsCount
             FROM EvidenceJpaEntity e
-            LEFT JOIN EvidenceAttachmentJpaEntity a on e.id = a.evidenceId
+            LEFT JOIN EvidenceAttachmentJpaEntity a ON e.id = a.evidenceId
             WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
+                    AND ((e.type IS NULL AND (e.resolved IS NULL OR e.resolved = false))
+                        OR (e.type IS NOT NULL AND e.resolved IS NULL))
             GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
         """)
     Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentId(@Param("questionId") Long questionId,
@@ -59,17 +59,34 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     void delete(@Param(value = "id") UUID id);
 
+    @Modifying
     @Query("""
-            SELECT
-                qsn.id as questionId,
-                COUNT(e.id) as evidenceCount
-            FROM QuestionJpaEntity qsn
-            LEFT JOIN EvidenceJpaEntity e on qsn.id = e.questionId
-            WHERE qsn.id IN :questionIds
-                AND e.assessmentId = :assessmentId
+            UPDATE EvidenceJpaEntity e
+            SET e.resolved = true,
+                e.lastModifiedBy = :lastModifiedBy,
+                e.lastModificationTime = :lastModificationTime
+            WHERE e.id = :evidenceId
+        """)
+    void resolveComment(@Param("evidenceId") UUID evidenceId,
+                        @Param("lastModifiedBy") UUID lastModifiedBy,
+                        @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Query("""
+            SELECT COUNT(DISTINCT e.questionId)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
                 AND e.deleted = false
                 AND e.type IS NOT NULL
         """)
-    List<CountQuestionEvidenceView> countByAssessmentIdAndQuestionIds(@Param("assessmentId") UUID assessmentId,
-                                                                      @Param("questionIds") Collection<Long> questionIds);
+    int countQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.deleted = false
+                AND e.type IS NULL
+                AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    int countUnresolvedComments(@Param("assessmentId") UUID assessmentId);
 }

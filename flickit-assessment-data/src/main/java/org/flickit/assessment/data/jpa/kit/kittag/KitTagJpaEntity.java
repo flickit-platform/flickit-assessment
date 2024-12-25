@@ -5,8 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
-
-import static lombok.AccessLevel.PRIVATE;
+import lombok.experimental.FieldNameConstants;
 
 @Entity
 @Table(name = "fak_kit_tag")
@@ -14,6 +13,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class KitTagJpaEntity {
 
@@ -27,9 +27,4 @@ public class KitTagJpaEntity {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
-
-    @NoArgsConstructor(access = PRIVATE)
-    public static class Fields {
-        public static final String CODE = "code";
-    }
 }

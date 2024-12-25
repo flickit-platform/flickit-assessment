@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
@@ -26,7 +27,8 @@ public class AnswerPersistenceJpaAdapter implements
     CountAnswersByQuestionIdsPort,
     LoadAnswerPort,
     UpdateAnswerPort,
-    LoadQuestionsAnswerListPort {
+    LoadQuestionsAnswerListPort,
+    CountLowConfidenceAnswersPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -41,11 +43,11 @@ public class AnswerPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND));
         AnswerOptionJpaEntity answerOption = null;
         if (param.answerOptionId() != null)
-            answerOption = answerOptionRepository.findByIdAndKitVersionId (param.answerOptionId(), assessmentResult.getKitVersionId())
+            answerOption = answerOptionRepository.findByIdAndKitVersionId(param.answerOptionId(), assessmentResult.getKitVersionId())
                 .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND));
 
         if (!Objects.equals(question.getKitVersionId(), assessmentResult.getKitVersionId()) ||
-            (answerOption!=null && !Objects.equals(question.getAnswerRangeId(), answerOption.getAnswerRangeId())) ||
+            (answerOption != null && !Objects.equals(question.getAnswerRangeId(), answerOption.getAnswerRangeId())) ||
             !Objects.equals(question.getQuestionnaireId(), param.questionnaireId()))
             throw new ResourceNotFoundException(SUBMIT_ANSWER_QUESTION_ID_NOT_FOUND);
 
@@ -92,5 +94,10 @@ public class AnswerPersistenceJpaAdapter implements
         return repository.findByAssessmentResultIdAndQuestionIdIn(assessmentResult.getId(), questionIds).stream()
             .map(AnswerMapper::mapToDomainModel)
             .toList();
+    }
+
+    @Override
+    public int countWithConfidenceLessThan(UUID assessmentResultId, ConfidenceLevel confidence) {
+        return repository.countWithConfidenceLessThan(assessmentResultId, confidence.ordinal());
     }
 }

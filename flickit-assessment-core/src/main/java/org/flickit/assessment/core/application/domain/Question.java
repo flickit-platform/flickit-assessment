@@ -20,10 +20,9 @@ public class Question {
     @Setter
     private List<AnswerOption> options;
 
-    public QuestionImpact findImpactByAttributeAndMaturityLevel(Attribute attribute, MaturityLevel maturityLevel) {
+    public QuestionImpact findImpactByAttributeAndMaturityLevel(long attributeId, long maturityLevelId) {
         return impacts.stream()
-            .filter(i -> i.getAttributeId() == attribute.getId() &&
-                i.getMaturityLevelId() == maturityLevel.getId())
+            .filter(i -> i.getAttributeId() == attributeId && i.getMaturityLevelId() == maturityLevelId)
             .findAny()
             .orElse(null);
     }

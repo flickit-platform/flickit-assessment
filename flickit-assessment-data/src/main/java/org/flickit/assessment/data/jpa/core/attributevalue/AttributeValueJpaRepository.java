@@ -20,11 +20,12 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
                                                                    @Param(value = "assessmentResultId") UUID assessmentResultId);
 
     @Query("""
-        SELECT av
-        FROM AttributeValueJpaEntity av
-        LEFT JOIN AttributeJpaEntity att ON av.attributeId = att.id
-        WHERE att.subjectId = :subjectId AND av.assessmentResult.id = :assessmentResultId
-            AND att.kitVersionId = av.assessmentResult.kitVersionId
+            SELECT av
+            FROM AttributeValueJpaEntity av
+            LEFT JOIN AttributeJpaEntity att ON av.attributeId = att.id
+            WHERE att.subjectId = :subjectId
+                AND av.assessmentResult.id = :assessmentResultId
+                AND att.kitVersionId = av.assessmentResult.kitVersionId
         """)
     List<AttributeValueJpaEntity> findByAssessmentResultIdAndSubjectId(@Param(value = "assessmentResultId") UUID assessmentResultId,
                                                                        @Param(value = "subjectId") Long subjectId);
@@ -35,8 +36,8 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
                 att as attribute
             FROM AttributeValueJpaEntity av
             LEFT JOIN AttributeJpaEntity att ON av.attributeId = att.id
-                and av.assessmentResult.kitVersionId = att.kitVersionId
-                and av.assessmentResult.id = :assessmentResultId
+                AND av.assessmentResult.kitVersionId = att.kitVersionId
+                AND av.assessmentResult.id = :assessmentResultId
             WHERE att.subjectId IN :subjectIds
         """)
     List<SubjectIdAttributeValueView> findByAssessmentResultIdAndSubjectIdIn(@Param(value = "assessmentResultId") UUID assessmentResultId,

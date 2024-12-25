@@ -69,7 +69,7 @@ class GetKitUserListServiceTest {
             kitUserListItems,
             param.getPage(),
             param.getSize(),
-            UserJpaEntity.Fields.NAME,
+            UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             kitUserListItems.size());
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
@@ -111,7 +111,7 @@ class GetKitUserListServiceTest {
             Collections.emptyList(),
             param.getPage(),
             param.getSize(),
-            UserJpaEntity.Fields.NAME,
+            UserJpaEntity.Fields.displayName,
             Sort.Direction.ASC.name().toLowerCase(),
             0);
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);

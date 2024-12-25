@@ -3,12 +3,15 @@ package org.flickit.assessment.kit.adapter.out.persistence.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityJoinCompetenceView;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity.EntityId;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.MaturityLevel;
+import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.port.out.maturitylevel.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,7 +21,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toMap;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper.mapToJpaEntityToPersist;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MATURITY_LEVEL_ID_NOT_FOUND;
@@ -45,7 +49,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
 
     @Override
     public void delete(Long id, Long kitVersionId) {
-        if(!repository.existsByIdAndKitVersionId(id, kitVersionId))
+        if (!repository.existsByIdAndKitVersionId(id, kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
         repository.deleteByIdAndKitVersionId(id, kitVersionId);
     }
@@ -77,7 +81,7 @@ public class MaturityLevelPersistenceJpaAdapter implements
     }
 
     @Override
-    public void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy ) {
+    public void update(MaturityLevel maturityLevel, Long kitVersionId, LocalDateTime lastModificationTime, UUID lastModifiedBy) {
         if (!repository.existsByIdAndKitVersionId(maturityLevel.getId(), kitVersionId))
             throw new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND);
 
@@ -154,6 +158,35 @@ public class MaturityLevelPersistenceJpaAdapter implements
     public List<MaturityLevel> loadByKitVersionId(long kitVersionId, Collection<Long> ids) {
         return repository.findAllByIdInAndKitVersionId(ids, kitVersionId).stream()
             .map(MaturityLevelMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
+    public List<MaturityLevelDslModel> loadDslModels(long kitVersionId) {
+        List<MaturityJoinCompetenceView> levelsWithCompetence = repository.findAllByKitVersionIdWithCompetence(kitVersionId);
+
+        Map<MaturityLevelJpaEntity, List<LevelCompetenceJpaEntity>> levelIdToCompetencesMap = levelsWithCompetence.stream()
+            .collect(Collectors.groupingBy(
+                MaturityJoinCompetenceView::getMaturityLevel,
+                mapping(MaturityJoinCompetenceView::getLevelCompetence, toList())
+            ));
+
+        var maturityLevelIdToCodeMap = levelsWithCompetence.stream()
+            .collect(toMap(ml -> ml.getMaturityLevel().getId(), ml -> ml.getMaturityLevel().getCode(),
+                (existing, duplicate) -> existing
+            ));
+
+        return levelIdToCompetencesMap.entrySet().stream()
+            .map(entry -> {
+                Map<String, Integer> competencesCodeToValueMap = entry.getValue().stream()
+                    .filter(Objects::nonNull)
+                    .collect(toMap(
+                        c -> maturityLevelIdToCodeMap.get(c.getEffectiveLevelId()),
+                        LevelCompetenceJpaEntity::getValue
+                    ));
+                return MaturityLevelMapper.mapToDslModel(entry.getKey(), competencesCodeToValueMap);
+            })
+            .sorted(comparingInt(MaturityLevelDslModel::getIndex))
             .toList();
     }
 }

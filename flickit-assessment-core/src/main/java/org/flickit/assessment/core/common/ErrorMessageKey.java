@@ -17,6 +17,7 @@ public class ErrorMessageKey {
     public static final String ASSESSMENT_INVITE_ID_NOT_FOUND = "assessment-invite.id.notFound";
     public static final String ANALYSIS_TYPE_ID_NOT_VALID = "analysis-type.id.notValid";
     public static final String KIT_CUSTOM_ID_NOT_FOUND = "kit-custom.id.notFound";
+    public static final String ASSESSMENT_USER_ROLE_ID_NOT_FOUND = "assessment-user-role.id.notFound";
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -260,4 +261,10 @@ public class ErrorMessageKey {
     public static final String GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_ID_NOT_NULL = "get-attribute-score-stats.assessment.id.notNull";
     public static final String GET_ATTRIBUTE_SCORE_STATS_ATTRIBUTE_ID_NOT_NULL = "get-attribute-score-stats.attribute.id.notNull";
     public static final String GET_ATTRIBUTE_SCORE_STATS_MATURITY_LEVEL_ID_NOT_NULL = "get-attribute-score-stats.maturityLevel.id.notNull";
+
+    public static final String RESOLVE_COMMENT_EVIDENCE_ID_NOT_NULL = "resolve-comment.evidenceId.notNull";
+    public static final String RESOLVE_COMMENT_INCORRECT_EVIDENCE_TYPE = "resolve-comment.incorrect.evidenceType";
+
+    public static final String GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL = "get-assessment-dashboard.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-dashboard.assessmentResult.notFound";
 }
