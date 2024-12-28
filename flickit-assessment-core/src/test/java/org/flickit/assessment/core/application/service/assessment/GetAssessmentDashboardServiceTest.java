@@ -125,11 +125,11 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(questionCount, result.questions().total());
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
-        assertEquals(2, result.questions().hasLowConfidence());
-        assertEquals(12, result.questions().hasNoEvidence());
-        assertEquals(1, result.questions().hasUnresolvedComments());
+        assertEquals(2, result.questions().answeredWithLowConfidence());
+        assertEquals(12, result.questions().withoutEvidence());
+        assertEquals(1, result.questions().unresolvedComments());
         //insights
-        assertEquals(10, result.insights().total());
+        assertEquals(10, result.insights().expected());
         assertEquals(3, result.insights().notGenerated());
         assertEquals(2, result.insights().expired());
         //advices
@@ -159,11 +159,11 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(questionCount, result.questions().total());
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
-        assertEquals(2, result.questions().hasLowConfidence());
-        assertEquals(12, result.questions().hasNoEvidence());
-        assertEquals(1, result.questions().hasUnresolvedComments());
+        assertEquals(2, result.questions().answeredWithLowConfidence());
+        assertEquals(12, result.questions().withoutEvidence());
+        assertEquals(1, result.questions().unresolvedComments());
         //insights
-        assertEquals(10, result.insights().total());
+        assertEquals(10, result.insights().expected());
         assertEquals(4, result.insights().notGenerated());
         assertEquals(2, result.insights().expired());
         //advices
@@ -194,11 +194,11 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(questionCount, result.questions().total());
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
-        assertEquals(2, result.questions().hasLowConfidence());
-        assertEquals(12, result.questions().hasNoEvidence());
-        assertEquals(1, result.questions().hasUnresolvedComments());
+        assertEquals(2, result.questions().answeredWithLowConfidence());
+        assertEquals(12, result.questions().withoutEvidence());
+        assertEquals(1, result.questions().unresolvedComments());
         //insights
-        assertEquals(10, result.insights().total());
+        assertEquals(10, result.insights().expected());
         assertEquals(3, result.insights().notGenerated());
         assertEquals(3, result.insights().expired());
         //advices
