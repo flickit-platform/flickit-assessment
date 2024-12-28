@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ApproveSubjectInsightUseCaseParamTest {
@@ -26,7 +27,7 @@ class ApproveSubjectInsightUseCaseParamTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjectId(null)));
 
-        assertThat(throwable).hasMessage("subjectId: " + APPROVE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("subjectId: " + APPROVE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
