@@ -61,6 +61,6 @@ class AssessmentPermissionTest {
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
             assertTrue(permissionCodesMap.containsValue(e.getCode()))
         );
-        assertEquals(41, AssessmentPermission.values().length);
+        assertEquals(42, AssessmentPermission.values().length);
     }
 }
