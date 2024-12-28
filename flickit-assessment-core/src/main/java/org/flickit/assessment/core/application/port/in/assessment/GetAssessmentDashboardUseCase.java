@@ -35,21 +35,21 @@ public interface GetAssessmentDashboardUseCase {
 
     record Result(Questions questions, Insights insights, Advices advices) {
 
-        public record Questions(long total,
-                                long answered,
-                                long unanswered,
-                                long answeredWithLowConfidence,
-                                long withoutEvidence,
-                                long unresolvedComments) {
+        public record Questions(int total,
+                                int answered,
+                                int unanswered,
+                                int answeredWithLowConfidence,
+                                int withoutEvidence,
+                                int unresolvedComments) {
         }
 
-        public record Insights(long expected,
-                               long notGenerated,
-                               Long unapproved,
-                               long expired) {
+        public record Insights(int expected,
+                               int notGenerated,
+                               Integer unapproved,
+                               int expired) {
         }
 
-        public record Advices(long total) {
+        public record Advices(int total) {
         }
     }
 }
