@@ -1145,6 +1145,34 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Approve Attribute Insight",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/6185a789-60a6-4c39-8670-21a1b057dee0/attributes/2311/approve-insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"6185a789-60a6-4c39-8670-21a1b057dee0",
+								"attributes",
+								"2311",
+								"approve-insight"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
