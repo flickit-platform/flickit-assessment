@@ -109,7 +109,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         return new Result.Insights(
             expectedInsightsCount,
             expectedInsightsCount - totalGeneratedInsights,
-            null,
+            0,
             expiredAttributeInsightsCount + expiredSubjectsInsightsCount + assessmentInsightExpired
         );
     }
