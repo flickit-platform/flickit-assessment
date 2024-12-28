@@ -74,6 +74,7 @@ class CreateSubjectInsightServiceTest {
         assertEquals(param.getInsight(), createPortParam.getValue().getInsight());
         assertEquals(param.getCurrentUserId(), createPortParam.getValue().getInsightBy());
         assertNotNull(createPortParam.getValue().getInsightTime());
+        assertTrue(createPortParam.getValue().isApproved());
 
         verifyNoInteractions(updateSubjectInsightPort);
     }
@@ -89,7 +90,7 @@ class CreateSubjectInsightServiceTest {
             param.getSubjectId(),
             "old insight",
             LocalDateTime.of(2022, 2, 20, 0, 0),
-            param.getCurrentUserId());
+            param.getCurrentUserId(), true);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
@@ -109,6 +110,7 @@ class CreateSubjectInsightServiceTest {
         assertEquals(param.getInsight(), updatePortParam.getValue().getInsight());
         assertEquals(param.getCurrentUserId(), updatePortParam.getValue().getInsightBy());
         assertNotNull(updatePortParam.getValue().getInsightTime());
+        assertTrue(updatePortParam.getValue().isApproved());
 
         verifyNoInteractions(createSubjectInsightPort);
     }

@@ -74,7 +74,7 @@ class GetSubjectInsightServiceTest {
     void testGetSubjectInsight_SubjectInsightExistsAndIsValidAndEditable_ReturnAssessorInsight() {
         GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        SubjectInsight subjectInsight = SubjectInsightMother.subjectInsight();
+        SubjectInsight subjectInsight = SubjectInsightMother.approvedSubjectInsight();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -92,6 +92,7 @@ class GetSubjectInsightServiceTest {
         assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
+        assertTrue(result.approved());
 
         verifyNoInteractions(loadSubjectReportInfoPort);
     }
@@ -103,7 +104,8 @@ class GetSubjectInsightServiceTest {
         SubjectInsight subjectInsight = new SubjectInsight(assessmentResult.getId(), param.getSubjectId(),
             "assessor insight",
             assessmentResult.getLastCalculationTime().minusDays(1),
-            param.getCurrentUserId()
+            param.getCurrentUserId(),
+            false
         );
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -122,6 +124,7 @@ class GetSubjectInsightServiceTest {
         assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
         assertFalse(result.assessorInsight().isValid());
         assertFalse(result.editable());
+        assertFalse(result.approved());
 
         verifyNoInteractions(loadSubjectReportInfoPort);
     }
@@ -160,6 +163,7 @@ class GetSubjectInsightServiceTest {
         assertNotNull(result.defaultInsight());
         assertEquals(defaultInsight, result.defaultInsight().insight());
         assertFalse(result.editable());
+        assertFalse(result.approved());
     }
 
     @Test
@@ -185,6 +189,7 @@ class GetSubjectInsightServiceTest {
         assertNotNull(result.defaultInsight());
         assertTrue(result.defaultInsight().insight().isBlank());
         assertFalse(result.editable());
+        assertFalse(result.approved());
     }
 
     private LoadSubjectReportInfoPort.Result createSubjectReportInfo() {
