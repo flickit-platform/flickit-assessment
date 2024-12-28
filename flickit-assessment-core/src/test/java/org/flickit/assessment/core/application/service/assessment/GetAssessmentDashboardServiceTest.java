@@ -125,7 +125,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(questionCount, result.questions().total());
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
-        assertEquals(2, result.questions().withLowConfidenceAnswer());
+        assertEquals(2, result.questions().answeredWithLowConfidence());
         assertEquals(12, result.questions().withoutEvidence());
         assertEquals(1, result.questions().unresolvedComments());
         //insights
@@ -159,7 +159,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(questionCount, result.questions().total());
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
-        assertEquals(2, result.questions().withLowConfidenceAnswer());
+        assertEquals(2, result.questions().answeredWithLowConfidence());
         assertEquals(12, result.questions().withoutEvidence());
         assertEquals(1, result.questions().unresolvedComments());
         //insights
@@ -194,7 +194,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(questionCount, result.questions().total());
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
-        assertEquals(2, result.questions().withLowConfidenceAnswer());
+        assertEquals(2, result.questions().answeredWithLowConfidence());
         assertEquals(12, result.questions().withoutEvidence());
         assertEquals(1, result.questions().unresolvedComments());
         //insights
