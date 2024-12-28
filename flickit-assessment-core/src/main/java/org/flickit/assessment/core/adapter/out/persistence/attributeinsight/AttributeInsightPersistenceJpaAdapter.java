@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_INSIGHT_ID_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -69,6 +70,9 @@ public class AttributeInsightPersistenceJpaAdapter implements
     public void approveAttributeInsight(UUID assessmentId, long attributeId) {
         var resultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
+
+        if (!repository.existsByAssessmentResultIdAndAttributeId(resultEntity.getId(), attributeId))
+            throw new ResourceNotFoundException(ATTRIBUTE_INSIGHT_ID_NOT_FOUND);
 
         repository.approve(resultEntity.getId(), attributeId);
     }

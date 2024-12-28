@@ -16,6 +16,8 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
 
     List<AttributeInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
+    boolean existsByAssessmentResultIdAndAttributeId(UUID assessmentResultId, long attributeId);
+
     @Modifying
     @Query("""
             UPDATE AttributeInsightJpaEntity a
