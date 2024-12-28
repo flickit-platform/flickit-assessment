@@ -21,7 +21,8 @@ public class SpaceMapper {
             space.getCreatedBy(),
             space.getLastModifiedBy(),
             false,
-            NOT_DELETED_DELETION_TIME);
+            NOT_DELETED_DELETION_TIME,
+            space.getType());
     }
 
     public static Space mapToDomain(SpaceJpaEntity entity) {
@@ -33,6 +34,7 @@ public class SpaceMapper {
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
-            entity.getLastModifiedBy());
+            entity.getLastModifiedBy(),
+            entity.getType());
     }
 }

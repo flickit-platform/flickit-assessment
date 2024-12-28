@@ -18,4 +18,5 @@ public class Space {
     private final LocalDateTime lastModificationTime;
     private final UUID createdBy;
     private final UUID lastModifiedBy;
+    private final int type;
 }
