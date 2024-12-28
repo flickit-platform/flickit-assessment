@@ -38,12 +38,12 @@ public interface GetAssessmentDashboardUseCase {
         public record Questions(long total,
                                 long answered,
                                 long unanswered,
-                                long hasLowConfidence,
-                                long hasNoEvidence,
-                                long hasUnresolvedComments) {
+                                long withLowConfidenceAnswer,
+                                long withoutEvidence,
+                                long unresolvedComments) {
         }
 
-        public record Insights(long total,
+        public record Insights(long expected,
                                long notGenerated,
                                Long unApproved,
                                long expired) {

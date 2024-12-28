@@ -78,7 +78,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private Result.Insights buildInsightsResult(AssessmentResult assessmentResult) {
         var attributesCount = countAttributesPort.countAttributes(assessmentResult.getKitVersionId());
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
-        var totalNeededInsights = attributesCount + subjectsCount + 1;
+        var expectedInsightCount = attributesCount + subjectsCount + 1;
 
         var attributeInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
         var subjectsInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
@@ -107,8 +107,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
         var assessmentInsightExpired = assessmentInsight != null && assessmentInsight.getInsightTime().isBefore(lastCalculationTime) ? 1 : 0;
         return new Result.Insights(
-            totalNeededInsights,
-            totalNeededInsights - totalGeneratedInsights,
+            expectedInsightCount,
+            expectedInsightCount - totalGeneratedInsights,
             null,
             expiredAttributeInsightsCount + expiredSubjectsInsightsCount + assessmentInsightExpired
         );
