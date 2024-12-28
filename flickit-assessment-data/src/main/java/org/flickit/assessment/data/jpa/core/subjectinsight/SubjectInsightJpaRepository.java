@@ -14,6 +14,10 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
 
     Optional<SubjectInsightJpaEntity> findByAssessmentResultIdAndSubjectId(UUID assessmentResultId, Long subjectId);
 
+    boolean existsByAssessmentResultIdAndSubjectId(UUID assessmentResultId, long subjectId);
+
+    List<SubjectInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+
     @Modifying
     @Query("""
             UPDATE SubjectInsightJpaEntity si
@@ -28,5 +32,12 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
                                                 @Param("insightTime") LocalDateTime insightTime,
                                                 @Param("insightBy") UUID insightBy);
 
-    List<SubjectInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    @Modifying
+    @Query("""
+            UPDATE SubjectInsightJpaEntity si
+            SET si.approved = true
+            WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
+        """)
+    void approveSubjectInsight(@Param("assessmentResultId") UUID assessmentResultId,
+                               @Param("subjectId") Long subjectId);
 }
