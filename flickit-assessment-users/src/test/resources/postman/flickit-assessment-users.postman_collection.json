@@ -17,6 +17,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -44,6 +49,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -97,6 +107,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -122,6 +137,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -146,6 +166,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -182,6 +207,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
 								"type": "text"
 							}
 						],
@@ -221,6 +251,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
 								"type": "text"
 							}
 						],
@@ -263,6 +298,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -300,6 +340,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -336,6 +381,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -362,6 +412,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -387,6 +442,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -412,6 +472,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
 								"type": "text"
 							}
 						],
@@ -443,6 +508,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -471,6 +541,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -498,6 +573,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -530,6 +610,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -563,6 +648,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -587,6 +677,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -625,6 +720,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -652,6 +752,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -684,6 +789,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -724,6 +834,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -752,6 +867,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -786,6 +906,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -812,6 +937,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -840,6 +970,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -874,6 +1009,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -900,7 +1040,12 @@
 					"name": "Get Tenant Info",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+						{
+							"key": "Accept-Language",
+							"value": "{{accept_language}}",
+							"type": "text"
+						}],
 						"url": {
 							"raw": "{{base_url}}/{{api_path}}/tenant/info",
 							"host": [
@@ -919,7 +1064,12 @@
 					"name": "Get Tenant Logo",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+						{
+							"key": "Accept-Language",
+							"value": "{{accept_language}}",
+							"type": "text"
+						}],
 						"url": {
 							"raw": "{{base_url}}/{{api_path}}/tenant/logo",
 							"host": [
@@ -947,6 +1097,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -966,7 +1121,12 @@
 					"name": "Create User",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+						{
+							"key": "Accept-Language",
+							"value": "{{accept_language}}",
+							"type": "text"
+						}],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"id\": \"28001724-d5b3-42f8-978f-90216cd7f573\",\n    \"email\": \"alisdg@gmail.com\",\n    \"displayName\": \"Ali Sedaghat\"\n}",
@@ -993,7 +1153,12 @@
 					"name": "Get User By Email",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+						{
+							"key": "Accept-Language",
+							"value": "{{accept_language}}",
+							"type": "text"
+						}],
 						"url": {
 							"raw": "{{base_url}}/{{api_path}}/users/email/admin@asta.ir",
 							"host": [
@@ -1017,6 +1182,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -1041,6 +1211,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -1073,6 +1248,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -1141,6 +1321,11 @@
 		{
 			"key": "inviteId",
 			"value": "428f8bc2-f47f-4190-b620-3dad8bd8a20b"
+		},
+		{
+			"key": "accept_language",
+			"value": "EN",
+			"type": "string"
 		}
 	]
 }
