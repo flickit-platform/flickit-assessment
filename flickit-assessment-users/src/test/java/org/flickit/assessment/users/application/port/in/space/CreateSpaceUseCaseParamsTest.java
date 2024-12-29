@@ -16,12 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateSpaceUseCaseParamsTest {
 
     @Test
-    void testCreateSpaceUseCaseParam_validParams_successful() {
-        assertDoesNotThrow(
-            () -> createParam(b -> b.type("PREMIUM")));
-    }
-
-    @Test
     void testCreateSpaceUseCaseParam_titleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
@@ -41,6 +35,9 @@ class CreateSpaceUseCaseParamsTest {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.type("SomeThing")));
         assertThat(throwable).hasMessage("type: " + CREATE_SPACE_TYPE_INVALID);
+
+        assertDoesNotThrow(
+            () -> createParam(b -> b.type("PREMIUM")));
     }
 
     @Test
