@@ -31,7 +31,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.41-03" author="Ali Sedaghat">
+    <changeSet id="0.41-04" author="Ali Sedaghat">
         <addColumn tableName="fac_subject_insight">
             <column name="approved" type="boolean" defaultValueBoolean="true">
                 <constraints nullable="false"/>
