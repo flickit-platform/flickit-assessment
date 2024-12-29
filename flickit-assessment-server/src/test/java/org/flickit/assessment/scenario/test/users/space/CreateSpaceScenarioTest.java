@@ -87,8 +87,7 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
         final int countBefore = jpaTemplate.count(SpaceJpaEntity.class);
 
         // Second invoke with the same request
-        var secondCreateResponse = spaceHelper.create(context, request);
-        secondCreateResponse.then()
+        spaceHelper.create(context, request).then()
             .statusCode(201);
 
         final int countAfter = jpaTemplate.count(SpaceJpaEntity.class);

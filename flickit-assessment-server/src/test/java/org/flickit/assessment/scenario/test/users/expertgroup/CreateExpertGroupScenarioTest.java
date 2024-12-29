@@ -75,4 +75,28 @@ class CreateExpertGroupScenarioTest extends AbstractScenarioTest {
         int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
         assertEquals(countBefore, countAfter);
     }
+
+    @Test
+    void createExpertGroup_withSameTitleAsDeleted() {
+        final var request = createExpertGroupRequestDto();
+        // First invoke
+        var response = expertGroupHelper.create(context, request);
+        response.then()
+            .statusCode(201);
+
+        final Number createdExpertGroupId = response.path("id");
+
+        // Delete created expert group
+        expertGroupHelper.delete(context, createdExpertGroupId.longValue());
+
+        final int countBefore = jpaTemplate.count(ExpertGroupJpaEntity.class);
+
+        // Second invoke with the same request
+        expertGroupHelper.create(context, request).then()
+            .statusCode(201);
+
+        final int countAfter = jpaTemplate.count(ExpertGroupJpaEntity.class);
+
+        assertEquals(countBefore + 1, countAfter);
+    }
 }
