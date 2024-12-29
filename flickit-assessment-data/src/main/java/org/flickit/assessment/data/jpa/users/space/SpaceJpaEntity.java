@@ -28,6 +28,9 @@ public class SpaceJpaEntity {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
+    @Column(name= "type", nullable = false)
+    private int type;
+
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
@@ -48,8 +51,5 @@ public class SpaceJpaEntity {
 
     @Column(name = "deletion_time", nullable = false)
     private long deletionTime;
-
-    @Column(name= "type", nullable = false)
-    private int type;
 }
 
