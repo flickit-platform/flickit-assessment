@@ -14,10 +14,6 @@ public class KitDbSequenceGenerators {
         return sequenceGenerator.generate("fak_answer_option_id_seq");
     }
 
-    public Long generateAnswerOptionImpactId() {
-        return sequenceGenerator.generate("fak_answer_option_impact_id_seq");
-    }
-
     public Long generateKitId() {
         return sequenceGenerator.generate("fak_assessment_kit_id_seq");
     }
