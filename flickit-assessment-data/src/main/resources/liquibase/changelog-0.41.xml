@@ -12,7 +12,11 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.41-02" author="Ali Sedaghat">
+    <changeSet id="0.41-02" author="Maziyar Gerami">
+        <dropTable tableName="fak_answer_option_impact"/>
+    </changeSet>
+
+    <changeSet id="0.41-03" author="Ali Sedaghat">
         <addColumn tableName="fac_attribute_insight">
             <column name="approved" type="boolean"
                     valueComputed="
