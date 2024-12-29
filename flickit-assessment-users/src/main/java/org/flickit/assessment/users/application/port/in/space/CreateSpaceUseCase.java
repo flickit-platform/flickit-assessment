@@ -35,7 +35,8 @@ public interface CreateSpaceUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(String title, UUID currentUserId) {
+        @Builder
+        public Param(String title, String type, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
             this.type = type;
             this.currentUserId = currentUserId;
