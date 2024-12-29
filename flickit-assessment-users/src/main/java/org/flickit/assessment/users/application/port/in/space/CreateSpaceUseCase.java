@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.port.in.space;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -27,11 +28,16 @@ public interface CreateSpaceUseCase {
         @Size(max = 100, message = CREATE_SPACE_TITLE_SIZE_MAX)
         String title;
 
+        @NotNull(message = CREATE_SPACE_TYPE_NOT_NULL)
+        @EnumValue(enumClass = SpaceType.class, message = CREATE_SPACE_TYPE_INVALID)
+        String type;
+
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         public Param(String title, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
+            this.type = type;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
