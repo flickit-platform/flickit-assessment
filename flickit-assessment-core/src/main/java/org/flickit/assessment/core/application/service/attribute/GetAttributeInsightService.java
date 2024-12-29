@@ -40,7 +40,7 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT);
-        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId());
+        var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId());
         Attribute attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
 
         if (attributeInsight.isEmpty()) {
