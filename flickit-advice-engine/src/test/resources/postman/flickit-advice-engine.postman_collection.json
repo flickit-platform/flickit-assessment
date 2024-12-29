@@ -27,6 +27,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -67,6 +72,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -102,6 +112,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -134,6 +149,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
 								"type": "text"
 							}
 						],
@@ -175,6 +195,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -210,6 +235,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
 								"type": "text"
 							}
 						],
@@ -258,6 +288,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -292,6 +327,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -317,6 +357,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -341,6 +386,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"url": {
@@ -364,6 +414,11 @@
 							{
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
 								"type": "text"
 							}
 						],
@@ -397,6 +452,11 @@
 		{
 			"key": "authorization_header",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "accept_language",
+			"value": "EN",
 			"type": "string"
 		}
 	]

@@ -88,16 +88,15 @@ class GetAttributeInsightServiceTest {
         var assessmentResult = validResult();
         Attribute attribute = AttributeMother.simpleAttribute();
 
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
         when(appAiProperties.isEnabled()).thenReturn(false);
-
         when(loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
 
         var result = assertDoesNotThrow(() -> service.getInsight(param));
+
         assertNotNull(result);
         assertNotNull(result.aiInsight());
         assertEquals(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()), result.aiInsight().insight());
