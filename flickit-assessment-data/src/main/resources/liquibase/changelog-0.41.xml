@@ -39,4 +39,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.41-05" author="Ali Sedaghat">
+        <dropNotNullConstraint tableName="fac_subject_insight" columnName="insight_by"/>
+    </changeSet>
+
 </databaseChangeLog>
