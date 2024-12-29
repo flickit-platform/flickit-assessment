@@ -77,20 +77,26 @@ class CreateExpertGroupScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    void createExpertGroup_whenDeleteExpertGroup_thenCreateSameExpertGroupAgain() {
-        var request = createExpertGroupRequestDto();
+    void createExpertGroup_withSameTitleAsDeleted() {
+        final var request = createExpertGroupRequestDto();
+        // First invoke
         var response = expertGroupHelper.create(context, request);
-
         response.then()
-            .statusCode(201)
-            .body("id", notNullValue());
+            .statusCode(201);
 
-        final Number expertGroupId = response.path("id");
+        final Number createdExpertGroupId = response.path("id");
 
-        expertGroupHelper.delete(context, expertGroupId.longValue());
+        // Delete created expert group
+        expertGroupHelper.delete(context, createdExpertGroupId.longValue());
 
+        final int countBefore = jpaTemplate.count(ExpertGroupJpaEntity.class);
+
+        // Second invoke with the same request
         expertGroupHelper.create(context, request).then()
-            .statusCode(201)
-            .body("id", notNullValue());
+            .statusCode(201);
+
+        final int countAfter = jpaTemplate.count(ExpertGroupJpaEntity.class);
+
+        assertEquals(countBefore + 1, countAfter);
     }
 }
