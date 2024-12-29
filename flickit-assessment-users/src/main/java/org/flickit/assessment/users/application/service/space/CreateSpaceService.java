@@ -22,13 +22,13 @@ public class CreateSpaceService implements CreateSpaceUseCase {
 
     @Override
     public Result createSpace(Param param) {
-        long id = createSpacePort.persist(toSpace(param.getTitle(), param.getCurrentUserId()));
+        long id = createSpacePort.persist(mapToDomain(param.getTitle(), param.getCurrentUserId()));
 
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
         return new Result(id);
     }
 
-    private Space toSpace(String title, UUID currentUserId) {
+    private Space mapToDomain(String title, UUID currentUserId) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new Space(null,
             generateSlugCode(title),
