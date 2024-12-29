@@ -6,10 +6,12 @@ import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.users.common.ErrorMessageKey;
+import org.flickit.assessment.common.validation.EnumValue;
+import org.flickit.assessment.users.application.domain.SpaceType;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 
 public interface CreateSpaceUseCase {
@@ -20,9 +22,9 @@ public interface CreateSpaceUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotBlank(message = ErrorMessageKey.CREATE_SPACE_TITLE_NOT_BLANK)
-        @Size(min = 3, message = ErrorMessageKey.CREATE_SPACE_TITLE_SIZE_MIN)
-        @Size(max = 100, message = ErrorMessageKey.CREATE_SPACE_TITLE_SIZE_MAX)
+        @NotBlank(message = CREATE_SPACE_TITLE_NOT_BLANK)
+        @Size(min = 3, message = CREATE_SPACE_TITLE_SIZE_MIN)
+        @Size(max = 100, message = CREATE_SPACE_TITLE_SIZE_MAX)
         String title;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
@@ -35,6 +37,6 @@ public interface CreateSpaceUseCase {
         }
     }
 
-    record Result(Long id) {
+    record Result(long id) {
     }
 }
