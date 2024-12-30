@@ -149,6 +149,8 @@ class InitAssessmentInsightServiceTest {
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
         assertEquals(expectedInsight, createCaptor.getValue().getInsight());
+
+        verifyNoInteractions(createAssessmentInsightPort);
     }
 
     private InitAssessmentInsightUseCase.Param createParam(Consumer<InitAssessmentInsightUseCase.Param.ParamBuilder> changer) {
