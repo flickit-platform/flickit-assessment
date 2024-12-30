@@ -82,7 +82,7 @@ class UpdateAttributeInsightServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
+        when(loadAttributeInsightPort.load(assessmentResult.getId(), attributeId)).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.updateAttributeInsight(param));
         assertEquals(UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND, throwable.getMessage());
@@ -101,7 +101,7 @@ class UpdateAttributeInsightServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), currentUserId, CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attributeId)).thenReturn(Optional.of(attributeInsight));
+        when(loadAttributeInsightPort.load(assessmentResult.getId(), attributeId)).thenReturn(Optional.of(attributeInsight));
 
         assertDoesNotThrow(() -> service.updateAttributeInsight(param));
     }
