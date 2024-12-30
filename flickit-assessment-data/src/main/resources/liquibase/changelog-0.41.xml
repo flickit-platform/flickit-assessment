@@ -15,4 +15,19 @@
     <changeSet id="0.41-02" author="Maziyar Gerami">
         <dropTable tableName="fak_answer_option_impact"/>
     </changeSet>
+
+    <changeSet id="0.41-03" author="Ali Sedaghat">
+        <addColumn tableName="fac_attribute_insight">
+            <column name="approved" type="boolean"
+                    valueComputed="
+                    CASE
+                        WHEN assessor_insight IS NOT NULL THEN TRUE
+                        WHEN ai_insight IS NOT NULL AND assessor_insight IS NULL THEN FALSE
+                        ELSE FALSE
+                    END">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
