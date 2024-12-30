@@ -9,8 +9,7 @@
             <column name="approved" type="boolean"
                     valueComputed="
                     CASE
-                        WHEN ai_insight IS NOT NULL AND assessor_insight IS NOT NULL THEN TRUE
-                        WHEN ai_insight IS NULL AND assessor_insight IS NOT NULL THEN TRUE
+                        WHEN assessor_insight IS NOT NULL THEN TRUE
                         WHEN ai_insight IS NOT NULL AND assessor_insight IS NULL THEN FALSE
                         ELSE FALSE
                     END">
