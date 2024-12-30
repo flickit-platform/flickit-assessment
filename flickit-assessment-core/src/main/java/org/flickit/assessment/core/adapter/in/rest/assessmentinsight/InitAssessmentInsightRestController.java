@@ -19,7 +19,7 @@ public class InitAssessmentInsightRestController {
     private final InitAssessmentInsightUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessment/{assessmentId}/init-insight")
+    @PostMapping("/assessments/{assessmentId}/init-insight")
     public ResponseEntity<Void> initAssessmentInsight(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
         useCase.initAssessmentInsight(new Param(assessmentId, currentUserId));
