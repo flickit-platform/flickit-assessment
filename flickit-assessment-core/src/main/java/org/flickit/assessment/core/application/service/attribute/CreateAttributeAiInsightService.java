@@ -80,7 +80,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
         List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
 
         var attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
-        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attribute.getId());
+        var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), attribute.getId());
         var assessmentTitle = assessmentResult.getAssessment().getShortTitle() != null ? assessmentResult.getAssessment().getShortTitle() : assessmentResult.getAssessment().getTitle();
 
         return attributeInsight.map(insight -> handleExistingInsight(insight, assessmentResult, assessmentTitle, attribute, attributeValue, maturityLevels))
@@ -135,6 +135,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             null,
             LocalDateTime.now(),
             null,
-            aiInputPath);
+            aiInputPath,
+            false);
     }
 }
