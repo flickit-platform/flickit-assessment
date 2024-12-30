@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.port.in.subjectinsight.UpdateSubj
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +20,7 @@ public class UpdateSubjectInsightRestController {
     private final UpdateSubjectInsightUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("/assessments/{assessmentId}/insights/subjects/{subjectId}")
+    @PutMapping("/assessments/{assessmentId}/subjects/{subjectId}/insights")
     public ResponseEntity<Void> updateSubjectInsight(@PathVariable("assessmentId") UUID assessmentId,
                                                      @PathVariable("subjectId") Long subjectId,
                                                      @RequestBody UpdateSubjectInsightRequestDto requestDto) {
