@@ -38,7 +38,7 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())
+        var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())
             .orElseThrow(()-> new ResourceNotFoundException(UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));
 
         updateAttributeInsightPort.updateAssessorInsight(toAttributeInsight(
@@ -54,6 +54,7 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
             assessorInsight,
             null,
             LocalDateTime.now(),
-            null);
+            null,
+            true);
     }
 }
