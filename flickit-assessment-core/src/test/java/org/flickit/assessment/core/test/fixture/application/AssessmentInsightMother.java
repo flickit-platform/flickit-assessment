@@ -17,6 +17,16 @@ public class AssessmentInsightMother {
         );
     }
 
+    public static AssessmentInsight createInitialInsightWithAssessmentResultId(UUID assessmentResultId) {
+        return new AssessmentInsight(
+            null,
+            assessmentResultId,
+            RandomStringUtils.random(50),
+            LocalDateTime.now().plusSeconds(1),
+            null
+        );
+    }
+
     public static AssessmentInsight createSimpleAssessmentInsight() {
         return new AssessmentInsight(
             UUID.randomUUID(),
