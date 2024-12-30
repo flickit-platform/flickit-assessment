@@ -28,7 +28,7 @@ public class AttributeInsightPersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
-    public Optional<AttributeInsight> loadAttributeAiInsight(UUID assessmentResultId, Long attributeId) {
+    public Optional<AttributeInsight> load(UUID assessmentResultId, Long attributeId) {
         return repository.findByAssessmentResultIdAndAttributeId(assessmentResultId, attributeId)
             .map(AttributeInsightMapper::mapToDomain);
     }

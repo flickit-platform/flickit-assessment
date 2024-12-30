@@ -36,4 +36,14 @@ public class ExpertGroupTestHelper {
             .extract()
             .response();
     }
+
+    public Response delete(ScenarioContext context, long id) {
+        return given()
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .delete("/assessment-core/api/expert-groups/" + id)
+            .then()
+            .extract()
+            .response();
+    }
 }

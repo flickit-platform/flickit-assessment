@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface LoadAttributeInsightPort {
 
-    Optional<AttributeInsight> loadAttributeAiInsight(UUID assessmentResultId, Long attributeId);
+    Optional<AttributeInsight> load(UUID assessmentResultId, Long attributeId);
 }
