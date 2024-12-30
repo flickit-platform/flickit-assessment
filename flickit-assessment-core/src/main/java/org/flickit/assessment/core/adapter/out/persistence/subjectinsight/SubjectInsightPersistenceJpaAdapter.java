@@ -44,7 +44,8 @@ public class SubjectInsightPersistenceJpaAdapter implements
             subjectInsight.getSubjectId(),
             subjectInsight.getInsight(),
             subjectInsight.getInsightTime(),
-            subjectInsight.getInsightBy());
+            subjectInsight.getInsightBy(),
+            subjectInsight.isApproved());
     }
 
     @Override

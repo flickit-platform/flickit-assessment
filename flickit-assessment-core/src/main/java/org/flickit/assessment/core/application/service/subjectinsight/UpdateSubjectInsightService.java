@@ -6,9 +6,8 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
-import org.flickit.assessment.core.application.port.in.subjectinsight.CreateSubjectInsightUseCase;
+import org.flickit.assessment.core.application.port.in.subjectinsight.UpdateSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.jetbrains.annotations.NotNull;
@@ -22,21 +21,21 @@ import java.util.UUID;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_INSIGHT_ID_NOT_FOUND;
 
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateSubjectInsightService implements CreateSubjectInsightUseCase {
+public class UpdateSubjectInsightService implements UpdateSubjectInsightUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadSubjectInsightPort loadSubjectInsightPort;
-    private final CreateSubjectInsightPort createSubjectInsightPort;
     private final UpdateSubjectInsightPort updateSubjectInsightPort;
 
     @Override
-    public void createSubjectInsight(Param param) {
+    public void updateSubjectInsight(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -51,7 +50,7 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
         if (subjectInsight.isPresent())
             updateSubjectInsightPort.update(insight);
         else
-            createSubjectInsightPort.persist(insight);
+            throw new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND);
     }
 
     @NotNull

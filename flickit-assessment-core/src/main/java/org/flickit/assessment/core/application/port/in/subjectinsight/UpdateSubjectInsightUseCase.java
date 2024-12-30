@@ -12,9 +12,9 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
-public interface CreateSubjectInsightUseCase {
+public interface UpdateSubjectInsightUseCase {
 
-    void createSubjectInsight(Param param);
+    void updateSubjectInsight(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

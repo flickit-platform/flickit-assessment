@@ -11,61 +11,61 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class CreateSubjectInsightUseCaseParamTest {
+class UpdateSubjectInsightUseCaseParamTest {
 
     @Test
-    void testCreateSubjectInsightParam_AssessmentIdIsNull_ErrorMessage() {
+    void testUpdateSubjectInsightParam_AssessmentIdIsNull_ErrorMessage() {
         UUID currentUserId = UUID.randomUUID();
         var insight = "insight";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateSubjectInsightUseCase.Param(null, 1L, insight, currentUserId));
+            () -> new UpdateSubjectInsightUseCase.Param(null, 1L, insight, currentUserId));
         assertThat(throwable).hasMessage("assessmentId: " + CREATE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateSubjectInsightParam_SubjectIdIsNull_ErrorMessage() {
+    void testUpdateSubjectInsightParam_SubjectIdIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var insight = "insight";
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateSubjectInsightUseCase.Param(assessmentId, null, insight, currentUserId));
+            () -> new UpdateSubjectInsightUseCase.Param(assessmentId, null, insight, currentUserId));
         assertThat(throwable).hasMessage("subjectId: " + CREATE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateSubjectInsightParam_InsightIsNull_ErrorMessage() {
+    void testUpdateSubjectInsightParam_InsightIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateSubjectInsightUseCase.Param(assessmentId, 123L, null, currentUserId));
+            () -> new UpdateSubjectInsightUseCase.Param(assessmentId, 123L, null, currentUserId));
         assertThat(throwable).hasMessage("insight: " + CREATE_SUBJECT_INSIGHT_INSIGHT_NOT_NULL);
     }
 
     @Test
-    void testCreateSubjectInsight_InsightSizeIsLessThanMin_ErrorMessage() {
+    void testUpdateSubjectInsight_InsightSizeIsLessThanMin_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateSubjectInsightUseCase.Param(assessmentId, 123L, " ab ", currentUserId));
+            () -> new UpdateSubjectInsightUseCase.Param(assessmentId, 123L, " ab ", currentUserId));
         assertThat(throwable).hasMessage("insight: " + CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MIN);
     }
 
     @Test
-    void testCreateSubjectInsightParam_InsightSizeIsGreaterThanMax_ErrorMessage() {
+    void testUpdateSubjectInsightParam_InsightSizeIsGreaterThanMax_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var insight = RandomStringUtils.randomAlphabetic(1001);
         UUID currentUserId = UUID.randomUUID();
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateSubjectInsightUseCase.Param(assessmentId, 123L, insight, currentUserId));
+            () -> new UpdateSubjectInsightUseCase.Param(assessmentId, 123L, insight, currentUserId));
         assertThat(throwable).hasMessage("insight: " + CREATE_SUBJECT_INSIGHT_INSIGHT_SIZE_MAX);
     }
 
     @Test
-    void testCreateSubjectInsightParam_CurrentUserIdIsNull_ErrorMessage() {
+    void testUpdateSubjectInsightParam_CurrentUserIdIsNull_ErrorMessage() {
         var assessmentId = UUID.randomUUID();
         var insight = "insight";
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateSubjectInsightUseCase.Param(assessmentId, 123L, insight, null));
+            () -> new UpdateSubjectInsightUseCase.Param(assessmentId, 123L, insight, null));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 }

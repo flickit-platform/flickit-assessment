@@ -23,14 +23,16 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             UPDATE SubjectInsightJpaEntity si
             SET si.insight = :insight,
                 si.insightTime = :insightTime,
-                si.insightBy = :insightBy
+                si.insightBy = :insightBy,
+                si.approved = :approved
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
     void updateByAssessmentResultIdAndSubjectId(@Param("assessmentResultId") UUID assessmentResultId,
                                                 @Param("subjectId") Long subjectId,
                                                 @Param("insight") String insight,
                                                 @Param("insightTime") LocalDateTime insightTime,
-                                                @Param("insightBy") UUID insightBy);
+                                                @Param("insightBy") UUID insightBy,
+                                                @Param("approved") boolean approved);
 
     @Modifying
     @Query("""
