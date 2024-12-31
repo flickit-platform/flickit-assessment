@@ -10,9 +10,7 @@ import org.flickit.assessment.core.application.port.out.assessmentinsight.Create
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
-import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -28,6 +26,10 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createInitialInsightWithAssessmentResultId;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createSimpleAssessmentInsight;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -53,9 +55,6 @@ class InitAssessmentInsightServiceTest {
     @Mock
     private UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
-    private final int questionsCount = 15;
-    private final double confidenceValue = 93.2;
-
     @Test
     void testInitAssessmentInsight_assessmentResultNotFound_throwsResourceNotFoundException() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
@@ -69,10 +68,11 @@ class InitAssessmentInsightServiceTest {
     @Test
     void testInitAssessmentInsight_assessmentInsightByAssessorFound_throwsValidationException() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevelAndConfidenceValue(null, MaturityLevelMother.levelFive(), confidenceValue);
+        var assessmentResult = validResult();
+        var assessorInsight = createSimpleAssessmentInsight();
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(AssessmentInsightMother.createSimpleAssessmentInsight()));
+        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessorInsight));
 
         var throwable = assertThrows(ValidationException.class, () -> service.initAssessmentInsight(param));
         assertEquals(INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE, throwable.getMessageKey());
@@ -80,36 +80,41 @@ class InitAssessmentInsightServiceTest {
 
     @Test
     void testInitAssessmentInsight_completeAssessment_successfulInitialization() {
-        final var answerCount = 15;
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevelAndConfidenceValue(null, MaturityLevelMother.levelFive(), confidenceValue);
-        var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), answerCount, questionsCount);
-        var insight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED, assessmentResult.getMaturityLevel().getTitle(), questionsCount, Math.ceil(confidenceValue));
+        var assessmentResult = validResult();
+        var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 15, 15);
+        var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
+            assessmentResult.getMaturityLevel().getTitle(),
+            progressResult.questionsCount(),
+            Math.ceil(assessmentResult.getConfidenceValue()));
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progressResult);
 
         service.initAssessmentInsight(param);
+
         ArgumentCaptor<AssessmentInsight> createCaptor = ArgumentCaptor.forClass(AssessmentInsight.class);
         verify(createAssessmentInsightPort).persist(createCaptor.capture());
         assertNull(createCaptor.getValue().getId());
         assertEquals(assessmentResult.getId(), createCaptor.getValue().getAssessmentResultId());
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
-        assertEquals(insight, createCaptor.getValue().getInsight());
+        assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
 
         verifyNoInteractions(updateAssessmentInsightPort);
     }
 
     @Test
     void testInitAssessmentInsight_completeAssessmentAndInitialInsightFound_successfulReinitialization() {
-        final var answerCount = 15;
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevelAndConfidenceValue(null, MaturityLevelMother.levelFive(), confidenceValue);
-        var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), answerCount, questionsCount);
-        var assessmentInsight = AssessmentInsightMother.createInitialInsightWithAssessmentResultId(assessmentResult.getId());
-        var insight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED, assessmentResult.getMaturityLevel().getTitle(), questionsCount, Math.ceil(confidenceValue));
+        var assessmentResult = validResult();
+        var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 30, 30);
+        var assessmentInsight = createInitialInsightWithAssessmentResultId(assessmentResult.getId());
+        var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
+            assessmentResult.getMaturityLevel().getTitle(),
+            progressResult.questionsCount(),
+            Math.ceil(assessmentResult.getConfidenceValue()));
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
@@ -122,26 +127,29 @@ class InitAssessmentInsightServiceTest {
         assertEquals(assessmentResult.getId(), createCaptor.getValue().getAssessmentResultId());
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
-        assertEquals(insight, createCaptor.getValue().getInsight());
+        assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
 
         verifyNoInteractions(createAssessmentInsightPort);
     }
 
     @Test
-    void testInitAssessmentInsight_confidenceValueIsNull_successfulInitialization() {
+    void testInitAssessmentInsight_incompleteAssessmentWithNullConfidenceValue_successfulInitialization() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-        var answerCount = 13;
-        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, MaturityLevelMother.levelFive());
-        var assessmentInsight = AssessmentInsightMother.createInitialInsightWithAssessmentResultId(assessmentResult.getId());
-        var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), answerCount, questionsCount);
-        var expectedInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE, assessmentResult.getMaturityLevel().getTitle(),
-            answerCount, questionsCount, 0);
+        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
+        var assessmentInsight = createInitialInsightWithAssessmentResultId(assessmentResult.getId());
+        var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 0, 15);
+        var expectedInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
+            assessmentResult.getMaturityLevel().getTitle(),
+            progressResult.answersCount(),
+            progressResult.questionsCount(),
+            0);
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progressResult);
 
         service.initAssessmentInsight(param);
+
         ArgumentCaptor<AssessmentInsight> createCaptor = ArgumentCaptor.forClass(AssessmentInsight.class);
         verify(updateAssessmentInsightPort).updateInsight(createCaptor.capture());
         assertEquals(assessmentInsight.getId(), createCaptor.getValue().getId());
