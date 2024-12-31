@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.attribute;
+package org.flickit.assessment.core.application.service.attributeinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeInsightUseCase;
+import org.flickit.assessment.core.application.port.in.attributeinsight.GetAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
