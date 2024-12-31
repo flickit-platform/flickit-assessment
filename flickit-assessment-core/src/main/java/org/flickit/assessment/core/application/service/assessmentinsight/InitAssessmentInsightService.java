@@ -35,7 +35,6 @@ public class InitAssessmentInsightService implements InitAssessmentInsightUseCas
     private final CreateAssessmentInsightPort createAssessmentInsightPort;
 
     @Override
-
     public void initAssessmentInsight(Param param) {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));

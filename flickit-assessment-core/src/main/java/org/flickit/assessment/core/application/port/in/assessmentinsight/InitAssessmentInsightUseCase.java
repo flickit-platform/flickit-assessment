@@ -17,7 +17,7 @@ public interface InitAssessmentInsightUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<InitAssessmentInsightUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = INIT_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
