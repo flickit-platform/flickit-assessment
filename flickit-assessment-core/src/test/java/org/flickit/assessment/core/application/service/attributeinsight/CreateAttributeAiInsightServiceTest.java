@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.attribute;
+package org.flickit.assessment.core.application.service.attributeinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -12,7 +12,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeAiInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.attributeinsight.CreateAttributeAiInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
