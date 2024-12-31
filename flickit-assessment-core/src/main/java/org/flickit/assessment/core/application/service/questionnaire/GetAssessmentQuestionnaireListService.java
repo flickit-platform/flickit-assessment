@@ -26,7 +26,39 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        return loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(toPortParam(param));
+        var questionnaires = loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(toPortParam(param));
+
+        return buildResultWithIssues(questionnaires);
+    }
+
+    private PaginatedResponse<QuestionnaireListItem> buildResultWithIssues(PaginatedResponse<QuestionnaireListItem> questionnaires) {
+        var items = questionnaires.getItems().stream().map(this::buildQuestionnaireWithIssues).toList();
+        return new PaginatedResponse<>(items,
+            questionnaires.getPage(),
+            questionnaires.getSize(),
+            questionnaires.getSort(),
+            questionnaires.getOrder(),
+            questionnaires.getTotal());
+    }
+
+    private QuestionnaireListItem buildQuestionnaireWithIssues(QuestionnaireListItem questionnaireListItem) {
+        return new QuestionnaireListItem(questionnaireListItem.id(),
+            questionnaireListItem.title(),
+            questionnaireListItem.description(),
+            questionnaireListItem.index(),
+            questionnaireListItem.questionCount(),
+            questionnaireListItem.answerCount(),
+            questionnaireListItem.nextQuestion(),
+            questionnaireListItem.progress(),
+            questionnaireListItem.subjects(),
+            buildIssues(questionnaireListItem));
+    }
+
+    private QuestionnaireListItem.Issues buildIssues(QuestionnaireListItem questionnaireListItem) {
+        return new QuestionnaireListItem.Issues(questionnaireListItem.questionCount() - questionnaireListItem.answerCount(),
+            0,
+            0,
+            0);
     }
 
     private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(Param param) {

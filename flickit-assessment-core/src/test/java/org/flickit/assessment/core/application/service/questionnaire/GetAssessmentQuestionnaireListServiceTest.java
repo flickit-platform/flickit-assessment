@@ -1,14 +1,12 @@
 package org.flickit.assessment.core.application.service.questionnaire;
 
+import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireListUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
-import org.flickit.assessment.core.application.port.out.questionnaire.GetQuestionnairesProgressPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionnaireListItemMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -37,13 +34,7 @@ class GetAssessmentQuestionnaireListServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadAssessmentResultPort loadAssessmentResultPort;
-
-    @Mock
     private LoadQuestionnairesByAssessmentIdPort loadQuestionnairesByAssessmentIdPort;
-
-    @Mock
-    private GetQuestionnairesProgressPort getQuestionnairesProgressPort;
 
     @Test
     void testGetQuestionnaireList_InvalidCurrentUser_ThrowsException() {
@@ -59,12 +50,8 @@ class GetAssessmentQuestionnaireListServiceTest {
     void testGetQuestionnaireList_whenAssessmentDoesNotHaveIssues_ReturnListSuccessfully() {
         Param param = createParam(Param.ParamBuilder::build);
         var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), param.getSize(), param.getPage());
-        var assessmentResult = AssessmentResultMother.validResult();
         var questionnaires = List.of(QuestionnaireListItemMother.createWithoutIssues(),
             QuestionnaireListItemMother.createWithoutIssues());
-        long[] questionnaireIds = questionnaires.stream().mapToLong(QuestionnaireListItem::id).toArray();
-        var expectedProgressPortResult = List.of(new GetQuestionnairesProgressPort.Result(questionnaireIds[0], 0, 1),
-            new GetQuestionnairesProgressPort.Result(questionnaireIds[0], 0, 1));
         var expectedResult = new PaginatedResponse<>(
             questionnaires,
             0,
@@ -77,11 +64,28 @@ class GetAssessmentQuestionnaireListServiceTest {
             .thenReturn(true);
         when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
             .thenReturn(expectedResult);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(getQuestionnairesProgressPort.getQuestionnairesProgress(param.getAssessmentId(), questionnaireIds)).thenReturn(expectedProgressPortResult);
 
-        var result = service.getAssessmentQuestionnaireList(param);
-        assertEquals(expectedResult, result);
+        var actualResult = service.getAssessmentQuestionnaireList(param);
+        var actualIssues = actualResult.getItems().stream().map(QuestionnaireListItem::issues).toList();
+        var expectedIssues = expectedResult.getItems().stream().map(QuestionnaireListItem::issues).toList();
+        Assertions.assertThat(actualResult.getItems())
+            .zipSatisfy(expectedResult.getItems(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.id());
+                assertEquals(expected.answerCount(), actual.answerCount());
+                assertEquals(expected.description(), actual.description());
+                assertEquals(expected.index(), actual.index());
+                assertEquals(expected.nextQuestion(), actual.nextQuestion());
+                assertEquals(expected.progress(), actual.progress());
+                assertEquals(expected.questionCount(), actual.questionCount());
+            });
+        Assertions.assertThat(actualIssues)
+            .zipSatisfy(expectedIssues, (actual, expected) -> {
+                assertEquals(expected.answeredWithLowConfidence(), actual.answeredWithLowConfidence());
+                assertEquals(expected.unanswered(), actual.unanswered());
+                assertEquals(expected.unresolvedComments(), actual.unresolvedComments());
+                assertEquals(expected.withoutEvidence(), actual.withoutEvidence());
+            });
+
     }
 
     @Test
