@@ -6,20 +6,21 @@ import java.util.List;
 
 public class QuestionnaireListItemMother {
 
-    static int id = 0;
+    private static int id = 0;
 
     public static QuestionnaireListItem createWithoutIssues() {
+        ++id;
         return new QuestionnaireListItem(
-            id++,
+            id,
             "questionnaire",
             "description about questionnaire",
-            id++,
-            1,
-            0,
-            1,
-            0,
+            id,
+            10,
+            10,
+            10,
+            100,
             List.of(new QuestionnaireListItem.Subject(0, "zero"),
                 new QuestionnaireListItem.Subject(1, "one")),
-            null);
+            new QuestionnaireListItem.Issues(0, 0, 0, 0));
     }
 }
