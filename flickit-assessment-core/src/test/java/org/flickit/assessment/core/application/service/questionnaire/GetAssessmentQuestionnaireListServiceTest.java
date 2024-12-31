@@ -6,6 +6,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireListUseCase.Param;
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
+import org.flickit.assessment.core.test.fixture.application.QuestionnaireListItemMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,22 +48,8 @@ class GetAssessmentQuestionnaireListServiceTest {
     @Test
     void testGetQuestionnaireList_ValidParams_ReturnListSuccessfully() {
         Param param = createParam(Param.ParamBuilder::build);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
-            .thenReturn(true);
-
         var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), param.getSize(), param.getPage());
-        QuestionnaireListItem.Subject subject = new QuestionnaireListItem.Subject(1, "subject");
-        QuestionnaireListItem questionnaire = new QuestionnaireListItem(
-            0,
-            "questionnaire",
-            "description about questionnaire",
-            1,
-            1,
-            0,
-            1,
-            0,
-            List.of(subject),
-            null);
+        QuestionnaireListItem questionnaire = QuestionnaireListItemMother.createWithoutIssues();
         var expectedResult = new PaginatedResponse<>(
             List.of(questionnaire),
             0,
@@ -71,11 +58,12 @@ class GetAssessmentQuestionnaireListServiceTest {
             "asc",
             1);
 
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
+            .thenReturn(true);
         when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
             .thenReturn(expectedResult);
 
         var result = service.getAssessmentQuestionnaireList(param);
-
         assertEquals(expectedResult, result);
     }
 
