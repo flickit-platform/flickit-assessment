@@ -38,13 +38,15 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
     @Query("""
             UPDATE AttributeInsightJpaEntity a
             SET a.assessorInsight = :assessorInsight,
-                a.assessorInsightTime = :assessorInsightTime
+                a.assessorInsightTime = :assessorInsightTime,
+                a.approved = :isApproved
             WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
         """)
     void updateAssessorInsight(@Param("assessmentResultId") UUID assessmentResultId,
                                @Param("attributeId") Long attributeId,
                                @Param("assessorInsight") String assessorInsight,
-                               @Param("assessorInsightTime") LocalDateTime assessorInsightTime);
+                               @Param("assessorInsightTime") LocalDateTime assessorInsightTime,
+                               @Param("isApproved") boolean isApproved);
 
     @Modifying
     @Query("""

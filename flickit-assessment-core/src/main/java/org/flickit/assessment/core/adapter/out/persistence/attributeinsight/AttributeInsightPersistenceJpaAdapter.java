@@ -54,7 +54,8 @@ public class AttributeInsightPersistenceJpaAdapter implements
             attributeInsight.getAssessmentResultId(),
             attributeInsight.getAttributeId(),
             attributeInsight.getAssessorInsight(),
-            attributeInsight.getAssessorInsightTime()
+            attributeInsight.getAssessorInsightTime(),
+            attributeInsight.isApproved()
         );
     }
 
