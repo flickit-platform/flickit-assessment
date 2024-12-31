@@ -38,6 +38,6 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             SET si.approved = true
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
-    void approveSubjectInsight(@Param("assessmentResultId") UUID assessmentResultId,
-                               @Param("subjectId") Long subjectId);
+    void approve(@Param("assessmentResultId") UUID assessmentResultId,
+                 @Param("subjectId") Long subjectId);
 }
