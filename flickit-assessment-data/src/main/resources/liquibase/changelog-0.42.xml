@@ -18,4 +18,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.42-02" author="Maziyar Gerami">
+        <dropNotNullConstraint tableName="fac_assessment_insight" columnName="insight_by"/>
+    </changeSet>
+
 </databaseChangeLog>

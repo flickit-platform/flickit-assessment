@@ -97,7 +97,8 @@ public enum AssessmentUserRole {
             MANAGE_KIT_CUSTOM,
             MANAGE_ADVICE_ITEM,
             RESOLVE_COMMENT,
-            VIEW_DASHBOARD)),
+            VIEW_DASHBOARD,
+            APPROVE_ATTRIBUTE_INSIGHT)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
