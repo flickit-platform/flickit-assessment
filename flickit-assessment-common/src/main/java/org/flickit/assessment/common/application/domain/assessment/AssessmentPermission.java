@@ -49,7 +49,6 @@ public enum AssessmentPermission {
     RESOLVE_COMMENT("resolveComment"),
     VIEW_DASHBOARD("viewDashboard"),
     APPROVE_ATTRIBUTE_INSIGHT("approveAttributeInsight"),
-    VIEW_DASHBOARD("viewDashboard"),
     GRANT_ACCESS_TO_REPORT("grantAccessToReport");
 
     private final String code;
