@@ -37,6 +37,9 @@ public class SubjectInsightJpaEntity extends AbstractEntity<SubjectInsightJpaEnt
     @Column(name = "insight_by", nullable = false)
     private UUID insightBy;
 
+    @Column(name = "approved", nullable = false)
+    private Boolean approved;
+
     @Override
     public EntityId getId() {
         return new EntityId(assessmentResultId, subjectId);
