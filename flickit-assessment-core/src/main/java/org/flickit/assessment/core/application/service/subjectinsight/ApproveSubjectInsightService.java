@@ -26,6 +26,6 @@ public class ApproveSubjectInsightService implements ApproveSubjectInsightUseCas
             AssessmentPermission.APPROVE_SUBJECT_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        approveSubjectInsightPort.approveSubjectInsight(param.getAssessmentId(), param.getSubjectId());
+        approveSubjectInsightPort.approve(param.getAssessmentId(), param.getSubjectId());
     }
 }

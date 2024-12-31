@@ -51,11 +51,11 @@ class ApproveSubjectInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
             param.getCurrentUserId(),
             AssessmentPermission.APPROVE_SUBJECT_INSIGHT)).thenReturn(true);
-        doNothing().when(approveSubjectInsightPort).approveSubjectInsight(param.getAssessmentId(), param.getSubjectId());
+        doNothing().when(approveSubjectInsightPort).approve(param.getAssessmentId(), param.getSubjectId());
 
         service.approveSubjectInsight(param);
 
-        verify(approveSubjectInsightPort).approveSubjectInsight(param.getAssessmentId(), param.getSubjectId());
+        verify(approveSubjectInsightPort).approve(param.getAssessmentId(), param.getSubjectId());
     }
 
     private ApproveSubjectInsightUseCase.Param createParam(Consumer<ApproveSubjectInsightUseCase.Param.ParamBuilder> changer) {
