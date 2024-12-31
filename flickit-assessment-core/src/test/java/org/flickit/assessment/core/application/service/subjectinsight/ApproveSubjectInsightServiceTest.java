@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.subjectinsight;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.subjectinsight.ApproveSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.subjectinsight.ApproveSubjectInsightPort;
@@ -14,8 +13,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,9 +35,8 @@ class ApproveSubjectInsightServiceTest {
     void testApproveSubjectInsight_whenCurrentUserDoesNotHaveRequiredPermissions_thenThrowAccessDeniedException() {
         var param = createParam(ApproveSubjectInsightUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
-            param.getCurrentUserId(),
-            AssessmentPermission.APPROVE_SUBJECT_INSIGHT)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_SUBJECT_INSIGHT))
+            .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.approveSubjectInsight(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
@@ -48,9 +48,8 @@ class ApproveSubjectInsightServiceTest {
     void testApproveSubjectInsight_whenCurrentUserHasRequiredPermission_thenApproveSubjectInsight() {
         var param = createParam(ApproveSubjectInsightUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
-            param.getCurrentUserId(),
-            AssessmentPermission.APPROVE_SUBJECT_INSIGHT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_SUBJECT_INSIGHT))
+            .thenReturn(true);
         doNothing().when(approveSubjectInsightPort).approve(param.getAssessmentId(), param.getSubjectId());
 
         service.approveSubjectInsight(param);
