@@ -20,8 +20,9 @@ class AssessmentUserRoleTest {
         assertEquals(2, ASSESSOR.getId());
         assertEquals(3, MANAGER.getId());
         assertEquals(4, ASSOCIATE.getId());
+        assertEquals(5, REPORT_VIEWER.getId());
 
-        assertEquals(5, AssessmentUserRole.values().length);
+        assertEquals(6, AssessmentUserRole.values().length);
     }
 
     @Test
@@ -31,6 +32,16 @@ class AssessmentUserRoleTest {
         assertEquals("Assessor", ASSESSOR.getTitle());
         assertEquals("Manager", MANAGER.getTitle());
         assertEquals("Associate", ASSOCIATE.getTitle());
+        assertEquals("ReportViewer", REPORT_VIEWER.getTitle());
+    }
+
+    @Test
+    void testAssessmentUserRole_ReportViewerPermissionsShouldBeSubsetOfCommenterAssessorManagerAssociateAndViewerReportViewer() {
+        assertTrue(COMMENTER.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
+        assertTrue(ASSESSOR.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
+        assertTrue(MANAGER.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
+        assertTrue(VIEWER.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
+        assertTrue(ASSOCIATE.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
     }
 
     @Test
