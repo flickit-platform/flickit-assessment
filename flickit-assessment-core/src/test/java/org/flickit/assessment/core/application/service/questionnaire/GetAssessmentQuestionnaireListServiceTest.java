@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_QUESTIONNAIRE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -45,7 +46,7 @@ class GetAssessmentQuestionnaireListServiceTest {
 
     @Test
     void testGetQuestionnaireList_ValidParams_ReturnListSuccessfully() {
-        Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID());
+        Param param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(true);
 
@@ -60,7 +61,8 @@ class GetAssessmentQuestionnaireListServiceTest {
             0,
             1,
             0,
-            List.of(subject));
+            List.of(subject),
+            null);
         var expectedResult = new PaginatedResponse<>(
             List.of(questionnaire),
             0,
@@ -75,5 +77,19 @@ class GetAssessmentQuestionnaireListServiceTest {
         var result = service.getAssessmentQuestionnaireList(param);
 
         assertEquals(expectedResult, result);
+    }
+
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .page(0)
+            .size(50)
+            .currentUserId(UUID.randomUUID());
     }
 }
