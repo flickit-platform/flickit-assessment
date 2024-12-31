@@ -6,12 +6,14 @@ import java.util.List;
 
 public class QuestionnaireListItemMother {
 
+    static int id = 0;
+
     public static QuestionnaireListItem createWithoutIssues() {
         return new QuestionnaireListItem(
-            0,
+            id++,
             "questionnaire",
             "description about questionnaire",
-            1,
+            id++,
             1,
             0,
             1,
