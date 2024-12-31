@@ -48,9 +48,9 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
 
     @Modifying
     @Query("""
-        UPDATE AttributeInsightJpaEntity a
-        SET a.approved = true
-        WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
+            UPDATE AttributeInsightJpaEntity a
+            SET a.approved = true
+            WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
         """)
     void approve(@Param("assessmentResultId") UUID assessmentResultId, @Param("attributeId") long attributeId);
 }

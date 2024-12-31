@@ -46,26 +46,9 @@ class ApproveAttributeInsightServiceTest {
     }
 
     @Test
-    void testApproveAttributeInsight_whenCurrentUserHasManagerRole_thenApproveAttributeInsight() {
+    void testApproveAttributeInsight_whenCurrentUserHasRequiredPermission_thenApproveAttributeInsight() {
         var param = createParam(ApproveAttributeInsightUseCase.Param.ParamBuilder::build);
 
-        // due to the having manager role, current user can approve attribute insight
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
-            param.getCurrentUserId(),
-            AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT))
-            .thenReturn(true);
-        doNothing().when(approveAttributeInsightPort).approve(param.getAssessmentId(), param.getAttributeId());
-
-        service.approveAttributeInsight(param);
-
-        verify(approveAttributeInsightPort).approve(param.getAssessmentId(), param.getAttributeId());
-    }
-
-    @Test
-    void testApproveAttributeInsight_whenCurrentUserHasAssessorRole_thenApproveAttributeInsight() {
-        var param = createParam(ApproveAttributeInsightUseCase.Param.ParamBuilder::build);
-
-        // due to the having assessor role, current user can approve attribute insight
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
             param.getCurrentUserId(),
             AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT))
