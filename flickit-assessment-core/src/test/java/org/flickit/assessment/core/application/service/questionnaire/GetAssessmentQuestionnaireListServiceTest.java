@@ -89,6 +89,48 @@ class GetAssessmentQuestionnaireListServiceTest {
     }
 
     @Test
+    void testGetQuestionnaireList_whenAssessmentHasIssues_ReturnListSuccessfully() {
+        Param param = createParam(Param.ParamBuilder::build);
+        var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), param.getSize(), param.getPage());
+        var questionnaires = List.of(QuestionnaireListItemMother.createWithoutIssues(),
+            QuestionnaireListItemMother.createWithIssues());
+        var expectedResult = new PaginatedResponse<>(
+            questionnaires,
+            0,
+            10,
+            "index",
+            "asc",
+            1);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
+            .thenReturn(true);
+        when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
+            .thenReturn(expectedResult);
+
+        var actualResult = service.getAssessmentQuestionnaireList(param);
+        var actualIssues = actualResult.getItems().stream().map(QuestionnaireListItem::issues).toList();
+        var expectedIssues = expectedResult.getItems().stream().map(QuestionnaireListItem::issues).toList();
+        Assertions.assertThat(actualResult.getItems())
+            .zipSatisfy(expectedResult.getItems(), (actual, expected) -> {
+                assertEquals(expected.id(), actual.id());
+                assertEquals(expected.answerCount(), actual.answerCount());
+                assertEquals(expected.description(), actual.description());
+                assertEquals(expected.index(), actual.index());
+                assertEquals(expected.nextQuestion(), actual.nextQuestion());
+                assertEquals(expected.progress(), actual.progress());
+                assertEquals(expected.questionCount(), actual.questionCount());
+            });
+        Assertions.assertThat(actualIssues)
+            .zipSatisfy(expectedIssues, (actual, expected) -> {
+                assertEquals(expected.answeredWithLowConfidence(), actual.answeredWithLowConfidence());
+                assertEquals(expected.unanswered(), actual.unanswered());
+                assertEquals(expected.unresolvedComments(), actual.unresolvedComments());
+                assertEquals(expected.withoutEvidence(), actual.withoutEvidence());
+            });
+
+    }
+
+    @Test
     void testGetQuestionnaireList_whenAssessmentHaveIssues_ReturnListContainsIssues() {
         Param param = createParam(Param.ParamBuilder::build);
         var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), param.getSize(), param.getPage());
