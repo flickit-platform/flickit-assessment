@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.attributeinsight;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attributeinsight.ApproveAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.attributeinsight.ApproveAttributeInsightPort;
@@ -14,8 +13,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,12 +32,12 @@ class ApproveAttributeInsightServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
-    void testApproveAttributeInsight_whenCurrentUserDoesntHaveRequiredPermissions_thenThrowAccessDeniedException() {
+    void testApproveAttributeInsight_whenCurrentUserDoesNotHaveRequiredPermissions_thenThrowAccessDeniedException() {
         var param = createParam(ApproveAttributeInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
             param.getCurrentUserId(),
-            AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT))
+            APPROVE_ATTRIBUTE_INSIGHT))
             .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.approveAttributeInsight(param));
@@ -49,9 +50,7 @@ class ApproveAttributeInsightServiceTest {
     void testApproveAttributeInsight_whenCurrentUserHasRequiredPermission_thenApproveAttributeInsight() {
         var param = createParam(ApproveAttributeInsightUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
-            param.getCurrentUserId(),
-            AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ATTRIBUTE_INSIGHT))
             .thenReturn(true);
         doNothing().when(approveAttributeInsightPort).approve(param.getAssessmentId(), param.getAttributeId());
 
