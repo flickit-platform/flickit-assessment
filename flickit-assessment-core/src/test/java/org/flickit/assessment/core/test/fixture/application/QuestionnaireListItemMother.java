@@ -23,4 +23,20 @@ public class QuestionnaireListItemMother {
                 new QuestionnaireListItem.Subject(1, "one")),
             new QuestionnaireListItem.Issues(0, 0, 0, 0));
     }
+
+    public static QuestionnaireListItem createWithIssues() {
+        ++id;
+        return new QuestionnaireListItem(
+            id,
+            "questionnaire",
+            "description about questionnaire",
+            id,
+            10,
+            7,
+            8,
+            70,
+            List.of(new QuestionnaireListItem.Subject(0, "zero"),
+                new QuestionnaireListItem.Subject(1, "one")),
+            new QuestionnaireListItem.Issues(3, 0, 0, 0));
+    }
 }
