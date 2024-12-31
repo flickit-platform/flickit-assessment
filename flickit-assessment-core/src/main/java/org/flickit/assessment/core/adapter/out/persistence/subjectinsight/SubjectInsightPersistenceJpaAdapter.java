@@ -44,7 +44,8 @@ public class SubjectInsightPersistenceJpaAdapter implements
             subjectInsight.getSubjectId(),
             subjectInsight.getInsight(),
             subjectInsight.getInsightTime(),
-            subjectInsight.getInsightBy());
+            subjectInsight.getInsightBy(),
+            subjectInsight.isApproved());
     }
 
     @Override
@@ -53,7 +54,6 @@ public class SubjectInsightPersistenceJpaAdapter implements
             .stream()
             .map(SubjectInsightMapper::mapToDomainModel)
             .toList();
-
     }
 
     @Override
@@ -65,6 +65,5 @@ public class SubjectInsightPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND);
 
         repository.approve(resultEntity.getId(), subjectId);
-
     }
 }
