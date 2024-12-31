@@ -268,6 +268,10 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL = "get-assessment-dashboard.assessmentId.notNull";
     public static final String GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-dashboard.assessmentResult.notFound";
 
+    public static final String INIT_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "init-assessment-insight.assessmentId.notNull";
+    public static final String INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "init-assessment-insight.assessmentResult.notFound";
+    public static final String INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE = "init-assessment-insight.insight.duplicate";
+
     public static final String APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "approve-attribute-insight.assessmentId.notNull";
     public static final String APPROVE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "approve-attribute-insight.attributeId.notNull";
     public static final String APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "approve-attribute-insight.assessmentResult.notFound";
