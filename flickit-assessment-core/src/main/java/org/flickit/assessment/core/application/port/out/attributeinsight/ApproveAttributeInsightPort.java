@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface ApproveAttributeInsightPort {
 
-    void approveAttributeInsight(UUID assessmentId, long attributeId);
+    void approve(UUID assessmentId, long attributeId);
 }

@@ -20,7 +20,7 @@ public class AssessmentAccessCheckerService implements AssessmentAccessChecker {
 
     @Override
     public boolean isAuthorized(UUID assessmentId, UUID userId, AssessmentPermission permission) {
-        if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(assessmentId, userId)) // todo: ruin the SRP rule!
+        if (!checkAssessmentSpaceMembershipPort.isAssessmentSpaceMember(assessmentId, userId))
             return false;
         return assessmentPermissionChecker.isAuthorized(assessmentId, userId, permission);
     }

@@ -54,11 +54,11 @@ class ApproveAttributeInsightServiceTest {
             param.getCurrentUserId(),
             AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT))
             .thenReturn(true);
-        doNothing().when(approveAttributeInsightPort).approveAttributeInsight(param.getAssessmentId(), param.getAttributeId());
+        doNothing().when(approveAttributeInsightPort).approve(param.getAssessmentId(), param.getAttributeId());
 
         service.approveAttributeInsight(param);
 
-        verify(approveAttributeInsightPort).approveAttributeInsight(param.getAssessmentId(), param.getAttributeId());
+        verify(approveAttributeInsightPort).approve(param.getAssessmentId(), param.getAttributeId());
     }
 
     @Test
@@ -70,11 +70,11 @@ class ApproveAttributeInsightServiceTest {
             param.getCurrentUserId(),
             AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT))
             .thenReturn(true);
-        doNothing().when(approveAttributeInsightPort).approveAttributeInsight(param.getAssessmentId(), param.getAttributeId());
+        doNothing().when(approveAttributeInsightPort).approve(param.getAssessmentId(), param.getAttributeId());
 
         service.approveAttributeInsight(param);
 
-        verify(approveAttributeInsightPort).approveAttributeInsight(param.getAssessmentId(), param.getAttributeId());
+        verify(approveAttributeInsightPort).approve(param.getAssessmentId(), param.getAttributeId());
     }
 
     private ApproveAttributeInsightUseCase.Param createParam(Consumer<ApproveAttributeInsightUseCase.Param.ParamBuilder> changer) {

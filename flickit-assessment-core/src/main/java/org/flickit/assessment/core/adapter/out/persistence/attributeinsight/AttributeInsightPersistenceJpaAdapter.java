@@ -67,13 +67,14 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public void approveAttributeInsight(UUID assessmentId, long attributeId) {
-        var resultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
+    public void approve(UUID assessmentId, long attributeId) {
+        var assessmentResultId = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND))
+            .getId();
 
-        if (!repository.existsByAssessmentResultIdAndAttributeId(resultEntity.getId(), attributeId))
+        if (!repository.existsByAssessmentResultIdAndAttributeId(assessmentResultId, attributeId))
             throw new ResourceNotFoundException(ATTRIBUTE_INSIGHT_ID_NOT_FOUND);
 
-        repository.approve(resultEntity.getId(), attributeId);
+        repository.approve(assessmentResultId, attributeId);
     }
 }

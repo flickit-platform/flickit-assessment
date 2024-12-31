@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attributeinsight.ApproveAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.attributeinsight.ApproveAttributeInsightPort;
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -24,11 +24,9 @@ public class ApproveAttributeInsightService implements ApproveAttributeInsightUs
     @Override
     public void approveAttributeInsight(Param param) {
         UUID assessmentId = param.getAssessmentId();
-        if (!assessmentAccessChecker.isAuthorized(assessmentId,
-            param.getCurrentUserId(),
-            AssessmentPermission.APPROVE_ATTRIBUTE_INSIGHT))
+        if (!assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ATTRIBUTE_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        approveAttributeInsightPort.approveAttributeInsight(assessmentId, param.getAttributeId());
+        approveAttributeInsightPort.approve(assessmentId, param.getAttributeId());
     }
 }
