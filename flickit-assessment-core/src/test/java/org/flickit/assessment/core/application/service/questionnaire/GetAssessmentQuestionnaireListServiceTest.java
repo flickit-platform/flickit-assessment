@@ -49,9 +49,9 @@ class GetAssessmentQuestionnaireListServiceTest {
     void testGetQuestionnaireList_ValidParams_ReturnListSuccessfully() {
         Param param = createParam(Param.ParamBuilder::build);
         var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), param.getSize(), param.getPage());
-        QuestionnaireListItem questionnaire = QuestionnaireListItemMother.createWithoutIssues();
+        QuestionnaireListItem questionnaires = QuestionnaireListItemMother.createWithoutIssues();
         var expectedResult = new PaginatedResponse<>(
-            List.of(questionnaire),
+            List.of(questionnaires),
             0,
             10,
             "index",
