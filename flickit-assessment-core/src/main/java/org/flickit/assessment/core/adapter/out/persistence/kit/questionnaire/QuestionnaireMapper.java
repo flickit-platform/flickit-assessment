@@ -16,13 +16,13 @@ public class QuestionnaireMapper {
     public static QuestionnaireListItem mapToListItem(QuestionnaireListItemView questionnaireView,
                                                       List<SubjectWithQuestionnaireIdView> subjectsView,
                                                       int answerCount,
-                                                      int nextQuestion){
+                                                      int nextQuestion) {
         var questionnaireEntity = questionnaireView.getQuestionnaire();
         List<QuestionnaireListItem.Subject> subjects = List.of();
         if (subjectsView != null)
             subjects = subjectsView.stream()
-            .map(s -> new QuestionnaireListItem.Subject(s.getId(), s.getTitle()))
-            .toList();
+                .map(s -> new QuestionnaireListItem.Subject(s.getId(), s.getTitle()))
+                .toList();
         int progress = (int) Math.floor(((double) answerCount / questionnaireView.getQuestionCount()) * 100);
 
         return new QuestionnaireListItem(
@@ -34,7 +34,8 @@ public class QuestionnaireMapper {
             answerCount,
             nextQuestion,
             progress,
-            subjects
+            subjects,
+            null //TODO: consideration needed
         );
     }
 

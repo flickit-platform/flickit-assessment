@@ -11,10 +11,17 @@ public record QuestionnaireListItem(
     int answerCount,
     int nextQuestion,
     int progress,
-    List<Subject> subjects) {
+    List<Subject> subjects,
+    Issues issues) {
 
     public record Subject(
         long id,
         String title) {
+    }
+
+    public record Issues(int unanswered,
+                         int answeredWithLowConfidence,
+                         int withoutEvidence,
+                         int unresolvedComments) {
     }
 }
