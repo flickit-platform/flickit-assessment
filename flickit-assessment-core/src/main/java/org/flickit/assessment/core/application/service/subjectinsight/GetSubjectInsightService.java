@@ -47,24 +47,18 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
 
         var subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
 
-        return subjectInsight.map(insight -> getAssessorInsight(assessmentResult,
-                insight,
-                editable,
-                insight.isApproved()))
+        return subjectInsight.map(insight -> getAssessorInsight(assessmentResult, insight, editable))
             .orElseGet(() -> getDefaultInsight(param.getAssessmentId(), param.getSubjectId(), editable));
 
     }
 
-    private Result getAssessorInsight(AssessmentResult assessmentResult,
-                                      SubjectInsight subjectInsight,
-                                      boolean editable,
-                                      boolean approved) {
+    private Result getAssessorInsight(AssessmentResult assessmentResult, SubjectInsight subjectInsight, boolean editable) {
         return new Result(null,
             new Result.AssessorInsight(subjectInsight.getInsight(),
                 subjectInsight.getInsightTime(),
                 assessmentResult.getLastCalculationTime().isBefore(subjectInsight.getInsightTime())),
             editable,
-            approved);
+            subjectInsight.isApproved());
     }
 
     private Result getDefaultInsight(UUID assessmentId, long subjectId, boolean editable) {
