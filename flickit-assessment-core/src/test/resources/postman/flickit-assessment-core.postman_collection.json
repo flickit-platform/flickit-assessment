@@ -2065,7 +2065,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/insights/subjects/464/approve",
+							"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/subjects/464/approve-insight",
 							"host": [
 								"{{base_url}}"
 							],
@@ -2073,10 +2073,9 @@
 								"{{api_path}}",
 								"assessments",
 								"f2b6317f-eb3c-49d0-99c8-e70e49533fac",
-								"insights",
 								"subjects",
 								"464",
-								"approve"
+								"approve-insight"
 							]
 						}
 					},
