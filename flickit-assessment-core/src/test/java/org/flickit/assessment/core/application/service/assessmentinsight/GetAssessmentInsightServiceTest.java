@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
+import org.flickit.assessment.core.application.port.in.assessmentinsight.GetAssessmentInsightUseCase;
 import org.flickit.assessment.core.application.port.in.assessmentinsight.GetAssessmentInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
@@ -49,27 +51,23 @@ class GetAssessmentInsightServiceTest {
 
     @Test
     void testGetAssessmentInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
-        var assessmentId = UUID.randomUUID();
-        var currentUserId = UUID.randomUUID();
-        var param = new Param(assessmentId, currentUserId);
+        var param = createParam(Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentInsight(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT);
+        verify(assessmentAccessChecker).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT);
         verifyNoInteractions(loadAssessmentResultPort, validateAssessmentResult, loadAssessmentInsightPort);
     }
 
     @Test
     void testGetAssessmentInsight_AssessmentResultNotFound_ThrowResourceNotFoundException() {
-        var assessmentId = UUID.randomUUID();
-        var currentUserId = UUID.randomUUID();
-        var param = new Param(assessmentId, currentUserId);
+        var param = createParam(Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.empty());
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentInsight(param));
         assertEquals(GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
@@ -79,13 +77,11 @@ class GetAssessmentInsightServiceTest {
 
     @Test
     void testGetAssessmentInsight_AssessmentInsightDoesNotExist_ThrowResourceNotFoundException() {
-        var assessmentId = UUID.randomUUID();
-        var currentUserId = UUID.randomUUID();
-        var param = new Param(assessmentId, currentUserId);
+        var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = validResult();
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
 
@@ -95,17 +91,15 @@ class GetAssessmentInsightServiceTest {
 
     @Test
     void testGetAssessmentInsight_AssessmentInsightExistsAndIsValidAndEditable_ReturnAssessorInsight() {
-        var assessmentId = UUID.randomUUID();
-        var currentUserId = UUID.randomUUID();
-        var param = new Param(assessmentId, currentUserId);
+        var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var assessmentInsight = createWithAssessmentResultId(assessmentResult.getId());
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
 
         var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
 
@@ -119,17 +113,15 @@ class GetAssessmentInsightServiceTest {
 
     @Test
     void testGetAssessmentInsight_AssessmentInsightExistsAndIsNotValidAndNotEditable_ReturnAssessorInsight() {
-        var assessmentId = UUID.randomUUID();
-        var currentUserId = UUID.randomUUID();
-        var param = new Param(assessmentId, currentUserId);
+        var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var assessmentInsight = createWithMinInsightTime();
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_INSIGHT)).thenReturn(false);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT)).thenReturn(false);
 
         var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
 
@@ -143,22 +135,32 @@ class GetAssessmentInsightServiceTest {
 
     @Test
     void testGetAssessmentInsight_InitialAssessmentInsightExists_ReturnDefaultInsightWithFullProgress() {
-        var assessmentId = UUID.randomUUID();
-        var currentUserId = UUID.randomUUID();
-        var param = new Param(assessmentId, currentUserId);
+        var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
         var assessmentInsight = AssessmentInsightMother.createInitialInsightWithAssessmentResultId(assessmentResult.getId());
 
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
-        when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
 
         var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
 
         assertNotNull(result.defaultInsight().insight());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
+    }
+
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private GetAssessmentInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAssessmentInsightUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .currentUserId(UUID.randomUUID());
     }
 }
