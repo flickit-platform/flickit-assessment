@@ -713,6 +713,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Init Assessment Insight",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/59fc1611-372f-4921-b7a0-5c2f299b5144/init-insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"59fc1611-372f-4921-b7a0-5c2f299b5144",
+								"init-insight"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1094,11 +1133,12 @@
 					"request": {
 						"method": "GET",
 						"header": [
-						{
-							"key": "Accept-Language",
-							"value": "{{accept_language}}",
-							"type": "text"
-						}],
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{base_url}}/{{api_path}}/assessment-user-roles",
 							"host": [
@@ -1516,11 +1556,12 @@
 					"request": {
 						"method": "GET",
 						"header": [
-						{
-							"key": "Accept-Language",
-							"value": "{{accept_language}}",
-							"type": "text"
-						}],
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{base_url}}/{{api_path}}/evidence-types",
 							"host": [
