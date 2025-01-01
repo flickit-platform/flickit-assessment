@@ -38,9 +38,7 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
         var assessmentResultId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .map(AssessmentResult::getId)
             .orElseThrow(() -> new ResourceNotFoundException(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
-
         validateAssessmentResultPort.validate(param.getAssessmentId());
-
         var subjectInsightOptional = loadSubjectInsightPort.load(assessmentResultId, param.getSubjectId());
         if (subjectInsightOptional.isPresent() && subjectInsightOptional.get().getInsightBy() != null)
             throw new ValidationException(INIT_SUBJECT_INSIGHT_INSIGHT_DUPLICATE);

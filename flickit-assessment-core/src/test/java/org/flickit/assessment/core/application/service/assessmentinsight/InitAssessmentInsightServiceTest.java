@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessmentinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
@@ -55,6 +56,9 @@ class InitAssessmentInsightServiceTest {
     @Mock
     private UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
+    @Mock
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
+
     @Test
     void testInitAssessmentInsight_assessmentResultNotFound_throwsResourceNotFoundException() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
@@ -63,6 +67,12 @@ class InitAssessmentInsightServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.initAssessmentInsight(param));
         assertEquals(INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(loadAssessmentInsightPort,
+            getAssessmentProgressPort,
+            createAssessmentInsightPort,
+            updateAssessmentInsightPort,
+            validateAssessmentResultPort);
     }
 
     @Test
@@ -72,10 +82,16 @@ class InitAssessmentInsightServiceTest {
         var assessorInsight = createSimpleAssessmentInsight();
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessorInsight));
 
         var throwable = assertThrows(ValidationException.class, () -> service.initAssessmentInsight(param));
         assertEquals(INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE, throwable.getMessageKey());
+
+        verifyNoInteractions(
+            getAssessmentProgressPort,
+            createAssessmentInsightPort,
+            updateAssessmentInsightPort);
     }
 
     @Test
@@ -89,6 +105,7 @@ class InitAssessmentInsightServiceTest {
             Math.ceil(assessmentResult.getConfidenceValue()));
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progressResult);
 
@@ -117,6 +134,7 @@ class InitAssessmentInsightServiceTest {
             Math.ceil(assessmentResult.getConfidenceValue()));
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progressResult);
 
@@ -145,6 +163,7 @@ class InitAssessmentInsightServiceTest {
             0);
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progressResult);
 

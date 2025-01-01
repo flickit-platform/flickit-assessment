@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessmentinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
@@ -33,11 +34,13 @@ public class InitAssessmentInsightService implements InitAssessmentInsightUseCas
     private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final UpdateAssessmentInsightPort updateAssessmentInsightPort;
     private final CreateAssessmentInsightPort createAssessmentInsightPort;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Override
     public void initAssessmentInsight(Param param) {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
+        validateAssessmentResultPort.validate(param.getAssessmentId());
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
         if (assessmentInsight.isPresent() && assessmentInsight.get().getInsightBy() != null)
             throw new ValidationException(INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE);
