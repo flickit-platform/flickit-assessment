@@ -20,11 +20,13 @@ public interface AssessmentInsightJpaRepository extends JpaRepository<Assessment
             UPDATE AssessmentInsightJpaEntity a
             SET a.insight = :insight,
                 a.insightTime = :insightTime,
-                a.insightBy = :insightBy
+                a.insightBy = :insightBy,
+                a.approved = :approved
             WHERE a.id = :id
         """)
     void update(@Param("id") UUID id,
                 @Param("insight") String insight,
                 @Param("insightTime") LocalDateTime insightTime,
-                @Param("insightBy") UUID insightBy);
+                @Param("insightBy") UUID insightBy,
+                @Param("approved") boolean approved);
 }

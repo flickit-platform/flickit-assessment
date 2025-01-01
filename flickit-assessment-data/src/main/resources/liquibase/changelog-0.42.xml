@@ -30,4 +30,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.42-04" author="Ali Sedaghat">
+        <addColumn tableName="fac_assessment_insight">
+            <column name="approved" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

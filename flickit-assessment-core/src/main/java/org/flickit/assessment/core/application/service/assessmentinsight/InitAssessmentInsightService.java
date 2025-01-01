@@ -63,6 +63,7 @@ public class InitAssessmentInsightService implements InitAssessmentInsightUseCas
             assessmentResultId,
             insight,
             LocalDateTime.now(),
-            null);
+            null,
+            false);
     }
 }
