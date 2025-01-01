@@ -37,6 +37,6 @@ public class QuestionnaireListItemMother {
             70,
             List.of(new QuestionnaireListItem.Subject(0, "zero"),
                 new QuestionnaireListItem.Subject(1, "one")),
-            new QuestionnaireListItem.Issues(3, 0, 0, 0));
+            new QuestionnaireListItem.Issues(1, 2, 3, 4));
     }
 }
