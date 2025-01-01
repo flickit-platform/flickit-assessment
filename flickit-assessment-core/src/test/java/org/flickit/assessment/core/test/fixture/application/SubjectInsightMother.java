@@ -15,6 +15,14 @@ public class SubjectInsightMother {
             true);
     }
 
+    public static SubjectInsight defaultSubjectInsight() {
+        return new SubjectInsight(UUID.randomUUID(),
+            2L,
+            "insight", LocalDateTime.now().plusSeconds(10),
+            null,
+            false);
+    }
+
     public static SubjectInsight subjectInsight() {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
