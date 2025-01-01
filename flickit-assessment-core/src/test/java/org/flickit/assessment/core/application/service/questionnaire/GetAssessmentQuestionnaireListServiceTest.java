@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireListUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.QuestionnaireListItemMother;
@@ -48,6 +49,9 @@ class GetAssessmentQuestionnaireListServiceTest {
     @Mock
     private CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
 
+    @Mock
+    private CountEvidencesPort countEvidencesPort;
+
     @Test
     void testGetQuestionnaireList_InvalidCurrentUser_ThrowsAccessDeniedException() {
         Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID());
@@ -81,6 +85,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             .map(QuestionnaireListItem::id)
             .collect(Collectors.toCollection(ArrayList::new));
         var countQuestionsWithLowConfidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 0));
+        var countUnresolvedComment = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 0));
         var expectedResult = new PaginatedResponse<>(
             questionnaires,
             0,
@@ -96,6 +101,8 @@ class GetAssessmentQuestionnaireListServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))
             .thenReturn(countQuestionsWithLowConfidence);
+        when(countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+            .thenReturn(countUnresolvedComment);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);
         var actualIssues = actualResult.getItems().stream().map(QuestionnaireListItem::issues).toList();

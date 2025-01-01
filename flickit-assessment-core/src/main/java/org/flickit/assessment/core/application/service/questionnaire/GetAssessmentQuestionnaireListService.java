@@ -11,13 +11,13 @@ import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.questionnaire.LoadQuestionnairesByAssessmentIdPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_QUESTIONNAIRE_LIST;
@@ -33,6 +33,7 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final CountLowConfidenceAnswersPort lowConfidenceAnswersPort;
+    private final CountEvidencesPort countEvidencesPort;
 
     @Override
     public PaginatedResponse<QuestionnaireListItem> getAssessmentQuestionnaireList(Param param) {
@@ -43,12 +44,14 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
 
         var questionnaires = loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(toPortParam(param, assessmentResult));
 
-        return buildResultWithIssues(questionnaires, assessmentResult.getId());
+        return buildResultWithIssues(assessmentResult, questionnaires);
     }
-    private PaginatedResponse<QuestionnaireListItem> buildResultWithIssues(PaginatedResponse<QuestionnaireListItem> questionnaires, UUID assessmentResultId ) {
+
+    private PaginatedResponse<QuestionnaireListItem> buildResultWithIssues(AssessmentResult assessmentResult, PaginatedResponse<QuestionnaireListItem> questionnaires) {
         var questionnaireIds = questionnaires.getItems().stream().map(QuestionnaireListItem::id).collect(Collectors.toCollection(ArrayList::new));
-        var lowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResultId, questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
-        var items = questionnaires.getItems().stream().map(i -> buildQuestionnaireWithIssues(i, lowConfidenceAnswersCount)).toList();
+        var lowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
+        var questionnairesUnresolvedComments = countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+        var items = questionnaires.getItems().stream().map(i -> buildQuestionnaireWithIssues(i, lowConfidenceAnswersCount, questionnairesUnresolvedComments)).toList();
 
         return new PaginatedResponse<>(items,
             questionnaires.getPage(),
@@ -58,7 +61,7 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             questionnaires.getTotal());
     }
 
-    private QuestionnaireListItem buildQuestionnaireWithIssues(QuestionnaireListItem questionnaireListItem, Map<Long, Integer> lowConfidenceAnswersCount) {
+    private QuestionnaireListItem buildQuestionnaireWithIssues(QuestionnaireListItem questionnaireListItem, Map<Long, Integer> lowConfidenceAnswersCount, Map<Long, Integer> questionnairesUnresolvedComments) {
         return new QuestionnaireListItem(questionnaireListItem.id(),
             questionnaireListItem.title(),
             questionnaireListItem.description(),
@@ -68,14 +71,14 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             questionnaireListItem.nextQuestion(),
             questionnaireListItem.progress(),
             questionnaireListItem.subjects(),
-            buildIssues(questionnaireListItem, lowConfidenceAnswersCount.get(questionnaireListItem.id())));
+            buildIssues(questionnaireListItem, lowConfidenceAnswersCount.get(questionnaireListItem.id()), questionnairesUnresolvedComments.get(questionnaireListItem.id())));
     }
 
-    private QuestionnaireListItem.Issues buildIssues(QuestionnaireListItem questionnaireListItem, Integer answeredWithLowConfidence) {
+    private QuestionnaireListItem.Issues buildIssues(QuestionnaireListItem questionnaireListItem, int answeredWithLowConfidence, int questionnairesUnresolvedComments) {
         return new QuestionnaireListItem.Issues(questionnaireListItem.questionCount() - questionnaireListItem.answerCount(),
             answeredWithLowConfidence,
             0,
-            0);
+            questionnairesUnresolvedComments);
     }
 
     private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(Param param, AssessmentResult assessmentResult) {
