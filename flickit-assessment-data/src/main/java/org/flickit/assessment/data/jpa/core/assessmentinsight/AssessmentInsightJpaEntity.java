@@ -32,6 +32,9 @@ public class AssessmentInsightJpaEntity {
     @Column(name = "insight_time", nullable = false)
     private LocalDateTime insightTime;
 
-    @Column(name = "insight_by", nullable = false)
+    @Column(name = "insight_by")
     private UUID insightBy;
+
+    @Column(name = "approved", nullable = false)
+    private Boolean approved;
 }

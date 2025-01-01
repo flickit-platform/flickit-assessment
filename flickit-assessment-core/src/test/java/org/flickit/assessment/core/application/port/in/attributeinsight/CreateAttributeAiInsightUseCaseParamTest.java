@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.attribute;
+package org.flickit.assessment.core.application.port.in.attributeinsight;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;

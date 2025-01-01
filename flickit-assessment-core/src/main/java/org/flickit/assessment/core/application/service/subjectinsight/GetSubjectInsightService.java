@@ -41,6 +41,44 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
         var subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND));
 
+        return subjectInsight.map(insight -> getAssessorInsight(assessmentResult, insight, editable))
+            .orElseGet(() -> getDefaultInsight(param.getAssessmentId(), param.getSubjectId(), editable));
+
+    }
+
+    private Result getAssessorInsight(AssessmentResult assessmentResult, SubjectInsight subjectInsight, boolean editable) {
+        return new Result(null,
+            new Result.AssessorInsight(subjectInsight.getInsight(),
+                subjectInsight.getInsightTime(),
+                assessmentResult.getLastCalculationTime().isBefore(subjectInsight.getInsightTime())),
+            editable,
+            subjectInsight.isApproved());
+    }
+
+    private Result getDefaultInsight(UUID assessmentId, long subjectId, boolean editable) {
+        return new Result(new Result.DefaultInsight(createDefaultInsight(assessmentId, subjectId)),
+            null,
+            editable,
+            false);
+    }
+
+    String createDefaultInsight(UUID assessmentId, long subjectId) {
+        var subjectReport = loadSubjectReportInfoPort.load(assessmentId, subjectId);
+        var subject = subjectReport.subject();
+
+        if (subject.maturityLevel() == null)
+            return "";
+
+        return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
+            subject.title(),
+            subject.description(),
+            subject.confidenceValue() != null ? (int) Math.ceil(subject.confidenceValue()) : 0,
+            subject.title(),
+            subject.maturityLevel().getIndex(),
+            subjectReport.maturityLevels().size(),
+            subject.maturityLevel().getTitle(),
+            subjectReport.attributes().size(),
+            subject.title());
         if (subjectInsight.getInsightBy() == null)
             return new Result(new Result.DefaultInsight(subjectInsight.getInsight()),
                 null,
