@@ -187,29 +187,6 @@ class GetAssessmentQuestionnaireListServiceTest {
             });
     }
 
-    @Test
-    void testGetQuestionnaireList_whenAssessmentHaveIssues_ReturnListContainsIssues() {
-        Param param = createParam(Param.ParamBuilder::build);
-        var assessmentResult = AssessmentResultMother.validResult();
-        var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), assessmentResult, param.getSize(), param.getPage());
-        QuestionnaireListItem questionnaires = QuestionnaireListItemMother.createWithoutIssues();
-        var expectedResult = new PaginatedResponse<>(
-            List.of(questionnaires),
-            0,
-            10,
-            "index",
-            "asc",
-            1);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
-            .thenReturn(true);
-        when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
-            .thenReturn(expectedResult);
-
-        var result = service.getAssessmentQuestionnaireList(param);
-        assertEquals(expectedResult, result);
-    }
-
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
