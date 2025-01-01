@@ -130,21 +130,13 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public Map<Long, Integer> countQuestionnairesUnresolvedComments(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds) {
-        var questions = questionRepository.findAllByKitVersionIdAndQuestionnaireIdIn(kitVersionId, questionnaireIds);
-        var questionIds = questions.stream().map(QuestionJpaEntity::getId).collect(Collectors.toCollection(ArrayList::new));
-        //return repository.countByAssessmentIdAndQuestionIdInAndTypeIsNullAndResolvedIsNullAndDeletedFalse(assessmentId, questionIds);
-
 
         return Map.of(); //TODO: consider it
     }
 
     @Override
     public Map<Long, Integer> countQuestionnairesEvidence(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds) {
-        var questions = questionRepository.findAllByKitVersionIdAndQuestionnaireIdIn(kitVersionId, questionnaireIds);
-        var questionIds = questions.stream().map(QuestionJpaEntity::getId).collect(Collectors.toCollection(ArrayList::new));
 
-        //return repository.countByAssessmentIdAndQuestionIdInAndTypeIsNullAndResolvedIsNullAndDeletedFalse(assessmentId, questionIds);
-         //TODO: consider it
-        return Map.of();
+        return Map.of(); //TODO: consider it
     }
 }
