@@ -16,7 +16,7 @@ public class InitSubjectInsightRestController {
 
     private final InitSubjectInsightUseCase useCase;
 
-    @PostMapping("/assessments/{assessmentId}/subjects/{subjectId}/init-insights")
+    @PostMapping("/assessments/{assessmentId}/subjects/{subjectId}/init-insight")
     public ResponseEntity<Void> initSubjectInsight(@PathVariable("assessmentId")UUID assessmentId,
                                                    @PathVariable("subjectId") Long subjectId) {
         useCase.initSubjectInsight(toParam(assessmentId, subjectId));
