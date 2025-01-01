@@ -86,6 +86,8 @@ class GetAssessmentQuestionnaireListServiceTest {
             .collect(Collectors.toCollection(ArrayList::new));
         var countQuestionsWithLowConfidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 0));
         var countUnresolvedComment = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 0));
+        var countWithNoEvidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 0));
+
         var expectedResult = new PaginatedResponse<>(
             questionnaires,
             0,
@@ -103,6 +105,8 @@ class GetAssessmentQuestionnaireListServiceTest {
             .thenReturn(countQuestionsWithLowConfidence);
         when(countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(countUnresolvedComment);
+        when(countEvidencesPort.countQuestionnairesEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+            .thenReturn(countWithNoEvidence);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);
         var actualIssues = actualResult.getItems().stream().map(QuestionnaireListItem::issues).toList();
@@ -123,7 +127,7 @@ class GetAssessmentQuestionnaireListServiceTest {
                 assertEquals(0, actual.answeredWithLowConfidence());
                 assertEquals(0, actual.unanswered());
                 assertEquals(0, actual.unresolvedComments());
-                assertEquals(0, actual.withoutEvidence());
+                assertEquals(10, actual.withoutEvidence());
             });
     }
 
@@ -132,9 +136,12 @@ class GetAssessmentQuestionnaireListServiceTest {
         Param param = createParam(Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), assessmentResult, param.getSize(), param.getPage());
-        var questionnaires = List.of(QuestionnaireListItemMother.createWithoutIssues(),
+        var questionnaires = List.of(QuestionnaireListItemMother.createWithIssues(),
             QuestionnaireListItemMother.createWithIssues());
         var countQuestionsWithLowConfidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 2));
+        var countWithNoEvidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 3));
+        var countUnresolvedComment = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 4));
+
         ArrayList<Long> questionnaireIds = questionnaires.stream()
             .map(QuestionnaireListItem::id)
             .collect(Collectors.toCollection(ArrayList::new));
@@ -153,6 +160,10 @@ class GetAssessmentQuestionnaireListServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))
             .thenReturn(countQuestionsWithLowConfidence);
+        when(countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+            .thenReturn(countUnresolvedComment);
+        when(countEvidencesPort.countQuestionnairesEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+            .thenReturn(countWithNoEvidence);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);
         var actualIssues = actualResult.getItems().stream().map(QuestionnaireListItem::issues).toList();
@@ -169,12 +180,11 @@ class GetAssessmentQuestionnaireListServiceTest {
             });
         Assertions.assertThat(actualIssues)
             .zipSatisfy(expectedIssues, (actual, expected) -> {
+                assertEquals(3, actual.unanswered());
                 assertEquals(2, actual.answeredWithLowConfidence());
-                assertEquals(expected.unanswered(), actual.unanswered());
-                assertEquals(expected.unresolvedComments(), actual.unresolvedComments());
-                assertEquals(expected.withoutEvidence(), actual.withoutEvidence());
+                assertEquals(7, actual.withoutEvidence());
+                assertEquals(4, actual.unresolvedComments());
             });
-
     }
 
     @Test
