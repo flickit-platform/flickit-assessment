@@ -15,6 +15,8 @@ public interface AssessmentInsightJpaRepository extends JpaRepository<Assessment
 
     Optional<AssessmentInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
+    boolean existsByAssessmentResultId(UUID assessmentResultId);
+
     @Modifying
     @Query("""
             UPDATE AssessmentInsightJpaEntity a
@@ -29,4 +31,12 @@ public interface AssessmentInsightJpaRepository extends JpaRepository<Assessment
                 @Param("insightTime") LocalDateTime insightTime,
                 @Param("insightBy") UUID insightBy,
                 @Param("approved") boolean approved);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentInsightJpaEntity a
+            SET a.approved = true
+            WHERE a.assessmentResultId = :assessmentResultId
+        """)
+    void approve(@Param("assessmentResultId") UUID assessmentResultId);
 }
