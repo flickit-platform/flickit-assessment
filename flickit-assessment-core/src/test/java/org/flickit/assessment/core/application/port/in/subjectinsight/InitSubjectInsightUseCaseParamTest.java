@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class InitSubjectInsightUseCaseParamTest {
 
     @Test
-    void initSubjectInsightUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
+    void testInitSubjectInsightUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + INIT_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void initSubjectInsightUseCaseParam_subjectIdParamIsNull_ErrorMessage() {
+    void testInitSubjectInsightUseCaseParam_subjectIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjectId(null)));
         assertThat(throwable).hasMessage("subjectId: " + INIT_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL);
