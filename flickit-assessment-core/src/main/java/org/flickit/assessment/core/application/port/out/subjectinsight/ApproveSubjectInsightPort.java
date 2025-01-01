@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface ApproveSubjectInsightPort {
 
-    void approveSubjectInsight(UUID assessmentId, long subjectId);
+    void approve(UUID assessmentId, long subjectId);
 }

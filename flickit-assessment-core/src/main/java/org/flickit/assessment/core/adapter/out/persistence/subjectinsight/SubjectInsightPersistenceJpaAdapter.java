@@ -44,7 +44,8 @@ public class SubjectInsightPersistenceJpaAdapter implements
             subjectInsight.getSubjectId(),
             subjectInsight.getInsight(),
             subjectInsight.getInsightTime(),
-            subjectInsight.getInsightBy());
+            subjectInsight.getInsightBy(),
+            subjectInsight.isApproved());
     }
 
     @Override
@@ -53,18 +54,16 @@ public class SubjectInsightPersistenceJpaAdapter implements
             .stream()
             .map(SubjectInsightMapper::mapToDomainModel)
             .toList();
-
     }
 
     @Override
-    public void approveSubjectInsight(UUID assessmentId, long subjectId) {
+    public void approve(UUID assessmentId, long subjectId) {
         var resultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         if (!repository.existsByAssessmentResultIdAndSubjectId(resultEntity.getId(), subjectId))
             throw new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND);
 
-        repository.approveSubjectInsight(resultEntity.getId(), subjectId);
-
+        repository.approve(resultEntity.getId(), subjectId);
     }
 }

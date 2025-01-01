@@ -23,14 +23,16 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             UPDATE SubjectInsightJpaEntity si
             SET si.insight = :insight,
                 si.insightTime = :insightTime,
-                si.insightBy = :insightBy
+                si.insightBy = :insightBy,
+                si.approved = :isApproved
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
     void updateByAssessmentResultIdAndSubjectId(@Param("assessmentResultId") UUID assessmentResultId,
                                                 @Param("subjectId") Long subjectId,
                                                 @Param("insight") String insight,
                                                 @Param("insightTime") LocalDateTime insightTime,
-                                                @Param("insightBy") UUID insightBy);
+                                                @Param("insightBy") UUID insightBy,
+                                                @Param("isApproved") boolean isApproved);
 
     @Modifying
     @Query("""
@@ -38,6 +40,6 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             SET si.approved = true
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
-    void approveSubjectInsight(@Param("assessmentResultId") UUID assessmentResultId,
-                               @Param("subjectId") Long subjectId);
+    void approve(@Param("assessmentResultId") UUID assessmentResultId,
+                 @Param("subjectId") Long subjectId);
 }

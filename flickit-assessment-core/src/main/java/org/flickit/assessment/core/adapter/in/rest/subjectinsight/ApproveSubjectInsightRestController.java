@@ -18,7 +18,7 @@ public class ApproveSubjectInsightRestController {
     private final ApproveSubjectInsightUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessments/{assessmentId}/insights/subjects/{subjectId}/approve")
+    @PutMapping("/assessments/{assessmentId}/subjects/{subjectId}/approve-insight")
     public ResponseEntity<Void> approveSubjectInsight(@PathVariable("assessmentId")UUID assessmentId,
                                                       @PathVariable("subjectId") Long subjectId) {
 
