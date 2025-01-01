@@ -281,4 +281,9 @@ public class ErrorMessageKey {
     public static final String APPROVE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "approve-subject-insight.assessmentId.notNull";
     public static final String APPROVE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "approve-subject-insight.subjectId.notNull";
     public static final String APPROVE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "approve-subject-insight.assessmentResult.notFound";
+
+    public static final String INIT_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "init-subject-insight.assessmentId.notNull";
+    public static final String INIT_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "init-subject-insight.subjectId.notNull";
+    public static final String INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "init-subject-insight.assessmentResult.notFound";
+    public static final String INIT_SUBJECT_INSIGHT_INSIGHT_DUPLICATE = "init-subject-insight.insight.duplicate";
 }
