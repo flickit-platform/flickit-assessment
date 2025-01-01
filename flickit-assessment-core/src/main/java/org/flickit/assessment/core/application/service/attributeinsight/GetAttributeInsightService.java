@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.attribute;
+package org.flickit.assessment.core.application.service.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
@@ -7,7 +7,7 @@ import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeInsightUseCase;
+import org.flickit.assessment.core.application.port.in.attributeinsight.GetAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
@@ -40,7 +40,7 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT);
-        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId());
+        var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId());
         Attribute attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
 
         if (attributeInsight.isEmpty()) {

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.42-01" author="Ali Sedaghat">
+        <addColumn tableName="fac_attribute_insight">
+            <column name="approved" type="boolean"
+                    valueComputed="
+                    CASE
+                        WHEN assessor_insight IS NOT NULL THEN TRUE
+                        WHEN ai_insight IS NOT NULL AND assessor_insight IS NULL THEN FALSE
+                        ELSE FALSE
+                    END">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.42-02" author="Maziyar Gerami">
+        <dropNotNullConstraint tableName="fac_assessment_insight" columnName="insight_by"/>
+    </changeSet>
+
+    <changeSet id="0.42-03" author="Ali Sedaghat">
+        <addColumn tableName="fac_subject_insight">
+            <column name="approved" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

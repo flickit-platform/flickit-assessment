@@ -20,8 +20,9 @@ class AssessmentUserRoleTest {
         assertEquals(2, ASSESSOR.getId());
         assertEquals(3, MANAGER.getId());
         assertEquals(4, ASSOCIATE.getId());
+        assertEquals(5, REPORT_VIEWER.getId());
 
-        assertEquals(5, AssessmentUserRole.values().length);
+        assertEquals(6, AssessmentUserRole.values().length);
     }
 
     @Test
@@ -31,6 +32,15 @@ class AssessmentUserRoleTest {
         assertEquals("Assessor", ASSESSOR.getTitle());
         assertEquals("Manager", MANAGER.getTitle());
         assertEquals("Associate", ASSOCIATE.getTitle());
+        assertEquals("ReportViewer", REPORT_VIEWER.getTitle());
+    }
+
+    @Test
+    void testAssessmentUserRole_ReportViewerPermissionsShouldBeSubsetOfViewerCommenterAssessorAndManager() {
+        assertTrue(COMMENTER.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
+        assertTrue(ASSESSOR.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
+        assertTrue(MANAGER.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
+        assertTrue(VIEWER.getPermissions().containsAll(REPORT_VIEWER.getPermissions()));
     }
 
     @Test
@@ -78,6 +88,8 @@ class AssessmentUserRoleTest {
         Set<AssessmentPermission> commenterPermissions = COMMENTER.getPermissions();
         Set<AssessmentPermission> assessorPermissions = ASSESSOR.getPermissions();
         Set<AssessmentPermission> managerPermissions = MANAGER.getPermissions();
+        Set<AssessmentPermission> associatePermissions = ASSOCIATE.getPermissions();
+        Set<AssessmentPermission> reportViewerPermissions = REPORT_VIEWER.getPermissions();
         assertThrows(UnsupportedOperationException.class, () -> viewerPermissions.remove(VIEW_ASSESSMENT));
         assertThrows(UnsupportedOperationException.class, () -> viewerPermissions.add(VIEW_ASSESSMENT));
         assertThrows(UnsupportedOperationException.class, () -> commenterPermissions.remove(VIEW_ASSESSMENT));
@@ -86,5 +98,9 @@ class AssessmentUserRoleTest {
         assertThrows(UnsupportedOperationException.class, () -> assessorPermissions.add(VIEW_ASSESSMENT));
         assertThrows(UnsupportedOperationException.class, () -> managerPermissions.remove(VIEW_ASSESSMENT));
         assertThrows(UnsupportedOperationException.class, () -> managerPermissions.add(VIEW_ASSESSMENT));
+        assertThrows(UnsupportedOperationException.class, () -> associatePermissions.remove(VIEW_ASSESSMENT));
+        assertThrows(UnsupportedOperationException.class, () -> associatePermissions.add(VIEW_ASSESSMENT));
+        assertThrows(UnsupportedOperationException.class, () -> reportViewerPermissions.remove(VIEW_ASSESSMENT));
+        assertThrows(UnsupportedOperationException.class, () -> reportViewerPermissions.add(VIEW_ASSESSMENT));
     }
 }

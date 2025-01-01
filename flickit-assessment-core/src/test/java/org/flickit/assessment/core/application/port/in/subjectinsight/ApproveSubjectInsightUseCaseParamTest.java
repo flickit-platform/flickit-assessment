@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ApproveSubjectInsightUseCaseParamTest {
 
     @Test
-    void approveSubjectInsightUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
+    void testApproveSubjectInsightUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
 
@@ -23,7 +23,7 @@ class ApproveSubjectInsightUseCaseParamTest {
     }
 
     @Test
-    void approveSubjectInsightUseCaseParam_subjectIdParamViolatesConstraints_ErrorMessage() {
+    void testApproveSubjectInsightUseCaseParam_subjectIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.subjectId(null)));
 
@@ -31,7 +31,7 @@ class ApproveSubjectInsightUseCaseParamTest {
     }
 
     @Test
-    void approveSubjectInsightUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
+    void testApproveSubjectInsightUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
 

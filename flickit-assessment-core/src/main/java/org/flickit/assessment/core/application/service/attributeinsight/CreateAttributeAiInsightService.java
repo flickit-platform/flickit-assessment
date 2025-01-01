@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.attribute;
+package org.flickit.assessment.core.application.service.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,7 +12,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.application.port.in.attribute.CreateAttributeAiInsightUseCase;
+import org.flickit.assessment.core.application.port.in.attributeinsight.CreateAttributeAiInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
@@ -80,7 +80,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
         List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
 
         var attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
-        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), attribute.getId());
+        var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), attribute.getId());
         var assessmentTitle = assessmentResult.getAssessment().getShortTitle() != null ? assessmentResult.getAssessment().getShortTitle() : assessmentResult.getAssessment().getTitle();
 
         return attributeInsight.map(insight -> handleExistingInsight(insight, assessmentResult, assessmentTitle, attribute, attributeValue, maturityLevels))

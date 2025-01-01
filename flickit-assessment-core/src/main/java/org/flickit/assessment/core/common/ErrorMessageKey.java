@@ -17,8 +17,9 @@ public class ErrorMessageKey {
     public static final String ASSESSMENT_INVITE_ID_NOT_FOUND = "assessment-invite.id.notFound";
     public static final String ANALYSIS_TYPE_ID_NOT_VALID = "analysis-type.id.notValid";
     public static final String KIT_CUSTOM_ID_NOT_FOUND = "kit-custom.id.notFound";
-    public static final String ASSESSMENT_USER_ROLE_ID_NOT_FOUND = "assessment-user-role.id.notFound";
+    public static final String ATTRIBUTE_INSIGHT_ID_NOT_FOUND = "attribute-insight.id.notFound";
     public static final String SUBJECT_INSIGHT_ID_NOT_FOUND = "subject-insight.id.notFound";
+
 
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
@@ -268,6 +269,14 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_DASHBOARD_ASSESSMENT_ID_NOT_NULL = "get-assessment-dashboard.assessmentId.notNull";
     public static final String GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-dashboard.assessmentResult.notFound";
+
+    public static final String INIT_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "init-assessment-insight.assessmentId.notNull";
+    public static final String INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "init-assessment-insight.assessmentResult.notFound";
+    public static final String INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE = "init-assessment-insight.insight.duplicate";
+
+    public static final String APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "approve-attribute-insight.assessmentId.notNull";
+    public static final String APPROVE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "approve-attribute-insight.attributeId.notNull";
+    public static final String APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "approve-attribute-insight.assessmentResult.notFound";
 
     public static final String APPROVE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL = "approve-subject-insight.assessmentId.notNull";
     public static final String APPROVE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "approve-subject-insight.subjectId.notNull";
