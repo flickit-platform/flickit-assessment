@@ -286,4 +286,7 @@ public class ErrorMessageKey {
     public static final String INIT_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL = "init-subject-insight.subjectId.notNull";
     public static final String INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "init-subject-insight.assessmentResult.notFound";
     public static final String INIT_SUBJECT_INSIGHT_INSIGHT_DUPLICATE = "init-subject-insight.insight.duplicate";
+
+    public static final String GRANT_ACCESS_TO_REPORT_EMAIL_NOT_NULL = "grant-access-to-report.email.notNull";
+    public static final String GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL = "grant-access-to-report.assessmentId.notNull";
 }
