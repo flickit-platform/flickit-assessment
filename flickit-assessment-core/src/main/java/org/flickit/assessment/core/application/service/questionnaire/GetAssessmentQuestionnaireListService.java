@@ -76,17 +76,10 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             questionnaireListItem.nextQuestion(),
             questionnaireListItem.progress(),
             questionnaireListItem.subjects(),
-            buildIssues(questionnaireListItem,
+            new QuestionnaireListItem.Issues(questionnaireListItem.questionCount() - questionnaireListItem.answerCount(),
                 lowConfidenceAnswersCount.get(questionnaireListItem.id()),
                 withoutEvidence,
                 questionnairesUnresolvedComments.get(questionnaireListItem.id())));
-    }
-
-    private QuestionnaireListItem.Issues buildIssues(QuestionnaireListItem questionnaireListItem, int answeredWithLowConfidence, Integer withoutEvidence, int questionnairesUnresolvedComments) {
-        return new QuestionnaireListItem.Issues(questionnaireListItem.questionCount() - questionnaireListItem.answerCount(),
-            answeredWithLowConfidence,
-            withoutEvidence,
-            questionnairesUnresolvedComments);
     }
 
     private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(Param param, AssessmentResult assessmentResult) {
