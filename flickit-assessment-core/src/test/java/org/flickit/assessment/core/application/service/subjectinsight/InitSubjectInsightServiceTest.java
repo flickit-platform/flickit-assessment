@@ -1,7 +1,9 @@
 package org.flickit.assessment.core.application.service.subjectinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.domain.report.SubjectReportItem;
@@ -9,8 +11,10 @@ import org.flickit.assessment.core.application.port.in.subjectinsight.InitSubjec
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
+import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
+import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,6 +30,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_SUBJECT_INSIGHT_INSIGHT_DUPLICATE;
 import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,6 +51,12 @@ class InitSubjectInsightServiceTest {
     @Mock
     private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
 
+    @Mock
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
+
+    @Mock
+    private LoadSubjectInsightPort loadSubjectInsightPort;
+
     @Captor
     private ArgumentCaptor<SubjectInsight> subjectInsightArgumentCaptor;
 
@@ -57,6 +68,25 @@ class InitSubjectInsightServiceTest {
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.initSubjectInsight(param));
         assertEquals(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(loadSubjectReportInfoPort,
+            createSubjectInsightPort,
+            validateAssessmentResultPort,
+            loadSubjectInsightPort);
+    }
+
+    @Test
+    void testInitSubjectInsight_whenSubjectInsightExists_thenThrowValidationException() {
+        var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
+        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+        SubjectInsight subjectInsight = SubjectInsightMother.approvedSubjectInsight();
+
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.of(subjectInsight));
+
+        var throwable = assertThrows(ValidationException.class, () -> service.initSubjectInsight(param));
+        assertEquals(INIT_SUBJECT_INSIGHT_INSIGHT_DUPLICATE, throwable.getMessageKey());
 
         verifyNoInteractions(loadSubjectReportInfoPort, createSubjectInsightPort);
     }
@@ -75,6 +105,8 @@ class InitSubjectInsightServiceTest {
         var subjectReport = new LoadSubjectReportInfoPort.Result(subject, new ArrayList<>(), new ArrayList<>());
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
         when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId())).thenReturn(subjectReport);
         doNothing().when(createSubjectInsightPort).persist(any(SubjectInsight.class));
 
@@ -116,6 +148,8 @@ class InitSubjectInsightServiceTest {
             subject.title());
 
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
         when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId())).thenReturn(subjectReport);
         doNothing().when(createSubjectInsightPort).persist(any(SubjectInsight.class));
 
