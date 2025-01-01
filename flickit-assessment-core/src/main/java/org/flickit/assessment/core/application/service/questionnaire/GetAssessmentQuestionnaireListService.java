@@ -49,10 +49,14 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
 
     private PaginatedResponse<QuestionnaireListItem> buildResultWithIssues(AssessmentResult assessmentResult, PaginatedResponse<QuestionnaireListItem> questionnaires) {
         var questionnaireIds = questionnaires.getItems().stream().map(QuestionnaireListItem::id).collect(Collectors.toCollection(ArrayList::new));
-        var lowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
-        var questionnairesUnresolvedCommentsCount = countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
-        var questionnairesEvidenceCount = countEvidencesPort.countQuestionnairesEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
-        var items = questionnaires.getItems().stream().map(i -> buildQuestionnaireWithIssues(i, lowConfidenceAnswersCount, questionnairesUnresolvedCommentsCount, questionnairesEvidenceCount)).toList();
+        var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
+        var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+        var questionnaireIdToEvidenceCount = countEvidencesPort.countQuestionnairesEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+        var items = questionnaires.getItems().stream()
+            .map(i -> buildQuestionnaireWithIssues(i, questionnaireIdToLowConfidenceAnswersCount,
+                questionnaireIdToUnresolvedCommentsCount,
+                questionnaireIdToEvidenceCount))
+            .toList();
         return new PaginatedResponse<>(items,
             questionnaires.getPage(),
             questionnaires.getSize(),
