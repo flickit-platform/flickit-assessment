@@ -33,4 +33,13 @@
     <changeSet id="0.42-04" author="Ali Sedaghat">
         <dropNotNullConstraint tableName="fac_subject_insight" columnName="insight_by"/>
     </changeSet>
+
+    <changeSet id="0.42-05" author="Ali Sedaghat">
+        <addColumn tableName="fac_assessment_insight">
+            <column name="approved" type="boolean" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

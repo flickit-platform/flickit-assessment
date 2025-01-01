@@ -149,6 +149,7 @@ class InitAssessmentInsightServiceTest {
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
         assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
+        assertFalse(createCaptor.getValue().isApproved());
 
         verifyNoInteractions(updateAssessmentInsightPort);
     }
@@ -179,6 +180,7 @@ class InitAssessmentInsightServiceTest {
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
         assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
+        assertFalse(createCaptor.getValue().isApproved());
 
         verifyNoInteractions(createAssessmentInsightPort);
     }
@@ -211,6 +213,7 @@ class InitAssessmentInsightServiceTest {
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
         assertEquals(expectedInsight, createCaptor.getValue().getInsight());
+        assertFalse(createCaptor.getValue().isApproved());
 
         verifyNoInteractions(createAssessmentInsightPort);
     }
