@@ -2,7 +2,9 @@ package org.flickit.assessment.core.application.service.subjectinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
+import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_SUBJECT_INSIGHT_INSIGHT_DUPLICATE;
 import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
@@ -27,6 +31,7 @@ import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSI
 @RequiredArgsConstructor
 public class InitSubjectInsightService implements InitSubjectInsightUseCase {
 
+    private final AssessmentAccessChecker assessmentAccessChecker;
     private final CreateSubjectInsightPort createSubjectInsightPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadSubjectReportInfoPort loadSubjectReportInfoPort;
@@ -35,10 +40,14 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
 
     @Override
     public void initSubjectInsight(Param param) {
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         var assessmentResultId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .map(AssessmentResult::getId)
             .orElseThrow(() -> new ResourceNotFoundException(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
+
         var subjectInsightOptional = loadSubjectInsightPort.load(assessmentResultId, param.getSubjectId());
         if (subjectInsightOptional.isPresent() && subjectInsightOptional.get().getInsightBy() != null)
             throw new ValidationException(INIT_SUBJECT_INSIGHT_INSIGHT_DUPLICATE);
@@ -57,9 +66,6 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
     private String createDefaultInsight(UUID assessmentId, long subjectId) {
         var subjectReport = loadSubjectReportInfoPort.load(assessmentId, subjectId);
         var subject = subjectReport.subject();
-
-        if (subject.maturityLevel() == null)
-            return "";
 
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subject.title(),
