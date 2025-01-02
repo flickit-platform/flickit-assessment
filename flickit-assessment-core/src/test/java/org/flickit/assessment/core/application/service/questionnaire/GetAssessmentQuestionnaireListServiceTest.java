@@ -127,7 +127,7 @@ class GetAssessmentQuestionnaireListServiceTest {
                 assertEquals(0, actual.answeredWithLowConfidence());
                 assertEquals(0, actual.unanswered());
                 assertEquals(0, actual.unresolvedComments());
-                assertEquals(10, actual.withoutEvidence());
+                assertEquals(10, actual.answeredWithoutEvidence());
             });
     }
 
@@ -182,7 +182,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             .zipSatisfy(expectedIssues, (actual, expected) -> {
                 assertEquals(3, actual.unanswered());
                 assertEquals(2, actual.answeredWithLowConfidence());
-                assertEquals(2, actual.withoutEvidence());
+                assertEquals(2, actual.answeredWithoutEvidence());
                 assertEquals(4, actual.unresolvedComments());
             });
     }

@@ -21,7 +21,7 @@ public record QuestionnaireListItem(
 
     public record Issues(int unanswered,
                          int answeredWithLowConfidence,
-                         int withoutEvidence,
+                         int answeredWithoutEvidence,
                          int unresolvedComments) {
     }
 }
