@@ -8,12 +8,14 @@ import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.core.evidence.EvidencesQuestionnaireView;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -99,7 +101,11 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Integer> countByQuestionnaireIdWithConfidenceLessThan(UUID assessmentResultId, ArrayList<Long> questionnaireId, ConfidenceLevel confidence) {
-        return null;
+    public Map<Long, Integer> countByQuestionnaireIdWithConfidenceLessThan(UUID assessmentResultId, ArrayList<Long> questionnaireIds, ConfidenceLevel confidence) {
+        return repository.countByQuestionnaireIdWithConfidenceLessThan(assessmentResultId, questionnaireIds, confidence.getId()).stream()
+            .collect(Collectors.toMap(
+                EvidencesQuestionnaireView::getQuestionnaireId,
+                EvidencesQuestionnaireView::getCount));
+
     }
 }

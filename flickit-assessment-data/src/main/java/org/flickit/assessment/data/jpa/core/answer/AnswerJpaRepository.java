@@ -1,10 +1,12 @@
 package org.flickit.assessment.data.jpa.core.answer;
 
+import org.flickit.assessment.data.jpa.core.evidence.EvidencesQuestionnaireView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -71,4 +73,18 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     int countWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
                                     @Param("confidence") int confidence);
+
+    @Query("""
+            SELECT q.questionnaireId as questionnaireId,
+             COUNT(a) as count
+            FROM AnswerJpaEntity a join QuestionJpaEntity q on a.questionnaireId = q.questionnaireId and a.questionId = q.id
+            WHERE a.assessmentResult.id=:assessmentResultId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.confidenceLevelId < :confidence
+                AND a.questionnaireId in :questionnaireIds
+                GROUP BY q.questionnaireId
+        """)
+    List<EvidencesQuestionnaireView> countByQuestionnaireIdWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                                  @Param("questionnaireIds") ArrayList<Long> questionnaireId,
+                                                                                  @Param("confidence") int confidence);
 }
