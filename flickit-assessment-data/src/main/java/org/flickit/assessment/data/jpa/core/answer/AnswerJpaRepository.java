@@ -1,6 +1,5 @@
 package org.flickit.assessment.data.jpa.core.answer;
 
-import org.flickit.assessment.data.jpa.core.evidence.EvidencesQuestionnaireView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -76,7 +75,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     @Query("""
             SELECT q.questionnaireId as questionnaireId,
-             COUNT(a) as count
+             COUNT(a) as answerCount
             FROM AnswerJpaEntity a join QuestionJpaEntity q on a.questionnaireId = q.questionnaireId and a.questionId = q.id
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
@@ -84,7 +83,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 AND a.questionnaireId in :questionnaireIds
                 GROUP BY q.questionnaireId
         """)
-    List<EvidencesQuestionnaireView> countByQuestionnaireIdWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
+    List<QuestionnaireIdAndAnswerCountView> countByQuestionnaireIdWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
                                                                                   @Param("questionnaireIds") ArrayList<Long> questionnaireId,
                                                                                   @Param("confidence") int confidence);
 }

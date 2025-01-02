@@ -7,8 +7,8 @@ import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
+import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.evidence.EvidencesQuestionnaireView;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -104,8 +104,8 @@ public class AnswerPersistenceJpaAdapter implements
     public Map<Long, Integer> countByQuestionnaireIdWithConfidenceLessThan(UUID assessmentResultId, ArrayList<Long> questionnaireIds, ConfidenceLevel confidence) {
         return repository.countByQuestionnaireIdWithConfidenceLessThan(assessmentResultId, questionnaireIds, confidence.getId()).stream()
             .collect(Collectors.toMap(
-                EvidencesQuestionnaireView::getQuestionnaireId,
-                EvidencesQuestionnaireView::getCount));
+                QuestionnaireIdAndAnswerCountView::getQuestionnaireId,
+                QuestionnaireIdAndAnswerCountView::getAnswerCount));
 
     }
 }
