@@ -18,7 +18,7 @@ public class QuestionnaireListItemMother {
             questionCount,
             answerCount,
             10,
-            answerCount/questionCount,
+            answerCount / questionCount,
             List.of(new QuestionnaireListItem.Subject(0, "zero"),
                 new QuestionnaireListItem.Subject(1, "one")),
             new QuestionnaireListItem.Issues(0, 0, 0, 0));
@@ -33,8 +33,8 @@ public class QuestionnaireListItemMother {
             id,
             questionCount,
             answerCount,
-            answerCount+1,
-            answerCount/questionCount,
+            answerCount + 1,
+            answerCount / questionCount,
             List.of(new QuestionnaireListItem.Subject(0, "zero"),
                 new QuestionnaireListItem.Subject(1, "one")),
             new QuestionnaireListItem.Issues(1, 2, 3, 4));
