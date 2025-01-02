@@ -51,7 +51,7 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
         var questionnaireIds = questionnaires.getItems().stream().map(QuestionnaireListItem::id).collect(Collectors.toCollection(ArrayList::new));
         var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
         var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
-        var questionnaireIdToEvidenceCount = countEvidencesPort.countQuestionnairesEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+        var questionnaireIdToEvidenceCount = countEvidencesPort.countQuestionnairesQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
         var items = questionnaires.getItems().stream()
             .map(i -> buildQuestionnaireWithIssues(i, questionnaireIdToLowConfidenceAnswersCount,
                 questionnaireIdToUnresolvedCommentsCount,
@@ -67,10 +67,6 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
 
     private QuestionnaireListItem buildQuestionnaireWithIssues(QuestionnaireListItem questionnaireListItem, Map<Long, Integer> lowConfidenceAnswersCount,
                                                                Map<Long, Integer> questionnairesUnresolvedComments, Map<Long, Integer> questionnairesEvidenceCount) {
-        var withoutEvidence = (questionnairesEvidenceCount.get(questionnaireListItem.id()) != null)
-            ? questionnaireListItem.questionCount() - questionnairesEvidenceCount.get(questionnaireListItem.id())
-            : 0;
-
         return new QuestionnaireListItem(questionnaireListItem.id(),
             questionnaireListItem.title(),
             questionnaireListItem.description(),
@@ -81,9 +77,13 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             questionnaireListItem.progress(),
             questionnaireListItem.subjects(),
             new QuestionnaireListItem.Issues(questionnaireListItem.questionCount() - questionnaireListItem.answerCount(),
-                lowConfidenceAnswersCount.get(questionnaireListItem.id()),
-                withoutEvidence,
-                questionnairesUnresolvedComments.get(questionnaireListItem.id())));
+                lowConfidenceAnswersCount.get(questionnaireListItem.id()) != null
+                    ? lowConfidenceAnswersCount.get(questionnaireListItem.id()) : 0,
+                (questionnairesEvidenceCount.get(questionnaireListItem.id()) != null)
+                    ? questionnaireListItem.answerCount() - questionnairesEvidenceCount.get(questionnaireListItem.id())
+                    : questionnaireListItem.answerCount(),
+                questionnairesUnresolvedComments.get(questionnaireListItem.id()) != null
+                    ? questionnairesUnresolvedComments.get(questionnaireListItem.id()) : 0));
     }
 
     private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(Param param, AssessmentResult assessmentResult) {

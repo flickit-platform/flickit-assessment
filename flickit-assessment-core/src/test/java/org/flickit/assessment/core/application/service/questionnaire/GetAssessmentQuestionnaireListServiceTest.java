@@ -105,7 +105,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             .thenReturn(countQuestionsWithLowConfidence);
         when(countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(countUnresolvedComment);
-        when(countEvidencesPort.countQuestionnairesEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+        when(countEvidencesPort.countQuestionnairesQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(countWithNoEvidence);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);
@@ -139,7 +139,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var questionnaires = List.of(QuestionnaireListItemMother.createWithIssues(),
             QuestionnaireListItemMother.createWithIssues());
         var countQuestionsWithLowConfidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 2));
-        var countWithNoEvidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 3));
+        var countWithNoEvidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 5));
         var countUnresolvedComment = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 4));
 
         ArrayList<Long> questionnaireIds = questionnaires.stream()
@@ -162,7 +162,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             .thenReturn(countQuestionsWithLowConfidence);
         when(countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(countUnresolvedComment);
-        when(countEvidencesPort.countQuestionnairesEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+        when(countEvidencesPort.countQuestionnairesQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(countWithNoEvidence);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);
@@ -182,7 +182,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             .zipSatisfy(expectedIssues, (actual, expected) -> {
                 assertEquals(3, actual.unanswered());
                 assertEquals(2, actual.answeredWithLowConfidence());
-                assertEquals(7, actual.withoutEvidence());
+                assertEquals(2, actual.withoutEvidence());
                 assertEquals(4, actual.unresolvedComments());
             });
     }
