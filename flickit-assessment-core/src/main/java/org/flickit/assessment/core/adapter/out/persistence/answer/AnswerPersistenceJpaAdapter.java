@@ -106,6 +106,5 @@ public class AnswerPersistenceJpaAdapter implements
             .collect(Collectors.toMap(
                 QuestionnaireIdAndAnswerCountView::getQuestionnaireId,
                 QuestionnaireIdAndAnswerCountView::getAnswerCount));
-
     }
 }
