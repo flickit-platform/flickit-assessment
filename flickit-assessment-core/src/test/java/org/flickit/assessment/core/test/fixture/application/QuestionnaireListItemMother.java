@@ -18,23 +18,23 @@ public class QuestionnaireListItemMother {
             questionCount,
             answerCount,
             10,
-            100,
+            answerCount/questionCount,
             List.of(new QuestionnaireListItem.Subject(0, "zero"),
                 new QuestionnaireListItem.Subject(1, "one")),
             new QuestionnaireListItem.Issues(0, 0, 0, 0));
     }
 
-    public static QuestionnaireListItem createWithIssues() {
+    public static QuestionnaireListItem createContainingIssuesByQuestionCountAndAnswerCount(int questionCount, int answerCount) {
         ++id;
         return new QuestionnaireListItem(
             id,
             "questionnaire",
             "description about questionnaire",
             id,
-            10,
-            7,
-            8,
-            70,
+            questionCount,
+            answerCount,
+            answerCount+1,
+            answerCount/questionCount,
             List.of(new QuestionnaireListItem.Subject(0, "zero"),
                 new QuestionnaireListItem.Subject(1, "one")),
             new QuestionnaireListItem.Issues(1, 2, 3, 4));
