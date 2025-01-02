@@ -105,7 +105,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                     AND e.deleted = false
                     GROUP BY q.questionnaireId
         """)
-    List<EvidencesQuestionnaireView> countQuestionnairesUnresolvedComments(@Param("assessmentId") UUID assessmentId,
-                                                                           @Param("kitVersionId") long kitVersionId,
-                                                                           @Param("questionnaireIds") ArrayList<Long> questionnaireIds);
+    List<EvidencesQuestionnaireAndCountView> countQuestionnairesUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                                                                   @Param("kitVersionId") long kitVersionId,
+                                                                                   @Param("questionnaireIds") ArrayList<Long> questionnaireIds);
 }

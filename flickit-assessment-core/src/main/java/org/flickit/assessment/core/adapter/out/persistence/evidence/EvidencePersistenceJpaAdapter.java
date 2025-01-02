@@ -10,7 +10,7 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithAttachmentsCountView;
-import org.flickit.assessment.data.jpa.core.evidence.EvidencesQuestionnaireView;
+import org.flickit.assessment.data.jpa.core.evidence.EvidencesQuestionnaireAndCountView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
@@ -131,8 +131,8 @@ public class EvidencePersistenceJpaAdapter implements
             .countQuestionnairesUnresolvedComments(assessmentId, kitVersionId, questionnaireIds)
             .stream()
             .collect(Collectors.toMap(
-                EvidencesQuestionnaireView::getQuestionnaireId,
-                EvidencesQuestionnaireView::getCount
+                EvidencesQuestionnaireAndCountView::getQuestionnaireId,
+                EvidencesQuestionnaireAndCountView::getCount
             ));
     }
 
