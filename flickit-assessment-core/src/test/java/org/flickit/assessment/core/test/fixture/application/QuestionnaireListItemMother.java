@@ -8,15 +8,15 @@ public class QuestionnaireListItemMother {
 
     private static int id = 0;
 
-    public static QuestionnaireListItem createWithoutIssues() {
+    public static QuestionnaireListItem createWithoutIssuesByQuestionCountAndAnswerCount(int questionCount, int answerCount) {
         ++id;
         return new QuestionnaireListItem(
             id,
             "questionnaire",
             "description about questionnaire",
             id,
-            10,
-            10,
+            questionCount,
+            answerCount,
             10,
             100,
             List.of(new QuestionnaireListItem.Subject(0, "zero"),

@@ -39,6 +39,7 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
     public PaginatedResponse<QuestionnaireListItem> getAssessmentQuestionnaireList(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
@@ -49,14 +50,20 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
 
     private PaginatedResponse<QuestionnaireListItem> buildResultWithIssues(AssessmentResult assessmentResult, PaginatedResponse<QuestionnaireListItem> questionnaires) {
         var questionnaireIds = questionnaires.getItems().stream().map(QuestionnaireListItem::id).collect(Collectors.toCollection(ArrayList::new));
-        var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
-        var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
-        var questionnaireIdToEvidenceCount = countEvidencesPort.countQuestionnairesQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+        var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(
+            assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
+        var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countQuestionnairesUnresolvedComments(
+            assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+        var questionnaireIdToEvidenceCount = countEvidencesPort.countQuestionnairesQuestionsHavingEvidence(
+            assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+
         var items = questionnaires.getItems().stream()
-            .map(i -> buildQuestionnaireWithIssues(i, questionnaireIdToLowConfidenceAnswersCount,
+            .map(i -> buildQuestionnaireWithIssues(i,
+                questionnaireIdToLowConfidenceAnswersCount,
                 questionnaireIdToUnresolvedCommentsCount,
                 questionnaireIdToEvidenceCount))
             .toList();
+
         return new PaginatedResponse<>(items,
             questionnaires.getPage(),
             questionnaires.getSize(),
