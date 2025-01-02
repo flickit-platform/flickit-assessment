@@ -10,7 +10,7 @@ public interface CountEvidencesPort {
 
     int countUnresolvedComments(UUID assessmentId);
 
-    Map<Long, Integer> countQuestionnairesUnresolvedComments(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds);
+    Map<Long, Integer> countQuestionnairesQuestionsHavingEvidence(UUID assessmentId, long kitBVersionId, ArrayList<Long> questionnaireIds);
 
-    Map<Long, Integer> countQuestionnairesEvidence(UUID assessmentId, long kitBVersionId, ArrayList<Long> questionnaireIds);
+    Map<Long, Integer> countQuestionnairesUnresolvedComments(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds);
 }
