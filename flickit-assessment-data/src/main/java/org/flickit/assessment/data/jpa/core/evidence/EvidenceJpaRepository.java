@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -89,4 +91,21 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND (e.resolved IS NULL OR e.resolved = false)
         """)
     int countUnresolvedComments(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT q.questionnaireId as questionnaireId,
+            COUNT(e) as count
+            FROM EvidenceJpaEntity e
+                    JOIN QuestionJpaEntity q ON e.questionId = q.id
+                    WHERE e.assessmentId = :assessmentId
+                    AND q.kitVersionId = :kitVersionId
+                    AND q.questionnaireId IN :questionnaireIds
+                    AND e.type IS NULL
+                    AND e.resolved IS NULL
+                    AND e.deleted = false
+                    GROUP BY q.questionnaireId
+        """)
+    List<EvidencesQuestionnaireView> countQuestionnairesUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                                                           @Param("kitVersionId") long kitVersionId,
+                                                                           @Param("questionnaireIds") ArrayList<Long> questionnaireIds);
 }

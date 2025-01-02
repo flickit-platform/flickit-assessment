@@ -10,7 +10,7 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
 import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithAttachmentsCountView;
-import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
+import org.flickit.assessment.data.jpa.core.evidence.EvidencesQuestionnaireView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
@@ -19,10 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -130,8 +127,13 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public Map<Long, Integer> countQuestionnairesUnresolvedComments(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds) {
-
-        return Map.of(); //TODO: consider it
+        return repository
+            .countQuestionnairesUnresolvedComments(assessmentId, kitVersionId, questionnaireIds)
+            .stream()
+            .collect(Collectors.toMap(
+                EvidencesQuestionnaireView::getQuestionnaireId,
+                EvidencesQuestionnaireView::getCount
+            ));
     }
 
     @Override
