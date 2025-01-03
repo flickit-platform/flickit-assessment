@@ -71,7 +71,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             answersCount,
             questionsCount - answersCount,
             lowConfidenceAnswersCount,
-            questionsCount - questionsWithEvidenceCount,
+            answersCount - questionsWithEvidenceCount,
             unresolvedCommentsCount);
     }
 
