@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.port.in.questionnaire;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -34,6 +35,7 @@ public interface GetAssessmentQuestionnaireListUseCase {
         @NotNull(message = GET_ASSESSMENT_QUESTIONNAIRE_LIST_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, int size, int page, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.size = size;
