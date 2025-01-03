@@ -95,7 +95,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             10,
             "index",
             "asc",
-            1);
+            2);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(true);
@@ -157,7 +157,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             10,
             "index",
             "asc",
-            1);
+            2);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(true);
@@ -191,6 +191,12 @@ class GetAssessmentQuestionnaireListServiceTest {
                 assertEquals(expected.unresolvedComments(), actual.unresolvedComments());
                 assertEquals(answersCount - withEvidences, actual.answeredWithoutEvidence());
             });
+
+        assertEquals(loadPortResult.getSort(), actualResult.getSort());
+        assertEquals(loadPortResult.getPage(), actualResult.getPage());
+        assertEquals(loadPortResult.getTotal(), actualResult.getTotal());
+        assertEquals(loadPortResult.getOrder(), actualResult.getOrder());
+        assertEquals(loadPortResult.getSize(), actualResult.getSize());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
