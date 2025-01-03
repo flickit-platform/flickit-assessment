@@ -35,7 +35,7 @@ public class QuestionnaireMapper {
             nextQuestion,
             progress,
             subjects,
-            null //TODO: consideration needed
+            null
         );
     }
 
