@@ -87,7 +87,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var answeredWithEvidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 0));
         var questionnaireIds = questionnaires.stream()
             .map(QuestionnaireListItem::id)
-            .collect(Collectors.toCollection(ArrayList::new));
+            .toList();
 
         var loadPortResult = new PaginatedResponse<>(
             questionnaires,
@@ -102,7 +102,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
             .thenReturn(loadPortResult);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(countLowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))
+        when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))
             .thenReturn(answeredWithLowConfidenceCount);
         when(countEvidencesPort.countUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(unresolvedCommentsCount);
@@ -155,7 +155,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var answeredWithEvidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> withEvidences));
         var questionnaireIds = questionnaires.stream()
             .map(QuestionnaireListItem::id)
-            .collect(Collectors.toCollection(ArrayList::new));
+            .toList();
 
         var loadPortResult = new PaginatedResponse<>(
             questionnaires,
@@ -170,7 +170,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         when(loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(portParam))
             .thenReturn(loadPortResult);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(countLowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))
+        when(countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))
             .thenReturn(answeredWithLowConfidenceCount);
         when(countEvidencesPort.countUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(unresolvedCommentsCount);
