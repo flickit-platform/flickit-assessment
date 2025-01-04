@@ -13,7 +13,8 @@ public class AssessmentInsightMother {
             assessmentResultId,
             RandomStringUtils.random(50),
             LocalDateTime.now().plusSeconds(1),
-            UUID.randomUUID()
+            UUID.randomUUID(),
+            false
         );
     }
 
@@ -23,7 +24,8 @@ public class AssessmentInsightMother {
             assessmentResultId,
             RandomStringUtils.random(50),
             LocalDateTime.now().plusSeconds(1),
-            null
+            null,
+            false
         );
     }
 
@@ -33,7 +35,8 @@ public class AssessmentInsightMother {
             UUID.randomUUID(),
             RandomStringUtils.random(50),
             LocalDateTime.now().plusSeconds(1),
-            UUID.randomUUID()
+            UUID.randomUUID(),
+            false
         );
     }
 
@@ -43,7 +46,8 @@ public class AssessmentInsightMother {
             UUID.randomUUID(),
             RandomStringUtils.random(50),
             LocalDateTime.MIN,
-            UUID.randomUUID()
+            UUID.randomUUID(),
+            false
         );
     }
 }

@@ -57,13 +57,15 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
             new Result.AssessorInsight(subjectInsight.getInsight(),
                 subjectInsight.getInsightTime(),
                 assessmentResult.getLastCalculationTime().isBefore(subjectInsight.getInsightTime())),
-            editable);
+            editable,
+            subjectInsight.isApproved());
     }
 
     private Result getDefaultInsight(UUID assessmentId, long subjectId, boolean editable) {
         return new Result(new Result.DefaultInsight(createDefaultInsight(assessmentId, subjectId)),
             null,
-            editable);
+            editable,
+            false);
     }
 
     String createDefaultInsight(UUID assessmentId, long subjectId) {

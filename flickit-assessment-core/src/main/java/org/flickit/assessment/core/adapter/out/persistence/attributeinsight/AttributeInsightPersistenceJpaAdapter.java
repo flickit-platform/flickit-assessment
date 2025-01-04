@@ -1,11 +1,10 @@
 package org.flickit.assessment.core.adapter.out.persistence.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
-import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.*;
+import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributeinsight.AttributeInsightJpaRepository;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +12,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.ATTRIBUTE_INSIGHT_ID_NOT_FOUND;
+
 @Component
 @RequiredArgsConstructor
 public class AttributeInsightPersistenceJpaAdapter implements
     LoadAttributeInsightPort,
     CreateAttributeInsightPort,
     UpdateAttributeInsightPort,
-    LoadAttributeInsightsPort {
+    LoadAttributeInsightsPort,
+    ApproveAttributeInsightPort {
 
     private final AttributeInsightJpaRepository repository;
+    private final AssessmentResultJpaRepository assessmentResultRepository;
 
     @Override
     public Optional<AttributeInsight> load(UUID assessmentResultId, Long attributeId) {
@@ -50,7 +54,8 @@ public class AttributeInsightPersistenceJpaAdapter implements
             attributeInsight.getAssessmentResultId(),
             attributeInsight.getAttributeId(),
             attributeInsight.getAssessorInsight(),
-            attributeInsight.getAssessorInsightTime()
+            attributeInsight.getAssessorInsightTime(),
+            attributeInsight.isApproved()
         );
     }
 
@@ -60,5 +65,17 @@ public class AttributeInsightPersistenceJpaAdapter implements
             .stream()
             .map(AttributeInsightMapper::mapToDomain)
             .toList();
+    }
+
+    @Override
+    public void approve(UUID assessmentId, long attributeId) {
+        var assessmentResultId = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND))
+            .getId();
+
+        if (!repository.existsByAssessmentResultIdAndAttributeId(assessmentResultId, attributeId))
+            throw new ResourceNotFoundException(ATTRIBUTE_INSIGHT_ID_NOT_FOUND);
+
+        repository.approve(assessmentResultId, attributeId);
     }
 }

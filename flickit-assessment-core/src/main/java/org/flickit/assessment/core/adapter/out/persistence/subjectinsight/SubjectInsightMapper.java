@@ -13,7 +13,8 @@ public class SubjectInsightMapper {
             subjectInsight.getSubjectId(),
             subjectInsight.getInsight(),
             subjectInsight.getInsightTime(),
-            subjectInsight.getInsightBy());
+            subjectInsight.getInsightBy(),
+            subjectInsight.isApproved());
     }
 
     public static SubjectInsight mapToDomainModel(SubjectInsightJpaEntity entity) {
@@ -21,6 +22,7 @@ public class SubjectInsightMapper {
             entity.getSubjectId(),
             entity.getInsight(),
             entity.getInsightTime(),
-            entity.getInsightBy());
+            entity.getInsightBy(),
+            entity.getApproved());
     }
 }

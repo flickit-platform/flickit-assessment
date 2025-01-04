@@ -119,7 +119,8 @@ class GetAssessmentInsightServiceTest {
             assessmentResult.getId(),
             "insight",
             LocalDateTime.now().minusDays(1),
-            UUID.randomUUID());
+            UUID.randomUUID(),
+            true);
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
@@ -135,6 +136,7 @@ class GetAssessmentInsightServiceTest {
         assertFalse(result.assessorInsight().isValid());
         assertNull(result.defaultInsight());
         assertFalse(result.editable());
+        assertTrue(result.approved());
     }
 
     @Test
@@ -162,6 +164,7 @@ class GetAssessmentInsightServiceTest {
         assertNull(result.assessorInsight());
         assertEquals(defaultInsight, result.defaultInsight().insight());
         assertTrue(result.editable());
+        assertFalse(result.approved());
     }
 
     @Test
@@ -188,5 +191,6 @@ class GetAssessmentInsightServiceTest {
         assertNotNull(result.defaultInsight().insight());
         assertEquals(defaultInsight, result.defaultInsight().insight());
         assertFalse(result.editable());
+        assertFalse(result.approved());
     }
 }
