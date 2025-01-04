@@ -44,8 +44,14 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
         var questionnaires = loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(toPortParam(param, assessmentResult));
-
         return buildResultWithIssues(assessmentResult, questionnaires);
+    }
+
+    private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(Param param, AssessmentResult assessmentResult) {
+        return new LoadQuestionnairesByAssessmentIdPort.Param(
+            assessmentResult,
+            param.getSize(),
+            param.getPage());
     }
 
     private PaginatedResponse<QuestionnaireListItem> buildResultWithIssues(AssessmentResult assessmentResult, PaginatedResponse<QuestionnaireListItem> questionnaires) {
@@ -91,13 +97,5 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
                     : questionnaireListItem.answerCount(),
                 questionnairesUnresolvedComments.get(questionnaireListItem.id()) != null
                     ? questionnairesUnresolvedComments.get(questionnaireListItem.id()) : 0));
-    }
-
-    private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(Param param, AssessmentResult assessmentResult) {
-        return new LoadQuestionnairesByAssessmentIdPort.Param(
-            param.getAssessmentId(),
-            assessmentResult,
-            param.getSize(),
-            param.getPage());
     }
 }
