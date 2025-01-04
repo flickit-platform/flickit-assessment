@@ -76,8 +76,8 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             FROM EvidenceJpaEntity e
             LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
             LEFT JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
-            LEFT JOIN QuestionJpaEntity q ON a.questionId = q.id AND q.kitVersionId = ar.kitVersionId
             WHERE e.assessmentId = :assessmentId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND e.deleted = false
                 AND e.type IS NOT NULL
         """)
