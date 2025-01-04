@@ -74,11 +74,14 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query("""
             SELECT COUNT(DISTINCT e.questionId)
             FROM EvidenceJpaEntity e
+            LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
+            LEFT JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
+            LEFT JOIN QuestionJpaEntity q ON a.questionId = q.id AND q.kitVersionId = ar.kitVersionId
             WHERE e.assessmentId = :assessmentId
                 AND e.deleted = false
                 AND e.type IS NOT NULL
         """)
-    int countQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
+    int countAnsweredQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
 
     @Query("""
             SELECT COUNT(e.id)
