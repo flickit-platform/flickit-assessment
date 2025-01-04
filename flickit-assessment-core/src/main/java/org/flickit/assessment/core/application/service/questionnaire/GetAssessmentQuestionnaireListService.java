@@ -55,8 +55,8 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
     }
 
     private PaginatedResponse<QuestionnaireListItem> buildResultWithIssues(AssessmentResult assessmentResult, PaginatedResponse<QuestionnaireListItem> questionnaires) {
-        var questionnaireIds = questionnaires.getItems().stream().map(QuestionnaireListItem::id).collect(Collectors.toCollection(ArrayList::new));
-        var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(
+        var questionnaireIds = questionnaires.getItems().stream().map(QuestionnaireListItem::id).toList();
+        var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countWithConfidenceLessThan(
             assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
         var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countUnresolvedComments(
             assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
