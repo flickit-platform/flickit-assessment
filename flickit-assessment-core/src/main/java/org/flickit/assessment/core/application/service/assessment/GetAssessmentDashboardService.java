@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -26,6 +27,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -106,9 +108,16 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             .count());
 
         int assessmentInsightExpired = assessmentInsight != null && assessmentInsight.getInsightTime().isBefore(lastCalculationTime) ? 1 : 0;
+
+        int notGenerated = Math.max(expectedInsightsCount - totalGeneratedInsights, 0);
+        if (totalGeneratedInsights > expectedInsightsCount) {
+            log.error("TotalGeneratedInsights exceeds the expected count: totalExpected:[{}], totalGenerated:[{}]",
+                expectedInsightsCount, totalGeneratedInsights);
+        }
+
         return new Result.Insights(
             expectedInsightsCount,
-            expectedInsightsCount - totalGeneratedInsights,
+            notGenerated,
             0,
             expiredAttributeInsightsCount + expiredSubjectsInsightsCount + assessmentInsightExpired
         );

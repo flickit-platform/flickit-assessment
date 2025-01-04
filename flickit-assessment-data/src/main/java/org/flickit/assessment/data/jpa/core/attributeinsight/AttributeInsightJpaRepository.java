@@ -14,9 +14,16 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
 
     Optional<AttributeInsightJpaEntity> findByAssessmentResultIdAndAttributeId(UUID assessmentResultId, Long attributeId);
 
-    List<AttributeInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
-
     boolean existsByAssessmentResultIdAndAttributeId(UUID assessmentResultId, long attributeId);
+
+    @Query("""
+            SELECT ai
+            FROM AttributeInsightJpaEntity ai
+            JOIN AssessmentResultJpaEntity ar ON ai.assessmentResultId = ar.id
+            RIGHT JOIN AttributeJpaEntity att ON ai.attributeId  = att.id AND ar.kitVersionId = att.kitVersionId
+            WHERE ar.id = :assessmentResultId
+        """)
+    List<AttributeInsightJpaEntity> findByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Modifying
     @Query("""
