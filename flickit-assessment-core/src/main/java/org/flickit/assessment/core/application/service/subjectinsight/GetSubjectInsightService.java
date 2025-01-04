@@ -5,6 +5,8 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
@@ -15,7 +17,6 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_INSIGHT_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,20 +39,27 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
 
         var editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT);
 
-        var subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND));
+        var subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
 
-        if (subjectInsight.getInsightBy() == null)
-            return new Result(new Result.DefaultInsight(subjectInsight.getInsight()),
-                null,
-                editable,
-                subjectInsight.isApproved());
-        else
-            return new Result(null,
-                new Result.AssessorInsight(subjectInsight.getInsight(),
-                    subjectInsight.getInsightTime(),
-                    assessmentResult.getLastCalculationTime().isBefore(subjectInsight.getInsightTime())),
-                editable,
-                subjectInsight.isApproved());
+        if (subjectInsight.isEmpty())
+            return new Result(null, null, false, false);
+
+        var insight = subjectInsight.get();
+        return (insight.getInsightBy() == null)
+            ? getDefaultInsight(insight, editable)
+            : getAssessorInsight(assessmentResult, insight, editable);
+    }
+
+    private Result getDefaultInsight(SubjectInsight insight, boolean editable) {
+        return new Result(new Result.DefaultInsight(insight.getInsight()), null, editable, insight.isApproved());
+    }
+
+    private Result getAssessorInsight(AssessmentResult assessmentResult, SubjectInsight insight, boolean editable) {
+        return new Result(null,
+            new Result.AssessorInsight(insight.getInsight(),
+                insight.getInsightTime(),
+                assessmentResult.getLastCalculationTime().isBefore(insight.getInsightTime())),
+            editable,
+            insight.isApproved());
     }
 }

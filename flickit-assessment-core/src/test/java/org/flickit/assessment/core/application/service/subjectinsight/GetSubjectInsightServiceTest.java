@@ -3,7 +3,6 @@ package org.flickit.assessment.core.application.service.subjectinsight;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase;
@@ -23,7 +22,6 @@ import java.util.UUID;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_INSIGHT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -147,7 +145,12 @@ class GetSubjectInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(false);
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getSubjectInsight(param));
-        assertEquals(SUBJECT_INSIGHT_ID_NOT_FOUND, throwable.getMessage());
+        var result = service.getSubjectInsight(param);
+
+        assertNotNull(result);
+        assertNull(result.defaultInsight());
+        assertNull(result.assessorInsight());
+        assertFalse(result.editable());
+        assertFalse(result.approved());
     }
 }
