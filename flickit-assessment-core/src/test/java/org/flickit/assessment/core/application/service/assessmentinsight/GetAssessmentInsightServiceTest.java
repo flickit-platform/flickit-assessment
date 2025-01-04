@@ -22,11 +22,12 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_INSIGHT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createWithAssessmentResultId;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createWithMinInsightTime;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.*;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -123,7 +124,7 @@ class GetAssessmentInsightServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT)).thenReturn(false);
 
-        var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
+        var result = service.getAssessmentInsight(param);
 
         assertNotNull(result.assessorInsight());
         assertEquals(assessmentInsight.getInsight(), result.assessorInsight().insight());
@@ -131,7 +132,7 @@ class GetAssessmentInsightServiceTest {
         assertFalse(result.assessorInsight().isValid());
         assertNull(result.defaultInsight());
         assertFalse(result.editable());
-        assertTrue(result.approved());
+        assertFalse(result.approved());
     }
 
     @Test

@@ -57,6 +57,6 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
     }
 
     private Result getDefaultInsight(AssessmentInsight assessmentInsight, boolean editable) {
-        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()), null, editable, false);
+        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()), null, editable, assessmentInsight.isApproved());
     }
 }

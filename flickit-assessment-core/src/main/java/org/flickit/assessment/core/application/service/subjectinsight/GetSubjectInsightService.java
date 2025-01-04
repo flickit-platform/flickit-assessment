@@ -49,7 +49,6 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
 
         return subjectInsight.map(insight -> getAssessorInsight(assessmentResult, insight, editable))
             .orElseGet(() -> getDefaultInsight(param.getAssessmentId(), param.getSubjectId(), editable));
-
     }
 
     private Result getAssessorInsight(AssessmentResult assessmentResult, SubjectInsight subjectInsight, boolean editable) {
