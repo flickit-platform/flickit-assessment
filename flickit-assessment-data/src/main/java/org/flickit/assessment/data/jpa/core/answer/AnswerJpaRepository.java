@@ -74,16 +74,16 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                                     @Param("confidence") int confidence);
 
     @Query("""
-            SELECT q.questionnaireId as questionnaireId,
-             COUNT(a) as answerCount
-            FROM AnswerJpaEntity a join QuestionJpaEntity q on a.questionnaireId = q.questionnaireId and a.questionId = q.id
+            SELECT q.questionnaireId AS questionnaireId,
+                COUNT(a) AS answerCount
+            FROM AnswerJpaEntity a JOIN QuestionJpaEntity q ON a.questionnaireId = q.questionnaireId AND a.questionId = q.id
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND a.confidenceLevelId < :confidence
                 AND a.questionnaireId in :questionnaireIds
-                GROUP BY q.questionnaireId
+            GROUP BY q.questionnaireId
         """)
     List<QuestionnaireIdAndAnswerCountView> countByQuestionnaireIdWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                                  @Param("questionnaireIds") ArrayList<Long> questionnaireId,
-                                                                                  @Param("confidence") int confidence);
+                                                                                         @Param("questionnaireIds") ArrayList<Long> questionnaireId,
+                                                                                         @Param("confidence") int confidence);
 }
