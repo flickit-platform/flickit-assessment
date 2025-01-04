@@ -49,6 +49,10 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
             : getAssessorInsight(assessmentResult, insight, editable);
     }
 
+    private Result getDefaultInsight(AssessmentInsight assessmentInsight, boolean editable) {
+        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()), null, editable, assessmentInsight.isApproved());
+    }
+
     private Result getAssessorInsight(AssessmentResult assessmentResult, AssessmentInsight assessmentInsight, boolean editable) {
         return new Result(null,
             new Result.AssessorInsight(assessmentInsight.getInsight(),
@@ -56,9 +60,5 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
                 assessmentResult.getLastCalculationTime().isBefore(assessmentInsight.getInsightTime())),
             editable,
             assessmentInsight.isApproved());
-    }
-
-    private Result getDefaultInsight(AssessmentInsight assessmentInsight, boolean editable) {
-        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()), null, editable, assessmentInsight.isApproved());
     }
 }
