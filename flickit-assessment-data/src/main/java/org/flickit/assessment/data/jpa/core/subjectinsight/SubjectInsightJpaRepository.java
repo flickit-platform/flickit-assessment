@@ -16,7 +16,14 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
 
     boolean existsByAssessmentResultIdAndSubjectId(UUID assessmentResultId, long subjectId);
 
-    List<SubjectInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    @Query("""
+            SELECT si
+            FROM SubjectInsightJpaEntity si
+            JOIN AssessmentResultJpaEntity ar ON si.assessmentResultId = ar.id
+            RIGHT JOIN SubjectJpaEntity s ON si.subjectId  = s.id AND ar.kitVersionId = s.kitVersionId
+            WHERE ar.id = :assessmentResultId
+        """)
+    List<SubjectInsightJpaEntity> findByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Modifying
     @Query("""
