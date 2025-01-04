@@ -52,12 +52,11 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
             new Result.AssessorInsight(assessmentInsight.getInsight(),
                 assessmentInsight.getInsightTime(),
                 assessmentResult.getLastCalculationTime().isBefore(assessmentInsight.getInsightTime())),
-            editable);
+            editable,
+            assessmentInsight.isApproved());
     }
 
     private Result getDefaultInsight(AssessmentInsight assessmentInsight, boolean editable) {
-        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()),
-            null,
-            editable);
+        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()), null, editable, false);
     }
 }

@@ -131,6 +131,7 @@ class GetAssessmentInsightServiceTest {
         assertFalse(result.assessorInsight().isValid());
         assertNull(result.defaultInsight());
         assertFalse(result.editable());
+        assertTrue(result.approved());
     }
 
     @Test
@@ -150,6 +151,7 @@ class GetAssessmentInsightServiceTest {
         assertNotNull(result.defaultInsight().insight());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
+        assertFalse(result.approved());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
