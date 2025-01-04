@@ -104,9 +104,9 @@ class GetAssessmentQuestionnaireListServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))
             .thenReturn(answeredWithLowConfidenceCount);
-        when(countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+        when(countEvidencesPort.countUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(unresolvedCommentsCount);
-        when(countEvidencesPort.countQuestionnairesQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(answeredWithEvidence);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);
@@ -172,9 +172,9 @@ class GetAssessmentQuestionnaireListServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(countLowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE))
             .thenReturn(answeredWithLowConfidenceCount);
-        when(countEvidencesPort.countQuestionnairesUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+        when(countEvidencesPort.countUnresolvedComments(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(unresolvedCommentsCount);
-        when(countEvidencesPort.countQuestionnairesQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds))
             .thenReturn(answeredWithEvidence);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);

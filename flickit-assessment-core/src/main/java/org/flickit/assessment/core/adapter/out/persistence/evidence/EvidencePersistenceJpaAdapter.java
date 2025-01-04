@@ -116,7 +116,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public int countQuestionsHavingEvidence(UUID assessmentId) {
+    public int countAnsweredQuestionsHavingEvidence(UUID assessmentId) {
         return repository.countAnsweredQuestionsHavingEvidence(assessmentId);
     }
 
@@ -126,7 +126,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Integer> countQuestionnairesUnresolvedComments(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds) {
+    public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds) {
         return repository.countQuestionnairesUnresolvedComments(assessmentId, kitVersionId, questionnaireIds)
             .stream()
             .collect(Collectors.toMap(
@@ -136,7 +136,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Integer> countQuestionnairesQuestionsHavingEvidence(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds) {
+    public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, long kitVersionId, ArrayList<Long> questionnaireIds) {
         return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, kitVersionId, questionnaireIds)
             .stream()
             .collect(Collectors.toMap(

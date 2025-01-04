@@ -58,9 +58,9 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
         var questionnaireIds = questionnaires.getItems().stream().map(QuestionnaireListItem::id).collect(Collectors.toCollection(ArrayList::new));
         var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countByQuestionnaireIdWithConfidenceLessThan(
             assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
-        var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countQuestionnairesUnresolvedComments(
+        var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countUnresolvedComments(
             assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
-        var questionnaireIdToEvidenceCount = countEvidencesPort.countQuestionnairesQuestionsHavingEvidence(
+        var questionnaireIdToEvidenceCount = countEvidencesPort.countAnsweredQuestionsHavingEvidence(
             assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
 
         var items = questionnaires.getItems().stream()
