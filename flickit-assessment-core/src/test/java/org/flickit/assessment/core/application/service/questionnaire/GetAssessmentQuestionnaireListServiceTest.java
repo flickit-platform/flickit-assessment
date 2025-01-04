@@ -79,7 +79,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         final int answersCount = 9;
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), assessmentResult, param.getSize(), param.getPage());
+        var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(assessmentResult, param.getSize(), param.getPage());
         var questionnaires = List.of(QuestionnaireListItemMother.createWithoutIssuesByQuestionCountAndAnswerCount(questionsCount, answersCount),
             QuestionnaireListItemMother.createWithoutIssuesByQuestionCountAndAnswerCount(questionsCount, answersCount));
         var answeredWithLowConfidenceCount = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 0));
@@ -147,7 +147,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         final int withEvidences = 5;
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(param.getAssessmentId(), assessmentResult, param.getSize(), param.getPage());
+        var portParam = new LoadQuestionnairesByAssessmentIdPort.Param(assessmentResult, param.getSize(), param.getPage());
         var questionnaires = List.of(QuestionnaireListItemMother.createContainingIssuesByQuestionCountAndAnswerCount(questionsCount, answersCount),
             QuestionnaireListItemMother.createContainingIssuesByQuestionCountAndAnswerCount(questionsCount, answersCount));
         var answeredWithLowConfidenceCount = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> lowConfidence));
