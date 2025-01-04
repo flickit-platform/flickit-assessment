@@ -50,7 +50,8 @@ public enum AssessmentPermission {
     VIEW_DASHBOARD("viewDashboard"),
     APPROVE_ATTRIBUTE_INSIGHT("approveAttributeInsight"),
     GRANT_ACCESS_TO_REPORT("grantAccessToReport"),
-    APPROVE_SUBJECT_INSIGHT("approveSubjectInsight");
+    APPROVE_SUBJECT_INSIGHT("approveSubjectInsight"),
+    VIEW_GRAPHICAL_REPORT("viewGraphicalReport"),;
 
     private final String code;
 }
