@@ -74,7 +74,7 @@ class GetAssessmentQuestionnaireListServiceTest {
     }
 
     @Test
-    void testGetQuestionnaireList_assessmentDoesNotHaveIssues_ReturnListSuccessfully() {
+    void testGetQuestionnaireList_whenQuestionnairesDoesNotHaveIssues_ReturnListSuccessfully() {
         final int questionsCount = 10;
         final int answersCount = 9;
         var param = createParam(Param.ParamBuilder::build);
@@ -139,7 +139,7 @@ class GetAssessmentQuestionnaireListServiceTest {
     }
 
     @Test
-    void testGetQuestionnaireList_whenAssessmentHasIssues_ReturnListSuccessfully() {
+    void testGetQuestionnaireList_whenQuestionnairesHaveIssues_ReturnListSuccessfully() {
         final int questionsCount = 10;
         final int answersCount = 7;
         final int lowConfidence = 2;
