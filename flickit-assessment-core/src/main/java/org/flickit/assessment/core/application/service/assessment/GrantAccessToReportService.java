@@ -9,6 +9,7 @@ import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -73,7 +74,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
             var roleOptional = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), user.getId());
             if (roleOptional.isPresent()) {
                 if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), user.getId(), VIEW_GRAPHICAL_REPORT))
-                    throw new AccessDeniedException(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER);
+                    throw new ValidationException(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER);
                 else
                     throw new ResourceAlreadyExistsException(GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED);
             } else
