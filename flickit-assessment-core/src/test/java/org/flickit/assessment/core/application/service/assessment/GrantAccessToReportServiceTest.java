@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -216,8 +217,8 @@ class GrantAccessToReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAccessToReport(param));
-        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER, throwable.getMessage());
+        var throwable = assertThrows(ValidationException.class, () -> service.grantAccessToReport(param));
+        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER, throwable.getMessageKey());
 
         verify(createAssessmentSpaceUserAccessPort).persist(createAssessmentSpaceUserAccessParamCaptor.capture());
         assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue());
@@ -248,8 +249,8 @@ class GrantAccessToReportServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAccessToReport(param));
-        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER, throwable.getMessage());
+        var throwable = assertThrows(ValidationException.class, () -> service.grantAccessToReport(param));
+        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER, throwable.getMessageKey());
 
         verifyNoInteractions(
             grantUserAssessmentRolePort,
