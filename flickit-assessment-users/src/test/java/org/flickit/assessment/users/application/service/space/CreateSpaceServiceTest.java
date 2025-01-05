@@ -7,7 +7,6 @@ import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateS
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,9 +30,6 @@ class CreateSpaceServiceTest {
     @Mock
     CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
-    @Captor
-    ArgumentCaptor<SpaceUserAccess> captor;
-
     @Test
     void testCreateSpace_validParams_successful() {
         var param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
@@ -43,6 +39,7 @@ class CreateSpaceServiceTest {
 
         service.createSpace(param);
 
+        ArgumentCaptor<SpaceUserAccess> captor = ArgumentCaptor.forClass(SpaceUserAccess.class);
         verify(createSpaceUserAccessPort).persist(captor.capture());
         var capturedAccess = captor.getValue();
         assertEquals(createdSpaceId, capturedAccess.getSpaceId());
