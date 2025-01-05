@@ -15,6 +15,7 @@ public class SpaceMother {
             "Code" + id,
             "Title",
             ownerId,
+            null,
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),

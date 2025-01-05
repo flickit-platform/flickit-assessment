@@ -18,6 +18,7 @@ public class SpaceMapper {
             space.getTitle(),
             SpaceType.PERSONAL.getId(), //TODO: Should consider based on input
             space.getOwnerId(),
+            space.getSubscriptionExpiry(),
             space.getCreationTime(),
             space.getLastModificationTime(),
             space.getCreatedBy(),
@@ -32,6 +33,7 @@ public class SpaceMapper {
             entity.getCode(),
             entity.getTitle(),
             entity.getOwnerId(),
+            entity.getSubscriptionExpiry(),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
