@@ -273,7 +273,7 @@ class GrantAccessToReportServiceTest {
             .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAccessToReport(param));
-        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_AUTHORIZED_CONTACT_SYS_ADMIN, throwable.getMessage());
+        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER, throwable.getMessage());
 
         verify(createAssessmentSpaceUserAccessPort).persist(createAssessmentSpaceUserAccessParamCaptor.capture());
         assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue());
@@ -305,7 +305,7 @@ class GrantAccessToReportServiceTest {
             .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAccessToReport(param));
-        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_AUTHORIZED_CONTACT_SYS_ADMIN, throwable.getMessage());
+        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER, throwable.getMessage());
 
         verifyNoInteractions(
             grantUserAssessmentRolePort,

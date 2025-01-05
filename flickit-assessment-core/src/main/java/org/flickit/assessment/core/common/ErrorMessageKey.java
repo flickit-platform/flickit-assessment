@@ -292,6 +292,6 @@ public class ErrorMessageKey {
 
     public static final String GRANT_ACCESS_TO_REPORT_EMAIL_NOT_NULL = "grant-access-to-report.email.notNull";
     public static final String GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL = "grant-access-to-report.assessmentId.notNull";
-    public static final String GRANT_ACCESS_TO_REPORT_NOT_AUTHORIZED_CONTACT_SYS_ADMIN = "grant-access-to-report.not-authorized.contact-sys-admin";
+    public static final String GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER = "grant-access-to-report.not-allowed.contact-assessment-manager";
     public static final String GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED = "grant-access-to-report.user-already-granted";
 }

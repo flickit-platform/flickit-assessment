@@ -74,7 +74,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
             var roleOptional = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), user.getId());
             if (roleOptional.isPresent()) {
                 if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), user.getId(), VIEW_GRAPHICAL_REPORT))
-                    throw new AccessDeniedException(GRANT_ACCESS_TO_REPORT_NOT_AUTHORIZED_CONTACT_SYS_ADMIN);
+                    throw new AccessDeniedException(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER);
                 else
                     throw new ResourceAlreadyExistsException(GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED);
             } else
