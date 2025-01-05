@@ -48,8 +48,8 @@ public class AppSpecProperties {
     @Getter
     @ToString
     public static class Space {
-        int maxPersonalSpaces = 5;
-        int maxPersonalSpaceAssessments = 5;
-        int maxPersonalSpaceMembers = 5;
+        int maxPersonalSpaces = 1;
+        int maxPersonalSpaceAssessments = 2;
+        int maxPersonalSpaceMembers = 3;
     }
 }
