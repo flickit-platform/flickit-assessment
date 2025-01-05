@@ -59,7 +59,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
 
         var creationTime = LocalDateTime.now();
         Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND)); // todo: don't know this msg is meaningful here or no!
+            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
         var userOptional = loadUserPort.loadByEmail(param.getEmail());
 
         if (userOptional.isPresent()) {
