@@ -6,7 +6,6 @@ import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -109,28 +108,6 @@ class GrantAccessToReportServiceTest {
             grantUserAssessmentRolePort,
             loadUserRoleForAssessmentPort,
             loadAssessmentPort,
-            createSpaceInvitePort,
-            createAssessmentInvitePort,
-            appSpecProperties,
-            sendEmailPort,
-            checkSpaceAccessPort,
-            createAssessmentSpaceUserAccessPort);
-    }
-
-    @Test
-    void testGrantAccessToReport_whenTheAssessmentThatUserIsGrantedReportAccessOnItDoesntExist_thenThrowResourceNotFoundException() {
-        var param = createParam(GrantAccessToReportUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
-            .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.empty());
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.grantAccessToReport(param));
-        assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(loadUserPort,
-            grantUserAssessmentRolePort,
-            loadUserRoleForAssessmentPort,
             createSpaceInvitePort,
             createAssessmentInvitePort,
             appSpecProperties,

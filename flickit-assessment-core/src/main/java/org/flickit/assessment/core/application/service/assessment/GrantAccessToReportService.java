@@ -8,7 +8,6 @@ import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
@@ -59,8 +58,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var creationTime = LocalDateTime.now();
-        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
         var userOptional = loadUserPort.loadByEmail(param.getEmail());
 
         if (userOptional.isPresent()) {
