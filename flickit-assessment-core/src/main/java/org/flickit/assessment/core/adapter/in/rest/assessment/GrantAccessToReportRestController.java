@@ -24,7 +24,7 @@ public class GrantAccessToReportRestController {
                                                     @RequestBody GrantAccessToReportRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.grantAccessToReport(toParam(assessmentId, requestDto.email(), currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private static GrantAccessToReportUseCase.Param toParam(UUID assessmentId, String email, UUID currentUserId) {
