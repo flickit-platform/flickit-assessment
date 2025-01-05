@@ -41,7 +41,8 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -175,7 +176,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsMemberOfAssessmentSpaceAndHaveARoleWithRequiredPermission_thenThrowResourceAlreadyExistsException() {
+    void testGrantAccessToReport_whenUserIsMemberOfAssessmentSpaceAndHaveARoleWithRequiredPermission_thenThrowResourceAlreadyExistsException() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -202,7 +203,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsNotMemberOfAssessmentSpaceAndDoesntHaveRoleWithRequiredPermission_thenThrowAccessDeniedException() {
+    void testGrantAccessToReport_whenUserIsNotMemberOfAssessmentSpaceAndHaveARoleWithNotRequiredPermission_thenThrowAccessDeniedException() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -235,7 +236,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsMemberOfAssessmentSpaceAndDoesntHaveRoleWithRequiredPermission_thenThrowAccessDeniedException() {
+    void testGrantAccessToReport_whenUserIsMemberOfAssessmentSpaceAndDoesNotHaveRoleWithRequiredPermission_thenThrowAccessDeniedException() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -262,7 +263,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsNotFoundedByEmailAndAppSpecSupportEmailIsNull_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail() {
+    void testGrantAccessToReport_whenUserIsNotFoundByEmailAndAppSpecSupportEmailIsNull_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail() {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         String subject =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, "flickit");
@@ -312,7 +313,7 @@ class GrantAccessToReportServiceTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"  ", "\t", "\n"})
-    void testGrantAccessToReport_whenTheUserIsNotFoundedByEmailAndAppSpecWithoutSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail(String supportEmail) {
+    void testGrantAccessToReport_whenUserIsNotFoundByEmailAndAppSpecWithoutSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail(String supportEmail) {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         String subject =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, "flickit");
@@ -360,7 +361,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsNotFoundedByEmailAndAppSpecWithSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithSupportEmail() {
+    void testGrantAccessToReport_whenTheUserIsNotFoundByEmailAndAppSpecWithSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithSupportEmail() {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         String subject =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, "flickit");
