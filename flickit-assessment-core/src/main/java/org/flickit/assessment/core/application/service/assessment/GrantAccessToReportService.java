@@ -28,9 +28,9 @@ import java.time.LocalDateTime;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_BODY;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
 
 @Slf4j
 @Service
@@ -57,16 +57,16 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var creationTime = LocalDateTime.now();
-        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
         var userOptional = loadUserPort.loadByEmail(param.getEmail());
+        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+        var creationTime = LocalDateTime.now();
 
         if (userOptional.isPresent()) {
             var user = userOptional.get();
             if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())) {
-                var createAssessmentParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                var createSpaceAccessParam = new CreateAssessmentSpaceUserAccessPort.Param(
                     assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
-                createAssessmentSpaceUserAccessPort.persist(createAssessmentParam);
+                createAssessmentSpaceUserAccessPort.persist(createSpaceAccessParam);
             }
 
             var roleOptional = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), user.getId());
