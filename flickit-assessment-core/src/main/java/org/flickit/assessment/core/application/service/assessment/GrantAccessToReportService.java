@@ -32,10 +32,10 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGI
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class GrantAccessToReportService implements GrantAccessToReportUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
@@ -51,7 +51,6 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
     private final CreateAssessmentSpaceUserAccessPort createAssessmentSpaceUserAccessPort;
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
-
 
     @Override
     public void grantAccessToReport(Param param) {

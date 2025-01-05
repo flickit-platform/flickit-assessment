@@ -23,11 +23,11 @@ public class GrantAccessToReportRestController {
     public ResponseEntity<Void> grantAccessToReport(@PathVariable("assessmentId") UUID assessmentId,
                                                     @RequestBody GrantAccessToReportRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
-        useCase.grantAccessToReport(toParam(requestDto.email(), assessmentId, currentUserId));
+        useCase.grantAccessToReport(toParam(assessmentId, requestDto.email(), currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private static GrantAccessToReportUseCase.Param toParam(String email, UUID assessmentId, UUID currentUserId) {
-        return new GrantAccessToReportUseCase.Param(email, assessmentId, currentUserId);
+    private static GrantAccessToReportUseCase.Param toParam(UUID assessmentId, String email, UUID currentUserId) {
+        return new GrantAccessToReportUseCase.Param(assessmentId, email, currentUserId);
     }
 }
