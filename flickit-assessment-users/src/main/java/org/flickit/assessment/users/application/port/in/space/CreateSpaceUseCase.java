@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.validation.EnumValue;
-import org.flickit.assessment.users.application.domain.SpaceType;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 
 import java.util.UUID;
 
