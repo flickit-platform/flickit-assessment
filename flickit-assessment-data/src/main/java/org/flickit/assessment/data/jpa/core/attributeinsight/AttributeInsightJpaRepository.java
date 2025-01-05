@@ -14,7 +14,16 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
 
     Optional<AttributeInsightJpaEntity> findByAssessmentResultIdAndAttributeId(UUID assessmentResultId, Long attributeId);
 
-    List<AttributeInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    boolean existsByAssessmentResultIdAndAttributeId(UUID assessmentResultId, long attributeId);
+
+    @Query("""
+            SELECT ai
+            FROM AttributeInsightJpaEntity ai
+            JOIN AssessmentResultJpaEntity ar ON ai.assessmentResultId = ar.id
+            RIGHT JOIN AttributeJpaEntity att ON ai.attributeId  = att.id AND ar.kitVersionId = att.kitVersionId
+            WHERE ar.id = :assessmentResultId
+        """)
+    List<AttributeInsightJpaEntity> findByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Modifying
     @Query("""
@@ -36,12 +45,21 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
     @Query("""
             UPDATE AttributeInsightJpaEntity a
             SET a.assessorInsight = :assessorInsight,
-                a.assessorInsightTime = :assessorInsightTime
+                a.assessorInsightTime = :assessorInsightTime,
+                a.approved = :isApproved
             WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
         """)
     void updateAssessorInsight(@Param("assessmentResultId") UUID assessmentResultId,
                                @Param("attributeId") Long attributeId,
                                @Param("assessorInsight") String assessorInsight,
-                               @Param("assessorInsightTime") LocalDateTime assessorInsightTime);
+                               @Param("assessorInsightTime") LocalDateTime assessorInsightTime,
+                               @Param("isApproved") boolean isApproved);
 
+    @Modifying
+    @Query("""
+            UPDATE AttributeInsightJpaEntity a
+            SET a.approved = true
+            WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
+        """)
+    void approve(@Param("assessmentResultId") UUID assessmentResultId, @Param("attributeId") long attributeId);
 }

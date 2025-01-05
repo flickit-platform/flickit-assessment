@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.attribute;
+package org.flickit.assessment.core.application.port.in.attributeinsight;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

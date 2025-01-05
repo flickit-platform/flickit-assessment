@@ -1,11 +1,11 @@
-package org.flickit.assessment.core.application.service.attribute;
+package org.flickit.assessment.core.application.service.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
-import org.flickit.assessment.core.application.port.in.attribute.UpdateAttributeInsightUseCase;
+import org.flickit.assessment.core.application.port.in.attributeinsight.UpdateAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
@@ -38,7 +38,7 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var attributeInsight = loadAttributeInsightPort.loadAttributeAiInsight(assessmentResult.getId(), param.getAttributeId())
+        var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())
             .orElseThrow(()-> new ResourceNotFoundException(UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));
 
         updateAttributeInsightPort.updateAssessorInsight(toAttributeInsight(
@@ -54,6 +54,7 @@ public class UpdateAttributeInsightService implements UpdateAttributeInsightUseC
             assessorInsight,
             null,
             LocalDateTime.now(),
-            null);
+            null,
+            true);
     }
 }

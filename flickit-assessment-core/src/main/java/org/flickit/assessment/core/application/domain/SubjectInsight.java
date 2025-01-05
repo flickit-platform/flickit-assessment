@@ -15,4 +15,5 @@ public class SubjectInsight {
     private final String insight;
     private final LocalDateTime insightTime;
     private final UUID insightBy;
+    private final boolean approved;
 }
