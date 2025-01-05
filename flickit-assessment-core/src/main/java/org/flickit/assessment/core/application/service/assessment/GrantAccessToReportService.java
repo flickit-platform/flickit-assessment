@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
+import org.flickit.assessment.core.application.domain.notification.GrantAccessToReportNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.CreateAssessmentInvitePort;
@@ -22,15 +24,18 @@ import org.flickit.assessment.core.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
-import static org.flickit.assessment.common.error.ErrorMessageKey.*;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_BODY;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_SUBJECT;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
+import static org.flickit.assessment.core.common.MessageKey.GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY;
+import static org.flickit.assessment.core.common.MessageKey.GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL;
 
 @Service
 @Transactional
@@ -54,7 +59,8 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
 
 
     @Override
-    public void grantAccessToReport(Param param) {
+    @SendNotification
+    public Result grantAccessToReport(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -80,12 +86,16 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
             } else
                 grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), REPORT_VIEWER.getId());
 
+            return new Result(new GrantAccessToReportNotificationCmd(assessment, user, param.getCurrentUserId()));
+
         } else {
             var expirationTime = creationTime.plusDays(EXPIRY_DURATION.toDays());
             createSpaceInvitePort.persist(toCreateSpaceInviteParam(assessment.getSpace().getId(), param, expirationTime, creationTime));
             createAssessmentInvitePort.persist(toCreateAssessmentInviteParam(param, expirationTime, creationTime));
-            sendInviteEmail(param.getEmail());
+            sendInviteEmail(param.getEmail(), assessment);
         }
+
+        return null;
     }
 
     CreateSpaceInvitePort.Param toCreateSpaceInviteParam(long spaceId,
@@ -110,21 +120,29 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
             param.getCurrentUserId());
     }
 
-    private void sendInviteEmail(String sendTo) {
+    private void sendInviteEmail(String sendTo, Assessment assessment) {
         String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
-        String body = generateEmailBody();
+        String body = generateEmailBody(assessment);
         log.debug("Sending invite email to [{}]", sendTo);
         sendEmailPort.send(sendTo, subject, body);
     }
 
-    private String generateEmailBody() {
+    private String generateEmailBody(Assessment assessment) {
+        String reportLink = MessageFormat.format("{0}/{1}/assessments/{2}/graphical-report",
+            appSpecProperties.getHost(),
+            assessment.getSpace().getId(),
+            assessment.getId());
         if (appSpecProperties.getSupportEmail() == null || appSpecProperties.getSupportEmail().isBlank())
-            return MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL,
+            return MessageBundle.message(GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL,
                 appSpecProperties.getHost(),
-                appSpecProperties.getName());
-        return MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY,
+                appSpecProperties.getName(),
+                assessment.getTitle(),
+                reportLink);
+        return MessageBundle.message(GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY,
             appSpecProperties.getHost(),
             appSpecProperties.getName(),
-            appSpecProperties.getSupportEmail());
+            appSpecProperties.getSupportEmail(),
+            assessment.getTitle(),
+            reportLink);
     }
 }
