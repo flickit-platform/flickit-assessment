@@ -20,7 +20,7 @@ public class GetSubjectInsightRestController {
     private final GetSubjectInsightUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/assessments/{assessmentId}/subjects/{subjectId}/insights")
+    @GetMapping("/assessments/{assessmentId}/insights/subjects/{subjectId}")
     public ResponseEntity<Result> getSubjectInsight(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("subjectId") Long subjectId) {
