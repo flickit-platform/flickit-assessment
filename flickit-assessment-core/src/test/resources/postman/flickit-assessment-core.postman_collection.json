@@ -587,6 +587,11 @@
 								"key": "Authorization",
 								"value": "{{authorization_header}}",
 								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
 							}
 						],
 						"body": {
