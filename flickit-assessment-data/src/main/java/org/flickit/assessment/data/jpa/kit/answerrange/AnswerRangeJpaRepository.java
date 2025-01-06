@@ -43,7 +43,7 @@ public interface AnswerRangeJpaRepository extends JpaRepository<AnswerRangeJpaEn
     @Query("""
             SELECT a as answerRange, o as answerOption
             FROM AnswerRangeJpaEntity a
-            JOIN AnswerOptionJpaEntity o on o.answerRangeId = a.id AND a.kitVersionId = o.kitVersionId
+            LEFT JOIN AnswerOptionJpaEntity o on o.answerRangeId = a.id AND a.kitVersionId = o.kitVersionId
             WHERE a.kitVersionId = :kitVersionId AND a.reusable = TRUE
         """)
     List<AnswerRangeJoinOptionView> findAllReusableWithOptionsByKitVersionId(@Param("kitVersionId") long kitVersionId);
