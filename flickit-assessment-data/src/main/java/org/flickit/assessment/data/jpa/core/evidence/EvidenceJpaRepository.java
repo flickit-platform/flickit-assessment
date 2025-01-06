@@ -94,7 +94,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     @Query("""
             SELECT q.questionnaireId as questionnaireId,
-            COUNT(e) as count
+                COUNT(e) as count
             FROM EvidenceJpaEntity e
             LEFT JOIN QuestionJpaEntity q ON e.questionId = q.id
             LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
@@ -110,7 +110,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     @Query("""
             SELECT q.questionnaireId as questionnaireId,
-            COUNT(e) as count
+                COUNT(e) as count
             FROM EvidenceJpaEntity e
             LEFT JOIN QuestionJpaEntity q ON e.questionId = q.id
             LEFT JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId
