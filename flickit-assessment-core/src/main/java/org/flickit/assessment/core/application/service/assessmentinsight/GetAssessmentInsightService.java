@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_INSIGHT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
@@ -39,12 +38,19 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT);
-        var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_INSIGHT_ASSESSMENT_INSIGHT_NOT_FOUND));
+        var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
 
-        return (assessmentInsight.getInsightBy() == null)
-            ? getDefaultInsight(assessmentInsight, editable)
-            : getAssessorInsight(assessmentResult, assessmentInsight, editable);
+        if (assessmentInsight.isEmpty())
+            return new Result(null, null, false, false);
+
+        var insight = assessmentInsight.get();
+        return (insight.getInsightBy() == null)
+            ? getDefaultInsight(insight, editable)
+            : getAssessorInsight(assessmentResult, insight, editable);
+    }
+
+    private Result getDefaultInsight(AssessmentInsight assessmentInsight, boolean editable) {
+        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()), null, editable, assessmentInsight.isApproved());
     }
 
     private Result getAssessorInsight(AssessmentResult assessmentResult, AssessmentInsight assessmentInsight, boolean editable) {
@@ -54,9 +60,5 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
                 assessmentResult.getLastCalculationTime().isBefore(assessmentInsight.getInsightTime())),
             editable,
             assessmentInsight.isApproved());
-    }
-
-    private Result getDefaultInsight(AssessmentInsight assessmentInsight, boolean editable) {
-        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()), null, editable, assessmentInsight.isApproved());
     }
 }

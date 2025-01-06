@@ -34,7 +34,7 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
             SELECT l as maturityLevel,
                 c as levelCompetence
             FROM MaturityLevelJpaEntity l
-            LEFT JOIN LevelCompetenceJpaEntity c ON l.id = c.affectedLevelId
+            LEFT JOIN LevelCompetenceJpaEntity c ON l.id = c.affectedLevelId AND l.kitVersionId = c.kitVersionId
             WHERE l.kitVersionId = :kitVersionId
         """)
     List<MaturityJoinCompetenceView> findAllByKitVersionIdWithCompetence(@Param(value = "kitVersionId") Long kitVersionId);

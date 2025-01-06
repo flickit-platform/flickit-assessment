@@ -22,7 +22,6 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_INSIGHT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createWithAssessmentResultId;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createWithMinInsightTime;
@@ -86,8 +85,13 @@ class GetAssessmentInsightServiceTest {
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentInsight(param));
-        assertEquals(GET_ASSESSMENT_INSIGHT_ASSESSMENT_INSIGHT_NOT_FOUND, throwable.getMessage());
+        var result = service.getAssessmentInsight(param);
+
+        assertNotNull(result);
+        assertNull(result.defaultInsight());
+        assertNull(result.assessorInsight());
+        assertFalse(result.editable());
+        assertFalse(result.approved());
     }
 
     @Test
@@ -102,7 +106,7 @@ class GetAssessmentInsightServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
 
-        var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
+        var result = service.getAssessmentInsight(param);
 
         assertNull(result.defaultInsight());
         assertNotNull(result.assessorInsight());
