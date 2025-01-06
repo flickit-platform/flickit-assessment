@@ -203,7 +203,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenUserIsNotMemberOfAssessmentSpaceAndHaveARoleWithNotRequiredPermission_thenThrowAccessDeniedException() {
+    void testGrantAccessToReport_whenUserIsNotMemberOfAssessmentSpaceAndHaveARoleWithoutRequiredPermission_thenThrowValidationException() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -236,7 +236,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenUserIsMemberOfAssessmentSpaceAndDoesNotHaveRoleWithRequiredPermission_thenThrowAccessDeniedException() {
+    void testGrantAccessToReport_whenUserIsMemberOfAssessmentSpaceAndHaveARoleWithoutRequiredPermission_thenThrowValidationException() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -260,54 +260,6 @@ class GrantAccessToReportServiceTest {
             appSpecProperties,
             sendEmailPort,
             createAssessmentSpaceUserAccessPort);
-    }
-
-    @Test
-    void testGrantAccessToReport_whenUserIsNotFoundByEmailAndAppSpecSupportEmailIsNull_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail() {
-        var assessment = AssessmentMother.assessment();
-        var param = createParam(b -> b.assessmentId(assessment.getId()));
-        String subject =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, "flickit");
-        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL, "localhost", "flickit");
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
-            .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.empty());
-        doNothing().when(createSpaceInvitePort).persist(any(CreateSpaceInvitePort.Param.class));
-        doNothing().when(createAssessmentInvitePort).persist(any(CreateAssessmentInvitePort.Param.class));
-        when(appSpecProperties.getName()).thenReturn("flickit");
-        when(appSpecProperties.getHost()).thenReturn("localhost");
-        when(appSpecProperties.getSupportEmail()).thenReturn(null);
-        doNothing().when(sendEmailPort).send(param.getEmail(), subject, body);
-
-        service.grantAccessToReport(param);
-
-        verify(createSpaceInvitePort).persist(createSpaceInviteParamCaptor.capture());
-        assertNotNull(createSpaceInviteParamCaptor.getValue());
-        assertEquals(assessment.getSpace().getId(), createSpaceInviteParamCaptor.getValue().spaceId());
-        assertEquals(param.getEmail(), createSpaceInviteParamCaptor.getValue().email());
-        LocalDateTime creationTime = createSpaceInviteParamCaptor.getValue().creationTime();
-        assertNotNull(creationTime);
-        LocalDateTime expirationDate = createSpaceInviteParamCaptor.getValue().expirationDate();
-        assertNotNull(expirationDate);
-        assertEquals(EXPIRY_DURATION.toDays(), ChronoUnit.DAYS.between(creationTime, expirationDate));
-        assertEquals(param.getCurrentUserId(), createSpaceInviteParamCaptor.getValue().createdBy());
-
-        verify(createAssessmentInvitePort).persist(createAssessmentInviteParamCaptor.capture());
-        assertNotNull(createAssessmentInviteParamCaptor.getValue());
-        assertEquals(param.getAssessmentId(), createAssessmentInviteParamCaptor.getValue().assessmentId());
-        assertEquals(param.getEmail(), createAssessmentInviteParamCaptor.getValue().email());
-        assertEquals(REPORT_VIEWER.getId(), createAssessmentInviteParamCaptor.getValue().roleId());
-        creationTime = createAssessmentInviteParamCaptor.getValue().creationTime();
-        assertNotNull(creationTime);
-        expirationDate = createAssessmentInviteParamCaptor.getValue().expirationTime();
-        assertNotNull(expirationDate);
-        assertEquals(EXPIRY_DURATION.toDays(), ChronoUnit.DAYS.between(creationTime, expirationDate));
-        assertEquals(param.getCurrentUserId(), createAssessmentInviteParamCaptor.getValue().createdBy());
-
-        verify(sendEmailPort).send(param.getEmail(), subject, body);
-
-        verifyNoInteractions(grantUserAssessmentRolePort, loadUserRoleForAssessmentPort);
     }
 
     @ParameterizedTest
