@@ -6,37 +6,22 @@ import java.util.List;
 
 public class QuestionnaireListItemMother {
 
-    private static int id = 0;
+    private static long id = 234L;
 
-    public static QuestionnaireListItem createWithoutIssuesByQuestionCountAndAnswerCount(int questionCount, int answerCount) {
+    public static QuestionnaireListItem createQuestionnaireListItem(int questionCount, int answerCount) {
         ++id;
         return new QuestionnaireListItem(
             id,
             "questionnaire",
             "description about questionnaire",
-            id,
+            1,
             questionCount,
             answerCount,
             10,
-            answerCount / questionCount,
-            List.of(new QuestionnaireListItem.Subject(0, "zero"),
-                new QuestionnaireListItem.Subject(1, "one")),
-            new QuestionnaireListItem.Issues(0, 0, 0, 0));
-    }
-
-    public static QuestionnaireListItem createContainingIssuesByQuestionCountAndAnswerCount(int questionCount, int answerCount) {
-        ++id;
-        return new QuestionnaireListItem(
-            id,
-            "questionnaire",
-            "description about questionnaire",
-            id,
-            questionCount,
-            answerCount,
-            answerCount + 1,
-            answerCount / questionCount,
-            List.of(new QuestionnaireListItem.Subject(0, "zero"),
-                new QuestionnaireListItem.Subject(1, "one")),
-            new QuestionnaireListItem.Issues(1, 2, 3, 4));
+            (int) Math.floor(((double) answerCount / questionCount) * 100),
+            List.of(
+                new QuestionnaireListItem.Subject(0, "Team"),
+                new QuestionnaireListItem.Subject(1, "Software")),
+            null);
     }
 }
