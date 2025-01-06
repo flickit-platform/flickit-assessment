@@ -1,5 +1,7 @@
 package org.flickit.assessment.core.application.domain;
 
+import lombok.With;
+
 import java.util.List;
 
 public record QuestionnaireListItem(long id,
@@ -11,7 +13,7 @@ public record QuestionnaireListItem(long id,
                                     int nextQuestion,
                                     int progress,
                                     List<Subject> subjects,
-                                    Issues issues) {
+                                    @With Issues issues) {
 
     public record Subject(long id, String title) {
     }

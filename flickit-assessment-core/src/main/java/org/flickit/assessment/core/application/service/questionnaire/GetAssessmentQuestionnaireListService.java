@@ -42,11 +42,11 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND));
 
-        var questionnaires = loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(toPortParam(param, assessmentResult));
+        var questionnaires = loadQuestionnairesByAssessmentIdPort.loadAllByAssessmentId(toPortParam(assessmentResult, param));
         return buildResultWithIssues(assessmentResult, questionnaires);
     }
 
-    private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(Param param, AssessmentResult assessmentResult) {
+    private LoadQuestionnairesByAssessmentIdPort.Param toPortParam(AssessmentResult assessmentResult, Param param) {
         return new LoadQuestionnairesByAssessmentIdPort.Param(
             assessmentResult,
             param.getSize(),
@@ -65,10 +65,13 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             assessmentResult.getAssessment().getId(), questionnaireIds);
 
         var items = questionnaires.getItems().stream()
-            .map(i -> buildQuestionnaireWithIssues(i,
-                questionnaireIdToLowConfidenceAnswersCount,
-                questionnaireIdToUnresolvedCommentsCount,
-                questionnaireIdToEvidenceCount))
+            .map(questionnaire -> {
+                var issues = buildQuestionnaireIssues(questionnaire,
+                    questionnaireIdToLowConfidenceAnswersCount,
+                    questionnaireIdToUnresolvedCommentsCount,
+                    questionnaireIdToEvidenceCount);
+                return questionnaire.withIssues(issues);
+            })
             .toList();
 
         return new PaginatedResponse<>(items,
@@ -79,24 +82,18 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             questionnaires.getTotal());
     }
 
-    private QuestionnaireListItem buildQuestionnaireWithIssues(QuestionnaireListItem questionnaireListItem, Map<Long, Integer> lowConfidenceAnswersCount,
-                                                               Map<Long, Integer> questionnairesUnresolvedComments, Map<Long, Integer> questionnairesEvidenceCount) {
-        return new QuestionnaireListItem(questionnaireListItem.id(),
-            questionnaireListItem.title(),
-            questionnaireListItem.description(),
-            questionnaireListItem.index(),
-            questionnaireListItem.questionCount(),
-            questionnaireListItem.answerCount(),
-            questionnaireListItem.nextQuestion(),
-            questionnaireListItem.progress(),
-            questionnaireListItem.subjects(),
-            new QuestionnaireListItem.Issues(questionnaireListItem.questionCount() - questionnaireListItem.answerCount(),
-                lowConfidenceAnswersCount.get(questionnaireListItem.id()) != null
-                    ? lowConfidenceAnswersCount.get(questionnaireListItem.id()) : 0,
-                (questionnairesEvidenceCount.get(questionnaireListItem.id()) != null)
-                    ? questionnaireListItem.answerCount() - questionnairesEvidenceCount.get(questionnaireListItem.id())
-                    : questionnaireListItem.answerCount(),
-                questionnairesUnresolvedComments.get(questionnaireListItem.id()) != null
-                    ? questionnairesUnresolvedComments.get(questionnaireListItem.id()) : 0));
+    private QuestionnaireListItem.Issues buildQuestionnaireIssues(QuestionnaireListItem questionnaire,
+                                                           Map<Long, Integer> lowConfidenceAnswersCount,
+                                                           Map<Long, Integer> questionnairesUnresolvedComments,
+                                                           Map<Long, Integer> questionnairesEvidenceCount) {
+        int unanswered = questionnaire.questionCount() - questionnaire.answerCount();
+        int answeredWithLowConfidence = lowConfidenceAnswersCount.getOrDefault(questionnaire.id(), 0);
+        int answeredWithoutEvidence = questionnaire.answerCount() - questionnairesEvidenceCount.getOrDefault(questionnaire.id(), 0);
+        int unresolvedComments = questionnairesUnresolvedComments.getOrDefault(questionnaire.id(), 0);
+
+        return new QuestionnaireListItem.Issues(unanswered,
+            answeredWithLowConfidence,
+            answeredWithoutEvidence,
+            unresolvedComments);
     }
 }
