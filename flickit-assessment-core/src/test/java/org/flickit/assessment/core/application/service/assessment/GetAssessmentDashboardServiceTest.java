@@ -118,7 +118,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unResolveCommentsCount);
-        when(countEvidencesPort.countQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -152,7 +152,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unResolveCommentsCount);
-        when(countEvidencesPort.countQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -187,7 +187,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unResolveCommentsCount);
-        when(countEvidencesPort.countQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions

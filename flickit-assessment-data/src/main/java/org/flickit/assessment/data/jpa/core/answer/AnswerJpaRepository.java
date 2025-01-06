@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -71,4 +72,20 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     int countWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
                                     @Param("confidence") int confidence);
+
+    @Query("""
+            SELECT q.questionnaireId AS questionnaireId,
+                COUNT(a) AS answerCount
+            FROM AnswerJpaEntity a
+            LEFT JOIN QuestionJpaEntity q ON a.questionnaireId = q.questionnaireId AND a.questionId = q.id
+            JOIN AssessmentResultJpaEntity ar ON a.assessmentResult.id = ar.id AND ar.kitVersionId = q.kitVersionId
+            WHERE a.assessmentResult.id=:assessmentResultId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND a.confidenceLevelId < :confidence
+                AND a.questionnaireId in :questionnaireIds
+            GROUP BY q.questionnaireId
+        """)
+    List<QuestionnaireIdAndAnswerCountView> countByQuestionnaireIdWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                                         @Param("questionnaireIds") Collection<Long> questionnaireId,
+                                                                                         @Param("confidence") int confidence);
 }

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -92,4 +94,36 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND (e.resolved IS NULL OR e.resolved = false)
         """)
     int countUnresolvedComments(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT q.questionnaireId  AS questionnaireId,
+                COUNT(DISTINCT q.id) AS count
+            FROM AnswerJpaEntity a
+            JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
+            JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId
+            JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId  = :assessmentId
+               AND q.questionnaireId  IN :questionnaireIds
+               AND e.type IS NOT NULL
+               AND e.deleted = false
+            GROUP BY q.questionnaireId
+        """)
+    List<EvidencesQuestionnaireAndCountView> countQuestionnairesQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
+                                                                                        @Param("questionnaireIds") Collection<Long> questionnaireIds);
+
+    @Query("""
+            SELECT q.questionnaireId as questionnaireId,
+                COUNT(e) as count
+            FROM EvidenceJpaEntity e
+            LEFT JOIN QuestionJpaEntity q ON e.questionId = q.id
+            LEFT JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId
+            WHERE e.assessmentId = :assessmentId
+                 AND q.questionnaireId IN :questionnaireIds
+                 AND e.type IS NULL
+                 AND e.resolved IS NULL
+                 AND e.deleted = false
+            GROUP BY q.questionnaireId
+        """)
+    List<EvidencesQuestionnaireAndCountView> countQuestionnairesUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                                                                   @Param("questionnaireIds") Collection<Long> questionnaireIds);
 }
