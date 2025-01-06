@@ -16,15 +16,6 @@ public interface CountEvidencesPort {
     int countAnsweredQuestionsHavingEvidence(UUID assessmentId);
 
     /**
-     * Counts the number of unresolved comments
-     * for a given assessment.
-     *
-     * @param assessmentId the unique identifier of the assessment
-     * @return the count of unresolved comments of an assessment
-     */
-    int countUnresolvedComments(UUID assessmentId);
-
-    /**
      * Counts the number of answered questions that have evidence
      * for a list the given questionnaires,
      *
@@ -33,6 +24,15 @@ public interface CountEvidencesPort {
      * @return a map where the key is the questionnaire ID and the value is the count of answered questions having evidence
      */
     Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds);
+
+    /**
+     * Counts the number of unresolved comments
+     * for a given assessment.
+     *
+     * @param assessmentId the unique identifier of the assessment
+     * @return the count of unresolved comments of an assessment
+     */
+    int countUnresolvedComments(UUID assessmentId);
 
     /**
      * Counts the number of unresolved comments

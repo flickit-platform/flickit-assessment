@@ -24,8 +24,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.adapter.out.persistence.evidence.EvidenceMapper.toEvidenceListItem;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -75,7 +75,7 @@ public class EvidencePersistenceJpaAdapter implements
             .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();
         var userIdToUserMap = userRepository.findAllById(userIds).stream()
-            .collect(Collectors.toMap(UserJpaEntity::getId, Function.identity()));
+            .collect(toMap(UserJpaEntity::getId, Function.identity()));
         var items = pageResult.getContent().stream()
             .map(e -> toEvidenceListItem(e, userIdToUserMap.get(e.getCreatedBy())))
             .toList();
@@ -130,21 +130,17 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, Set<Long> questionnaireIds) {
-        return repository.countQuestionnairesUnresolvedComments(assessmentId, questionnaireIds)
-            .stream()
-            .collect(Collectors.toMap(
+        return repository.countQuestionnairesUnresolvedComments(assessmentId, questionnaireIds).stream()
+            .collect(toMap(
                 EvidencesQuestionnaireAndCountView::getQuestionnaireId,
-                EvidencesQuestionnaireAndCountView::getCount
-            ));
+                EvidencesQuestionnaireAndCountView::getCount));
     }
 
     @Override
     public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds) {
-        return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, questionnaireIds)
-            .stream()
-            .collect(Collectors.toMap(
+        return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, questionnaireIds).stream()
+            .collect(toMap(
                 EvidencesQuestionnaireAndCountView::getQuestionnaireId,
-                EvidencesQuestionnaireAndCountView::getCount
-            ));
+                EvidencesQuestionnaireAndCountView::getCount));
     }
 }

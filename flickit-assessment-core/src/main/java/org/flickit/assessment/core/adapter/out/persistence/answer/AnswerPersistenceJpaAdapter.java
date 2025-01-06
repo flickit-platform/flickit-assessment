@@ -15,8 +15,8 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
@@ -103,7 +103,7 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public Map<Long, Integer> countWithConfidenceLessThan(UUID assessmentResultId, Set<Long> questionnaireIds, ConfidenceLevel confidence) {
         return repository.countByQuestionnaireIdWithConfidenceLessThan(assessmentResultId, questionnaireIds, confidence.getId()).stream()
-            .collect(Collectors.toMap(
+            .collect(toMap(
                 QuestionnaireIdAndAnswerCountView::getQuestionnaireId,
                 QuestionnaireIdAndAnswerCountView::getAnswerCount));
     }
