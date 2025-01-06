@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_QUESTIONNAIRE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
@@ -53,7 +54,9 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
     }
 
     private PaginatedResponse<QuestionnaireListItem> buildResultWithIssues(AssessmentResult assessmentResult, PaginatedResponse<QuestionnaireListItem> questionnaires) {
-        var questionnaireIds = questionnaires.getItems().stream().map(QuestionnaireListItem::id).toList();
+        var questionnaireIds = questionnaires.getItems().stream()
+            .map(QuestionnaireListItem::id)
+            .collect(toSet());
         var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countWithConfidenceLessThan(
             assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
         var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countUnresolvedComments(

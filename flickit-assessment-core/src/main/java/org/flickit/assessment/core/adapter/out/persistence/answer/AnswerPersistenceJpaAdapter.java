@@ -101,7 +101,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Integer> countWithConfidenceLessThan(UUID assessmentResultId, List<Long> questionnaireIds, ConfidenceLevel confidence) {
+    public Map<Long, Integer> countWithConfidenceLessThan(UUID assessmentResultId, Set<Long> questionnaireIds, ConfidenceLevel confidence) {
         return repository.countByQuestionnaireIdWithConfidenceLessThan(assessmentResultId, questionnaireIds, confidence.getId()).stream()
             .collect(Collectors.toMap(
                 QuestionnaireIdAndAnswerCountView::getQuestionnaireId,

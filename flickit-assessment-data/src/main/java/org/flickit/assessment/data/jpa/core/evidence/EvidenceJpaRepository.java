@@ -8,7 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, UUID> {
 
@@ -106,7 +109,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             GROUP BY q.questionnaireId
         """)
     List<EvidencesQuestionnaireAndCountView> countQuestionnairesQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
-                                                                                        @Param("questionnaireIds") List<Long> questionnaireIds);
+                                                                                        @Param("questionnaireIds") Collection<Long> questionnaireIds);
 
     @Query("""
             SELECT q.questionnaireId as questionnaireId,
@@ -122,5 +125,5 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             GROUP BY q.questionnaireId
         """)
     List<EvidencesQuestionnaireAndCountView> countQuestionnairesUnresolvedComments(@Param("assessmentId") UUID assessmentId,
-                                                                                   @Param("questionnaireIds") List<Long> questionnaireIds);
+                                                                                   @Param("questionnaireIds") Collection<Long> questionnaireIds);
 }

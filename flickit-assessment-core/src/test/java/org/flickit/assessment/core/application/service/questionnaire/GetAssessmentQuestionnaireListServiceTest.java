@@ -20,10 +20,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_QUESTIONNAIRE_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
@@ -87,7 +90,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var answeredWithEvidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> 0));
         var questionnaireIds = questionnaires.stream()
             .map(QuestionnaireListItem::id)
-            .toList();
+            .collect(toSet());
 
         var loadPortResult = new PaginatedResponse<>(
             questionnaires,
@@ -155,7 +158,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var answeredWithEvidence = questionnaires.stream().collect(Collectors.toMap(QuestionnaireListItem::id, id -> withEvidences));
         var questionnaireIds = questionnaires.stream()
             .map(QuestionnaireListItem::id)
-            .toList();
+            .collect(toSet());
 
         var loadPortResult = new PaginatedResponse<>(
             questionnaires,

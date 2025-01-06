@@ -19,7 +19,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -126,7 +129,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, List<Long> questionnaireIds) {
+    public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, Set<Long> questionnaireIds) {
         return repository.countQuestionnairesUnresolvedComments(assessmentId, questionnaireIds)
             .stream()
             .collect(Collectors.toMap(
@@ -136,7 +139,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, List<Long> questionnaireIds) {
+    public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds) {
         return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, questionnaireIds)
             .stream()
             .collect(Collectors.toMap(

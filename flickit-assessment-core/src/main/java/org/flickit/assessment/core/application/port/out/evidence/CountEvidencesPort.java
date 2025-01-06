@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.port.out.evidence;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public interface CountEvidencesPort {
@@ -29,18 +29,18 @@ public interface CountEvidencesPort {
      * for a list the given questionnaires,
      *
      * @param assessmentId     the unique identifier of the assessment
-     * @param questionnaireIds a list of questionnaire IDs to filter the questions
+     * @param questionnaireIds a set of questionnaire IDs to filter the questions
      * @return a map where the key is the questionnaire ID and the value is the count of answered questions having evidence
      */
-    Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, List<Long> questionnaireIds);
+    Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds);
 
     /**
      * Counts the number of unresolved comments
      * for a given list of questionnaire IDs.
      *
      * @param assessmentId     the unique identifier of the assessment
-     * @param questionnaireIds a list of questionnaire IDs to filter the comments
+     * @param questionnaireIds a set of questionnaire IDs to filter the comments
      * @return a map where the key is the questionnaire ID and the value is the count of unresolved comments
      */
-    Map<Long, Integer> countUnresolvedComments(UUID assessmentId, List<Long> questionnaireIds);
+    Map<Long, Integer> countUnresolvedComments(UUID assessmentId, Set<Long> questionnaireIds);
 }
