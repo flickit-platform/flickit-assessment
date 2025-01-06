@@ -96,16 +96,16 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     int countUnresolvedComments(@Param("assessmentId") UUID assessmentId);
 
     @Query("""
-            SELECT q.questionnaireId as questionnaireId,
-                COUNT(e) as count
-            FROM EvidenceJpaEntity e
-            LEFT JOIN QuestionJpaEntity q ON e.questionId = q.id
-            LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
-            LEFT JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId AND ar.kitVersionId = q.kitVersionId
-            WHERE e.assessmentId = :assessmentId
-                 AND q.questionnaireId IN :questionnaireIds
-                 AND e.type IS NOT NULL
-                 AND e.deleted = false
+            SELECT q.questionnaireId  AS questionnaireId,
+                COUNT(DISTINCT q.id) AS count
+            FROM AnswerJpaEntity a
+            JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
+            JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId
+            JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId  = :assessmentId
+               AND q.questionnaireId  IN :questionnaireIds
+               AND e.type IS NOT NULL
+               AND e.deleted = false
             GROUP BY q.questionnaireId
         """)
     List<EvidencesQuestionnaireAndCountView> countQuestionnairesQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
