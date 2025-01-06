@@ -96,25 +96,25 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             SELECT q.questionnaireId as questionnaireId,
             COUNT(e) as count
             FROM EvidenceJpaEntity e
-            JOIN QuestionJpaEntity q ON e.questionId = q.id
+            LEFT JOIN QuestionJpaEntity q ON e.questionId = q.id
+            LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
+            LEFT JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId AND ar.kitVersionId = q.kitVersionId
             WHERE e.assessmentId = :assessmentId
-                 AND q.kitVersionId = :kitVersionId
                  AND q.questionnaireId IN :questionnaireIds
                  AND e.type IS NOT NULL
                  AND e.deleted = false
             GROUP BY q.questionnaireId
         """)
     List<EvidencesQuestionnaireAndCountView> countQuestionnairesQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
-                                                                                        @Param("kitVersionId") long kitVersionId,
                                                                                         @Param("questionnaireIds") List<Long> questionnaireIds);
 
     @Query("""
             SELECT q.questionnaireId as questionnaireId,
             COUNT(e) as count
             FROM EvidenceJpaEntity e
-            JOIN QuestionJpaEntity q ON e.questionId = q.id
+            LEFT JOIN QuestionJpaEntity q ON e.questionId = q.id
+            LEFT JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId
             WHERE e.assessmentId = :assessmentId
-                 AND q.kitVersionId = :kitVersionId
                  AND q.questionnaireId IN :questionnaireIds
                  AND e.type IS NULL
                  AND e.resolved IS NULL
@@ -122,6 +122,5 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             GROUP BY q.questionnaireId
         """)
     List<EvidencesQuestionnaireAndCountView> countQuestionnairesUnresolvedComments(@Param("assessmentId") UUID assessmentId,
-                                                                                   @Param("kitVersionId") long kitVersionId,
                                                                                    @Param("questionnaireIds") List<Long> questionnaireIds);
 }

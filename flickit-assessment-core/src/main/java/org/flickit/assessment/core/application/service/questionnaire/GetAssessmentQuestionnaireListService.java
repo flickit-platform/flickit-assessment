@@ -57,9 +57,9 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
         var questionnaireIdToLowConfidenceAnswersCount = lowConfidenceAnswersPort.countWithConfidenceLessThan(
             assessmentResult.getId(), questionnaireIds, ConfidenceLevel.SOMEWHAT_UNSURE);
         var questionnaireIdToUnresolvedCommentsCount = countEvidencesPort.countUnresolvedComments(
-            assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+            assessmentResult.getAssessment().getId(), questionnaireIds);
         var questionnaireIdToEvidenceCount = countEvidencesPort.countAnsweredQuestionsHavingEvidence(
-            assessmentResult.getAssessment().getId(), assessmentResult.getKitVersionId(), questionnaireIds);
+            assessmentResult.getAssessment().getId(), questionnaireIds);
 
         var items = questionnaires.getItems().stream()
             .map(i -> buildQuestionnaireWithIssues(i,
