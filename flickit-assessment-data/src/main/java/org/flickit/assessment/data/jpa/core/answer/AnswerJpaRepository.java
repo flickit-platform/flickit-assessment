@@ -74,7 +74,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             SELECT q.questionnaireId AS questionnaireId,
                 COUNT(a) AS answerCount
             FROM AnswerJpaEntity a
-            JOIN QuestionJpaEntity q ON a.questionnaireId = q.questionnaireId AND a.questionId = q.id
+            LEFT JOIN QuestionJpaEntity q ON a.questionnaireId = q.questionnaireId AND a.questionId = q.id
+            JOIN AssessmentResultJpaEntity ar ON a.assessmentResult.id = ar.id AND ar.kitVersionId = q.kitVersionId
             WHERE a.assessmentResult.id=:assessmentResultId
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND a.confidenceLevelId < :confidence
