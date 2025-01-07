@@ -115,6 +115,7 @@ public class AnswerRangePersistenceJpaAdapter implements
         var rangeViews = repository.findAllReusableWithOptionsByKitVersionId(kitVersionId);
 
         Map<AnswerRangeJpaEntity, List<AnswerOptionJpaEntity>> answerRangeToOptions = rangeViews.stream()
+            .filter(e -> e.getAnswerOption() != null)
             .collect(Collectors.groupingBy(
                 AnswerRangeJoinOptionView::getAnswerRange,
                 Collectors.mapping(AnswerRangeJoinOptionView::getAnswerOption, Collectors.toList())
