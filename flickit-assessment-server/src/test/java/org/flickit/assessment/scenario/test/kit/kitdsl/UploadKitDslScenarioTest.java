@@ -1,6 +1,12 @@
 package org.flickit.assessment.scenario.test.kit.kitdsl;
 
+import io.minio.MinioClient;
+import io.minio.StatObjectArgs;
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.ServerException;
+import lombok.SneakyThrows;
 import okhttp3.mockwebserver.MockResponse;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkitdsl.KitDslJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.users.expertgroup.ExpertGroupTestHelper;
@@ -8,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.FILE_STORAGE_FILE_NOT_FOUND;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.util.FileUtils.createMultipartFile;
 import static org.flickit.assessment.scenario.util.FileUtils.readFileToString;
@@ -21,6 +28,9 @@ class UploadKitDslScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     ExpertGroupTestHelper expertGroupHelper;
+
+    @Autowired
+    MinioClient minioClient;
 
     @Test
     void uploadKitDsl() {
@@ -55,5 +65,24 @@ class UploadKitDslScenarioTest extends AbstractScenarioTest {
         assertNotNull(loadedKitDsl.getLastModificationTime());
         assertEquals(getCurrentUserId(), loadedKitDsl.getCreatedBy());
         assertEquals(getCurrentUserId(), loadedKitDsl.getLastModifiedBy());
+        assertDoesNotThrow(() -> checkFileExistenceInMinio(loadedKitDsl.getDslPath()));
+        assertDoesNotThrow(() -> checkFileExistenceInMinio(loadedKitDsl.getJsonPath()));
+    }
+
+    @SneakyThrows
+    private void checkFileExistenceInMinio(String filePath) {
+        String bucketName = filePath.substring(0, filePath.indexOf("/"));
+        String objectName = filePath.substring(filePath.indexOf("/") + 1);
+
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                .bucket(bucketName)
+                .object(objectName)
+                .build());
+        } catch (ErrorResponseException e) {
+            throw new ResourceNotFoundException(FILE_STORAGE_FILE_NOT_FOUND);
+        } catch (ServerException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
