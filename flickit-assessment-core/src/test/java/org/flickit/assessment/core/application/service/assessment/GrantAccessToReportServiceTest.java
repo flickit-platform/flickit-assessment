@@ -232,7 +232,7 @@ class GrantAccessToReportServiceTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"  ", "\t", "\n"})
-    void testGrantAccessToReport_whenUserIsNotFoundedByEmailAndAppSpecIsWithoutSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail(String supportEmail) {
+    void testGrantAccessToReport_whenUserIsNotFoundByEmailAndAppSpecIsWithoutSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail(String supportEmail) {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         String subject =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, "flickit");
@@ -280,7 +280,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsNotFoundedByEmailAndAppSpecHasSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithSupportEmail() {
+    void testGrantAccessToReport_whenTheUserIsNotFoundByEmailAndAppSpecHasSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithSupportEmail() {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         String subject =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, "flickit");
