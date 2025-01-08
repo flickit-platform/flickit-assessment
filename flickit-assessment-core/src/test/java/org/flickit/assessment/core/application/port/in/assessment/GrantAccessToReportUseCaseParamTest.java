@@ -16,6 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GrantAccessToReportUseCaseParamTest {
 
     @Test
+    void testGrantAccessToReportUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.assessmentId(null)));
+        assertThat(throwable).hasMessage("assessmentId: " + GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL);
+    }
+
+    @Test
     void testGrantAccessToReportUseCaseParam_emailParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.email(null)));
@@ -24,13 +31,6 @@ class GrantAccessToReportUseCaseParamTest {
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.email("invalid-email-format")));
         assertThat(throwable).hasMessage("email: " + COMMON_EMAIL_FORMAT_NOT_VALID);
-    }
-
-    @Test
-    void testGrantAccessToReportUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.assessmentId(null)));
-        assertThat(throwable).hasMessage("assessmentId: " + GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test

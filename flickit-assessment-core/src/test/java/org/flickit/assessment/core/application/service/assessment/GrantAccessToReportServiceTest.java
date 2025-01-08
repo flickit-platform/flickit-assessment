@@ -6,7 +6,7 @@ import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
@@ -42,9 +42,8 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.core.common.MessageKey.GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY;
-import static org.flickit.assessment.core.common.MessageKey.GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -99,7 +98,7 @@ class GrantAccessToReportServiceTest {
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
     @Test
-    void testGrantAccessToReport_whenUserWhoGrantAccessDoesNotHaveRequiredPermissions_thenThrowAccessDeniedException() {
+    void testGrantAccessToReport_whenCurrentUserDoesNotHaveRequiredPermissions_thenThrowAccessDeniedException() {
         var param = createParam(GrantAccessToReportUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
@@ -121,29 +120,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheAssessmentThatUserIsGrantedReportAccessOnItDoesntExist_thenThrowResourceNotFoundException() {
-        var param = createParam(GrantAccessToReportUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
-            .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.empty());
-
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.grantAccessToReport(param));
-        assertEquals(ASSESSMENT_ID_NOT_FOUND, throwable.getMessage());
-
-        verifyNoInteractions(loadUserPort,
-            grantUserAssessmentRolePort,
-            loadUserRoleForAssessmentPort,
-            createSpaceInvitePort,
-            createAssessmentInvitePort,
-            appSpecProperties,
-            sendEmailPort,
-            checkSpaceAccessPort,
-            createAssessmentSpaceUserAccessPort);
-    }
-
-    @Test
-    void testGrantAccessToReport_whenTheUserMemberOfAssessmentSpaceAndDoesntHaveAnyRoleOnAssessment_thenGrantRequiredRole() {
+    void testGrantAccessToReport_whenUserIsMemberOfTheAssessmentSpaceAndDoesNotHaveAnAssessmentRole_thenGrantRequiredRole() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -172,7 +149,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsNotMemberOfAssessmentSpaceAndDoesntHaveAnyRoleOnAssessment_thenMakeMemberAndGrantRequiredRole() {
+    void testGrantAccessToReport_whenUserIsNotMemberOfAssessmentSpaceAndDoesNotHaveAnAssessmentRole_thenMakeMemberAndGrantRequiredRole() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -208,7 +185,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsNotMemberOfAssessmentSpaceAndHaveARoleWithRequiredPermission_thenThrowResourceAlreadyExistsException() {
+    void testGrantAccessToReport_whenUserHaveARoleWithRequiredPermission_thenThrowResourceAlreadyExistsException() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -217,40 +194,6 @@ class GrantAccessToReportServiceTest {
             .thenReturn(true);
         when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
-        when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(false);
-        doNothing().when(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));
-        when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
-            .thenReturn(true);
-
-        var throwable = assertThrows(ResourceAlreadyExistsException.class, () -> service.grantAccessToReport(param));
-        assertEquals(GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED, throwable.getMessage());
-
-        verify(createAssessmentSpaceUserAccessPort).persist(createAssessmentSpaceUserAccessParamCaptor.capture());
-        assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue());
-        assertEquals(param.getAssessmentId(), createAssessmentSpaceUserAccessParamCaptor.getValue().assessmentId());
-        assertEquals(accessGrantedUser.getId(), createAssessmentSpaceUserAccessParamCaptor.getValue().userId());
-        assertEquals(param.getCurrentUserId(), createAssessmentSpaceUserAccessParamCaptor.getValue().createdBy());
-        assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue().creationTime());
-
-        verifyNoInteractions(grantUserAssessmentRolePort,
-            createSpaceInvitePort,
-            createAssessmentInvitePort,
-            appSpecProperties,
-            sendEmailPort);
-    }
-
-    @Test
-    void testGrantAccessToReport_whenTheUserIsMemberOfAssessmentSpaceAndHaveARoleWithRequiredPermission_thenThrowResourceAlreadyExistsException() {
-        var assessment = AssessmentMother.assessment();
-        var accessGrantedUser = UserMother.createUser();
-        var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
-            .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
-        when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(true);
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.of(AssessmentUserRole.ASSESSOR));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
@@ -260,6 +203,7 @@ class GrantAccessToReportServiceTest {
 
         verifyNoInteractions(
             grantUserAssessmentRolePort,
+            checkSpaceAccessPort,
             createSpaceInvitePort,
             createAssessmentInvitePort,
             appSpecProperties,
@@ -268,7 +212,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsNotMemberOfAssessmentSpaceAndDoesntHaveRoleWithRequiredPermission_thenThrowAccessDeniedException() {
+    void testGrantAccessToReport_whenUserHaveARoleWithoutRequiredPermission_thenThrowValidationException() {
         var assessment = AssessmentMother.assessment();
         var accessGrantedUser = UserMother.createUser();
         var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
@@ -277,49 +221,16 @@ class GrantAccessToReportServiceTest {
             .thenReturn(true);
         when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
         when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
-        when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(false);
-        doNothing().when(createAssessmentSpaceUserAccessPort).persist(any(CreateAssessmentSpaceUserAccessPort.Param.class));
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.of(AssessmentUserRole.ASSOCIATE));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAccessToReport(param));
-        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_AUTHORIZED_CONTACT_SYS_ADMIN, throwable.getMessage());
-
-        verify(createAssessmentSpaceUserAccessPort).persist(createAssessmentSpaceUserAccessParamCaptor.capture());
-        assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue());
-        assertEquals(param.getAssessmentId(), createAssessmentSpaceUserAccessParamCaptor.getValue().assessmentId());
-        assertEquals(accessGrantedUser.getId(), createAssessmentSpaceUserAccessParamCaptor.getValue().userId());
-        assertEquals(param.getCurrentUserId(), createAssessmentSpaceUserAccessParamCaptor.getValue().createdBy());
-        assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue().creationTime());
-
-        verifyNoInteractions(grantUserAssessmentRolePort,
-            createSpaceInvitePort,
-            createAssessmentInvitePort,
-            appSpecProperties,
-            sendEmailPort);
-    }
-
-    @Test
-    void testGrantAccessToReport_whenTheUserIsMemberOfAssessmentSpaceAndDoesntHaveRoleWithRequiredPermission_thenThrowAccessDeniedException() {
-        var assessment = AssessmentMother.assessment();
-        var accessGrantedUser = UserMother.createUser();
-        var param = createParam(b -> b.assessmentId(assessment.getId()).email(accessGrantedUser.getEmail()));
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
-            .thenReturn(true);
-        when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
-        when(loadUserPort.loadByEmail(param.getEmail())).thenReturn(Optional.of(accessGrantedUser));
-        when(checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), accessGrantedUser.getId())).thenReturn(true);
-        when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.of(AssessmentUserRole.ASSOCIATE));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), accessGrantedUser.getId(), VIEW_GRAPHICAL_REPORT))
-            .thenReturn(false);
-
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.grantAccessToReport(param));
-        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_AUTHORIZED_CONTACT_SYS_ADMIN, throwable.getMessage());
+        var throwable = assertThrows(ValidationException.class, () -> service.grantAccessToReport(param));
+        assertEquals(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER, throwable.getMessageKey());
 
         verifyNoInteractions(
             grantUserAssessmentRolePort,
+            checkSpaceAccessPort,
             createSpaceInvitePort,
             createAssessmentInvitePort,
             appSpecProperties,
@@ -330,7 +241,7 @@ class GrantAccessToReportServiceTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"  ", "\t", "\n"})
-    void testGrantAccessToReport_whenTheUserIsNotFoundedByEmailAndAppSpecWithoutSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail(String supportEmail) {
+    void testGrantAccessToReport_whenUserIsNotFoundByEmailAndAppSpecIsWithoutSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail(String supportEmail) {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         String reportLink = MessageFormat.format("{0}/{1}/assessments/{2}/graphical-report",
@@ -387,7 +298,7 @@ class GrantAccessToReportServiceTest {
     }
 
     @Test
-    void testGrantAccessToReport_whenTheUserIsNotFoundedByEmailAndAppSpecWithSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithSupportEmail() {
+    void testGrantAccessToReport_whenTheUserIsNotFoundByEmailAndAppSpecHasSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithSupportEmail() {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
         String reportLink = MessageFormat.format("{0}/{1}/assessments/{2}/graphical-report",

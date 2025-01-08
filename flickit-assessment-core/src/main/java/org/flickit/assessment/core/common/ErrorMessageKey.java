@@ -21,7 +21,6 @@ public class ErrorMessageKey {
     public static final String SUBJECT_INSIGHT_ID_NOT_FOUND = "subject-insight.id.notFound";
     public static final String ASSESSMENT_INSIGHT_ID_NOT_FOUND = "assessment-insight.id.notFound";
 
-
     public static final String CREATE_ASSESSMENT_TITLE_NOT_BLANK = "create-assessment.title.notBlank";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MIN = "create-assessment.title.size.min";
     public static final String CREATE_ASSESSMENT_TITLE_SIZE_MAX = "create-assessment.title.size.max";
@@ -293,6 +292,6 @@ public class ErrorMessageKey {
 
     public static final String GRANT_ACCESS_TO_REPORT_EMAIL_NOT_NULL = "grant-access-to-report.email.notNull";
     public static final String GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL = "grant-access-to-report.assessmentId.notNull";
-    public static final String GRANT_ACCESS_TO_REPORT_NOT_AUTHORIZED_CONTACT_SYS_ADMIN = "grant-access-to-report.not-authorized.contact-sys-admin";
+    public static final String GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER = "grant-access-to-report.not-allowed.contact-assessment-manager";
     public static final String GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED = "grant-access-to-report.user-already-granted";
 }

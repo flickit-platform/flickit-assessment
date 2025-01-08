@@ -9,7 +9,7 @@ import org.flickit.assessment.common.application.port.out.SendEmailPort;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.notification.GrantAccessToReportNotificationCmd;
 import org.flickit.assessment.core.application.port.in.assessment.GrantAccessToReportUseCase;
@@ -30,17 +30,15 @@ import java.time.LocalDateTime;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGISTER_EMAIL_SUBJECT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
-import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.flickit.assessment.core.common.MessageKey.GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY;
-import static org.flickit.assessment.core.common.MessageKey.GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class GrantAccessToReportService implements GrantAccessToReportUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
@@ -57,34 +55,32 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
 
     private static final Duration EXPIRY_DURATION = Duration.ofDays(7);
 
-
     @Override
     @SendNotification
     public Result grantAccessToReport(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var creationTime = LocalDateTime.now();
-        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND)); // todo: don't know this msg is meaningful here or no!
         var userOptional = loadUserPort.loadByEmail(param.getEmail());
+        Assessment assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId()).orElseThrow();
+        var creationTime = LocalDateTime.now();
 
         if (userOptional.isPresent()) {
             var user = userOptional.get();
-            if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())) {
-                var createAssessmentParam = new CreateAssessmentSpaceUserAccessPort.Param(
-                    assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
-                createAssessmentSpaceUserAccessPort.persist(createAssessmentParam);
-            }
-
             var roleOptional = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), user.getId());
             if (roleOptional.isPresent()) {
                 if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), user.getId(), VIEW_GRAPHICAL_REPORT))
-                    throw new AccessDeniedException(GRANT_ACCESS_TO_REPORT_NOT_AUTHORIZED_CONTACT_SYS_ADMIN);
+                    throw new ValidationException(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER);
                 else
                     throw new ResourceAlreadyExistsException(GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED);
-            } else
+            } else {
+                if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())) {
+                    var createSpaceAccessParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                        assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
+                    createAssessmentSpaceUserAccessPort.persist(createSpaceAccessParam);
+                }
                 grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), REPORT_VIEWER.getId());
+            }
 
             return new Result(new GrantAccessToReportNotificationCmd(assessment, user, param.getCurrentUserId()));
 

@@ -24,20 +24,20 @@ public interface GrantAccessToReportUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
+        @NotNull(message = GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL)
+        UUID assessmentId;
+
         @NotNull(message = GRANT_ACCESS_TO_REPORT_EMAIL_NOT_NULL)
         @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = COMMON_EMAIL_FORMAT_NOT_VALID)
         String email;
-
-        @NotNull(message = GRANT_ACCESS_TO_REPORT_ASSESSMENT_ID_NOT_NULL)
-        UUID assessmentId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(String email, UUID assessmentId, UUID currentUserId) {
-            this.email = email;
+        public Param(UUID assessmentId, String email, UUID currentUserId) {
             this.assessmentId = assessmentId;
+            this.email = email;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

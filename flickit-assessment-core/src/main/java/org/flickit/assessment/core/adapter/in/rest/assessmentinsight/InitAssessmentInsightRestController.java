@@ -23,6 +23,6 @@ public class InitAssessmentInsightRestController {
     public ResponseEntity<Void> initAssessmentInsight(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
         useCase.initAssessmentInsight(new Param(assessmentId, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
