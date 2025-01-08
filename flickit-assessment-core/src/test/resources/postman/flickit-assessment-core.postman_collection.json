@@ -2103,7 +2103,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/insights/subjects/15",
+							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/subjects/15/insight",
 							"host": [
 								"{{base_url}}"
 							],
@@ -2111,9 +2111,9 @@
 								"{{api_path}}",
 								"assessments",
 								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
-								"insights",
 								"subjects",
-								"15"
+								"15",
+								"insight"
 							]
 						}
 					},

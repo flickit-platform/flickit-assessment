@@ -76,6 +76,12 @@ class GetSubjectInsightServiceTest {
 
         assertNull(result.defaultInsight());
         assertNotNull(result.assessorInsight());
+        assertEquals(subjectInsight.getInsight(), result.assessorInsight().insight());
+        assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
+        assertTrue(result.assessorInsight().isValid());
+        assertTrue(result.editable());
+        assertTrue(result.approved());
+
     }
 
     @Test
@@ -109,7 +115,7 @@ class GetSubjectInsightServiceTest {
     }
 
     @Test
-    void testGetSubjectInsight_whenSubjectInsightExistsAndIsNotValidAndNotEditableAndIsNotCreatedByAssessor_thenReturnDefaultInsight() {
+    void testGetSubjectInsight_whenSubjectInsightExistsAndIsValidAndEditableAndIsNotCreatedByAssessor_thenReturnDefaultInsight() {
         GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         SubjectInsight subjectInsight = SubjectInsightMother.defaultSubjectInsight();
@@ -127,6 +133,8 @@ class GetSubjectInsightServiceTest {
         assertNull(result.assessorInsight());
         assertNotNull(result.defaultInsight());
         assertEquals(subjectInsight.getInsight(), result.defaultInsight().insight());
+        assertEquals(subjectInsight.getInsightTime(), result.defaultInsight().creationTime());
+        assertTrue(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertFalse(result.approved());
     }
