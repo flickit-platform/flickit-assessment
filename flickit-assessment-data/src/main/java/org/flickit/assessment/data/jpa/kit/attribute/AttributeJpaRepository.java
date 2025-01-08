@@ -88,7 +88,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
             GROUP BY
-                qr.title, qsn.id, qsn.index, qsn.title,
+                qr.id, qr.title, qsn.id, qsn.index, qsn.title,
                 ans, qi, ao.index, ao.title, ao.value
         """)
     Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentId") UUID assessmentId,
