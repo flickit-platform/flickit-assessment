@@ -4,9 +4,8 @@ import org.flickit.assessment.common.application.domain.notification.Notificatio
 
 import java.util.UUID;
 
-public record GrantAccessToReportNotificationPayload(
-    AssessmentModel assessment,
-    UserModel sender) implements NotificationPayload {
+public record GrantAccessToReportNotificationPayload(AssessmentModel assessment,
+                                                     UserModel sender) implements NotificationPayload {
 
     public record AssessmentModel(UUID id, String title, long spaceId) {}
 
