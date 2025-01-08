@@ -112,6 +112,7 @@ class GetAttributeScoreDetailServiceTest {
 
     private LoadAttributeScoreDetailPort.Result questionWithScore(int weight, double score) {
         return new LoadAttributeScoreDetailPort.Result(
+            333L,
             "title",
             123L,
             1,
@@ -128,6 +129,7 @@ class GetAttributeScoreDetailServiceTest {
 
     private LoadAttributeScoreDetailPort.Result questionWithoutAnswer() {
         return new LoadAttributeScoreDetailPort.Result(
+            333L,
             "title",
             124L,
             1,
@@ -144,6 +146,7 @@ class GetAttributeScoreDetailServiceTest {
 
     private LoadAttributeScoreDetailPort.Result questionMarkedAsNotApplicable() {
         return new LoadAttributeScoreDetailPort.Result(
+            333L,
             "title",
             125L,
             1,

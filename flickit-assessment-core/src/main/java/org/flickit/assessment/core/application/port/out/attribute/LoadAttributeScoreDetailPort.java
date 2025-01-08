@@ -18,7 +18,8 @@ public interface LoadAttributeScoreDetailPort {
                  int size,
                  int page) {}
 
-    record Result(String questionnaireTitle,
+    record Result(long questionnaireId,
+                  String questionnaireTitle,
                   long questionId,
                   int questionIndex,
                   String questionTitle,
