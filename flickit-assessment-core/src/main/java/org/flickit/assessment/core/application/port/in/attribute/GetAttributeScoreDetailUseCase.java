@@ -78,7 +78,10 @@ public interface GetAttributeScoreDetailUseCase {
         }
     }
 
-    record Result(String questionnaire, Question question, Answer answer) {
+    record Result(Questionnaire questionnaire, Question question, Answer answer) {
+
+        public record Questionnaire(long id, String title) {
+        }
 
         public record Question(long id, int index, String title, int weight, int evidenceCount) {
         }

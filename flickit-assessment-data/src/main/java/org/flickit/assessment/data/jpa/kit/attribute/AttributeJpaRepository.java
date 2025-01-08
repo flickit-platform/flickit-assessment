@@ -58,6 +58,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     @Query("""
             SELECT
+                qr.id as questionnaireId,
                 qr.title as questionnaireTitle,
                 qsn.id as questionId,
                 qsn.index as questionIndex,
