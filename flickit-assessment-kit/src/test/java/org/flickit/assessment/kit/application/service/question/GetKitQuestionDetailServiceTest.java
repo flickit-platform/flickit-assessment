@@ -15,6 +15,7 @@ import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
@@ -95,7 +97,16 @@ class GetKitQuestionDetailServiceTest {
 
         var result = service.getKitQuestionDetail(param);
 
-        verify(loadAttributesPort).loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId);
+        ArgumentCaptor<List<Long>> idListCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<Long> kitVersionIdCaptor = ArgumentCaptor.forClass(Long.class);
+
+        verify(loadAttributesPort).loadAllByIdsAndKitVersionId(idListCaptor.capture(), kitVersionIdCaptor.capture());
+
+        assertThat(idListCaptor.getValue())
+            .zipSatisfy(List.of(attr1.getId(), attr2.getId()),
+                (actualId, expectedId) -> assertThat(actualId).isEqualTo(expectedId));
+
+        assertEquals(kitVersionId, kitVersionIdCaptor.getValue());
 
         assertEquals(answerOptions.size(), result.options().size());
         assertEquals(2, result.attributeImpacts().size());
