@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GetGraphicalReportUsersUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadGraphicalReportInviteesPort;
-import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadGraphicalReportUsersPort;
+import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
     private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadGraphicalReportUsersPort loadGraphicalReportUsersPort;
+    private final LoadAssessmentUsersPort loadAssessmentUsersPort;
     private final LoadGraphicalReportInviteesPort loadGraphicalReportInviteesPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
@@ -40,7 +40,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             .map(AssessmentUserRole::getId)
             .toList();
 
-        var fullUsers = loadGraphicalReportUsersPort.load(param.getAssessmentId(), roleIds);
+        var fullUsers = loadAssessmentUsersPort.load(param.getAssessmentId(), roleIds);
         var invitees = loadGraphicalReportInviteesPort.load(param.getAssessmentId(), roleIds);
 
         var users = fullUsers.stream()

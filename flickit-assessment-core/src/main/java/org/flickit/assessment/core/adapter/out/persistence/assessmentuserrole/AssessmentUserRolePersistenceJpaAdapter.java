@@ -32,8 +32,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     GrantUserAssessmentRolePort,
     UpdateUserAssessmentRolePort,
     DeleteUserAssessmentRolePort,
-    LoadAssessmentUsersPort,
-    LoadGraphicalReportUsersPort {
+    LoadAssessmentUsersPort {
 
     private final AssessmentUserRoleJpaRepository repository;
 
