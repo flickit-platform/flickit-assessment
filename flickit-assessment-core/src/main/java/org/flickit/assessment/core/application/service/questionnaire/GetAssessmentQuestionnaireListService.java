@@ -97,7 +97,7 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
 
         int evidencesCount = questionnairesEvidenceCount.getOrDefault(questionnaire.id(), 0);
         int answeredWithoutEvidence = Math.max(questionnaire.answerCount() - evidencesCount, 0);
-        if (questionnairesEvidenceCount.getOrDefault(questionnaire.id(), 0) > questionnaire.answerCount())
+        if (evidencesCount > questionnaire.answerCount())
             log.error("EvidencesCount exceeds the answer count: evidencesCount:[{}], answerCount:[{}]",
                 evidencesCount, questionnaire.answerCount());
 
