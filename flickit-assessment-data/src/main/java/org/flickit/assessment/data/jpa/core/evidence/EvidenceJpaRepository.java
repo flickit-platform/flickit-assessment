@@ -100,12 +100,13 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 COUNT(DISTINCT q.id) AS count
             FROM AnswerJpaEntity a
             JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
-            JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId
+            JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId AND ar.id = a.assessmentResult.id
             JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
             WHERE e.assessmentId  = :assessmentId
-               AND q.questionnaireId  IN :questionnaireIds
-               AND e.type IS NOT NULL
-               AND e.deleted = false
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND q.questionnaireId  IN :questionnaireIds
+                AND e.type IS NOT NULL
+                AND e.deleted = false
             GROUP BY q.questionnaireId
         """)
     List<EvidencesQuestionnaireAndCountView> countQuestionnairesQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
