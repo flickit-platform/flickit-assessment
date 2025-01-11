@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
 import org.flickit.assessment.core.application.domain.FullUser;
@@ -116,9 +115,8 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
 
     @Override
     public List<FullUser> load(UUID assessmentId, List<Integer> roleIds) {
-        List<UserJpaEntity> userEntities = repository.findGraphicalReportUsers(assessmentId, roleIds);
-        return userEntities.stream()
-            .map(UserMapper::mapToFullDomain)
+        return repository.findUsersByRoles(assessmentId, roleIds).stream()
+            .map(e -> new FullUser(e.getUserId(), e.getDisplayName(), e.getEmail(), e.getPicturePath()))
             .toList();
     }
 }
