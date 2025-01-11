@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,4 +58,23 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 (SELECT a.id FROM AssessmentJpaEntity a WHERE a.spaceId = :spaceId)
         """)
     void deleteByUserIdAndSpaceId(@Param("userId") UUID userId, @Param("spaceId") Long spaceId);
+
+    @Query("""
+            SELECT
+                u.id AS userId,
+                u.email AS email,
+                u.displayName AS displayName,
+                u.picture AS picturePath
+            FROM UserJpaEntity u
+            JOIN AssessmentUserRoleJpaEntity a ON u.id = a.userId
+            JOIN AssessmentJpaEntity assessment ON assessment.id = a.assessmentId
+            WHERE a.assessmentId = :assessmentId
+                AND a.roleId IN :roleIds
+                AND EXISTS (
+                      SELECT 1 FROM SpaceUserAccessJpaEntity sua
+                      LEFT JOIN AssessmentJpaEntity fa on fa.spaceId = sua.spaceId
+                      WHERE fa.id = :assessmentId AND sua.userId  = a.userId)
+        """)
+    List<AssessmentUserView> findUsersByRoles(@Param("assessmentId") UUID assessmentId,
+                                              @Param("roleIds") List<Integer> roleIds);
 }
