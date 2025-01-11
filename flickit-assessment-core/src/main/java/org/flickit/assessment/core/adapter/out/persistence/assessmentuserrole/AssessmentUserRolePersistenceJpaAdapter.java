@@ -114,7 +114,7 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<FullUser> load(UUID assessmentId, List<Integer> roleIds) {
+    public List<FullUser> loadAll(UUID assessmentId, List<Integer> roleIds) {
         return repository.findUsersByRoles(assessmentId, roleIds).stream()
             .map(e -> new FullUser(e.getUserId(), e.getDisplayName(), e.getEmail(), e.getPicturePath()))
             .toList();

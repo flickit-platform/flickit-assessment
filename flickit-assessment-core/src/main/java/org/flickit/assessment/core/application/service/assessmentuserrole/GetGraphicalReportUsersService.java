@@ -41,7 +41,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             .map(AssessmentUserRole::getId)
             .toList();
 
-        var fullUsers = loadAssessmentUsersPort.load(param.getAssessmentId(), roleIds);
+        var fullUsers = loadAssessmentUsersPort.loadAll(param.getAssessmentId(), roleIds);
         var invitees = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds);
 
         var users = fullUsers.stream()

@@ -24,5 +24,5 @@ public interface LoadAssessmentUsersPort {
         }
     }
 
-    List<FullUser> load(UUID assessmentId, List<Integer> roleIds);
+    List<FullUser> loadAll(UUID assessmentId, List<Integer> roleIds);
 }
