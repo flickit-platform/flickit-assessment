@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.questionnaire;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -23,6 +24,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_LIST_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -83,12 +85,22 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
     }
 
     private QuestionnaireListItem.Issues buildQuestionnaireIssues(QuestionnaireListItem questionnaire,
-                                                           Map<Long, Integer> lowConfidenceAnswersCount,
-                                                           Map<Long, Integer> questionnairesUnresolvedComments,
-                                                           Map<Long, Integer> questionnairesEvidenceCount) {
-        int unanswered = questionnaire.questionCount() - questionnaire.answerCount();
+                                                                  Map<Long, Integer> lowConfidenceAnswersCount,
+                                                                  Map<Long, Integer> questionnairesUnresolvedComments,
+                                                                  Map<Long, Integer> questionnairesEvidenceCount) {
+        int unanswered = Math.max(questionnaire.questionCount() - questionnaire.answerCount(), 0);
+        if (questionnaire.answerCount() > questionnaire.questionCount())
+            log.error("AnswerCount exceeds the questions count: answerCount:[{}], questionCount:[{}]",
+                questionnaire.answerCount(), questionnaire.questionCount());
+
         int answeredWithLowConfidence = lowConfidenceAnswersCount.getOrDefault(questionnaire.id(), 0);
-        int answeredWithoutEvidence = questionnaire.answerCount() - questionnairesEvidenceCount.getOrDefault(questionnaire.id(), 0);
+
+        int evidencesCount = questionnairesEvidenceCount.getOrDefault(questionnaire.id(), 0);
+        int answeredWithoutEvidence = Math.max(questionnaire.answerCount() - evidencesCount, 0);
+        if (questionnairesEvidenceCount.getOrDefault(questionnaire.id(), 0) > questionnaire.answerCount())
+            log.error("EvidencesCount exceeds the answer count: evidencesCount:[{}], answerCount:[{}]",
+                evidencesCount, questionnaire.answerCount());
+
         int unresolvedComments = questionnairesUnresolvedComments.getOrDefault(questionnaire.id(), 0);
 
         return new QuestionnaireListItem.Issues(unanswered,
