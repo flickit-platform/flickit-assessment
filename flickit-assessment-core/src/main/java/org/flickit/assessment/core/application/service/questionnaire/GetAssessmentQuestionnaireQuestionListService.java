@@ -94,7 +94,8 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             question.getOptions().stream()
                 .map(this::mapToOption)
                 .toList(),
-            answerDto);
+            answerDto,
+            new Issues(answerDto == null));
     }
 
     private Option mapToOption(AnswerOption option) {
