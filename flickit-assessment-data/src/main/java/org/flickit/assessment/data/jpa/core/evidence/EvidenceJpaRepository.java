@@ -115,8 +115,8 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             SELECT q.questionnaireId as questionnaireId,
                 COUNT(e) as count
             FROM EvidenceJpaEntity e
-            LEFT JOIN QuestionJpaEntity q ON e.questionId = q.id
-            LEFT JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId
+            JOIN QuestionJpaEntity q ON e.questionId = q.id
+            JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId AND ar.kitVersionId = q.kitVersionId
             WHERE e.assessmentId = :assessmentId
                  AND q.questionnaireId IN :questionnaireIds
                  AND e.type IS NULL
