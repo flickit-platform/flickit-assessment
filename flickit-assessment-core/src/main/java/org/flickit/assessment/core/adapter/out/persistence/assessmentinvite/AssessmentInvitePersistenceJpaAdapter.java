@@ -27,8 +27,7 @@ public class AssessmentInvitePersistenceJpaAdapter implements
     DeleteAssessmentUserInvitationPort,
     LoadAssessmentInvitePort,
     DeleteAssessmentInvitePort,
-    UpdateAssessmentInvitePort,
-    LoadGraphicalReportInviteesPort {
+    UpdateAssessmentInvitePort {
 
     private final AssessmentInviteeJpaRepository repository;
 
@@ -100,11 +99,9 @@ public class AssessmentInvitePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Result> load(UUID assessmentId, List<Integer> roleIds) {
-        var entities = repository.findAllByAssessmentIdAndRoleIdIn(assessmentId, roleIds);
-
-        return entities.stream()
-            .map(e -> new Result(e.getEmail()))
+    public List<AssessmentInvite> loadAll(UUID assessmentId, List<Integer> roleIds) {
+        return repository.findAllByAssessmentIdAndRoleIdIn(assessmentId, roleIds).stream()
+            .map(AssessmentInviteMapper::mapToDomainModel)
             .toList();
     }
 }

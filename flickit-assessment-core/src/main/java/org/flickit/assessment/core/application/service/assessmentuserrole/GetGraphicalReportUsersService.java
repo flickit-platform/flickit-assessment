@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.domain.AssessmentInvite;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GetGraphicalReportUsersUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadGraphicalReportInviteesPort;
+import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentInviteeListPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentUsersPort loadAssessmentUsersPort;
-    private final LoadGraphicalReportInviteesPort loadGraphicalReportInviteesPort;
+    private final LoadAssessmentInviteeListPort loadAssessmentInviteeListPort;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
     @Override
@@ -41,7 +42,7 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             .toList();
 
         var fullUsers = loadAssessmentUsersPort.load(param.getAssessmentId(), roleIds);
-        var invitees = loadGraphicalReportInviteesPort.load(param.getAssessmentId(), roleIds);
+        var invitees = loadAssessmentInviteeListPort.loadAll(param.getAssessmentId(), roleIds);
 
         var users = fullUsers.stream()
             .map(e -> {
@@ -53,7 +54,8 @@ public class GetGraphicalReportUsersService implements GetGraphicalReportUsersUs
             }).toList();
 
         var inviteeUsers = invitees.stream()
-            .map(e -> new Result.GraphicalReportInvitee(e.email()))
+            .filter(AssessmentInvite::isNotExpired)
+            .map(e -> new Result.GraphicalReportInvitee(e.getEmail()))
             .toList();
 
         return new Result(users, inviteeUsers);

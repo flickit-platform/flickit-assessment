@@ -5,9 +5,10 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.assessmentuserrole.GetGraphicalReportUsersUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadGraphicalReportInviteesPort;
+import org.flickit.assessment.core.application.port.out.assessmentinvite.LoadAssessmentInviteeListPort;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadAssessmentUsersPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentInviteMother;
 import org.flickit.assessment.core.test.fixture.application.FullUserMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +48,7 @@ class GetGraphicalReportUsersServiceTest {
     private LoadAssessmentUsersPort loadAssessmentUsersPort;
 
     @Mock
-    private LoadGraphicalReportInviteesPort loadGraphicalReportInviteesPort;
+    private LoadAssessmentInviteeListPort loadAssessmentInviteeListPort;
 
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
@@ -75,7 +76,7 @@ class GetGraphicalReportUsersServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(loadAssessmentUsersPort.load(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
-        when(loadGraphicalReportInviteesPort.load(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
+        when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
 
         var result = service.getGraphicalReportUsers(param);
         assertNotNull(result);
@@ -99,7 +100,7 @@ class GetGraphicalReportUsersServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(loadAssessmentUsersPort.load(any(UUID.class), anyList())).thenReturn(List.of(grantedUser));
-        when(loadGraphicalReportInviteesPort.load(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
+        when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
 
         var result = service.getGraphicalReportUsers(param);
         assertNotNull(result);
@@ -116,7 +117,7 @@ class GetGraphicalReportUsersServiceTest {
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
 
-        verify(loadGraphicalReportInviteesPort).load(eq(param.getAssessmentId()), roleIdsCaptor.capture());
+        verify(loadAssessmentInviteeListPort).loadAll(eq(param.getAssessmentId()), roleIdsCaptor.capture());
         assertNotNull(roleIdsCaptor.getValue());
         assertFalse(roleIdsCaptor.getValue().isEmpty());
         for (int i = 0; i < roleIds.size(); i++)
@@ -137,7 +138,7 @@ class GetGraphicalReportUsersServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(loadAssessmentUsersPort.load(any(UUID.class), anyList())).thenReturn(List.of(grantedUser));
-        when(loadGraphicalReportInviteesPort.load(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
+        when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
         when(createFileDownloadLinkPort.createDownloadLink(grantedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn("picture-link");
 
         var result = service.getGraphicalReportUsers(param);
@@ -156,7 +157,7 @@ class GetGraphicalReportUsersServiceTest {
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
 
-        verify(loadGraphicalReportInviteesPort).load(eq(param.getAssessmentId()), roleIdsCaptor.capture());
+        verify(loadAssessmentInviteeListPort).loadAll(eq(param.getAssessmentId()), roleIdsCaptor.capture());
         assertNotNull(roleIdsCaptor.getValue());
         assertFalse(roleIdsCaptor.getValue().isEmpty());
         for (int i = 0; i < roleIds.size(); i++)
@@ -171,18 +172,18 @@ class GetGraphicalReportUsersServiceTest {
             .map(AssessmentUserRole::getId)
             .toList();
 
-        var invitees = List.of(new LoadGraphicalReportInviteesPort.Result("invitee@test.com"));
+        var invitees = List.of(AssessmentInviteMother.notExpiredAssessmentInvite("invitee@test.com"));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(loadAssessmentUsersPort.load(any(UUID.class), anyList())).thenReturn(new ArrayList<>());
-        when(loadGraphicalReportInviteesPort.load(any(UUID.class), anyList())).thenReturn(invitees);
+        when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(invitees);
 
         var result = service.getGraphicalReportUsers(param);
         assertNotNull(result);
         assertNotNull(result.invitees());
         assertTrue(result.users().isEmpty());
-        assertEquals(invitees.getFirst().email(), result.invitees().getFirst().email());
+        assertEquals(invitees.getFirst().getEmail(), result.invitees().getFirst().email());
 
         verify(loadAssessmentUsersPort).load(eq(param.getAssessmentId()), roleIdsCaptor.capture());
         assertNotNull(roleIdsCaptor.getValue());
@@ -190,7 +191,7 @@ class GetGraphicalReportUsersServiceTest {
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
 
-        verify(loadGraphicalReportInviteesPort).load(eq(param.getAssessmentId()), roleIdsCaptor.capture());
+        verify(loadAssessmentInviteeListPort).loadAll(eq(param.getAssessmentId()), roleIdsCaptor.capture());
         assertNotNull(roleIdsCaptor.getValue());
         assertFalse(roleIdsCaptor.getValue().isEmpty());
         for (int i = 0; i < roleIds.size(); i++)
@@ -207,12 +208,12 @@ class GetGraphicalReportUsersServiceTest {
             .filter(e -> e.hasAccess(AssessmentPermission.VIEW_GRAPHICAL_REPORT))
             .map(AssessmentUserRole::getId)
             .toList();
-        var invitees = List.of(new LoadGraphicalReportInviteesPort.Result("invitee@test.com"));
+        var invitees = List.of(AssessmentInviteMother.notExpiredAssessmentInvite("invitee@test.com"));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(loadAssessmentUsersPort.load(any(UUID.class), anyList())).thenReturn(List.of(grantedUser));
-        when(loadGraphicalReportInviteesPort.load(any(UUID.class), anyList())).thenReturn(invitees);
+        when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(invitees);
         when(createFileDownloadLinkPort.createDownloadLink(grantedUser.getPicturePath(), EXPIRY_DURATION)).thenReturn("picture-link");
 
         var result = service.getGraphicalReportUsers(param);
@@ -225,7 +226,7 @@ class GetGraphicalReportUsersServiceTest {
         assertEquals("picture-link", result.users().getFirst().pictureLink());
         assertNotNull(result.invitees());
         assertFalse(result.invitees().isEmpty());
-        assertEquals(invitees.getFirst().email(), result.invitees().getFirst().email());
+        assertEquals(invitees.getFirst().getEmail(), result.invitees().getFirst().email());
 
         verify(loadAssessmentUsersPort).load(eq(param.getAssessmentId()), roleIdsCaptor.capture());
         assertNotNull(roleIdsCaptor.getValue());
@@ -233,7 +234,7 @@ class GetGraphicalReportUsersServiceTest {
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
 
-        verify(loadGraphicalReportInviteesPort).load(eq(param.getAssessmentId()), roleIdsCaptor.capture());
+        verify(loadAssessmentInviteeListPort).loadAll(eq(param.getAssessmentId()), roleIdsCaptor.capture());
         assertNotNull(roleIdsCaptor.getValue());
         assertFalse(roleIdsCaptor.getValue().isEmpty());
         for (int i = 0; i < roleIds.size(); i++)
@@ -250,12 +251,12 @@ class GetGraphicalReportUsersServiceTest {
             .filter(e -> e.hasAccess(AssessmentPermission.VIEW_GRAPHICAL_REPORT))
             .map(AssessmentUserRole::getId)
             .toList();
-        var invitees = List.of(new LoadGraphicalReportInviteesPort.Result("invitee@test.com"));
+        var invitees = List.of(AssessmentInviteMother.notExpiredAssessmentInvite("invitee@test.com"));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(loadAssessmentUsersPort.load(any(UUID.class), anyList())).thenReturn(List.of(grantedUser));
-        when(loadGraphicalReportInviteesPort.load(any(UUID.class), anyList())).thenReturn(invitees);
+        when(loadAssessmentInviteeListPort.loadAll(any(UUID.class), anyList())).thenReturn(invitees);
 
         var result = service.getGraphicalReportUsers(param);
         assertNotNull(result);
@@ -266,7 +267,7 @@ class GetGraphicalReportUsersServiceTest {
         assertNull(result.users().getFirst().pictureLink());
         assertNotNull(result.invitees());
         assertFalse(result.invitees().isEmpty());
-        assertEquals(invitees.getFirst().email(), result.invitees().getFirst().email());
+        assertEquals(invitees.getFirst().getEmail(), result.invitees().getFirst().email());
 
         verify(loadAssessmentUsersPort).load(eq(param.getAssessmentId()), roleIdsCaptor.capture());
         assertNotNull(roleIdsCaptor.getValue());
@@ -274,7 +275,7 @@ class GetGraphicalReportUsersServiceTest {
         for (int i = 0; i < roleIds.size(); i++)
             assertEquals(roleIds.get(i), roleIdsCaptor.getValue().get(i));
 
-        verify(loadGraphicalReportInviteesPort).load(eq(param.getAssessmentId()), roleIdsCaptor.capture());
+        verify(loadAssessmentInviteeListPort).loadAll(eq(param.getAssessmentId()), roleIdsCaptor.capture());
         assertNotNull(roleIdsCaptor.getValue());
         assertFalse(roleIdsCaptor.getValue().isEmpty());
         for (int i = 0; i < roleIds.size(); i++)
