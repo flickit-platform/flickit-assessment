@@ -27,7 +27,8 @@ public class AssessmentInvitePersistenceJpaAdapter implements
     DeleteAssessmentUserInvitationPort,
     LoadAssessmentInvitePort,
     DeleteAssessmentInvitePort,
-    UpdateAssessmentInvitePort {
+    UpdateAssessmentInvitePort,
+    LoadGraphicalReportInviteesPort {
 
     private final AssessmentInviteeJpaRepository repository;
 
@@ -96,5 +97,14 @@ public class AssessmentInvitePersistenceJpaAdapter implements
             throw new ResourceNotFoundException(UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND);
 
         repository.updateRoleById(id, roleId);
+    }
+
+    @Override
+    public List<Result> load(UUID assessmentId, List<Integer> roleIds) {
+        var entities = repository.findAllByAssessmentIdAndRoleIdIn(assessmentId, roleIds);
+
+        return entities.stream()
+            .map(e -> new Result(e.getEmail()))
+            .toList();
     }
 }
