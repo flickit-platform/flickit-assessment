@@ -29,8 +29,7 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.KIT_ID_NOT_FOUND
 import static org.flickit.assessment.kit.common.ErrorMessageKey.QUESTION_ID_NOT_FOUND;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.createAnswerOption;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -109,23 +108,25 @@ class GetKitQuestionDetailServiceTest {
         assertEquals(answerOptions.size(), result.options().size());
         assertEquals(2, result.attributeImpacts().size());
 
-        var attributeImpact1 = result.attributeImpacts().getFirst();
-        assertEquals(attr1.getId(), attributeImpact1.id());
-        assertEquals(attr1.getTitle(), attributeImpact1.title());
-        assertEquals(2, attributeImpact1.affectedLevels().size());
+        result.attributeImpacts().forEach(im -> {
+            if (attr1.getId() == im.id()) {
+                assertEquals(attr1.getId(), im.id());
+                assertEquals(attr1.getTitle(), im.title());
+                assertEquals(2, im.affectedLevels().size());
 
-        var attr1AffectedLevel1 = attributeImpact1.affectedLevels().getFirst();
-        assertEquals(impact1.getAttributeId(), attributeImpact1.id());
-        assertEquals(impact1.getMaturityLevelId(), attr1AffectedLevel1.maturityLevel().id());
+                var attr1AffectedLevel1 = im.affectedLevels().getFirst();
+                assertEquals(impact1.getAttributeId(), im.id());
+                assertEquals(impact1.getMaturityLevelId(), attr1AffectedLevel1.maturityLevel().id());
 
-        var attr1AffectedLevel2 = attributeImpact1.affectedLevels().get(1);
-        assertEquals(impact2.getAttributeId(), attributeImpact1.id());
-        assertEquals(impact2.getMaturityLevelId(), attr1AffectedLevel2.maturityLevel().id());
-
-        var attributeImpact2 = result.attributeImpacts().get(1);
-        var attr2AffectedLevel1 = attributeImpact1.affectedLevels().getFirst();
-        assertEquals(impact3.getAttributeId(), attributeImpact2.id());
-        assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().id());
+                var attr1AffectedLevel2 = im.affectedLevels().get(1);
+                assertEquals(impact2.getAttributeId(), im.id());
+                assertEquals(impact2.getMaturityLevelId(), attr1AffectedLevel2.maturityLevel().id());
+            } else if (attr2.getId() == im.id()) {
+                var attr2AffectedLevel1 = im.affectedLevels().getFirst();
+                assertEquals(impact3.getAttributeId(), im.id());
+                assertEquals(impact3.getMaturityLevelId(), attr2AffectedLevel1.maturityLevel().id());
+            } else fail();
+        });
     }
 
     @Test
