@@ -29,8 +29,7 @@ import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMo
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetKitQuestionDetailServiceTest {
@@ -90,11 +89,13 @@ class GetKitQuestionDetailServiceTest {
         when(loadKitExpertGroupPort.loadKitExpertGroup(param.getKitId())).thenReturn(expertGroup);
         when(checkExpertGroupAccessPort.checkIsMember(expertGroup.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadQuestionPort.load(question.getId(), kitVersionId)).thenReturn(question);
-        when(loadAttributesPort.loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId)).thenReturn(List.of(attr1, attr2));
+        when(loadAttributesPort.loadAllByIdsAndKitVersionId(anyList(), anyLong())).thenReturn(List.of(attr1, attr2));
         when(loadMaturityLevelsPort.loadAllByKitVersionId(kitVersionId)).thenReturn(maturityLevels);
         when(loadActiveKitVersionIdPort.loadKitVersionId(kitId)).thenReturn(kitVersionId);
 
         var result = service.getKitQuestionDetail(param);
+
+        verify(loadAttributesPort).loadAllByIdsAndKitVersionId(List.of(attr1.getId(), attr2.getId()), kitVersionId);
 
         assertEquals(answerOptions.size(), result.options().size());
         assertEquals(2, result.attributeImpacts().size());
