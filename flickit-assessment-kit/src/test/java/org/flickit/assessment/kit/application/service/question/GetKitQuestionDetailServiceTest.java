@@ -102,9 +102,7 @@ class GetKitQuestionDetailServiceTest {
 
         verify(loadAttributesPort).loadAllByIdsAndKitVersionId(idListCaptor.capture(), kitVersionIdCaptor.capture());
 
-        assertThat(idListCaptor.getValue())
-            .zipSatisfy(List.of(attr1.getId(), attr2.getId()),
-                (actualId, expectedId) -> assertThat(actualId).isEqualTo(expectedId));
+        assertThat(idListCaptor.getValue()).containsExactlyInAnyOrderElementsOf(List.of(attr1.getId(), attr2.getId()));
 
         assertEquals(kitVersionId, kitVersionIdCaptor.getValue());
 
