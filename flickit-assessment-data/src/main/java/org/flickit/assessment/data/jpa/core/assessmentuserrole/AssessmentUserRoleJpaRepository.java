@@ -1,6 +1,7 @@
 package org.flickit.assessment.data.jpa.core.assessmentuserrole;
 
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity.EntityId;
+import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,4 +59,13 @@ public interface AssessmentUserRoleJpaRepository extends JpaRepository<Assessmen
                 (SELECT a.id FROM AssessmentJpaEntity a WHERE a.spaceId = :spaceId)
         """)
     void deleteByUserIdAndSpaceId(@Param("userId") UUID userId, @Param("spaceId") Long spaceId);
+
+    @Query("""
+            SELECT u
+            FROM AssessmentUserRoleJpaEntity a
+            JOIN UserJpaEntity u ON a.userId = u.id
+            WHERE a.assessmentId = :assessmentId and a.roleId IN (:roleIds)
+        """)
+    List<UserJpaEntity> findGraphicalReportUsers(@Param("assessmentId") UUID assessmentId,
+                                                 @Param("roleIds") List<Integer> roleIds);
 }

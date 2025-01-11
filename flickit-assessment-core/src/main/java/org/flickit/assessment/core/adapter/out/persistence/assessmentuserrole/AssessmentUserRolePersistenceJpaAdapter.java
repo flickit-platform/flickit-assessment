@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.domain.AssessmentUserRoleItem;
+import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.out.assessmentuserrole.*;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentuserrole.AssessmentUserRoleJpaRepository;
@@ -30,7 +32,8 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
     GrantUserAssessmentRolePort,
     UpdateUserAssessmentRolePort,
     DeleteUserAssessmentRolePort,
-    LoadAssessmentUsersPort {
+    LoadAssessmentUsersPort,
+    LoadGraphicalReportUsersPort {
 
     private final AssessmentUserRoleJpaRepository repository;
 
@@ -110,5 +113,13 @@ public class AssessmentUserRolePersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Override
+    public List<FullUser> load(UUID assessmentId, List<Integer> roleIds) {
+        List<UserJpaEntity> userEntities = repository.findGraphicalReportUsers(assessmentId, roleIds);
+        return userEntities.stream()
+            .map(UserMapper::mapToFullDomain)
+            .toList();
     }
 }
