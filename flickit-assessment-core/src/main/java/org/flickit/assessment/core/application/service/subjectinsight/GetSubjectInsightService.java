@@ -46,17 +46,22 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
 
         var insight = subjectInsight.get();
         return (insight.getInsightBy() == null)
-            ? getDefaultInsight(insight, editable)
+            ? getDefaultInsight(assessmentResult, insight, editable)
             : getAssessorInsight(assessmentResult, insight, editable);
     }
 
-    private Result getDefaultInsight(SubjectInsight insight, boolean editable) {
-        return new Result(new Result.DefaultInsight(insight.getInsight()), null, editable, insight.isApproved());
+    private Result getDefaultInsight(AssessmentResult assessmentResult, SubjectInsight insight, boolean editable) {
+        return new Result(new Result.Insight(insight.getInsight(),
+            insight.getInsightTime(),
+            assessmentResult.getLastCalculationTime().isBefore(insight.getInsightTime())),
+            null,
+            editable,
+            insight.isApproved());
     }
 
     private Result getAssessorInsight(AssessmentResult assessmentResult, SubjectInsight insight, boolean editable) {
         return new Result(null,
-            new Result.AssessorInsight(insight.getInsight(),
+            new Result.Insight(insight.getInsight(),
                 insight.getInsightTime(),
                 assessmentResult.getLastCalculationTime().isBefore(insight.getInsightTime())),
             editable,

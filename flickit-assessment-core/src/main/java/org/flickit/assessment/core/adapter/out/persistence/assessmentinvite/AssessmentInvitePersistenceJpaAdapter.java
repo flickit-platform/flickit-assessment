@@ -97,4 +97,11 @@ public class AssessmentInvitePersistenceJpaAdapter implements
 
         repository.updateRoleById(id, roleId);
     }
+
+    @Override
+    public List<AssessmentInvite> loadAll(UUID assessmentId, List<Integer> roleIds) {
+        return repository.findAllByAssessmentIdAndRoleIdIn(assessmentId, roleIds).stream()
+            .map(AssessmentInviteMapper::mapToDomainModel)
+            .toList();
+    }
 }

@@ -63,21 +63,20 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
 
         if (userOptional.isPresent()) {
             var user = userOptional.get();
-            if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())) {
-                var createSpaceAccessParam = new CreateAssessmentSpaceUserAccessPort.Param(
-                    assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
-                createAssessmentSpaceUserAccessPort.persist(createSpaceAccessParam);
-            }
-
             var roleOptional = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), user.getId());
             if (roleOptional.isPresent()) {
                 if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), user.getId(), VIEW_GRAPHICAL_REPORT))
                     throw new ValidationException(GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER);
                 else
                     throw new ResourceAlreadyExistsException(GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED);
-            } else
+            } else {
+                if (!checkSpaceAccessPort.checkIsMember(assessment.getSpace().getId(), user.getId())) {
+                    var createSpaceAccessParam = new CreateAssessmentSpaceUserAccessPort.Param(
+                        assessment.getId(), user.getId(), param.getCurrentUserId(), creationTime);
+                    createAssessmentSpaceUserAccessPort.persist(createSpaceAccessParam);
+                }
                 grantUserAssessmentRolePort.persist(param.getAssessmentId(), user.getId(), REPORT_VIEWER.getId());
-
+            }
         } else {
             var expirationTime = creationTime.plusDays(EXPIRY_DURATION.toDays());
             createSpaceInvitePort.persist(toCreateSpaceInviteParam(assessment.getSpace().getId(), param, expirationTime, creationTime));
