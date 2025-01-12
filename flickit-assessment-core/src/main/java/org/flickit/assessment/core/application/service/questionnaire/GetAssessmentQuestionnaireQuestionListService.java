@@ -95,7 +95,8 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 .map(this::mapToOption)
                 .toList(),
             answerDto,
-            new Issues(answerDto == null));
+            new Issues(answerDto == null,
+                answerDto != null ? answerDto.confidenceLevel().getId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId() : null));
     }
 
     private Option mapToOption(AnswerOption option) {

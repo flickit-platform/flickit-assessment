@@ -67,6 +67,7 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
                           Boolean isNotApplicable) {
     }
 
-    record Issues(boolean isUnanswered){
+    record Issues(boolean isUnanswered,
+                  Boolean isAnsweredWithLowConfidence){
     }
 }
