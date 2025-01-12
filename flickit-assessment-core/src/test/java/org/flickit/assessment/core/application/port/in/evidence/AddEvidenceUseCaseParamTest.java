@@ -53,7 +53,7 @@ class AddEvidenceUseCaseParamTest {
     void testAddEvidenceParam_DescriptionSizeIsEqualToMax_Success() {
         UUID createdById = UUID.randomUUID();
         assertDoesNotThrow(
-            () -> new AddEvidenceUseCase.Param(randomAlphabetic(200), UUID.randomUUID(), 1L, "POSITIVE", createdById));
+            () -> new AddEvidenceUseCase.Param(randomAlphabetic(500), UUID.randomUUID(), 1L, "POSITIVE", createdById));
     }
 
     @Test
