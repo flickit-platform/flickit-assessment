@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
+    private final CountEvidencesPort countEvidencesPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
@@ -97,7 +99,8 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 .toList(),
             answerDto,
             new Issues(answerDto == null,
-                answerDto != null ? answerDto.confidenceLevel().getId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId() : null));
+                answerDto != null ? answerDto.confidenceLevel().getId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId() : null,
+                evidencesCount == 0));
     }
 
     private Option mapToOption(AnswerOption option) {
