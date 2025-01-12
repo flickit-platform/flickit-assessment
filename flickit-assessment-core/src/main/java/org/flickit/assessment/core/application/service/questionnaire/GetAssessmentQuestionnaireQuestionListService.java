@@ -60,8 +60,13 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
         var questionIdToEvidencesCountMap = countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId(), param.getQuestionnaireId());
+        var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()
-            .map((Question q) -> mapToResult(q, questionIdToAnswerMap.get(q.getId()), questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0))).toList();
+            .map((Question q) -> mapToResult(q,
+                questionIdToAnswerMap.get(q.getId()),
+                questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0),
+                questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0)))
+            .toList();
 
         return new PaginatedResponse<>(
             items,
@@ -72,7 +77,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             pageResult.getTotal());
     }
 
-    private Result mapToResult(Question question, Answer answer, int evidencesCount) {
+    private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
             Option answerOption = null;
@@ -100,7 +105,8 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             answerDto,
             new Issues(answerDto == null,
                 answerDto != null ? answerDto.confidenceLevel().getId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId() : null,
-                evidencesCount == 0));
+                evidencesCount == 0,
+                unresolvedCommentsCount));
     }
 
     private Option mapToOption(AnswerOption option) {
