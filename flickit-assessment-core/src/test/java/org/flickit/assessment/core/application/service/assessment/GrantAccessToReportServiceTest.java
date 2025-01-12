@@ -267,6 +267,7 @@ class GrantAccessToReportServiceTest {
         when(appSpecProperties.getName()).thenReturn("flickit");
         when(appSpecProperties.getHost()).thenReturn("localhost");
         when(appSpecProperties.getSupportEmail()).thenReturn(supportEmail);
+        when(appSpecProperties.getAssessmentReportUrlPath()).thenReturn("{0}/{1}/assessments/{2}/graphical-report");
         doNothing().when(sendEmailPort).send(param.getEmail(), subject, body);
 
         var result = service.grantAccessToReport(param);
@@ -324,6 +325,7 @@ class GrantAccessToReportServiceTest {
         when(appSpecProperties.getName()).thenReturn("flickit");
         when(appSpecProperties.getHost()).thenReturn("localhost");
         when(appSpecProperties.getSupportEmail()).thenReturn("support@flickit.com");
+        when(appSpecProperties.getAssessmentReportUrlPath()).thenReturn("{0}/{1}/assessments/{2}/graphical-report");
         doNothing().when(sendEmailPort).send(param.getEmail(), subject, body);
 
         var result = service.grantAccessToReport(param);
