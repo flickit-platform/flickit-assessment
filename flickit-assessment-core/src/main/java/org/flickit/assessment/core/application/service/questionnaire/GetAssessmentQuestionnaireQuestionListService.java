@@ -57,8 +57,9 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
+        var questionIdToEvidencesCountMap = countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()
-            .map((Question q) -> mapToResult(q, questionIdToAnswerMap.get(q.getId()))).toList();
+            .map((Question q) -> mapToResult(q, questionIdToAnswerMap.get(q.getId()), questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0))).toList();
 
         return new PaginatedResponse<>(
             items,
@@ -69,7 +70,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             pageResult.getTotal());
     }
 
-    private Result mapToResult(Question question, Answer answer) {
+    private Result mapToResult(Question question, Answer answer, int evidencesCount) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
             Option answerOption = null;
