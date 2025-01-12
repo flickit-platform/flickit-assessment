@@ -144,4 +144,20 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
                                                                                   @Param("questionnaireId") long questionnaireId);
+
+    @Query("""
+            SELECT q.id as questionId,
+                COUNT(e) as count
+            FROM EvidenceJpaEntity e
+            JOIN QuestionJpaEntity q ON e.questionId = q.id
+            JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId AND ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId = :assessmentId
+                 AND q.questionnaireId = :questionnaireId
+                 AND e.type IS NULL
+                 AND e.resolved IS NULL
+                 AND e.deleted = false
+            GROUP BY q.id
+        """)
+    List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                                                                      @Param("questionnaireId") long questionnaireId);
 }

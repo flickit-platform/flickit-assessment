@@ -143,6 +143,15 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
+    public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, long questionnaireId) {
+        return repository.countQuestionnaireQuestionsUnresolvedComments(assessmentId, questionnaireId).stream()
+            .collect(toMap(
+                EvidencesQuestionAndCountView::getQuestionId,
+                EvidencesQuestionAndCountView::getCount
+            ));
+    }
+
+    @Override
     public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds) {
         return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, questionnaireIds).stream()
             .collect(toMap(
