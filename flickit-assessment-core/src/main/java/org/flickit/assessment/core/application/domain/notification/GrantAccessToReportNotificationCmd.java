@@ -6,7 +6,7 @@ import org.flickit.assessment.core.application.domain.User;
 
 import java.util.UUID;
 
-public record GrantAccessToReportNotificationCmd(
-        Assessment assessment,
-        User targetUser,
-        UUID senderId) implements NotificationCmd {}
+public record GrantAccessToReportNotificationCmd(Assessment assessment,
+                                                 User targetUser,
+                                                 UUID senderId) implements NotificationCmd {
+}

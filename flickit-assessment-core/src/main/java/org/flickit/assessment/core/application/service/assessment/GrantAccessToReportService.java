@@ -35,8 +35,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.INVITE_TO_REGI
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
-import static org.flickit.assessment.core.common.MessageKey.GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY;
-import static org.flickit.assessment.core.common.MessageKey.GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL;
+import static org.flickit.assessment.core.common.MessageKey.*;
 
 @Slf4j
 @Service
@@ -120,7 +119,7 @@ public class GrantAccessToReportService implements GrantAccessToReportUseCase {
     }
 
     private void sendInviteEmail(String sendTo, Assessment assessment) {
-        String subject = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, appSpecProperties.getName());
+        String subject = MessageBundle.message(GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_SUBJECT, assessment.getTitle());
         String body = generateEmailBody(assessment);
         log.debug("Sending invite email to [{}]", sendTo);
         sendEmailPort.send(sendTo, subject, body);
