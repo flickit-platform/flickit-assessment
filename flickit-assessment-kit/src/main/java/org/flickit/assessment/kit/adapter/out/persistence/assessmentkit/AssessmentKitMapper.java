@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithDraftVersionIdView;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
+import org.flickit.assessment.kit.application.domain.KitLanguage;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 
@@ -24,6 +25,7 @@ public class AssessmentKitMapper {
             param.published(),
             param.isPrivate(),
             param.expertGroupId(),
+            KitLanguage.valueOf(param.lang()).getId(),
             LocalDateTime.now(),
             LocalDateTime.now(),
             param.createdBy(),
@@ -44,6 +46,7 @@ public class AssessmentKitMapper {
             param.published() != null ? param.published() : entity.getPublished(),
             param.isPrivate() != null ? param.isPrivate() : entity.getIsPrivate(),
             entity.getExpertGroupId(),
+            KitLanguage.valueOf(param.lang()).getId(),
             entity.getCreationTime(),
             param.lastModificationTime(),
             entity.getCreatedBy(),
