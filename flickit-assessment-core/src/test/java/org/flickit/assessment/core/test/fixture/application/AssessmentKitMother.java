@@ -10,13 +10,23 @@ public class AssessmentKitMother {
         return new AssessmentKit(id++,
             "title" + id,
             id,
-            MaturityLevelMother.allLevels());
+            MaturityLevelMother.allLevels(),
+            true);
+    }
+
+    public static AssessmentKit publicKit() {
+        return new AssessmentKit(id++,
+            "title" + id,
+            id,
+            MaturityLevelMother.allLevels(),
+            false);
     }
 
     public static AssessmentKit AssessmentKitWithoutActiveKitVersion() {
         return new AssessmentKit(id++,
             "title" + id,
             null,
-            MaturityLevelMother.allLevels());
+            MaturityLevelMother.allLevels(),
+            true);
     }
 }

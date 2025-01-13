@@ -16,7 +16,8 @@ public class AssessmentKitMapper {
             entity.getId(),
             entity.getTitle(),
             entity.getKitVersionId(),
-            maturityLevels
+            maturityLevels,
+            entity.getIsPrivate()
         );
     }
 }

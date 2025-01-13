@@ -13,4 +13,5 @@ public class AssessmentKit {
     private final String title;
     private final Long kitVersion;
     private final List<MaturityLevel> maturityLevels;
+    private final Boolean isPrivate;
 }
