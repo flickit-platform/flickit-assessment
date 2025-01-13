@@ -17,6 +17,8 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
 
     boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
+    int countBySpaceIdAndDeletedFalse(long spaceId);
+
     @Query("""
             SELECT
                 a as assessment,
