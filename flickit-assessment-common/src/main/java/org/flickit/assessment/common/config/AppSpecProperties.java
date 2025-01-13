@@ -22,6 +22,9 @@ public class AppSpecProperties {
     private String expertGroupInviteUrlPath = "account/expert-group-invitation";
 
     @NotBlank
+    private String assessmentReportUrlPath = "{0}/{1}/assessments/{2}/graphical-report";
+
+    @NotBlank
     private String name = "Flickit";
 
     @NotBlank

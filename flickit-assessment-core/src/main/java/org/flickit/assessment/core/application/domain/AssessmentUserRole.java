@@ -70,7 +70,6 @@ public enum AssessmentUserRole {
             CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
-            VIEW_ASSESSMENT,
             VIEW_SUBJECT_PROGRESS,
             VIEW_SUBJECT_REPORT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
@@ -129,6 +128,7 @@ public enum AssessmentUserRole {
             VIEW_EVIDENCE,
             RESOLVE_COMMENT)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
+            VIEW_ASSESSMENT,
             GRANT_ACCESS_TO_REPORT,
             VIEW_GRAPHICAL_REPORT
             ));
