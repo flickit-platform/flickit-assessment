@@ -60,7 +60,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
-    PaginatedResponse<Question> expectedPaginatedResponse = new PaginatedResponse<>(
+    private final PaginatedResponse<Question> expectedPaginatedResponse = new PaginatedResponse<>(
         List.of(question),
         0,
         1,
@@ -70,7 +70,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     );
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsException() {
+    void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsAccessDeniedException() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -83,7 +83,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_InvalidQuestionnaireId_ThrowsException() {
+    void testGetAssessmentQuestionnaireQuestionList_InvalidQuestionnaireId_ThrowsResourceNotFoundException() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -99,7 +99,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamAndAnswerIsNotApplicableFalse_ValidResult() {
+    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndAnswerIsNotApplicableFalse_ValidResult() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
 
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
@@ -114,15 +114,16 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(List.of(answer));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
-
+        //Assert Pagination params
         assertPaginationProperties(result);
+        //Assert Question properties
         Result item = result.getItems().getFirst();
         assertQuestionProperties(item);
-
+        //Assert Answer properties
         assertNotNull(answer.getSelectedOption());
         assertEquals(answer.getSelectedOption().getId(), item.answer().selectedOption().id());
         assertEquals(question.getOptions().getFirst().getTitle(), item.answer().selectedOption().title());
-
+        //Assert Issues
         assertFalse(item.issues().isUnanswered());
         assertTrue(item.issues().isAnsweredWithLowConfidence());
         assertTrue(item.issues().isAnsweredWithoutEvidences());
@@ -132,9 +133,10 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_NotApplicableAnswerValidParam_ValidResult() {
+    void testGetAssessmentQuestionnaireQuestionList_ValidParamAndAnswerIsNotApplicable_ValidResult() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
-        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2, null, null), question.getId(), 3, Boolean.TRUE);
+        Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
+            null, null), question.getId(), 3, Boolean.TRUE);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -149,15 +151,16 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of(question.getId(), 2));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
-
+        //Assert Pagination params
         assertPaginationProperties(result);
         Result item = result.getItems().getFirst();
+        //Assert Question properties
         assertQuestionProperties(item);
-
+        //Assert Answer properties
         assertNull(item.answer().selectedOption());
         assertTrue(item.answer().isNotApplicable());
         assertNotNull(item.answer().confidenceLevel());
-
+        //Assert Issues
         assertFalse(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
@@ -165,7 +168,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamSelectedOptionIsNullAndIsNotApplicableFalse_ValidResult() {
+    void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndSelectedOptionIsNullAndIsNotApplicableFalse_ValidResult() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
         Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE);
 
@@ -182,15 +185,16 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of(question.getId(), 1));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
-
+        //Assert Pagination params
         assertPaginationProperties(result);
         Result item = result.getItems().getFirst();
+        //Assert Question properties
         assertQuestionProperties(item);
-
+        //Assert Answer properties
         assertFalse(item.answer().isNotApplicable());
         assertNull(item.answer().selectedOption());
         assertNull(item.answer().confidenceLevel());
-
+        //Assert Issues
         assertTrue(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
@@ -214,11 +218,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of());
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
-
+        //Assert Pagination params
         assertPaginationProperties(result);
         Result item = result.getItems().getFirst();
+        //Assert Question properties
         assertQuestionProperties(item);
-
+        //Assert Answer properties
         assertTrue(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
