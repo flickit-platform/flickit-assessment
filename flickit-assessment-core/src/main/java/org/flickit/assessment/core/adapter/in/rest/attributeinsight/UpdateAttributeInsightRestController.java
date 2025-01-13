@@ -6,10 +6,7 @@ import org.flickit.assessment.core.application.port.in.attributeinsight.UpdateAt
 import org.flickit.assessment.core.application.port.in.attributeinsight.UpdateAttributeInsightUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -30,7 +27,17 @@ public class UpdateAttributeInsightRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("assessments/{assessmentId}/attributes/{attributeId}/insight")
+    public ResponseEntity<Void> createAttributeInsight(
+        @PathVariable UUID assessmentId,
+        @PathVariable Long attributeId,
+        @RequestBody UpdateAttributeInsightRequestDto requestDto) {
+        var currentUserId = userContext.getUser().id();
+        useCase.updateAttributeInsight(toParam(assessmentId, attributeId, requestDto, currentUserId));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     private Param toParam(UUID assessmentId, Long attributeId, UpdateAttributeInsightRequestDto requestDto, UUID currentUserId) {
-        return new Param(assessmentId, attributeId, requestDto.assessorInsight() , currentUserId);
+        return new Param(assessmentId, attributeId, requestDto.assessorInsight(), currentUserId);
     }
 }
