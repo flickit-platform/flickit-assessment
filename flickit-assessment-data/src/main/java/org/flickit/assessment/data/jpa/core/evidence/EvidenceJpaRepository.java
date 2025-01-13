@@ -130,7 +130,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
 
     @Query("""
             SELECT q.id  AS questionId,
-                COUNT(DISTINCT q.id) AS count
+                COUNT(q) AS count
             FROM AnswerJpaEntity a
             JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
             JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId AND ar.id = a.assessmentResult.id
