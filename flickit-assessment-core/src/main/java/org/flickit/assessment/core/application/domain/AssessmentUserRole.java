@@ -64,6 +64,7 @@ public enum AssessmentUserRole {
     enum PermissionGroup {
 
         VIEWER_PERMISSIONS(Set.of(
+            VIEW_ASSESSMENT_REPORT,
             CALCULATE_ASSESSMENT,
             MIGRATE_KIT_VERSION,
             CALCULATE_CONFIDENCE,
@@ -128,9 +129,9 @@ public enum AssessmentUserRole {
             VIEW_EVIDENCE,
             RESOLVE_COMMENT)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
-            VIEW_ASSESSMENT_REPORT,
             GRANT_ACCESS_TO_REPORT,
-            VIEW_GRAPHICAL_REPORT));
+            VIEW_GRAPHICAL_REPORT
+            ));
 
         private final Set<AssessmentPermission> permissions;
     }
