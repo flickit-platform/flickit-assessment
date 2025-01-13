@@ -198,7 +198,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamAnswerIsNullAndIsMayApplicableFalse_ValidResult() {
+    void testGetAssessmentQuestionnaireQuestionList_ValidParamAnswerIsNullAndIsIsApplicableFalse_ValidResult() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -219,7 +219,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         Result item = result.getItems().getFirst();
         assertQuestionProperties(item);
 
-        assertFalse(item.issues().isUnanswered());
+        assertTrue(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(0, item.issues().unresolvedCommentsCount());

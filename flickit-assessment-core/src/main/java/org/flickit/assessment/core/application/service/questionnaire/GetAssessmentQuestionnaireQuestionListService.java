@@ -103,14 +103,16 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 .map(this::mapToOption)
                 .toList(),
             answerDto,
-            new Issues((answer == null || answer.getSelectedOption() == null) && (answer != null && !answer.getIsNotApplicable()),
+            new Issues(
+                !hasAnswer(answer),
                 hasAnswer(answer) && answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
                 hasAnswer(answer) && evidencesCount == 0,
-                unresolvedCommentsCount));
+                unresolvedCommentsCount
+            ));
     }
 
-    private static boolean hasAnswer(Answer answer) {
-        return answer != null && answer.getSelectedOption() != null;
+    private boolean hasAnswer(Answer answer) {
+        return !(answer == null || answer.getSelectedOption() == null) || (answer != null && answer.getIsNotApplicable());
     }
 
     private Option mapToOption(AnswerOption option) {
