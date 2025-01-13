@@ -70,8 +70,8 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
     }
 
     record Issues(boolean isUnanswered,
-                  Boolean isAnsweredWithLowConfidence,
-                  Boolean isAnsweredWithoutEvidences,
+                  boolean isAnsweredWithLowConfidence,
+                  boolean isAnsweredWithoutEvidences,
                   int unresolvedCommentsCount){
     }
 }
