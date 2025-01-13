@@ -28,4 +28,12 @@ public interface SpaceUserAccessJpaRepository extends JpaRepository<SpaceUserAcc
             WHERE s.spaceId = :spaceId
         """)
     Page<SpaceMembersView> findMembers(@Param("spaceId") long spaceId, Pageable pageable);
+
+    @Query("""
+            SELECT COUNT(u)
+            FROM SpaceUserAccessJpaEntity AS u
+            JOIN SpaceJpaEntity AS s ON s.id = u.spaceId
+            WHERE u.spaceId = :spaceId
+        """)
+    int countBySpaceId(long spaceId);
 }
