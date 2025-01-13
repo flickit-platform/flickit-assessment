@@ -216,12 +216,12 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_NULL = "update-assessment-invite.roleId.notNull";
     public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND = "update-assessment-invite.roleId.notFound";
 
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "update-attribute-insight.assessmentId.notNull";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "update-attribute-insight.attributeId.notNull";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL = "update-attribute-insight.assessorInsight.notNull";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX= "update-attribute-insight.assessorInsight.size.max";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "update-attribute-insight.assessmentResult.notFound";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND = "update-attribute-insight.attributeInsight.notFound";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-attribute-insight.assessmentId.notNull";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "create-attribute-insight.attributeId.notNull";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL = "create-attribute-insight.assessorInsight.notNull";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX = "create-attribute-insight.assessorInsight.size.max";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-attribute-insight.assessmentResult.notFound";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND = "create-attribute-insight.attributeInsight.notFound";
 
     public static final String GET_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-attribute-insight.assessmentId.notNull";
     public static final String GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "get-attribute-insight.attributeId.notNull";

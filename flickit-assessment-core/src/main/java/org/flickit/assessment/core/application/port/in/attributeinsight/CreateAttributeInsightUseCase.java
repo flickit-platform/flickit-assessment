@@ -12,22 +12,22 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 
-public interface UpdateAttributeInsightUseCase {
+public interface CreateAttributeInsightUseCase {
 
-    void updateAttributeInsight(Param param);
+    void createAttributeInsight(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL)
+        @NotNull(message = CREATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @NotNull(message = UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL)
-        @Size(max = 1000, message = UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX)
+        @NotNull(message = CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL)
+        @Size(max = 1000, message = CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX)
         String assessorInsight;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
