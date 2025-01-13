@@ -54,7 +54,7 @@ public interface GetAttributeScoreDetailUseCase {
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
             this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : Sort.DEFAULT.name();
-            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DEFAULT.name();
+            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DESC.name();
             this.size = size;
             this.page = page;
             this.currentUserId = currentUserId;
@@ -74,7 +74,7 @@ public interface GetAttributeScoreDetailUseCase {
 
             private final String title;
 
-            public static final Sort DEFAULT = QUESTIONNAIRE;
+            public static final Sort DEFAULT = WEIGHT;
         }
     }
 
