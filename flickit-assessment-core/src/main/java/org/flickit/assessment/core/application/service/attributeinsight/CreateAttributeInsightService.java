@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AttributeInsight;
 import org.flickit.assessment.core.application.port.in.attributeinsight.CreateAttributeInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,6 @@ import java.util.UUID;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ATTRIBUTE_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND;
 
 @Service
 @Transactional
@@ -29,6 +29,7 @@ public class CreateAttributeInsightService implements CreateAttributeInsightUseC
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
+    private final CreateAttributeInsightPort createAttributeInsightPort;
 
     @Override
     public void createAttributeInsight(Param param) {
@@ -38,13 +39,11 @@ public class CreateAttributeInsightService implements CreateAttributeInsightUseC
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())
-            .orElseThrow(()-> new ResourceNotFoundException(CREATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND));
-
-        updateAttributeInsightPort.updateAssessorInsight(toAttributeInsight(
-            assessmentResult.getId(),
-            attributeInsight.getAttributeId(),
-            param.getAssessorInsight()));
+        var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId());
+        if (attributeInsight.isPresent())
+            updateAttributeInsightPort.updateAssessorInsight(toAttributeInsight(assessmentResult.getId(), param.getAttributeId(), param.getAssessorInsight()));
+        else
+            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), param.getAttributeId(), param.getAssessorInsight()));
     }
 
     private static AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String assessorInsight) {
