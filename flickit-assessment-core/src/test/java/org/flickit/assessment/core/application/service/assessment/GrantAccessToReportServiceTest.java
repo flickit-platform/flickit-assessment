@@ -30,6 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -39,10 +40,11 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GRANT_ACCESS_TO_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
-import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.REPORT_VIEWER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_NOT_ALLOWED_CONTACT_ASSESSMENT_MANAGER;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED;
+import static org.flickit.assessment.core.common.MessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -132,7 +134,11 @@ class GrantAccessToReportServiceTest {
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.empty());
         doNothing().when(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
-        service.grantAccessToReport(param);
+        var result = service.grantAccessToReport(param);
+        assertNotNull(result);
+        assertEquals(accessGrantedUser, result.notificationCmd().targetUser());
+        assertEquals(param.getCurrentUserId(), result.notificationCmd().senderId());
+        assertEquals(assessment, result.notificationCmd().assessment());
 
         verify(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
@@ -158,7 +164,11 @@ class GrantAccessToReportServiceTest {
         when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), accessGrantedUser.getId())).thenReturn(Optional.empty());
         doNothing().when(grantUserAssessmentRolePort).persist(param.getAssessmentId(), accessGrantedUser.getId(), REPORT_VIEWER.getId());
 
-        service.grantAccessToReport(param);
+        var result = service.grantAccessToReport(param);
+        assertNotNull(result);
+        assertEquals(accessGrantedUser, result.notificationCmd().targetUser());
+        assertEquals(param.getCurrentUserId(), result.notificationCmd().senderId());
+        assertEquals(assessment, result.notificationCmd().assessment());
 
         verify(createAssessmentSpaceUserAccessPort).persist(createAssessmentSpaceUserAccessParamCaptor.capture());
         assertNotNull(createAssessmentSpaceUserAccessParamCaptor.getValue());
@@ -235,8 +245,16 @@ class GrantAccessToReportServiceTest {
     void testGrantAccessToReport_whenUserIsNotFoundByEmailAndAppSpecIsWithoutSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithoutSupportEmail(String supportEmail) {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
-        String subject =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, "flickit");
-        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL, "localhost", "flickit");
+        String reportLink = MessageFormat.format("{0}/{1}/assessments/{2}/graphical-report",
+            "localhost",
+            assessment.getSpace().getId(),
+            assessment.getId());
+        String subject = MessageBundle.message(GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_SUBJECT, assessment.getTitle());
+        String body = MessageBundle.message(GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY_WITHOUT_SUPPORT_EMAIL,
+            "localhost",
+            "flickit",
+            assessment.getTitle(),
+            reportLink);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
@@ -247,9 +265,11 @@ class GrantAccessToReportServiceTest {
         when(appSpecProperties.getName()).thenReturn("flickit");
         when(appSpecProperties.getHost()).thenReturn("localhost");
         when(appSpecProperties.getSupportEmail()).thenReturn(supportEmail);
+        when(appSpecProperties.getAssessmentReportUrlPath()).thenReturn("{0}/{1}/assessments/{2}/graphical-report");
         doNothing().when(sendEmailPort).send(param.getEmail(), subject, body);
 
-        service.grantAccessToReport(param);
+        var result = service.grantAccessToReport(param);
+        assertNull(result);
 
         verify(createSpaceInvitePort).persist(createSpaceInviteParamCaptor.capture());
         assertNotNull(createSpaceInviteParamCaptor.getValue());
@@ -283,9 +303,17 @@ class GrantAccessToReportServiceTest {
     void testGrantAccessToReport_whenTheUserIsNotFoundByEmailAndAppSpecHasSupportEmail_thenSendEmailToInviteThemToSpaceAndAssessmentWithSupportEmail() {
         var assessment = AssessmentMother.assessment();
         var param = createParam(b -> b.assessmentId(assessment.getId()));
-        String subject =  MessageBundle.message(INVITE_TO_REGISTER_EMAIL_SUBJECT, "flickit");
-        String body = MessageBundle.message(INVITE_TO_REGISTER_EMAIL_BODY, "localhost", "flickit", "support@flickit.com");
-
+        String reportLink = MessageFormat.format("{0}/{1}/assessments/{2}/graphical-report",
+            "localhost",
+            assessment.getSpace().getId(),
+            assessment.getId());
+        String subject = MessageBundle.message(GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_SUBJECT, assessment.getTitle());
+        String body = MessageBundle.message(GRANT_ACCESS_TO_REPORT_INVITE_TO_REGISTER_EMAIL_BODY,
+            "localhost",
+            "flickit",
+            "support@flickit.com",
+            assessment.getTitle(),
+            reportLink);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GRANT_ACCESS_TO_REPORT))
             .thenReturn(true);
         when(loadAssessmentPort.getAssessmentById(param.getAssessmentId())).thenReturn(Optional.of(assessment));
@@ -295,9 +323,11 @@ class GrantAccessToReportServiceTest {
         when(appSpecProperties.getName()).thenReturn("flickit");
         when(appSpecProperties.getHost()).thenReturn("localhost");
         when(appSpecProperties.getSupportEmail()).thenReturn("support@flickit.com");
+        when(appSpecProperties.getAssessmentReportUrlPath()).thenReturn("{0}/{1}/assessments/{2}/graphical-report");
         doNothing().when(sendEmailPort).send(param.getEmail(), subject, body);
 
-        service.grantAccessToReport(param);
+        var result = service.grantAccessToReport(param);
+        assertNull(result);
 
         verify(createSpaceInvitePort).persist(createSpaceInviteParamCaptor.capture());
         assertNotNull(createSpaceInviteParamCaptor.getValue());
