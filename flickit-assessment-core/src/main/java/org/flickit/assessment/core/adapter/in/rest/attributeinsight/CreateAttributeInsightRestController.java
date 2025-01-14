@@ -34,7 +34,7 @@ public class CreateAttributeInsightRestController {
         @RequestBody CreateAttributeInsightRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         useCase.createAttributeInsight(toParam(assessmentId, attributeId, requestDto, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, Long attributeId, CreateAttributeInsightRequestDto requestDto, UUID currentUserId) {
