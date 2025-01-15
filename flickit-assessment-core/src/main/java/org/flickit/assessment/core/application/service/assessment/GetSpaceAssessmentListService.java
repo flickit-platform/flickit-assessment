@@ -41,8 +41,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
 
         List<SpaceAssessmentListItem> items = assessmentListItemPaginatedResponse.getItems().stream()
             .map(e -> {
-                boolean viewable = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT);
-                boolean canViewReport = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
+                boolean viewable = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
                 boolean canViewDashboard = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_DASHBOARD);
                 boolean canViewQuestionnaires = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST);
                 return new SpaceAssessmentListItem(e.id(),
@@ -54,7 +53,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                     e.isCalculateValid(),
                     e.isConfidenceValid(),
                     new SpaceAssessmentListItem.Permissions(e.manageable(),
-                        canViewReport,
+                        viewable,
                         canViewDashboard,
                         canViewQuestionnaires));
             }).toList();
