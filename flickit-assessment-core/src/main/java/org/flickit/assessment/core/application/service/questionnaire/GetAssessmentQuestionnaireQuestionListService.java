@@ -112,8 +112,10 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     }
 
     private boolean hasAnswer(Answer answer) {
-        return !(answer == null || answer.getSelectedOption() == null) ||
-            (answer != null && answer.getIsNotApplicable());
+        if (answer == null)
+            return false;
+
+        return answer.getSelectedOption() != null || Boolean.TRUE.equals(answer.getIsNotApplicable());
     }
 
     private Option mapToOption(AnswerOption option) {
