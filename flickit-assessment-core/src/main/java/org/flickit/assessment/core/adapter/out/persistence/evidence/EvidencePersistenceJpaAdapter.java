@@ -121,13 +121,8 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public int countUnresolvedComments(UUID assessmentId) {
-        return repository.countUnresolvedComments(assessmentId);
-    }
-
-    @Override
-    public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, Set<Long> questionnaireIds) {
-        return repository.countQuestionnairesUnresolvedComments(assessmentId, questionnaireIds).stream()
+    public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds) {
+        return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, questionnaireIds).stream()
             .collect(toMap(
                 EvidencesQuestionnaireAndCountView::getQuestionnaireId,
                 EvidencesQuestionnaireAndCountView::getCount));
@@ -143,19 +138,24 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
+    public int countUnresolvedComments(UUID assessmentId) {
+        return repository.countUnresolvedComments(assessmentId);
+    }
+
+    @Override
+    public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, Set<Long> questionnaireIds) {
+        return repository.countQuestionnairesUnresolvedComments(assessmentId, questionnaireIds).stream()
+            .collect(toMap(
+                EvidencesQuestionnaireAndCountView::getQuestionnaireId,
+                EvidencesQuestionnaireAndCountView::getCount));
+    }
+
+    @Override
     public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, long questionnaireId) {
         return repository.countQuestionnaireQuestionsUnresolvedComments(assessmentId, questionnaireId).stream()
             .collect(toMap(
                 EvidencesQuestionAndCountView::getQuestionId,
                 EvidencesQuestionAndCountView::getCount
             ));
-    }
-
-    @Override
-    public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds) {
-        return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, questionnaireIds).stream()
-            .collect(toMap(
-                EvidencesQuestionnaireAndCountView::getQuestionnaireId,
-                EvidencesQuestionnaireAndCountView::getCount));
     }
 }
