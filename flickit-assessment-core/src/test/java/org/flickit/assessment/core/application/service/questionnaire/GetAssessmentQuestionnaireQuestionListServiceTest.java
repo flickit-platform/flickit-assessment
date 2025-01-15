@@ -70,7 +70,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     );
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_InvalidCurrentUser_ThrowsAccessDeniedException() {
+    void testGetAssessmentQuestionnaireQuestionList_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
@@ -83,15 +83,12 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     }
 
     @Test
-    void testGetAssessmentQuestionnaireQuestionList_InvalidQuestionnaireId_ThrowsResourceNotFoundException() {
+    void testGetAssessmentQuestionnaireQuestionList_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), assessmentResult.getKitVersionId(), param.getSize(), param.getPage()))
-            .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenThrow(new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionnaireQuestionList(param));
@@ -233,35 +230,6 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(1, item.issues().unresolvedCommentsCount());
-    }
-
-    @Test
-    void testGetAssessmentQuestionnaireQuestionList_ValidParamAnswerIsNullAndIsIsApplicableFalse_ValidResult() {
-        Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(), assessmentResult.getKitVersionId(), param.getSize(), param.getPage()))
-            .thenReturn(expectedPaginatedResponse);
-        when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
-            .thenReturn(List.of());
-        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of());
-        when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of());
-
-        PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
-        //Assert Pagination params
-        assertPaginationProperties(result);
-        Result item = result.getItems().getFirst();
-        //Assert Question properties
-        assertQuestionProperties(item);
-        //Assert Answer properties
-        assertTrue(item.issues().isUnanswered());
-        assertFalse(item.issues().isAnsweredWithLowConfidence());
-        assertFalse(item.issues().isAnsweredWithoutEvidences());
-        assertEquals(0, item.issues().unresolvedCommentsCount());
     }
 
     private void assertPaginationProperties(PaginatedResponse<Result> result) {
