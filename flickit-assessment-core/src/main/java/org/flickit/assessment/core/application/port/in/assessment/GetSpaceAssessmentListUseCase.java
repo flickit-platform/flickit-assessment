@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.port.in.assessment;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -36,6 +37,7 @@ public interface GetSpaceAssessmentListUseCase {
         @Min(value = 0, message = GET_SPACE_ASSESSMENT_LIST_PAGE_MIN)
         int page;
 
+        @Builder
         public Param(Long spaceId, UUID currentUserId, int size, int page) {
             this.spaceId = spaceId;
             this.currentUserId = currentUserId;
@@ -53,7 +55,12 @@ public interface GetSpaceAssessmentListUseCase {
                                    Double confidenceValue,
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
-                                   Boolean manageable,
-                                   boolean viewable) {
+                                   Permissions permissions) {
+
+        public record Permissions(boolean canManageSettings,
+                                  boolean canViewReport,
+                                  boolean canViewDashboard,
+                                  boolean canViewQuestionnaires) {
+        }
     }
 }

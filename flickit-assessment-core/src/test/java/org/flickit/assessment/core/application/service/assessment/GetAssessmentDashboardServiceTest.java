@@ -214,7 +214,6 @@ class GetAssessmentDashboardServiceTest {
     private GetAssessmentDashboardUseCase.Param.ParamBuilder paramBuilder() {
         return GetAssessmentDashboardUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .currentUserId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
 }
