@@ -59,7 +59,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
-        var questionIdToEvidencesCountMap = countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId(), param.getQuestionnaireId());
+        var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()
             .map((Question q) -> mapToResult(q,

@@ -129,7 +129,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertTrue(item.issues().isAnsweredWithoutEvidences());
         assertEquals(0, item.issues().unresolvedCommentsCount());
 
-        verify(countEvidencesPort).countAnsweredQuestionsHavingEvidence(param.getAssessmentId(), param.getQuestionnaireId());
+        verify(countEvidencesPort).countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
     }
 
     @Test
@@ -145,7 +145,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
-        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId(), param.getQuestionnaireId()))
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 1));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 2));
@@ -179,7 +179,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
-        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId(), param.getQuestionnaireId()))
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 1));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());
@@ -213,7 +213,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of(answer));
-        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId(), param.getQuestionnaireId()))
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 1));
@@ -246,7 +246,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(expectedPaginatedResponse);
         when(loadQuestionsAnswerListPort.loadByQuestionIds(param.getAssessmentId(), List.of(question.getId())))
             .thenReturn(List.of());
-        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId(), param.getQuestionnaireId()))
+        when(countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());
