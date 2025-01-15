@@ -45,12 +45,12 @@ public interface CountEvidencesPort {
     Map<Long, Integer> countUnresolvedComments(UUID assessmentId, Set<Long> questionnaireIds);
 
     /**
-     * Counts the number of answered questions with evidence
+     * Counts the evidences associated with answered questions
      * for a given questionnaire within an assessment.
      *
      * @param assessmentId    the unique identifier of the assessment
      * @param questionnaireId the unique identifier of the questionnaire
-     * @return a map where the key is the question ID, and the value is the count of answered questions that have associated evidence
+     * @return a map where the key is the question ID, and the value is the count of evidences for that question
      */
     Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, long questionnaireId);
 
