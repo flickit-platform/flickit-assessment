@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -28,7 +28,6 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
     @Override
     public PaginatedResponse<SpaceAssessmentListItem> getAssessmentList(Param param) {
         UUID currentUserId = param.getCurrentUserId();
-
         Long spaceId = param.getSpaceId();
         if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
@@ -43,6 +42,9 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
         List<SpaceAssessmentListItem> items = assessmentListItemPaginatedResponse.getItems().stream()
             .map(e -> {
                 boolean viewable = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT);
+                boolean canViewReport = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT);
+                boolean canViewDashboard = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_DASHBOARD);
+                boolean canViewQuestionnaires = assessmentPermissionChecker.isAuthorized(e.id(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST);
                 return new SpaceAssessmentListItem(e.id(),
                     e.title(),
                     e.kit(),
@@ -51,8 +53,10 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                     viewable ? e.confidenceValue() : null,
                     e.isCalculateValid(),
                     e.isConfidenceValid(),
-                    e.manageable(),
-                    viewable);
+                    new SpaceAssessmentListItem.Permissions(e.manageable(),
+                        canViewReport,
+                        canViewDashboard,
+                        canViewQuestionnaires));
             }).toList();
 
         return new PaginatedResponse<>(items,

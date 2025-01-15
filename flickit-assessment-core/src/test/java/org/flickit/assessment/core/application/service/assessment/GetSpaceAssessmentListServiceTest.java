@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -109,14 +108,23 @@ class GetSpaceAssessmentListServiceTest {
         assertEquals(20, assessments.getSize());
         assertEquals(0, assessments.getPage());
         assertEquals(2, assessments.getTotal());
+        assertFalse(assessments.getItems().getFirst().permissions().canManageSettings());
+        assertTrue(assessments.getItems().getFirst().permissions().canViewDashboard());
+        assertTrue(assessments.getItems().getFirst().permissions().canViewReport());
+        assertTrue(assessments.getItems().getFirst().permissions().canViewQuestionnaires());
+        assertFalse(assessments.getItems().getLast().permissions().canManageSettings());
+        assertTrue(assessments.getItems().getLast().permissions().canViewDashboard());
+        assertTrue(assessments.getItems().getLast().permissions().canViewReport());
+        assertTrue(assessments.getItems().getLast().permissions().canViewQuestionnaires());
         assertEquals(Sort.Direction.DESC.name().toLowerCase(), assessments.getOrder());
         assertEquals(AssessmentJpaEntity.Fields.lastModificationTime, assessments.getSort());
 
         verify(loadAssessmentPort, times(1)).loadSpaceAssessments(any(), any(), anyInt(), anyInt());
+        verify(assessmentPermissionChecker, times(8)).isAuthorized(any(UUID.class), any(UUID.class), any(AssessmentPermission.class));
     }
 
     @Test
-    void testGetSpaceAssessmentList_WhenUserDoesntHaveViewReportAssessmentPermission_ThenItemsMaturityLevelAndConfidenceValueAreNull() {
+    void testGetSpaceAssessmentList_WhenUserDoesNotHaveAnyAssessmentPermission_ThenItemsMaturityLevelAndConfidenceValueAreNull() {
         Long spaceId = 123L;
         var assessment1 = AssessmentMother.assessmentListItem(spaceId, AssessmentKitMother.kit().getId());
 
@@ -134,7 +142,7 @@ class GetSpaceAssessmentListServiceTest {
         when(checkSpaceAccessPort.checkIsMember(spaceId, currentUserId)).thenReturn(true);
         when(loadAssessmentPort.loadSpaceAssessments(spaceId, currentUserId, 0, 20))
             .thenReturn(paginatedRes);
-        when(assessmentPermissionChecker.isAuthorized(assessment1.id(), currentUserId, VIEW_ASSESSMENT_REPORT))
+        when(assessmentPermissionChecker.isAuthorized(any(UUID.class), any(UUID.class), any(AssessmentPermission.class)))
             .thenReturn(false);
 
         var param = new GetSpaceAssessmentListUseCase.Param(spaceId, currentUserId, 20, 0);
@@ -144,7 +152,13 @@ class GetSpaceAssessmentListServiceTest {
         assertEquals(1, items.size());
         assertNull(items.getFirst().maturityLevel());
         assertNull(items.getFirst().confidenceValue());
-        assertFalse(items.getFirst().viewable());
+        assertFalse(assessments.getItems().getFirst().permissions().canManageSettings());
+        assertFalse(assessments.getItems().getFirst().permissions().canViewDashboard());
+        assertFalse(assessments.getItems().getFirst().permissions().canViewReport());
+        assertFalse(assessments.getItems().getFirst().permissions().canViewQuestionnaires());
+
+        verify(assessmentPermissionChecker, times(4))
+            .isAuthorized(any(UUID.class), any(UUID.class), any(AssessmentPermission.class));
     }
 
     @Test
