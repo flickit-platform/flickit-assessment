@@ -135,7 +135,7 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public Map<Long, Integer> countQuestionnaireQuestionsEvidences(UUID assessmentId, long questionnaireId) {
-        return repository.countQuestionnaireQuestionsHavingEvidence(assessmentId, questionnaireId).stream()
+        return repository.countQuestionnaireQuestionsEvidences(assessmentId, questionnaireId).stream()
             .collect(toMap(
                 EvidencesQuestionAndCountView::getQuestionId,
                 EvidencesQuestionAndCountView::getCount

@@ -142,8 +142,8 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND q.questionnaireId  = :questionnaireId
             GROUP BY q.id
         """)
-    List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
-                                                                                  @Param("questionnaireId") long questionnaireId);
+    List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsEvidences(@Param("assessmentId") UUID assessmentId,
+                                                                             @Param("questionnaireId") long questionnaireId);
 
     @Query("""
             SELECT q.id as questionId,
