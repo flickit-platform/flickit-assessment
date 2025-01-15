@@ -121,7 +121,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             WHERE e.assessmentId = :assessmentId
                  AND q.questionnaireId IN :questionnaireIds
                  AND e.type IS NULL
-                 AND e.resolved IS NULL
+                 AND (e.resolved IS NULL OR e.resolved = false)
                  AND e.deleted = false
             GROUP BY q.questionnaireId
         """)
@@ -154,7 +154,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             WHERE e.assessmentId = :assessmentId
                  AND q.questionnaireId = :questionnaireId
                  AND e.type IS NULL
-                 AND e.resolved IS NULL
+                 AND (e.resolved IS NULL OR e.resolved = false)
                  AND e.deleted = false
             GROUP BY q.id
         """)
