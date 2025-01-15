@@ -54,7 +54,7 @@ class CreateAttributeInsightServiceTest {
     private final AttributeInsight attributeInsight = AttributeInsightMother.simpleAttributeAiInsight();
 
     @Test
-    void createAttributeInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
+    void createAttributeInsight_UserDoesNotHaveRequiredPermission_ThrowsAccessDeniedException() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
@@ -68,7 +68,7 @@ class CreateAttributeInsightServiceTest {
     }
 
     @Test
-    void createAttributeInsight_AssessmentResultDoesNotExist_ThrowResourceNotFoundException() {
+    void createAttributeInsight_AssessmentResultDoesNotExist_ThrowsResourceNotFoundException() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
