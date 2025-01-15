@@ -30,6 +30,16 @@ public interface AnswerOptionJpaRepository extends JpaRepository<AnswerOptionJpa
 
     List<AnswerOptionJpaEntity> findAllByAnswerRangeIdInAndKitVersionId(Collection<Long> answerRangeIds, Long kitVersionId, Sort sort);
 
+
+    @Query("""
+            SELECT a
+            FROM QuestionJpaEntity q
+            JOIN AnswerOptionJpaEntity a ON q.answerRangeId = a.answerRangeId AND q.kitVersionId = a.kitVersionId
+            WHERE q.id = :questionId AND q.kitVersionId = :kitVersionId
+        """)
+    List<AnswerOptionJpaEntity> findByQuestionIdAndKitVersionId(@Param("questionId") long questionId,
+                                                                @Param("kitVersionId") long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AnswerOptionJpaEntity a
