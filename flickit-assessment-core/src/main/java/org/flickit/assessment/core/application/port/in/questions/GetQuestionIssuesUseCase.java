@@ -8,6 +8,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetQuestionIssuesUseCase {
@@ -24,7 +25,7 @@ public interface GetQuestionIssuesUseCase {
         @NotNull(message = GET_QUESTION_ISSUES_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = GET_QUESTION_ISSUES_CURRENT_USER_ID_NOT_NULL)
+        @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
@@ -36,10 +37,9 @@ public interface GetQuestionIssuesUseCase {
         }
     }
 
-    record Result(
-        boolean isUnanswered,
-        boolean isAnsweredWithLowConfidence,
-        boolean isAnsweredWithoutEvidences,
-        int unresolvedCommentsCount) {
+    record Result(boolean isUnanswered,
+                  boolean isAnsweredWithLowConfidence,
+                  boolean isAnsweredWithoutEvidences,
+                  int unresolvedCommentsCount) {
     }
 }
