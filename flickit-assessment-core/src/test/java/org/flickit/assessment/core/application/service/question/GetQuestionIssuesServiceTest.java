@@ -7,6 +7,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.questions.GetQuestionIssuesUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_QUESTION_ISSUES_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetQuestionIssuesServiceTest {
@@ -36,6 +37,9 @@ class GetQuestionIssuesServiceTest {
 
     @Mock
     private LoadAssessmentResultPort assessmentResultPort;
+
+    @Mock
+    private CountEvidencesPort countEvidencesPort;
 
     @Mock
     private LoadAnswerPort loadAnswerPort;
@@ -83,7 +87,7 @@ class GetQuestionIssuesServiceTest {
     }
 
     @Test
-    void testGetQuestionIssues_SelectedAnswerOptionIsNull_ThrowsAccessDeniedException() {
+    void testGetQuestionIssues_SelectedAnswerOptionIsNull_successfulWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
@@ -97,6 +101,68 @@ class GetQuestionIssuesServiceTest {
         assertFalse(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
+    }
+
+    @Test
+    void testGetQuestionIssues_SelectedAnswerOptionHasLowConfidence_successfulWithIssues() {
+        var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
+        var answer = AnswerMother.answerWithConfidenceLevel(2, param.getQuestionId());
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+            .thenReturn(true);
+        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
+            .thenReturn(Optional.of(answer));
+        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+            .thenReturn(1);
+
+        var result = service.getQuestionIssues(param);
+        assertFalse(result.isUnanswered());
+        assertTrue(result.isAnsweredWithLowConfidence());
+        assertFalse(result.isAnsweredWithoutEvidences());
+        assertEquals(0, result.unresolvedCommentsCount());
+    }
+
+    @Test
+    void testGetQuestionIssues_SelectedAnswerOptionHasLowConfidenceWithEvidences_successfulWithIssues() {
+        var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
+        var answer = AnswerMother.answerWithConfidenceLevel(2, param.getQuestionId());
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+            .thenReturn(true);
+        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
+            .thenReturn(Optional.of(answer));
+        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+            .thenReturn(2);
+
+        var result = service.getQuestionIssues(param);
+        assertFalse(result.isUnanswered());
+        assertTrue(result.isAnsweredWithLowConfidence());
+        assertFalse(result.isAnsweredWithoutEvidences());
+        assertEquals(0, result.unresolvedCommentsCount());
+    }
+
+    @Test
+    void testGetQuestionIssues_SelectedAnswerOptionWithoutEvidencesAndUnresolvedComments_successfulWithIssues() {
+        var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
+        var answer = AnswerMother.answerWithConfidenceLevel(3, param.getQuestionId());
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+            .thenReturn(true);
+        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
+            .thenReturn(Optional.of(answer));
+        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+            .thenReturn(0);
+        when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
+            .thenReturn(2);
+
+        var result = service.getQuestionIssues(param);
+        assertFalse(result.isUnanswered());
+        assertFalse(result.isAnsweredWithLowConfidence());
+        assertTrue(result.isAnsweredWithoutEvidences());
+        assertEquals(2, result.unresolvedCommentsCount());
     }
 
     private GetQuestionIssuesUseCase.Param createParam(Consumer<GetQuestionIssuesUseCase.Param.ParamBuilder> changer) {
