@@ -296,4 +296,8 @@ public class ErrorMessageKey {
     public static final String GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED = "grant-access-to-report.user-already-granted";
 
     public static final String GET_GRAPHICAL_REPORT_USERS_ASSESSMENT_ID_NOT_NULL = "get-graphical-report-users.assessmentId.notNull";
+
+    public static final String GET_QUESTION_ISSUES_QUESTION_ID_NOT_NULL = "get-question-issues.questionId.notNull";
+    public static final String GET_QUESTION_ISSUES_ASSESSMENT_ID_NOT_NULL = "get-question-issues.assessmentId.notNull";
+    public static final String GET_QUESTION_ISSUES_CURRENT_USER_ID_NOT_NULL = "get-question-issues.currentUserId.notNull";
 }
