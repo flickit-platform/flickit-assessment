@@ -160,4 +160,29 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsUnresolvedComments(@Param("assessmentId") UUID assessmentId,
                                                                                       @Param("questionnaireId") long questionnaireId);
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
+            JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
+            WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND e.deleted = false
+                AND e.type IS NOT NULL
+        """)
+    int countQuestionEvidences(UUID assessmentId, long questionId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId
+            JOIN AnswerJpaEntity a ON e.assessmentId = a.assessmentResult.id
+            WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND e.deleted = false
+                AND e.type IS NULL
+                AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    int countQuestionUnresolvedComments(UUID assessmentId, long questionId);
 }
