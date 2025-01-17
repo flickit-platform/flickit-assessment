@@ -22,7 +22,6 @@ import org.flickit.assessment.core.application.port.out.assessmentuserrole.Grant
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
-import org.flickit.assessment.core.application.port.out.spaceuseraccess.CountSpaceMembersPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
 import org.springframework.stereotype.Service;
@@ -60,7 +59,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     private final GrantUserAssessmentRolePort grantUserAssessmentRolePort;
     private final CountAssessmentsPort countAssessmentsPort;
     private final LoadAssessmentKitPort loadAssessmentKitPort;
-    private final CountSpaceMembersPort countSpaceMembersPort;
     private final AppSpecProperties appSpecProperties;
 
     @Override
