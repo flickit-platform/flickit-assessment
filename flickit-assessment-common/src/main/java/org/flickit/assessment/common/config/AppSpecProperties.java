@@ -35,6 +35,9 @@ public class AppSpecProperties {
     @Valid
     private Email email = new Email();
 
+    @Valid
+    private Space space = new Space();
+
     @Setter
     @Getter
     @ToString
