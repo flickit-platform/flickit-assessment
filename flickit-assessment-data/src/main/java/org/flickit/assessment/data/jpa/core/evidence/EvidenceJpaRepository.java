@@ -174,10 +174,8 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     int countQuestionEvidences(UUID assessmentId, long questionId);
 
     @Query("""
-            SELECT COUNT(e.id)
+            SELECT COUNT(e)
             FROM EvidenceJpaEntity e
-            JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId
-            JOIN AnswerJpaEntity a ON e.assessmentId = a.assessmentResult.id
             WHERE e.assessmentId = :assessmentId
                 AND e.questionId = :questionId
                 AND e.deleted = false
