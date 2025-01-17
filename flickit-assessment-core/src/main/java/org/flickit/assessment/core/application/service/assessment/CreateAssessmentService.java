@@ -83,14 +83,12 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     }
 
     private void validatePlan(Param param, Space space, boolean isKitPrivate) {
-        if (space.getType().equals(SpaceType.PERSONAL) && countSpaceMembersPort.countSpaceMembers(param.getSpaceId()) >= appSpecProperties.getSpace().getMaxPersonalSpaceMembers())
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_PERSONAL_SPACE_MEMBERS_MAX);
-        if (space.getType().equals(SpaceType.PREMIUM) && space.getSubscriptionExpiry().isBefore(LocalDateTime.now()))
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
-        if (isKitPrivate && countAssessmentsPort.countSpaceAssessments(param.getSpaceId()) >= appSpecProperties.getSpace().getMaxPersonalSpaceAssessments())
+        if (space.getType().equals(SpaceType.PERSONAL) && countAssessmentsPort.countSpaceAssessments(param.getSpaceId()) >= appSpecProperties.getSpace().getMaxPersonalSpaceAssessments())
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_PERSONAL_SPACE_ASSESSMENTS_MAX);
         if (isKitPrivate && space.getType().equals(SpaceType.PERSONAL))
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_PERSONAL_SPACE_PRIVATE_KIT_MAX);
+        if (space.getType().equals(SpaceType.PREMIUM) && space.getSubscriptionExpiry().isBefore(LocalDateTime.now()))
+            throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {
