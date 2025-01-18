@@ -155,7 +155,7 @@ class GetQuestionIssuesServiceTest {
             .thenReturn(Optional.of(answer));
         when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(0);
-        when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
+        when(countEvidencesPort.countAnsweredQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(2);
 
         var result = service.getQuestionIssues(param);
