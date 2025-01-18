@@ -1454,6 +1454,47 @@
 					"response": []
 				},
 				{
+					"name": "Create Attribute Insight",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"assessorInsight\" : \"Assessor Insight\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/0b711637-89c8-473b-bf20-b4f78af9f5f8/attributes/1961/insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"0b711637-89c8-473b-bf20-b4f78af9f5f8",
+								"attributes",
+								"1961",
+								"insight"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Attribute Insight",
 					"request": {
 						"method": "GET",
