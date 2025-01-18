@@ -5,9 +5,7 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJoinOptionView;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJoinSubjectView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityJoinCompetenceView;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
@@ -18,6 +16,8 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJoinAttributeView;
+import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.kit.adapter.out.persistence.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRangeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
@@ -27,7 +27,6 @@ import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.Question
 import org.flickit.assessment.kit.adapter.out.persistence.subject.SubjectMapper;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.kit.application.port.out.kitdsl.LoadKitDslModelPort;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -43,18 +42,18 @@ import static java.util.stream.Collectors.*;
 public class LoadKitDslModelAdapter implements LoadKitDslModelPort {
 
     private final QuestionnaireJpaRepository questionnaireRepository;
-    private final AttributeJpaRepository attributeRepository;
+    private final SubjectJpaRepository subjectRepository;
     private final QuestionJpaRepository questionRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final AnswerRangeJpaRepository answerRangeRepository;
 
     @Override
     public AssessmentKitDslModel load(long kitVersionId) {
-        var subjectWithAttributeViews = attributeRepository.findAllByKitVersionId(kitVersionId, Pageable.unpaged());
+        var subjectWithAttributeViews = subjectRepository.findWithAttributesByKitVersionId(kitVersionId);
         var levelWithCompetenceViews = maturityLevelRepository.findAllByKitVersionIdWithCompetence(kitVersionId);
         var rangeWithOptionViews = answerRangeRepository.findAllWithOptionsByKitVersionId(kitVersionId);
         var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(kitVersionId);
-        var questionToImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
+        var questionWithImpactViews = questionRepository.loadByKitVersionId(kitVersionId);
 
         var questionnaireDslModels = questionnaireEntities.stream()
             .map(QuestionnaireMapper::mapToDslModel)
@@ -67,9 +66,9 @@ public class LoadKitDslModelAdapter implements LoadKitDslModelPort {
 
         var rangeDslModels = rangeToOptions.entrySet().stream()
             .filter(e -> e.getKey().isReusable())
-            .filter(e -> e.getValue().size() > 1)
             .map(e -> {
                 var dslOptions = e.getValue().stream()
+                    .filter(Objects::nonNull)
                     .map(AnswerOptionMapper::mapToDslModel)
                     .toList();
                 return AnswerRangeMapper.mapToDslModel(e.getKey(), dslOptions);
@@ -82,7 +81,7 @@ public class LoadKitDslModelAdapter implements LoadKitDslModelPort {
             .toList();
 
         var subjectDslModels = subjectWithAttributeViews.stream()
-            .collect(groupingBy(AttributeJoinSubjectView::getSubject))
+            .collect(groupingBy(SubjectJoinAttributeView::getSubject))
             .keySet().stream()
             .map(SubjectMapper::mapToDslModel)
             .sorted(comparingInt(SubjectDslModel::getIndex))
@@ -99,7 +98,7 @@ public class LoadKitDslModelAdapter implements LoadKitDslModelPort {
 
         var levelDslModels = createLevelDslModels(levelToCompetences, levelIdToLevel);
 
-        var questionToImpacts = questionToImpactViews.stream()
+        var questionToImpacts = questionWithImpactViews.stream()
             .collect(Collectors.groupingBy(QuestionJoinQuestionImpactView::getQuestion,
                 Collectors.mapping(QuestionJoinQuestionImpactView::getQuestionImpact, Collectors.toList())));
 
@@ -107,7 +106,7 @@ public class LoadKitDslModelAdapter implements LoadKitDslModelPort {
             .collect(Collectors.toMap(QuestionnaireJpaEntity::getId, QuestionnaireJpaEntity::getCode));
 
         var attrIdToCode = subjectWithAttributeViews.stream()
-            .map(AttributeJoinSubjectView::getAttribute)
+            .map(SubjectJoinAttributeView::getAttribute)
             .collect(Collectors.toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getCode));
 
         var questionDslModels = createQuestionDslModels(questionToImpacts,
@@ -124,7 +123,6 @@ public class LoadKitDslModelAdapter implements LoadKitDslModelPort {
             .maturityLevels(levelDslModels)
             .answerRanges(rangeDslModels)
             .build();
-
     }
 
     private List<MaturityLevelDslModel> createLevelDslModels(Map<MaturityLevelJpaEntity, List<LevelCompetenceJpaEntity>> levelToCompetences,
