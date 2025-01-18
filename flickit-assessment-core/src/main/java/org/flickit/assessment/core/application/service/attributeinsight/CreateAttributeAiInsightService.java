@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
@@ -108,7 +107,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     private Result handleNewInsight(Attribute attribute, AssessmentResult assessmentResult, String assessmentTitle,
                                     AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
         if (!appAiProperties.isEnabled())
-            throw new UnsupportedOperationException(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()));
+            throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
 
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         String aiInputPath = uploadInputFile(attribute, file.stream());

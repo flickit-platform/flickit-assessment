@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.service.attributeinsight;
 
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
@@ -279,8 +278,8 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
 
-        var result = service.createAiInsight(param);
-        assertEquals(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()), result.content());
+        var throwable = assertThrows(UnsupportedOperationException.class, () -> service.createAiInsight(param));
+        assertEquals(ASSESSMENT_AI_IS_DISABLED, throwable.getMessage());
 
         verifyNoInteractions(updateAttributeInsightPort,
             callAiPromptPort,
@@ -401,8 +400,8 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
 
-        var result = service.createAiInsight(param);
-        assertEquals(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()), result.content());
+        var throwable = assertThrows(UnsupportedOperationException.class, () -> service.createAiInsight(param));
+        assertEquals(ASSESSMENT_AI_IS_DISABLED, throwable.getMessage());
 
         verifyNoInteractions(callAiPromptPort,
             createAttributeInsightPort,
