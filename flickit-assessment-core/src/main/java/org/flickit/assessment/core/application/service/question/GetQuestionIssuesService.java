@@ -39,7 +39,7 @@ public class GetQuestionIssuesService implements GetQuestionIssuesUseCase {
         var isAnswered = hasAnswer(answer);
         return new Result(!isAnswered,
             isAnswered && (answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
-            isAnswered && countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()) == 0,
+            isAnswered && countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()) == 0,
             isAnswered ? countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()) : 0);
     }
 

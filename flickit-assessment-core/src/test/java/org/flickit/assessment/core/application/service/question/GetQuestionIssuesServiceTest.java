@@ -113,7 +113,7 @@ class GetQuestionIssuesServiceTest {
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(answer));
-        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+        when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(1);
 
         var result = service.getQuestionIssues(param);
@@ -133,7 +133,7 @@ class GetQuestionIssuesServiceTest {
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(answer));
-        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+        when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(2);
 
         var result = service.getQuestionIssues(param);
@@ -153,7 +153,7 @@ class GetQuestionIssuesServiceTest {
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(answer));
-        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+        when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(0);
         when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(2);

@@ -43,7 +43,7 @@ public interface CountEvidencesPort {
      * @param questionId      the unique identifier of the question
      * @return the count of evidences for the specified answered question in the assessment
      */
-    int countQuestionEvidences(UUID assessmentId, long questionId);
+    int countAnsweredQuestionEvidences(UUID assessmentId, long questionId);
 
     /**
      * Counts the number of unresolved comments

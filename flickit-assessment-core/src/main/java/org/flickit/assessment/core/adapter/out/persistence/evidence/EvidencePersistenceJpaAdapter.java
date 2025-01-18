@@ -138,7 +138,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public int countQuestionEvidences(UUID assessmentId, long questionId) {
+    public int countAnsweredQuestionEvidences(UUID assessmentId, long questionId) {
         return repository.countQuestionEvidences(assessmentId, questionId);
     }
 
