@@ -18,20 +18,18 @@ public class CreateAttributeInsightRestController {
     private final UserContext userContext;
 
     @PutMapping("assessments/{assessmentId}/ai-report/attributes/{attributeId}")
-    ResponseEntity<Void> updateAttributeInsight(
-        @PathVariable UUID assessmentId,
-        @PathVariable Long attributeId,
-        @RequestBody CreateAttributeInsightRequestDto requestDto) {
+    ResponseEntity<Void> updateAttributeInsight(@PathVariable UUID assessmentId,
+                                                @PathVariable Long attributeId,
+                                                @RequestBody CreateAttributeInsightRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         useCase.createAttributeInsight(toParam(assessmentId, attributeId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("assessments/{assessmentId}/attributes/{attributeId}/insight")
-    public ResponseEntity<Void> createAttributeInsight(
-        @PathVariable UUID assessmentId,
-        @PathVariable Long attributeId,
-        @RequestBody CreateAttributeInsightRequestDto requestDto) {
+    public ResponseEntity<Void> createAttributeInsight(@PathVariable UUID assessmentId,
+                                                       @PathVariable Long attributeId,
+                                                       @RequestBody CreateAttributeInsightRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         useCase.createAttributeInsight(toParam(assessmentId, attributeId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.CREATED);
