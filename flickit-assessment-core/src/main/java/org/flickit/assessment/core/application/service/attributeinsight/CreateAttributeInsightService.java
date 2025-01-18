@@ -40,10 +40,13 @@ public class CreateAttributeInsightService implements CreateAttributeInsightUseC
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId());
+
+        var newInsight = toAttributeInsight(assessmentResult.getId(), param.getAttributeId(), param.getAssessorInsight());
+
         if (attributeInsight.isPresent())
-            updateAttributeInsightPort.updateAssessorInsight(toAttributeInsight(assessmentResult.getId(), param.getAttributeId(), param.getAssessorInsight()));
+            updateAttributeInsightPort.updateAssessorInsight(newInsight);
         else
-            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), param.getAttributeId(), param.getAssessorInsight()));
+            createAttributeInsightPort.persist(newInsight);
     }
 
     private static AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String assessorInsight) {
