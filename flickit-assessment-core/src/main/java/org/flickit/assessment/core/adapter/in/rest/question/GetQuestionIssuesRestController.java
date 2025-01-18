@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.in.rest.question;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.questions.GetQuestionIssuesUseCase;
-import org.flickit.assessment.core.application.port.in.questions.GetQuestionIssuesUseCase.*;
+import org.flickit.assessment.core.application.port.in.question.GetQuestionIssuesUseCase;
+import org.flickit.assessment.core.application.port.in.question.GetQuestionIssuesUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
