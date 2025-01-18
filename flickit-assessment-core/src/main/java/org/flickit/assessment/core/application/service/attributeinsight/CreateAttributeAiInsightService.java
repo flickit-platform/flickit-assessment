@@ -94,7 +94,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             return new Result(attributeInsight.getAiInsight());
 
         if (!appAiProperties.isEnabled())
-            return new Result(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()));
+            throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
 
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         String aiInputPath = uploadInputFile(attribute, file.stream());
@@ -108,7 +108,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     private Result handleNewInsight(Attribute attribute, AssessmentResult assessmentResult, String assessmentTitle,
                                     AttributeValue attributeValue, List<MaturityLevel> maturityLevels) {
         if (!appAiProperties.isEnabled())
-            return new Result(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()));
+            throw new UnsupportedOperationException(MessageBundle.message(ASSESSMENT_AI_IS_DISABLED, attribute.getTitle()));
 
         var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
         String aiInputPath = uploadInputFile(attribute, file.stream());
