@@ -15,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateAttributeInsightUseCaseParamTest {
 
     @Test
-    void testCreateAttributeInsightParam_assessmentIdParamViolateConstraints_ErrorMessage() {
+    void testCreateAttributeInsightUseCaseParam_assessmentIdParamViolateConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAttributeInsightParam_attributeIdParamViolateConstraints_ErrorMessage() {
+    void testCreateAttributeInsightUseCaseParam_attributeIdParamViolateConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributeId(null)));
         assertThat(throwable).hasMessage("attributeId: " + CREATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAttributeInsightParam_assessorInsightParamViolatesConstraints_ErrorMessage() {
+    void testCreateAttributeInsightUseCaseParam_assessorInsightParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessorInsight(RandomStringUtils.random(1001))));
         assertThat(throwable).hasMessage("assessorInsight: " + CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX);
@@ -40,7 +40,7 @@ class CreateAttributeInsightUseCaseParamTest {
     }
 
     @Test
-    void testCreateAttributeInsightParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
+    void testCreateAttributeInsightUseCaseParam_currentUserIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

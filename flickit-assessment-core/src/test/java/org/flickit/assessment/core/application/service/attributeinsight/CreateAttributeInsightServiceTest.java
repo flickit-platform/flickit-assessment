@@ -54,7 +54,7 @@ class CreateAttributeInsightServiceTest {
     private final AttributeInsight attributeInsight = AttributeInsightMother.simpleAttributeAiInsight();
 
     @Test
-    void createAttributeInsight_UserDoesNotHaveRequiredPermission_ThrowsAccessDeniedException() {
+    void testCreateAttributeInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
@@ -68,7 +68,7 @@ class CreateAttributeInsightServiceTest {
     }
 
     @Test
-    void createAttributeInsight_AssessmentResultDoesNotExist_ThrowsResourceNotFoundException() {
+    void testCreateAttributeInsight_whenNoAssessmentResultExists_thenThrowsResourceNotFoundException() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -81,7 +81,7 @@ class CreateAttributeInsightServiceTest {
     }
 
     @Test
-    void createAttributeInsight_AttributeInsightDoesNotExist_CreateAttributeInsight() {
+    void testCreateAttributeInsight_whenAttributeInsightDoesNotExist_thenCreateAttributeInsight() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -99,7 +99,7 @@ class CreateAttributeInsightServiceTest {
     }
 
     @Test
-    void createAttributeInsight_AttributeInsightExists_UpdateAttributeInsight() {
+    void testCreateAttributeInsight_whenAttributeInsightExists_thenUpdateAttributeInsight() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
