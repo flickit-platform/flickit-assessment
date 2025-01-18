@@ -7,10 +7,7 @@ import org.flickit.assessment.core.application.domain.Evidence;
 import org.flickit.assessment.core.application.port.out.evidence.*;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
-import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaEntity;
-import org.flickit.assessment.data.jpa.core.evidence.EvidenceJpaRepository;
-import org.flickit.assessment.data.jpa.core.evidence.EvidenceWithAttachmentsCountView;
-import org.flickit.assessment.data.jpa.core.evidence.EvidencesQuestionnaireAndCountView;
+import org.flickit.assessment.data.jpa.core.evidence.*;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
@@ -124,6 +121,23 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
+    public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds) {
+        return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, questionnaireIds).stream()
+            .collect(toMap(
+                EvidencesQuestionnaireAndCountView::getQuestionnaireId,
+                EvidencesQuestionnaireAndCountView::getCount));
+    }
+
+    @Override
+    public Map<Long, Integer> countQuestionnaireQuestionsEvidences(UUID assessmentId, long questionnaireId) {
+        return repository.countQuestionnaireQuestionsEvidences(assessmentId, questionnaireId).stream()
+            .collect(toMap(
+                EvidencesQuestionAndCountView::getQuestionId,
+                EvidencesQuestionAndCountView::getCount
+            ));
+    }
+
+    @Override
     public int countUnresolvedComments(UUID assessmentId) {
         return repository.countUnresolvedComments(assessmentId);
     }
@@ -137,10 +151,11 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public Map<Long, Integer> countAnsweredQuestionsHavingEvidence(UUID assessmentId, Set<Long> questionnaireIds) {
-        return repository.countQuestionnairesQuestionsHavingEvidence(assessmentId, questionnaireIds).stream()
+    public Map<Long, Integer> countUnresolvedComments(UUID assessmentId, long questionnaireId) {
+        return repository.countQuestionnaireQuestionsUnresolvedComments(assessmentId, questionnaireId).stream()
             .collect(toMap(
-                EvidencesQuestionnaireAndCountView::getQuestionnaireId,
-                EvidencesQuestionnaireAndCountView::getCount));
+                EvidencesQuestionAndCountView::getQuestionId,
+                EvidencesQuestionAndCountView::getCount
+            ));
     }
 }
