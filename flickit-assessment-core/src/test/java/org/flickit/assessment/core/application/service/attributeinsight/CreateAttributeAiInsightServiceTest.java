@@ -98,9 +98,8 @@ class CreateAttributeAiInsightServiceTest {
     private GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Test
-    void testCreateAttributeAiInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
-        UUID currentUserId = UUID.randomUUID();
-        Param param = new Param(UUID.randomUUID(), 123L, currentUserId);
+    void testCreateAttributeAiInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(false);
 
@@ -119,9 +118,8 @@ class CreateAttributeAiInsightServiceTest {
     }
 
     @Test
-    void testCreateAttributeAiInsight_AllQuestionDoesNotHaveAnswered_ThrowValidationException() {
-        UUID currentUserId = UUID.randomUUID();
-        Param param = new Param(UUID.randomUUID(), 123L, currentUserId);
+    void testCreateAttributeAiInsight_whenAssessmentProgressIsNotCompleted_thenThrowValidationException() {
+        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 11);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
