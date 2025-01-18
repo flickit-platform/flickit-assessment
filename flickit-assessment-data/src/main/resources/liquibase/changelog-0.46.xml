@@ -12,4 +12,27 @@
         <dropNotNullConstraint tableName="fac_attribute_insight" columnName="ai_insight_time"/>
     </changeSet>
 
+    <changeSet id="0.46.03" author="Maziyar Gerami">
+        <createTable tableName="fac_assessment_report">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment_report"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="meta_data" type="varchar"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.46-04" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_assessment_report"
+                                 baseColumnNames="assessment_result_id"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessment_report_assessmentresult"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
 </databaseChangeLog>
