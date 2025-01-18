@@ -55,7 +55,7 @@ class CreateAttributeInsightUseCaseParamTest {
     private CreateAttributeInsightUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAttributeInsightUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .attributeId(0L)
+            .attributeId(123L)
             .assessorInsight("assessorInsight")
             .currentUserId(UUID.randomUUID());
     }

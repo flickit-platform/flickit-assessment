@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ATTRIBUTE_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.simpleAttributeAiInsight;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -42,7 +43,7 @@ class CreateAttributeInsightServiceTest {
     private LoadAttributeInsightPort loadAttributeInsightPort;
 
     @Mock
-    private LoadAssessmentResultPort assessmentResultPort;
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private UpdateAttributeInsightPort updateAttributeInsightPort;
@@ -51,7 +52,6 @@ class CreateAttributeInsightServiceTest {
     private CreateAttributeInsightPort createAttributeInsightPort;
 
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-    private final AttributeInsight attributeInsight = AttributeInsightMother.simpleAttributeAiInsight();
 
     @Test
     void testCreateAttributeInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -63,16 +63,19 @@ class CreateAttributeInsightServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAttributeInsight(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAttributeInsightPort, assessmentResultPort,
-            updateAttributeInsightPort, createAttributeInsightPort);
+        verifyNoInteractions(loadAttributeInsightPort,
+            loadAssessmentResultPort,
+            updateAttributeInsightPort,
+            createAttributeInsightPort);
     }
 
     @Test
     void testCreateAttributeInsight_whenNoAssessmentResultExists_thenThrowsResourceNotFoundException() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAttributeInsight(param));
         assertEquals(CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
@@ -84,36 +87,45 @@ class CreateAttributeInsightServiceTest {
     void testCreateAttributeInsight_whenAttributeInsightDoesNotExist_thenCreateAttributeInsight() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
 
         service.createAttributeInsight(param);
-        ArgumentCaptor<AttributeInsight> captor = ArgumentCaptor.forClass(AttributeInsight.class);
 
-        verifyNoInteractions(updateAttributeInsightPort);
+        ArgumentCaptor<AttributeInsight> captor = ArgumentCaptor.forClass(AttributeInsight.class);
         verify(createAttributeInsightPort).persist(captor.capture());
+        assertEquals(assessmentResult.getId(), captor.getValue().getAssessmentResultId());
         assertEquals(param.getAttributeId(), captor.getValue().getAttributeId());
         assertEquals(param.getAssessorInsight(), captor.getValue().getAssessorInsight());
-        assertEquals(assessmentResult.getId(), captor.getValue().getAssessmentResultId());
+        assertNotNull(captor.getValue().getAssessorInsightTime());
+        assertTrue(captor.getValue().isApproved());
+
+        verifyNoInteractions(updateAttributeInsightPort);
     }
 
     @Test
     void testCreateAttributeInsight_whenAttributeInsightExists_thenUpdateAttributeInsight() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
+        AttributeInsight attributeInsight = simpleAttributeAiInsight();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
 
         service.createAttributeInsight(param);
-        ArgumentCaptor<AttributeInsight> captor = ArgumentCaptor.forClass(AttributeInsight.class);
 
-        verifyNoInteractions(createAttributeInsightPort);
+        ArgumentCaptor<AttributeInsight> captor = ArgumentCaptor.forClass(AttributeInsight.class);
         verify(updateAttributeInsightPort).updateAssessorInsight(captor.capture());
+        assertEquals(assessmentResult.getId(), captor.getValue().getAssessmentResultId());
         assertEquals(param.getAttributeId(), captor.getValue().getAttributeId());
         assertEquals(param.getAssessorInsight(), captor.getValue().getAssessorInsight());
-        assertEquals(assessmentResult.getId(), captor.getValue().getAssessmentResultId());
+        assertNotNull(captor.getValue().getAssessorInsightTime());
+        assertTrue(captor.getValue().isApproved());
+
+        verifyNoInteractions(createAttributeInsightPort);
     }
 
     private CreateAttributeInsightUseCase.Param createParam(Consumer<CreateAttributeInsightUseCase.Param.ParamBuilder> changer) {
@@ -125,7 +137,7 @@ class CreateAttributeInsightServiceTest {
     private CreateAttributeInsightUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAttributeInsightUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .attributeId(0L)
+            .attributeId(123L)
             .assessorInsight("assessorInsight")
             .currentUserId(UUID.randomUUID());
     }
