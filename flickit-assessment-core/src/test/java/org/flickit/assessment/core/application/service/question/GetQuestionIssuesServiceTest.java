@@ -39,10 +39,10 @@ class GetQuestionIssuesServiceTest {
     private LoadAssessmentResultPort assessmentResultPort;
 
     @Mock
-    private CountEvidencesPort countEvidencesPort;
+    private LoadAnswerPort loadAnswerPort;
 
     @Mock
-    private LoadAnswerPort loadAnswerPort;
+    private CountEvidencesPort countEvidencesPort;
 
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
@@ -55,7 +55,6 @@ class GetQuestionIssuesServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionIssues(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
-
     }
 
     @Test
@@ -71,7 +70,7 @@ class GetQuestionIssuesServiceTest {
     }
 
     @Test
-    void testGetQuestionIssues_AnswerDoesNotExist_ThrowsAccessDeniedException() {
+    void testGetQuestionIssues_AnswerDoesNotExist_successfulWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
@@ -94,7 +93,7 @@ class GetQuestionIssuesServiceTest {
             .thenReturn(true);
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
-            .thenReturn(Optional.of(AnswerMother.answerWithNullNotApplicable(null)));
+            .thenReturn(Optional.of(AnswerMother.answerWithNotApplicableFalse(null)));
 
         var result = service.getQuestionIssues(param);
         assertTrue(result.isUnanswered());
@@ -115,6 +114,8 @@ class GetQuestionIssuesServiceTest {
             .thenReturn(Optional.of(answer));
         when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(1);
+        when(countEvidencesPort.countAnsweredQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
+            .thenReturn(0);
 
         var result = service.getQuestionIssues(param);
         assertFalse(result.isUnanswered());
@@ -135,6 +136,8 @@ class GetQuestionIssuesServiceTest {
             .thenReturn(Optional.of(answer));
         when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(2);
+        when(countEvidencesPort.countAnsweredQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
+            .thenReturn(0);
 
         var result = service.getQuestionIssues(param);
         assertFalse(result.isUnanswered());
@@ -177,5 +180,4 @@ class GetQuestionIssuesServiceTest {
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
-
 }
