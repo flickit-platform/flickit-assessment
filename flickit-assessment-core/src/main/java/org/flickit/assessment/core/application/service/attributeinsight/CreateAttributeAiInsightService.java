@@ -90,12 +90,11 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
         var prompt = openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), assessmentTitle, file.text());
         String aiInsight = callAiPromptPort.call(prompt);
         String aiInputPath = uploadInputFile(attribute, file.stream());
-        var newInsight = toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath);
 
         if (attributeInsight.isPresent())
-            updateAttributeInsightPort.updateAiInsight(newInsight);
+            updateAttributeInsightPort.updateAiInsight(toUpdateParam(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
         else
-            createAttributeInsightPort.persist(newInsight);
+            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
 
         return new Result(aiInsight);
     }
@@ -124,6 +123,15 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             aiInputPath = uploadAttributeScoresFilePort.uploadExcel(stream, fileName);
         }
         return aiInputPath;
+    }
+
+    private UpdateAttributeInsightPort.AiParam toUpdateParam(UUID assessmentResultId, long attributeId, String aiInsight, String aiInputPath) {
+        return new UpdateAttributeInsightPort.AiParam(assessmentResultId,
+            attributeId,
+            aiInsight,
+            LocalDateTime.now(),
+            aiInputPath,
+            false);
     }
 
     private AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String aiInsight, String aiInputPath) {

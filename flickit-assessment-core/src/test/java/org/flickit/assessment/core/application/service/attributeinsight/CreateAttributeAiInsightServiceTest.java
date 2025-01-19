@@ -29,6 +29,7 @@ import org.flickit.assessment.core.test.fixture.application.AttributeValueMother
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -51,8 +52,7 @@ import static org.flickit.assessment.core.test.fixture.application.AssessmentRes
 import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.simpleAttributeAiInsight;
 import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.simpleAttributeAiInsightMinInsightTime;
 import static org.flickit.assessment.core.test.fixture.application.AttributeMother.simpleAttribute;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -341,6 +341,14 @@ class CreateAttributeAiInsightServiceTest {
         var result = service.createAiInsight(param);
         assertEquals(attributeInsight.getAiInsight(), result.content());
 
+        ArgumentCaptor<UpdateAttributeInsightPort.AiParam> captor = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AiParam.class);
+        verify(updateAttributeInsightPort).updateAiInsight(captor.capture());
+        assertEquals(assessmentResult.getId(), captor.getValue().assessmentResultId());
+        assertEquals(param.getAttributeId(), captor.getValue().attributeId());
+        assertEquals(attributeInsight.getAiInsight(), captor.getValue().aiInsight());
+        assertNotNull(captor.getValue().aiInsightTime());
+        assertFalse(captor.getValue().isApproved());
+
         verifyNoInteractions(createAttributeInsightPort);
     }
 
@@ -374,11 +382,19 @@ class CreateAttributeAiInsightServiceTest {
         var result = service.createAiInsight(param);
         assertEquals(attributeInsight.getAiInsight(), result.content());
 
+        ArgumentCaptor<UpdateAttributeInsightPort.AiParam> captor = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AiParam.class);
+        verify(updateAttributeInsightPort).updateAiInsight(captor.capture());
+        assertEquals(assessmentResult.getId(), captor.getValue().assessmentResultId());
+        assertEquals(param.getAttributeId(), captor.getValue().attributeId());
+        assertEquals(attributeInsight.getAiInsight(), captor.getValue().aiInsight());
+        assertNotNull(captor.getValue().aiInsightTime());
+        assertFalse(captor.getValue().isApproved());
+
         verifyNoInteractions(createAttributeInsightPort, uploadAttributeScoresFilePort);
     }
 
     @Test
-    void testCreateAttributeAiInsight_whenAiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiDisabled_thenThrowUnsupporetedOperationException() {
+    void testCreateAttributeAiInsight_whenAiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiDisabled_thenThrowUnsupportedOperationException() {
         var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
         var attributeInsight = simpleAttributeAiInsightMinInsightTime();
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
