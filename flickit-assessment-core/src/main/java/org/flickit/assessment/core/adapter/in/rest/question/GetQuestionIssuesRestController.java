@@ -28,6 +28,6 @@ public class GetQuestionIssuesRestController {
     }
 
     private Param toParam(UUID assessmentId, Long questionId, UUID currentUserId) {
-        return new Param(questionId, assessmentId, currentUserId);
+        return new Param(assessmentId, questionId, currentUserId);
     }
 }

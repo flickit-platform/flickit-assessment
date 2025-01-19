@@ -19,19 +19,19 @@ public interface GetQuestionIssuesUseCase {
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_QUESTION_ISSUES_QUESTION_ID_NOT_NULL)
-        Long questionId;
-
         @NotNull(message = GET_QUESTION_ISSUES_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
+
+        @NotNull(message = GET_QUESTION_ISSUES_QUESTION_ID_NOT_NULL)
+        Long questionId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(Long questionId, UUID assessmentId, UUID currentUserId) {
-            this.questionId = questionId;
+        public Param(UUID assessmentId, Long questionId, UUID currentUserId) {
             this.assessmentId = assessmentId;
+            this.questionId = questionId;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
