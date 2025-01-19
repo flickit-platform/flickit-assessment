@@ -41,12 +41,18 @@ public class CreateAttributeInsightService implements CreateAttributeInsightUseC
 
         var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId());
 
-        var newInsight = toAttributeInsight(assessmentResult.getId(), param.getAttributeId(), param.getAssessorInsight());
-
         if (attributeInsight.isPresent())
-            updateAttributeInsightPort.updateAssessorInsight(newInsight);
+            updateAttributeInsightPort.updateAssessorInsight(toUpdateParam(assessmentResult.getId(), param.getAttributeId(), param.getAssessorInsight()));
         else
-            createAttributeInsightPort.persist(newInsight);
+            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), param.getAttributeId(), param.getAssessorInsight()));
+    }
+
+    private static UpdateAttributeInsightPort.AssessorParam toUpdateParam(UUID assessmentResultId, long attributeId, String assessorInsight) {
+        return new UpdateAttributeInsightPort.AssessorParam(assessmentResultId,
+            attributeId,
+            assessorInsight,
+            LocalDateTime.now(),
+            true);
     }
 
     private static AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String assessorInsight) {

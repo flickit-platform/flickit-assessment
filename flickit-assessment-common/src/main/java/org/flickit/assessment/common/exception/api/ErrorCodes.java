@@ -11,4 +11,5 @@ public class ErrorCodes {
     public static final String CALCULATE_NOT_VALID = "CALCULATE_NOT_VALID";
     public static final String CONFIDENCE_CALCULATION_NOT_VALID = "CONFIDENCE_CALCULATION_NOT_VALID";
     public static final String DEPRECATED = "DEPRECATED";
+    public static final String UNSUPPORTED_OPERATION = "UNSUPPORTED_OPERATION";
 }
