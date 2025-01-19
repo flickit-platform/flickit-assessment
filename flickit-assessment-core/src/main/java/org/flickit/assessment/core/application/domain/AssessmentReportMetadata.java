@@ -1,14 +1,12 @@
 package org.flickit.assessment.core.application.domain;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Getter
-@RequiredArgsConstructor
-public class AssessmentReportMetadata {
-
-    private final String intro;
-    private final String prosAndCons;
-    private final String steps;
-    private final String participants;
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public record AssessmentReportMetadata(
+    @JsonProperty("intro") String intro,
+    @JsonProperty("prosAndCons") String prosAndCons,
+    @JsonProperty("steps") String steps,
+    @JsonProperty("participants") String participants) {
 }
