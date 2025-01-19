@@ -38,6 +38,9 @@ public interface GetAssessmentReportMetaDataUseCase {
         }
     }
 
-    record Result(String metaData) {
+    record Result(String intro,
+                  String prosAndCons,
+                  String steps,
+                  String participants) {
     }
 }
