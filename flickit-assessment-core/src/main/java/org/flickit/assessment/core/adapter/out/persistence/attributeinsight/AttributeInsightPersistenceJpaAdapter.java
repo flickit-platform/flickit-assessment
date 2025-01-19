@@ -39,22 +39,23 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public void updateAiInsight(AttributeInsight attributeInsight) {
+    public void updateAiInsight(UpdateAttributeInsightPort.AiParam attributeInsight) {
         repository.updateAiInsight(
-            attributeInsight.getAssessmentResultId(),
-            attributeInsight.getAttributeId(),
-            attributeInsight.getAiInsight(),
-            attributeInsight.getAiInsightTime(),
-            attributeInsight.getAiInputPath());
+            attributeInsight.assessmentResultId(),
+            attributeInsight.attributeId(),
+            attributeInsight.aiInsight(),
+            attributeInsight.aiInsightTime(),
+            attributeInsight.aiInputPath(),
+            attributeInsight.isApproved());
     }
 
     @Override
-    public void updateAssessorInsight(AttributeInsight attributeInsight) {
+    public void updateAssessorInsight(UpdateAttributeInsightPort.AssessorParam attributeInsight) {
         repository.updateAssessorInsight(
-            attributeInsight.getAssessmentResultId(),
-            attributeInsight.getAttributeId(),
-            attributeInsight.getAssessorInsight(),
-            attributeInsight.getAssessorInsightTime(),
+            attributeInsight.assessmentResultId(),
+            attributeInsight.attributeId(),
+            attributeInsight.assessorInsight(),
+            attributeInsight.assessorInsightTime(),
             attributeInsight.isApproved()
         );
     }

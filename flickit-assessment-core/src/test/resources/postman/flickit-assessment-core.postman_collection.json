@@ -1396,17 +1396,17 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/ai-report/attributes/1523",
+							"raw": "{{base_url}}/{{api_path}}/assessments/8ded0da4-9509-40ad-8701-7b6322cb5862/attributes/2078/ai-insight",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
-								"ai-report",
+								"8ded0da4-9509-40ad-8701-7b6322cb5862",
 								"attributes",
-								"1523"
+								"2078",
+								"ai-insight"
 							]
 						}
 					},
