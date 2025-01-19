@@ -29,5 +29,5 @@ public class AssessmentReportJpaEntity {
     private UUID assessmentResultId;
 
     @Column(name = "meta_data", nullable = false)
-    private String metaData;
+    private String metadata;
 }
