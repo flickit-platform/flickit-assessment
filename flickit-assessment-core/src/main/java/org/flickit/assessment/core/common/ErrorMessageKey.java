@@ -295,4 +295,7 @@ public class ErrorMessageKey {
     public static final String GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED = "grant-access-to-report.user-already-granted";
 
     public static final String GET_GRAPHICAL_REPORT_USERS_ASSESSMENT_ID_NOT_NULL = "get-graphical-report-users.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_REPORT_ID_NOT_NULL = "get-assessment-report-metadata.assessmentReportId.notNull";
+    public static final String GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL = "get-assessment-report-metadata.assessmentId.notNull";
 }
