@@ -45,7 +45,8 @@ public class AttributeInsightPersistenceJpaAdapter implements
             attributeInsight.getAttributeId(),
             attributeInsight.getAiInsight(),
             attributeInsight.getAiInsightTime(),
-            attributeInsight.getAiInputPath());
+            attributeInsight.getAiInputPath(),
+            attributeInsight.isApproved());
     }
 
     @Override
