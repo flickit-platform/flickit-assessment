@@ -165,7 +165,7 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public int countAnsweredQuestionUnresolvedComments(UUID assessmentId, long questionId) {
+    public int countQuestionUnresolvedComments(UUID assessmentId, long questionId) {
         return repository.countQuestionUnresolvedComments(assessmentId, questionId);
     }
 }

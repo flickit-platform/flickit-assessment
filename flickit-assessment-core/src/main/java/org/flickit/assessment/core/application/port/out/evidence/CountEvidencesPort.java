@@ -75,12 +75,12 @@ public interface CountEvidencesPort {
     Map<Long, Integer> countUnresolvedComments(UUID assessmentId, long questionnaireId);
 
     /**
-     * Counts the number of unresolved answered question comments
+     * Counts the number of unresolved question comments
      * for a given question ID.
      *
      * @param assessmentId     the unique identifier of the assessment
      * @param questionId        the unique identifier of the question
-     * @return the count of unresolved comments for the specified answered question in the assessment
+     * @return the count of unresolved comments for the specified question in the assessment
      */
-    int countAnsweredQuestionUnresolvedComments(UUID assessmentId, long questionId);
+    int countQuestionUnresolvedComments(UUID assessmentId, long questionId);
 }
