@@ -112,7 +112,7 @@ class GetQuestionIssuesServiceTest {
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(answer));
-        when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(1);
         when(countEvidencesPort.countAnsweredQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(0);
@@ -134,7 +134,7 @@ class GetQuestionIssuesServiceTest {
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(answer));
-        when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(2);
         when(countEvidencesPort.countAnsweredQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(0);
@@ -156,7 +156,7 @@ class GetQuestionIssuesServiceTest {
         when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(answer));
-        when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
+        when(countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(0);
         when(countEvidencesPort.countAnsweredQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(2);
