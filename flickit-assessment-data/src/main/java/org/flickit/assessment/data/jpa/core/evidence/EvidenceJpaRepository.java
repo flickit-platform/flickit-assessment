@@ -122,6 +122,20 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query("""
             SELECT COUNT(e.id)
             FROM EvidenceJpaEntity e
+            JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
+            JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
+            WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND e.deleted = false
+                AND e.type IS NOT NULL
+        """)
+    int countQuestionEvidences(@Param("assessmentId") UUID assessmentId,
+                               @Param("questionId") long questionId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
             WHERE e.assessmentId = :assessmentId
                 AND e.deleted = false
                 AND e.type IS NULL
@@ -160,18 +174,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsUnresolvedComments(@Param("assessmentId") UUID assessmentId,
                                                                                       @Param("questionnaireId") long questionnaireId);
-    @Query("""
-            SELECT COUNT(e.id)
-            FROM EvidenceJpaEntity e
-            JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
-            JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
-            WHERE e.assessmentId = :assessmentId
-                AND e.questionId = :questionId
-                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
-                AND e.deleted = false
-                AND e.type IS NOT NULL
-        """)
-    int countQuestionEvidences(UUID assessmentId, long questionId);
 
     @Query("""
             SELECT COUNT(e)
