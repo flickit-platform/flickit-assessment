@@ -15,7 +15,7 @@ public class AssessmentReportPersistenceJpaAdapter implements LoadAssessmentRepo
     private final AssessmentReportJpaRepository repository;
 
     @Override
-    public AssessmentReportMetadata loadMetaData(UUID assessmentId) {
+    public AssessmentReportMetadata loadMetadata(UUID assessmentId) {
         return null;
     }
 }

@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface LoadAssessmentReportMetaDataPort {
 
-    AssessmentReportMetadata loadMetaData(UUID assessmentId);
+    AssessmentReportMetadata loadMetadata(UUID assessmentId);
 }
