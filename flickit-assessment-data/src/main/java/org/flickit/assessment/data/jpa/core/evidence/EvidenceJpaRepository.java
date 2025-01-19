@@ -122,11 +122,8 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query("""
             SELECT COUNT(e.id)
             FROM EvidenceJpaEntity e
-            JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
-            JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
             WHERE e.assessmentId = :assessmentId
                 AND e.questionId = :questionId
-                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND e.deleted = false
                 AND e.type IS NOT NULL
         """)
