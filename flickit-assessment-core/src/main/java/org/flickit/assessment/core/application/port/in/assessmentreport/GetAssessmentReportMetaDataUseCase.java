@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_REPORT_ID_NOT_NULL;
 
 public interface GetAssessmentReportMetaDataUseCase {
 
@@ -20,9 +19,6 @@ public interface GetAssessmentReportMetaDataUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_REPORT_ID_NOT_NULL)
-        UUID assessmentReportId;
-
         @NotNull(message = GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
@@ -30,8 +26,7 @@ public interface GetAssessmentReportMetaDataUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentReportId, UUID assessmentId, UUID currentUserId) {
-            this.assessmentReportId = assessmentReportId;
+        public Param(UUID assessmentId, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.currentUserId = currentUserId;
             this.validateSelf();

@@ -82,7 +82,6 @@ class GetAssessmentReportMetaDataServiceTest {
 
     private GetAssessmentReportMetaDataUseCase.Param.ParamBuilder paramBuilder() {
         return GetAssessmentReportMetaDataUseCase.Param.builder()
-            .assessmentReportId(UUID.randomUUID())
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }

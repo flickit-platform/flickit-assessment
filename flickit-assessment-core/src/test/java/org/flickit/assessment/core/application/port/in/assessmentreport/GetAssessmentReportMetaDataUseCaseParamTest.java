@@ -9,17 +9,9 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_REPORT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GetAssessmentReportMetaDataUseCaseParamTest {
-
-    @Test
-    void testGetAssessmentReportMetaDataUseCaseParam_assessmentReportIdParamViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.assessmentReportId(null)));
-        assertThat(throwable).hasMessage("assessmentReportId: " + GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_REPORT_ID_NOT_NULL);
-    }
 
     @Test
     void testGetAssessmentReportMetaDataUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
@@ -43,7 +35,6 @@ class GetAssessmentReportMetaDataUseCaseParamTest {
 
     private GetAssessmentReportMetaDataUseCase.Param.ParamBuilder paramBuilder() {
         return GetAssessmentReportMetaDataUseCase.Param.builder()
-            .assessmentReportId(UUID.randomUUID())
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
