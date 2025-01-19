@@ -24,7 +24,8 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_QUESTION_ISSUES_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetQuestionIssuesServiceTest {
@@ -36,7 +37,7 @@ class GetQuestionIssuesServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadAssessmentResultPort assessmentResultPort;
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private LoadAnswerPort loadAnswerPort;
@@ -47,7 +48,7 @@ class GetQuestionIssuesServiceTest {
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
     @Test
-    void testGetQuestionIssues_UserDoesNotHaveEnoughAccess_ThrowsAccessDeniedException() {
+    void testGetQuestionIssues_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
@@ -55,27 +56,31 @@ class GetQuestionIssuesServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionIssues(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadAssessmentResultPort, loadAnswerPort, countEvidencesPort);
     }
 
     @Test
-    void testGetQuestionIssues_AssessmentResultDoesNotExist_ThrowsResourceNotFoundException() {
+    void testGetQuestionIssues_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionIssues(param));
         assertEquals(GET_QUESTION_ISSUES_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
+
+        verifyNoInteractions(loadAnswerPort, countEvidencesPort);
     }
 
     @Test
-    void testGetQuestionIssues_AnswerDoesNotExist_successfulWithIssues() {
+    void testGetQuestionIssues_whenAnswerDoesNotExist_thenReturnResultWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())).thenReturn(Optional.empty());
 
         var result = service.getQuestionIssues(param);
@@ -83,15 +88,17 @@ class GetQuestionIssuesServiceTest {
         assertFalse(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
+
+        verifyNoInteractions(countEvidencesPort);
     }
 
     @Test
-    void testGetQuestionIssues_SelectedAnswerOptionIsNull_successfulWithIssues() {
+    void testGetQuestionIssues_whenNoOptionIsSelectedAndNotApplicableNotTrue_thenReturnResultWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(AnswerMother.answerWithNotApplicableFalse(null)));
 
@@ -103,13 +110,13 @@ class GetQuestionIssuesServiceTest {
     }
 
     @Test
-    void testGetQuestionIssues_SelectedAnswerOptionHasLowConfidence_successfulWithIssues() {
+    void testGetQuestionIssues_whenQuestionIsAnsweredWithLowConfidenceAndHasEvidence_thenReturnResultWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
         var answer = AnswerMother.answerWithConfidenceLevel(2, param.getQuestionId());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(answer));
         when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
@@ -125,35 +132,13 @@ class GetQuestionIssuesServiceTest {
     }
 
     @Test
-    void testGetQuestionIssues_SelectedAnswerOptionHasLowConfidenceWithEvidences_successfulWithIssues() {
-        var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
-        var answer = AnswerMother.answerWithConfidenceLevel(2, param.getQuestionId());
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
-            .thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
-            .thenReturn(Optional.of(answer));
-        when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
-            .thenReturn(2);
-        when(countEvidencesPort.countAnsweredQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
-            .thenReturn(0);
-
-        var result = service.getQuestionIssues(param);
-        assertFalse(result.isUnanswered());
-        assertTrue(result.isAnsweredWithLowConfidence());
-        assertFalse(result.isAnsweredWithoutEvidences());
-        assertEquals(0, result.unresolvedCommentsCount());
-    }
-
-    @Test
-    void testGetQuestionIssues_SelectedAnswerOptionWithoutEvidencesAndUnresolvedComments_successfulWithIssues() {
+    void testGetQuestionIssues_whenQuestionIsAnsweredWithoutEvidencesAndHasUnresolvedComments_thenReturnResultWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
         var answer = AnswerMother.answerWithConfidenceLevel(3, param.getQuestionId());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
             .thenReturn(Optional.of(answer));
         when(countEvidencesPort.countAnsweredQuestionEvidences(param.getAssessmentId(), param.getQuestionId()))
