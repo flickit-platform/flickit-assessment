@@ -27,7 +27,7 @@ public class CreateAttributeAiInsightRestController {
         @PathVariable("attributeId") Long attributeId) {
         var currentUserId = userContext.getUser().id();
         var result = useCase.createAiInsight(toParam(assessmentId, attributeId, currentUserId));
-        return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
+        return new ResponseEntity<>(toResponseDto(result), HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, Long attributeId, UUID currentUserId) {
