@@ -12,7 +12,8 @@ public interface UpdateAttributeInsightPort {
                    String aiInsight,
                    LocalDateTime aiInsightTime,
                    String aiInputPath,
-                   boolean isApproved) {
+                   boolean isApproved,
+                   LocalDateTime lastModificationTime) {
     }
 
     void updateAssessorInsight(AssessorParam attributeInsight);

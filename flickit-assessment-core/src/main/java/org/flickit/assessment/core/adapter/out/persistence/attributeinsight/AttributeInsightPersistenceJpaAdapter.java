@@ -47,7 +47,8 @@ public class AttributeInsightPersistenceJpaAdapter implements
             attributeInsight.aiInsight(),
             attributeInsight.aiInsightTime(),
             attributeInsight.aiInputPath(),
-            attributeInsight.isApproved());
+            attributeInsight.isApproved(),
+            attributeInsight.lastModificationTime());
     }
 
     @Override
