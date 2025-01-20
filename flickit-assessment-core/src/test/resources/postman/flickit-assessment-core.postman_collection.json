@@ -2252,6 +2252,43 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Question",
+			"item": [
+				{
+					"name": "Get Assessment Question Issues",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/4a298d20-d1ba-42f6-bbfe-03b6c5e28678/questions/19169/issues",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"4a298d20-d1ba-42f6-bbfe-03b6c5e28678",
+								"questions",
+								"19169",
+								"issues"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
