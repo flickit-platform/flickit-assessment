@@ -2254,7 +2254,7 @@
 			]
 		},
 		{
-			"name": "AssessmentResult",
+			"name": "AssessmentReport",
 			"item": [
 				{
 					"name": "Get Assessment Report Metadata",
