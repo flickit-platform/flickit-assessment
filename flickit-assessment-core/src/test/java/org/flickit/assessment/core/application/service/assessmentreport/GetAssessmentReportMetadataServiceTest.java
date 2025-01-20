@@ -64,6 +64,23 @@ class GetAssessmentReportMetadataServiceTest {
         verifyNoInteractions(objectMapper);
     }
 
+    @Test
+    void testAssessmentReportMetadata_AssessmentReportExistsWithBlankMetadata_SuccessfulEmptyAssessmentReport() {
+        var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
+            .thenReturn(true);
+        when(loadAssessmentReportMetadataPort.load(param.getAssessmentId())).thenReturn("");
+
+        var result = service.getAssessmentReportMetadata(param);
+        assertNull(result.intro());
+        assertNull(result.prosAndCons());
+        assertNull(result.steps());
+        assertNull(result.participants());
+
+        verifyNoInteractions(objectMapper);
+    }
+
     @SneakyThrows
     @Test
     void testAssessmentReportMetadata_AssessmentReportExists_ReturnsFullMetadata() {

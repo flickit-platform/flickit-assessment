@@ -31,7 +31,7 @@ public class GetAssessmentReportMetadataService implements GetAssessmentReportMe
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var portResult = loadAssessmentReportMetadataPort.load(param.getAssessmentId());
-        if (portResult != null)
+        if (portResult != null && !portResult.isBlank())
             return toResult(objectMapper.readValue(portResult, AssessmentReportMetadata.class));
 
         return new Result(null, null, null, null);
