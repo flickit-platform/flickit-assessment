@@ -41,4 +41,8 @@
         </addUniqueConstraint>
     </changeSet>
 
+    <changeSet id="0.46-06" author="Maziyar Gerami">
+        <renameColumn tableName="fac_assessment_report" oldColumnName="meta_data" newColumnName="metadata"/>
+    </changeSet>
+
 </databaseChangeLog>

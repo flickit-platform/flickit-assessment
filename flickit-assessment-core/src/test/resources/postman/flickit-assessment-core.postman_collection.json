@@ -2289,6 +2289,41 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "AssessmentReport",
+			"item": [
+				{
+					"name": "Get Assessment Report Metadata",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/27c48fa6-97ff-4fd6-8c3d-259106468f11/report-metadata",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"27c48fa6-97ff-4fd6-8c3d-259106468f11",
+								"report-metadata"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [

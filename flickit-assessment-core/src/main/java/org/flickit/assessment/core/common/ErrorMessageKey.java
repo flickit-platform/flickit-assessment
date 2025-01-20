@@ -299,4 +299,6 @@ public class ErrorMessageKey {
     public static final String GET_QUESTION_ISSUES_QUESTION_ID_NOT_NULL = "get-question-issues.questionId.notNull";
     public static final String GET_QUESTION_ISSUES_ASSESSMENT_ID_NOT_NULL = "get-question-issues.assessmentId.notNull";
     public static final String GET_QUESTION_ISSUES_ASSESSMENT_RESULT_NOT_FOUND = "get-question-issues.assessmentResult.notFound";
+
+    public static final String GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL = "get-assessment-report-metadata.assessmentId.notNull";
 }
