@@ -15,17 +15,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class GetQuestionIssuesUseCaseParamTest {
 
     @Test
-    void testGetQuestionIssuesUseCaseParam_questionIdParamViolatesConstraint_ErrorMessage() {
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.questionId(null)));
-        assertThat(throwable).hasMessage("questionId: " + GET_QUESTION_ISSUES_QUESTION_ID_NOT_NULL);
-    }
-
-    @Test
     void testGetQuestionIssuesUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + GET_QUESTION_ISSUES_ASSESSMENT_ID_NOT_NULL);
+    }
+
+    @Test
+    void testGetQuestionIssuesUseCaseParam_questionIdParamViolatesConstraint_ErrorMessage() {
+        var throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.questionId(null)));
+        assertThat(throwable).hasMessage("questionId: " + GET_QUESTION_ISSUES_QUESTION_ID_NOT_NULL);
     }
 
     @Test
