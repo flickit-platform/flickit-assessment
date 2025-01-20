@@ -138,6 +138,11 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
+    public int countQuestionEvidences(UUID assessmentId, long questionId) {
+        return repository.countQuestionEvidences(assessmentId, questionId);
+    }
+
+    @Override
     public int countUnresolvedComments(UUID assessmentId) {
         return repository.countUnresolvedComments(assessmentId);
     }
@@ -157,5 +162,10 @@ public class EvidencePersistenceJpaAdapter implements
                 EvidencesQuestionAndCountView::getQuestionId,
                 EvidencesQuestionAndCountView::getCount
             ));
+    }
+
+    @Override
+    public int countQuestionUnresolvedComments(UUID assessmentId, long questionId) {
+        return repository.countQuestionUnresolvedComments(assessmentId, questionId);
     }
 }
