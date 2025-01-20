@@ -38,6 +38,9 @@ public class GetAssessmentReportMetadataService implements GetAssessmentReportMe
     }
 
     private Result toResult(AssessmentReportMetadata metadata) {
-        return new Result(metadata.intro(), metadata.prosAndCons(), metadata.steps(), metadata.participants());
+        return new Result(metadata.intro(),
+            metadata.prosAndCons(),
+            metadata.steps(),
+            metadata.participants());
     }
 }
