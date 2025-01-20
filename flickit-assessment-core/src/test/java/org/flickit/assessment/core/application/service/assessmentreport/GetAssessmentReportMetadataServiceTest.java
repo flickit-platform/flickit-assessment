@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -108,8 +109,10 @@ class GetAssessmentReportMetadataServiceTest {
     void testAssessmentReportMetadata_AssessmentReportExistsSomeKeysAreNull_ReturnsPartialMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
         String portResult = "{\"intro\": \"introduction of assessment report\", " +
+            "\"incorrectKey\": \"incorrectValue\", " +
             "\"participants\": \"list of assessment participants and their participation's\"}";
-        var expectedMetadata = new ObjectMapper().readValue(portResult, AssessmentReportMetadata.class);
+        var om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        var expectedMetadata = om.readValue(portResult, AssessmentReportMetadata.class);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
             .thenReturn(true);
