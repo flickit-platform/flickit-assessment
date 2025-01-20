@@ -87,6 +87,26 @@ class GetAssessmentReportMetadataServiceTest {
         assertEquals(expectedMetadata.participants(), result.participants());
     }
 
+    @SneakyThrows
+    @Test
+    void testAssessmentReportMetadata_AssessmentReportExistsSomeKeysAreNull_Successful() {
+        var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
+        String portResult = "{\"intro\": \"introduction of assessment report\", " +
+            "\"participants\": \"list of assessment participants and their participation's\"}";
+        var expectedMetadata = new ObjectMapper().readValue(portResult, AssessmentReportMetadata.class);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
+            .thenReturn(true);
+        when(loadAssessmentReportMetadataPort.load(param.getAssessmentId())).thenReturn(portResult);
+        when(objectMapper.readValue(portResult, AssessmentReportMetadata.class)).thenReturn(expectedMetadata);
+
+        var result = service.getAssessmentReportMetadata(param);
+        assertEquals(expectedMetadata.intro(), result.intro());
+        assertNull(result.prosAndCons());
+        assertNull(result.steps());
+        assertEquals(expectedMetadata.participants(), result.participants());
+    }
+
     private GetAssessmentReportMetadataUseCase.Param createParam(Consumer<GetAssessmentReportMetadataUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
