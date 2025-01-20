@@ -6,31 +6,31 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
-import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportMetaDataPort;
+import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportMetadataPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetaDataUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetadataUseCase;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetAssessmentReportMetaDataService implements GetAssessmentReportMetaDataUseCase {
+public class GetAssessmentReportMetadataService implements GetAssessmentReportMetadataUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final LoadAssessmentReportMetaDataPort loadAssessmentReportMetaDataPort;
+    private final LoadAssessmentReportMetadataPort loadAssessmentReportMetadataPort;
     private final ObjectMapper objectMapper;
 
     @SneakyThrows
     @Override
-    public Result getAssessmentReportMetaData(Param param) {
+    public Result getAssessmentReportMetadata(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var portResult = loadAssessmentReportMetaDataPort.loadMetadata(param.getAssessmentId());
+        var portResult = loadAssessmentReportMetadataPort.load(param.getAssessmentId());
         if (portResult != null)
             return toResult(objectMapper.readValue(portResult, AssessmentReportMetadata.class));
 

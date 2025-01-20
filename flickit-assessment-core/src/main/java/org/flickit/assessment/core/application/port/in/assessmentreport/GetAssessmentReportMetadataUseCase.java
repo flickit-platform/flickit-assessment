@@ -11,9 +11,9 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL;
 
-public interface GetAssessmentReportMetaDataUseCase {
+public interface GetAssessmentReportMetadataUseCase {
 
-    Result getAssessmentReportMetaData(Param param);
+    Result getAssessmentReportMetadata(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)

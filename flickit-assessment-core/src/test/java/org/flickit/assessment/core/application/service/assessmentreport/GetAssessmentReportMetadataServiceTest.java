@@ -6,8 +6,8 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetaDataUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportMetaDataPort;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetadataUseCase;
+import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportMetadataPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,40 +22,40 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetAssessmentReportMetaDataServiceTest {
+class GetAssessmentReportMetadataServiceTest {
 
     @InjectMocks
-    private GetAssessmentReportMetaDataService service;
+    private GetAssessmentReportMetadataService service;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadAssessmentReportMetaDataPort loadAssessmentReportMetaDataPort;
+    private LoadAssessmentReportMetadataPort loadAssessmentReportMetadataPort;
 
     @Mock
     private ObjectMapper objectMapper;
 
     @Test
-    void testAssessmentReportMetaData_UserDoesNotHaveEnoughAccess_AccessDeniedException() {
-        var param = createParam(GetAssessmentReportMetaDataUseCase.Param.ParamBuilder::build);
+    void testAssessmentReportMetadata_UserDoesNotHaveEnoughAccess_AccessDeniedException() {
+        var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
             .thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentReportMetaData(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentReportMetadata(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     @Test
-    void testAssessmentReportMetaData_AssessmentReportDoesNotExists_SuccessfulEmptyAssessmentReport() {
-        var param = createParam(GetAssessmentReportMetaDataUseCase.Param.ParamBuilder::build);
+    void testAssessmentReportMetadata_AssessmentReportDoesNotExists_SuccessfulEmptyAssessmentReport() {
+        var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
             .thenReturn(true);
-        when(loadAssessmentReportMetaDataPort.loadMetadata(param.getAssessmentId())).thenReturn(null);
+        when(loadAssessmentReportMetadataPort.load(param.getAssessmentId())).thenReturn(null);
 
-        var result = service.getAssessmentReportMetaData(param);
+        var result = service.getAssessmentReportMetadata(param);
         assertNull(result.intro());
         assertNull(result.prosAndCons());
         assertNull(result.steps());
@@ -67,34 +67,34 @@ class GetAssessmentReportMetaDataServiceTest {
 
     @SneakyThrows
     @Test
-    void testAssessmentReportMetaData_AssessmentReportExists_SuccessfulEmptyAssessmentReport() {
-        var param = createParam(GetAssessmentReportMetaDataUseCase.Param.ParamBuilder::build);
+    void testAssessmentReportMetadata_AssessmentReportExists_SuccessfulEmptyAssessmentReport() {
+        var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
         String portResult = "{\"intro\": \"introduction of assessment report\", " +
             "\"prosAndCons\": \"pros and cons of assessment\", " +
             "\"steps\": \"description of steps taken to perform the assessment\", " +
             "\"participants\": \"list of assessment participants and their participation's\"}";
-        var expectedMetaData = new ObjectMapper().readValue(portResult, AssessmentReportMetadata.class);
+        var expectedMetadata = new ObjectMapper().readValue(portResult, AssessmentReportMetadata.class);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
             .thenReturn(true);
-        when(loadAssessmentReportMetaDataPort.loadMetadata(param.getAssessmentId())).thenReturn(portResult);
-        when(objectMapper.readValue(portResult, AssessmentReportMetadata.class)).thenReturn(expectedMetaData);
+        when(loadAssessmentReportMetadataPort.load(param.getAssessmentId())).thenReturn(portResult);
+        when(objectMapper.readValue(portResult, AssessmentReportMetadata.class)).thenReturn(expectedMetadata);
 
-        var result = service.getAssessmentReportMetaData(param);
-        assertEquals(expectedMetaData.intro(), result.intro());
-        assertEquals(expectedMetaData.prosAndCons(), result.prosAndCons());
-        assertEquals(expectedMetaData.steps(), result.steps());
-        assertEquals(expectedMetaData.participants(), result.participants());
+        var result = service.getAssessmentReportMetadata(param);
+        assertEquals(expectedMetadata.intro(), result.intro());
+        assertEquals(expectedMetadata.prosAndCons(), result.prosAndCons());
+        assertEquals(expectedMetadata.steps(), result.steps());
+        assertEquals(expectedMetadata.participants(), result.participants());
     }
 
-    private GetAssessmentReportMetaDataUseCase.Param createParam(Consumer<GetAssessmentReportMetaDataUseCase.Param.ParamBuilder> changer) {
+    private GetAssessmentReportMetadataUseCase.Param createParam(Consumer<GetAssessmentReportMetadataUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private GetAssessmentReportMetaDataUseCase.Param.ParamBuilder paramBuilder() {
-        return GetAssessmentReportMetaDataUseCase.Param.builder()
+    private GetAssessmentReportMetadataUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAssessmentReportMetadataUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }

@@ -2,8 +2,8 @@ package org.flickit.assessment.core.adapter.in.rest.assessmentreport;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetaDataUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetaDataUseCase.*;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetadataUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetadataUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,16 +14,16 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class GetAssessmentReportMetaDataRestController {
+public class GetAssessmentReportMetadataRestController {
 
-    private final GetAssessmentReportMetaDataUseCase usecase;
+    private final GetAssessmentReportMetadataUseCase useCase;
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/report-metadata")
-    public ResponseEntity<Result> getAssessmentReportMetaData(@PathVariable UUID assessmentId) {
+    public ResponseEntity<Result> getAssessmentReportMetadata(@PathVariable UUID assessmentId) {
         UUID currentUserId = userContext.getUser().id();
-        var reportMetaData = usecase.getAssessmentReportMetaData(toParam(assessmentId, currentUserId));
-        return new ResponseEntity<>(reportMetaData, HttpStatus.OK);
+        var reportMetadata = useCase.getAssessmentReportMetadata(toParam(assessmentId, currentUserId));
+        return new ResponseEntity<>(reportMetadata, HttpStatus.OK);
     }
 
     private Param toParam(UUID assessmentId, UUID currentUserId) {

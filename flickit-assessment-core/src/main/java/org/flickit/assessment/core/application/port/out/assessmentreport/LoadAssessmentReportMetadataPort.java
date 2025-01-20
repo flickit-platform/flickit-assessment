@@ -2,7 +2,7 @@ package org.flickit.assessment.core.application.port.out.assessmentreport;
 
 import java.util.UUID;
 
-public interface LoadAssessmentReportMetaDataPort {
+public interface LoadAssessmentReportMetadataPort {
 
-    String loadMetadata(UUID assessmentId);
+    String load(UUID assessmentId);
 }

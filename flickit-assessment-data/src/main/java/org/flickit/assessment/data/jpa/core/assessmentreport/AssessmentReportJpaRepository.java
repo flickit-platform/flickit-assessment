@@ -14,5 +14,5 @@ public interface AssessmentReportJpaRepository extends JpaRepository<AssessmentR
             JOIN AssessmentResultJpaEntity u on r.assessmentResultId = u.id
             WHERE u.assessment.id = :assessmentId
      """)
-    String findMetaDataByAssessmentId(@Param("assessmentId") UUID assessmentId);
+    String findMetadataByAssessmentId(@Param("assessmentId") UUID assessmentId);
 }

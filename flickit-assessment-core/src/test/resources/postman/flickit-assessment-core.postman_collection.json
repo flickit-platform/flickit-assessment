@@ -2257,7 +2257,7 @@
 			"name": "AssessmentResult",
 			"item": [
 				{
-					"name": "Get Assessment Report MetaData",
+					"name": "Get Assessment Report Metadata",
 					"request": {
 						"method": "GET",
 						"header": [
