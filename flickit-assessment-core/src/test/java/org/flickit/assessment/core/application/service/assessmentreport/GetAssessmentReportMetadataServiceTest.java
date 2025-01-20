@@ -1,26 +1,26 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetadataUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportMetadataPort;
+import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentReportMetadataServiceTest {
@@ -32,10 +32,7 @@ class GetAssessmentReportMetadataServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadAssessmentReportMetadataPort loadAssessmentReportMetadataPort;
-
-    @Mock
-    private ObjectMapper objectMapper;
+    private LoadAssessmentReportPort loadAssessmentReportPort;
 
     @Test
     void testAssessmentReportMetadata_UserDoesNotHaveEnoughAccess_AccessDeniedException() {
@@ -54,76 +51,55 @@ class GetAssessmentReportMetadataServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
             .thenReturn(true);
-        when(loadAssessmentReportMetadataPort.load(param.getAssessmentId())).thenReturn(null);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var result = service.getAssessmentReportMetadata(param);
         assertNull(result.intro());
         assertNull(result.prosAndCons());
         assertNull(result.steps());
         assertNull(result.participants());
-
-        verifyNoInteractions(objectMapper);
-    }
-
-    @Test
-    void testAssessmentReportMetadata_AssessmentReportExistsWithBlankMetadata_SuccessfulEmptyAssessmentReport() {
-        var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
-            .thenReturn(true);
-        when(loadAssessmentReportMetadataPort.load(param.getAssessmentId())).thenReturn("");
-
-        var result = service.getAssessmentReportMetadata(param);
-        assertNull(result.intro());
-        assertNull(result.prosAndCons());
-        assertNull(result.steps());
-        assertNull(result.participants());
-
-        verifyNoInteractions(objectMapper);
     }
 
     @SneakyThrows
     @Test
     void testAssessmentReportMetadata_AssessmentReportExists_ReturnsFullMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
-        String portResult = "{\"intro\": \"introduction of assessment report\", " +
-            "\"prosAndCons\": \"pros and cons of assessment\", " +
-            "\"steps\": \"description of steps taken to perform the assessment\", " +
-            "\"participants\": \"list of assessment participants and their participation's\"}";
-        var expectedMetadata = new ObjectMapper().readValue(portResult, AssessmentReportMetadata.class);
+        var metadata = new AssessmentReportMetadata("introduction of assessment report",
+            "pros and cons of assessment",
+            "description of steps taken to perform the assessment",
+            "participants\": \"list of assessment participants and their participation's");
+        var assessmentReport = AssessmentReportMother.reportWithMetadata(metadata);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
             .thenReturn(true);
-        when(loadAssessmentReportMetadataPort.load(param.getAssessmentId())).thenReturn(portResult);
-        when(objectMapper.readValue(portResult, AssessmentReportMetadata.class)).thenReturn(expectedMetadata);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         var result = service.getAssessmentReportMetadata(param);
-        assertEquals(expectedMetadata.intro(), result.intro());
-        assertEquals(expectedMetadata.prosAndCons(), result.prosAndCons());
-        assertEquals(expectedMetadata.steps(), result.steps());
-        assertEquals(expectedMetadata.participants(), result.participants());
+        assertEquals(metadata.intro(), result.intro());
+        assertEquals(metadata.prosAndCons(), result.prosAndCons());
+        assertEquals(metadata.steps(), result.steps());
+        assertEquals(metadata.participants(), result.participants());
     }
 
     @SneakyThrows
     @Test
     void testAssessmentReportMetadata_AssessmentReportExistsSomeKeysAreNull_ReturnsPartialMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
-        String portResult = "{\"intro\": \"introduction of assessment report\", " +
-            "\"incorrectKey\": \"incorrectValue\", " +
-            "\"participants\": \"list of assessment participants and their participation's\"}";
-        var om = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        var expectedMetadata = om.readValue(portResult, AssessmentReportMetadata.class);
+        var metadata = new AssessmentReportMetadata("introduction of assessment report",
+            "pros and cons of assessment",
+            null,
+            null);
+        var assessmentReport = AssessmentReportMother.reportWithMetadata(metadata);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
             .thenReturn(true);
-        when(loadAssessmentReportMetadataPort.load(param.getAssessmentId())).thenReturn(portResult);
-        when(objectMapper.readValue(portResult, AssessmentReportMetadata.class)).thenReturn(expectedMetadata);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         var result = service.getAssessmentReportMetadata(param);
-        assertEquals(expectedMetadata.intro(), result.intro());
-        assertNull(result.prosAndCons());
+        assertEquals(metadata.intro(), result.intro());
+        assertEquals(metadata.prosAndCons(), result.prosAndCons());
         assertNull(result.steps());
-        assertEquals(expectedMetadata.participants(), result.participants());
+        assertNull(result.participants());
     }
 
     private GetAssessmentReportMetadataUseCase.Param createParam(Consumer<GetAssessmentReportMetadataUseCase.Param.ParamBuilder> changer) {
