@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -21,7 +20,6 @@ public class GetAssessmentReportMetadataService implements GetAssessmentReportMe
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
 
-    @SneakyThrows
     @Override
     public Result getAssessmentReportMetadata(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))

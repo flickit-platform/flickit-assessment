@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -60,7 +59,6 @@ class GetAssessmentReportMetadataServiceTest {
         assertNull(result.participants());
     }
 
-    @SneakyThrows
     @Test
     void testAssessmentReportMetadata_AssessmentReportExists_ReturnsFullMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
@@ -81,7 +79,6 @@ class GetAssessmentReportMetadataServiceTest {
         assertEquals(metadata.participants(), result.participants());
     }
 
-    @SneakyThrows
     @Test
     void testAssessmentReportMetadata_AssessmentReportExistsSomeKeysAreNull_ReturnsPartialMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
