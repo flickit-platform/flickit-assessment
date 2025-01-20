@@ -58,7 +58,8 @@ public class AttributeInsightPersistenceJpaAdapter implements
             attributeInsight.attributeId(),
             attributeInsight.assessorInsight(),
             attributeInsight.assessorInsightTime(),
-            attributeInsight.isApproved()
+            attributeInsight.isApproved(),
+            attributeInsight.lastModificationTime()
         );
     }
 

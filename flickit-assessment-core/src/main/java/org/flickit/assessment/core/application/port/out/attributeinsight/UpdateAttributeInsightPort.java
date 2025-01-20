@@ -22,6 +22,7 @@ public interface UpdateAttributeInsightPort {
                          Long attributeId,
                          String assessorInsight,
                          LocalDateTime assessorInsightTime,
-                         boolean isApproved) {
+                         boolean isApproved,
+                         LocalDateTime lastModificationTime) {
     }
 }
