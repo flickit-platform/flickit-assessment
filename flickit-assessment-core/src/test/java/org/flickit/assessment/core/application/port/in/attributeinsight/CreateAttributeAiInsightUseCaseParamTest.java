@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -14,29 +15,36 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateAttributeAiInsightUseCaseParamTest {
 
     @Test
-    void testCreateAttributeAiInsight_AssessmentIdIsNull_ErrorMessage() {
-        var attributeId = 1L;
-        var currentUserId = UUID.randomUUID();
+    void testCreateAttributeAiInsightUseCaseParam_AssessmentIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAttributeAiInsightUseCase.Param(null, attributeId, currentUserId));
+            () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAttributeAiInsight_AttributeIdIsNull_ErrorMessage() {
-        var assessmentId = UUID.randomUUID();
-        var currentUserId = UUID.randomUUID();
+    void testCreateAttributeAiInsightUseCaseParam_AttributeIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAttributeAiInsightUseCase.Param(assessmentId, null, currentUserId));
+            () -> createParam(b -> b.attributeId(null)));
         assertThat(throwable).hasMessage("attributeId: " + CREATE_ATTRIBUTE_AI_INSIGHT_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAttributeAiInsight_CurrentUserIsNull_ErrorMessage() {
-        var assessmentId = UUID.randomUUID();
-        var attributeId = 1L;
+    void testCreateAttributeAiInsightUseCaseParam_CurrentUserIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAttributeAiInsightUseCase.Param(assessmentId, attributeId, null));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
+    }
+
+    private void createParam(Consumer<CreateAttributeAiInsightUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private CreateAttributeAiInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateAttributeAiInsightUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .attributeId(123L)
+            .currentUserId(UUID.randomUUID());
     }
 }

@@ -20,13 +20,14 @@ public class CreateAttributeAiInsightRestController {
     private final CreateAttributeAiInsightUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("assessments/{assessmentId}/ai-report/attributes/{attributeId}")
+    @PostMapping({"/assessments/{assessmentId}/ai-report/attributes/{attributeId}",
+    "/assessments/{assessmentId}/attributes/{attributeId}/ai-insight"})
     ResponseEntity<CreateAttributeAiInsightResponseDto> createAttributeAiInsight(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId) {
         var currentUserId = userContext.getUser().id();
         var result = useCase.createAiInsight(toParam(assessmentId, attributeId, currentUserId));
-        return new ResponseEntity<>(toResponseDto(result), HttpStatus.OK);
+        return new ResponseEntity<>(toResponseDto(result), HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, Long attributeId, UUID currentUserId) {

@@ -99,7 +99,8 @@ public enum AssessmentUserRole {
             VIEW_DASHBOARD,
             APPROVE_ATTRIBUTE_INSIGHT,
             APPROVE_SUBJECT_INSIGHT,
-            APPROVE_ASSIGNMENT_INSIGHT)),
+            APPROVE_ASSIGNMENT_INSIGHT,
+            MANAGE_REPORT_METADATA)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,

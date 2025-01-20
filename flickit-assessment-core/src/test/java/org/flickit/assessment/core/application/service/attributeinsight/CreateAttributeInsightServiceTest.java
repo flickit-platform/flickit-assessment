@@ -11,7 +11,6 @@ import org.flickit.assessment.core.application.port.out.attributeinsight.CreateA
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
-import org.flickit.assessment.core.test.fixture.application.AttributeInsightMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -117,12 +116,12 @@ class CreateAttributeInsightServiceTest {
 
         service.createAttributeInsight(param);
 
-        ArgumentCaptor<AttributeInsight> captor = ArgumentCaptor.forClass(AttributeInsight.class);
+        ArgumentCaptor<UpdateAttributeInsightPort.AssessorParam> captor = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AssessorParam.class);
         verify(updateAttributeInsightPort).updateAssessorInsight(captor.capture());
-        assertEquals(assessmentResult.getId(), captor.getValue().getAssessmentResultId());
-        assertEquals(param.getAttributeId(), captor.getValue().getAttributeId());
-        assertEquals(param.getAssessorInsight(), captor.getValue().getAssessorInsight());
-        assertNotNull(captor.getValue().getAssessorInsightTime());
+        assertEquals(assessmentResult.getId(), captor.getValue().assessmentResultId());
+        assertEquals(param.getAttributeId(), captor.getValue().attributeId());
+        assertEquals(param.getAssessorInsight(), captor.getValue().assessorInsight());
+        assertNotNull(captor.getValue().assessorInsightTime());
         assertTrue(captor.getValue().isApproved());
 
         verifyNoInteractions(createAttributeInsightPort);
