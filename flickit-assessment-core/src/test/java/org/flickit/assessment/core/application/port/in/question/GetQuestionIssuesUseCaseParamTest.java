@@ -43,8 +43,8 @@ class GetQuestionIssuesUseCaseParamTest {
 
     private GetQuestionIssuesUseCase.Param.ParamBuilder paramBuilder() {
         return GetQuestionIssuesUseCase.Param.builder()
-            .questionId(0L)
             .assessmentId(UUID.randomUUID())
+            .questionId(0L)
             .currentUserId(UUID.randomUUID());
     }
 }

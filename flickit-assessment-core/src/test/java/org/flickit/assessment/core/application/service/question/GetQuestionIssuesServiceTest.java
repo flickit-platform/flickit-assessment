@@ -130,7 +130,7 @@ class GetQuestionIssuesServiceTest {
     }
 
     @Test
-    void testGetQuestionIssues_whenSelectedAnswerOptionWithoutEvidencesAndUnresolvedComments_thenSuccessfulWithIssues() {
+    void testGetQuestionIssues_whenQuestionIsAnsweredWithoutEvidencesAndHasUnresolvedComments_thenSuccessfulWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
         var answer = AnswerMother.answerWithConfidenceLevel(3, param.getQuestionId());
 
@@ -160,8 +160,8 @@ class GetQuestionIssuesServiceTest {
 
     private GetQuestionIssuesUseCase.Param.ParamBuilder paramBuilder() {
         return GetQuestionIssuesUseCase.Param.builder()
-            .questionId(0L)
             .assessmentId(UUID.randomUUID())
+            .questionId(0L)
             .currentUserId(UUID.randomUUID());
     }
 }
