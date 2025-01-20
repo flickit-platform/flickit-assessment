@@ -28,6 +28,6 @@ public class AssessmentReportJpaEntity {
     @Column(name = "assessment_result_id", updatable = false, nullable = false)
     private UUID assessmentResultId;
 
-    @Column(name = "meta_data", nullable = false)
+    @Column(name = "metadata", nullable = false)
     private String metadata;
 }
