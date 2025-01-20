@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -20,13 +21,18 @@ public class CreateAssessmentReportMetadataRestController {
     private final UserContext userContext;
 
     @PatchMapping("/assessments/{assessmentId}/report-metadata")
-    ResponseEntity<Void> createReportMetadata(@PathVariable("assessmentId") UUID assessmentId) {
+    ResponseEntity<Void> createReportMetadata(@PathVariable("assessmentId") UUID assessmentId,
+                                              @RequestBody CreateAssessmentReportMetadataRequestDto request) {
         var currentUserId = userContext.getUser().id();
-        useCase.createReportMetadata(toParam(assessmentId, currentUserId));
+        useCase.createReportMetadata(toParam(assessmentId, request, currentUserId));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    private Param toParam(UUID assessmentId, UUID currentUserId) {
-        return new Param(assessmentId, currentUserId);
+    private Param toParam(UUID assessmentId, CreateAssessmentReportMetadataRequestDto request, UUID currentUserId) {
+        var metadataParam = new CreateAssessmentReportMetadataUseCase.MetadataParam(request.intro(),
+            request.prosAnsCons(),
+            request.steps(),
+            request.participants());
+        return new Param(assessmentId, metadataParam, currentUserId);
     }
 }
