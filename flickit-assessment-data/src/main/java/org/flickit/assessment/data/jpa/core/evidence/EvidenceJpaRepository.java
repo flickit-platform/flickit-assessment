@@ -181,5 +181,6 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND e.type IS NULL
                 AND (e.resolved IS NULL OR e.resolved = false)
         """)
-    int countQuestionUnresolvedComments(UUID assessmentId, long questionId);
+    int countQuestionUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                        @Param("questionId") long questionId);
 }
