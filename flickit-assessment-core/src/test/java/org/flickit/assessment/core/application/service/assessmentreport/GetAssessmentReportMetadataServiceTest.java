@@ -64,10 +64,9 @@ class GetAssessmentReportMetadataServiceTest {
         verifyNoInteractions(objectMapper);
     }
 
-
     @SneakyThrows
     @Test
-    void testAssessmentReportMetadata_AssessmentReportExists_SuccessfulEmptyAssessmentReport() {
+    void testAssessmentReportMetadata_AssessmentReportExists_ReturnsFullMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
         String portResult = "{\"intro\": \"introduction of assessment report\", " +
             "\"prosAndCons\": \"pros and cons of assessment\", " +
@@ -89,7 +88,7 @@ class GetAssessmentReportMetadataServiceTest {
 
     @SneakyThrows
     @Test
-    void testAssessmentReportMetadata_AssessmentReportExistsSomeKeysAreNull_Successful() {
+    void testAssessmentReportMetadata_AssessmentReportExistsSomeKeysAreNull_ReturnsPartialMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
         String portResult = "{\"intro\": \"introduction of assessment report\", " +
             "\"participants\": \"list of assessment participants and their participation's\"}";
