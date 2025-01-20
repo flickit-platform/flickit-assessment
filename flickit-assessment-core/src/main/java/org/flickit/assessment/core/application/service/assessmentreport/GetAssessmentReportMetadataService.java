@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -32,10 +31,8 @@ public class GetAssessmentReportMetadataService implements GetAssessmentReportMe
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var portResult = loadAssessmentReportMetadataPort.load(param.getAssessmentId());
-        if (portResult != null && !portResult.isBlank()) {
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        if (portResult != null && !portResult.isBlank())
             return toResult(objectMapper.readValue(portResult, AssessmentReportMetadata.class));
-        }
 
         return new Result(null, null, null, null);
     }
