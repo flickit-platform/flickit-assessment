@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class AttributeInsightMother {
 
-    public static AttributeInsight simpleAttributeAiInsight(){
+    public static AttributeInsight simpleAttributeInsight() {
         return new AttributeInsight(UUID.randomUUID(),
             new Random().nextLong(),
             "ai insight ",
@@ -20,7 +20,7 @@ public class AttributeInsightMother {
             LocalDateTime.now().plusSeconds(10));
     }
 
-    public static AttributeInsight simpleAttributeAiInsightMinInsightTime(){
+    public static AttributeInsight simpleAttributeInsightMinInsightTime() {
         return new AttributeInsight(UUID.randomUUID(),
             new Random().nextLong(),
             "ai insight ",
@@ -32,7 +32,7 @@ public class AttributeInsightMother {
             LocalDateTime.now().plusSeconds(10));
     }
 
-    public static AttributeInsight simpleAttributeAiInsightMinInsightsTime(){
+    public static AttributeInsight simpleAttributeInsightMinInsightsTime() {
         return new AttributeInsight(UUID.randomUUID(),
             new Random().nextLong(),
             "ai insight ",
@@ -42,5 +42,29 @@ public class AttributeInsightMother {
             "input path",
             false,
             LocalDateTime.MIN);
+    }
+
+    public static AttributeInsight attributeInsightWithTimes(LocalDateTime aiInsightTime, LocalDateTime assessorInsightTime, LocalDateTime lastModificationTime) {
+        return new AttributeInsight(UUID.randomUUID(),
+            new Random().nextLong(),
+            "ai insight ",
+            "assessor insight",
+            aiInsightTime,
+            assessorInsightTime,
+            "input path",
+            true,
+            lastModificationTime);
+    }
+
+    public static AttributeInsight attributeAiInsightWithTimes(LocalDateTime aiInsightTime, LocalDateTime lastModificationTime) {
+        return new AttributeInsight(UUID.randomUUID(),
+            new Random().nextLong(),
+            "ai insight ",
+            null,
+            aiInsightTime,
+            null,
+            "input path",
+            false,
+            lastModificationTime);
     }
 }
