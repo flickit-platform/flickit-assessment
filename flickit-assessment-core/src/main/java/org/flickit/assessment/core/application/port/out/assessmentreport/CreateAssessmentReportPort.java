@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface CreateAssessmentReportPort {
 
-    void persist(UUID assessmentId, AssessmentReportMetadata assessmentReport);
+    void persist(UUID assessmentId, AssessmentReportMetadata metadata);
 }

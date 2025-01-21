@@ -6,6 +6,8 @@ import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.data.jpa.core.assessmentreport.AssessmentReportJpaEntity;
 
+import java.util.UUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssessmentReportMapper {
 
@@ -13,5 +15,9 @@ public class AssessmentReportMapper {
         return new AssessmentReport(entity.getId(),
             entity.getAssessmentResultId(),
             metadata);
+    }
+
+    public static AssessmentReportJpaEntity mapToJpaEntity(UUID assessmentResultId, String metadata) {
+        return new AssessmentReportJpaEntity(null, assessmentResultId, metadata);
     }
 }

@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface UpdateAssessmentReportPort {
 
-    void update(UUID assessmentId, AssessmentReportMetadata assessmentReport);
+    void update(UUID id, AssessmentReportMetadata assessmentReport);
 }
