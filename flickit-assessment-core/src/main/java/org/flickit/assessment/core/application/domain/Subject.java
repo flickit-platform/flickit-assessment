@@ -12,7 +12,9 @@ import java.util.List;
 public class Subject {
 
     private final long id;
+    private final int index;
     private final String title;
+    private final String description;
     private final int weight;
     private List<Attribute> attributes;
 }
