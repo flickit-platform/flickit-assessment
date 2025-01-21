@@ -53,8 +53,8 @@ public interface CreateAssessmentReportMetadataUseCase {
         String participants;
 
         @Builder
-        public MetadataParam(String into, String prosAndCons, String steps, String participants) {
-            this.intro = into;
+        public MetadataParam(String intro, String prosAndCons, String steps, String participants) {
+            this.intro = intro;
             this.prosAndCons = prosAndCons;
             this.steps = steps;
             this.participants = participants;
