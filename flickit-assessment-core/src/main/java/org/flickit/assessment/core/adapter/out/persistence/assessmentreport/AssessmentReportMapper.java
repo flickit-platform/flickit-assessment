@@ -14,4 +14,8 @@ public class AssessmentReportMapper {
             entity.getAssessmentResultId(),
             metadata);
     }
+
+    public static AssessmentReportJpaEntity mapToJpaEntity(AssessmentReport assessmentReport, String metadata) {
+        return new AssessmentReportJpaEntity(null, assessmentReport.getAssessmentResultId(), metadata);
+    }
 }
