@@ -2285,6 +2285,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Create Assessment Report Metadata",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"intro\": \"intro\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/27c48fa6-97ff-4fd6-8c3d-259106468f11/report-metadata",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"27c48fa6-97ff-4fd6-8c3d-259106468f11",
+								"report-metadata"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
