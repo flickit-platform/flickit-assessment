@@ -1,10 +1,8 @@
 package org.flickit.assessment.core.application.port.out.assessmentreport;
 
-import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
-
-import java.util.UUID;
+import org.flickit.assessment.core.application.domain.AssessmentReport;
 
 public interface CreateAssessmentReportPort {
 
-    void persist(UUID assessmentId, AssessmentReportMetadata metadata);
+    void persist(AssessmentReport assessmentReport);
 }

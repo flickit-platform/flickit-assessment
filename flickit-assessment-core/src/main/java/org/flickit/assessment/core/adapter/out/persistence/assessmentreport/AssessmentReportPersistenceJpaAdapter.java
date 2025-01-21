@@ -47,18 +47,15 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
     @Override
     @SneakyThrows
-    public void persist(UUID assessmentId, AssessmentReportMetadata metadata) {
-        var assessmentResultId = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND)).getId();
-
-        var assessmentReportJpaEntity = mapToJpaEntity(assessmentResultId, objectMapper.writeValueAsString(metadata));
+    public void persist(AssessmentReport assessmentReport) {
+        var assessmentReportJpaEntity = mapToJpaEntity(assessmentReport, objectMapper.writeValueAsString(assessmentReport.getMetadata()));
 
         repository.save(assessmentReportJpaEntity);
     }
 
     @Override
     @SneakyThrows
-    public void update(UUID id, AssessmentReportMetadata assessmentReport) {
-        repository.updateMetadata(id, objectMapper.writeValueAsString(assessmentReport));
+    public void update(UUID id, AssessmentReportMetadata metadata) {
+        repository.updateMetadata(id, objectMapper.writeValueAsString(metadata));
     }
 }
