@@ -48,9 +48,8 @@ public class AssessmentReportPersistenceJpaAdapter implements
     @Override
     @SneakyThrows
     public void persist(AssessmentReport assessmentReport) {
-        var assessmentReportJpaEntity = mapToJpaEntity(assessmentReport, objectMapper.writeValueAsString(assessmentReport.getMetadata()));
-
-        repository.save(assessmentReportJpaEntity);
+        var metadata = objectMapper.writeValueAsString(assessmentReport.getMetadata());
+        repository.save(mapToJpaEntity(assessmentReport, metadata));
     }
 
     @Override
