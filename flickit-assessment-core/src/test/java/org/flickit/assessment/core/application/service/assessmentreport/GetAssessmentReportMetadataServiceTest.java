@@ -1,8 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportMetadataUseCase;
@@ -18,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_REPORT_METADATA;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -35,10 +34,10 @@ class GetAssessmentReportMetadataServiceTest {
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
     @Test
-    void testAssessmentReportMetadata_UserDoesNotHaveEnoughAccess_AccessDeniedException() {
+    void testAssessmentReportMetadata_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
             .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentReportMetadata(param));
@@ -46,10 +45,10 @@ class GetAssessmentReportMetadataServiceTest {
     }
 
     @Test
-    void testAssessmentReportMetadata_AssessmentReportDoesNotExists_SuccessfulEmptyAssessmentReport() {
+    void testAssessmentReportMetadata_whenAssessmentReportDoesNotExist_thenReturnEmptyMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
             .thenReturn(true);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
 
@@ -60,38 +59,16 @@ class GetAssessmentReportMetadataServiceTest {
         assertNull(result.participants());
     }
 
-    @SneakyThrows
     @Test
-    void testAssessmentReportMetadata_AssessmentReportExists_ReturnsFullMetadata() {
-        var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
-        var metadata = new AssessmentReportMetadata("introduction of assessment report",
-            "pros and cons of assessment",
-            "description of steps taken to perform the assessment",
-            "participants\": \"list of assessment participants and their participation's");
-        var assessmentReport = AssessmentReportMother.reportWithMetadata(metadata);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
-            .thenReturn(true);
-        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
-
-        var result = service.getAssessmentReportMetadata(param);
-        assertEquals(metadata.intro(), result.intro());
-        assertEquals(metadata.prosAndCons(), result.prosAndCons());
-        assertEquals(metadata.steps(), result.steps());
-        assertEquals(metadata.participants(), result.participants());
-    }
-
-    @SneakyThrows
-    @Test
-    void testAssessmentReportMetadata_AssessmentReportExistsSomeKeysAreNull_ReturnsPartialMetadata() {
+    void testAssessmentReportMetadata_whenAssessmentReportExists_thenReturnMetadata() {
         var param = createParam(GetAssessmentReportMetadataUseCase.Param.ParamBuilder::build);
         var metadata = new AssessmentReportMetadata("introduction of assessment report",
             "pros and cons of assessment",
             null,
-            null);
+            "list of assessment participants and their participation's");
         var assessmentReport = AssessmentReportMother.reportWithMetadata(metadata);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.MANAGE_REPORT_METADATA))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
             .thenReturn(true);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
@@ -99,7 +76,7 @@ class GetAssessmentReportMetadataServiceTest {
         assertEquals(metadata.intro(), result.intro());
         assertEquals(metadata.prosAndCons(), result.prosAndCons());
         assertNull(result.steps());
-        assertNull(result.participants());
+        assertEquals(metadata.participants(), result.participants());
     }
 
     private GetAssessmentReportMetadataUseCase.Param createParam(Consumer<GetAssessmentReportMetadataUseCase.Param.ParamBuilder> changer) {

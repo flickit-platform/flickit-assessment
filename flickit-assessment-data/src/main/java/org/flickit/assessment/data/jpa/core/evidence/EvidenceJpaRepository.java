@@ -123,6 +123,17 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             SELECT COUNT(e.id)
             FROM EvidenceJpaEntity e
             WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND e.deleted = false
+                AND e.type IS NOT NULL
+        """)
+    int countQuestionEvidences(@Param("assessmentId") UUID assessmentId,
+                               @Param("questionId") long questionId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
                 AND e.deleted = false
                 AND e.type IS NULL
                 AND (e.resolved IS NULL OR e.resolved = false)
@@ -160,4 +171,16 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsUnresolvedComments(@Param("assessmentId") UUID assessmentId,
                                                                                       @Param("questionnaireId") long questionnaireId);
+
+    @Query("""
+            SELECT COUNT(e)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND e.deleted = false
+                AND e.type IS NULL
+                AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    int countQuestionUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                        @Param("questionId") long questionId);
 }
