@@ -30,7 +30,7 @@ public class CreateAssessmentReportMetadataRestController {
 
     private Param toParam(UUID assessmentId, CreateAssessmentReportMetadataRequestDto request, UUID currentUserId) {
         var metadataParam = new CreateAssessmentReportMetadataUseCase.MetadataParam(request.intro(),
-            request.prosAnsCons(),
+            request.prosAndCons(),
             request.steps(),
             request.participants());
         return new Param(assessmentId, metadataParam, currentUserId);
