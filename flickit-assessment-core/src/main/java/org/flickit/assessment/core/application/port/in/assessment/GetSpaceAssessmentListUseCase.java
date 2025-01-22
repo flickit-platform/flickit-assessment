@@ -55,6 +55,7 @@ public interface GetSpaceAssessmentListUseCase {
                                    Double confidenceValue,
                                    boolean isCalculateValid,
                                    boolean isConfidenceValid,
+                                   boolean hasReport,
                                    Permissions permissions) {
 
         public record Permissions(boolean canManageSettings,
