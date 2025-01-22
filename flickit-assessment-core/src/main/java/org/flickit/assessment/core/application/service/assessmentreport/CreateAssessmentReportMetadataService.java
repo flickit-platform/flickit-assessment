@@ -37,13 +37,15 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var metadata = toDomainModel(param.getMetadata());
 
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
         if (assessmentReport.isEmpty()) {
+            var metadata = toDomainModel(param.getMetadata());
             createAssessmentReportPort.persist(new AssessmentReport(null, assessmentResult.getId(), metadata));
         } else {
-            updateAssessmentReportPort.update(assessmentReport.get().getId(), metadata);
+            var existedMetadata = assessmentReport.get().getMetadata();
+            var newMetadata = buildNewMetadata(existedMetadata, param.getMetadata());
+            updateAssessmentReportPort.update(assessmentReport.get().getId(), newMetadata);
         }
     }
 
@@ -52,5 +54,18 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
             metadata.getProsAndCons(),
             metadata.getSteps(),
             metadata.getParticipants());
+    }
+
+    private AssessmentReportMetadata buildNewMetadata(AssessmentReportMetadata existedMetadata, MetadataParam metadataParam) {
+        return new AssessmentReportMetadata(
+            resolveField(existedMetadata.intro(), metadataParam.getIntro()),
+            resolveField(existedMetadata.prosAndCons(), metadataParam.getProsAndCons()),
+            resolveField(existedMetadata.steps(), metadataParam.getSteps()),
+            resolveField(existedMetadata.participants(), metadataParam.getParticipants())
+        );
+    }
+
+    private <T> T resolveField(T existingValue, T newValue) {
+        return newValue != null ? newValue : existingValue;
     }
 }
