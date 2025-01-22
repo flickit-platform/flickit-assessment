@@ -14,7 +14,6 @@ import org.flickit.assessment.core.application.port.out.assessmentreport.CreateA
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -29,6 +28,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_REPORT_METADATA;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMother.reportWithMetadata;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -101,9 +101,9 @@ class CreateAssessmentReportMetadataServiceTest {
         var actualMetadata = assessmentReportParam.getValue().getMetadata();
         assertNotNull(actualMetadata);
         assertEquals(param.getMetadata().getIntro(), actualMetadata.intro());
-        assertEquals(param.getMetadata().getProsAndCons(), actualMetadata.prosAndCons());
-        assertEquals(param.getMetadata().getSteps(), actualMetadata.steps());
-        assertEquals(param.getMetadata().getParticipants(), actualMetadata.participants());
+        assertNull(actualMetadata.prosAndCons());
+        assertNull(param.getMetadata().getSteps(), actualMetadata.steps());
+        assertNull(param.getMetadata().getParticipants(), actualMetadata.participants());
 
         verifyNoInteractions(updateAssessmentReportPort);
     }
@@ -111,8 +111,8 @@ class CreateAssessmentReportMetadataServiceTest {
     @Test
     void testCreateAssessmentReportMetadata_whenAssessmentReportExists_thenUpdateAssessmentReport() {
         var param = createParam(ParamBuilder::build);
-        var oldMetadata = new AssessmentReportMetadata(null, null, null, null);
-        var assessmentReport = AssessmentReportMother.reportWithMetadata(oldMetadata);
+        var oldMetadata = new AssessmentReportMetadata(null, "pros and cons", null, null);
+        var assessmentReport = reportWithMetadata(oldMetadata);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
             .thenReturn(true);
@@ -126,9 +126,9 @@ class CreateAssessmentReportMetadataServiceTest {
 
         assertEquals(assessmentReport.getId(), reportIdPortParam.getValue());
         assertEquals(param.getMetadata().getIntro(), assessmentReportParam.getValue().intro());
-        assertEquals(param.getMetadata().getProsAndCons(), assessmentReportParam.getValue().prosAndCons());
-        assertEquals(param.getMetadata().getSteps(), assessmentReportParam.getValue().steps());
-        assertEquals(param.getMetadata().getParticipants(), assessmentReportParam.getValue().participants());
+        assertEquals(oldMetadata.prosAndCons(), assessmentReportParam.getValue().prosAndCons());
+        assertNull(assessmentReportParam.getValue().steps());
+        assertNull(assessmentReportParam.getValue().participants());
 
         verifyNoInteractions(createAssessmentReportPort);
     }
@@ -149,8 +149,8 @@ class CreateAssessmentReportMetadataServiceTest {
     private MetadataParamBuilder metadataParamBuilder() {
         return CreateAssessmentReportMetadataUseCase.MetadataParam.builder()
             .intro("intro")
-            .prosAndCons("prosAndCons")
-            .steps("steps")
-            .participants("participants");
+            .prosAndCons(null)
+            .steps(null)
+            .participants(null);
     }
 }
