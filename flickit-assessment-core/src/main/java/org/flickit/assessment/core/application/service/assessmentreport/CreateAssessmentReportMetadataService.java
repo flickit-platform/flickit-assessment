@@ -41,7 +41,7 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
         if (assessmentReport.isEmpty()) {
             var metadata = toDomainModel(param.getMetadata());
-            createAssessmentReportPort.persist(new AssessmentReport(null, assessmentResult.getId(), metadata));
+            createAssessmentReportPort.persist(new AssessmentReport(null, assessmentResult.getId(), metadata, false));
         } else {
             var existedMetadata = assessmentReport.get().getMetadata();
             var newMetadata = buildNewMetadata(existedMetadata, param.getMetadata());
