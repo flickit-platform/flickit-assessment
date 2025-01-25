@@ -1396,17 +1396,17 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/ai-report/attributes/1523",
+							"raw": "{{base_url}}/{{api_path}}/assessments/8ded0da4-9509-40ad-8701-7b6322cb5862/attributes/2078/ai-insight",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
-								"ai-report",
+								"8ded0da4-9509-40ad-8701-7b6322cb5862",
 								"attributes",
-								"1523"
+								"2078",
+								"ai-insight"
 							]
 						}
 					},
@@ -1454,6 +1454,47 @@
 					"response": []
 				},
 				{
+					"name": "Create Attribute Insight",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"assessorInsight\" : \"Assessor Insight\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/0b711637-89c8-473b-bf20-b4f78af9f5f8/attributes/1961/insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"0b711637-89c8-473b-bf20-b4f78af9f5f8",
+								"attributes",
+								"1961",
+								"insight"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Attribute Insight",
 					"request": {
 						"method": "GET",
@@ -1481,6 +1522,39 @@
 								"ai-report",
 								"attributes",
 								"1104"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Attribute Insight",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/attributes/1104/insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"attributes",
+								"1104",
+								"insight"
 							]
 						}
 					},
@@ -2182,17 +2256,17 @@
 					"name": "Init Subject Insight",
 					"request": {
 						"method": "POST",
-                      "header": [
-                        {
-                          "key": "Authorization",
-                          "value": "{{authorization_header}}"
-                        },
-                        {
-                          "key": "Accept-Language",
-                          "value": "{{accept_language}}",
-                          "type": "text"
-                        }
-                      ],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/subjects/464/init-insight",
 							"host": [
@@ -2205,6 +2279,117 @@
 								"subjects",
 								"464",
 								"init-insight"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Question",
+			"item": [
+				{
+					"name": "Get Assessment Question Issues",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/4a298d20-d1ba-42f6-bbfe-03b6c5e28678/questions/19169/issues",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"4a298d20-d1ba-42f6-bbfe-03b6c5e28678",
+								"questions",
+								"19169",
+								"issues"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AssessmentReport",
+			"item": [
+				{
+					"name": "Get Assessment Report Metadata",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/27c48fa6-97ff-4fd6-8c3d-259106468f11/report-metadata",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"27c48fa6-97ff-4fd6-8c3d-259106468f11",
+								"report-metadata"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Assessment Report Metadata",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"intro\": \"intro\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/27c48fa6-97ff-4fd6-8c3d-259106468f11/report-metadata",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"27c48fa6-97ff-4fd6-8c3d-259106468f11",
+								"report-metadata"
 							]
 						}
 					},

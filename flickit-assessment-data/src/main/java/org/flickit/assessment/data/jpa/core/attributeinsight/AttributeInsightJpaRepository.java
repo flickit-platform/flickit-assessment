@@ -31,35 +31,42 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
             SET a.aiInsight = :aiInsight,
                 a.aiInsightTime = :aiInsightTime,
                 a.aiInputPath = :aiInputPath,
-                a.assessorInsight = null,
-                a.assessorInsightTime = null
+                a.approved = :isApproved,
+                a.lastModificationTime = :lastModificationTime
             WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
         """)
     void updateAiInsight(@Param("assessmentResultId") UUID assessmentResultId,
                          @Param("attributeId") Long attributeId,
                          @Param("aiInsight") String aiInsight,
                          @Param("aiInsightTime") LocalDateTime aiInsightTime,
-                         @Param("aiInputPath") String aiInputPath);
+                         @Param("aiInputPath") String aiInputPath,
+                         @Param("isApproved") boolean isApproved,
+                         @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
     @Modifying
     @Query("""
             UPDATE AttributeInsightJpaEntity a
             SET a.assessorInsight = :assessorInsight,
                 a.assessorInsightTime = :assessorInsightTime,
-                a.approved = :isApproved
+                a.approved = :isApproved,
+                a.lastModificationTime = :lastModificationTime
             WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
         """)
     void updateAssessorInsight(@Param("assessmentResultId") UUID assessmentResultId,
                                @Param("attributeId") Long attributeId,
                                @Param("assessorInsight") String assessorInsight,
                                @Param("assessorInsightTime") LocalDateTime assessorInsightTime,
-                               @Param("isApproved") boolean isApproved);
+                               @Param("isApproved") boolean isApproved,
+                               @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
     @Modifying
     @Query("""
             UPDATE AttributeInsightJpaEntity a
-            SET a.approved = true
+            SET a.approved = true,
+                a.lastModificationTime = :lastModificationTime
             WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId = :attributeId
         """)
-    void approve(@Param("assessmentResultId") UUID assessmentResultId, @Param("attributeId") long attributeId);
+    void approve(@Param("assessmentResultId") UUID assessmentResultId,
+                 @Param("attributeId") long attributeId,
+                 @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }

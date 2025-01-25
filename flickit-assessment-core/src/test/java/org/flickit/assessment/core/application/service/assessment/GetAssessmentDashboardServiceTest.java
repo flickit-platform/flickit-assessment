@@ -83,9 +83,9 @@ class GetAssessmentDashboardServiceTest {
     private final int unResolveCommentsCount = 1;
     private final int questionsWithEvidenceCount = 3;
 
-    private final AttributeInsight attributeInsight1 = AttributeInsightMother.simpleAttributeAiInsight();
-    private final AttributeInsight attributeInsight2 = AttributeInsightMother.simpleAttributeAiInsightMinInsightTime();
-    private final AttributeInsight attributeInsight3 = AttributeInsightMother.simpleAttributeAiInsightMinInsightsTime();
+    private final AttributeInsight attributeInsight1 = AttributeInsightMother.simpleAttributeInsight();
+    private final AttributeInsight attributeInsight2 = AttributeInsightMother.simpleAttributeInsightMinInsightTime();
+    private final AttributeInsight attributeInsight3 = AttributeInsightMother.simpleAttributeInsightMinInsightsTime();
 
     private final SubjectInsight subjectInsight1 = SubjectInsightMother.subjectInsight();
     private final SubjectInsight subjectInsight2 = SubjectInsightMother.subjectInsight();
