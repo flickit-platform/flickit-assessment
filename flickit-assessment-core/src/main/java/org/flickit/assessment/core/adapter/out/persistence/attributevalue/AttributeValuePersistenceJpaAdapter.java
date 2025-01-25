@@ -14,7 +14,6 @@ import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuesPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
@@ -45,8 +44,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AttributeValuePersistenceJpaAdapter implements
     CreateAttributeValuePort,
-    LoadAttributeValuePort,
-    LoadAttributeValuesPort {
+    LoadAttributeValuePort {
 
     private final AttributeValueJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -99,18 +97,6 @@ public class AttributeValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
 
         return mapToDomainModel(attributeValueEntity, attribute, answers, maturityLevel);
-    }
-
-    @Override
-    public List<AttributeValue> load(UUID assessmentId) {
-        AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
-
-        var attributes = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId())
-            .stream().collect(toMap(AttributeJpaEntity::getId, Function.identity()));
-        return repository.findByAssessmentResultId(assessmentId)
-            .stream().map(av -> mapToDomainModel(av, attributes.get(av.getAttributeId())))
-            .toList();
     }
 
     private List<Question> loadQuestionsByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId) {

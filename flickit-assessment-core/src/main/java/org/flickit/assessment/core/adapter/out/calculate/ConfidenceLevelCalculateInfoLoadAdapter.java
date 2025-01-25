@@ -195,7 +195,6 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
                 attributeId,
                 null,
                 null,
-                null,
                 attributeIdToWeightMap.get(attributeId),
                 impactfulQuestions
             );

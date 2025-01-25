@@ -11,7 +11,6 @@ import java.util.List;
 public class Attribute {
 
     private final long id;
-    private final Integer index;
     private final String title;
     private final String description;
     private final int weight;

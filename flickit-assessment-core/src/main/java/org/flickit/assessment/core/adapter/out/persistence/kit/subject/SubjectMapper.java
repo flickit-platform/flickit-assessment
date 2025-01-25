@@ -14,9 +14,7 @@ public class SubjectMapper {
     public static Subject mapToDomainModel(SubjectJpaEntity entity, List<Attribute> attributes) {
         return new Subject(
             entity.getId(),
-            entity.getIndex(),
             entity.getTitle(),
-            entity.getDescription(),
             entity.getWeight(),
             attributes
         );
