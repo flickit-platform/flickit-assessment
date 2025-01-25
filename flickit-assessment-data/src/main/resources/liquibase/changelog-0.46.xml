@@ -54,4 +54,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.46-08" author="Mahnaz Khorsandi">
+        <addColumn tableName="fac_assessment_report">
+            <column name="published" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

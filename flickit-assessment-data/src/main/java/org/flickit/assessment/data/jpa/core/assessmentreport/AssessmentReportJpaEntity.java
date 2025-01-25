@@ -30,4 +30,7 @@ public class AssessmentReportJpaEntity {
 
     @Column(name = "metadata", nullable = false)
     private String metadata;
+
+    @Column(name = "published", nullable = false)
+    private Boolean published;
 }

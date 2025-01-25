@@ -8,6 +8,6 @@ import java.util.UUID;
 public class AssessmentReportMother {
 
     public static AssessmentReport reportWithMetadata(AssessmentReportMetadata metadata) {
-        return new AssessmentReport(UUID.randomUUID(), UUID.randomUUID(), metadata);
+        return new AssessmentReport(UUID.randomUUID(), UUID.randomUUID(), metadata, false);
     }
 }
