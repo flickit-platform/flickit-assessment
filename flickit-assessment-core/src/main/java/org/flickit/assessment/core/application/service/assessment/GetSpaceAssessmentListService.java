@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -27,13 +26,11 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
 
     @Override
     public PaginatedResponse<SpaceAssessmentListItem> getAssessmentList(Param param) {
-        UUID currentUserId = param.getCurrentUserId();
-        Long spaceId = param.getSpaceId();
-        if (!checkSpaceAccessPort.checkIsMember(spaceId, currentUserId))
+        if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentListItemPaginatedResponse = loadAssessmentsBySpace.loadSpaceAssessments(
-            spaceId,
+            param.getSpaceId(),
             param.getCurrentUserId(),
             param.getPage(),
             param.getSize()
@@ -52,6 +49,7 @@ public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseC
                     viewable ? e.confidenceValue() : null,
                     e.isCalculateValid(),
                     e.isConfidenceValid(),
+                    e.hasReport(),
                     new SpaceAssessmentListItem.Permissions(e.manageable(),
                         viewable,
                         canViewDashboard,

@@ -12,6 +12,14 @@ public class AssessmentReportMapper {
     public static AssessmentReport mapToDomainModel(AssessmentReportJpaEntity entity, AssessmentReportMetadata metadata) {
         return new AssessmentReport(entity.getId(),
             entity.getAssessmentResultId(),
-            metadata);
+            metadata,
+            entity.getPublished());
+    }
+
+    public static AssessmentReportJpaEntity mapToJpaEntity(AssessmentReport assessmentReport, String metadata) {
+        return new AssessmentReportJpaEntity(null,
+            assessmentReport.getAssessmentResultId(),
+            metadata,
+            assessmentReport.isPublished());
     }
 }

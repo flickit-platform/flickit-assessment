@@ -302,5 +302,10 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL = "get-assessment-report-metadata.assessmentId.notNull";
 
+    public static final String CREATE_ASSESSMENT_REPORT_METADATA_METADATA_NOT_NULL = "create-assessment-report-metadata.metadata.notNull";
+    public static final String CREATE_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL = "create-assessment-report-metadata.assessmentId.notNull";
+    public static final String CREATE_ASSESSMENT_REPORT_METADATA_INTRO_SIZE_MAX = "create-assessment-report-metadata.intro.size.max";
+    public static final String CREATE_ASSESSMENT_REPORT_METADATA_PROS_AND_CONS_SIZE_MAX = "create-assessment-report-metadata.prosAndCons.size.max";
+
     public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL = "get-assessment-report.assessmentId.notNull";
 }

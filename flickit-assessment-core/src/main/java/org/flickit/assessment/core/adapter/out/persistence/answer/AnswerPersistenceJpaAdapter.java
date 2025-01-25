@@ -97,7 +97,7 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public int countWithConfidenceLessThan(UUID assessmentResultId, ConfidenceLevel confidence) {
-        return repository.countWithConfidenceLessThan(assessmentResultId, confidence.ordinal());
+        return repository.countWithConfidenceLessThan(assessmentResultId, confidence.getId());
     }
 
     @Override

@@ -126,6 +126,7 @@ class GetSpaceAssessmentListServiceTest {
                 assertEquals(expected.lastModificationTime(), actual.lastModificationTime());
                 assertTrue(actual.isCalculateValid());
                 assertTrue(actual.isConfidenceValid());
+                assertFalse(actual.hasReport());
                 assertNotNull(actual.permissions());
             });
 
