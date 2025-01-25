@@ -9,9 +9,10 @@ import org.flickit.assessment.core.application.domain.report.AssessmentReportIte
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem.Space;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
+import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
-import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentinsight.AssessmentInsightJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
@@ -20,8 +21,10 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
+import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
@@ -59,6 +62,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final AttributeValueJpaRepository attributeValueJpaRepository;
     private final MinioAdapter minioAdapter;
     private final SpaceJpaRepository spaceRepository;
+    private final AssessmentInsightJpaRepository assessmentInsightRepository;
+    private final QuestionnaireJpaRepository questionnaireRepository;
 
     @Override
     public Result load(UUID assessmentId, UUID currentUserId) {
@@ -68,26 +73,33 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var assessmentResultEntity = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        AssessmentJpaEntity assessment = assessmentResultEntity.getAssessment();
-        AssessmentKitJpaEntity assessmentKitEntity = assessmentKitRepository.findById(assessment.getAssessmentKitId())
+        var assessment = assessmentResultEntity.getAssessment();
+        var assessmentKitEntity = assessmentKitRepository.findById(assessment.getAssessmentKitId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND));
 
-        ExpertGroupJpaEntity expertGroupEntity = expertGroupRepository.findById(assessmentKitEntity.getExpertGroupId())
+        var insightEntity = assessmentInsightRepository.findByAssessmentResultId(assessmentResultEntity.getId())
+            .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND));
+
+        var questionnaireViews = questionnaireRepository.findAllWithQuestionCountByKitVersionId(assessmentResultEntity.getKitVersionId(), null).getContent();
+
+        var expertGroupEntity = expertGroupRepository.findById(assessmentKitEntity.getExpertGroupId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_EXPERT_GROUP_NOT_FOUND));
 
-        long kitVersionId = assessmentResultEntity.getKitVersionId();
-        var maturityLevelEntities = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
+        var kitVersionId = assessmentResultEntity.getKitVersionId();
+        var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId)
+            .stream().map(e -> mapToDomainModel(e, null)).toList();
 
-        Map<Long, MaturityLevel> idToMaturityLevel = maturityLevelEntities.stream()
-            .collect(toMap(MaturityLevelJpaEntity::getId, e -> mapToDomainModel(e, null)));
+        var idToMaturityLevel = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::getId, Function.identity()));
 
         var spaceEntity = spaceRepository.findById(assessment.getSpaceId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_SPACE_NOT_FOUND));
 
-        AssessmentReportItem assessmentReportItem = new AssessmentReportItem(assessmentId,
+        var assessmentReportItem = new AssessmentReportItem(assessmentId,
             assessment.getTitle(),
             assessment.getShortTitle(),
-            buildAssessmentKitItem(expertGroupEntity, assessmentKitEntity, idToMaturityLevel.values().stream().toList()),
+            insightEntity.getInsight(),
+            buildAssessmentKitItem(expertGroupEntity, assessmentKitEntity, maturityLevels, questionnaireViews),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
             assessmentResultEntity.getIsCalculateValid(),
@@ -96,26 +108,42 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessment.getLastModificationTime(),
             new Space(spaceEntity.getId(), spaceEntity.getTitle()));
 
-        List<AssessmentSubjectReportItem> subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel);
+        var subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel);
 
         return new Result(assessmentReportItem, subjects);
     }
 
     private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(ExpertGroupJpaEntity expertGroupEntity,
                                                                           AssessmentKitJpaEntity assessmentKitEntity,
-                                                                          List<MaturityLevel> maturityLevels) {
+                                                                          List<MaturityLevel> maturityLevels,
+                                                                          List<QuestionnaireListItemView> questionnaireItemViews) {
         AssessmentReportItem.AssessmentKitItem.ExpertGroup expertGroup =
             new AssessmentReportItem.AssessmentKitItem.ExpertGroup(expertGroupEntity.getId(),
                 expertGroupEntity.getTitle(),
                 minioAdapter.createDownloadLink(expertGroupEntity.getPicture(), EXPIRY_DURATION));
+
+        var questionnaireReportItems = questionnaireItemViews.stream().map(this::buildQuestionnaireReportItems).toList();
+        int questionsCount = questionnaireReportItems.stream()
+            .mapToInt(QuestionnaireReportItem::questionCount).reduce(0, Integer::sum);
 
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),
             assessmentKitEntity.getSummary(),
             assessmentKitEntity.getAbout(),
             maturityLevels.size(),
+            questionsCount,
             maturityLevels,
+            questionnaireReportItems,
             expertGroup);
+    }
+
+    private QuestionnaireReportItem buildQuestionnaireReportItems(QuestionnaireListItemView itemView) {
+        QuestionnaireJpaEntity questionnaire = itemView.getQuestionnaire();
+        return new QuestionnaireReportItem(questionnaire.getId(),
+            questionnaire.getTitle(),
+            questionnaire.getDescription(),
+            questionnaire.getIndex(),
+            itemView.getQuestionCount());
     }
 
     private List<AssessmentSubjectReportItem> buildSubjectReportItems(AssessmentResultJpaEntity assessmentResult,

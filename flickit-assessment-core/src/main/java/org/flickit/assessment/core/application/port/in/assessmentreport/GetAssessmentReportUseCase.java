@@ -37,14 +37,13 @@ public interface GetAssessmentReportUseCase {
 
     record Result(Assessment assessment,
                   List<Subject> subjects,
-                  List<Questionnaire> questionnaires,
-                  String steps,
-                  String participant) {
+                  AssessmentProcess assessmentProcess) {
     }
 
     record Assessment(String title,
                       String intro,
-                      String executiveSummary,
+                      String overallInsight,
+                      String prosAndCons,
                       AssessmentKit assessmentKit,
                       MaturityLevel maturityLevel,
                       double confidenceValue,
@@ -57,7 +56,7 @@ public interface GetAssessmentReportUseCase {
                          int questionsCount,
                          int questionnairesCount,
                          int attributesCount,
-                         String prosAndCons,
+                         List<Questionnaire> questionnaires,
                          List<MaturityLevel> maturityLevels) {
     }
 
@@ -79,7 +78,6 @@ public interface GetAssessmentReportUseCase {
 
     record Attribute(long id,
                      String title,
-                     String translatedTitle,
                      String description,
                      int index,
                      double confidenceValue,
@@ -91,5 +89,9 @@ public interface GetAssessmentReportUseCase {
                          String description,
                          int index,
                          int questionCount) {
+    }
+
+    record AssessmentProcess(String steps,
+                             String participant) {
     }
 }
