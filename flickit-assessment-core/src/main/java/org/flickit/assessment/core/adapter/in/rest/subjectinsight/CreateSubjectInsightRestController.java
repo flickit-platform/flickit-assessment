@@ -21,12 +21,21 @@ public class CreateSubjectInsightRestController {
     private final UserContext userContext;
 
     @PostMapping("/assessments/{assessmentId}/insights/subjects/{subjectId}")
+    public ResponseEntity<Void> createSubjectInsightOld(@PathVariable("assessmentId") UUID assessmentId,
+                                                        @PathVariable("subjectId") Long subjectId,
+                                                        @RequestBody CreateSubjectInsightRequestDto requestDto) {
+        UUID currentUserId = userContext.getUser().id();
+        useCase.createSubjectInsight(toParam(assessmentId, subjectId, requestDto, currentUserId));
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/assessments/{assessmentId}/subjects/{subjectId}/insight")
     public ResponseEntity<Void> createSubjectInsight(@PathVariable("assessmentId") UUID assessmentId,
                                                      @PathVariable("subjectId") Long subjectId,
                                                      @RequestBody CreateSubjectInsightRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.createSubjectInsight(toParam(assessmentId, subjectId, requestDto, currentUserId));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private Param toParam(UUID assessmentId, Long subjectId, CreateSubjectInsightRequestDto requestDto, UUID currentUserId) {
