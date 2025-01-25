@@ -8,8 +8,6 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
-import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
-import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
@@ -30,9 +28,6 @@ public class SubjectValuePersistenceJpaAdapter implements
     private final SubjectValueJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
-    private final SubjectValueJpaRepository subjectValueRepository;
-    private final AttributeJpaRepository attributeRepository;
-    private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
     public List<SubjectValue> persistAll(List<Long> subjectIds, UUID assessmentResultId) {
