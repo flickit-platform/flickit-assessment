@@ -11,6 +11,8 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
@@ -19,8 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.ASSESSMENT_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND;
@@ -36,6 +37,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final SubjectValueJpaRepository subjectValueRepository;
     private final AttributeJpaRepository attributeRepository;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
     public List<SubjectValue> persistAll(List<Long> subjectIds, UUID assessmentResultId) {
@@ -65,15 +67,22 @@ public class SubjectValuePersistenceJpaAdapter implements
     public List<SubjectValue> loadByAssessmentId(UUID assessmentId) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
+        var kitVersionId = assessmentResult.getKitVersionId();
         var subjectValuesEntities = subjectValueRepository.findByAssessmentResultId(assessmentResult.getId());
-        var subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(assessmentResult.getKitVersionId());
+        var subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(kitVersionId);
         var subjectIdToValueMap = subjectValuesEntities.stream()
             .collect(toMap(SubjectValueJpaEntity::getSubjectId, Function.identity()));
-        var subjectIdToAttributeMap = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId())
+        var subjectIdToAttributeMap = attributeRepository.findAllByKitVersionId(kitVersionId)
             .stream().collect(groupingBy(AttributeJpaEntity::getSubjectId));
+        var maturityLevelsId = subjectValuesEntities.stream().map(SubjectValueJpaEntity::getMaturityLevelId).collect(toSet());
+        var maturityLevelEntityMap = maturityLevelRepository.findAllByIdInAndKitVersionId(maturityLevelsId, kitVersionId)
+            .stream().collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
 
         return subjectEntities.stream()
-            .map(s -> mapToDomainModel(subjectIdToValueMap.get(s.getId()), s, subjectIdToAttributeMap.get(s.getId())))
+            .map(s -> {
+                var sv = subjectIdToValueMap.get(s.getId());
+                return mapToDomainModel(sv, s, subjectIdToAttributeMap.get(s.getId()), maturityLevelEntityMap.get(sv.getMaturityLevelId()));
+            })
             .toList();
     }
 }
