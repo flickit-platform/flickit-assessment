@@ -70,7 +70,7 @@ public interface GetAssessmentReportUseCase {
     record Subject(long id,
                    String title,
                    int index,
-                   String description,
+                   String insight,
                    double confidenceValue,
                    MaturityLevel maturityLevel,
                    List<Attribute> attributes) {
@@ -79,6 +79,7 @@ public interface GetAssessmentReportUseCase {
     record Attribute(long id,
                      String title,
                      String description,
+                     String insight,
                      int index,
                      double confidenceValue,
                      MaturityLevel maturityLevel) {

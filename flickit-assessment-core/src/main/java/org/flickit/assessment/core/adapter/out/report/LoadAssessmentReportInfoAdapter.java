@@ -15,8 +15,12 @@ import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentinsight.AssessmentInsightJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.core.attributeinsight.AttributeInsightJpaEntity;
+import org.flickit.assessment.data.jpa.core.attributeinsight.AttributeInsightJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.AttributeValueJpaRepository;
 import org.flickit.assessment.data.jpa.core.attributevalue.SubjectIdAttributeValueView;
+import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaEntity;
+import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
@@ -64,6 +68,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final SpaceJpaRepository spaceRepository;
     private final AssessmentInsightJpaRepository assessmentInsightRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
+    private final AttributeInsightJpaRepository attributeInsightRepository;
+    private final SubjectInsightJpaRepository subjectInsightRepository;
 
     @Override
     public Result load(UUID assessmentId, UUID currentUserId) {
@@ -163,34 +169,53 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .collect(groupingBy(SubjectIdAttributeValueView::getSubjectId));
 
         List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, assessmentResult.getKitVersionId());
+        var attributeIdToInsightMap = attributeInsightRepository.findByAssessmentResultId(assessmentResult.getId())
+            .stream().collect(toMap(AttributeInsightJpaEntity::getAttributeId, Function.identity()));
+        var subjectIdToInsightMap = subjectInsightRepository.findByAssessmentResultId(assessmentResult.getId())
+            .stream().collect(toMap(SubjectInsightJpaEntity::getSubjectId, Function.identity()));
 
         return subjectEntities.stream()
             .map(e -> {
                 Long maturityLevelId = subjectIdToSubjectValue.get(e.getId()).getMaturityLevelId();
                 MaturityLevel subjectMaturityLevel = idToMaturityLevel.get(maturityLevelId);
                 var attributeValues = subjectIdToAttributeValueMap.get(e.getId());
+                var insight = subjectIdToInsightMap.get(e.getId()) == null ? null :
+                    subjectIdToInsightMap.get(e.getId()).getInsight();
                 return new AssessmentSubjectReportItem(e.getId(),
                     e.getTitle(),
                     e.getIndex(),
-                    e.getDescription(),
+                    insight,
                     subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
                     subjectMaturityLevel,
                     attributeValues == null ? List.of() : attributeValues.stream()
-                        .map(x -> buildAttributeReportItem(idToMaturityLevel, x))
+                        .map(x -> buildAttributeReportItem(idToMaturityLevel, x, attributeIdToInsightMap.get(x.getAttribute().getId())))
                         .toList());
             }).toList();
     }
 
     private AttributeReportItem buildAttributeReportItem(Map<Long, MaturityLevel> idToMaturityLevel,
-                                                         SubjectIdAttributeValueView attributeValueView) {
+                                                         SubjectIdAttributeValueView attributeValueView,
+                                                         AttributeInsightJpaEntity attributeInsight) {
         var attribute = attributeValueView.getAttribute();
         var attributeValue = attributeValueView.getAttributeValue();
         var maturityLevel = idToMaturityLevel.get(attributeValue.getMaturityLevelId());
+        var insight = getAttributeInsight(attributeInsight);
         return new AttributeReportItem(attribute.getId(),
             attribute.getTitle(),
             attribute.getDescription(),
+            insight,
             attribute.getIndex(),
             attributeValue.getConfidenceValue(),
             maturityLevel);
+    }
+
+    private String getAttributeInsight(AttributeInsightJpaEntity insight) {
+        if (insight == null || (insight.getAiInsight() == null && insight.getAssessorInsight() == null))
+            return null;
+        if (insight.getAssessorInsight() == null ||
+            insight.getAiInsightTime() != null && insight.getAiInsightTime().isAfter(insight.getAssessorInsightTime())) {
+            return insight.getAiInsight();
+        }
+        return insight.getAssessorInsight();
     }
 }

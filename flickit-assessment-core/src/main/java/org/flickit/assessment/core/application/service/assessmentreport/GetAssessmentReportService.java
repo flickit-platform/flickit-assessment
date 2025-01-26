@@ -107,7 +107,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new Subject(subject.id(),
             subject.title(),
             subject.index(),
-            subject.description(),
+            subject.insight(),
             subject.confidenceValue(),
             maturityLevelMap.get(subject.maturityLevel().getId()),
             attributes);
@@ -117,6 +117,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new Attribute(attribute.id(),
             attribute.title(),
             attribute.description(),
+            attribute.insight(),
             attribute.index(),
             attribute.confidenceValue(),
             maturityLevelMap.get(attribute.maturityLevel().getId()));
