@@ -2298,7 +2298,7 @@
 			"name": "SubjectInsight",
 			"item": [
 				{
-					"name": "Old Create Subject Insight",
+					"name": "Create Subject Insight",
 					"request": {
 						"method": "POST",
 						"header": [
