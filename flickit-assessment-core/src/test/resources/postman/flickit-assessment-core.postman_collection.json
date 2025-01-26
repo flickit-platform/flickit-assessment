@@ -2339,47 +2339,6 @@
 					"response": []
 				},
 				{
-					"name": "Create Subject Insight",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"insight\" : \"Assessor Insight\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/subjects/15/insight",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
-								"subjects",
-								"15",
-								"insight"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get Subject Insight",
 					"request": {
 						"method": "GET",
