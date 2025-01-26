@@ -7,16 +7,13 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
-import org.flickit.assessment.core.application.domain.report.SubjectReportItem;
 import org.flickit.assessment.core.application.port.in.subjectinsight.InitSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
-import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
-import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
+import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,16 +72,16 @@ class InitSubjectInsightServiceTest {
         var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
-                .thenReturn(false);
+            .thenReturn(false);
 
         var throwable = Assertions.assertThrows(AccessDeniedException.class, () -> service.initSubjectInsight(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadAssessmentResultPort,
-                createSubjectInsightPort,
-                updateSubjectInsightPort,
-                validateAssessmentResultPort,
-                loadSubjectInsightPort);
+            createSubjectInsightPort,
+            updateSubjectInsightPort,
+            validateAssessmentResultPort,
+            loadSubjectInsightPort);
     }
 
     @Test
@@ -92,7 +89,7 @@ class InitSubjectInsightServiceTest {
         var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.initSubjectInsight(param));
@@ -110,13 +107,7 @@ class InitSubjectInsightServiceTest {
         var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         var mLevel = MaturityLevelMother.levelOne();
-        var subject = new SubjectReportItem(1L,
-            "reportTitle",
-            "desc",
-            mLevel,
-            1d,
-            true,
-            true);
+        var subject = SubjectReportItemMother.createWithMaturityLevel(mLevel);
         var subjectReport = new LoadSubjectReportInfoPort.Result(subject, List.of(mLevel), new ArrayList<>());
         var insight = MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subject.title(),
@@ -160,13 +151,7 @@ class InitSubjectInsightServiceTest {
         var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         var mLevel = MaturityLevelMother.levelOne();
-        var subject = new SubjectReportItem(1L,
-            "reportTitle",
-            "desc",
-            mLevel,
-            1d,
-            true,
-            true);
+        var subject = SubjectReportItemMother.createWithMaturityLevel(mLevel);
         var subjectReport = new LoadSubjectReportInfoPort.Result(subject, List.of(mLevel), new ArrayList<>());
         var insight = MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subject.title(),
@@ -180,7 +165,7 @@ class InitSubjectInsightServiceTest {
             subject.title());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
