@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
@@ -35,11 +36,13 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
+    private final ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Override
     public Result getAssessmentReport(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_GRAPHICAL_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId(), param.getCurrentUserId());
         var metadata = loadAssessmentReportPort.load(param.getAssessmentId())
