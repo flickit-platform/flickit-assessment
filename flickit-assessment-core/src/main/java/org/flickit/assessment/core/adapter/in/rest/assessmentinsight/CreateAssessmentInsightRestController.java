@@ -28,7 +28,7 @@ public class CreateAssessmentInsightRestController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("assessments/{assessmentId}/overall-insights")
+    @PostMapping("assessments/{assessmentId}/overall-insight")
     ResponseEntity<Void> createAssessmentInsight(@PathVariable("assessmentId") UUID assessmentId,
                                                  @RequestBody CreateAssessmentInsightRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
