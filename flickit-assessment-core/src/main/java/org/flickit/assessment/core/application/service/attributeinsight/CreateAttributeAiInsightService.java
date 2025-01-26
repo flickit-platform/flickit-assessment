@@ -78,8 +78,10 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
         var attribute = loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId());
         var attributeInsight = loadAttributeInsightPort.load(assessmentResult.getId(), attribute.getId());
 
-        if (attributeInsight.isPresent() && isInsightValid(attributeInsight.get(), assessmentResult))
+        if (attributeInsight.isPresent() && isInsightValid(attributeInsight.get(), assessmentResult)) {
+            updateAttributeInsightPort.updateAiInsightTime(toUpdateTimeParam(assessmentResult.getId(), attribute.getId()));
             return new Result(attributeInsight.get().getAiInsight());
+        }
 
         if (!appAiProperties.isEnabled())
             throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
@@ -124,6 +126,13 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             aiInputPath = uploadAttributeScoresFilePort.uploadExcel(stream, fileName);
         }
         return aiInputPath;
+    }
+
+    private UpdateAttributeInsightPort.AiTimeParam toUpdateTimeParam(UUID assessmentResultId, long attributeId) {
+        return new UpdateAttributeInsightPort.AiTimeParam(assessmentResultId,
+            attributeId,
+            LocalDateTime.now(),
+            LocalDateTime.now());
     }
 
     private UpdateAttributeInsightPort.AiParam toUpdateParam(UUID assessmentResultId, long attributeId, String aiInsight, String aiInputPath) {
