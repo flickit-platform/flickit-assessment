@@ -44,4 +44,5 @@
     <include file="classpath:liquibase/changelog-0.42.xml"/>
     <include file="classpath:liquibase/changelog-0.44.xml"/>
     <include file="classpath:liquibase/changelog-0.46.xml"/>
+    <include file="classpath:liquibase/changelog-0.47.xml"/>
 </databaseChangeLog>
