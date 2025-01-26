@@ -100,7 +100,8 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     }
 
     private boolean isInsightValid(AttributeInsight attributeInsight, AssessmentResult assessmentResult) {
-        return assessmentResult.getLastCalculationTime().isBefore(attributeInsight.getAiInsightTime());
+        return attributeInsight.getAiInsightTime() != null &&
+            assessmentResult.getLastCalculationTime().isBefore(attributeInsight.getAiInsightTime());
     }
 
     private String getAssessmentTitle(AssessmentResult assessmentResult) {

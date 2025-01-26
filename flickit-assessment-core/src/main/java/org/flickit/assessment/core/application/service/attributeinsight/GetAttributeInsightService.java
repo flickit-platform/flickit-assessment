@@ -42,7 +42,8 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
 
         var insight = attributeInsight.get();
 
-        if (insight.getAssessorInsight() == null || insight.getAiInsightTime().isAfter(insight.getAssessorInsightTime())) {
+        if (insight.getAssessorInsight() == null ||
+            (insight.getAiInsightTime() != null && insight.getAiInsightTime().isAfter(insight.getAssessorInsightTime()))) {
             Result.Insight aiInsight = new Result.Insight(insight.getAiInsight(),
                 insight.getAiInsightTime(),
                 isValid(assessmentResult.getLastCalculationTime(), insight.getAiInsightTime(), insight.getLastModificationTime()));
