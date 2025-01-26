@@ -67,7 +67,7 @@ public interface CreateAssessmentKitUseCase {
             this.title = title != null ? title.strip() : null;
             this.summary = summary != null ? summary.strip() : null;
             this.about = about != null ? about.strip() : null;
-            this.lang = KitLanguage.getEnum(lang).getTitle();
+            this.lang = KitLanguage.getEnum(lang).name();
             this.isPrivate = isPrivate;
             this.expertGroupId = expertGroupId;
             this.tagIds = tagIds;
