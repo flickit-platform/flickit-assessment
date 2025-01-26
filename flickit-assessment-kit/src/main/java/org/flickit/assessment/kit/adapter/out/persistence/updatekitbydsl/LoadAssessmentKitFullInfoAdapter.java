@@ -103,7 +103,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             entity.getTitle(),
             entity.getSummary(),
             entity.getAbout(),
-            KitLanguage.values()[entity.getLanguageId()].name(),
+            KitLanguage.values()[entity.getLanguageId()],
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getPublished(),

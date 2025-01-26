@@ -2,7 +2,6 @@ package org.flickit.assessment.kit.adapter.in.rest.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.kit.application.domain.KitLanguage;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitEditableInfoUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +34,7 @@ public class GetKitEditableInfoRestController {
             kitEditableInfo.id(),
             kitEditableInfo.title(),
             kitEditableInfo.summary(),
-            KitLanguage.valueOf(kitEditableInfo.lang()).getTitle(),
+            kitEditableInfo.lang(),
             kitEditableInfo.published(),
             kitEditableInfo.isPrivate(),
             kitEditableInfo.price(),

@@ -83,7 +83,7 @@ class GetKitEditableInfoServiceTest {
         assertEquals(assessmentKit.getId(), kitEditableInfo.id());
         assertEquals(assessmentKit.getTitle(), kitEditableInfo.title());
         assertEquals(assessmentKit.getSummary(), kitEditableInfo.summary());
-        assertEquals(assessmentKit.getLang(), kitEditableInfo.lang());
+        assertEquals(assessmentKit.getLanguage().getTitle(), kitEditableInfo.lang());
         assertEquals(assessmentKit.isPublished(), kitEditableInfo.published());
         assertEquals(assessmentKit.isPrivate(), kitEditableInfo.isPrivate());
         assertEquals(0, kitEditableInfo.price());
