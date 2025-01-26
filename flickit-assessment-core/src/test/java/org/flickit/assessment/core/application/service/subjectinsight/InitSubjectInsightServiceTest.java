@@ -72,9 +72,9 @@ class InitSubjectInsightServiceTest {
 
     private final MaturityLevel mLevel = MaturityLevelMother.levelOne();
     private final SubjectReportItem subject = SubjectReportItemMother.createWithMaturityLevel(mLevel);
-    private final LoadSubjectReportInfoPort.Result subjectReport = new LoadSubjectReportInfoPort.Result(subject, List.of(mLevel), new ArrayList<>());
+    private final LoadSubjectReportInfoPort.Result subjectReportInfo = new LoadSubjectReportInfoPort.Result(subject, List.of(mLevel), new ArrayList<>());
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-    private final String insight = getInsight();
+    private final String insight = buildInsight();
 
     @Test
     void testInitSubjectInsight_whenCurrentUserDoesNotHaveRequiredPermission_throwAccessDeniedException() {
@@ -123,7 +123,7 @@ class InitSubjectInsightServiceTest {
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
             .thenReturn(Optional.of(subjectInsight));
         when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId()))
-            .thenReturn(subjectReport);
+            .thenReturn(subjectReportInfo);
         doNothing().when(updateSubjectInsightPort).update(any(SubjectInsight.class));
 
         service.initSubjectInsight(param);
@@ -150,7 +150,7 @@ class InitSubjectInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
-        when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId())).thenReturn(subjectReport);
+        when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId())).thenReturn(subjectReportInfo);
         doNothing().when(createSubjectInsightPort).persist(any(SubjectInsight.class));
 
         service.initSubjectInsight(param);
@@ -168,16 +168,16 @@ class InitSubjectInsightServiceTest {
         verifyNoInteractions(updateSubjectInsightPort);
     }
 
-    private @NotNull String getInsight() {
+    private @NotNull String buildInsight() {
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subject.title(),
             subject.description(),
             subject.confidenceValue() != null ? (int) Math.ceil(subject.confidenceValue()) : 0,
             subject.title(),
             subject.maturityLevel().getIndex(),
-            subjectReport.maturityLevels().size(),
+            subjectReportInfo.maturityLevels().size(),
             subject.maturityLevel().getTitle(),
-            subjectReport.attributes().size(),
+            subjectReportInfo.attributes().size(),
             subject.title());
     }
 
