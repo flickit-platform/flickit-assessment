@@ -18,7 +18,7 @@ public class ReportAssessmentRestController {
     private final ReportAssessmentUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("/assessments/{assessmentId}/report")
+    @GetMapping("/assessments/{assessmentId}/insights")
     public ResponseEntity<ReportAssessmentUseCase.Result> reportAssessment(@PathVariable("assessmentId") UUID assessmentId) {
         UUID currentUserId = userContext.getUser().id();
         var param = toParam(assessmentId, currentUserId);

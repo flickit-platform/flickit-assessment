@@ -417,7 +417,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/report",
+							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/insights",
 							"host": [
 								"{{base_url}}"
 							],
@@ -425,7 +425,7 @@
 								"{{api_path}}",
 								"assessments",
 								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
-								"report"
+								"insights"
 							]
 						}
 					},
