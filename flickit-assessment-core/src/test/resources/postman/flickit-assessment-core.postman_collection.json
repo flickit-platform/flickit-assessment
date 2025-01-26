@@ -674,7 +674,7 @@
 			"name": "AssessmentInsight",
 			"item": [
 				{
-					"name": "Create Assessment Insight",
+					"name": "Old Create Assessment Insight",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -707,6 +707,45 @@
 								"assessments",
 								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
 								"insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Assessment Insight",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/overall-insights",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
+								"overall-insights"
 							]
 						}
 					},
