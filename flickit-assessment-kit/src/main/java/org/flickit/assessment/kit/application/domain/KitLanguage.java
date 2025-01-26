@@ -38,10 +38,6 @@ public enum KitLanguage {
     }
 
     public static KitLanguage getEnum(String name) {
-        return EnumUtils.getEnum(KitLanguage.class, name);
-    }
-
-    public static KitLanguage getOrDefault(String name) {
         return EnumUtils.getEnum(KitLanguage.class, name, getDefault());
     }
 }

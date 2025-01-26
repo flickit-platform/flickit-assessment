@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.flickit.assessment.common.exception.ValidationException;
+import org.flickit.assessment.kit.application.domain.KitLanguage;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,8 +13,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UpdateKitInfoUseCaseParamTest {
 
@@ -59,10 +58,12 @@ class UpdateKitInfoUseCaseParamTest {
     }
 
     @Test
-    void testUpdateKitInfoUseCaseParam_langParamViolatesConstraints_ErrorMessage() {
-        var throwable = assertThrows(ValidationException.class,
-            () -> createParam(b -> b.lang("FR")));
-        assertEquals(UPDATE_KIT_INFO_KIT_LANGUAGE_INVALID, throwable.getMessageKey());
+    void testUpdateKitInfoUseCaseParam_langParamViolatesConstraints_SetDefault() {
+        var param = createParam(b -> b.lang("FR"));
+        assertEquals(KitLanguage.getDefault().name(), param.getLang());
+
+        param = createParam(b -> b.lang(null));
+        assertNull(param.getLang());
     }
 
     @Test
@@ -79,10 +80,10 @@ class UpdateKitInfoUseCaseParamTest {
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private void createParam(Consumer<UpdateKitInfoUseCase.Param.ParamBuilder> changer) {
+    private UpdateKitInfoUseCase.Param createParam(Consumer<UpdateKitInfoUseCase.Param.ParamBuilder> changer) {
         var param = paramBuilder();
         changer.accept(param);
-        param.build();
+        return param.build();
     }
 
     private UpdateKitInfoUseCase.Param.ParamBuilder paramBuilder() {
