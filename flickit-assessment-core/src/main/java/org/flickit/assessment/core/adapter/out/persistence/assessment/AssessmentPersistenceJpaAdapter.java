@@ -106,7 +106,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getConfidenceValue(),
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
-                    null);
+                    null,
+                    false);
             }).toList();
 
         return new PaginatedResponse<>(
@@ -165,7 +166,8 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getConfidenceValue(),
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
-                    e.getManageable());
+                    e.getManageable(),
+                    e.getHasReport());
             }).toList();
 
 

@@ -216,12 +216,11 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_NULL = "update-assessment-invite.roleId.notNull";
     public static final String UPDATE_ASSESSMENT_INVITE_ROLE_ID_NOT_FOUND = "update-assessment-invite.roleId.notFound";
 
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "update-attribute-insight.assessmentId.notNull";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "update-attribute-insight.attributeId.notNull";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL = "update-attribute-insight.assessorInsight.notNull";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX= "update-attribute-insight.assessorInsight.size.max";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "update-attribute-insight.assessmentResult.notFound";
-    public static final String UPDATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_INSIGHT_NOT_FOUND = "update-attribute-insight.attributeInsight.notFound";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "create-attribute-insight.assessmentId.notNull";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "create-attribute-insight.attributeId.notNull";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_NOT_NULL = "create-attribute-insight.assessorInsight.notNull";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ASSESSOR_INSIGHT_SIZE_MAX = "create-attribute-insight.assessorInsight.size.max";
+    public static final String CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND = "create-attribute-insight.assessmentResult.notFound";
 
     public static final String GET_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL = "get-attribute-insight.assessmentId.notNull";
     public static final String GET_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL = "get-attribute-insight.attributeId.notNull";
@@ -296,4 +295,15 @@ public class ErrorMessageKey {
     public static final String GRANT_ACCESS_TO_REPORT_USER_ALREADY_GRANTED = "grant-access-to-report.user-already-granted";
 
     public static final String GET_GRAPHICAL_REPORT_USERS_ASSESSMENT_ID_NOT_NULL = "get-graphical-report-users.assessmentId.notNull";
+
+    public static final String GET_QUESTION_ISSUES_QUESTION_ID_NOT_NULL = "get-question-issues.questionId.notNull";
+    public static final String GET_QUESTION_ISSUES_ASSESSMENT_ID_NOT_NULL = "get-question-issues.assessmentId.notNull";
+    public static final String GET_QUESTION_ISSUES_ASSESSMENT_RESULT_NOT_FOUND = "get-question-issues.assessmentResult.notFound";
+
+    public static final String GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL = "get-assessment-report-metadata.assessmentId.notNull";
+
+    public static final String CREATE_ASSESSMENT_REPORT_METADATA_METADATA_NOT_NULL = "create-assessment-report-metadata.metadata.notNull";
+    public static final String CREATE_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL = "create-assessment-report-metadata.assessmentId.notNull";
+    public static final String CREATE_ASSESSMENT_REPORT_METADATA_INTRO_SIZE_MAX = "create-assessment-report-metadata.intro.size.max";
+    public static final String CREATE_ASSESSMENT_REPORT_METADATA_PROS_AND_CONS_SIZE_MAX = "create-assessment-report-metadata.prosAndCons.size.max";
 }

@@ -64,6 +64,7 @@ public class AssessmentMother {
             new Random().nextDouble() * 100,
             Boolean.TRUE,
             Boolean.TRUE,
-            manageable);
+            manageable,
+            Boolean.FALSE);
     }
 }

@@ -1,0 +1,635 @@
+{
+  "questionnaireModels": [
+    {
+      "code": "Development",
+      "index": 1,
+      "title": "Development",
+      "description": "This category includes tools "
+    },
+    {
+      "code": "TeamCollaboration",
+      "index": 2,
+      "title": "Team Collaboration",
+      "description": "These tools facilitate"
+    }
+  ],
+  "attributeModels": [
+    {
+      "code": "AgileWorkflow",
+      "index": 1,
+      "title": "Team Agility",
+      "description": "How is the team equipped to continuously and incrementally meet the growing needs of customers in a rapid manner?",
+      "subjectCode": "Team",
+      "weight": 1
+    },
+    {
+      "code": "Productivity",
+      "index": 2,
+      "title": "Productivity",
+      "description": "How is the team equipped to deliver high-quality code efficiently and promptly?",
+      "subjectCode": "Team",
+      "weight": 3
+    },
+    {
+      "code": "SoftwareReliability",
+      "index": 1,
+      "title": "Software Reliability",
+      "description": "How is the team equipped to develop reliable software that ensures accurate and robust system performance, even under exceptional conditions?",
+      "subjectCode": "Software",
+      "weight": 5
+    }
+  ],
+  "questionModels": [
+    {
+      "code": "Q1",
+      "index": 1,
+      "title": "How efficiently are 'Code Editor' like Intellij, Eclipse and VSCode being employed?",
+      "description": "software tool for writing",
+      "questionnaireCode": "Development",
+      "questionImpacts": [
+        {
+          "attributeCode": "Productivity",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        },
+        {
+          "attributeCode": "SoftwareReliability",
+          "question": null,
+          "weight": 2,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    },
+    {
+      "code": "Q2",
+      "index": 2,
+      "title": "How efficiently are 'Build Management' like Maven, Gradle, Ant, Apache Ivy and Bazel being employed?",
+      "description": "automate the process of converting source code ",
+      "questionnaireCode": "Development",
+      "questionImpacts": [
+        {
+          "attributeCode": "Productivity",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.6,
+            "4": 0.85,
+            "5": 1
+          }
+        },
+        {
+          "attributeCode": "SoftwareReliability",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.6,
+            "4": 0.85,
+            "5": 1
+          }
+        }
+      ],
+      "answerRangeCode": null,
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": [
+        {
+          "index": 1,
+          "caption": "Undeveloped",
+          "value": 0
+        },
+        {
+          "index": 2,
+          "caption": "Partial",
+          "value": 0.3
+        },
+        {
+          "index": 3,
+          "caption": "Discussable",
+          "value": 0.6
+        },
+        {
+          "index": 4,
+          "caption": "Acceptable",
+          "value": 0.85
+        },
+        {
+          "index": 5,
+          "caption": "Excellent",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "code": "Q3",
+      "index": 3,
+      "title": "How efficiently are 'Application-level Dependency Manager' like Maven, npm, pip, Bundler and Composer being employed?",
+      "description": "automates the management of libraries ",
+      "questionnaireCode": "Development",
+      "questionImpacts": [
+        {
+          "attributeCode": "Productivity",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    },
+    {
+      "code": "Q4",
+      "index": 4,
+      "title": "How efficiently are 'Version Control System (VCS)' like Git (GitHub, GitLab, Azure, Bitbucket), Subversion (SVN) and Mercurial being employed?",
+      "description": "a tool that tracks changes made to source code",
+      "questionnaireCode": "Development",
+      "questionImpacts": [
+        {
+          "attributeCode": "Productivity",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        },
+        {
+          "attributeCode": "SoftwareReliability",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    },
+    {
+      "code": "Q5",
+      "index": 5,
+      "title": "How efficiently are 'Snippet Management' like Gist (GitHub), CodePen and JSFiddle being employed?",
+      "description": "tool for developers to store and organize reusable pieces of code.",
+      "questionnaireCode": "Development",
+      "questionImpacts": [
+        {
+          "attributeCode": "Productivity",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "StateOfTheArt",
+            "index": null,
+            "title": "State of the Art",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    },
+    {
+      "code": "Q20",
+      "index": 1,
+      "title": "How efficiently are 'Code Review and Collaboration' like Gitlab, Azure, Crucible, Review Board, Collaborator and GitHub Pull Requests being employed?",
+      "description": "streamline the process of sharing",
+      "questionnaireCode": "TeamCollaboration",
+      "questionImpacts": [
+        {
+          "attributeCode": "AgileWorkflow",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "WellEquiped",
+            "index": null,
+            "title": "Well Equiped",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        },
+        {
+          "attributeCode": "SoftwareReliability",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "WellEquiped",
+            "index": null,
+            "title": "Well Equiped",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    },
+    {
+      "code": "Q21",
+      "index": 2,
+      "title": "How efficiently are 'Project Management and Issue Tracking' like JIRA, Trello, Asana, ClickUp and Monday.com being employed?",
+      "description": "streamline software development",
+      "questionnaireCode": "TeamCollaboration",
+      "questionImpacts": [
+        {
+          "attributeCode": "AgileWorkflow",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        },
+        {
+          "attributeCode": "Productivity",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "Prepared",
+            "index": null,
+            "title": "Prepared",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    },
+    {
+      "code": "Q22",
+      "index": 3,
+      "title": "How efficiently are 'Team Communication and Collaboration' like Slack, Microsoft Teams, Discord, Google Chat and Mattermost being employed?",
+      "description": "facilitate communication and collaboration ",
+      "questionnaireCode": "TeamCollaboration",
+      "questionImpacts": [
+        {
+          "attributeCode": "AgileWorkflow",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "WellEquiped",
+            "index": null,
+            "title": "Well Equiped",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        },
+        {
+          "attributeCode": "Productivity",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "WellEquiped",
+            "index": null,
+            "title": "Well Equiped",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    },
+    {
+      "code": "Q23",
+      "index": 4,
+      "title": "How efficiently are 'Virtual Whiteboards' like Miro, MURAL and Microsoft Whiteboard being employed?",
+      "description": "Virtual Whiteboards are digital platforms ",
+      "questionnaireCode": "TeamCollaboration",
+      "questionImpacts": [
+        {
+          "attributeCode": "AgileWorkflow",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "StateOfTheArt",
+            "index": null,
+            "title": "State of the Art",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    },
+    {
+      "code": "Q24",
+      "index": 5,
+      "title": "How efficiently are 'Team Analytics and Performance Insights' like Codacy Pulse, Oobeya, Swarmia, Linearb and Faros.ai being employed?",
+      "description": "software solutions that gather data from various team collaboration tools ",
+      "questionnaireCode": "TeamCollaboration",
+      "questionImpacts": [
+        {
+          "attributeCode": "AgileWorkflow",
+          "question": null,
+          "weight": 3,
+          "level": {
+            "code": "StateOfTheArt",
+            "index": null,
+            "title": "State of the Art",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        },
+        {
+          "attributeCode": "Productivity",
+          "question": null,
+          "weight": 1,
+          "level": {
+            "code": "StateOfTheArt",
+            "index": null,
+            "title": "State of the Art",
+            "description": null,
+            "value": null,
+            "levelCompetence": null
+          },
+          "optionValues": {
+            "1": 0,
+            "2": 0.3,
+            "3": 0.8,
+            "4": 1
+          }
+        }
+      ],
+      "answerRangeCode": "UsageRange",
+      "mayNotBeApplicable": false,
+      "advisable": true,
+      "answers": null
+    }
+  ],
+  "subjectModels": [
+    {
+      "code": "Team",
+      "index": 1,
+      "title": "Team",
+      "description": "How have the tools employed contributed to maintaining a well-being and high-performing team?",
+      "weight": 1,
+      "questionnaireCodes": null
+    },
+    {
+      "code": "Software",
+      "index": 2,
+      "title": "Software",
+      "description": "How have the tools employed established the conditions necessary for producing high-quality software?",
+      "weight": 2,
+      "questionnaireCodes": null
+    }
+  ],
+  "levelModels": [
+    {
+      "code": "Uprepared",
+      "index": 1,
+      "title": "Unprepared",
+      "description": "Tools are insufficient, causing frequent issues and inefficiencies.",
+      "value": 1,
+      "levelCompetence": null
+    },
+    {
+      "code": "Prepared",
+      "index": 2,
+      "title": "Prepared",
+      "description": "Basic tools provide essential support but do not optimize performance fully.",
+      "value": 2,
+      "levelCompetence": {
+        "Prepared": 70
+      }
+    },
+    {
+      "code": "WellEquiped",
+      "index": 3,
+      "title": "Well Equiped",
+      "description": "Robust tools significantly improve software quality and team productivity.",
+      "value": 3,
+      "levelCompetence": {
+        "WellEquiped": 70,
+        "Prepared": 80
+      }
+    },
+    {
+      "code": "StateOfTheArt",
+      "index": 4,
+      "title": "State of the Art",
+      "description": "Cutting-edge tools lead to exceptional software quality and peak team performance, supporting continuous improvement and innovation.",
+      "value": 4,
+      "levelCompetence": {
+        "WellEquiped": 80,
+        "Prepared": 80,
+        "StateOfTheArt": 40
+      }
+    }
+  ],
+  "answerRangeModels": [
+    {
+      "code": "UsageRange",
+      "index": null,
+      "title": "UsageRange",
+      "description": null,
+      "options": [
+        {
+          "index": 1,
+          "caption": "Never-Not used at all.",
+          "value": 0
+        },
+        {
+          "index": 2,
+          "caption": "Rarely-Underutilized",
+          "value": 0.3
+        },
+        {
+          "index": 3,
+          "caption": "Often-Utilized reasonably well",
+          "value": 0.8
+        },
+        {
+          "index": 4,
+          "caption": "Always-Fully and perfectly employed",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "code": "NoYes",
+      "index": null,
+      "title": "NoYes",
+      "description": null,
+      "options": [
+        {
+          "index": 1,
+          "caption": "No",
+          "value": 0
+        },
+        {
+          "index": 2,
+          "caption": "Yes",
+          "value": 1
+        }
+      ]
+    }
+  ],
+  "hasError": false
+}
