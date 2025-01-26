@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.KitLanguage;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
@@ -91,7 +92,7 @@ class CreateAssessmentKitServiceTest {
         assertEquals(param.getTitle(), createKitPortParamCaptor.getValue().title());
         assertEquals(param.getSummary(), createKitPortParamCaptor.getValue().summary());
         assertEquals(param.getAbout(), createKitPortParamCaptor.getValue().about());
-        assertEquals(param.getLang(), createKitPortParamCaptor.getValue().lang());
+        assertEquals(KitLanguage.valueOf(param.getLang()), createKitPortParamCaptor.getValue().lang());
         assertFalse(createKitPortParamCaptor.getValue().published());
         assertEquals(param.getIsPrivate(), createKitPortParamCaptor.getValue().isPrivate());
         assertEquals(param.getExpertGroupId(), createKitPortParamCaptor.getValue().expertGroupId());

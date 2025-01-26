@@ -7,9 +7,9 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.validation.EnumValue;
 import org.flickit.assessment.kit.application.domain.KitLanguage;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +39,7 @@ public interface CreateKitByDslUseCase {
         @Size(max = 1000, message = CREATE_KIT_BY_DSL_ABOUT_SIZE_MAX)
         String about;
 
+        @EnumValue(enumClass = KitLanguage.class, message = CREATE_KIT_BY_DSL_LANGUAGE_INVALID)
         String lang;
 
         @NotNull(message = CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL)
@@ -69,25 +70,13 @@ public interface CreateKitByDslUseCase {
             this.title = title != null ? title.strip() : null;
             this.summary = summary != null ? summary.strip() : null;
             this.about = about != null ? about.strip() : null;
+            this.lang = KitLanguage.getEnum(lang).getTitle();
             this.isPrivate = isPrivate;
             this.kitDslId = kitDslId;
             this.expertGroupId = expertGroupId;
             this.tagIds = tagIds;
             this.currentUserId = currentUserId;
-
-            if (lang == null || lang.isBlank() || !isKitLanguage(lang))
-                this.lang = KitLanguage.EN.name();
-            else
-                this.lang = lang;
-
             this.validateSelf();
-        }
-
-        private boolean isKitLanguage(String lang) {
-            return Arrays.stream(KitLanguage.values())
-                .map(KitLanguage::name)
-                .toList()
-                .contains(lang);
         }
     }
 }

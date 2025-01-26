@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.assessmentkit;
 
+import org.flickit.assessment.kit.application.domain.KitLanguage;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -12,7 +14,7 @@ public interface UpdateKitInfoPort {
                  String code,
                  String title,
                  String summary,
-                 String lang,
+                 KitLanguage lang,
                  Boolean published,
                  Boolean isPrivate,
                  Double price,

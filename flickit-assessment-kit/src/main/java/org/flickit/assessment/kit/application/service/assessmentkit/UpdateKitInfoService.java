@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.KitLanguage;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.UpdateKitInfoUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadKitExpertGroupPort;
@@ -54,7 +55,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getTitle() != null ? generateSlugCode(param.getTitle()) : null,
             param.getTitle(),
             param.getSummary(),
-            param.getLang(),
+            KitLanguage.valueOf(param.getLang()),
             param.getPublished(),
             param.getIsPrivate(),
             param.getPrice(),
