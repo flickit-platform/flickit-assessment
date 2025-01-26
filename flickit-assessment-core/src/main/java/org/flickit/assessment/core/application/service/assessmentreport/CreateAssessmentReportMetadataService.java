@@ -40,7 +40,6 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
         if (assessmentReport.isEmpty()) {
             var metadata = toDomainModel(param.getMetadata());
