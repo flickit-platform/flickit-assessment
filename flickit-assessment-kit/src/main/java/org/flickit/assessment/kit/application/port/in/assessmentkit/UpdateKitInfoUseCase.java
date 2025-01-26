@@ -68,7 +68,7 @@ public interface UpdateKitInfoUseCase {
             this.currentUserId = currentUserId;
             this.title = title;
             this.summary = summary;
-            this.lang = KitLanguage.getEnum(lang).getTitle();
+            this.lang = KitLanguage.getEnum(lang) != null ? KitLanguage.getEnum(lang).name() : null;
             this.published = published;
             this.isPrivate = isPrivate;
             this.price = price;

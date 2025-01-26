@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
+import org.flickit.assessment.common.application.MessageBundle;
 
 @Getter
 @RequiredArgsConstructor
@@ -13,6 +14,10 @@ public enum KitLanguage {
     EN("en"), FA("fa");
 
     private final String title;
+
+    public String getTitle() {
+        return MessageBundle.message(getClass().getSimpleName() + "_" + name());
+    }
 
     public int getId() {
         return this.ordinal();
@@ -33,6 +38,10 @@ public enum KitLanguage {
     }
 
     public static KitLanguage getEnum(String name) {
+        return EnumUtils.getEnum(KitLanguage.class, name);
+    }
+
+    public static KitLanguage getOrDefault(String name) {
         return EnumUtils.getEnum(KitLanguage.class, name, getDefault());
     }
 }

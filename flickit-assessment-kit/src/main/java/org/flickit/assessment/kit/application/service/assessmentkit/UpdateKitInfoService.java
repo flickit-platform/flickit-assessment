@@ -55,7 +55,7 @@ public class UpdateKitInfoService implements UpdateKitInfoUseCase {
             param.getTitle() != null ? generateSlugCode(param.getTitle()) : null,
             param.getTitle(),
             param.getSummary(),
-            KitLanguage.valueOf(param.getLang()),
+            param.getLang() != null ? KitLanguage.valueOf(param.getLang()) : null,
             param.getPublished(),
             param.getIsPrivate(),
             param.getPrice(),

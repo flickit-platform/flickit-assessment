@@ -70,7 +70,7 @@ public interface CreateKitByDslUseCase {
             this.title = title != null ? title.strip() : null;
             this.summary = summary != null ? summary.strip() : null;
             this.about = about != null ? about.strip() : null;
-            this.lang = KitLanguage.getEnum(lang).name();
+            this.lang = KitLanguage.getOrDefault(lang).name();
             this.isPrivate = isPrivate;
             this.kitDslId = kitDslId;
             this.expertGroupId = expertGroupId;
