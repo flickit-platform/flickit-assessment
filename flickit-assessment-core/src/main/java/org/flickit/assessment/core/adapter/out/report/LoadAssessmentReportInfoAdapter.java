@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.domain.report.AttributeReportItem
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
+import org.flickit.assessment.data.jpa.core.assessmentinsight.AssessmentInsightJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentinsight.AssessmentInsightJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -83,8 +84,9 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var assessmentKitEntity = assessmentKitRepository.findById(assessment.getAssessmentKitId())
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND));
 
-        var insightEntity = assessmentInsightRepository.findByAssessmentResultId(assessmentResultEntity.getId())
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_KIT_NOT_FOUND));
+        var assessmentInsight = assessmentInsightRepository.findByAssessmentResultId(assessmentResultEntity.getId())
+            .map(AssessmentInsightJpaEntity::getInsight)
+            .orElse(null);
 
         var questionnaireViews = questionnaireRepository.findAllWithQuestionCountByKitVersionId(assessmentResultEntity.getKitVersionId(), null).getContent();
 
@@ -104,7 +106,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var assessmentReportItem = new AssessmentReportItem(assessmentId,
             assessment.getTitle(),
             assessment.getShortTitle(),
-            insightEntity.getInsight(),
+            assessmentInsight,
             buildAssessmentKitItem(expertGroupEntity, assessmentKitEntity, maturityLevels, questionnaireViews),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
