@@ -53,11 +53,6 @@ class GetAssessmentReportServiceTest {
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
-    private static AssessmentReport createReport() {
-        return new AssessmentReport(null, null,
-            new AssessmentReportMetadata("intro", "pros", "steps", "participants"), false);
-    }
-
     @Test
     void testGetAssessmentReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
@@ -174,5 +169,16 @@ class GetAssessmentReportServiceTest {
         return GetAssessmentReportUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
+    }
+
+    private AssessmentReport createReport() {
+        return new AssessmentReport(null,
+            null,
+            new AssessmentReportMetadata("intro", "pros", "steps", "participants"),
+            false,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID());
     }
 }

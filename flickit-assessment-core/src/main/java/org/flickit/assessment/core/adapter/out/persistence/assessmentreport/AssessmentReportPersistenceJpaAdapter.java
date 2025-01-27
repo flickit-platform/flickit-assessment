@@ -65,6 +65,9 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
     @Override
     public void publish(PublishAssessmentReportPort.Param param) {
-        repository.updatePublished(param.assessmentReportId(), true, param.lastModificationTime(), param.lastModifiedBy());
+        repository.updatePublished(param.assessmentReportId(),
+            true,
+            param.lastModificationTime(),
+            param.lastModifiedBy());
     }
 }

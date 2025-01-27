@@ -3,10 +3,10 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.port.in.assessmentreport.PublishAssessmentReportUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.PublishAssessmentReportPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -70,19 +69,12 @@ class PublishAssessmentReportServiceTest {
     @Test
     void testPublishAssessmentReport_whenAssessmentReportExists_thenPublishAssessmentReport() {
         var param = createParam(Param.ParamBuilder::build);
-        UUID assessmentReportId = UUID.randomUUID();
+        var assessmentReport = AssessmentReportMother.reportWithMetadata(null);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), PUBLISH_ASSESSMENT_REPORT))
             .thenReturn(true);
         when(loadAssessmentReportPort.load(param.getAssessmentId()))
-            .thenReturn(Optional.of(new AssessmentReport(assessmentReportId,
-                UUID.randomUUID(),
-                null,
-                false,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                param.getCurrentUserId(),
-                param.getCurrentUserId())));
+            .thenReturn(Optional.of(assessmentReport));
         doNothing().when(publishAssessmentReportPort).publish(any());
 
         service.publishAssessmentReport(param);
@@ -90,7 +82,7 @@ class PublishAssessmentReportServiceTest {
         var publishPortParam = ArgumentCaptor.forClass(PublishAssessmentReportPort.Param.class);
         verify(publishAssessmentReportPort, times(1)).publish(publishPortParam.capture());
 
-        assertEquals(assessmentReportId, publishPortParam.getValue().assessmentReportId());
+        assertEquals(assessmentReport.getId(), publishPortParam.getValue().assessmentReportId());
         assertNotNull(publishPortParam.getValue().lastModificationTime());
         assertEquals(param.getCurrentUserId(), publishPortParam.getValue().lastModifiedBy());
     }
