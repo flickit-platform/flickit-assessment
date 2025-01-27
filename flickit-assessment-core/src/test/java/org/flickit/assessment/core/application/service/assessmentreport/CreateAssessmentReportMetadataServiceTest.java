@@ -84,7 +84,7 @@ class CreateAssessmentReportMetadataServiceTest {
     }
 
     @Test
-    void testCreateAssessmentReportMetadata_whenAssessmentReportDoesNotExists_thenPersistAssessmentReport() {
+    void testCreateAssessmentReportMetadata_whenAssessmentReportDoesNotExist_thenPersistAssessmentReport() {
         var param = createParam(ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
