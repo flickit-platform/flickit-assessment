@@ -38,10 +38,7 @@ import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -182,11 +179,13 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                 Long maturityLevelId = subjectIdToSubjectValue.get(e.getId()).getMaturityLevelId();
                 MaturityLevel subjectMaturityLevel = idToMaturityLevel.get(maturityLevelId);
                 var attributeValues = subjectIdToAttributeValueMap.get(e.getId());
-                var insight = subjectIdToInsightMap.get(e.getId()) == null ? null :
-                    subjectIdToInsightMap.get(e.getId()).getInsight();
+                var insight = Optional.ofNullable(subjectIdToInsightMap.get(e.getId()))
+                    .map(SubjectInsightJpaEntity::getInsight)
+                    .orElse(null);
                 return new AssessmentSubjectReportItem(e.getId(),
                     e.getTitle(),
                     e.getIndex(),
+                    e.getDescription(),
                     insight,
                     subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
                     subjectMaturityLevel,
