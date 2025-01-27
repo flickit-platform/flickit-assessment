@@ -53,10 +53,11 @@ class GetAssessmentReportMetadataServiceTest {
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var result = service.getAssessmentReportMetadata(param);
-        assertNull(result.intro());
-        assertNull(result.prosAndCons());
-        assertNull(result.steps());
-        assertNull(result.participants());
+        assertNull(result.metadata().intro());
+        assertNull(result.metadata().prosAndCons());
+        assertNull(result.metadata().steps());
+        assertNull(result.metadata().participants());
+        assertFalse(result.published());
     }
 
     @Test
@@ -73,10 +74,11 @@ class GetAssessmentReportMetadataServiceTest {
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         var result = service.getAssessmentReportMetadata(param);
-        assertEquals(metadata.intro(), result.intro());
-        assertEquals(metadata.prosAndCons(), result.prosAndCons());
-        assertNull(result.steps());
-        assertEquals(metadata.participants(), result.participants());
+        assertEquals(metadata.intro(), result.metadata().intro());
+        assertEquals(metadata.prosAndCons(), result.metadata().prosAndCons());
+        assertNull(result.metadata().steps());
+        assertEquals(metadata.participants(), result.metadata().participants());
+        assertEquals(assessmentReport.isPublished(), result.published());
     }
 
     private GetAssessmentReportMetadataUseCase.Param createParam(Consumer<GetAssessmentReportMetadataUseCase.Param.ParamBuilder> changer) {
