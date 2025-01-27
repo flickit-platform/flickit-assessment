@@ -83,8 +83,8 @@ class ReportAssessmentServiceTest {
             space);
 
         var subjects = List.of(
-            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", 20.0, softwareLevel, List.of()),
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", "subject insight 1", 20.0, softwareLevel, List.of()),
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", "subject insight 2", 58.6, teamLevel, List.of()));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
@@ -158,7 +158,7 @@ class ReportAssessmentServiceTest {
             space);
 
         var subjects = List.of(
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", "subject insight 2", 58.6, teamLevel, List.of()));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
@@ -201,7 +201,7 @@ class ReportAssessmentServiceTest {
             space);
 
         var subjects = List.of(
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", "subject insight 2", 58.6, teamLevel, List.of()));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
