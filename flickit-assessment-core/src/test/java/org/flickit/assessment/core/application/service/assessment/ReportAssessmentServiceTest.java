@@ -90,7 +90,7 @@ class ReportAssessmentServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
-        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(currentUserId);
 
         ReportAssessmentUseCase.Result result = service.reportAssessment(param);
@@ -163,7 +163,7 @@ class ReportAssessmentServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
-        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.VIEWER));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(false);
@@ -206,7 +206,7 @@ class ReportAssessmentServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
-        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);

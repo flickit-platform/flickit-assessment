@@ -73,7 +73,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final SubjectInsightJpaRepository subjectInsightRepository;
 
     @Override
-    public Result load(UUID assessmentId, UUID currentUserId) {
+    public Result load(UUID assessmentId) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(REPORT_ASSESSMENT_ASSESSMENT_ID_NOT_FOUND);
 
@@ -132,7 +132,8 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
         var questionnaireReportItems = questionnaireItemViews.stream().map(this::buildQuestionnaireReportItems).toList();
         int questionsCount = questionnaireReportItems.stream()
-            .mapToInt(QuestionnaireReportItem::questionCount).reduce(0, Integer::sum);
+            .mapToInt(QuestionnaireReportItem::questionCount)
+            .sum();
 
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),

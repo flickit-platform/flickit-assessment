@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
@@ -25,6 +24,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 
@@ -40,11 +40,11 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
     @Override
     public Result getAssessmentReport(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_GRAPHICAL_REPORT))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId(), param.getCurrentUserId());
+        var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId());
         var metadata = loadAssessmentReportPort.load(param.getAssessmentId())
             .map(AssessmentReport::getMetadata)
             .orElse(new AssessmentReportMetadata(null, null, null, null));
