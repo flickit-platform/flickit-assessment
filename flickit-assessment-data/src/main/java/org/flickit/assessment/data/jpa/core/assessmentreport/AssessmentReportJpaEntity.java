@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -33,4 +34,16 @@ public class AssessmentReportJpaEntity {
 
     @Column(name = "published", nullable = false)
     private Boolean published;
+
+    @Column(name = "creation_time", nullable = false)
+    private LocalDateTime creationTime;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
+    @Column(name = "created_by", nullable = false)
+    private UUID createdBy;
+
+    @Column(name = "last_modified_by", nullable = false)
+    private UUID lastModifiedBy;
 }

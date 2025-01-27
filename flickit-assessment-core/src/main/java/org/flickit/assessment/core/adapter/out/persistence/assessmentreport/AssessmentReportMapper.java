@@ -13,13 +13,21 @@ public class AssessmentReportMapper {
         return new AssessmentReport(entity.getId(),
             entity.getAssessmentResultId(),
             metadata,
-            entity.getPublished());
+            entity.getPublished(),
+            entity.getCreationTime(),
+            entity.getLastModificationTime(),
+            entity.getCreatedBy(),
+            entity.getLastModifiedBy());
     }
 
     public static AssessmentReportJpaEntity mapToJpaEntity(AssessmentReport assessmentReport, String metadata) {
         return new AssessmentReportJpaEntity(null,
             assessmentReport.getAssessmentResultId(),
             metadata,
-            assessmentReport.isPublished());
+            assessmentReport.isPublished(),
+            assessmentReport.getCreationTime(),
+            assessmentReport.getLastModificationTime(),
+            assessmentReport.getCreatedBy(),
+            assessmentReport.getLastModifiedBy());
     }
 }
