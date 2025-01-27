@@ -3,6 +3,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit.createbydsl
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.kit.application.domain.KitLanguage;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateKitByDslUseCase;
@@ -89,6 +90,7 @@ public class CreateKitByDslService implements CreateKitByDslUseCase {
             param.getTitle(),
             param.getSummary(),
             param.getAbout(),
+            KitLanguage.valueOf(param.getLang()),
             Boolean.FALSE,
             param.getIsPrivate(),
             param.getExpertGroupId(),

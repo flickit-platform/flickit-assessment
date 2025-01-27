@@ -16,6 +16,14 @@ public interface UpdateAttributeInsightPort {
                    LocalDateTime lastModificationTime) {
     }
 
+    void updateAiInsightTime(AiTimeParam attributeInsight);
+
+    record AiTimeParam(UUID assessmentResultId,
+                   Long attributeId,
+                   LocalDateTime aiInsightTime,
+                   LocalDateTime lastModificationTime) {
+    }
+
     void updateAssessorInsight(AssessorParam attributeInsight);
 
     record AssessorParam(UUID assessmentResultId,

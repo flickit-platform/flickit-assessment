@@ -64,7 +64,7 @@ class ReportAssessmentServiceTest {
         List<MaturityLevel> maturityLevels = List.of(softwareLevel, teamLevel);
 
         var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1", "picture/link");
-        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", "about kit", 3, maturityLevels, expertGroup);
+        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", "about kit", 3, 156, maturityLevels, List.of(), expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
         LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
@@ -72,6 +72,7 @@ class ReportAssessmentServiceTest {
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
             "assessmentTitle",
             "shortAssessmentTitle",
+            "assessment insight",
             kit,
             assessmentMaturityLevel,
             1.5,
@@ -82,14 +83,14 @@ class ReportAssessmentServiceTest {
             space);
 
         var subjects = List.of(
-            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", 20.0, softwareLevel, List.of()),
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+            new AssessmentSubjectReportItem(1L, "software", 1, "subjectDesc1", "subject insight 1", 20.0, softwareLevel, List.of()),
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", "subject insight 2", 58.6, teamLevel, List.of()));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
-        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(currentUserId);
 
         ReportAssessmentUseCase.Result result = service.reportAssessment(param);
@@ -148,6 +149,7 @@ class ReportAssessmentServiceTest {
             "shortAssessmentTitle",
             null,
             null,
+            MaturityLevelMother.levelTwo(),
             1.5,
             true,
             true,
@@ -156,12 +158,12 @@ class ReportAssessmentServiceTest {
             space);
 
         var subjects = List.of(
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", "subject insight 2", 58.6, teamLevel, List.of()));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
-        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.VIEWER));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(false);
@@ -190,6 +192,7 @@ class ReportAssessmentServiceTest {
             "shortAssessmentTitle",
             null,
             null,
+            MaturityLevelMother.levelTwo(),
             1.5,
             true,
             true,
@@ -198,12 +201,12 @@ class ReportAssessmentServiceTest {
             space);
 
         var subjects = List.of(
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", 58.6, teamLevel, List.of()));
+            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", "subject insight 2", 58.6, teamLevel, List.of()));
         var assessmentReport = new LoadAssessmentReportInfoPort.Result(assessment, subjects);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         doNothing().when(validateAssessmentResult).validate(param.getAssessmentId());
-        when(loadReportInfoPort.load(assessmentId, currentUserId)).thenReturn(assessmentReport);
+        when(loadReportInfoPort.load(assessmentId)).thenReturn(assessmentReport);
         when(loadSpaceOwnerPort.loadOwnerId(space.id())).thenReturn(UUID.randomUUID());
         when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), EXPORT_ASSESSMENT_REPORT)).thenReturn(true);

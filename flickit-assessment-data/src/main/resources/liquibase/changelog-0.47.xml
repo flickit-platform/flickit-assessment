@@ -4,7 +4,11 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.47-01" author="Maziyar Gerami">
+    <changeSet id="0.47-01" author="Ali Sedaghat">
+        <addColumn tableName="fak_assessment_kit">
+            <column name="language_id" type="int" defaultValue="0">
+
+    <changeSet id="0.47-02" author="Maziyar Gerami">
         <addColumn tableName="fac_assessment_report">
             <column name="creation_time" type="${datetime_with_time_zone_type}"
                     valueComputed="current_timestamp">
@@ -13,7 +17,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.47-02" author="Maziyar Gerami">
+    <changeSet id="0.47-03" author="Maziyar Gerami">
         <addColumn tableName="fac_assessment_report">
             <column name="last_modification_time" type="${datetime_with_time_zone_type}"
                     valueComputed="current_timestamp">
@@ -22,7 +26,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.47-03" author="Maziyar Gerami">
+    <changeSet id="0.47-04" author="Maziyar Gerami">
         <addColumn tableName="fac_assessment_report">
             <column name="created_by" type="UUID"
                     valueComputed="(SELECT fa.created_by FROM fac_assessment fa
@@ -33,12 +37,11 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.47-04" author="Maziyar Gerami">
+    <changeSet id="0.47-05" author="Maziyar Gerami">
         <addColumn tableName="fac_assessment_report">
             <column name="last_modified_by" type="UUID" valueComputed="fac_assessment_report.created_by">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
-
 </databaseChangeLog>
