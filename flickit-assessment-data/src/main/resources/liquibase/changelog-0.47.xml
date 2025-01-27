@@ -12,4 +12,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="0.47-02" author="Maziyar Gerami">
+        <dropNotNullConstraint tableName="faa_advice_item" columnName="created_by"/>
+    </changeSet>
+
 </databaseChangeLog>
