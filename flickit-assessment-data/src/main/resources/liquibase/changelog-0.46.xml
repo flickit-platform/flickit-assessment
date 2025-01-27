@@ -61,45 +61,4 @@
             </column>
         </addColumn>
     </changeSet>
-
-    <changeSet id="0.46-09" author="Maziyar Gerami">
-        <addColumn tableName="fac_assessment_report">
-            <column name="creation_time" type="${datetime_with_time_zone_type}"
-                    valueComputed="current_timestamp">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.46-10" author="Maziyar Gerami">
-        <addColumn tableName="fac_assessment_report">
-            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
-                    valueComputed="current_timestamp">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.46-11" author="Maziyar Gerami">
-        <addColumn tableName="fac_assessment_report">
-            <column name="created_by" type="UUID"
-                    valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
-                                    fac_assessment.id = (SELECT fac_assessment_result.assessment_id FROM fac_assessment_result WHERE
-                                    fac_assessment_result.id = fac_assessment_report.assessment_result_id)">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.46-12" author="Maziyar Gerami">
-        <addColumn tableName="fac_assessment_report">
-            <column name="last_modified_by" type="UUID"
-                    valueComputed="fac_assessment.created_by FROM fac_assessment WHERE
-                                    fac_assessment.id = (SELECT fac_assessment_result.assessment_id FROM fac_assessment_result WHERE
-                                    fac_assessment_result.id = fac_assessment_report.assessment_result_id)">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
 </databaseChangeLog>
