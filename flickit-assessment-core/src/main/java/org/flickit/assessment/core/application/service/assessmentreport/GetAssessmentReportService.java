@@ -57,13 +57,16 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         var assessmentKitItem = assessment.assessmentKit();
         var attributesCount = assessmentReportInfo.subjects().stream()
             .flatMap(s -> s.attributes().stream())
-            .collect(toSet()).size();
+            .collect(toSet())
+            .size();
         var levels = assessmentKitItem.maturityLevels().stream()
-            .map(this::toMaturityLevel).toList();
+            .map(this::toMaturityLevel)
+            .toList();
         var maturityLevelMap = levels.stream()
             .collect(toMap(MaturityLevel::id, Function.identity()));
         var subjects = assessmentReportInfo.subjects().stream()
-            .map(subject -> toSubject(subject, maturityLevelMap)).toList();
+            .map(subject -> toSubject(subject, maturityLevelMap))
+            .toList();
 
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, levels, attributesCount, maturityLevelMap),
             subjects,

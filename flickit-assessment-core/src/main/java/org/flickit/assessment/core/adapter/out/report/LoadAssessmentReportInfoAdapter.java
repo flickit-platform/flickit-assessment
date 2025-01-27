@@ -30,7 +30,6 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaReposit
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
-import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
 import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
@@ -164,15 +163,16 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .collect(Collectors.toMap(SubjectValueJpaEntity::getSubjectId, Function.identity()));
 
         var subjectIdToAttributeValueMap = attributeValueJpaRepository.findByAssessmentResultIdAndSubjectIdIn(
-                assessmentResult.getId(), subjectIds)
-            .stream()
+                assessmentResult.getId(), subjectIds).stream()
             .collect(groupingBy(SubjectIdAttributeValueView::getSubjectId));
 
-        List<SubjectJpaEntity> subjectEntities = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, assessmentResult.getKitVersionId());
-        var attributeIdToInsightMap = attributeInsightRepository.findByAssessmentResultId(assessmentResult.getId())
-            .stream().collect(toMap(AttributeInsightJpaEntity::getAttributeId, Function.identity()));
-        var subjectIdToInsightMap = subjectInsightRepository.findByAssessmentResultId(assessmentResult.getId())
-            .stream().collect(toMap(SubjectInsightJpaEntity::getSubjectId, Function.identity()));
+        var subjectEntities = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, assessmentResult.getKitVersionId());
+
+        var attributeIdToInsightMap = attributeInsightRepository.findByAssessmentResultId(assessmentResult.getId()).stream()
+            .collect(toMap(AttributeInsightJpaEntity::getAttributeId, Function.identity()));
+
+        var subjectIdToInsightMap = subjectInsightRepository.findByAssessmentResultId(assessmentResult.getId()).stream()
+            .collect(toMap(SubjectInsightJpaEntity::getSubjectId, Function.identity()));
 
         return subjectEntities.stream()
             .map(e -> {
