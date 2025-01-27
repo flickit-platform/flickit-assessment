@@ -25,4 +25,17 @@ public interface AssessmentReportJpaRepository extends JpaRepository<AssessmentR
                         @Param("metadata") String metadata,
                         @Param("lastModificationTime") LocalDateTime lastModificationTime,
                         @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentReportJpaEntity a
+            SET a.published = :published,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy= :lastModifiedBy
+            WHERE a.id = :id
+        """)
+    void updatePublished(@Param("id") UUID id,
+                         @Param("published") boolean published,
+                         @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                         @Param("lastModifiedBy") UUID lastModifiedBy);
 }

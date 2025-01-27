@@ -8,6 +8,7 @@ import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
+import org.flickit.assessment.core.application.port.out.assessmentreport.PublishAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
 import org.flickit.assessment.data.jpa.core.assessmentreport.AssessmentReportJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -24,7 +25,8 @@ import static org.flickit.assessment.core.adapter.out.persistence.assessmentrepo
 public class AssessmentReportPersistenceJpaAdapter implements
     LoadAssessmentReportPort,
     CreateAssessmentReportPort,
-    UpdateAssessmentReportPort {
+    UpdateAssessmentReportPort,
+    PublishAssessmentReportPort {
 
     private final AssessmentReportJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -59,5 +61,10 @@ public class AssessmentReportPersistenceJpaAdapter implements
             objectMapper.writeValueAsString(param.reportMetadata()),
             param.lastModificationTime(),
             param.lastModifiedBy());
+    }
+
+    @Override
+    public void publish(PublishAssessmentReportPort.Param param) {
+        repository.updatePublished(param.assessmentReportId(), true, param.lastModificationTime(), param.lastModifiedBy());
     }
 }
