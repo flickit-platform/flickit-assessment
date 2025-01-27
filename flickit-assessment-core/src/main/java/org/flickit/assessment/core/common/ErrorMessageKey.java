@@ -308,4 +308,5 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_REPORT_METADATA_PROS_AND_CONS_SIZE_MAX = "create-assessment-report-metadata.prosAndCons.size.max";
 
     public static final String PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL = "publish-assessment-report.assessmentId.notNull";
+    public static final String PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_REPORT_NOT_FOUND = "publish-assessment-report.assessmentReport.notFound";
 }
