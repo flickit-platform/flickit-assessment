@@ -84,7 +84,7 @@ class CreateAssessmentReportMetadataServiceTest {
     }
 
     @Test
-    void testCreateAssessmentReportMetadata_whenAssessmentReportDoesNotExists_thenPersistAssessmentReport() {
+    void testCreateAssessmentReportMetadata_whenAssessmentReportDoesNotExist_thenPersistAssessmentReport() {
         var param = createParam(ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), MANAGE_REPORT_METADATA))
@@ -104,6 +104,10 @@ class CreateAssessmentReportMetadataServiceTest {
         assertNull(actualMetadata.prosAndCons());
         assertNull(param.getMetadata().getSteps(), actualMetadata.steps());
         assertNull(param.getMetadata().getParticipants(), actualMetadata.participants());
+        assertNotNull(assessmentReportParam.getValue().getCreationTime());
+        assertNotNull(assessmentReportParam.getValue().getLastModificationTime());
+        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().getCreatedBy());
+        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().getLastModifiedBy());
 
         verifyNoInteractions(updateAssessmentReportPort);
     }
@@ -120,15 +124,16 @@ class CreateAssessmentReportMetadataServiceTest {
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         service.createReportMetadata(param);
-        ArgumentCaptor<AssessmentReportMetadata> assessmentReportParam = ArgumentCaptor.forClass(AssessmentReportMetadata.class);
-        ArgumentCaptor<UUID> reportIdPortParam = ArgumentCaptor.forClass(UUID.class);
-        verify(updateAssessmentReportPort, times(1)).update(reportIdPortParam.capture(), assessmentReportParam.capture());
+        ArgumentCaptor<UpdateAssessmentReportPort.Param> updateAssessmentReportPortParam = ArgumentCaptor.forClass(UpdateAssessmentReportPort.Param.class);
+        verify(updateAssessmentReportPort, times(1)).update(updateAssessmentReportPortParam.capture());
 
-        assertEquals(assessmentReport.getId(), reportIdPortParam.getValue());
-        assertEquals(param.getMetadata().getIntro(), assessmentReportParam.getValue().intro());
-        assertEquals(oldMetadata.prosAndCons(), assessmentReportParam.getValue().prosAndCons());
-        assertNull(assessmentReportParam.getValue().steps());
-        assertNull(assessmentReportParam.getValue().participants());
+        assertEquals(assessmentReport.getId(), updateAssessmentReportPortParam.getValue().id());
+        assertEquals(param.getMetadata().getIntro(), updateAssessmentReportPortParam.getValue().reportMetadata().intro());
+        assertEquals(oldMetadata.prosAndCons(), updateAssessmentReportPortParam.getValue().reportMetadata().prosAndCons());
+        assertNull(updateAssessmentReportPortParam.getValue().reportMetadata().steps());
+        assertNull(updateAssessmentReportPortParam.getValue().reportMetadata().participants());
+        assertNotNull(updateAssessmentReportPortParam.getValue().lastModificationTime());
+        assertEquals(param.getCurrentUserId(), updateAssessmentReportPortParam.getValue().lastModifiedBy());
 
         verifyNoInteractions(createAssessmentReportPort);
     }

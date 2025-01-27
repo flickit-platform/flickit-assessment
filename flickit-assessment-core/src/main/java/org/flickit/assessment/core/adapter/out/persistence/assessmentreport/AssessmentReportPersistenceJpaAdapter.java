@@ -54,7 +54,10 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
     @Override
     @SneakyThrows
-    public void update(UUID id, AssessmentReportMetadata metadata) {
-        repository.updateMetadata(id, objectMapper.writeValueAsString(metadata));
+    public void update(UpdateAssessmentReportPort.Param param) {
+        repository.updateMetadata(param.id(),
+            objectMapper.writeValueAsString(param.reportMetadata()),
+            param.lastModificationTime(),
+            param.lastModifiedBy());
     }
 }
