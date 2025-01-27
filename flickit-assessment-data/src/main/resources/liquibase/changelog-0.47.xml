@@ -7,6 +7,10 @@
     <changeSet id="0.47-01" author="Ali Sedaghat">
         <addColumn tableName="fak_assessment_kit">
             <column name="language_id" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
     <changeSet id="0.47-02" author="Maziyar Gerami">
         <addColumn tableName="fac_assessment_report">
