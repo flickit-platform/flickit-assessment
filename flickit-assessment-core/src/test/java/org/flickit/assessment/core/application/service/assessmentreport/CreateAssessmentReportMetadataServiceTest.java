@@ -104,6 +104,10 @@ class CreateAssessmentReportMetadataServiceTest {
         assertNull(actualMetadata.prosAndCons());
         assertNull(param.getMetadata().getSteps(), actualMetadata.steps());
         assertNull(param.getMetadata().getParticipants(), actualMetadata.participants());
+        assertNotNull(assessmentReportParam.getValue().getCreationTime());
+        assertNotNull(assessmentReportParam.getValue().getLastModificationTime());
+        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().getCreatedBy());
+        assertEquals(param.getCurrentUserId(), assessmentReportParam.getValue().getLastModifiedBy());
 
         verifyNoInteractions(updateAssessmentReportPort);
     }
@@ -128,6 +132,8 @@ class CreateAssessmentReportMetadataServiceTest {
         assertEquals(oldMetadata.prosAndCons(), updateAssessmentReportPortParam.getValue().reportMetadata().prosAndCons());
         assertNull(updateAssessmentReportPortParam.getValue().reportMetadata().steps());
         assertNull(updateAssessmentReportPortParam.getValue().reportMetadata().participants());
+        assertNotNull(updateAssessmentReportPortParam.getValue().lastModificationTime());
+        assertEquals(param.getCurrentUserId(), updateAssessmentReportPortParam.getValue().lastModifiedBy());
 
         verifyNoInteractions(createAssessmentReportPort);
     }
