@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
+import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
@@ -29,6 +30,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -70,7 +72,7 @@ class GetAssessmentReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentReport_AssessmentCalculateIsNotValid_ThrowException() {
+    void testGetAssessmentReport_whenAssessmentCalculateIsNotValid_thenThrowException() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
@@ -85,25 +87,26 @@ class GetAssessmentReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentReport_AssessmentCalculateIsValid_ReturnReport() {
+    void testGetAssessmentReport_whenAssessmentCalculateIsValid_thenReturnReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
-        doNothing()
-            .when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         AssessmentReportItem assessmentReport = createAssessmentReportItem(param);
 
         MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
-        var subjects = List.of(
-            new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2", "subject Insight", 58.6, teamLevel, List.of()));
+        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
+            "in very good state", 1, 63.0, levelThree());
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
+            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         AssessmentReport report = createReport();
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
-        var result = service.getAssessmentReport(param);
 
+        var result = service.getAssessmentReport(param);
 
         assertEquals(assessmentReport.title(), result.assessment().title());
         assertEquals(report.getMetadata().intro(), result.assessment().intro());
@@ -113,6 +116,24 @@ class GetAssessmentReportServiceTest {
         assertEquals(assessmentReport.maturityLevel().getTitle(), result.assessment().maturityLevel().title());
         assertEquals(assessmentReport.assessmentKit().id(), result.assessment().assessmentKit().id());
         assertEquals(assessmentReport.assessmentKit().title(), result.assessment().assessmentKit().title());
+        assertEquals(subjects.size(), result.subjects().size());
+        var expectedSubjectItem = subjects.getFirst();
+        var actualSubjectItem = result.subjects().getFirst();
+        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
+        assertEquals(expectedSubjectItem.title(), actualSubjectItem.title());
+        assertEquals(expectedSubjectItem.index(), actualSubjectItem.index());
+        assertEquals(expectedSubjectItem.confidenceValue(), actualSubjectItem.confidenceValue());
+        assertEquals(expectedSubjectItem.insight(), actualSubjectItem.insight());
+        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
+        assertEquals(expectedSubjectItem.maturityLevel().getId(), actualSubjectItem.maturityLevel().id());
+        assertEquals(expectedSubjectItem.attributes().size(), actualSubjectItem.attributes().size());
+        assertEquals(expectedSubjectItem.attributes().getFirst().id(), actualSubjectItem.attributes().getFirst().id());
+        assertEquals(expectedSubjectItem.attributes().getFirst().index(), actualSubjectItem.attributes().getFirst().index());
+        assertEquals(expectedSubjectItem.attributes().getFirst().title(), actualSubjectItem.attributes().getFirst().title());
+        assertEquals(expectedSubjectItem.attributes().getFirst().insight(), actualSubjectItem.attributes().getFirst().insight());
+        assertEquals(expectedSubjectItem.attributes().getFirst().description(), actualSubjectItem.attributes().getFirst().description());
+        assertEquals(expectedSubjectItem.attributes().getFirst().confidenceValue(), actualSubjectItem.attributes().getFirst().confidenceValue());
+        assertEquals(expectedSubjectItem.attributes().getFirst().maturityLevel().getId(), actualSubjectItem.attributes().getFirst().maturityLevel().id());
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
