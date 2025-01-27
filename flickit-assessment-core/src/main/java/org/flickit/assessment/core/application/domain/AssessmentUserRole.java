@@ -100,7 +100,8 @@ public enum AssessmentUserRole {
             APPROVE_ATTRIBUTE_INSIGHT,
             APPROVE_SUBJECT_INSIGHT,
             APPROVE_ASSIGNMENT_INSIGHT,
-            MANAGE_REPORT_METADATA)),
+            MANAGE_REPORT_METADATA,
+            PUBLISH_ASSESSMENT_REPORT)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
