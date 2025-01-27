@@ -18,6 +18,6 @@ public class AttributeMother {
     }
 
     public static Attribute withIdQuestionsAndWeight(long id, List<Question> questions, int weight) {
-        return new Attribute(id,"attribute", "description", weight, questions);
+        return new Attribute(id, "attribute", "description", weight, questions);
     }
 }

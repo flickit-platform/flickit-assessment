@@ -13,13 +13,12 @@ public interface LoadAssessmentReportInfoPort {
     /**
      * Loads the assessment report info by the given {@code assessmentId}.
      *
-     * @param assessmentId  The ID of the assessment to load the result for.
-     * @param currentUserId The ID of current user
+     * @param assessmentId The ID of the assessment to load the result for.
      * @return The loaded AssessmentResult object.
      * @throws ResourceNotFoundException  If the assessment result is not found.
      * @throws CalculateNotValidException If the assessment result is not valid.
      */
-    Result load(UUID assessmentId, UUID currentUserId);
+    Result load(UUID assessmentId);
 
     record Result(AssessmentReportItem assessment,
                   List<AssessmentSubjectReportItem> subjects) {
