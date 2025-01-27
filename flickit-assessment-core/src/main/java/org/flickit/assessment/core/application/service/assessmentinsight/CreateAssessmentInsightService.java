@@ -50,6 +50,11 @@ public class CreateAssessmentInsightService implements CreateAssessmentInsightUs
     }
 
     AssessmentInsight toAssessmentInsight(UUID insightId, UUID assessmentResultId, Param param) {
-        return new AssessmentInsight(insightId, assessmentResultId, param.getInsight(), LocalDateTime.now(), param.getCurrentUserId());
+        return new AssessmentInsight(insightId,
+            assessmentResultId,
+            param.getInsight(),
+            LocalDateTime.now(),
+            param.getCurrentUserId(),
+            true);
     }
 }

@@ -16,7 +16,14 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
 
     boolean existsByAssessmentResultIdAndSubjectId(UUID assessmentResultId, long subjectId);
 
-    List<SubjectInsightJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    @Query("""
+            SELECT si
+            FROM SubjectInsightJpaEntity si
+            JOIN AssessmentResultJpaEntity ar ON si.assessmentResultId = ar.id
+            RIGHT JOIN SubjectJpaEntity s ON si.subjectId  = s.id AND ar.kitVersionId = s.kitVersionId
+            WHERE ar.id = :assessmentResultId
+        """)
+    List<SubjectInsightJpaEntity> findByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
 
     @Modifying
     @Query("""
@@ -24,7 +31,7 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             SET si.insight = :insight,
                 si.insightTime = :insightTime,
                 si.insightBy = :insightBy,
-                si.approved = :approved
+                si.approved = :isApproved
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
     void updateByAssessmentResultIdAndSubjectId(@Param("assessmentResultId") UUID assessmentResultId,
@@ -32,7 +39,7 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
                                                 @Param("insight") String insight,
                                                 @Param("insightTime") LocalDateTime insightTime,
                                                 @Param("insightBy") UUID insightBy,
-                                                @Param("approved") boolean approved);
+                                                @Param("isApproved") boolean isApproved);
 
     @Modifying
     @Query("""
@@ -40,6 +47,6 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             SET si.approved = true
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
-    void approveSubjectInsight(@Param("assessmentResultId") UUID assessmentResultId,
-                               @Param("subjectId") Long subjectId);
+    void approve(@Param("assessmentResultId") UUID assessmentResultId,
+                 @Param("subjectId") Long subjectId);
 }

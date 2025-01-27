@@ -48,11 +48,15 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 r as assessmentResult,
                 CASE
                     WHEN ur.roleId = :managerRoleId OR space.ownerId = :userId THEN TRUE ELSE FALSE
-                END as manageable
+                END as manageable,
+                CASE
+                    WHEN arp IS NOT NULL AND COALESCE(arp.published, FALSE) = TRUE THEN TRUE ELSE FALSE
+                END as hasReport
             FROM AssessmentJpaEntity a
             LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
             LEFT JOIN AssessmentUserRoleJpaEntity ur ON a.id = ur.assessmentId AND ur.userId = :userId
             LEFT JOIN SpaceJpaEntity space ON a.spaceId = space.id
+            LEFT JOIN AssessmentReportJpaEntity arp ON r.id = arp.assessmentResultId
             WHERE a.spaceId = :spaceId
                 AND a.deleted=false
                 AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)

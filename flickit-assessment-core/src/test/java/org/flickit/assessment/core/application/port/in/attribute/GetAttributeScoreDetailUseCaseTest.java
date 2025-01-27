@@ -55,7 +55,7 @@ class GetAttributeScoreDetailUseCaseTest {
         assertDoesNotThrow(() -> createParam(b -> b.order("    asc     ")));
         assertDoesNotThrow(() -> createParam(b -> b.order("    DESC     ")));
         var params = assertDoesNotThrow(() -> createParam(b -> b.order(null)));
-        assertEquals(Order.DEFAULT.name(), params.getOrder());
+        assertEquals(Order.DESC.name(), params.getOrder());
     }
 
     @Test

@@ -5,6 +5,8 @@ import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntit
 
 public interface ImpactFullQuestionsView {
 
+    Long getQuestionnaireId();
+
     String getQuestionnaireTitle();
 
     Long getQuestionId();

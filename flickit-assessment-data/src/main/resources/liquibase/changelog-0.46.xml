@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.46-01" author="Maziyar Gerami">
+        <dropNotNullConstraint tableName="fac_attribute_insight" columnName="ai_insight"/>
+    </changeSet>
+
+    <changeSet id="0.46-02" author="Maziyar Gerami">
+        <dropNotNullConstraint tableName="fac_attribute_insight" columnName="ai_insight_time"/>
+    </changeSet>
+
+    <changeSet id="0.46.03" author="Maziyar Gerami">
+        <createTable tableName="fac_assessment_report">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_fac_assessment_report"/>
+            </column>
+            <column name="assessment_result_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="meta_data" type="varchar"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.46-04" author="Maziyar Gerami">
+        <addForeignKeyConstraint baseTableName="fac_assessment_report"
+                                 baseColumnNames="assessment_result_id"
+                                 referencedTableName="fac_assessment_result"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_fac_assessment_report_assessmentresult"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.46-05" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fac_assessment_report" columnNames="assessment_result_id"
+                             constraintName="uq_fac_assessment_report_assessmentresultid">
+        </addUniqueConstraint>
+    </changeSet>
+
+    <changeSet id="0.46-06" author="Maziyar Gerami">
+        <renameColumn tableName="fac_assessment_report" oldColumnName="meta_data" newColumnName="metadata"/>
+    </changeSet>
+
+    <changeSet id="0.46-07" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_attribute_insight">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="GREATEST(ai_insight_time, COALESCE(assessor_insight_time, ai_insight_time))">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.46-08" author="Mahnaz Khorsandi">
+        <addColumn tableName="fac_assessment_report">
+            <column name="published" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

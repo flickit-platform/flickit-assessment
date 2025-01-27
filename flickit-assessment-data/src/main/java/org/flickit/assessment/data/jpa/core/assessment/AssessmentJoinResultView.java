@@ -9,4 +9,6 @@ public interface AssessmentJoinResultView {
     AssessmentResultJpaEntity getAssessmentResult();
 
     boolean getManageable();
+
+    boolean getHasReport();
 }

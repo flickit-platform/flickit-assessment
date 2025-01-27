@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,11 +76,59 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     @Query("""
             SELECT COUNT(DISTINCT e.questionId)
             FROM EvidenceJpaEntity e
+            LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
+            LEFT JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
             WHERE e.assessmentId = :assessmentId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
                 AND e.deleted = false
                 AND e.type IS NOT NULL
         """)
-    int countQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
+    int countAnsweredQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT q.questionnaireId  AS questionnaireId,
+                COUNT(DISTINCT q.id) AS count
+            FROM AnswerJpaEntity a
+            JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
+            JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId AND ar.id = a.assessmentResult.id
+            JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId  = :assessmentId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND q.questionnaireId  IN :questionnaireIds
+                AND e.type IS NOT NULL
+                AND e.deleted = false
+            GROUP BY q.questionnaireId
+        """)
+    List<EvidencesQuestionnaireAndCountView> countQuestionnairesQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId,
+                                                                                        @Param("questionnaireIds") Collection<Long> questionnaireIds);
+
+    @Query("""
+            SELECT q.id  AS questionId,
+                COUNT(e) AS count
+            FROM AnswerJpaEntity a
+            JOIN EvidenceJpaEntity e ON e.questionId  = a.questionId
+            JOIN AssessmentResultJpaEntity ar ON ar.assessment.id = e.assessmentId AND ar.id = a.assessmentResult.id
+            JOIN QuestionJpaEntity q ON e.questionId = q.id and ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId  = :assessmentId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND e.type IS NOT NULL
+                AND e.deleted = false
+                AND q.questionnaireId  = :questionnaireId
+            GROUP BY q.id
+        """)
+    List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsEvidences(@Param("assessmentId") UUID assessmentId,
+                                                                             @Param("questionnaireId") long questionnaireId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND e.deleted = false
+                AND e.type IS NOT NULL
+        """)
+    int countQuestionEvidences(@Param("assessmentId") UUID assessmentId,
+                               @Param("questionId") long questionId);
 
     @Query("""
             SELECT COUNT(e.id)
@@ -89,4 +139,48 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                 AND (e.resolved IS NULL OR e.resolved = false)
         """)
     int countUnresolvedComments(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT q.questionnaireId as questionnaireId,
+                COUNT(e) as count
+            FROM EvidenceJpaEntity e
+            JOIN QuestionJpaEntity q ON e.questionId = q.id
+            JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId AND ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId = :assessmentId
+                 AND q.questionnaireId IN :questionnaireIds
+                 AND e.type IS NULL
+                 AND (e.resolved IS NULL OR e.resolved = false)
+                 AND e.deleted = false
+            GROUP BY q.questionnaireId
+        """)
+    List<EvidencesQuestionnaireAndCountView> countQuestionnairesUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                                                                   @Param("questionnaireIds") Collection<Long> questionnaireIds);
+
+    @Query("""
+            SELECT q.id as questionId,
+                COUNT(e) as count
+            FROM EvidenceJpaEntity e
+            JOIN QuestionJpaEntity q ON e.questionId = q.id
+            JOIN AssessmentResultJpaEntity ar on ar.assessment.id = e.assessmentId AND ar.kitVersionId = q.kitVersionId
+            WHERE e.assessmentId = :assessmentId
+                 AND q.questionnaireId = :questionnaireId
+                 AND e.type IS NULL
+                 AND (e.resolved IS NULL OR e.resolved = false)
+                 AND e.deleted = false
+            GROUP BY q.id
+        """)
+    List<EvidencesQuestionAndCountView> countQuestionnaireQuestionsUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                                                                      @Param("questionnaireId") long questionnaireId);
+
+    @Query("""
+            SELECT COUNT(e)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.questionId = :questionId
+                AND e.deleted = false
+                AND e.type IS NULL
+                AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    int countQuestionUnresolvedComments(@Param("assessmentId") UUID assessmentId,
+                                        @Param("questionId") long questionId);
 }

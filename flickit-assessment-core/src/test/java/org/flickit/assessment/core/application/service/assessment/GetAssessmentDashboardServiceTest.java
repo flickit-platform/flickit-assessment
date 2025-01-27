@@ -83,9 +83,9 @@ class GetAssessmentDashboardServiceTest {
     private final int unResolveCommentsCount = 1;
     private final int questionsWithEvidenceCount = 3;
 
-    private final AttributeInsight attributeInsight1 = AttributeInsightMother.simpleAttributeAiInsight();
-    private final AttributeInsight attributeInsight2 = AttributeInsightMother.simpleAttributeAiInsightMinInsightTime();
-    private final AttributeInsight attributeInsight3 = AttributeInsightMother.simpleAttributeAiInsightMinInsightsTime();
+    private final AttributeInsight attributeInsight1 = AttributeInsightMother.simpleAttributeInsight();
+    private final AttributeInsight attributeInsight2 = AttributeInsightMother.simpleAttributeInsightMinInsightTime();
+    private final AttributeInsight attributeInsight3 = AttributeInsightMother.simpleAttributeInsightMinInsightsTime();
 
     private final SubjectInsight subjectInsight1 = SubjectInsightMother.subjectInsight();
     private final SubjectInsight subjectInsight2 = SubjectInsightMother.subjectInsight();
@@ -118,7 +118,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unResolveCommentsCount);
-        when(countEvidencesPort.countQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -126,7 +126,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
         assertEquals(2, result.questions().answeredWithLowConfidence());
-        assertEquals(12, result.questions().withoutEvidence());
+        assertEquals(7, result.questions().withoutEvidence());
         assertEquals(1, result.questions().unresolvedComments());
         //insights
         assertEquals(10, result.insights().expected());
@@ -152,7 +152,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unResolveCommentsCount);
-        when(countEvidencesPort.countQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -160,7 +160,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
         assertEquals(2, result.questions().answeredWithLowConfidence());
-        assertEquals(12, result.questions().withoutEvidence());
+        assertEquals(7, result.questions().withoutEvidence());
         assertEquals(1, result.questions().unresolvedComments());
         //insights
         assertEquals(10, result.insights().expected());
@@ -187,7 +187,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of(subjectInsight1, subjectInsight2, subjectInsight3));
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unResolveCommentsCount);
-        when(countEvidencesPort.countQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
+        when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -195,7 +195,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(answerCount, result.questions().answered());
         assertEquals(5, result.questions().unanswered());
         assertEquals(2, result.questions().answeredWithLowConfidence());
-        assertEquals(12, result.questions().withoutEvidence());
+        assertEquals(7, result.questions().withoutEvidence());
         assertEquals(1, result.questions().unresolvedComments());
         //insights
         assertEquals(10, result.insights().expected());
@@ -214,7 +214,6 @@ class GetAssessmentDashboardServiceTest {
     private GetAssessmentDashboardUseCase.Param.ParamBuilder paramBuilder() {
         return GetAssessmentDashboardUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
-            .currentUserId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
 }

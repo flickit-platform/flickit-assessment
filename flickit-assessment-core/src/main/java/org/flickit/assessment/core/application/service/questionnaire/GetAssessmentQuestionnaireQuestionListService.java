@@ -12,6 +12,7 @@ import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionnaireQuestionListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     private final LoadQuestionnaireQuestionListPort loadQuestionnaireQuestionListPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
+    private final CountEvidencesPort countEvidencesPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
@@ -57,8 +59,14 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             .stream()
             .collect(toMap(Answer::getQuestionId, Function.identity()));
 
+        var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
+        var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()
-            .map((Question q) -> mapToResult(q, questionIdToAnswerMap.get(q.getId()))).toList();
+            .map((Question q) -> mapToResult(q,
+                questionIdToAnswerMap.get(q.getId()),
+                questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0),
+                questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0)))
+            .toList();
 
         return new PaginatedResponse<>(
             items,
@@ -69,7 +77,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             pageResult.getTotal());
     }
 
-    private Result mapToResult(Question question, Answer answer) {
+    private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
             Option answerOption = null;
@@ -94,7 +102,20 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             question.getOptions().stream()
                 .map(this::mapToOption)
                 .toList(),
-            answerDto);
+            answerDto,
+            new Issues(
+                !hasAnswer(answer),
+                hasAnswer(answer) && answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
+                hasAnswer(answer) && evidencesCount == 0,
+                unresolvedCommentsCount
+            ));
+    }
+
+    private boolean hasAnswer(Answer answer) {
+        if (answer == null)
+            return false;
+
+        return answer.getSelectedOption() != null || Boolean.TRUE.equals(answer.getIsNotApplicable());
     }
 
     private Option mapToOption(AnswerOption option) {

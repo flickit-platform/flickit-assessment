@@ -51,7 +51,9 @@ public class AttributePersistenceJpaAdapter implements
             pageRequest);
 
         var items = pageResult.getContent().stream()
-            .map(view -> new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireTitle(),
+            .map(view -> new LoadAttributeScoreDetailPort.Result(view.getQuestionnaireId(),
+                view.getQuestionnaireTitle(),
+                view.getQuestionId(),
                 view.getQuestionIndex(),
                 view.getQuestionTitle(),
                 view.getQuestionImpact().getWeight(),
