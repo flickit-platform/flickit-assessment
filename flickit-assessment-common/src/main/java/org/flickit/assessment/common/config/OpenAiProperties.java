@@ -36,28 +36,32 @@ public class OpenAiProperties {
         Here is the file content: {fileContent}.
         """;
 
-    private String aiAdviceNarrationPrompt = """
-        For an assessment, titled "{assessmentTitle}", an assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
-        The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
-        The advice includes the current status (selected option) and the goal status for each relevant question.
-        Task: Based on the provided advice items, generate a clear narrative with up to 10 concise bullet points formatted with HTML tags, but include only as many points as there are distinct pieces of actionable advice, skipping redundant or trivial suggestions. Consider using the title of the assessment in your response.
-        Ensure that the advice is polite, constructive, and focused on actionable improvements, tailored for an expert software assessor.
-        Avoid references to individual scores or negative phrasing. Keep the tone professional and supportive.
-        Before the bullets, write a brief paragraph mentioning of the attributes and their target levels in no more than two sentences and put it in paragraph HTML tag.
-        Attribute Targets: {attributeLevelTargets}
+    private String adviceNarrationAndItemsPrompt = """
+            For an assessment, titled "%s", an assessment platform has evaluated a software product by analyzing responses to various questions, each influencing specific quality attributes.
+            The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
+            The advice includes the current status (selected option) and the goal status for each relevant question.
+            Task: Based on the provided Advice Recommendations, generate up to 10 Advice Items including only as many points as there are distinct pieces of actionable advice. Each Advice Recommendation includes the following details:
+                title : Up to 100 characters
+                description : Up to 3000 characters
+                cost : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
+                priority : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
+                impact : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
+            Additionally, provide a paragraph mentioning the attributes and their target levels and put it in a paragraph HTML tag as AdviceNarration. Include the title of the assessment in your response.
+            Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.
+            Avoid referring to individual scores or negative phrasing. Keep the tone professional and supportive.
+            Attribute Targets: %s
+            Advice Recommendations: %s
 
-        Advice Items: {adviceListItems}
-
-        Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
+            Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
         """;
+
 
     public Prompt createAttributeAiInsightPrompt(String attributeTitle, String attributeDescription, String assessmentTitle, String fileContent) {
         var promptTemplate = new PromptTemplate(attributeAiInsightPrompt, Map.of("attributeTitle", attributeTitle, "attributeDescription", attributeDescription, "assessmentTitle", assessmentTitle, "fileContent", fileContent));
         return new Prompt(promptTemplate.createMessage(), chatOptions);
     }
 
-    public Prompt createAiAdviceNarrationPrompt(String assessmentTitle, String adviceListItems, String attributeLevelTargets) {
-        var promptTemplate = new PromptTemplate(aiAdviceNarrationPrompt, Map.of("assessmentTitle", assessmentTitle, "adviceListItems", adviceListItems, "attributeLevelTargets", attributeLevelTargets));
-        return new Prompt(promptTemplate.createMessage(), chatOptions);
+    public String createAiAdviceNarrationAndItemsPrompt(String assessmentTitle, String attributeLevelTargets, String adviceRecommendations) {
+        return String.format(adviceNarrationAndItemsPrompt, assessmentTitle, attributeLevelTargets, adviceRecommendations);
     }
 }
