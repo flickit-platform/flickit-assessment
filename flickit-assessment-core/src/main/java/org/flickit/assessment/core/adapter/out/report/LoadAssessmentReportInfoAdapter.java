@@ -100,6 +100,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_SPACE_NOT_FOUND));
 
         var assessmentReportItem = new AssessmentReportItem(assessmentId,
+            assessmentResultEntity.getId(),
             assessment.getTitle(),
             assessment.getShortTitle(),
             assessmentInsight,

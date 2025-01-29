@@ -1,8 +1,8 @@
-package org.flickit.assessment.advice.application.domain.adviceitem;
+package org.flickit.assessment.common.application.domain.adviceitem;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ImpactLevelTest {
 

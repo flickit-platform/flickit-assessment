@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
+import org.flickit.assessment.core.application.domain.AdviceItem;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
@@ -12,6 +13,8 @@ import org.flickit.assessment.core.application.domain.report.AssessmentSubjectRe
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
+import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
@@ -54,6 +57,12 @@ class GetAssessmentReportServiceTest {
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
+    @Mock
+    private LoadAdviceNarrationPort loadAdviceNarrationPort;
+
+    @Mock
+    private LoadAdviceItemsPort loadAdviceItemsPort;
+
     @Test
     void testGetAssessmentReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
@@ -64,7 +73,11 @@ class GetAssessmentReportServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentReport(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentReportInfoPort, loadAssessmentReportPort, validateAssessmentResultPort);
+        verifyNoInteractions(loadAssessmentReportInfoPort,
+            loadAssessmentReportPort,
+            validateAssessmentResultPort,
+            loadAdviceItemsPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
@@ -79,7 +92,10 @@ class GetAssessmentReportServiceTest {
         var throwable = assertThrows(CalculateNotValidException.class, () -> service.getAssessmentReport(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentReportInfoPort, loadAssessmentReportPort);
+        verifyNoInteractions(loadAssessmentReportInfoPort,
+            loadAssessmentReportPort,
+            loadAdviceItemsPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
@@ -99,9 +115,13 @@ class GetAssessmentReportServiceTest {
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
         AssessmentReport report = AssessmentReportMother.reportWithMetadata(reportMetadata);
+        var adviceNarration = "assessor narration";
+        var adviceItem = new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium");
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of(adviceItem));
 
         var result = service.getAssessmentReport(param);
 
@@ -136,6 +156,7 @@ class GetAssessmentReportServiceTest {
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
         AssessmentReportItem.Space space = new AssessmentReportItem.Space(1563L, "Space");
         return new AssessmentReportItem(param.getAssessmentId(),
+            UUID.randomUUID(),
             "assessmentTitle",
             "shortAssessmentTitle",
             "assessment insight",

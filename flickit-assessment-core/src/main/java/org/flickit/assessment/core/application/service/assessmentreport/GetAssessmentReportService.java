@@ -12,6 +12,8 @@ import org.flickit.assessment.core.application.domain.report.AssessmentSubjectRe
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
+import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
@@ -37,6 +40,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private final LoadAssessmentReportInfoPort loadAssessmentReportInfoPort;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
+    private final LoadAdviceNarrationPort loadAdviceNarrationPort;
+    private final LoadAdviceItemsPort loadAdviceItemsPort;
 
     @Override
     public Result getAssessmentReport(Param param) {
@@ -70,6 +75,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, levels, attributesCount, maturityLevelMap),
             subjects,
+            toAdvice(assessment.assessmentResultId()),
             toAssessmentProcess(metadata));
     }
 
@@ -143,6 +149,12 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             questionnaire.description(),
             questionnaire.index(),
             questionnaire.questionCount());
+    }
+
+    private Advice toAdvice(UUID assessmentResultId) {
+        var narration = loadAdviceNarrationPort.load(assessmentResultId);
+        var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
+        return new Advice(narration, adviceItems);
     }
 
     private AssessmentProcess toAssessmentProcess(AssessmentReportMetadata metadata) {
