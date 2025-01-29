@@ -211,14 +211,7 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceNarrationPort).persist(adviceNarrationCaptor.capture());
         AdviceNarration capturedAdviceNarration = adviceNarrationCaptor.getValue();
-        assertAll("adviceNarration",
-            () -> assertEquals(aiNarration, capturedAdviceNarration.getAiNarration()),
-            () -> assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy()),
-            () -> assertNull(capturedAdviceNarration.getAssessorNarration()),
-            () -> assertNotNull(capturedAdviceNarration.getAiNarrationTime()),
-            () -> assertNull(capturedAdviceNarration.getAssessorNarrationTime()),
-            () -> assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId())
-        );
+        assertAdviceNarration(capturedAdviceNarration);
 
         verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
@@ -252,14 +245,7 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceNarrationPort).persist(adviceNarrationCaptor.capture());
         AdviceNarration capturedAdviceNarration = adviceNarrationCaptor.getValue();
-        assertAll("adviceNarration",
-            () -> assertEquals(aiNarration, capturedAdviceNarration.getAiNarration()),
-            () -> assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy()),
-            () -> assertNull(capturedAdviceNarration.getAssessorNarration()),
-            () -> assertNotNull(capturedAdviceNarration.getAiNarrationTime()),
-            () -> assertNull(capturedAdviceNarration.getAssessorNarrationTime()),
-            () -> assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId())
-        );
+        assertAdviceNarration(capturedAdviceNarration);
 
         verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
@@ -293,14 +279,7 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceNarrationPort).persist(adviceNarrationCaptor.capture());
         AdviceNarration capturedAdviceNarration = adviceNarrationCaptor.getValue();
-        assertAll("adviceNarration",
-            () -> assertEquals(aiNarration, capturedAdviceNarration.getAiNarration()),
-            () -> assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy()),
-            () -> assertNull(capturedAdviceNarration.getAssessorNarration()),
-            () -> assertNotNull(capturedAdviceNarration.getAiNarrationTime()),
-            () -> assertNull(capturedAdviceNarration.getAssessorNarrationTime()),
-            () -> assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId())
-        );
+        assertAdviceNarration(capturedAdviceNarration);
 
         verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
@@ -347,6 +326,17 @@ class CreateAiAdviceNarrationServiceTest {
             () -> assertNotNull(capturedItem.getLastModificationTime()),
             () -> assertNull(capturedItem.getCreatedBy()),
             () -> assertNull(capturedItem.getLastModifiedBy())
+        );
+    }
+
+    private void assertAdviceNarration(AdviceNarration capturedAdviceNarration) {
+        assertAll("adviceNarration",
+            () -> assertEquals(aiNarration, capturedAdviceNarration.getAiNarration()),
+            () -> assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy()),
+            () -> assertNull(capturedAdviceNarration.getAssessorNarration()),
+            () -> assertNotNull(capturedAdviceNarration.getAiNarrationTime()),
+            () -> assertNull(capturedAdviceNarration.getAssessorNarrationTime()),
+            () -> assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId())
         );
     }
 
