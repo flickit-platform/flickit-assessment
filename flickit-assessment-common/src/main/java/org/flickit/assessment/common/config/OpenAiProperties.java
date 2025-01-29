@@ -47,7 +47,7 @@ public class OpenAiProperties {
             priority : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
             impact : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
         Additionally, provide a complete paragraph mentioning the attributes, their target levels, and the related advice and suggestions.
-        Wrap this paragraph in an HTML <p> tag with the class name 'AdviceNarration'. Also, include the title of the assessment in your response.
+        Wrap this paragraph in an HTML <p> tag without any class attributes. Also, include the title of the assessment in your response.
         Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.
         Avoid referring to individual scores or negative phrasing. Keep the tone professional and supportive.
         Attribute Targets: %s
