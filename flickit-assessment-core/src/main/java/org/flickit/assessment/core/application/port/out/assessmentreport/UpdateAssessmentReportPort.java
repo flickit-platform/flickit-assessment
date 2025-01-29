@@ -7,11 +7,19 @@ import java.util.UUID;
 
 public interface UpdateAssessmentReportPort {
 
-    void update(Param param);
+    void updateMetadata(UpdateMetadataParam param);
 
-    record Param(UUID id,
-                 AssessmentReportMetadata reportMetadata,
-                 LocalDateTime lastModificationTime,
-                 UUID lastModifiedBy) {
+    record UpdateMetadataParam(UUID id,
+                               AssessmentReportMetadata reportMetadata,
+                               LocalDateTime lastModificationTime,
+                               UUID lastModifiedBy) {
+    }
+
+    void updatePublishStatus(UpdatePublishParam param);
+
+    record UpdatePublishParam(UUID assessmentResultId,
+                              boolean published,
+                              LocalDateTime lastModificationTime,
+                              UUID lastModifiedBy) {
     }
 }

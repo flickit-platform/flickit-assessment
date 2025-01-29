@@ -2424,6 +2424,45 @@
 						}
 					},
 					"response": []
+				},
+				{
+                  "name": "Update Report Publish status",
+					"request": {
+                      "method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+                          "raw": "{\r\n    \"published\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+                          "raw": "{{base_url}}/{{api_path}}/assessments/70c58eab-3d5f-48aa-9ffb-07802e5ea48f/report-publish-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"70c58eab-3d5f-48aa-9ffb-07802e5ea48f",
+                              "report-publish-status"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

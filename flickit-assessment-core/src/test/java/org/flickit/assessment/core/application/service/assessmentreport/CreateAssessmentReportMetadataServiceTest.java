@@ -124,8 +124,8 @@ class CreateAssessmentReportMetadataServiceTest {
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(assessmentReport));
 
         service.createReportMetadata(param);
-        ArgumentCaptor<UpdateAssessmentReportPort.Param> updateAssessmentReportPortParam = ArgumentCaptor.forClass(UpdateAssessmentReportPort.Param.class);
-        verify(updateAssessmentReportPort, times(1)).update(updateAssessmentReportPortParam.capture());
+        ArgumentCaptor<UpdateAssessmentReportPort.UpdateMetadataParam> updateAssessmentReportPortParam = ArgumentCaptor.forClass(UpdateAssessmentReportPort.UpdateMetadataParam.class);
+        verify(updateAssessmentReportPort, times(1)).updateMetadata(updateAssessmentReportPortParam.capture());
 
         assertEquals(assessmentReport.getId(), updateAssessmentReportPortParam.getValue().id());
         assertEquals(param.getMetadata().getIntro(), updateAssessmentReportPortParam.getValue().reportMetadata().intro());

@@ -13,6 +13,8 @@ public interface AssessmentReportJpaRepository extends JpaRepository<AssessmentR
 
     Optional<AssessmentReportJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
+    boolean existsByAssessmentResultId(UUID assessmentResultId);
+
     @Modifying
     @Query("""
             UPDATE AssessmentReportJpaEntity a
@@ -25,4 +27,17 @@ public interface AssessmentReportJpaRepository extends JpaRepository<AssessmentR
                         @Param("metadata") String metadata,
                         @Param("lastModificationTime") LocalDateTime lastModificationTime,
                         @Param("lastModifiedBy") UUID lastModifiedBy);
+
+    @Modifying
+    @Query("""
+            UPDATE AssessmentReportJpaEntity a
+            SET a.published = :published,
+                a.lastModificationTime = :lastModificationTime,
+                a.lastModifiedBy= :lastModifiedBy
+            WHERE a.assessmentResultId = :assessmentResultId
+        """)
+    void updatePublished(@Param("assessmentResultId") UUID assessmentResultId,
+                         @Param("published") boolean published,
+                         @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                         @Param("lastModifiedBy") UUID lastModifiedBy);
 }
