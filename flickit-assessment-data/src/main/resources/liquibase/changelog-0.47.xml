@@ -13,10 +13,46 @@
     </changeSet>
 
     <changeSet id="0.47-02" author="Maziyar Gerami">
-        <dropNotNullConstraint tableName="faa_advice_item" columnName="created_by"/>
+        <addColumn tableName="fac_assessment_report">
+            <column name="creation_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
 
     <changeSet id="0.47-03" author="Maziyar Gerami">
+        <addColumn tableName="fac_assessment_report">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.47-04" author="Maziyar Gerami">
+        <addColumn tableName="fac_assessment_report">
+            <column name="created_by" type="UUID"
+                    valueComputed="(SELECT fa.created_by FROM fac_assessment fa
+                                    JOIN fac_assessment_result far ON fa.id = far.assessment_id
+                                    WHERE far.id = fac_assessment_report.assessment_result_id)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.47-05" author="Maziyar Gerami">
+        <addColumn tableName="fac_assessment_report">
+            <column name="last_modified_by" type="UUID" valueComputed="fac_assessment_report.created_by">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="0.47-06" author="Maziyar Gerami">
+        <dropNotNullConstraint tableName="faa_advice_item" columnName="created_by"/>
+    </changeSet>
+
+    <changeSet id="0.47-07" author="Maziyar Gerami">
         <dropNotNullConstraint tableName="faa_advice_item" columnName="last_modified_by"/>
     </changeSet>
 

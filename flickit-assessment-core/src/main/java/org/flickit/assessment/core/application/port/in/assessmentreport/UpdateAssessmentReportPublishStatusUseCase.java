@@ -9,36 +9,32 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_PUBLISH_NOT_NULL;
 
-public interface GetAssessmentReportMetadataUseCase {
+public interface UpdateAssessmentReportPublishStatusUseCase {
 
-    Result getAssessmentReportMetadata(Param param);
+    void updateReportPublishStatus(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ASSESSMENT_REPORT_METADATA_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
+
+        @NotNull(message = UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_PUBLISH_NOT_NULL)
+        Boolean published;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
         @Builder
-        public Param(UUID assessmentId, UUID currentUserId) {
+        public Param(UUID assessmentId, Boolean published, UUID currentUserId) {
             this.assessmentId = assessmentId;
+            this.published = published;
             this.currentUserId = currentUserId;
             this.validateSelf();
-        }
-    }
-
-    record Result(Metadata metadata, boolean published) {
-
-        public record Metadata(String intro,
-                               String prosAndCons,
-                               String steps,
-                               String participants) {
         }
     }
 }
