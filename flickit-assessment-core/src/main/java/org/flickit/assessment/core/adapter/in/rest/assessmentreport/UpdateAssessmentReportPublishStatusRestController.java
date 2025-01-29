@@ -20,7 +20,7 @@ public class UpdateAssessmentReportPublishStatusRestController {
     private final UpdateAssessmentReportPublishStatusUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessments/{assessmentId}/update-publish-status")
+    @PutMapping("/assessments/{assessmentId}/report-publish-status")
     public ResponseEntity<Void> updateReportPublishStatus(@PathVariable UUID assessmentId,
                                                           @RequestBody UpdateAssessmentReportPublishStatusRequestDto request) {
         var currentUserId = userContext.getUser().id();
