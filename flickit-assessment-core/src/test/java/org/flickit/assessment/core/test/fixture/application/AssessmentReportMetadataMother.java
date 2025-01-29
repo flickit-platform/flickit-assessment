@@ -12,4 +12,13 @@ public class AssessmentReportMetadataMother {
             "participants"
         );
     }
+
+    public static AssessmentReportMetadata createWithPartialMetaData() {
+        return new AssessmentReportMetadata(
+            null,
+            "prosAndCons",
+            "steps",
+            "participants"
+        );
+    }
 }
