@@ -14,6 +14,9 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.MANAGE_REPORT_METADATA;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -37,15 +40,14 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-
         var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
         if (assessmentReport.isEmpty()) {
             var metadata = toDomainModel(param.getMetadata());
-            createAssessmentReportPort.persist(new AssessmentReport(null, assessmentResult.getId(), metadata, false));
+            createAssessmentReportPort.persist(toAssessmentReport(assessmentResult.getId(), metadata, param.getCurrentUserId()));
         } else {
             var existedMetadata = assessmentReport.get().getMetadata();
             var newMetadata = buildNewMetadata(existedMetadata, param.getMetadata());
-            updateAssessmentReportPort.update(assessmentReport.get().getId(), newMetadata);
+            updateAssessmentReportPort.updateMetadata(toUpdateParam(assessmentReport.get().getId(), newMetadata, param.getCurrentUserId()));
         }
     }
 
@@ -54,6 +56,17 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
             metadata.getProsAndCons(),
             metadata.getSteps(),
             metadata.getParticipants());
+    }
+
+    private AssessmentReport toAssessmentReport(UUID assessmentResultId, AssessmentReportMetadata metadata, UUID currentUserId) {
+        return new AssessmentReport(null,
+            assessmentResultId,
+            metadata,
+            false,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            currentUserId,
+            currentUserId);
     }
 
     private AssessmentReportMetadata buildNewMetadata(AssessmentReportMetadata existedMetadata, MetadataParam metadataParam) {
@@ -67,5 +80,12 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
 
     private <T> T resolveField(T existingValue, T newValue) {
         return newValue != null ? newValue : existingValue;
+    }
+
+    private UpdateAssessmentReportPort.UpdateMetadataParam toUpdateParam(UUID assessmentReportId, AssessmentReportMetadata newMetadata, UUID currentUserId) {
+        return new UpdateAssessmentReportPort.UpdateMetadataParam(assessmentReportId,
+            newMetadata,
+            LocalDateTime.now(),
+            currentUserId);
     }
 }

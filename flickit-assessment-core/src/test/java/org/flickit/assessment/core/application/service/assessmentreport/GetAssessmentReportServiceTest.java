@@ -14,6 +14,7 @@ import org.flickit.assessment.core.application.domain.report.QuestionnaireReport
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,11 +53,6 @@ class GetAssessmentReportServiceTest {
 
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
-
-    private static AssessmentReport createReport() {
-        return new AssessmentReport(null, null,
-            new AssessmentReportMetadata("intro", "pros", "steps", "participants"), false);
-    }
 
     @Test
     void testGetAssessmentReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -101,7 +97,8 @@ class GetAssessmentReportServiceTest {
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
-        AssessmentReport report = createReport();
+        var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
+        AssessmentReport report = AssessmentReportMother.reportWithMetadata(reportMetadata);
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
