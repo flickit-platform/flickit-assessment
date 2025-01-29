@@ -172,15 +172,4 @@ class GetAssessmentReportServiceTest {
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
-
-    private AssessmentReport createReport() {
-        return new AssessmentReport(null,
-            null,
-            new AssessmentReportMetadata("intro", "pros", "steps", "participants"),
-            false,
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            UUID.randomUUID(),
-            UUID.randomUUID());
-    }
 }
