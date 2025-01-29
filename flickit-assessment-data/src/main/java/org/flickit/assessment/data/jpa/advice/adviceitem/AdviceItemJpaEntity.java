@@ -52,6 +52,6 @@ public class AdviceItemJpaEntity {
     @Column(name = "created_by")
     private UUID createdBy;
 
-    @Column(name = "last_modified_by", nullable = false)
+    @Column(name = "last_modified_by")
     private UUID lastModifiedBy;
 }
