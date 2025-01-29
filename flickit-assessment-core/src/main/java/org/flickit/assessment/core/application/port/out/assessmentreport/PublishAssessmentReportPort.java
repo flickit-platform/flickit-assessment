@@ -7,7 +7,7 @@ public interface PublishAssessmentReportPort {
 
     void publish(Param param);
 
-    record Param(UUID assessmentReportId,
+    record Param(UUID assessmentResultId,
                  LocalDateTime lastModificationTime,
                  UUID lastModifiedBy) {
     }

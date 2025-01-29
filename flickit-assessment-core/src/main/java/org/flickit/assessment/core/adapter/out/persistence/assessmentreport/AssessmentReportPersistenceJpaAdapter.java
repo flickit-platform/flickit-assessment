@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentreport.AssessmentReportMapper.mapToJpaEntity;
+import static org.flickit.assessment.core.common.ErrorMessageKey.PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_REPORT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
@@ -65,7 +66,10 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
     @Override
     public void publish(PublishAssessmentReportPort.Param param) {
-        repository.updatePublished(param.assessmentReportId(),
+        if (!repository.existsByAssessmentResultId(param.assessmentResultId()))
+            throw new ResourceNotFoundException(PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_REPORT_NOT_FOUND);
+
+        repository.updatePublished(param.assessmentResultId(),
             true,
             param.lastModificationTime(),
             param.lastModifiedBy());

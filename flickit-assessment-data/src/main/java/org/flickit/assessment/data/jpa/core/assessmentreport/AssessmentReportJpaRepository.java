@@ -13,6 +13,8 @@ public interface AssessmentReportJpaRepository extends JpaRepository<AssessmentR
 
     Optional<AssessmentReportJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
+    boolean existsByAssessmentResultId(UUID assessmentResultId);
+
     @Modifying
     @Query("""
             UPDATE AssessmentReportJpaEntity a

@@ -4,9 +4,9 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessmentreport.PublishAssessmentReportUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.PublishAssessmentReportPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -19,8 +19,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.PUBLISH_ASSESSMENT_REPORT;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_REPORT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,7 +34,7 @@ class PublishAssessmentReportServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Mock
-    private LoadAssessmentReportPort loadAssessmentReportPort;
+    private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
     private PublishAssessmentReportPort publishAssessmentReportPort;
@@ -49,32 +49,31 @@ class PublishAssessmentReportServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.publishAssessmentReport(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentReportPort, publishAssessmentReportPort);
+        verifyNoInteractions(loadAssessmentResultPort, publishAssessmentReportPort);
     }
 
     @Test
-    void testPublishAssessmentReport_whenAssessmentReportDoesNotExist_thenThrowResourceNotFoundException() {
+    void testPublishAssessmentReport_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), PUBLISH_ASSESSMENT_REPORT))
             .thenReturn(true);
-        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.publishAssessmentReport(param));
-        assertEquals(PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_REPORT_NOT_FOUND, throwable.getMessage());
+        assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(publishAssessmentReportPort);
     }
 
     @Test
-    void testPublishAssessmentReport_whenAssessmentReportExists_thenPublishAssessmentReport() {
+    void testPublishAssessmentReport_whenAssessmentResultExists_thenPublishAssessmentReport() {
         var param = createParam(Param.ParamBuilder::build);
-        var assessmentReport = AssessmentReportMother.reportWithMetadata(null);
+        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), PUBLISH_ASSESSMENT_REPORT))
             .thenReturn(true);
-        when(loadAssessmentReportPort.load(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessmentReport));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(publishAssessmentReportPort).publish(any());
 
         service.publishAssessmentReport(param);
@@ -82,7 +81,7 @@ class PublishAssessmentReportServiceTest {
         var publishPortParam = ArgumentCaptor.forClass(PublishAssessmentReportPort.Param.class);
         verify(publishAssessmentReportPort, times(1)).publish(publishPortParam.capture());
 
-        assertEquals(assessmentReport.getId(), publishPortParam.getValue().assessmentReportId());
+        assertEquals(assessmentResult.getId(), publishPortParam.getValue().assessmentResultId());
         assertNotNull(publishPortParam.getValue().lastModificationTime());
         assertEquals(param.getCurrentUserId(), publishPortParam.getValue().lastModifiedBy());
     }
