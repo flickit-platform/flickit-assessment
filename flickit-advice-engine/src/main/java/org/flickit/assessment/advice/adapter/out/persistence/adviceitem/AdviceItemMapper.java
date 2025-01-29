@@ -6,7 +6,7 @@ import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
-import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAiAdviceItemsPort;
+import org.flickit.assessment.advice.application.port.out.advicenarration.GenerateAiAdvicePort;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaEntity;
 
 import java.time.LocalDateTime;
@@ -43,7 +43,7 @@ public class AdviceItemMapper {
             entity.getLastModifiedBy());
     }
 
-    public static AdviceItem mapToDomainModel(CreateAiAdviceItemsPort.Result.AdviceItem adviceItem, UUID assessmentResultId) {
+    public static AdviceItem mapToDomainModel(GenerateAiAdvicePort.Result.AdviceItem adviceItem, UUID assessmentResultId) {
         return new AdviceItem(null,
             adviceItem.title(),
             assessmentResultId,

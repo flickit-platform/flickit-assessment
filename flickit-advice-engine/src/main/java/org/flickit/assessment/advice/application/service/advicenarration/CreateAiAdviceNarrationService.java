@@ -8,7 +8,7 @@ import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemsPort;
-import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAiAdviceItemsPort;
+import org.flickit.assessment.advice.application.port.out.advicenarration.GenerateAiAdvicePort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
@@ -53,7 +53,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAssessmentPort loadAssessmentPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
-    private final CreateAiAdviceItemsPort createAiAdviceItemsPort;
+    private final GenerateAiAdvicePort generateAiAdvicePort;
     private final CreateAdviceItemsPort createAdviceItemsPort;
     private final AppAiProperties appAiProperties;
     private final OpenAiProperties openAiProperties;
@@ -78,7 +78,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
-        var portResult = createAiAdviceItemsPort.generateAiAdviceItems(prompt);
+        var portResult = generateAiAdvicePort.generateAiAdviceNarrationAndItems(prompt);
         createAdviceItemsPort.persist(portResult.adviceItems().stream().map(i -> mapToDomainModel(i, assessmentResult.getId())).toList());
 
         if (adviceNarration.isPresent()) {

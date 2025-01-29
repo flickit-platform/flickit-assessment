@@ -1,10 +1,10 @@
-package org.flickit.assessment.advice.application.port.out.adviceitem;
+package org.flickit.assessment.advice.application.port.out.advicenarration;
 
 import java.util.List;
 
-public interface CreateAiAdviceItemsPort {
+public interface GenerateAiAdvicePort {
 
-    Result generateAiAdviceItems(String prompt);
+    Result generateAiAdviceNarrationAndItems(String prompt);
 
     record Result(String aiNarration, List<AdviceItem> adviceItems) {
 
