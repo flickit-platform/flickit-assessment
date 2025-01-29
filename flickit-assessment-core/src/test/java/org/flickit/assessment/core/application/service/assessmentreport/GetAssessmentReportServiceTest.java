@@ -136,6 +136,7 @@ class GetAssessmentReportServiceTest {
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
         AssessmentReportItem.Space space = new AssessmentReportItem.Space(1563L, "Space");
         return new AssessmentReportItem(param.getAssessmentId(),
+            UUID.randomUUID(),
             "assessmentTitle",
             "shortAssessmentTitle",
             "assessment insight",
