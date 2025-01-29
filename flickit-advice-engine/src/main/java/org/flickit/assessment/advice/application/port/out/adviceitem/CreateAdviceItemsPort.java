@@ -2,9 +2,9 @@ package org.flickit.assessment.advice.application.port.out.adviceitem;
 
 import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 
-import java.util.UUID;
+import java.util.List;
 
-public interface CreateAdviceItemPort {
+public interface CreateAdviceItemsPort {
 
-    UUID persist(AdviceItem adviceItem);
+    void persist(List<AdviceItem> adviceItems);
 }

@@ -6,7 +6,7 @@ import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
-import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemsPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAiAdviceItemsPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
@@ -101,7 +101,7 @@ class CreateAiAdviceNarrationServiceTest {
     private ArgumentCaptor<List<AdviceItem>> adviceItemsCaptor;
 
     @Mock
-    private CreateAdviceItemPort createAdviceItemPort;
+    private CreateAdviceItemsPort createAdviceItemsPort;
 
     private final String aiNarration = "aiNarration";
     private final String prompt = "AI prompt";
@@ -138,7 +138,7 @@ class CreateAiAdviceNarrationServiceTest {
             loadMaturityLevelsPort,
             loadAssessmentPort,
             loadAttributesPort,
-            createAdviceItemPort);
+            createAdviceItemsPort);
     }
 
     @Test
@@ -159,7 +159,7 @@ class CreateAiAdviceNarrationServiceTest {
             loadAttributesPort,
             loadAssessmentPort,
             loadMaturityLevelsPort,
-            createAdviceItemPort);
+            createAdviceItemsPort);
     }
 
     @Test
@@ -177,7 +177,7 @@ class CreateAiAdviceNarrationServiceTest {
             loadAdviceNarrationPort,
             loadAssessmentPort,
             createAdviceNarrationPort,
-            createAdviceItemPort);
+            createAdviceItemsPort);
     }
 
     @Test
@@ -220,7 +220,7 @@ class CreateAiAdviceNarrationServiceTest {
             () -> assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId())
         );
 
-        verify(createAdviceItemPort).persist(adviceItemsCaptor.capture());
+        verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
         List<CreateAiAdviceItemsPort.Result.AdviceItem> expectedAdviceItems = portResult.adviceItems();
         assertEquals(portResult.adviceItems().size(), capturedAdviceItems.size());
@@ -261,7 +261,7 @@ class CreateAiAdviceNarrationServiceTest {
             () -> assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId())
         );
 
-        verify(createAdviceItemPort).persist(adviceItemsCaptor.capture());
+        verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
         List<CreateAiAdviceItemsPort.Result.AdviceItem> expectedAdviceItems = portResult.adviceItems();
         assertEquals(portResult.adviceItems().size(), capturedAdviceItems.size());
@@ -302,7 +302,7 @@ class CreateAiAdviceNarrationServiceTest {
             () -> assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId())
         );
 
-        verify(createAdviceItemPort).persist(adviceItemsCaptor.capture());
+        verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
         List<CreateAiAdviceItemsPort.Result.AdviceItem> expectedAdviceItems = portResult.adviceItems();
         assertEquals(portResult.adviceItems().size(), capturedAdviceItems.size());
@@ -310,6 +310,7 @@ class CreateAiAdviceNarrationServiceTest {
         IntStream.range(0, capturedAdviceItems.size())
             .forEach(i -> assertAdviceItem(expectedAdviceItems.get(i), capturedAdviceItems.get(i)));
     }
+
     @Test
     void testCreateAiAdviceNarration_NoValidTargetExists_ThrowValidationException() {
         var attributeLevelTargets = List.of(createAttributeLevelTarget());

@@ -24,7 +24,8 @@ public class AdviceItemPersistenceJpaAdapter implements
     LoadAdviceItemListPort,
     UpdateAdviceItemPort,
     LoadAdviceItemPort,
-    DeleteAdviceItemPort {
+    DeleteAdviceItemPort,
+    CreateAdviceItemsPort {
 
     private final AdviceItemJpaRepository repository;
 

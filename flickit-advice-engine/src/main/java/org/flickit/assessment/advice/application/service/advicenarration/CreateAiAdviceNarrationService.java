@@ -7,7 +7,7 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
-import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
+import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemsPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAiAdviceItemsPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
@@ -54,7 +54,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     private final LoadAssessmentPort loadAssessmentPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
     private final CreateAiAdviceItemsPort createAiAdviceItemsPort;
-    private final CreateAdviceItemPort createAdviceItemsPort;
+    private final CreateAdviceItemsPort createAdviceItemsPort;
     private final AppAiProperties appAiProperties;
     private final OpenAiProperties openAiProperties;
 
