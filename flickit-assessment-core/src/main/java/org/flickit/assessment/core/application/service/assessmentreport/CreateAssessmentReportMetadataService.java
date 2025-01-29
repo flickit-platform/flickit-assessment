@@ -47,7 +47,7 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
         } else {
             var existedMetadata = assessmentReport.get().getMetadata();
             var newMetadata = buildNewMetadata(existedMetadata, param.getMetadata());
-            updateAssessmentReportPort.update(toUpdateParam(assessmentReport.get().getId(), newMetadata, param.getCurrentUserId()));
+            updateAssessmentReportPort.updateMetadata(toUpdateParam(assessmentReport.get().getId(), newMetadata, param.getCurrentUserId()));
         }
     }
 
@@ -82,8 +82,8 @@ public class CreateAssessmentReportMetadataService implements CreateAssessmentRe
         return newValue != null ? newValue : existingValue;
     }
 
-    private UpdateAssessmentReportPort.Param toUpdateParam(UUID assessmentReportId, AssessmentReportMetadata newMetadata, UUID currentUserId) {
-        return new UpdateAssessmentReportPort.Param(assessmentReportId,
+    private UpdateAssessmentReportPort.UpdateMetadataParam toUpdateParam(UUID assessmentReportId, AssessmentReportMetadata newMetadata, UUID currentUserId) {
+        return new UpdateAssessmentReportPort.UpdateMetadataParam(assessmentReportId,
             newMetadata,
             LocalDateTime.now(),
             currentUserId);

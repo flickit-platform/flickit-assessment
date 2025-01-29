@@ -34,9 +34,9 @@ public interface AssessmentReportJpaRepository extends JpaRepository<AssessmentR
             SET a.published = :published,
                 a.lastModificationTime = :lastModificationTime,
                 a.lastModifiedBy= :lastModifiedBy
-            WHERE a.id = :id
+            WHERE a.assessmentResultId = :assessmentResultId
         """)
-    void updatePublished(@Param("id") UUID id,
+    void updatePublished(@Param("assessmentResultId") UUID assessmentResultId,
                          @Param("published") boolean published,
                          @Param("lastModificationTime") LocalDateTime lastModificationTime,
                          @Param("lastModifiedBy") UUID lastModifiedBy);

@@ -8,7 +8,6 @@ import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.port.out.assessmentreport.CreateAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
-import org.flickit.assessment.core.application.port.out.assessmentreport.PublishAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.UpdateAssessmentReportPort;
 import org.flickit.assessment.data.jpa.core.assessmentreport.AssessmentReportJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
@@ -19,15 +18,14 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.assessmentreport.AssessmentReportMapper.mapToJpaEntity;
-import static org.flickit.assessment.core.common.ErrorMessageKey.PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_REPORT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_REPORT_NOT_FOUND;
 
 @Component
 @RequiredArgsConstructor
 public class AssessmentReportPersistenceJpaAdapter implements
     LoadAssessmentReportPort,
     CreateAssessmentReportPort,
-    UpdateAssessmentReportPort,
-    PublishAssessmentReportPort {
+    UpdateAssessmentReportPort {
 
     private final AssessmentReportJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -57,7 +55,7 @@ public class AssessmentReportPersistenceJpaAdapter implements
 
     @Override
     @SneakyThrows
-    public void update(UpdateAssessmentReportPort.Param param) {
+    public void updateMetadata(UpdateAssessmentReportPort.UpdateMetadataParam param) {
         repository.updateMetadata(param.id(),
             objectMapper.writeValueAsString(param.reportMetadata()),
             param.lastModificationTime(),
@@ -65,12 +63,12 @@ public class AssessmentReportPersistenceJpaAdapter implements
     }
 
     @Override
-    public void publish(PublishAssessmentReportPort.Param param) {
+    public void updatePublishStatus(UpdateAssessmentReportPort.UpdatePublishParam param) {
         if (!repository.existsByAssessmentResultId(param.assessmentResultId()))
-            throw new ResourceNotFoundException(PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_REPORT_NOT_FOUND);
+            throw new ResourceNotFoundException(UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_REPORT_NOT_FOUND);
 
         repository.updatePublished(param.assessmentResultId(),
-            true,
+            param.published(),
             param.lastModificationTime(),
             param.lastModifiedBy());
     }

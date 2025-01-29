@@ -309,6 +309,8 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL = "get-assessment-report.assessmentId.notNull";
 
-    public static final String PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL = "publish-assessment-report.assessmentId.notNull";
-    public static final String PUBLISH_ASSESSMENT_REPORT_ASSESSMENT_REPORT_NOT_FOUND = "publish-assessment-report.assessmentReport.notFound";
+    public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_ID_NOT_NULL = "update-assessment-report-publish-status.assessmentId.notNull";
+    public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_REPORT_NOT_FOUND = "update-assessment-report-publish-status.assessmentReport.notFound";
+    public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_PUBLISH_NOT_NULL = "update-assessment-report-publish-status.published.notNull";
+
 }
