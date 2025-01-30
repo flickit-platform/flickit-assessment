@@ -139,7 +139,6 @@ class GetAssessmentDashboardServiceTest {
         //report
         assertFalse(result.report().isNotPublished());
         assertEquals(0, result.report().blankFields());
-
     }
 
     @Test
