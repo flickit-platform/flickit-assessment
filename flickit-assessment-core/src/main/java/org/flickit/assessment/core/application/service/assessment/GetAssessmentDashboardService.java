@@ -143,9 +143,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         if (assessmentReport == null || assessmentReport.getMetadata() == null)
             return new Result.Report(true, allFieldsCount);
 
-        var metadata = assessmentReport.getMetadata();
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> notNullFields = objectMapper.convertValue(metadata, new TypeReference<>() {});
+        Map<String, Object> notNullFields = new ObjectMapper().convertValue(assessmentReport.getMetadata(), new TypeReference<>() {});
         return new Result.Report(!assessmentReport.isPublished(), allFieldsCount - notNullFields.size());
     }
 }
