@@ -1,5 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -24,9 +26,7 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubje
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.RecordComponent;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
@@ -139,23 +139,13 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     }
 
     private Result.Report buildReport(AssessmentReport assessmentReport) {
+        int allFieldsCount = AssessmentReportMetadata.class.getDeclaredFields().length;
         if (assessmentReport == null || assessmentReport.getMetadata() == null)
-            return new Result.Report(true, AssessmentReportMetadata.class.getRecordComponents().length);
+            return new Result.Report(true, allFieldsCount);
 
         var metadata = assessmentReport.getMetadata();
-        int nullCount = (int) Arrays.stream(AssessmentReportMetadata.class.getRecordComponents())
-            .map(component -> invokeAccessor(component, metadata))
-            .filter(Objects::isNull)
-            .count();
-
-        return new Result.Report(!assessmentReport.isPublished(), nullCount);
-    }
-
-    private static Object invokeAccessor(RecordComponent component, AssessmentReportMetadata metadata) {
-        try {
-            return component.getAccessor().invoke(metadata);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> notNullFields = objectMapper.convertValue(metadata, new TypeReference<>() {});
+        return new Result.Report(!assessmentReport.isPublished(), allFieldsCount - notNullFields.size());
     }
 }
