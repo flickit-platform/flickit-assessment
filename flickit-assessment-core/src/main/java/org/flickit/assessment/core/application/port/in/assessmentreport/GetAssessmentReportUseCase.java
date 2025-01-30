@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.core.application.domain.AdviceItem;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +38,7 @@ public interface GetAssessmentReportUseCase {
 
     record Result(Assessment assessment,
                   List<Subject> subjects,
+                  Advice advice,
                   AssessmentProcess assessmentProcess) {
     }
 
@@ -81,8 +83,12 @@ public interface GetAssessmentReportUseCase {
                      String description,
                      String insight,
                      int index,
+                     int weight,
                      double confidenceValue,
                      MaturityLevel maturityLevel) {
+    }
+
+    record Advice(String narration, List<AdviceItem> adviceItems) {
     }
 
     record Questionnaire(long id,

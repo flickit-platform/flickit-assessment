@@ -5,10 +5,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
-import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.UUID;

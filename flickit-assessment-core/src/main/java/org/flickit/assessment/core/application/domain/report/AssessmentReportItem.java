@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record AssessmentReportItem(UUID id,
+                                   UUID assessmentResultId,
                                    String title,
                                    String shortTitle,
                                    String insight,

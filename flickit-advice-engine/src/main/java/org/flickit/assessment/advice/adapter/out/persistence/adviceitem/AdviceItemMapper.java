@@ -2,10 +2,10 @@ package org.flickit.assessment.advice.adapter.out.persistence.adviceitem;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
-import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
+import org.flickit.assessment.advice.application.domain.AdviceItem;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
