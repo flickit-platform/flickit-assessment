@@ -131,6 +131,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             attribute.description(),
             attribute.insight(),
             attribute.index(),
+            attribute.weight(),
             attribute.confidenceValue(),
             maturityLevelMap.get(attribute.maturityLevel().getId()));
     }
