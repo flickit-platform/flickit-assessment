@@ -42,7 +42,7 @@ public class ReportSubjectService implements ReportSubjectUseCase {
         List<SubjectAttributeReportItem> attributes = subjectReport.attributes();
 
         var topAttributes = attributes.stream()
-            .map(e -> new AttributeReportItem(e.id(), e.title(), e.description(), null, e.index(), e.confidenceValue(), e.maturityLevel()))
+            .map(e -> new AttributeReportItem(e.id(), e.title(), e.description(), null, e.index(), 1, e.confidenceValue(), e.maturityLevel()))
             .toList();
         TopAttributeResolver topAttributeResolver = new TopAttributeResolver(topAttributes, midLevelMaturity);
         var topStrengths = topAttributeResolver.getTopStrengths();

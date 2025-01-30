@@ -83,6 +83,7 @@ public interface GetAssessmentReportUseCase {
                      String description,
                      String insight,
                      int index,
+                     int weight,
                      double confidenceValue,
                      MaturityLevel maturityLevel) {
     }

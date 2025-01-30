@@ -1,7 +1,10 @@
 package org.flickit.assessment.core.adapter.out.report;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.minio.MinioAdapter;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
@@ -26,6 +29,8 @@ import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
@@ -67,6 +72,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
     private final QuestionnaireJpaRepository questionnaireRepository;
     private final AttributeInsightJpaRepository attributeInsightRepository;
     private final SubjectInsightJpaRepository subjectInsightRepository;
+    private final KitCustomJpaRepository kitCustomRepository;
 
     @Override
     public Result load(UUID assessmentId) {
@@ -175,6 +181,17 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var subjectIdToInsightMap = subjectInsightRepository.findByAssessmentResultId(assessmentResult.getId()).stream()
             .collect(toMap(SubjectInsightJpaEntity::getSubjectId, Function.identity()));
 
+        var attributeIds = subjectEntities.stream()
+            .map(e -> subjectIdToAttributeValueMap.get(e.getId()))
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream)
+            .map(SubjectIdAttributeValueView::getAttribute)
+            .toList();
+
+        var attributeIdToWeight = getAttributeIdToWeightMap(attributeIds,
+            assessmentResult.getAssessment().getAssessmentKitId(),
+            assessmentResult.getAssessment().getKitCustomId());
+
         return subjectEntities.stream()
             .map(e -> {
                 Long maturityLevelId = subjectIdToSubjectValue.get(e.getId()).getMaturityLevelId();
@@ -191,14 +208,18 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                     subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
                     subjectMaturityLevel,
                     attributeValues == null ? List.of() : attributeValues.stream()
-                        .map(x -> buildAttributeReportItem(idToMaturityLevel, x, attributeIdToInsightMap.get(x.getAttribute().getId())))
+                        .map(x -> buildAttributeReportItem(idToMaturityLevel,
+                            x,
+                            attributeIdToInsightMap.get(x.getAttribute().getId()),
+                            attributeIdToWeight.get(x.getAttribute().getId())))
                         .toList());
             }).toList();
     }
 
     private AttributeReportItem buildAttributeReportItem(Map<Long, MaturityLevel> idToMaturityLevel,
                                                          SubjectIdAttributeValueView attributeValueView,
-                                                         AttributeInsightJpaEntity attributeInsight) {
+                                                         AttributeInsightJpaEntity attributeInsight,
+                                                         int attributeWeight) {
         var attribute = attributeValueView.getAttribute();
         var attributeValue = attributeValueView.getAttributeValue();
         var maturityLevel = idToMaturityLevel.get(attributeValue.getMaturityLevelId());
@@ -208,6 +229,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             attribute.getDescription(),
             insight,
             attribute.getIndex(),
+            attributeWeight,
             attributeValue.getConfidenceValue(),
             maturityLevel);
     }
@@ -220,5 +242,29 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             return insight.getAiInsight();
         }
         return insight.getAssessorInsight();
+    }
+
+    @SneakyThrows
+    private Map<Long, Integer> getAttributeIdToWeightMap(List<AttributeJpaEntity> attributeEntities, long kitId, Long kitCustomId) {
+        KitCustomData kitCustomData = null;
+        if (kitCustomId != null) {
+            var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, kitId)
+                .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
+            var objectMapper = new ObjectMapper();
+            kitCustomData = objectMapper.readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
+        }
+
+        Map<Long, Integer> attributeIdToWeight = new HashMap<>();
+        if (kitCustomData != null && kitCustomData.attributes() != null) {
+            Map<Long, Integer> attributeIdToCustomWeight = kitCustomData.attributes().stream()
+                .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+            attributeEntities.forEach(e -> {
+                if (attributeIdToWeight.containsKey(e.getId()))
+                    attributeIdToWeight.put(e.getId(), attributeIdToCustomWeight.get(e.getId()));
+                else
+                    attributeIdToWeight.put(e.getId(), e.getWeight());
+            });
+        }
+        return attributeIdToWeight;
     }
 }

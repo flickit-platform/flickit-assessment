@@ -109,7 +109,7 @@ class GetAssessmentReportServiceTest {
 
         MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
         var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
-            "in very good state", 1, 63.0, levelThree());
+            "in very good state", 1, 3, 63.0, levelThree());
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
