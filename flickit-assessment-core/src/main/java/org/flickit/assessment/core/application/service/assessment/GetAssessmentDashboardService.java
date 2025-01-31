@@ -144,6 +144,6 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             return new Result.Report(true, allFieldsCount);
 
         Map<String, Object> notNullFields = new ObjectMapper().convertValue(assessmentReport.getMetadata(), new TypeReference<>() {});
-        return new Result.Report(!assessmentReport.isPublished(), allFieldsCount - notNullFields.size());
+        return new Result.Report(!assessmentReport.isPublished(), Math.max(allFieldsCount - notNullFields.size(), 0));
     }
 }
