@@ -143,12 +143,17 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         if (assessmentReport == null || assessmentReport.getMetadata() == null)
             return new Result.Report(true, allFieldsCount);
 
-        Map<String, Object> notNullFields = new ObjectMapper().convertValue(assessmentReport.getMetadata(), new TypeReference<>() {});
+        Map<String, Object> notNullFields = new ObjectMapper().convertValue(assessmentReport.getMetadata(), new TypeReference<>() {
+        });
         int notEmptyFieldsCount = Math.toIntExact(notNullFields
             .entrySet()
             .stream()
-            .filter(entry -> entry.getValue() instanceof String && !((String) entry.getValue()).isBlank())
+            .filter(entry -> {
+                String str = (String) entry.getValue();
+                return !str.isBlank();
+            })
             .count());
+
         return new Result.Report(!assessmentReport.isPublished(), Math.max(allFieldsCount - notEmptyFieldsCount, 0));
     }
 }
