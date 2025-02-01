@@ -17,6 +17,7 @@ public class AssessmentKit {
     private final String title;
     private final String summary;
     private final String about;
+    private final KitLanguage language;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final boolean published;

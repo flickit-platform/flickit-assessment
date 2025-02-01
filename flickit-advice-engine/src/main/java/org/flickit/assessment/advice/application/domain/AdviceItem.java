@@ -1,7 +1,10 @@
-package org.flickit.assessment.advice.application.domain.adviceitem;
+package org.flickit.assessment.advice.application.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
