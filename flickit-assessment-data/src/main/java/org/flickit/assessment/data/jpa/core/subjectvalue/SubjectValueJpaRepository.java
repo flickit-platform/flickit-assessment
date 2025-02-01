@@ -17,6 +17,8 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
 
     List<SubjectValueJpaEntity> findAllByIdIn(Collection<UUID> ids);
 
+    Optional<SubjectValueJpaEntity> findBySubjectIdAndAssessmentResultId(Long subjectId, UUID assessmentResultId);
+
     @Query("""
             SELECT
                 sv as subjectValue,

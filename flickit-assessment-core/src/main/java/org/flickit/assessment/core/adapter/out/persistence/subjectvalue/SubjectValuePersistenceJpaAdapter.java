@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
+import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuesPort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
@@ -23,7 +24,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_SUBJECT_
 @Component
 @RequiredArgsConstructor
 public class SubjectValuePersistenceJpaAdapter implements
-    CreateSubjectValuePort {
+    CreateSubjectValuePort,
+    LoadSubjectValuesPort {
 
     private final SubjectValueJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
@@ -51,5 +53,18 @@ public class SubjectValuePersistenceJpaAdapter implements
                 return mapToDomainModel(sv, subjectEntity);
             })
             .toList();
+    }
+
+    @Override
+    public SubjectValue load(long subjectId, UUID assessmentResultId) {
+        AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId)
+            .orElseThrow(() -> new ResourceNotFoundException("ASSESSMENT_RESULT_NOT_FOUND"));
+
+        var subjectEntity = subjectRepository.findByIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId())
+            .orElseThrow(() -> new ResourceNotFoundException("SUBJECT_NOT_FOUND"));
+        var subjectValue = repository.findBySubjectIdAndAssessmentResultId(subjectId, assessmentResult.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("SUBJECT_VALUE_NOT_FOUND"));
+
+        return SubjectValueMapper.mapToDomainModel(subjectValue, subjectEntity);
     }
 }
