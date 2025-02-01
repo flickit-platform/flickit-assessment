@@ -6,7 +6,7 @@ import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceIt
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaEntity;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaRepository;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +34,7 @@ public class AdviceItemPersistenceJpaAdapter implements
             Sort.Order.asc(AdviceItemJpaEntity.Fields.cost)
         );
 
-        var pageResult = repository.findByAssessmentResultId(assessmentResultId,
-            PageRequest.of(0, Integer.MAX_VALUE, sort));
+        var pageResult = repository.findByAssessmentResultId(assessmentResultId, Pageable.unpaged(sort));
 
         return pageResult.stream()
             .map(AdviceItemMapper::mapToDomainModel)
