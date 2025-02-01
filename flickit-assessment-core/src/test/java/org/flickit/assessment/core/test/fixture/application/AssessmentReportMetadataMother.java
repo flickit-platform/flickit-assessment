@@ -16,8 +16,8 @@ public class AssessmentReportMetadataMother {
     public static AssessmentReportMetadata createWithPartialMetaData() {
         return new AssessmentReportMetadata(
             null,
-            "prosAndCons",
-            "steps",
+            "   ",
+            "",
             "participants"
         );
     }
