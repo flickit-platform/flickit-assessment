@@ -674,7 +674,7 @@
 			"name": "AssessmentInsight",
 			"item": [
 				{
-					"name": "Create Assessment Insight",
+					"name": "Old Create Assessment Insight",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -713,7 +713,46 @@
 					"response": []
 				},
 				{
-					"name": "Get Assessment Insight",
+					"name": "Create Assessment Insight",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/overall-insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
+								"overall-insight"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Old Get Assessment Insight",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -755,7 +794,49 @@
 					"response": []
 				},
 				{
-					"name": "Init Assessment Insight",
+					"name": "Get Assessment Insight",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/overall-insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"e4f4a1cc-f80f-4b30-aaea-27f642a3965b",
+								"overall-insight"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Old Init Assessment Insight",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -794,7 +875,46 @@
 					"response": []
 				},
 				{
-					"name": "Approve Assessment Insight",
+					"name": "Init Assessment Insight",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/59fc1611-372f-4921-b7a0-5c2f299b5144/init-overall-insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"59fc1611-372f-4921-b7a0-5c2f299b5144",
+								"init-overall-insight"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Old Approve Assessment Insight",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -814,6 +934,32 @@
 								"assessments",
 								"53028c27-83f5-4c10-9105-56e2a4f58a09",
 								"approve-insight"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Assessment Insight",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/approve-overall-insight",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"approve-overall-insight"
 							]
 						}
 					},
