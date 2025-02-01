@@ -3,7 +3,7 @@ package org.flickit.assessment.core.adapter.in.rest.assessmentinsight;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.assessmentinsight.CreateAssessmentInsightUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentinsight.CreateAssessmentInsightUseCase.*;
+import org.flickit.assessment.core.application.port.in.assessmentinsight.CreateAssessmentInsightUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +33,6 @@ public class CreateAssessmentInsightRestController {
                                                  @RequestBody CreateAssessmentInsightRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
         useCase.createAssessmentInsight(toParam(assessmentId, requestDto, currentUserId));
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
