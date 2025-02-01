@@ -1,5 +1,7 @@
 package org.flickit.assessment.kit.application.port.out.assessmentkit;
 
+import org.flickit.assessment.kit.application.domain.KitLanguage;
+
 import java.util.UUID;
 
 public interface CreateAssessmentKitPort {
@@ -10,6 +12,7 @@ public interface CreateAssessmentKitPort {
                  String title,
                  String summary,
                  String about,
+                 KitLanguage lang,
                  boolean published,
                  boolean isPrivate,
                  long expertGroupId,

@@ -87,6 +87,7 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL = "create-kit-by-dsl.isPrivate.notNull";
     public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
+    public static final String CREATE_KIT_BY_DSL_LANGUAGE_INVALID = "create-kit-by-dsl.kitLanguage.invalid";
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
 
@@ -102,6 +103,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_INFO_ABOUT_SIZE_MAX = "update-kit-info.about.size.max";
     public static final String UPDATE_KIT_INFO_TAGS_SIZE_MIN = "update-kit-info.tags.size.min";
     public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFound";
+    public static final String UPDATE_KIT_INFO_KIT_LANGUAGE_INVALID = "update-kit-info.kitLanguage.invalid";
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 
@@ -236,6 +238,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
     public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
     public static final String CREATE_ASSESSMENT_KIT_STATUS_DUPLICATE = "create-assessment-kit.kitStatus.duplicate";
+    public static final String CREATE_ASSESSMENT_KIT_LANGUAGE_INVALID = "create-assessment-kit.kitLanguage.invalid";
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
     public static final String ACTIVATE_KIT_VERSION_STATUS_INVALID = "activate-kit-version.status.invalid";

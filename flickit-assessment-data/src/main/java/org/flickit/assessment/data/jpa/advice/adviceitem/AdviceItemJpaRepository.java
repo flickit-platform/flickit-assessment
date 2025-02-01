@@ -8,11 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEntity, UUID> {
 
     Page<AdviceItemJpaEntity> findByAssessmentResultId(UUID assessmentResultId, PageRequest pageRequest);
+
+    List<AdviceItemJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
     int countByAssessmentResultId(UUID assessmentResultId);
 

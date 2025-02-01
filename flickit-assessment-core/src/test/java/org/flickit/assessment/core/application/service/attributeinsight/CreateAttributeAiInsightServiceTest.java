@@ -299,12 +299,19 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId()))
             .thenReturn(Optional.of(attributeInsight));
+        doNothing().when(updateAttributeInsightPort).updateAiInsightTime(any());
 
         var result = service.createAiInsight(param);
         assertEquals(result.content(), attributeInsight.getAiInsight());
 
+        ArgumentCaptor<UpdateAttributeInsightPort.AiTimeParam> attributeInsightParam = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AiTimeParam.class);
+        verify(updateAttributeInsightPort, times(1)).updateAiInsightTime(attributeInsightParam.capture());
+        assertEquals(assessmentResult.getId(), attributeInsightParam.getValue().assessmentResultId());
+        assertEquals(param.getAttributeId(), attributeInsightParam.getValue().attributeId());
+        assertNotNull(attributeInsightParam.getValue().aiInsightTime());
+        assertNotNull(attributeInsightParam.getValue().lastModificationTime());
+
         verifyNoInteractions(callAiPromptPort,
-            updateAttributeInsightPort,
             generateAttributeValueReportFilePort,
             uploadAttributeScoresFilePort);
     }
