@@ -116,41 +116,27 @@ class GetAssessmentReportServiceTest {
         var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
         AssessmentReport report = AssessmentReportMother.reportWithMetadata(reportMetadata);
         var adviceNarration = "assessor narration";
-        var adviceItem = new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium");
+        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
-        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(List.of(adviceItem));
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
 
         var result = service.getAssessmentReport(param);
 
-        assertEquals(assessmentReport.title(), result.assessment().title());
-        assertEquals(report.getMetadata().intro(), result.assessment().intro());
-        assertEquals(assessmentReport.insight(), result.assessment().overallInsight());
-        assertEquals(report.getMetadata().prosAndCons(), result.assessment().prosAndCons());
-        assertEquals(assessmentReport.maturityLevel().getId(), result.assessment().maturityLevel().id());
-        assertEquals(assessmentReport.maturityLevel().getTitle(), result.assessment().maturityLevel().title());
-        assertEquals(assessmentReport.assessmentKit().id(), result.assessment().assessmentKit().id());
-        assertEquals(assessmentReport.assessmentKit().title(), result.assessment().assessmentKit().title());
+        assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
         var expectedSubjectItem = subjects.getFirst();
         var actualSubjectItem = result.subjects().getFirst();
-        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
-        assertEquals(expectedSubjectItem.title(), actualSubjectItem.title());
-        assertEquals(expectedSubjectItem.index(), actualSubjectItem.index());
-        assertEquals(expectedSubjectItem.confidenceValue(), actualSubjectItem.confidenceValue());
-        assertEquals(expectedSubjectItem.insight(), actualSubjectItem.insight());
-        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
-        assertEquals(expectedSubjectItem.maturityLevel().getId(), actualSubjectItem.maturityLevel().id());
-        assertEquals(expectedSubjectItem.attributes().size(), actualSubjectItem.attributes().size());
-        assertEquals(expectedSubjectItem.attributes().getFirst().id(), actualSubjectItem.attributes().getFirst().id());
-        assertEquals(expectedSubjectItem.attributes().getFirst().index(), actualSubjectItem.attributes().getFirst().index());
-        assertEquals(expectedSubjectItem.attributes().getFirst().title(), actualSubjectItem.attributes().getFirst().title());
-        assertEquals(expectedSubjectItem.attributes().getFirst().insight(), actualSubjectItem.attributes().getFirst().insight());
-        assertEquals(expectedSubjectItem.attributes().getFirst().description(), actualSubjectItem.attributes().getFirst().description());
-        assertEquals(expectedSubjectItem.attributes().getFirst().confidenceValue(), actualSubjectItem.attributes().getFirst().confidenceValue());
-        assertEquals(expectedSubjectItem.attributes().getFirst().maturityLevel().getId(), actualSubjectItem.attributes().getFirst().maturityLevel().id());
+        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
+        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
+        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
+        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertEquals(adviceNarration, result.advice().narration());
+        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
+        var actualAdviceItem = result.advice().adviceItems().getFirst();
+        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
@@ -192,5 +178,48 @@ class GetAssessmentReportServiceTest {
         return GetAssessmentReportUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
+    }
+
+    private void assertAssessmentReport(AssessmentReportItem assessmentReport, GetAssessmentReportUseCase.Result result, AssessmentReport report) {
+        assertEquals(assessmentReport.title(), result.assessment().title());
+        assertEquals(report.getMetadata().intro(), result.assessment().intro());
+        assertEquals(assessmentReport.insight(), result.assessment().overallInsight());
+        assertEquals(report.getMetadata().prosAndCons(), result.assessment().prosAndCons());
+        assertEquals(assessmentReport.maturityLevel().getId(), result.assessment().maturityLevel().id());
+        assertEquals(assessmentReport.maturityLevel().getTitle(), result.assessment().maturityLevel().title());
+        assertEquals(assessmentReport.assessmentKit().id(), result.assessment().assessmentKit().id());
+        assertEquals(assessmentReport.assessmentKit().title(), result.assessment().assessmentKit().title());
+    }
+
+    private void assertSubjectItem(AssessmentSubjectReportItem expectedSubjectItem, GetAssessmentReportUseCase.Subject actualSubjectItem) {
+        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
+        assertEquals(expectedSubjectItem.title(), actualSubjectItem.title());
+        assertEquals(expectedSubjectItem.index(), actualSubjectItem.index());
+        assertEquals(expectedSubjectItem.confidenceValue(), actualSubjectItem.confidenceValue());
+        assertEquals(expectedSubjectItem.insight(), actualSubjectItem.insight());
+        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
+        assertEquals(expectedSubjectItem.maturityLevel().getId(), actualSubjectItem.maturityLevel().id());
+        assertEquals(expectedSubjectItem.attributes().size(), actualSubjectItem.attributes().size());
+    }
+
+    private void assertAttributeItem(AttributeReportItem expectedAttributeItem, GetAssessmentReportUseCase.Attribute actualAttributeItem) {
+        assertEquals(expectedAttributeItem.id(), actualAttributeItem.id());
+        assertEquals(expectedAttributeItem.index(), actualAttributeItem.index());
+        assertEquals(expectedAttributeItem.title(), actualAttributeItem.title());
+        assertEquals(expectedAttributeItem.insight(), actualAttributeItem.insight());
+        assertEquals(expectedAttributeItem.description(), actualAttributeItem.description());
+        assertEquals(expectedAttributeItem.confidenceValue(), actualAttributeItem.confidenceValue());
+        assertEquals(expectedAttributeItem.maturityLevel().getId(), actualAttributeItem.maturityLevel().id());
+        assertEquals(expectedAttributeItem.weight(), actualAttributeItem.weight());
+    }
+
+    private void assertAdviceItem(AdviceItem adviceItem, AdviceItem actualAdviceItem) {
+        assertEquals(adviceItem.getId(), actualAdviceItem.getId());
+        assertEquals(adviceItem.getTitle(), actualAdviceItem.getTitle());
+        assertEquals(adviceItem.getTitle(), actualAdviceItem.getTitle());
+        assertEquals(adviceItem.getDescription(), actualAdviceItem.getDescription());
+        assertEquals(adviceItem.getCost(), actualAdviceItem.getCost());
+        assertEquals(adviceItem.getPriority(), actualAdviceItem.getPriority());
+        assertEquals(adviceItem.getImpact(), actualAdviceItem.getImpact());
     }
 }

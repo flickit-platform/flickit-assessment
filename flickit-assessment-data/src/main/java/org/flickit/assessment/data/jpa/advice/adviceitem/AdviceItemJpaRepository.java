@@ -1,21 +1,18 @@
 package org.flickit.assessment.data.jpa.advice.adviceitem;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 public interface AdviceItemJpaRepository extends JpaRepository<AdviceItemJpaEntity, UUID> {
 
-    Page<AdviceItemJpaEntity> findByAssessmentResultId(UUID assessmentResultId, PageRequest pageRequest);
-
-    List<AdviceItemJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
+    Page<AdviceItemJpaEntity> findByAssessmentResultId(UUID assessmentResultId, Pageable pageable);
 
     int countByAssessmentResultId(UUID assessmentResultId);
 
