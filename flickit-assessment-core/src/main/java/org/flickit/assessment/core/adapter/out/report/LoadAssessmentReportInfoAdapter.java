@@ -181,14 +181,14 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var subjectIdToInsightMap = subjectInsightRepository.findByAssessmentResultId(assessmentResult.getId()).stream()
             .collect(toMap(SubjectInsightJpaEntity::getSubjectId, Function.identity()));
 
-        var attributeIds = subjectEntities.stream()
+        var attributeEntities = subjectEntities.stream()
             .map(e -> subjectIdToAttributeValueMap.get(e.getId()))
             .filter(Objects::nonNull)
             .flatMap(Collection::stream)
             .map(SubjectIdAttributeValueView::getAttribute)
             .toList();
 
-        var attributeIdToWeight = getAttributeIdToWeightMap(attributeIds,
+        var attributeIdToWeight = getAttributeIdToWeightMap(attributeEntities,
             assessmentResult.getAssessment().getAssessmentKitId(),
             assessmentResult.getAssessment().getKitCustomId());
 
@@ -246,25 +246,27 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
     @SneakyThrows
     private Map<Long, Integer> getAttributeIdToWeightMap(List<AttributeJpaEntity> attributeEntities, long kitId, Long kitCustomId) {
-        KitCustomData kitCustomData = null;
-        if (kitCustomId != null) {
-            var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, kitId)
-                .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
-            var objectMapper = new ObjectMapper();
-            kitCustomData = objectMapper.readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
-        }
+        if (kitCustomId == null)
+            return attributeEntities.stream()
+                .collect(Collectors.toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
 
-        Map<Long, Integer> attributeIdToWeight = new HashMap<>();
-        if (kitCustomData != null && kitCustomData.attributes() != null) {
-            Map<Long, Integer> attributeIdToCustomWeight = kitCustomData.attributes().stream()
-                .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
-            attributeEntities.forEach(e -> {
-                if (attributeIdToWeight.containsKey(e.getId()))
-                    attributeIdToWeight.put(e.getId(), attributeIdToCustomWeight.get(e.getId()));
-                else
-                    attributeIdToWeight.put(e.getId(), e.getWeight());
-            });
-        }
-        return attributeIdToWeight;
+        var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
+
+        KitCustomData kitCustomData = new ObjectMapper()
+            .readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
+
+        if (kitCustomData == null || kitCustomData.attributes() == null)
+            return attributeEntities.stream()
+                .collect(Collectors.toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
+
+        Map<Long, Integer> attributeIdToCustomWeight = kitCustomData.attributes().stream()
+            .collect(Collectors.toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+
+        return attributeEntities.stream()
+            .collect(Collectors.toMap(
+                AttributeJpaEntity::getId,
+                e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())
+            ));
     }
 }
