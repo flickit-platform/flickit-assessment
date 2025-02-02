@@ -92,6 +92,12 @@ class GetAssessmentDashboardServiceTest {
     private final int assessmentReportMetadataFieldsCount = AssessmentReportMetadata.class.getRecordComponents().length;
 
     @Test
+    void testGetAssessmentDashboard_WhenMetadataFieldsChange_ThenDetectIssue() {
+        assertEquals(4, AssessmentReportMetadata.class.getDeclaredFields().length,
+            "Developers should be aware that newly added fields may affect how 'report issues' are displayed on the dashboard.");
+    }
+
+    @Test
     void testGetAssessmentDashboard_WhenUserDoesNotHaveRequiredPermission_ThenThrowsAccessDeniedException() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
 
@@ -106,7 +112,7 @@ class GetAssessmentDashboardServiceTest {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var assessmentInsight = AssessmentInsightMother.createSimpleAssessmentInsight();
-        var metadata = AssessmentReportMetadataMother.createWithFullMetaData();
+        var metadata = AssessmentReportMetadataMother.createWithFullMetadata();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -145,7 +151,7 @@ class GetAssessmentDashboardServiceTest {
     void testGetAssessmentDashboard_WhenAssessmentInsightNotExist_ThenProduceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        var metadata = AssessmentReportMetadataMother.createWithPartialMetaData();
+        var metadata = AssessmentReportMetadataMother.createWithPartialMetadata();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
