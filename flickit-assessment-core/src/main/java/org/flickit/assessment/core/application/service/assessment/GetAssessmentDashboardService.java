@@ -89,25 +89,14 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
         var lastCalculationTime = assessmentResult.getLastCalculationTime();
         var expiredAttributeInsightsCount = Math.toIntExact(attributeInsights.stream()
-            .map(e -> {
-                if (e.getAiInsightTime() == null) {
-                    return e.getAssessorInsightTime();
-                } else if (e.getAssessorInsightTime() == null) {
-                    return e.getAiInsightTime();
-                } else {
-                    return e.getAiInsightTime().isBefore(e.getAssessorInsightTime())
-                        ? e.getAssessorInsightTime()
-                        : e.getAiInsightTime();
-                }
-            })
-            .filter(latestInsightTime -> latestInsightTime != null && latestInsightTime.isBefore(lastCalculationTime))
+            .filter(e -> e.getLastModificationTime().isBefore(lastCalculationTime))
             .count());
 
         var expiredSubjectsInsightsCount = Math.toIntExact(subjectsInsights.stream()
-            .filter(e -> e.getInsightTime().isBefore(lastCalculationTime))
+            .filter(e -> e.getLastModificationTime().isBefore(lastCalculationTime))
             .count());
 
-        int assessmentInsightExpired = assessmentInsight != null && assessmentInsight.getInsightTime().isBefore(lastCalculationTime) ? 1 : 0;
+        int assessmentInsightExpired = assessmentInsight != null && assessmentInsight.getLastModificationTime().isBefore(lastCalculationTime) ? 1 : 0;
 
         int notGenerated = Math.max(expectedInsightsCount - totalGeneratedInsights, 0);
         if (totalGeneratedInsights > expectedInsightsCount) {
