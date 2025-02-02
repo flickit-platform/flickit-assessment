@@ -9,6 +9,7 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     private final SubjectValueJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
+    private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
     public List<SubjectValue> persistAll(List<Long> subjectIds, UUID assessmentResultId) {
@@ -64,7 +66,9 @@ public class SubjectValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException("SUBJECT_NOT_FOUND"));
         var subjectValue = repository.findBySubjectIdAndAssessmentResultId(subjectId, assessmentResult.getId())
             .orElseThrow(() -> new ResourceNotFoundException("SUBJECT_VALUE_NOT_FOUND"));
+        var maturityLevel = maturityLevelRepository.findByIdAndKitVersionId(subjectValue.getSubjectValue().getMaturityLevelId(),
+            assessmentResult.getKitVersionId()).orElseThrow(() -> new ResourceNotFoundException("MATURITY_LEVEL_NOT_FOUND"));
 
-        return SubjectValueMapper.mapToDomainModel(subjectValue, subjectEntity);
+        return SubjectValueMapper.mapToDomainModel(subjectValue, subjectEntity, maturityLevel);
     }
 }

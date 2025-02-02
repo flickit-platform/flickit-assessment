@@ -17,8 +17,6 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
 
     List<SubjectValueJpaEntity> findAllByIdIn(Collection<UUID> ids);
 
-    Optional<SubjectValueJpaEntity> findBySubjectIdAndAssessmentResultId(Long subjectId, UUID assessmentResultId);
-
     @Query("""
             SELECT
                 sv as subjectValue,
@@ -28,4 +26,15 @@ public interface SubjectValueJpaRepository extends JpaRepository<SubjectValueJpa
             WHERE sv.assessmentResult.id = :assessmentResultId
         """)
     List<SubjectValueWithSubjectView> findAllWithSubjectByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId);
+
+    @Query("""
+            SELECT
+                sv as subjectValue,
+                s as subject
+            FROM SubjectValueJpaEntity sv
+            JOIN SubjectJpaEntity s ON sv.subjectId = s.id AND sv.assessmentResult.kitVersionId = s.kitVersionId
+            WHERE sv.assessmentResult.id = :assessmentResultId and s.id = :subjectId
+        """)
+    Optional<SubjectValueWithSubjectView> findBySubjectIdAndAssessmentResultId(@Param("subjectId") Long subjectId,
+                                                                               @Param("assessmentResultId") UUID assessmentResultId);
 }
