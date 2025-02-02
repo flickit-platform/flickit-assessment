@@ -148,6 +148,7 @@ class InitAssessmentInsightServiceTest {
         assertEquals(assessmentResult.getId(), createCaptor.getValue().getAssessmentResultId());
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
+        assertNotNull(createCaptor.getValue().getLastModificationTime());
         assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
         assertFalse(createCaptor.getValue().isApproved());
 
@@ -179,6 +180,7 @@ class InitAssessmentInsightServiceTest {
         assertEquals(assessmentResult.getId(), createCaptor.getValue().getAssessmentResultId());
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
+        assertNotNull(createCaptor.getValue().getLastModificationTime());
         assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
         assertFalse(createCaptor.getValue().isApproved());
 
@@ -212,6 +214,7 @@ class InitAssessmentInsightServiceTest {
         assertEquals(assessmentResult.getId(), createCaptor.getValue().getAssessmentResultId());
         assertNull(createCaptor.getValue().getInsightBy());
         assertNotNull(createCaptor.getValue().getInsightTime());
+        assertNotNull(createCaptor.getValue().getLastModificationTime());
         assertEquals(expectedInsight, createCaptor.getValue().getInsight());
         assertFalse(createCaptor.getValue().isApproved());
 

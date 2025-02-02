@@ -5,7 +5,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentPer
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
-import org.flickit.assessment.core.application.port.in.assessmentinsight.CreateAssessmentInsightUseCase.*;
+import org.flickit.assessment.core.application.port.in.assessmentinsight.CreateAssessmentInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.CreateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.UpdateAssessmentInsightPort;
@@ -14,6 +14,7 @@ import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMot
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -97,6 +98,15 @@ class CreateAssessmentInsightServiceTest {
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
         verify(loadAssessmentInsightPort).loadByAssessmentResultId(assessmentResult.getId());
 
+        ArgumentCaptor<AssessmentInsight> createCaptor = ArgumentCaptor.forClass(AssessmentInsight.class);
+        verify(createAssessmentInsightPort).persist(createCaptor.capture());
+        assertNull(createCaptor.getValue().getId());
+        assertEquals(assessmentResult.getId(), createCaptor.getValue().getAssessmentResultId());
+        assertEquals(currentUserId, createCaptor.getValue().getInsightBy());
+        assertNotNull(createCaptor.getValue().getInsightTime());
+        assertNotNull(createCaptor.getValue().getLastModificationTime());
+        assertEquals(param.getInsight(), createCaptor.getValue().getInsight());
+        assertTrue(createCaptor.getValue().isApproved());
     }
 
     @Test
@@ -117,5 +127,15 @@ class CreateAssessmentInsightServiceTest {
         verify(assessmentAccessChecker).isAuthorized(assessmentId, currentUserId, AssessmentPermission.CREATE_ASSESSMENT_INSIGHT);
         verify(loadAssessmentResultPort).loadByAssessmentId(assessmentId);
         verify(updateAssessmentInsightPort).updateInsight(isA(AssessmentInsight.class));
+
+        ArgumentCaptor<AssessmentInsight> createCaptor = ArgumentCaptor.forClass(AssessmentInsight.class);
+        verify(updateAssessmentInsightPort).updateInsight(createCaptor.capture());
+        assertEquals(assessmentInsight.getId(), createCaptor.getValue().getId());
+        assertEquals(assessmentResult.getId(), createCaptor.getValue().getAssessmentResultId());
+        assertEquals(currentUserId, createCaptor.getValue().getInsightBy());
+        assertNotNull(createCaptor.getValue().getInsightTime());
+        assertNotNull(createCaptor.getValue().getLastModificationTime());
+        assertEquals(param.getInsight(), createCaptor.getValue().getInsight());
+        assertTrue(createCaptor.getValue().isApproved());
     }
 }
