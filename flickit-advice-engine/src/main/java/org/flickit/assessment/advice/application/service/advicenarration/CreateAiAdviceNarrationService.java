@@ -6,9 +6,9 @@ import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemsPort;
-import org.flickit.assessment.advice.application.port.out.advicenarration.GenerateAiAdvicePort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
@@ -16,6 +16,7 @@ import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadA
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.common.adapter.openai.OpenAiAdapter;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
@@ -24,6 +25,7 @@ import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +55,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAssessmentPort loadAssessmentPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
-    private final GenerateAiAdvicePort generateAiAdvicePort;
+    private final OpenAiAdapter openAiAdapter;
     private final CreateAdviceItemsPort createAdviceItemsPort;
     private final AppAiProperties appAiProperties;
     private final OpenAiProperties openAiProperties;
@@ -78,18 +80,18 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
-        var portResult = generateAiAdvicePort.generateAiAdviceNarrationAndItems(prompt);
-        createAdviceItemsPort.persist(portResult.adviceItems().stream().map(i -> mapToDomainModel(i, assessmentResult.getId())).toList());
+        Advice advice = openAiAdapter.call(prompt, new ParameterizedTypeReference<>() {});
+        createAdviceItemsPort.persist(advice.adviceItems().stream().map(i -> mapToDomainModel(i, assessmentResult.getId())).toList());
 
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
             UUID assessmentResultId = assessmentResult.getId();
-            handleExistingAdviceNarration(narrationId, assessmentResultId, portResult.aiNarration(), param.getCurrentUserId());
+            handleExistingAdviceNarration(narrationId, assessmentResultId, advice.aiNarration, param.getCurrentUserId());
         } else {
             UUID assessmentResultId = assessmentResult.getId();
-            handleNewAdviceNarration(assessmentResultId, portResult.aiNarration(), param.getCurrentUserId());
+            handleNewAdviceNarration(assessmentResultId, advice.aiNarration(), param.getCurrentUserId());
         }
-        return new Result(portResult.aiNarration());
+        return new Result(advice.aiNarration());
     }
 
     private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
@@ -129,6 +131,9 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .toList();
 
         return openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessmentTitle, targetAttributes.toString(), adviceRecommendations.toString());
+    }
+
+    record Advice(String aiNarration, List<AdviceItem> adviceItems){
     }
 
     record AdviceRecommendation(String question, String currentOption, String recommendedOption) {
