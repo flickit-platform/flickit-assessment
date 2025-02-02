@@ -55,7 +55,7 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
     private Result getDefaultInsight(AssessmentResult assessmentResult, SubjectInsight insight, boolean editable) {
         return new Result(new Result.Insight(insight.getInsight(),
             insight.getInsightTime(),
-            isValid(assessmentResult.getLastCalculationTime(), insight.getInsightTime(), insight.getLastModificationTime())),
+            isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime())),
             null,
             editable,
             insight.isApproved());
@@ -65,13 +65,12 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
         return new Result(null,
             new Result.Insight(insight.getInsight(),
                 insight.getInsightTime(),
-                isValid(assessmentResult.getLastCalculationTime(), insight.getInsightTime(), insight.getLastModificationTime())),
+                isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime())),
             editable,
             insight.isApproved());
     }
 
-    private boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightTime, LocalDateTime insightLastModificationTime) {
-        return lastCalculationTime.isBefore(insightTime) ||
-            lastCalculationTime.isBefore(insightLastModificationTime);
+    private boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightLastModificationTime) {
+        return lastCalculationTime.isBefore(insightLastModificationTime);
     }
 }
