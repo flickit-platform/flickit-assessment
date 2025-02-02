@@ -42,7 +42,7 @@ public class OpenAiProperties {
         The advice includes the current status (selected option) and the goal status for each relevant question.
         Task: Based on the provided Advice Recommendations, generate up to 10 Advice Items including only as many points as there are distinct pieces of actionable advice. Each Advice Recommendation includes the following details:
             title : Up to 100 characters
-            description : Up to 3000 characters
+            description : Up to 1000 characters
             cost : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
             priority : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
             impact : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
@@ -50,10 +50,9 @@ public class OpenAiProperties {
         Wrap this paragraph in an HTML <p> tag without any class attributes. Also, include the title of the assessment in your response.
         Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.
         Avoid referring to individual scores or negative phrasing. Keep the tone professional and supportive.
+        Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
         Attribute Targets: %s
         Advice Recommendations: %s
-
-        Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
         """;
 
     public Prompt createAttributeAiInsightPrompt(String attributeTitle, String attributeDescription, String assessmentTitle, String fileContent) {
