@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: adopt
+          distribution: temurin
 
       - name: Build with Maven
         run: mvn clean compile
@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: adopt
+          distribution: temurin
 
       - name: Run Tests
         run: mvn test -Dspring.profiles.active=test
@@ -73,7 +73,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: adopt
+          distribution: temurin
 
       - name: Extract Maven project version
         run: echo version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
@@ -128,7 +128,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: adopt
+          distribution: temurin
 
       - name: Extract GitHub SHA
         run: echo sha=${GITHUB_SHA:0:7} >> $GITHUB_OUTPUT
@@ -223,7 +223,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21
-          distribution: adopt
+          distribution: temurin
 
       - name: Extract Maven project version
         run: echo version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec) >> $GITHUB_OUTPUT
