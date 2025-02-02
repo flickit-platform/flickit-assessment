@@ -2,6 +2,7 @@ package org.flickit.assessment.core.test.fixture.application;
 
 
 import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 
 import java.util.List;
@@ -14,5 +15,15 @@ public class SubjectValueMother {
     public static SubjectValue withAttributeValues(List<AttributeValue> attributeValues, int weight) {
         var attributes = attributeValues.stream().map(AttributeValue::getAttribute).toList();
         return new SubjectValue(UUID.randomUUID(), subjectWithWeightAndAttributes(weight, attributes), attributeValues);
+    }
+
+    public static SubjectValue withAttributeValues(List<AttributeValue> attributeValues, MaturityLevel maturityLevel, int weight) {
+        var attributes = attributeValues.stream().map(AttributeValue::getAttribute).toList();
+        var subjectValue = new SubjectValue(UUID.randomUUID(), subjectWithWeightAndAttributes(weight, attributes), attributeValues);
+        subjectValue.setAttributeValues(attributeValues);
+        subjectValue.setConfidenceValue(subjectValue.getConfidenceValue());
+        subjectValue.setMaturityLevel(maturityLevel);
+
+        return subjectValue;
     }
 }
