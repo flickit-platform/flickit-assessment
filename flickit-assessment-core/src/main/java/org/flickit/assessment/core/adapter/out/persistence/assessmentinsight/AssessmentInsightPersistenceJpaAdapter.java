@@ -47,6 +47,7 @@ public class AssessmentInsightPersistenceJpaAdapter implements
         repository.update(assessmentInsight.getId(),
             assessmentInsight.getInsight(),
             assessmentInsight.getInsightTime(),
+            assessmentInsight.getLastModificationTime(),
             assessmentInsight.getInsightBy(),
             assessmentInsight.isApproved());
     }
