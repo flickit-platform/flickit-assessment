@@ -137,8 +137,8 @@ class GetAssessmentDashboardServiceTest {
         //advices
         assertEquals(2, result.advices().total());
         //report
-        assertFalse(result.report().isNotPublished());
-        assertEquals(0, result.report().blankFields());
+        assertFalse(result.report().unpublished());
+        assertEquals(0, result.report().unprovidedMetadata());
     }
 
     @Test
@@ -176,8 +176,8 @@ class GetAssessmentDashboardServiceTest {
         //advices
         assertEquals(2, result.advices().total());
         //report
-        assertFalse(result.report().isNotPublished());
-        assertEquals(3, result.report().blankFields());
+        assertFalse(result.report().unpublished());
+        assertEquals(3, result.report().unprovidedMetadata());
     }
 
     @Test
@@ -215,8 +215,8 @@ class GetAssessmentDashboardServiceTest {
         //advices
         assertEquals(2, result.advices().total());
         //report
-        assertTrue(result.report().isNotPublished());
-        assertEquals(assessmentReportMetadataFieldsCount, result.report().blankFields());
+        assertTrue(result.report().unpublished());
+        assertEquals(assessmentReportMetadataFieldsCount, result.report().unprovidedMetadata());
     }
 
     private GetAssessmentDashboardUseCase.Param createParam(Consumer<GetAssessmentDashboardUseCase.Param.ParamBuilder> changer) {
