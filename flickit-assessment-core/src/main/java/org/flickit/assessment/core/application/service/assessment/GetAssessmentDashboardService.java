@@ -140,8 +140,10 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
 
     private Result.Report buildReport(AssessmentReport assessmentReport) {
         int allFieldsCount = AssessmentReportMetadata.class.getDeclaredFields().length;
-        if (assessmentReport == null || assessmentReport.getMetadata() == null)
+        if (assessmentReport == null)
             return new Result.Report(true, allFieldsCount);
+        if (assessmentReport.getMetadata() == null)
+            return new Result.Report(!assessmentReport.isPublished(), allFieldsCount);
 
         Map<String, Object> notNullFields = new ObjectMapper().convertValue(assessmentReport.getMetadata(), new TypeReference<>() {
         });
