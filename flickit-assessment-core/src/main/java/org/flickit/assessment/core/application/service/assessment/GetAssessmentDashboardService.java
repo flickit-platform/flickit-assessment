@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.util.ClassUtil;
+import org.flickit.assessment.common.util.ClassUtils;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.ClassUtils.countProvidedFields;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Slf4j
@@ -137,7 +138,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     }
 
     private Result.Report buildReport(AssessmentReport assessmentReport) {
-        int allFieldsCount = ClassUtil.countAllFields(AssessmentReportMetadata.class);
+        int allFieldsCount = ClassUtils.countAllFields(AssessmentReportMetadata.class);
 
         if (assessmentReport == null)
             return new Result.Report(true, allFieldsCount);

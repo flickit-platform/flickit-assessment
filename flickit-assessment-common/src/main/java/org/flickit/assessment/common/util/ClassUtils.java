@@ -7,7 +7,7 @@ import lombok.experimental.UtilityClass;
 import java.util.Map;
 
 @UtilityClass
-public class ClassUtil {
+public class ClassUtils {
 
     public static <T> int countAllFields(Class<T> clazz) {
         return clazz.getDeclaredFields().length;
