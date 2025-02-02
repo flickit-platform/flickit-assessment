@@ -30,6 +30,7 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             UPDATE SubjectInsightJpaEntity si
             SET si.insight = :insight,
                 si.insightTime = :insightTime,
+                si.lastModificationTime = :lastModificationTime,
                 si.insightBy = :insightBy,
                 si.approved = :isApproved
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
@@ -38,6 +39,7 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
                                                 @Param("subjectId") Long subjectId,
                                                 @Param("insight") String insight,
                                                 @Param("insightTime") LocalDateTime insightTime,
+                                                @Param("lastModificationTime") LocalDateTime lastModificationTime,
                                                 @Param("insightBy") UUID insightBy,
                                                 @Param("isApproved") boolean isApproved);
 
