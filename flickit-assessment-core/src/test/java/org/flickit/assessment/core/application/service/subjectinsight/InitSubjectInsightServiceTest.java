@@ -5,16 +5,14 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
-import org.flickit.assessment.core.application.domain.SubjectInsight;
-import org.flickit.assessment.core.application.domain.report.SubjectReportItem;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.subjectinsight.InitSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
+import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuesPort;
 import org.flickit.assessment.core.test.fixture.application.*;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
@@ -26,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -59,7 +56,10 @@ class InitSubjectInsightServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    private LoadSubjectReportInfoPort loadSubjectReportInfoPort;
+    private LoadSubjectValuesPort loadSubjectValuesPort;
+
+    @Mock
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
@@ -71,8 +71,11 @@ class InitSubjectInsightServiceTest {
     private ArgumentCaptor<SubjectInsight> subjectInsightArgumentCaptor;
 
     private final MaturityLevel mLevel = MaturityLevelMother.levelOne();
-    private final SubjectReportItem subject = SubjectReportItemMother.createWithMaturityLevel(mLevel);
-    private final LoadSubjectReportInfoPort.Result subjectReportInfo = new LoadSubjectReportInfoPort.Result(subject, List.of(mLevel), new ArrayList<>());
+    private final List<MaturityLevel> maturityLevels = List.of(MaturityLevelMother.levelOne(), MaturityLevelMother.levelTwo());
+    private final List<AttributeValue> attributeValues = List.of(AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, 123L),
+        AttributeValueMother.hasFullScoreOnLevel23WithWeight(2, 124L));
+    private final Subject subject = SubjectMother.subjectWithWeightAndAttributes(1, List.of(AttributeMother.simpleAttribute()));
+    private final SubjectValue subjectValue = SubjectValueMother.withAttributeValues(attributeValues, mLevel, 3);
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
     private final String insight = buildInsight();
 
@@ -104,7 +107,8 @@ class InitSubjectInsightServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.initSubjectInsight(param));
         assertEquals(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(loadSubjectReportInfoPort,
+        verifyNoInteractions(loadSubjectValuesPort,
+            loadMaturityLevelsPort,
             createSubjectInsightPort,
             updateSubjectInsightPort,
             validateAssessmentResultPort,
@@ -122,8 +126,10 @@ class InitSubjectInsightServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
             .thenReturn(Optional.of(subjectInsight));
-        when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId()))
-            .thenReturn(subjectReportInfo);
+        when(loadSubjectValuesPort.load(param.getSubjectId(), assessmentResult.getId()))
+            .thenReturn(subjectValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevels);
         doNothing().when(updateSubjectInsightPort).update(any(SubjectInsight.class));
 
         service.initSubjectInsight(param);
@@ -150,7 +156,10 @@ class InitSubjectInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
-        when(loadSubjectReportInfoPort.load(param.getAssessmentId(), param.getSubjectId())).thenReturn(subjectReportInfo);
+        when(loadSubjectValuesPort.load(param.getSubjectId(), assessmentResult.getId()))
+            .thenReturn(subjectValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevels);
         doNothing().when(createSubjectInsightPort).persist(any(SubjectInsight.class));
 
         service.initSubjectInsight(param);
@@ -170,15 +179,15 @@ class InitSubjectInsightServiceTest {
 
     private @NotNull String buildInsight() {
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
-            subject.title(),
-            subject.description(),
-            subject.confidenceValue() != null ? (int) Math.ceil(subject.confidenceValue()) : 0,
-            subject.title(),
-            subject.maturityLevel().getIndex(),
-            subjectReportInfo.maturityLevels().size(),
-            subject.maturityLevel().getTitle(),
-            subjectReportInfo.attributes().size(),
-            subject.title());
+            subjectValue.getSubject().getTitle(),
+            subjectValue.getSubject().getDescription(),
+            subjectValue.getConfidenceValue() != null ? (int) Math.ceil(subjectValue.getConfidenceValue()) : 0,
+            subject.getTitle(),
+            subjectValue.getMaturityLevel().getIndex(),
+            maturityLevels.size(),
+            subjectValue.getMaturityLevel().getTitle(),
+            subjectValue.getAttributeValues().size(),
+            subject.getTitle());
     }
 
     private InitSubjectInsightUseCase.Param createParam(Consumer<InitSubjectInsightUseCase.Param.ParamBuilder> changer) {

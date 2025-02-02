@@ -6,14 +6,14 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.InitSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.subject.LoadSubjectReportInfoPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
+import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuesPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +34,9 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
     private final CreateSubjectInsightPort createSubjectInsightPort;
     private final UpdateSubjectInsightPort updateSubjectInsightPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final LoadSubjectReportInfoPort loadSubjectReportInfoPort;
     private final LoadSubjectInsightPort loadSubjectInsightPort;
+    private final LoadSubjectValuesPort loadSubjectValuesPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Override
@@ -43,39 +44,37 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentResultId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .map(AssessmentResult::getId)
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        String defaultInsight = createDefaultInsight(param.getAssessmentId(), param.getSubjectId());
-        var subjectInsight = new SubjectInsight(assessmentResultId,
+        String defaultInsight = buildDefaultInsight(param.getSubjectId(), assessmentResult.getId(), assessmentResult.getKitVersionId());
+        var subjectInsight = new SubjectInsight(assessmentResult.getId(),
             param.getSubjectId(),
             defaultInsight,
             LocalDateTime.now(),
             null,
             false);
 
-        var subjectInsightOptional = loadSubjectInsightPort.load(assessmentResultId, param.getSubjectId());
+        var subjectInsightOptional = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
         if (subjectInsightOptional.isPresent())
             updateSubjectInsightPort.update(subjectInsight);
         else
             createSubjectInsightPort.persist(subjectInsight);
     }
 
-    private String createDefaultInsight(UUID assessmentId, long subjectId) {
-        var subjectReport = loadSubjectReportInfoPort.load(assessmentId, subjectId);
-        var subject = subjectReport.subject();
+    private String buildDefaultInsight(long subjectId, UUID assessmentResultId, long kitVersionId) {
+        var subjectValue = loadSubjectValuesPort.load(subjectId, assessmentResultId);
 
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
-            subject.title(),
-            subject.description(),
-            subject.confidenceValue() != null ? (int) Math.ceil(subject.confidenceValue()) : 0,
-            subject.title(),
-            subject.maturityLevel().getIndex(),
-            subjectReport.maturityLevels().size(),
-            subject.maturityLevel().getTitle(),
-            subjectReport.attributes().size(),
-            subject.title());
+            subjectValue.getSubject().getTitle(),
+            subjectValue.getSubject().getDescription(),
+            subjectValue.getConfidenceValue() != null ? (int) Math.ceil(subjectValue.getConfidenceValue()) : 0,
+            subjectValue.getSubject().getTitle(),
+            subjectValue.getMaturityLevel().getIndex(),
+            loadMaturityLevelsPort.loadByKitVersionId(kitVersionId).size(),
+            subjectValue.getMaturityLevel().getTitle(),
+            subjectValue.getAttributeValues().size(),
+            subjectValue.getSubject().getTitle());
     }
 }
