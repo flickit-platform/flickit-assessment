@@ -1,12 +1,11 @@
 package org.flickit.assessment.core.application.service.assessment;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.ClassUtil;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -26,7 +25,6 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubje
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
@@ -139,23 +137,15 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     }
 
     private Result.Report buildReport(AssessmentReport assessmentReport) {
-        int allFieldsCount = AssessmentReportMetadata.class.getDeclaredFields().length;
+        int allFieldsCount = ClassUtil.countAllFields(AssessmentReportMetadata.class);
+
         if (assessmentReport == null)
             return new Result.Report(true, allFieldsCount);
         if (assessmentReport.getMetadata() == null)
             return new Result.Report(!assessmentReport.isPublished(), allFieldsCount);
 
-        Map<String, Object> notNullFields = new ObjectMapper().convertValue(assessmentReport.getMetadata(), new TypeReference<>() {
-        });
-        int notEmptyFieldsCount = Math.toIntExact(notNullFields
-            .entrySet()
-            .stream()
-            .filter(entry -> {
-                String str = (String) entry.getValue();
-                return !str.isBlank();
-            })
-            .count());
+        int unprovidedFieldsCount = ClassUtil.countProvidedFields(assessmentReport.getMetadata());
 
-        return new Result.Report(!assessmentReport.isPublished(), Math.max(allFieldsCount - notEmptyFieldsCount, 0));
+        return new Result.Report(!assessmentReport.isPublished(), Math.max(allFieldsCount - unprovidedFieldsCount, 0));
     }
 }

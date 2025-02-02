@@ -13,7 +13,7 @@ public class ClassUtil {
         return clazz.getDeclaredFields().length;
     }
 
-    public static <T> int countUnprovidedFields(T instance) {
+    public static <T> int countProvidedFields(T instance) {
         Map<String, Object> notNullFields = new ObjectMapper().convertValue(instance, new TypeReference<>() {
         });
 
