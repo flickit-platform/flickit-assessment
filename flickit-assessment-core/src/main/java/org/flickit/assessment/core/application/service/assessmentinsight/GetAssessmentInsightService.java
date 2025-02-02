@@ -57,7 +57,7 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         return new Result(null,
             new Result.AssessorInsight(assessmentInsight.getInsight(),
                 assessmentInsight.getInsightTime(),
-                assessmentResult.getLastCalculationTime().isBefore(assessmentInsight.getInsightTime())),
+                assessmentResult.getLastCalculationTime().isBefore(assessmentInsight.getLastModificationTime())),
             editable,
             assessmentInsight.isApproved());
     }
