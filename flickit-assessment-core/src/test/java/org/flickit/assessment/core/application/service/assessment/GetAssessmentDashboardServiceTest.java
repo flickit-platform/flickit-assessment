@@ -3,7 +3,10 @@ package org.flickit.assessment.core.application.service.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.AttributeInsight;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
@@ -89,14 +92,6 @@ class GetAssessmentDashboardServiceTest {
     private final SubjectInsight subjectInsight2 = SubjectInsightMother.subjectInsight();
     private final SubjectInsight subjectInsight3 = SubjectInsightMother.subjectInsightMinInsightTime();
 
-    private final int assessmentReportMetadataFieldsCount = AssessmentReportMetadata.class.getRecordComponents().length;
-
-    @Test
-    void testGetAssessmentDashboard_WhenMetadataFieldsChange_ThenDetectIssue() {
-        assertEquals(4, AssessmentReportMetadata.class.getDeclaredFields().length,
-            "Developers should be aware that newly added fields may affect how 'report issues' are displayed on the dashboard.");
-    }
-
     @Test
     void testGetAssessmentDashboard_WhenUserDoesNotHaveRequiredPermission_ThenThrowsAccessDeniedException() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
@@ -108,7 +103,7 @@ class GetAssessmentDashboardServiceTest {
     }
 
     @Test
-    void testGetAssessmentDashboard_WhenAssessmentInsightExists_ThenProduceResult() {
+    void testGetAssessmentDashboard_WhenAssessmentInsightExistsAndAssessmentReportHasFullProvidedMetadata_ThenProduceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var assessmentInsight = AssessmentInsightMother.createSimpleAssessmentInsight();
@@ -148,7 +143,7 @@ class GetAssessmentDashboardServiceTest {
     }
 
     @Test
-    void testGetAssessmentDashboard_WhenAssessmentInsightNotExist_ThenProduceResult() {
+    void testGetAssessmentDashboard_WhenAssessmentInsightNotExistsAndAssessmentReportHasPartialMetadata_ThenProduceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var metadata = AssessmentReportMetadataMother.createWithPartialMetadata();
@@ -187,7 +182,7 @@ class GetAssessmentDashboardServiceTest {
     }
 
     @Test
-    void testGetAssessmentDashboard_WhenAssessmentInsightExpired_ThenProduceResult() {
+    void testGetAssessmentDashboard_WhenAssessmentInsightExpiredAndNullAssessmentReport_ThenProduceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var assessmentInsight = AssessmentInsightMother.createWithMinInsightTime();
@@ -222,7 +217,13 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(2, result.advices().total());
         //report
         assertTrue(result.report().unpublished());
-        assertEquals(assessmentReportMetadataFieldsCount, result.report().unprovidedMetadata());
+        assertEquals(4, result.report().unprovidedMetadata());
+    }
+
+    @Test
+    void testGetAssessmentDashboard_WhenMetadataFieldsChange_ThenDetectIssue() {
+        assertEquals(4, AssessmentReportMetadata.class.getDeclaredFields().length,
+            "Developers should be aware that newly added fields may affect how 'report issues' are displayed on the dashboard.");
     }
 
     private GetAssessmentDashboardUseCase.Param createParam(Consumer<GetAssessmentDashboardUseCase.Param.ParamBuilder> changer) {
