@@ -8,6 +8,8 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.ApproveSu
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -24,6 +26,6 @@ public class ApproveSubjectInsightService implements ApproveSubjectInsightUseCas
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_SUBJECT_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        approveSubjectInsightPort.approve(param.getAssessmentId(), param.getSubjectId());
+        approveSubjectInsightPort.approve(param.getAssessmentId(), param.getSubjectId(), LocalDateTime.now());
     }
 }

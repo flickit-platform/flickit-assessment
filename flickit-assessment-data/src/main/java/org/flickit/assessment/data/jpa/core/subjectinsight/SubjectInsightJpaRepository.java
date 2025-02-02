@@ -46,9 +46,11 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
     @Modifying
     @Query("""
             UPDATE SubjectInsightJpaEntity si
-            SET si.approved = true
+            SET si.approved = true,
+                si.lastModificationTime = :lastModificationTime
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
     void approve(@Param("assessmentResultId") UUID assessmentResultId,
-                 @Param("subjectId") Long subjectId);
+                 @Param("subjectId") Long subjectId,
+                 @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }
