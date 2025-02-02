@@ -6,7 +6,6 @@ import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemsPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
@@ -133,7 +132,10 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         return openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessmentTitle, targetAttributes.toString(), adviceRecommendations.toString());
     }
 
-    record Advice(String aiNarration, List<AdviceItem> adviceItems){
+    public record Advice(String aiNarration, List<AdviceItem> adviceItems) {
+
+        public record AdviceItem(String title, String description, int cost, int priority, int impact) {
+        }
     }
 
     record AdviceRecommendation(String question, String currentOption, String recommendedOption) {

@@ -93,21 +93,22 @@ class CreateAiAdviceNarrationServiceTest {
     @Mock
     private AppAiProperties appAiProperties;
 
+    @Mock
+    private CreateAdviceItemsPort createAdviceItemsPort;
+
     @Captor
     private ArgumentCaptor<AdviceNarration> adviceNarrationCaptor;
 
     @Captor
     private ArgumentCaptor<List<AdviceItem>> adviceItemsCaptor;
 
-    @Mock
-    private CreateAdviceItemsPort createAdviceItemsPort;
-
     private final String aiNarration = "aiNarration";
     private final String prompt = "AI prompt";
     private final AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
-    private final List<AdviceItem> adviceItems = List.of(
-        AdviceItemMother.adviceItemWithLevels(0, 1, 2),
-        AdviceItemMother.adviceItemWithLevels(2, 0, 1));
+    private final List<CreateAiAdviceNarrationService.Advice.AdviceItem> adviceItems = List.of(
+        new CreateAiAdviceNarrationService.Advice.AdviceItem("title1", "description1", 0, 1, 2),
+        new CreateAiAdviceNarrationService.Advice.AdviceItem("title1", "description1", 2, 0, 1)
+    );
     private final Advice advice = new Advice(aiNarration, adviceItems);
     private final CreateAiAdviceNarrationUseCase.Param param = createParam(CreateAiAdviceNarrationUseCase.Param.ParamBuilder::build);
     private final List<Attribute> attributes = List.of(new Attribute(param.getAttributeLevelTargets().getFirst().getAttributeId(), "Reliability"));
@@ -194,7 +195,8 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getShortTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
-        when(openAiAdapter.call(prompt, new ParameterizedTypeReference<CreateAiAdviceNarrationService.Advice>() {})).thenReturn(advice);
+        when(openAiAdapter.call(prompt, new ParameterizedTypeReference<CreateAiAdviceNarrationService.Advice>() {
+        })).thenReturn(advice);
 
         service.createAiAdviceNarration(param);
 
@@ -214,7 +216,7 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
-        List<AdviceItem> expectedAdviceItems = advice.adviceItems();
+        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
         assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());
 
         IntStream.range(0, capturedAdviceItems.size())
@@ -237,7 +239,8 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
-        when(openAiAdapter.call(prompt, new ParameterizedTypeReference<Advice>() {})).thenReturn(advice);
+        when(openAiAdapter.call(prompt, new ParameterizedTypeReference<Advice>() {}))
+            .thenReturn(advice);
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
 
         service.createAiAdviceNarration(param);
@@ -248,7 +251,7 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
-        List<AdviceItem> expectedAdviceItems = advice.adviceItems();
+        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
         assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());
 
         IntStream.range(0, capturedAdviceItems.size())
@@ -271,7 +274,8 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getShortTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
-        when(openAiAdapter.call(prompt, new ParameterizedTypeReference<Advice>() {})).thenReturn(advice);
+        when(openAiAdapter.call(prompt, new ParameterizedTypeReference<Advice>() {}))
+            .thenReturn(advice);
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
 
         service.createAiAdviceNarration(param);
@@ -282,7 +286,7 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
-        List<AdviceItem> expectedAdviceItems = advice.adviceItems();
+        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
         assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());
 
         IntStream.range(0, capturedAdviceItems.size())
@@ -313,14 +317,14 @@ class CreateAiAdviceNarrationServiceTest {
             createAdviceNarrationPort);
     }
 
-    private void assertAdviceItem(AdviceItem portItem, AdviceItem capturedItem) {
+    private void assertAdviceItem(CreateAiAdviceNarrationService.Advice.AdviceItem portItem, AdviceItem capturedItem) {
         assertAll("adviceItem",
-            () -> assertEquals(portItem.getTitle(), capturedItem.getTitle()),
+            () -> assertEquals(portItem.title(), capturedItem.getTitle()),
             () -> assertEquals(assessmentResult.getId(), capturedItem.getAssessmentResultId()),
-            () -> assertEquals(portItem.getDescription(), capturedItem.getDescription()),
-            () -> assertEquals(portItem.getCost().getId(), capturedItem.getCost().getId()),
-            () -> assertEquals(portItem.getImpact().getId(), capturedItem.getImpact().getId()),
-            () -> assertEquals(portItem.getPriority().getId(), capturedItem.getPriority().getId()),
+            () -> assertEquals(portItem.description(), capturedItem.getDescription()),
+            () -> assertEquals(portItem.cost(), capturedItem.getCost().getId()),
+            () -> assertEquals(portItem.impact(), capturedItem.getImpact().getId()),
+            () -> assertEquals(portItem.priority(), capturedItem.getPriority().getId()),
             () -> assertNotNull(capturedItem.getCreationTime()),
             () -> assertNotNull(capturedItem.getLastModificationTime()),
             () -> assertNull(capturedItem.getCreatedBy()),
