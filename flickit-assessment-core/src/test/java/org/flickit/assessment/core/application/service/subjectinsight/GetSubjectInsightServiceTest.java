@@ -91,6 +91,7 @@ class GetSubjectInsightServiceTest {
         SubjectInsight subjectInsight = new SubjectInsight(assessmentResult.getId(), param.getSubjectId(),
             "assessor insight",
             assessmentResult.getLastCalculationTime().minusDays(1),
+            assessmentResult.getLastCalculationTime().minusDays(1),
             param.getCurrentUserId(),
             true
         );
