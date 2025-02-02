@@ -19,7 +19,7 @@ public class ClassUtil {
 
         return (int) notNullFields.entrySet()
             .stream()
-            .filter(entry -> !(entry.getValue() instanceof String str && str.isBlank()))
+            .filter(entry -> !(entry.getValue().toString().isBlank()))
             .count();
     }
 }
