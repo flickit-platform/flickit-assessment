@@ -33,7 +33,7 @@ public interface GetAssessmentDashboardUseCase {
         }
     }
 
-    record Result(Questions questions, Insights insights, Advices advices) {
+    record Result(Questions questions, Insights insights, Advices advices, Report report) {
 
         public record Questions(int total,
                                 int answered,
@@ -50,6 +50,9 @@ public interface GetAssessmentDashboardUseCase {
         }
 
         public record Advices(int total) {
+        }
+
+        public record Report(boolean unpublished, int unprovidedMetadata){
         }
     }
 }
