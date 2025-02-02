@@ -19,4 +19,16 @@ public class AssessmentReportMother {
             userId,
             userId);
     }
+
+    public static AssessmentReport publishedReportWithMetadata(AssessmentReportMetadata metadata) {
+        var userId = UUID.randomUUID();
+        return new AssessmentReport(UUID.randomUUID(),
+            UUID.randomUUID(),
+            metadata,
+            true,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            userId,
+            userId);
+    }
 }
