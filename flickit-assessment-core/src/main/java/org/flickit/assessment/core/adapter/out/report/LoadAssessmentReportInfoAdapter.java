@@ -173,7 +173,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                 assessmentResult.getId(), subjectIds).stream()
             .collect(groupingBy(SubjectIdAttributeValueView::getSubjectId));
 
-        var subjectEntities = subjectRepository.findAllByIdInAndKitVersionId(subjectIds, assessmentResult.getKitVersionId());
+        var subjectEntities = subjectRepository.findAllByKitVersionIdOrderByIndex(assessmentResult.getKitVersionId());
 
         var attributeIdToInsightMap = attributeInsightRepository.findByAssessmentResultId(assessmentResult.getId()).stream()
             .collect(toMap(AttributeInsightJpaEntity::getAttributeId, Function.identity()));
