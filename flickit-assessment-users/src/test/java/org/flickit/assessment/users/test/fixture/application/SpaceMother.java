@@ -1,5 +1,6 @@
 package org.flickit.assessment.users.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.domain.Space;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ public class SpaceMother {
             id++,
             "Code" + id,
             "Title",
+            SpaceType.PERSONAL,
             ownerId,
             null,
             LocalDateTime.now(),
