@@ -74,7 +74,7 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             subjectValue.getMaturityLevel().getIndex(),
             loadMaturityLevelsPort.loadByKitVersionId(kitVersionId).size(),
             subjectValue.getMaturityLevel().getTitle(),
-            subjectValue.getAttributeValues().size(),
+            subjectValue.getSubject().getAttributes().size(),
             subjectValue.getSubject().getTitle());
     }
 }
