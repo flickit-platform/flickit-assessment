@@ -54,6 +54,7 @@ public interface GetAssessmentDashboardUseCase {
 
         public record Report(boolean unpublished,
                              int unprovidedMetadata,
+                             int providedMetadata,
                              int totalMetadata){
         }
     }
