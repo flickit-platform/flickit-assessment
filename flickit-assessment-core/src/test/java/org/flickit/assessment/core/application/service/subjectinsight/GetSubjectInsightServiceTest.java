@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
@@ -46,7 +45,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(false);
@@ -61,7 +60,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightCreatedByAssessorBeforeCalculationAndNotApprovedAndEditable_thenReturnInvalidAssessorInsight() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam();
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
         var subjectInsight = subjectWithInsightTimeAndModificationTime(insightTime, insightTime, false);
@@ -87,7 +86,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightCreatedByAssessorAndApprovedBeforeCalculationAndNotEditable_thenReturnInvalidAssessorInsight() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam();
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(2);
         var insightLastModificationTime = assessmentResult.getLastCalculationTime().minusDays(1);
@@ -114,7 +113,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightCreatedByAssessorBeforeCalculationAndApprovedAfterCalculationAndEditable_thenReturnValidAssessorInsight() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam();
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
         var insightLastModificationTime = assessmentResult.getLastCalculationTime().plusDays(1);
@@ -142,7 +141,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightInitializedBeforeCalculationAndNotApprovedAndEditable_thenReturnInvalidDefaultInsight() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam();
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
         var subjectInsight = SubjectInsightMother.defaultSubjectInsight(insightTime, insightTime, false);
@@ -168,7 +167,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightInitializedAfterCalculationAndNotApprovedAndEditable_thenReturnValidDefaultInsight() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam();
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().plusDays(1);
         var subjectInsight = SubjectInsightMother.defaultSubjectInsight(insightTime, insightTime, false);
@@ -194,7 +193,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightInitializedBeforeCalculationAndApprovedAfterCalculationAndEditable_thenReturnValidDefaultInsight() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam();
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
         var insightLastCalculationTime = assessmentResult.getLastCalculationTime().plusDays(1);
@@ -221,7 +220,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightDoesNotExist_thenReturnEmptyInsight() {
-        Param param = createParam(Param.ParamBuilder::build);
+        Param param = createParam();
         var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -242,16 +241,7 @@ class GetSubjectInsightServiceTest {
         assertFalse(result.approved());
     }
 
-    private Param createParam(Consumer<Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
-    }
-
-    private Param.ParamBuilder paramBuilder() {
-        return Param.builder()
-            .assessmentId(UUID.randomUUID())
-            .subjectId(1L)
-            .currentUserId(UUID.randomUUID());
+    private Param createParam() {
+        return new Param(UUID.randomUUID(), 153L, UUID.randomUUID());
     }
 }
