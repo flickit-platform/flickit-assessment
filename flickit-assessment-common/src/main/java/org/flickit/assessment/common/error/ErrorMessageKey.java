@@ -15,9 +15,6 @@ public class ErrorMessageKey {
     public static final String COMMON_ASSESSMENT_RESULT_NOT_VALID = "common.assessmentResult.notValid";
     public static final String COMMON_ASSESSMENT_KIT_NOT_FOUND = "common.assessmentKit.notFound";
     public static final String COMMON_ASSESSMENT_RESULT_KIT_VERSION_DEPRECATED = "common.assessmentResult.kitVersion.deprecated";
-    public static final String COMMON_SUBJECT_NOT_FOUND = "common.subject.notFound";
-    public static final String COMMON_SUBJECT_VALUE_NOT_FOUND = "common.subjectValue.notFound";
-    public static final String COMMON_MATURITY_LEVEL_NOT_FOUND = "common.maturityLevel.notFound";
 
     public static final String UPLOAD_FILE_PICTURE_SIZE_MAX = "upload-file.picture-size.max";
     public static final String UPLOAD_FILE_DSL_SIZE_MAX = "upload-file.dsl-size.max";
