@@ -109,7 +109,7 @@ class CreateAiAdviceNarrationServiceTest {
         new CreateAiAdviceNarrationService.Advice.AdviceItem("title1", "description1", 0, 1, 2),
         new CreateAiAdviceNarrationService.Advice.AdviceItem("title1", "description1", 2, 0, 1)
     );
-    private final Advice advice = new Advice(aiNarration, adviceItems);
+    private final Advice aiAdvice = new Advice(aiNarration, adviceItems);
     private final CreateAiAdviceNarrationUseCase.Param param = createParam(CreateAiAdviceNarrationUseCase.Param.ParamBuilder::build);
     private final List<Attribute> attributes = List.of(new Attribute(param.getAttributeLevelTargets().getFirst().getAttributeId(), "Reliability"));
     private final List<MaturityLevel> maturityLevels = List.of(new MaturityLevel(param.getAttributeLevelTargets().getFirst().getMaturityLevelId(), "Great"));
@@ -196,7 +196,7 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getShortTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
         when(openAiAdapter.call(prompt, new ParameterizedTypeReference<CreateAiAdviceNarrationService.Advice>() {
-        })).thenReturn(advice);
+        })).thenReturn(aiAdvice);
 
         service.createAiAdviceNarration(param);
 
@@ -216,8 +216,8 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
-        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
-        assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());
+        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = aiAdvice.adviceItems();
+        assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
 
         IntStream.range(0, capturedAdviceItems.size())
             .forEach(i -> assertAdviceItem(expectedAdviceItems.get(i), capturedAdviceItems.get(i)));
@@ -240,7 +240,7 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
         when(openAiAdapter.call(prompt, new ParameterizedTypeReference<Advice>() {}))
-            .thenReturn(advice);
+            .thenReturn(aiAdvice);
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
 
         service.createAiAdviceNarration(param);
@@ -251,8 +251,8 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
-        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
-        assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());
+        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = aiAdvice.adviceItems();
+        assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
 
         IntStream.range(0, capturedAdviceItems.size())
             .forEach(i -> assertAdviceItem(expectedAdviceItems.get(i), capturedAdviceItems.get(i)));
@@ -275,7 +275,7 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getShortTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
         when(openAiAdapter.call(prompt, new ParameterizedTypeReference<Advice>() {}))
-            .thenReturn(advice);
+            .thenReturn(aiAdvice);
         doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
 
         service.createAiAdviceNarration(param);
@@ -286,8 +286,8 @@ class CreateAiAdviceNarrationServiceTest {
 
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
-        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
-        assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());
+        List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = aiAdvice.adviceItems();
+        assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
 
         IntStream.range(0, capturedAdviceItems.size())
             .forEach(i -> assertAdviceItem(expectedAdviceItems.get(i), capturedAdviceItems.get(i)));

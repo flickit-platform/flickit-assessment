@@ -79,18 +79,18 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
-        Advice advice = openAiAdapter.call(prompt, new ParameterizedTypeReference<>() {});
-        createAdviceItemPort.persistAll(advice.adviceItems().stream().map(i -> mapToDomainModel(i, assessmentResult.getId())).toList());
+        Advice aiAdvice = openAiAdapter.call(prompt, new ParameterizedTypeReference<>() {});
+        createAdviceItemPort.persistAll(aiAdvice.adviceItems().stream().map(i -> mapToDomainModel(i, assessmentResult.getId())).toList());
 
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
             UUID assessmentResultId = assessmentResult.getId();
-            handleExistingAdviceNarration(narrationId, assessmentResultId, advice.aiNarration, param.getCurrentUserId());
+            handleExistingAdviceNarration(narrationId, assessmentResultId, aiAdvice.aiNarration, param.getCurrentUserId());
         } else {
             UUID assessmentResultId = assessmentResult.getId();
-            handleNewAdviceNarration(assessmentResultId, advice.aiNarration(), param.getCurrentUserId());
+            handleNewAdviceNarration(assessmentResultId, aiAdvice.aiNarration(), param.getCurrentUserId());
         }
-        return new Result(advice.aiNarration());
+        return new Result(aiAdvice.aiNarration());
     }
 
     private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
