@@ -8,7 +8,6 @@ import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaEntity;
 
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdviceItemMapper {
 
