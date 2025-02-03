@@ -141,12 +141,14 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         int allFieldsCount = ClassUtils.countAllFields(AssessmentReportMetadata.class);
 
         if (assessmentReport == null)
-            return new Result.Report(true, allFieldsCount);
+            return new Result.Report(true, allFieldsCount, allFieldsCount);
         if (assessmentReport.getMetadata() == null)
-            return new Result.Report(!assessmentReport.isPublished(), allFieldsCount);
+            return new Result.Report(!assessmentReport.isPublished(), allFieldsCount, allFieldsCount);
 
         int providedFieldsCount = countProvidedFields(assessmentReport.getMetadata());
 
-        return new Result.Report(!assessmentReport.isPublished(), Math.max(allFieldsCount - providedFieldsCount, 0));
+        return new Result.Report(!assessmentReport.isPublished(),
+            Math.max(allFieldsCount - providedFieldsCount, 0),
+            allFieldsCount);
     }
 }

@@ -52,7 +52,9 @@ public interface GetAssessmentDashboardUseCase {
         public record Advices(int total) {
         }
 
-        public record Report(boolean unpublished, int unprovidedMetadata){
+        public record Report(boolean unpublished,
+                             int unprovidedMetadata,
+                             int totalMetadata){
         }
     }
 }
