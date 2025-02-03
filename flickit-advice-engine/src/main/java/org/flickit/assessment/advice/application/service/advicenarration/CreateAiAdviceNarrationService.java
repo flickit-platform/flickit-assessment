@@ -12,12 +12,12 @@ import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadA
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.common.adapter.openai.OpenAiAdapter;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.config.OpenAiProperties;
@@ -52,7 +52,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAssessmentPort loadAssessmentPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
-    private final OpenAiAdapter openAiAdapter;
+    private final CallAiPromptPort callAiPromptPort;
     private final CreateAdviceItemPort createAdviceItemPort;
     private final AppAiProperties appAiProperties;
     private final OpenAiProperties openAiProperties;
@@ -77,7 +77,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
-        AdviceDto aiAdvice = openAiAdapter.call(prompt, AdviceDto.class);
+        AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
         var adviceItems = aiAdvice.adviceItems().stream()
             .map(i -> i.toDomainModel(assessmentResult.getId()))
             .toList();
