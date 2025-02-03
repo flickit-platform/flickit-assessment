@@ -5,7 +5,9 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.SubjectInsight;
+import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.in.subjectinsight.InitSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -13,7 +15,8 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSub
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuesPort;
-import org.flickit.assessment.core.test.fixture.application.*;
+import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
+import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,7 +27,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -33,6 +35,8 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -70,14 +74,8 @@ class InitSubjectInsightServiceTest {
     @Captor
     private ArgumentCaptor<SubjectInsight> subjectInsightArgumentCaptor;
 
-    private final MaturityLevel mLevel = MaturityLevelMother.levelOne();
-    private final List<MaturityLevel> maturityLevels = List.of(MaturityLevelMother.levelOne(), MaturityLevelMother.levelTwo());
-    private final List<AttributeValue> attributeValues = List.of(AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, 123L),
-        AttributeValueMother.hasFullScoreOnLevel23WithWeight(2, 124L));
-    private final Subject subject = SubjectMother.subjectWithWeightAndAttributes(1, List.of(AttributeMother.simpleAttribute()));
-    private final SubjectValue subjectValue = SubjectValueMother.withAttributeValues(attributeValues, mLevel, 3);
-    private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-    private final String insight = buildInsight();
+    private final AssessmentResult assessmentResult = validResult();
+    private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
 
     @Test
     void testInitSubjectInsight_whenCurrentUserDoesNotHaveRequiredPermission_throwAccessDeniedException() {
@@ -129,7 +127,7 @@ class InitSubjectInsightServiceTest {
         when(loadSubjectValuesPort.load(param.getSubjectId(), assessmentResult.getId()))
             .thenReturn(subjectValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
+            .thenReturn(allLevels());
         doNothing().when(updateSubjectInsightPort).update(any(SubjectInsight.class));
 
         service.initSubjectInsight(param);
@@ -139,7 +137,7 @@ class InitSubjectInsightServiceTest {
         assertNotNull(capturedSubjectInsight);
         assertEquals(assessmentResult.getId(), capturedSubjectInsight.getAssessmentResultId());
         assertEquals(param.getSubjectId(), capturedSubjectInsight.getSubjectId());
-        assertEquals(insight, capturedSubjectInsight.getInsight());
+        assertEquals(expectedDefaultInsight(), capturedSubjectInsight.getInsight());
         assertNull(capturedSubjectInsight.getInsightBy());
         assertNotNull(capturedSubjectInsight.getInsightTime());
         assertFalse(capturedSubjectInsight.isApproved());
@@ -148,7 +146,7 @@ class InitSubjectInsightServiceTest {
     }
 
     @Test
-    void testInitSubjectInsight_whenRequestedToInitiateSubjectInsightOfExistingAssessmentResult_thenCreateDefaultSubjectInsight() {
+    void testInitSubjectInsight_whenSubjectInsightDoesNotExist_thenCreateDefaultSubjectInsight() {
         var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -156,10 +154,8 @@ class InitSubjectInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
-        when(loadSubjectValuesPort.load(param.getSubjectId(), assessmentResult.getId()))
-            .thenReturn(subjectValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
+        when(loadSubjectValuesPort.load(param.getSubjectId(), assessmentResult.getId())).thenReturn(subjectValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(allLevels());
         doNothing().when(createSubjectInsightPort).persist(any(SubjectInsight.class));
 
         service.initSubjectInsight(param);
@@ -169,7 +165,7 @@ class InitSubjectInsightServiceTest {
         assertNotNull(subjectInsight);
         assertEquals(assessmentResult.getId(), subjectInsight.getAssessmentResultId());
         assertEquals(param.getSubjectId(), subjectInsight.getSubjectId());
-        assertEquals(insight, subjectInsight.getInsight());
+        assertEquals(expectedDefaultInsight(), subjectInsight.getInsight());
         assertNull(subjectInsight.getInsightBy());
         assertNotNull(subjectInsight.getInsightTime());
         assertFalse(subjectInsight.isApproved());
@@ -177,17 +173,17 @@ class InitSubjectInsightServiceTest {
         verifyNoInteractions(updateSubjectInsightPort);
     }
 
-    private @NotNull String buildInsight() {
+    private @NotNull String expectedDefaultInsight() {
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subjectValue.getSubject().getTitle(),
             subjectValue.getSubject().getDescription(),
             subjectValue.getConfidenceValue() != null ? (int) Math.ceil(subjectValue.getConfidenceValue()) : 0,
-            subject.getTitle(),
+            subjectValue.getSubject().getTitle(),
             subjectValue.getMaturityLevel().getIndex(),
-            maturityLevels.size(),
+            allLevels().size(),
             subjectValue.getMaturityLevel().getTitle(),
             subjectValue.getAttributeValues().size(),
-            subject.getTitle());
+            subjectValue.getSubject().getTitle());
     }
 
     private InitSubjectInsightUseCase.Param createParam(Consumer<InitSubjectInsightUseCase.Param.ParamBuilder> changer) {
@@ -198,7 +194,7 @@ class InitSubjectInsightServiceTest {
 
     private InitSubjectInsightUseCase.Param.ParamBuilder paramBuilder() {
         return InitSubjectInsightUseCase.Param.builder()
-            .assessmentId(UUID.randomUUID())
+            .assessmentId(assessmentResult.getAssessment().getId())
             .subjectId(1L)
             .currentUserId(UUID.randomUUID());
     }
