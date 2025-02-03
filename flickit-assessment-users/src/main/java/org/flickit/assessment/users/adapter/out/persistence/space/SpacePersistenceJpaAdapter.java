@@ -2,6 +2,7 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
@@ -29,7 +30,8 @@ public class SpacePersistenceJpaAdapter implements
     UpdateSpaceLastSeenPort,
     CountSpaceAssessmentPort,
     DeleteSpacePort,
-    UpdateSpacePort {
+    UpdateSpacePort,
+    CountUserSpacesPort {
 
     private final SpaceJpaRepository repository;
 
@@ -98,5 +100,10 @@ public class SpacePersistenceJpaAdapter implements
     @Override
     public void updateSpace(Param param) {
         repository.update(param.id(), param.title(), param.code(), param.lastModificationTime(), param.lastModifiedBy());
+    }
+
+    @Override
+    public int countUserSpaces(UUID userId, SpaceType type) {
+        return 0;
     }
 }
