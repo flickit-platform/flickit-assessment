@@ -36,7 +36,9 @@ public class AdviceItemPersistenceJpaAdapter implements
 
     @Override
     public void persistAll(List<AdviceItem> adviceItems) {
-        var entities = adviceItems.stream().map(AdviceItemMapper::toJpaEntity).toList();
+        var entities = adviceItems.stream()
+            .map(AdviceItemMapper::toJpaEntity)
+            .toList();
         repository.saveAll(entities);
     }
 
