@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
+import org.flickit.assessment.core.application.domain.AdviceItem;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
@@ -12,6 +13,8 @@ import org.flickit.assessment.core.application.domain.report.AssessmentSubjectRe
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
+import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentReportInfoPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMother;
@@ -54,6 +57,12 @@ class GetAssessmentReportServiceTest {
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
+    @Mock
+    private LoadAdviceNarrationPort loadAdviceNarrationPort;
+
+    @Mock
+    private LoadAdviceItemsPort loadAdviceItemsPort;
+
     @Test
     void testGetAssessmentReport_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
@@ -64,7 +73,11 @@ class GetAssessmentReportServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentReport(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentReportInfoPort, loadAssessmentReportPort, validateAssessmentResultPort);
+        verifyNoInteractions(loadAssessmentReportInfoPort,
+            loadAssessmentReportPort,
+            validateAssessmentResultPort,
+            loadAdviceItemsPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
@@ -79,7 +92,10 @@ class GetAssessmentReportServiceTest {
         var throwable = assertThrows(CalculateNotValidException.class, () -> service.getAssessmentReport(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentReportInfoPort, loadAssessmentReportPort);
+        verifyNoInteractions(loadAssessmentReportInfoPort,
+            loadAssessmentReportPort,
+            loadAdviceItemsPort,
+            loadAdviceNarrationPort);
     }
 
     @Test
@@ -93,49 +109,40 @@ class GetAssessmentReportServiceTest {
 
         MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
         var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
-            "in very good state", 1, 63.0, levelThree());
+            "in very good state", 1, 3, 63.0, levelThree());
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
         AssessmentReport report = AssessmentReportMother.reportWithMetadata(reportMetadata);
+        var adviceNarration = "assessor narration";
+        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
 
         var result = service.getAssessmentReport(param);
 
-        assertEquals(assessmentReport.title(), result.assessment().title());
-        assertEquals(report.getMetadata().intro(), result.assessment().intro());
-        assertEquals(assessmentReport.insight(), result.assessment().overallInsight());
-        assertEquals(report.getMetadata().prosAndCons(), result.assessment().prosAndCons());
-        assertEquals(assessmentReport.maturityLevel().getId(), result.assessment().maturityLevel().id());
-        assertEquals(assessmentReport.maturityLevel().getTitle(), result.assessment().maturityLevel().title());
-        assertEquals(assessmentReport.assessmentKit().id(), result.assessment().assessmentKit().id());
-        assertEquals(assessmentReport.assessmentKit().title(), result.assessment().assessmentKit().title());
+        assertAssessmentReport(assessmentReport, result, report);
         assertEquals(subjects.size(), result.subjects().size());
         var expectedSubjectItem = subjects.getFirst();
         var actualSubjectItem = result.subjects().getFirst();
-        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
-        assertEquals(expectedSubjectItem.title(), actualSubjectItem.title());
-        assertEquals(expectedSubjectItem.index(), actualSubjectItem.index());
-        assertEquals(expectedSubjectItem.confidenceValue(), actualSubjectItem.confidenceValue());
-        assertEquals(expectedSubjectItem.insight(), actualSubjectItem.insight());
-        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
-        assertEquals(expectedSubjectItem.maturityLevel().getId(), actualSubjectItem.maturityLevel().id());
-        assertEquals(expectedSubjectItem.attributes().size(), actualSubjectItem.attributes().size());
-        assertEquals(expectedSubjectItem.attributes().getFirst().id(), actualSubjectItem.attributes().getFirst().id());
-        assertEquals(expectedSubjectItem.attributes().getFirst().index(), actualSubjectItem.attributes().getFirst().index());
-        assertEquals(expectedSubjectItem.attributes().getFirst().title(), actualSubjectItem.attributes().getFirst().title());
-        assertEquals(expectedSubjectItem.attributes().getFirst().insight(), actualSubjectItem.attributes().getFirst().insight());
-        assertEquals(expectedSubjectItem.attributes().getFirst().description(), actualSubjectItem.attributes().getFirst().description());
-        assertEquals(expectedSubjectItem.attributes().getFirst().confidenceValue(), actualSubjectItem.attributes().getFirst().confidenceValue());
-        assertEquals(expectedSubjectItem.attributes().getFirst().maturityLevel().getId(), actualSubjectItem.attributes().getFirst().maturityLevel().id());
+        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
+        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
+        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
+        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertEquals(adviceNarration, result.advice().narration());
+        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
+        var actualAdviceItem = result.advice().adviceItems().getFirst();
+        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
         AssessmentReportItem.Space space = new AssessmentReportItem.Space(1563L, "Space");
         return new AssessmentReportItem(param.getAssessmentId(),
+            UUID.randomUUID(),
             "assessmentTitle",
             "shortAssessmentTitle",
             "assessment insight",
@@ -171,5 +178,48 @@ class GetAssessmentReportServiceTest {
         return GetAssessmentReportUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
+    }
+
+    private void assertAssessmentReport(AssessmentReportItem assessmentReport, GetAssessmentReportUseCase.Result result, AssessmentReport report) {
+        assertEquals(assessmentReport.title(), result.assessment().title());
+        assertEquals(report.getMetadata().intro(), result.assessment().intro());
+        assertEquals(assessmentReport.insight(), result.assessment().overallInsight());
+        assertEquals(report.getMetadata().prosAndCons(), result.assessment().prosAndCons());
+        assertEquals(assessmentReport.maturityLevel().getId(), result.assessment().maturityLevel().id());
+        assertEquals(assessmentReport.maturityLevel().getTitle(), result.assessment().maturityLevel().title());
+        assertEquals(assessmentReport.assessmentKit().id(), result.assessment().assessmentKit().id());
+        assertEquals(assessmentReport.assessmentKit().title(), result.assessment().assessmentKit().title());
+    }
+
+    private void assertSubjectItem(AssessmentSubjectReportItem expectedSubjectItem, GetAssessmentReportUseCase.Subject actualSubjectItem) {
+        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
+        assertEquals(expectedSubjectItem.title(), actualSubjectItem.title());
+        assertEquals(expectedSubjectItem.index(), actualSubjectItem.index());
+        assertEquals(expectedSubjectItem.confidenceValue(), actualSubjectItem.confidenceValue());
+        assertEquals(expectedSubjectItem.insight(), actualSubjectItem.insight());
+        assertEquals(expectedSubjectItem.id(), actualSubjectItem.id());
+        assertEquals(expectedSubjectItem.maturityLevel().getId(), actualSubjectItem.maturityLevel().id());
+        assertEquals(expectedSubjectItem.attributes().size(), actualSubjectItem.attributes().size());
+    }
+
+    private void assertAttributeItem(AttributeReportItem expectedAttributeItem, GetAssessmentReportUseCase.Attribute actualAttributeItem) {
+        assertEquals(expectedAttributeItem.id(), actualAttributeItem.id());
+        assertEquals(expectedAttributeItem.index(), actualAttributeItem.index());
+        assertEquals(expectedAttributeItem.title(), actualAttributeItem.title());
+        assertEquals(expectedAttributeItem.insight(), actualAttributeItem.insight());
+        assertEquals(expectedAttributeItem.description(), actualAttributeItem.description());
+        assertEquals(expectedAttributeItem.confidenceValue(), actualAttributeItem.confidenceValue());
+        assertEquals(expectedAttributeItem.maturityLevel().getId(), actualAttributeItem.maturityLevel().id());
+        assertEquals(expectedAttributeItem.weight(), actualAttributeItem.weight());
+    }
+
+    private void assertAdviceItem(AdviceItem adviceItem, AdviceItem actualAdviceItem) {
+        assertEquals(adviceItem.getId(), actualAdviceItem.getId());
+        assertEquals(adviceItem.getTitle(), actualAdviceItem.getTitle());
+        assertEquals(adviceItem.getTitle(), actualAdviceItem.getTitle());
+        assertEquals(adviceItem.getDescription(), actualAdviceItem.getDescription());
+        assertEquals(adviceItem.getCost(), actualAdviceItem.getCost());
+        assertEquals(adviceItem.getPriority(), actualAdviceItem.getPriority());
+        assertEquals(adviceItem.getImpact(), actualAdviceItem.getImpact());
     }
 }

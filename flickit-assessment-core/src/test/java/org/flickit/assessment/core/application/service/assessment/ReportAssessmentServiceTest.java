@@ -27,6 +27,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.EXPORT_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -55,7 +56,8 @@ class ReportAssessmentServiceTest {
     @Test
     void testReportAssessment_ValidResult() {
         UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
+        var assessmentResult = validResult();
+        UUID assessmentId = assessmentResult.getAssessment().getId();
 
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
@@ -70,6 +72,7 @@ class ReportAssessmentServiceTest {
         LocalDateTime lastModificationTime = LocalDateTime.now();
         Space space = new Space(1563L, "Space");
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
+            assessmentResult.getId(),
             "assessmentTitle",
             "shortAssessmentTitle",
             "assessment insight",
@@ -138,13 +141,15 @@ class ReportAssessmentServiceTest {
     @Test
     void testReportAssessment_assessmentIsNotManageableByCurrentUser() {
         UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
+        var assessmentResult = validResult();
+        UUID assessmentId = assessmentResult.getAssessment().getId();
 
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
         MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
         Space space = new Space(1563L, "Space");
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
+            assessmentResult.getId(),
             "assessmentTitle",
             "shortAssessmentTitle",
             null,
@@ -181,13 +186,15 @@ class ReportAssessmentServiceTest {
     @Test
     void testReportAssessment_currentUserHasManagerRole() {
         UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
+        var assessmentResult = validResult();
+        UUID assessmentId = assessmentResult.getAssessment().getId();
 
         ReportAssessmentUseCase.Param param = new ReportAssessmentUseCase.Param(assessmentId, currentUserId);
 
         MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
         Space space = new Space(1563L, "Space");
         AssessmentReportItem assessment = new AssessmentReportItem(assessmentId,
+            assessmentResult.getId(),
             "assessmentTitle",
             "shortAssessmentTitle",
             null,
