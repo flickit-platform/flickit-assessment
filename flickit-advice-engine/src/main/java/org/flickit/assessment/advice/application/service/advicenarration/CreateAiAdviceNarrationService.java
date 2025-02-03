@@ -1,15 +1,8 @@
 package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.AdviceNarration;
-import org.flickit.assessment.advice.application.domain.Attribute;
-import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.domain.MaturityLevel;
+import org.flickit.assessment.advice.application.domain.*;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
-import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
-import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
@@ -21,6 +14,9 @@ import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAtt
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.common.adapter.openai.OpenAiAdapter;
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
