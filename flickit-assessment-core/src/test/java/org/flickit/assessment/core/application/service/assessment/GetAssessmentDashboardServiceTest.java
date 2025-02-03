@@ -140,6 +140,8 @@ class GetAssessmentDashboardServiceTest {
         //report
         assertFalse(result.report().unpublished());
         assertEquals(0, result.report().unprovidedMetadata());
+        assertEquals(4, result.report().providedMetadata());
+        assertEquals(4, result.report().totalMetadata());
     }
 
     @Test
@@ -179,6 +181,8 @@ class GetAssessmentDashboardServiceTest {
         //report
         assertFalse(result.report().unpublished());
         assertEquals(3, result.report().unprovidedMetadata());
+        assertEquals(1, result.report().providedMetadata());
+        assertEquals(4, result.report().totalMetadata());
     }
 
     @Test
@@ -218,6 +222,8 @@ class GetAssessmentDashboardServiceTest {
         //report
         assertTrue(result.report().unpublished());
         assertEquals(4, result.report().unprovidedMetadata());
+        assertEquals(0, result.report().providedMetadata());
+        assertEquals(4, result.report().totalMetadata());
     }
 
     @Test
