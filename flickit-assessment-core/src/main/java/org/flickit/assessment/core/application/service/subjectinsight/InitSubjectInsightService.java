@@ -56,11 +56,11 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             null,
             false);
 
-        var subjectInsightOptional = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
-        if (subjectInsightOptional.isPresent())
-            updateSubjectInsightPort.update(subjectInsight);
-        else
-            createSubjectInsightPort.persist(subjectInsight);
+        loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())
+            .ifPresentOrElse(
+                existing -> updateSubjectInsightPort.update(subjectInsight),
+                () -> createSubjectInsightPort.persist(subjectInsight)
+            );
     }
 
     private String buildDefaultInsight(long subjectId, UUID assessmentResultId, long kitVersionId) {
