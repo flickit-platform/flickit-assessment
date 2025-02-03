@@ -169,7 +169,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var subjectIdToSubjectValue = subjectValueEntities.stream()
             .collect(Collectors.toMap(SubjectValueJpaEntity::getSubjectId, Function.identity()));
 
-        var subjectIdToAttributeValueMap = attributeValueJpaRepository.findByAssessmentResultIdAndSubjectIdIn(
+        var subjectIdToAttributeValueMap = attributeValueJpaRepository.findByAssessmentResultIdAndSubjectIdInOrderByIndex(
                 assessmentResult.getId(), subjectIds).stream()
             .collect(groupingBy(SubjectIdAttributeValueView::getSubjectId));
 

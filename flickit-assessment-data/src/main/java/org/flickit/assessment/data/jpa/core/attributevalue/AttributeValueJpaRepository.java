@@ -41,8 +41,8 @@ public interface AttributeValueJpaRepository extends JpaRepository<AttributeValu
             WHERE att.subjectId IN :subjectIds
             ORDER BY att.index ASC
         """)
-    List<SubjectIdAttributeValueView> findByAssessmentResultIdAndSubjectIdIn(@Param(value = "assessmentResultId") UUID assessmentResultId,
-                                                                             @Param(value = "subjectIds") Collection<Long> subjectIds);
+    List<SubjectIdAttributeValueView> findByAssessmentResultIdAndSubjectIdInOrderByIndex(@Param(value = "assessmentResultId") UUID assessmentResultId,
+                                                                                         @Param(value = "subjectIds") Collection<Long> subjectIds);
 
     @Query("""
             SELECT
