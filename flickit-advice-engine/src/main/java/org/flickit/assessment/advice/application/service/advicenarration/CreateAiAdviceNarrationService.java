@@ -7,7 +7,7 @@ import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
-import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemsPort;
+import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
@@ -55,7 +55,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     private final LoadAssessmentPort loadAssessmentPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
     private final OpenAiAdapter openAiAdapter;
-    private final CreateAdviceItemsPort createAdviceItemsPort;
+    private final CreateAdviceItemPort createAdviceItemPort;
     private final AppAiProperties appAiProperties;
     private final OpenAiProperties openAiProperties;
 
@@ -80,7 +80,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
         Advice advice = openAiAdapter.call(prompt, new ParameterizedTypeReference<>() {});
-        createAdviceItemsPort.persist(advice.adviceItems().stream().map(i -> mapToDomainModel(i, assessmentResult.getId())).toList());
+        createAdviceItemPort.persistAll(advice.adviceItems().stream().map(i -> mapToDomainModel(i, assessmentResult.getId())).toList());
 
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();

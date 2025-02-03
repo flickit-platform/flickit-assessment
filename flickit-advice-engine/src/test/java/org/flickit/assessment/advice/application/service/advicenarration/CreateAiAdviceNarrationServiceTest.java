@@ -6,7 +6,7 @@ import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
-import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemsPort;
+import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
@@ -94,7 +94,7 @@ class CreateAiAdviceNarrationServiceTest {
     private AppAiProperties appAiProperties;
 
     @Mock
-    private CreateAdviceItemsPort createAdviceItemsPort;
+    private CreateAdviceItemPort createAdviceItemPort;
 
     @Captor
     private ArgumentCaptor<AdviceNarration> adviceNarrationCaptor;
@@ -138,7 +138,7 @@ class CreateAiAdviceNarrationServiceTest {
             loadMaturityLevelsPort,
             loadAssessmentPort,
             loadAttributesPort,
-            createAdviceItemsPort);
+            createAdviceItemPort);
     }
 
     @Test
@@ -159,7 +159,7 @@ class CreateAiAdviceNarrationServiceTest {
             loadAttributesPort,
             loadAssessmentPort,
             loadMaturityLevelsPort,
-            createAdviceItemsPort);
+            createAdviceItemPort);
     }
 
     @Test
@@ -177,7 +177,7 @@ class CreateAiAdviceNarrationServiceTest {
             loadAdviceNarrationPort,
             loadAssessmentPort,
             createAdviceNarrationPort,
-            createAdviceItemsPort);
+            createAdviceItemPort);
     }
 
     @Test
@@ -214,7 +214,7 @@ class CreateAiAdviceNarrationServiceTest {
         AdviceNarration capturedAdviceNarration = adviceNarrationCaptor.getValue();
         assertAdviceNarration(capturedAdviceNarration);
 
-        verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
+        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
         List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
         assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());
@@ -249,7 +249,7 @@ class CreateAiAdviceNarrationServiceTest {
         AdviceNarration capturedAdviceNarration = adviceNarrationCaptor.getValue();
         assertAdviceNarration(capturedAdviceNarration);
 
-        verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
+        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
         List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
         assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());
@@ -284,7 +284,7 @@ class CreateAiAdviceNarrationServiceTest {
         AdviceNarration capturedAdviceNarration = adviceNarrationCaptor.getValue();
         assertAdviceNarration(capturedAdviceNarration);
 
-        verify(createAdviceItemsPort).persist(adviceItemsCaptor.capture());
+        verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
         List<CreateAiAdviceNarrationService.Advice.AdviceItem> expectedAdviceItems = advice.adviceItems();
         assertEquals(advice.adviceItems().size(), capturedAdviceItems.size());

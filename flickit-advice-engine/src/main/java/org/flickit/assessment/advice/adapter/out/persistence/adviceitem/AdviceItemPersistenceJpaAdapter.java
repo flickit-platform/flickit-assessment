@@ -24,8 +24,7 @@ public class AdviceItemPersistenceJpaAdapter implements
     LoadAdviceItemListPort,
     UpdateAdviceItemPort,
     LoadAdviceItemPort,
-    DeleteAdviceItemPort,
-    CreateAdviceItemsPort {
+    DeleteAdviceItemPort {
 
     private final AdviceItemJpaRepository repository;
 
@@ -36,7 +35,7 @@ public class AdviceItemPersistenceJpaAdapter implements
     }
 
     @Override
-    public void persist(List<AdviceItem> adviceItems) {
+    public void persistAll(List<AdviceItem> adviceItems) {
         var entities = adviceItems.stream().map(AdviceItemMapper::toJpaEntity).toList();
         repository.saveAll(entities);
     }
