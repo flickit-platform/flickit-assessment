@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFour;
+
 public class AssessmentResultMother {
 
     public static AssessmentResult invalidResultWithSubjectValues(List<SubjectValue> subjectValues) {
@@ -51,7 +53,9 @@ public class AssessmentResultMother {
             LocalDateTime.now());
 
         assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setMaturityLevel(levelFour());
         assessmentResult.setIsConfidenceValid(true);
+        assessmentResult.setConfidenceValue(69.0);
         return assessmentResult;
     }
 

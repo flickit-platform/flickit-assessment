@@ -70,4 +70,26 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     void resolveComment(@Param("evidenceId") UUID evidenceId,
                         @Param("lastModifiedBy") UUID lastModifiedBy,
                         @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Query("""
+            SELECT COUNT(DISTINCT e.questionId)
+            FROM EvidenceJpaEntity e
+            LEFT JOIN AnswerJpaEntity a ON e.questionId = a.questionId AND a.assessmentResult.assessment.id = :assessmentId
+            LEFT JOIN AssessmentResultJpaEntity ar on a.assessmentResult.assessment.id = e.assessmentId
+            WHERE e.assessmentId = :assessmentId
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+                AND e.deleted = false
+                AND e.type IS NOT NULL
+        """)
+    int countAnsweredQuestionsHavingEvidence(@Param("assessmentId") UUID assessmentId);
+
+    @Query("""
+            SELECT COUNT(e.id)
+            FROM EvidenceJpaEntity e
+            WHERE e.assessmentId = :assessmentId
+                AND e.deleted = false
+                AND e.type IS NULL
+                AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    int countUnresolvedComments(@Param("assessmentId") UUID assessmentId);
 }

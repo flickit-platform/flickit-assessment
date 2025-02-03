@@ -13,7 +13,41 @@ public class AssessmentInsightMother {
             assessmentResultId,
             RandomStringUtils.random(50),
             LocalDateTime.now().plusSeconds(1),
-            UUID.randomUUID()
+            UUID.randomUUID(),
+            false
+        );
+    }
+
+    public static AssessmentInsight createInitialInsightWithAssessmentResultId(UUID assessmentResultId) {
+        return new AssessmentInsight(
+            null,
+            assessmentResultId,
+            RandomStringUtils.random(50),
+            LocalDateTime.now().plusSeconds(1),
+            null,
+            false
+        );
+    }
+
+    public static AssessmentInsight createSimpleAssessmentInsight() {
+        return new AssessmentInsight(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            RandomStringUtils.random(50),
+            LocalDateTime.now().plusSeconds(1),
+            UUID.randomUUID(),
+            false
+        );
+    }
+
+    public static AssessmentInsight createWithMinInsightTime() {
+        return new AssessmentInsight(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            RandomStringUtils.random(50),
+            LocalDateTime.MIN,
+            UUID.randomUUID(),
+            false
         );
     }
 }

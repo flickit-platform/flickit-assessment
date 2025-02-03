@@ -13,9 +13,10 @@ public class AttributeInsightMother {
             new Random().nextLong(),
             "ai insight ",
             "assessor insight",
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            "input path");
+            LocalDateTime.now().plusSeconds(10),
+            LocalDateTime.now().plusSeconds(10),
+            "input path",
+            false);
     }
 
     public static AttributeInsight simpleAttributeAiInsightMinInsightTime(){
@@ -24,7 +25,19 @@ public class AttributeInsightMother {
             "ai insight ",
             "assessor insight",
             LocalDateTime.MIN,
-            LocalDateTime.now(),
-            "input path");
+            LocalDateTime.now().plusSeconds(10),
+            "input path",
+            false);
+    }
+
+    public static AttributeInsight simpleAttributeAiInsightMinInsightsTime(){
+        return new AttributeInsight(UUID.randomUUID(),
+            new Random().nextLong(),
+            "ai insight ",
+            "assessor insight",
+            LocalDateTime.MIN,
+            LocalDateTime.MIN,
+            "input path",
+            false);
     }
 }

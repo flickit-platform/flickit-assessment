@@ -17,4 +17,5 @@ public class AttributeInsight {
     private final LocalDateTime aiInsightTime;
     private final LocalDateTime assessorInsightTime;
     private final String aiInputPath;
+    private final boolean approved;
 }

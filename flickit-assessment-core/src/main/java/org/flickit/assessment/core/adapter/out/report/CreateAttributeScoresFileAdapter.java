@@ -115,7 +115,7 @@ public class CreateAttributeScoresFileAdapter implements CreateAttributeScoresFi
         int rowNumber = 1;
         for (Question question : questions) {
             var answer = questionIdToAnswerMap.get(question.getId());
-            if (answer != null && answer.getIsNotApplicable())
+            if (answer != null && Boolean.TRUE.equals(answer.getIsNotApplicable()))
                 continue;
 
             Row row = sheet.createRow(rowNumber++);

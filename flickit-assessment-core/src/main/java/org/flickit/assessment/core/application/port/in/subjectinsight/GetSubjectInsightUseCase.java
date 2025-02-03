@@ -37,7 +37,8 @@ public interface GetSubjectInsightUseCase {
         }
     }
 
-    record Result(DefaultInsight defaultInsight, AssessorInsight assessorInsight, boolean editable) {
+    record Result(DefaultInsight defaultInsight, AssessorInsight assessorInsight, boolean editable, boolean approved) {
+
         public record DefaultInsight(String insight) {
         }
 

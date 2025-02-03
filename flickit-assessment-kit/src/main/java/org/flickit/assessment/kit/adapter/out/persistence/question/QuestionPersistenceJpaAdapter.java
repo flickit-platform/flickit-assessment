@@ -24,6 +24,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.Questio
 import org.flickit.assessment.kit.application.domain.Question;
 import org.flickit.assessment.kit.application.domain.QuestionImpact;
 import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.dsl.AnswerOptionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.MaturityLevelDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionImpactDslModel;
@@ -175,13 +176,13 @@ public class QuestionPersistenceJpaAdapter implements
 
         var rangeViews = answerRangeRepository.findAllWithOptionsByKitVersionId(kitVersionId);
 
-        Map<Long, List<AnswerOptionJpaEntity>> answerRangeToOptions = rangeViews.stream()
+        Map<Long, List<AnswerOptionJpaEntity>> answerRangeIdToOptions = rangeViews.stream()
             .collect(Collectors.groupingBy(
                 a -> a.getAnswerRange().getId(),
                 Collectors.mapping(AnswerRangeJoinOptionView::getAnswerOption, Collectors.toList())
             ));
 
-        var answerRangeIdToView = rangeViews.stream()
+        var answerRangeIdToEntity = rangeViews.stream()
             .collect(toMap(v -> v.getAnswerRange().getId(), AnswerRangeJoinOptionView::getAnswerRange,
                 (existing, duplicate) -> existing
             ));
@@ -191,7 +192,7 @@ public class QuestionPersistenceJpaAdapter implements
             .map(entry -> {
                 var questionEntity = entry.getKey();
                 var impactEntities = entry.getValue().stream().map(QuestionJoinQuestionImpactView::getQuestionImpact).toList();
-                var optionIndexToValue = answerRangeToOptions.get(questionEntity.getAnswerRangeId()).stream()
+                var optionIndexToValue = answerRangeIdToOptions.get(questionEntity.getAnswerRangeId()).stream()
                     .collect(Collectors.toMap(AnswerOptionJpaEntity::getIndex, AnswerOptionJpaEntity::getValue));
 
                 String questionnaireCode = questionnaireEntities.stream()
@@ -214,11 +215,18 @@ public class QuestionPersistenceJpaAdapter implements
                             .build()
                     ).toList();
 
-                String answerRangeCode = answerRangeIdToView.get(questionEntity.getAnswerRangeId()).getCode();
+                String answerRangeCode = answerRangeIdToEntity.get(questionEntity.getAnswerRangeId()).getCode();
+                List<AnswerOptionDslModel> answerOptions = null;
+                if (!answerRangeIdToEntity.get(questionEntity.getAnswerRangeId()).isReusable()) {
+                    answerRangeCode = null;
+                    answerOptions = answerRangeIdToOptions.get(questionEntity.getAnswerRangeId()).stream()
+                        .map(AnswerOptionMapper::mapToDslModel)
+                        .toList();
+                }
 
                 assert questionnaireCode != null;
                 return QuestionMapper.mapToDslModel(
-                    questionEntity, questionnaireCode, answerRangeCode, impacts);
+                    questionEntity, questionnaireCode, answerRangeCode, impacts, answerOptions);
             })
             .sorted(comparing(QuestionDslModel::getQuestionnaireCode)
                 .thenComparing(QuestionDslModel::getIndex))

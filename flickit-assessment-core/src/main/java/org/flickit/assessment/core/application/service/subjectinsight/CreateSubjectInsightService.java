@@ -56,6 +56,11 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
 
     @NotNull
     private static SubjectInsight toSubjectInsight(UUID assessmentResultId, Param param) {
-        return new SubjectInsight(assessmentResultId, param.getSubjectId(), param.getInsight(), LocalDateTime.now(), param.getCurrentUserId());
+        return new SubjectInsight(assessmentResultId,
+            param.getSubjectId(),
+            param.getInsight(),
+            LocalDateTime.now(),
+            param.getCurrentUserId(),
+            true);
     }
 }

@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.in.assessmentinsight;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -25,6 +26,7 @@ public interface GetAssessmentInsightUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.currentUserId = currentUserId;
@@ -32,7 +34,7 @@ public interface GetAssessmentInsightUseCase {
         }
     }
 
-    record Result(DefaultInsight defaultInsight, AssessorInsight assessorInsight, boolean editable) {
+    record Result(DefaultInsight defaultInsight, AssessorInsight assessorInsight, boolean editable, boolean approved) {
 
         public record DefaultInsight(String insight) {
         }

@@ -31,8 +31,8 @@ public class AssessmentMapper {
     }
 
     public static Assessment mapToDomainModel(AssessmentKitSpaceJoinView view) {
-        AssessmentKit kit = new AssessmentKit(view.getKit().getId(), view.getKit().getTitle(), view.getKit().getKitVersionId(), null);
-        Space space = new Space(view.getSpace().getId(), view.getSpace().getTitle());
+        AssessmentKit kit = new AssessmentKit(view.getKit().getId(), view.getKit().getTitle(), view.getKit().getKitVersionId(), null, null);
+        Space space = new Space(view.getSpace().getId(), view.getSpace().getTitle(), null, null, null);
         return mapToDomainModel(view.getAssessment(), kit, space);
     }
 
