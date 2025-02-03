@@ -6,6 +6,10 @@ import org.flickit.assessment.advice.application.domain.Attribute;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
 import org.flickit.assessment.advice.application.domain.MaturityLevel;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
+import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
+import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
@@ -33,7 +37,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.flickit.assessment.advice.adapter.out.persistence.adviceitem.AdviceItemMapper.mapToDomainModel;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
@@ -79,8 +82,9 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
-        Advice aiAdvice = openAiAdapter.call(prompt, new ParameterizedTypeReference<>() {});
-        createAdviceItemPort.persistAll(aiAdvice.adviceItems().stream().map(i -> mapToDomainModel(i, assessmentResult.getId())).toList());
+        Advice aiAdvice = openAiAdapter.call(prompt, new ParameterizedTypeReference<>() {
+        });
+        createAdviceItemPort.persistAll(aiAdvice.adviceItems().stream().map(i -> toAdviceItem(i, assessmentResult.getId())).toList());
 
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
@@ -159,5 +163,19 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             LocalDateTime.now(),
             null,
             createdBy);
+    }
+
+    public static AdviceItem toAdviceItem(Advice.AdviceItem adviceItem, UUID assessmentResultId) {
+        return new AdviceItem(null,
+            adviceItem.title(),
+            assessmentResultId,
+            adviceItem.description(),
+            CostLevel.valueOfById(adviceItem.cost()),
+            PriorityLevel.valueOfById(adviceItem.priority()),
+            ImpactLevel.valueOfById(adviceItem.impact()),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            null,
+            null);
     }
 }

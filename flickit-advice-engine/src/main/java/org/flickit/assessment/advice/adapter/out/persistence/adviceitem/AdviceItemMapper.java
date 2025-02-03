@@ -6,11 +6,8 @@ import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
 import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
-import org.flickit.assessment.advice.application.service.advicenarration.CreateAiAdviceNarrationService.Advice;
 import org.flickit.assessment.data.jpa.advice.adviceitem.AdviceItemJpaEntity;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdviceItemMapper {
@@ -41,19 +38,5 @@ public class AdviceItemMapper {
             entity.getLastModificationTime(),
             entity.getCreatedBy(),
             entity.getLastModifiedBy());
-    }
-
-    public static AdviceItem mapToDomainModel(Advice.AdviceItem adviceItem, UUID assessmentResultId) {
-        return new AdviceItem(null,
-            adviceItem.title(),
-            assessmentResultId,
-            adviceItem.description(),
-            CostLevel.valueOfById(adviceItem.cost()),
-            PriorityLevel.valueOfById(adviceItem.priority()),
-            ImpactLevel.valueOfById(adviceItem.impact()),
-            LocalDateTime.now(),
-            LocalDateTime.now(),
-            null,
-            null);
     }
 }
