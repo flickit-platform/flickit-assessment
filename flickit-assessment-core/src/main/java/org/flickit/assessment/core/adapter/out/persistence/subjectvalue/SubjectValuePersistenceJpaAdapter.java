@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.common.error.ErrorMessageKey.*;
 import static org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_SUBJECT_VALUE_ASSESSMENT_RESULT_ID_NOT_FOUND;
 
@@ -62,17 +62,16 @@ public class SubjectValuePersistenceJpaAdapter implements
 
     @Override
     public SubjectValue load(long subjectId, UUID assessmentResultId) {
-        AssessmentResultJpaEntity assessmentResult = assessmentResultRepository.findById(assessmentResultId)
+        var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-
         var subjectEntity = subjectRepository.findByIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId())
-            .orElseThrow(() -> new ResourceNotFoundException("SUBJECT_NOT_FOUND"));
-        var subjectValueEntity = repository.findBySubjectIdAndAssessmentResultId(subjectId, assessmentResult.getId())
-            .orElseThrow(() -> new ResourceNotFoundException("SUBJECT_VALUE_NOT_FOUND"));
-        var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(subjectValueEntity.getSubjectValue().getMaturityLevelId(),
-            assessmentResult.getKitVersionId()).orElseThrow(() -> new ResourceNotFoundException("MATURITY_LEVEL_NOT_FOUND"));
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_SUBJECT_NOT_FOUND));
+        var subjectValueWithSubjectView = repository.findBySubjectIdAndAssessmentResultId(subjectId, assessmentResult.getId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_SUBJECT_VALUE_NOT_FOUND));
+        var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(subjectValueWithSubjectView.getSubjectValue().getMaturityLevelId(),
+            assessmentResult.getKitVersionId()).orElseThrow(() -> new ResourceNotFoundException(COMMON_MATURITY_LEVEL_NOT_FOUND));
         var attributesEntity = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId());
 
-        return SubjectValueMapper.mapToDomainModel(subjectValueEntity, subjectEntity, maturityLevelEntity, attributesEntity);
+        return SubjectValueMapper.mapToDomainModel(subjectValueWithSubjectView, subjectEntity, maturityLevelEntity, attributesEntity);
     }
 }
