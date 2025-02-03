@@ -41,7 +41,7 @@ class CreateSpaceUseCaseParamsTest {
     }
 
     @Test
-    void testCreateSpaceUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
+    void testCreateSpaceUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
