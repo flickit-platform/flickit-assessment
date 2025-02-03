@@ -5,12 +5,17 @@ import org.flickit.assessment.advice.application.port.in.advicenarration.CreateA
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
+import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.advice.test.fixture.application.*;
+import org.flickit.assessment.advice.application.service.advicenarration.CreateAiAdviceNarrationService.AdviceDto;
+import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentMother;
+import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
@@ -20,7 +25,6 @@ import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.advice.application.service.advicenarration.CreateAiAdviceNarrationService.AdviceDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -86,6 +90,9 @@ class CreateAiAdviceNarrationServiceTest {
     private CreateAdviceNarrationPort createAdviceNarrationPort;
 
     @Mock
+    private UpdateAdviceNarrationPort updateAdviceNarrationPort;
+
+    @Mock
     private AppAiProperties appAiProperties;
 
     @Mock
@@ -93,6 +100,9 @@ class CreateAiAdviceNarrationServiceTest {
 
     @Captor
     private ArgumentCaptor<AdviceNarration> adviceNarrationCaptor;
+
+    @Captor
+    private ArgumentCaptor<UpdateAdviceNarrationPort.AiNarrationParam> updateNarrationCaptor;
 
     @Captor
     private ArgumentCaptor<List<AdviceItem>> adviceItemsCaptor;
@@ -204,7 +214,7 @@ class CreateAiAdviceNarrationServiceTest {
         verify(callAiPromptPort, times(1)).call(prompt, AdviceDto.class);
 
         assertEquals(aiNarration, capturedAdviceNarration.getAiNarration());
-        assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy());
+        assertNull(capturedAdviceNarration.getCreatedBy());
         assertNull(capturedAdviceNarration.getAssessorNarration());
         assertNotNull(capturedAdviceNarration.getAiNarrationTime());
         assertNull(capturedAdviceNarration.getAssessorNarrationTime());
@@ -241,23 +251,21 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt, AdviceDto.class)).thenReturn(aiAdvice);
-        doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
+        doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(UpdateAdviceNarrationPort.AiNarrationParam.class));
 
         service.createAiAdviceNarration(param);
 
-        verify(createAdviceNarrationPort).persist(adviceNarrationCaptor.capture());
-        AdviceNarration capturedAdviceNarration = adviceNarrationCaptor.getValue();
+        verify(updateAdviceNarrationPort).updateAiNarration(updateNarrationCaptor.capture());
+        var capturedAdviceNarration = updateNarrationCaptor.getValue();
+        assertEquals(adviceNarration.getId(), capturedAdviceNarration.id());
+        assertEquals(aiNarration, capturedAdviceNarration.narration());
+        assertNotNull(capturedAdviceNarration.narrationTime());
+
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
         List<CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto> expectedAdviceItems = aiAdvice.adviceItems();
         assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
 
-        assertEquals(aiNarration, capturedAdviceNarration.getAiNarration());
-        assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy());
-        assertNull(capturedAdviceNarration.getAssessorNarration());
-        assertNotNull(capturedAdviceNarration.getAiNarrationTime());
-        assertNull(capturedAdviceNarration.getAssessorNarrationTime());
-        assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId());
         assertThat(capturedAdviceItems)
             .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
                 assertEquals(expected.title(), actual.getTitle());
@@ -291,23 +299,21 @@ class CreateAiAdviceNarrationServiceTest {
         when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getShortTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt, AdviceDto.class)).thenReturn(aiAdvice);
 
-        doNothing().when(createAdviceNarrationPort).persist(any(AdviceNarration.class));
+        doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(UpdateAdviceNarrationPort.AiNarrationParam.class));
 
         service.createAiAdviceNarration(param);
 
-        verify(createAdviceNarrationPort).persist(adviceNarrationCaptor.capture());
-        AdviceNarration capturedAdviceNarration = adviceNarrationCaptor.getValue();
+        verify(updateAdviceNarrationPort).updateAiNarration(updateNarrationCaptor.capture());
+        var capturedAdviceNarration = updateNarrationCaptor.getValue();
+        assertEquals(adviceNarration.getId(), capturedAdviceNarration.id());
+        assertEquals(aiNarration, capturedAdviceNarration.narration());
+        assertNotNull(capturedAdviceNarration.narrationTime());
+
         verify(createAdviceItemPort).persistAll(adviceItemsCaptor.capture());
         List<AdviceItem> capturedAdviceItems = adviceItemsCaptor.getValue();
         List<CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto> expectedAdviceItems = aiAdvice.adviceItems();
         assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
 
-        assertEquals(aiNarration, capturedAdviceNarration.getAiNarration());
-        assertEquals(param.getCurrentUserId(), capturedAdviceNarration.getCreatedBy());
-        assertNull(capturedAdviceNarration.getAssessorNarration());
-        assertNotNull(capturedAdviceNarration.getAiNarrationTime());
-        assertNull(capturedAdviceNarration.getAssessorNarrationTime());
-        assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId());
         assertThat(capturedAdviceItems)
             .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
                 assertEquals(expected.title(), actual.getTitle());
@@ -327,7 +333,6 @@ class CreateAiAdviceNarrationServiceTest {
     void testCreateAiAdviceNarration_NoValidTargetExists_ThrowValidationException() {
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
-
 
         when(appAiProperties.isEnabled()).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
