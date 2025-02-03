@@ -28,7 +28,6 @@ import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,8 +81,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
-        AdviceDto aiAdvice = openAiAdapter.call(prompt, new ParameterizedTypeReference<>() {
-        });
+        AdviceDto aiAdvice = openAiAdapter.call(prompt, AdviceDto.class);
         var adviceItems = aiAdvice.adviceItems().stream()
             .map(i -> i.toDomainModel(assessmentResult.getId()))
             .toList();
