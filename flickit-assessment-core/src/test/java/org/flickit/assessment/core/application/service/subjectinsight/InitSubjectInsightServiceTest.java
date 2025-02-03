@@ -14,7 +14,7 @@ import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturi
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
-import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuesPort;
+import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +60,7 @@ class InitSubjectInsightServiceTest {
     private LoadAssessmentResultPort loadAssessmentResultPort;
 
     @Mock
-    private LoadSubjectValuesPort loadSubjectValuesPort;
+    private LoadSubjectValuePort loadSubjectValuePort;
 
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
@@ -105,7 +105,7 @@ class InitSubjectInsightServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.initSubjectInsight(param));
         assertEquals(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(loadSubjectValuesPort,
+        verifyNoInteractions(loadSubjectValuePort,
             loadMaturityLevelsPort,
             createSubjectInsightPort,
             updateSubjectInsightPort,
@@ -124,7 +124,7 @@ class InitSubjectInsightServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
             .thenReturn(Optional.of(subjectInsight));
-        when(loadSubjectValuesPort.load(param.getSubjectId(), assessmentResult.getId()))
+        when(loadSubjectValuePort.load(param.getSubjectId(), assessmentResult.getId()))
             .thenReturn(subjectValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(allLevels());
@@ -154,7 +154,7 @@ class InitSubjectInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
-        when(loadSubjectValuesPort.load(param.getSubjectId(), assessmentResult.getId())).thenReturn(subjectValue);
+        when(loadSubjectValuePort.load(param.getSubjectId(), assessmentResult.getId())).thenReturn(subjectValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(allLevels());
         doNothing().when(createSubjectInsightPort).persist(any(SubjectInsight.class));
 

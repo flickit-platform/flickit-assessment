@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.subjectvalue.CreateSubjectValuePort;
-import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuesPort;
+import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
@@ -28,7 +28,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class SubjectValuePersistenceJpaAdapter implements
     CreateSubjectValuePort,
-    LoadSubjectValuesPort {
+    LoadSubjectValuePort {
 
     private final SubjectValueJpaRepository repository;
     private final SubjectJpaRepository subjectRepository;

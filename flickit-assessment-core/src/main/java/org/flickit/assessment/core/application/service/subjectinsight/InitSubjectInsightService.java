@@ -13,7 +13,7 @@ import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturi
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
-import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuesPort;
+import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +35,7 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
     private final UpdateSubjectInsightPort updateSubjectInsightPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadSubjectInsightPort loadSubjectInsightPort;
-    private final LoadSubjectValuesPort loadSubjectValuesPort;
+    private final LoadSubjectValuePort loadSubjectValuePort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
 
@@ -64,7 +64,7 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
     }
 
     private String buildDefaultInsight(long subjectId, UUID assessmentResultId, long kitVersionId) {
-        var subjectValue = loadSubjectValuesPort.load(subjectId, assessmentResultId);
+        var subjectValue = loadSubjectValuePort.load(subjectId, assessmentResultId);
 
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
             subjectValue.getSubject().getTitle(),
