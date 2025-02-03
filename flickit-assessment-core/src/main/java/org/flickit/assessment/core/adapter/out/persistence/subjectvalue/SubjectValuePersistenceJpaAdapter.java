@@ -64,14 +64,13 @@ public class SubjectValuePersistenceJpaAdapter implements
     public SubjectValue load(long subjectId, UUID assessmentResultId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var subjectEntity = subjectRepository.findByIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId())
-            .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_ID_NOT_FOUND));
         var subjectValueWithSubjectView = repository.findBySubjectIdAndAssessmentResultId(subjectId, assessmentResult.getId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_VALUE_NOT_FOUND));
         var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(subjectValueWithSubjectView.getSubjectValue().getMaturityLevelId(),
-            assessmentResult.getKitVersionId()).orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
+            assessmentResult.getKitVersionId())
+            .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
         var attributesEntity = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId());
 
-        return SubjectValueMapper.mapToDomainModel(subjectValueWithSubjectView, subjectEntity, maturityLevelEntity, attributesEntity);
+        return SubjectValueMapper.mapToDomainModel(subjectValueWithSubjectView, maturityLevelEntity, attributesEntity);
     }
 }

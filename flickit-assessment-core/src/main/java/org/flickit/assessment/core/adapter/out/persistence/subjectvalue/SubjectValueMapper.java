@@ -37,12 +37,11 @@ public class SubjectValueMapper {
         );
     }
 
-    public static SubjectValue mapToDomainModel(SubjectValueWithSubjectView view, SubjectJpaEntity subjectJpaEntity,
-                                                MaturityLevelJpaEntity maturityLevelJpaEntity, List<AttributeJpaEntity> attributeJpaEntities) {
+    public static SubjectValue mapToDomainModel(SubjectValueWithSubjectView view, MaturityLevelJpaEntity maturityLevelJpaEntity, List<AttributeJpaEntity> attributeJpaEntities) {
         var attributes = attributeJpaEntities.stream()
             .map(AttributeMapper::mapToDomainModel)
             .toList();
-        var subject = SubjectMapper.mapToDomainModel(subjectJpaEntity, attributes);
+        var subject = SubjectMapper.mapToDomainModel(view.getSubject(), attributes);
         var subjectValue = new SubjectValue(
             view.getSubjectValue().getId(),
             subject,
