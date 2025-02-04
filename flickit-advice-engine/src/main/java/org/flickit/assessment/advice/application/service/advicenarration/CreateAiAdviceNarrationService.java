@@ -1,20 +1,22 @@
 package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.AdviceNarration;
-import org.flickit.assessment.advice.application.domain.Attribute;
-import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
-import org.flickit.assessment.advice.application.domain.MaturityLevel;
+import org.flickit.assessment.advice.application.domain.*;
 import org.flickit.assessment.advice.application.domain.advice.AdviceListItem;
 import org.flickit.assessment.advice.application.port.in.advicenarration.CreateAiAdviceNarrationUseCase;
+import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
+import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
 import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
@@ -23,7 +25,6 @@ import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,9 +53,11 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final LoadAssessmentPort loadAssessmentPort;
     private final CreateAdviceNarrationPort createAdviceNarrationPort;
+    private final CallAiPromptPort callAiPromptPort;
+    private final CreateAdviceItemPort createAdviceItemPort;
     private final AppAiProperties appAiProperties;
     private final OpenAiProperties openAiProperties;
-    private final CallAiPromptPort callAiPromptPort;
+    private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
     @Override
     public Result createAiAdviceNarration(Param param) {
@@ -76,17 +79,22 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
         var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
-        var aiNarration = callAiPromptPort.call(prompt);
+        AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
+
+        var adviceItems = aiAdvice.adviceItems().stream()
+            .map(i -> i.toDomainModel(assessmentResult.getId()))
+            .toList();
+        createAdviceItemPort.persistAll(adviceItems);
 
         if (adviceNarration.isPresent()) {
             UUID narrationId = adviceNarration.get().getId();
-            UUID assessmentResultId = assessmentResult.getId();
-            handleExistingAdviceNarration(narrationId, assessmentResultId, aiNarration, param.getCurrentUserId());
+            var updateParam = new UpdateAdviceNarrationPort.AiNarrationParam(narrationId, aiAdvice.narration(), LocalDateTime.now());
+            updateAdviceNarrationPort.updateAiNarration(updateParam);
         } else {
             UUID assessmentResultId = assessmentResult.getId();
-            handleNewAdviceNarration(assessmentResultId, aiNarration, param.getCurrentUserId());
+            createAdviceNarrationPort.persist(toAdviceNarration(assessmentResultId, aiAdvice.narration()));
         }
-        return new Result(aiNarration);
+        return new Result(aiAdvice.narration());
     }
 
     private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
@@ -103,7 +111,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .toList();
     }
 
-    private Prompt buildPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle) {
+    private String buildPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle) {
         var maturityLevelsMap = loadMaturityLevelsPort.loadAll(kitVersionId).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
@@ -113,8 +121,8 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
         var attributesMap = loadAttributesPort.loadByIdsAndKitVersionId(targetAttributeIds, kitVersionId).stream()
             .collect(Collectors.toMap(Attribute::getId, Attribute::getTitle));
 
-        var promptAdviceItems = adviceItems.stream()
-            .map(a -> new AdviceItem(a.question().title(),
+        var adviceRecommendations = adviceItems.stream()
+            .map(a -> new AdviceRecommendation(a.question().title(),
                 a.answeredOption() != null ? a.answeredOption().title() : null,
                 a.recommendedOption().title()))
             .toList();
@@ -125,29 +133,42 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
                 maturityLevelsMap.getOrDefault(target.getMaturityLevelId(), "Unknown")))
             .toList();
 
-        return openAiProperties.createAiAdviceNarrationPrompt(assessmentTitle, promptAdviceItems.toString(), targetAttributes.toString());
+        return openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessmentTitle, targetAttributes.toString(), adviceRecommendations.toString());
     }
 
-    record AdviceItem(String question, String currentOption, String recommendedOption) {
+    record AdviceDto(String narration, List<AdviceItemDto> adviceItems) {
+
+        record AdviceItemDto(String title, String description, int cost, int priority, int impact) {
+
+            AdviceItem toDomainModel(UUID assessmentResultId) {
+                return new AdviceItem(null,
+                    title,
+                    assessmentResultId,
+                    description,
+                    CostLevel.valueOfById(cost),
+                    PriorityLevel.valueOfById(priority),
+                    ImpactLevel.valueOfById(impact),
+                    LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    null,
+                    null);
+            }
+        }
+    }
+
+    record AdviceRecommendation(String question, String currentOption, String recommendedOption) {
     }
 
     record TargetAttribute(String attribute, String targetMaturityLevel) {
     }
 
-    private void handleExistingAdviceNarration(UUID adviceId, UUID assessmentResultId, String aiNarration, UUID createdBy) {
-        createAdviceNarrationPort.persist(toAdviceNarration(adviceId, assessmentResultId, aiNarration, createdBy));
-    }
-
-    private void handleNewAdviceNarration(UUID assessmentResultId, String aiNarration, UUID createdBy) {
-        createAdviceNarrationPort.persist(toAdviceNarration(null, assessmentResultId, aiNarration, createdBy));
-    }
-
-    AdviceNarration toAdviceNarration(UUID adviceId, UUID assessmentResultId, String aiNarration, UUID createdBy) {
-        return new AdviceNarration(adviceId, assessmentResultId,
+    AdviceNarration toAdviceNarration(UUID assessmentResultId, String aiNarration) {
+        return new AdviceNarration(null,
+            assessmentResultId,
             aiNarration,
             null,
             LocalDateTime.now(),
             null,
-            createdBy);
+            null);
     }
 }

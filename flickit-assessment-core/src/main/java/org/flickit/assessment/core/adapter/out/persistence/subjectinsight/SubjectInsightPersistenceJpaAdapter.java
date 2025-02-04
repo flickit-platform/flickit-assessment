@@ -41,7 +41,7 @@ public class SubjectInsightPersistenceJpaAdapter implements
 
     @Override
     public void update(SubjectInsight subjectInsight) {
-        repository.updateByAssessmentResultIdAndSubjectId(subjectInsight.getAssessmentResultId(),
+        repository.update(subjectInsight.getAssessmentResultId(),
             subjectInsight.getSubjectId(),
             subjectInsight.getInsight(),
             subjectInsight.getInsightTime(),
