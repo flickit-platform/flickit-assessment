@@ -5,7 +5,6 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
 import org.flickit.assessment.core.application.port.in.assessmentinsight.InitAssessmentInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
@@ -29,11 +28,9 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createInitialInsightWithAssessmentResultId;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createSimpleAssessmentInsight;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.junit.Assert.assertThrows;
@@ -103,28 +100,7 @@ class InitAssessmentInsightServiceTest {
     }
 
     @Test
-    void testInitAssessmentInsight_whenAssessmentInsightByAssessorFound_thenThrowsValidationException() {
-        var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-        var assessmentResult = validResult();
-        var assessorInsight = createSimpleAssessmentInsight();
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessorInsight));
-
-        var throwable = assertThrows(ValidationException.class, () -> service.initAssessmentInsight(param));
-        assertEquals(INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE, throwable.getMessageKey());
-
-        verifyNoInteractions(
-            getAssessmentProgressPort,
-            createAssessmentInsightPort,
-            updateAssessmentInsightPort);
-    }
-
-    @Test
-    void testInitAssessmentInsight_whenAssessmentIsComplete_thenCreateDefaultInsight() {
+    void testInitAssessmentInsight_whenInsightNotExistsAndAssessmentIsComplete_thenCrateAssessmentInsight() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 15, 15);
@@ -156,39 +132,7 @@ class InitAssessmentInsightServiceTest {
     }
 
     @Test
-    void testInitAssessmentInsight_whenAssessmentIsCompleteAndInitialInsightFound_thenUpdateDefaultInsight() {
-        var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-        var assessmentResult = validResult();
-        var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 30, 30);
-        var assessmentInsight = createInitialInsightWithAssessmentResultId(assessmentResult.getId());
-        var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
-            assessmentResult.getMaturityLevel().getTitle(),
-            progressResult.questionsCount(),
-            Math.ceil(assessmentResult.getConfidenceValue()));
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
-        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progressResult);
-
-        service.initAssessmentInsight(param);
-        ArgumentCaptor<AssessmentInsight> createCaptor = ArgumentCaptor.forClass(AssessmentInsight.class);
-        verify(updateAssessmentInsightPort).updateInsight(createCaptor.capture());
-        assertEquals(assessmentInsight.getId(), createCaptor.getValue().getId());
-        assertEquals(assessmentResult.getId(), createCaptor.getValue().getAssessmentResultId());
-        assertNull(createCaptor.getValue().getInsightBy());
-        assertNotNull(createCaptor.getValue().getInsightTime());
-        assertNotNull(createCaptor.getValue().getLastModificationTime());
-        assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
-        assertFalse(createCaptor.getValue().isApproved());
-
-        verifyNoInteractions(createAssessmentInsightPort);
-    }
-
-    @Test
-    void testInitAssessmentInsight_whenAssessmentIsIncompleteWithNullConfidenceValue_thenCreateDefaultInsight() {
+    void testInitAssessmentInsight_whenInsightExistsAndAssessmentIsIncompleteWithNullConfidenceValue_thenUpdateInsight() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
         var assessmentInsight = createInitialInsightWithAssessmentResultId(assessmentResult.getId());
