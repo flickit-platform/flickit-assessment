@@ -97,13 +97,13 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var totalGeneratedInsights = attributeInsights.size() + subjectsInsights.size() + (assessmentInsight == null ? 0 : 1);
 
         var lastCalculationTime = assessmentResult.getLastCalculationTime();
-        var expiredAttributeInsightsCount = Math.toIntExact(attributeInsights.stream()
+        var expiredAttributeInsightsCount = (int) attributeInsights.stream()
             .filter(e -> e.getLastModificationTime().isBefore(lastCalculationTime))
-            .count());
+            .count();
 
-        var expiredSubjectsInsightsCount = Math.toIntExact(subjectsInsights.stream()
+        var expiredSubjectsInsightsCount = (int) subjectsInsights.stream()
             .filter(e -> e.getLastModificationTime().isBefore(lastCalculationTime))
-            .count());
+            .count();
 
         int assessmentInsightExpired = assessmentInsight != null && assessmentInsight.getLastModificationTime().isBefore(lastCalculationTime) ? 1 : 0;
 
