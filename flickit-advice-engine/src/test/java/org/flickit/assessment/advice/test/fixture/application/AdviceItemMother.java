@@ -25,4 +25,20 @@ public class AdviceItemMother {
             UUID.randomUUID()
         );
     }
+
+    public static AdviceItem adviceItemWithLevels(int cost, int priority, int impact) {
+        return new AdviceItem(
+            UUID.randomUUID(),
+            "title",
+            UUID.randomUUID(),
+            "description",
+            CostLevel.valueOfById(cost),
+            PriorityLevel.valueOfById(priority),
+            ImpactLevel.valueOfById(impact),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        );
+    }
 }
