@@ -6,7 +6,6 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
 import org.flickit.assessment.core.application.port.in.assessmentinsight.InitAssessmentInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
@@ -23,7 +22,6 @@ import java.util.UUID;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 
@@ -50,8 +48,6 @@ public class InitAssessmentInsightService implements InitAssessmentInsightUseCas
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
-        if (assessmentInsight.isPresent() && assessmentInsight.get().getInsightBy() != null)
-            throw new ValidationException(INIT_ASSESSMENT_INSIGHT_INSIGHT_DUPLICATE);
 
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
         int questionsCount = progress.questionsCount();
