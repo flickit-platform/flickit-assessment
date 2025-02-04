@@ -31,6 +31,20 @@ public class AssessmentInsightMother {
         );
     }
 
+    public static AssessmentInsight createDefaultInsightWithTimesAndApprove(LocalDateTime insightTime,
+                                                                            LocalDateTime lastModificationTIme,
+                                                                            boolean approved) {
+        return new AssessmentInsight(
+            null,
+            UUID.randomUUID(),
+            RandomStringUtils.random(50),
+            insightTime,
+            lastModificationTIme,
+            null,
+            approved
+        );
+    }
+
     public static AssessmentInsight createSimpleAssessmentInsight() {
         return createWithAssessmentResultId(UUID.randomUUID());
     }
