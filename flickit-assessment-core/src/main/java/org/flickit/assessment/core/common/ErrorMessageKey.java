@@ -312,4 +312,5 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_REPORT_NOT_FOUND = "update-assessment-report-publish-status.assessmentReport.notFound";
     public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_PUBLISH_NOT_NULL = "update-assessment-report-publish-status.published.notNull";
 
+    public static final String GET_ASSESSMENT_ATTRIBUTES_ASSESSMENT_ID_NOT_NULL = "get-assessment-attributes.assessmentId.notNull";
 }
