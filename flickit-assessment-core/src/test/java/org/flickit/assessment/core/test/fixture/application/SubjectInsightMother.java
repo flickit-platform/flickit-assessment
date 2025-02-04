@@ -17,14 +17,14 @@ public class SubjectInsightMother {
             true);
     }
 
-    public static SubjectInsight defaultSubjectInsight() {
+    public static SubjectInsight defaultSubjectInsight(LocalDateTime insightTime, LocalDateTime insightLastCalculationTime, boolean approved) {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
             "insight",
-            LocalDateTime.now().plusSeconds(10),
-            LocalDateTime.now().plusSeconds(10),
+            insightTime,
+            insightLastCalculationTime,
             null,
-            false);
+            approved);
     }
 
     public static SubjectInsight subjectInsight() {
@@ -45,5 +45,17 @@ public class SubjectInsightMother {
             LocalDateTime.MIN,
             UUID.randomUUID(),
             false);
+    }
+
+    public static SubjectInsight subjectWithInsightTimeAndModificationTime(LocalDateTime insightTime,
+                                                                           LocalDateTime lastModificationTIme,
+                                                                           boolean approved) {
+        return new SubjectInsight(UUID.randomUUID(),
+            2L,
+            "insight",
+            insightTime,
+            lastModificationTIme,
+            UUID.randomUUID(),
+            approved);
     }
 }

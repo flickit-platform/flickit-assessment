@@ -3,9 +3,9 @@ package org.flickit.assessment.core.application.service.subjectinsight;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase;
+import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
@@ -18,10 +18,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.test.fixture.application.SubjectInsightMother.subjectWithInsightTimeAndModificationTime;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,12 +47,12 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(false);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getSubjectInsight(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.getSubjectInsight(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
         verifyNoInteractions(validateAssessmentResultPort,
@@ -59,10 +61,11 @@ class GetSubjectInsightServiceTest {
     }
 
     @Test
-    void testGetSubjectInsight_whenSubjectInsightExistsAndIsValidAndEditableAndCreatedByAssessor_thenReturnAssessorInsight() {
-        GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        SubjectInsight subjectInsight = SubjectInsightMother.approvedSubjectInsight();
+    void testGetSubjectInsight_whenInsightCreatedByAssessorBeforeCalculationAndNotApprovedAndEditable_thenReturnInvalidAssessorInsight() {
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
+        var assessmentResult = AssessmentResultMother.validResult();
+        var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
+        var subjectInsight = subjectWithInsightTimeAndModificationTime(insightTime, insightTime, false);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -72,29 +75,24 @@ class GetSubjectInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
 
-        GetSubjectInsightUseCase.Result result = service.getSubjectInsight(param);
+        Result result = service.getSubjectInsight(param);
 
         assertNull(result.defaultInsight());
         assertNotNull(result.assessorInsight());
         assertEquals(subjectInsight.getInsight(), result.assessorInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
-        assertTrue(result.assessorInsight().isValid());
+        assertFalse(result.assessorInsight().isValid());
         assertTrue(result.editable());
-        assertTrue(result.approved());
-
+        assertFalse(result.approved());
     }
 
     @Test
-    void testGetSubjectInsight_whenSubjectInsightExistsAndIsNotValidAndNotEditableAndCreatedByAssessor_thenReturnAssessorInsight() {
-        GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        SubjectInsight subjectInsight = new SubjectInsight(assessmentResult.getId(), param.getSubjectId(),
-            "assessor insight",
-            assessmentResult.getLastCalculationTime().minusDays(1),
-            assessmentResult.getLastCalculationTime().minusDays(1),
-            param.getCurrentUserId(),
-            true
-        );
+    void testGetSubjectInsight_whenInsightCreatedByAssessorAndApprovedBeforeCalculationAndNotEditable_thenReturnInvalidAssessorInsight() {
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
+        var assessmentResult = AssessmentResultMother.validResult();
+        var insightTime = assessmentResult.getLastCalculationTime().minusDays(2);
+        var insightLastModificationTime = assessmentResult.getLastCalculationTime().minusDays(1);
+        var subjectInsight = subjectWithInsightTimeAndModificationTime(insightTime, insightLastModificationTime, true);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -104,7 +102,7 @@ class GetSubjectInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(false);
 
-        GetSubjectInsightUseCase.Result result = service.getSubjectInsight(param);
+        Result result = service.getSubjectInsight(param);
 
         assertNull(result.defaultInsight());
         assertNotNull(result.assessorInsight());
@@ -116,10 +114,12 @@ class GetSubjectInsightServiceTest {
     }
 
     @Test
-    void testGetSubjectInsight_whenSubjectInsightExistsAndIsValidAndEditableAndIsNotCreatedByAssessor_thenReturnDefaultInsight() {
-        GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        SubjectInsight subjectInsight = SubjectInsightMother.defaultSubjectInsight();
+    void testGetSubjectInsight_whenInsightCreatedByAssessorBeforeCalculationAndApprovedAfterCalculationAndEditable_thenReturnValidAssessorInsight() {
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
+        var assessmentResult = AssessmentResultMother.validResult();
+        var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
+        var insightLastModificationTime = assessmentResult.getLastCalculationTime().plusDays(1);
+        var subjectInsight = subjectWithInsightTimeAndModificationTime(insightTime, insightLastModificationTime, true);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -129,7 +129,59 @@ class GetSubjectInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
 
-        GetSubjectInsightUseCase.Result result = service.getSubjectInsight(param);
+        Result result = service.getSubjectInsight(param);
+
+        assertNull(result.defaultInsight());
+        assertNotNull(result.assessorInsight());
+        assertEquals(subjectInsight.getInsight(), result.assessorInsight().insight());
+        assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
+        assertTrue(result.assessorInsight().isValid());
+        assertTrue(result.editable());
+        assertTrue(result.approved());
+    }
+
+    @Test
+    void testGetSubjectInsight_whenInsightInitializedBeforeCalculationAndNotApprovedAndEditable_thenReturnInvalidDefaultInsight() {
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
+        var assessmentResult = AssessmentResultMother.validResult();
+        var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
+        var subjectInsight = SubjectInsightMother.defaultSubjectInsight(insightTime, insightTime, false);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.of(subjectInsight));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
+            .thenReturn(true);
+
+        Result result = service.getSubjectInsight(param);
+
+        assertNull(result.assessorInsight());
+        assertNotNull(result.defaultInsight());
+        assertEquals(subjectInsight.getInsight(), result.defaultInsight().insight());
+        assertEquals(subjectInsight.getInsightTime(), result.defaultInsight().creationTime());
+        assertFalse(result.defaultInsight().isValid());
+        assertTrue(result.editable());
+        assertFalse(result.approved());
+    }
+
+    @Test
+    void testGetSubjectInsight_whenInsightInitializedAfterCalculationAndNotApprovedAndEditable_thenReturnValidDefaultInsight() {
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
+        var assessmentResult = AssessmentResultMother.validResult();
+        var insightTime = assessmentResult.getLastCalculationTime().plusDays(1);
+        var subjectInsight = SubjectInsightMother.defaultSubjectInsight(insightTime, insightTime, false);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.of(subjectInsight));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
+            .thenReturn(true);
+
+        Result result = service.getSubjectInsight(param);
 
         assertNull(result.assessorInsight());
         assertNotNull(result.defaultInsight());
@@ -141,9 +193,36 @@ class GetSubjectInsightServiceTest {
     }
 
     @Test
-    void testGetSubjectInsight_whenSubjectInsightDoesNotExist_thenThrowResourceNotFoundException() {
-        GetSubjectInsightUseCase.Param param = new GetSubjectInsightUseCase.Param(UUID.randomUUID(), 1L, UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+    void testGetSubjectInsight_whenInsightInitializedBeforeCalculationAndApprovedAfterCalculationAndEditable_thenReturnValidDefaultInsight() {
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
+        var assessmentResult = AssessmentResultMother.validResult();
+        var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
+        var insightLastCalculationTime = assessmentResult.getLastCalculationTime().plusDays(1);
+        var subjectInsight = SubjectInsightMother.defaultSubjectInsight(insightTime, insightLastCalculationTime, true);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.of(subjectInsight));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
+            .thenReturn(true);
+
+        Result result = service.getSubjectInsight(param);
+
+        assertNull(result.assessorInsight());
+        assertNotNull(result.defaultInsight());
+        assertEquals(subjectInsight.getInsight(), result.defaultInsight().insight());
+        assertEquals(subjectInsight.getInsightTime(), result.defaultInsight().creationTime());
+        assertTrue(result.defaultInsight().isValid());
+        assertTrue(result.editable());
+        assertTrue(result.approved());
+    }
+
+    @Test
+    void testGetSubjectInsight_whenInsightDoesNotExist_thenReturnEmptyInsight() {
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
+        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -154,12 +233,25 @@ class GetSubjectInsightServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(false);
 
-        var result = service.getSubjectInsight(param);
+        Result result = service.getSubjectInsight(param);
 
         assertNotNull(result);
         assertNull(result.defaultInsight());
         assertNull(result.assessorInsight());
         assertFalse(result.editable());
         assertFalse(result.approved());
+    }
+
+    private GetSubjectInsightUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var param = paramBuilder();
+        changer.accept(param);
+        return param.build();
+    }
+
+    private GetSubjectInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return GetSubjectInsightUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .subjectId(1L)
+            .currentUserId(UUID.randomUUID());
     }
 }

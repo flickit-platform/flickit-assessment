@@ -68,7 +68,7 @@ class InitAssessmentInsightServiceTest {
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Test
-    void testInitAssessmentInsight_currentUserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
+    void testInitAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -85,7 +85,7 @@ class InitAssessmentInsightServiceTest {
     }
 
     @Test
-    void testInitAssessmentInsight_assessmentResultNotFound_throwsResourceNotFoundException() {
+    void testInitAssessmentInsight_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -103,7 +103,7 @@ class InitAssessmentInsightServiceTest {
     }
 
     @Test
-    void testInitAssessmentInsight_assessmentInsightByAssessorFound_throwsValidationException() {
+    void testInitAssessmentInsight_whenAssessmentInsightByAssessorFound_thenThrowsValidationException() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var assessorInsight = createSimpleAssessmentInsight();
@@ -124,7 +124,7 @@ class InitAssessmentInsightServiceTest {
     }
 
     @Test
-    void testInitAssessmentInsight_completeAssessment_successfulInitialization() {
+    void testInitAssessmentInsight_whenAssessmentIsComplete_thenCreateDefaultInsight() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 15, 15);
@@ -156,7 +156,7 @@ class InitAssessmentInsightServiceTest {
     }
 
     @Test
-    void testInitAssessmentInsight_completeAssessmentAndInitialInsightFound_successfulReinitialization() {
+    void testInitAssessmentInsight_whenAssessmentIsCompleteAndInitialInsightFound_thenUpdateDefaultInsight() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 30, 30);
@@ -188,7 +188,7 @@ class InitAssessmentInsightServiceTest {
     }
 
     @Test
-    void testInitAssessmentInsight_incompleteAssessmentWithNullConfidenceValue_successfulInitialization() {
+    void testInitAssessmentInsight_whenAssessmentIsIncompleteWithNullConfidenceValue_thenCreateDefaultInsight() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
         var assessmentInsight = createInitialInsightWithAssessmentResultId(assessmentResult.getId());

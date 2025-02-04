@@ -32,6 +32,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     List<AttributeJpaEntity> findAllByIdInAndKitVersionIdAndSubjectId(List<Long> ids, long kitVersionId, long subjectId);
 
+    int countByKitVersionId(long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AttributeJpaEntity a
@@ -144,6 +146,4 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                @Param("kitVersionId") Long kitVersionId,
                                                @Param("attributeId") Long attributeId,
                                                @Param("maturityLevelId") Long maturityLevelId);
-
-    int countByKitVersionId(long kitVersionId);
 }
