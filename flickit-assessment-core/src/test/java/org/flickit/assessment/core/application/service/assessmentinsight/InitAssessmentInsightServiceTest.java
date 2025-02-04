@@ -163,7 +163,7 @@ class InitAssessmentInsightServiceTest {
     }
 
     @Test
-    void testInitAssessmentInsight_whenAssessmentIsComplete_thenUpdateAssessmentInsight() {
+    void testInitAssessmentInsight_whenAssessmentIsComplete_thenCrateAssessmentInsight() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 15, 15);
