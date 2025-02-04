@@ -168,6 +168,7 @@ class InitSubjectInsightServiceTest {
         assertEquals(expectedDefaultInsight(), subjectInsight.getInsight());
         assertNull(subjectInsight.getInsightBy());
         assertNotNull(subjectInsight.getInsightTime());
+        assertNotNull(subjectInsight.getLastModificationTime());
         assertFalse(subjectInsight.isApproved());
 
         verifyNoInteractions(updateSubjectInsightPort);

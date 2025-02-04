@@ -53,6 +53,7 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             param.getSubjectId(),
             defaultInsight,
             LocalDateTime.now(),
+            LocalDateTime.now(),
             null,
             false);
 

@@ -16,4 +16,13 @@
         <addUniqueConstraint tableName="fac_subject_value" columnNames="subject_id, assessment_result_id"
                              constraintName="uq_fac_subject_value_subjectid_assessmentresultid"/>
     </changeSet>
+
+    <changeSet id="0.48-04" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_subject_insight">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="insight_time">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

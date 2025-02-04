@@ -10,23 +10,29 @@ public class SubjectInsightMother {
     public static SubjectInsight approvedSubjectInsight() {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
-            "insight", LocalDateTime.now().plusSeconds(10),
+            "insight",
+            LocalDateTime.now().plusSeconds(10),
+            LocalDateTime.now().plusSeconds(10),
             UUID.randomUUID(),
             true);
     }
 
-    public static SubjectInsight defaultSubjectInsight() {
+    public static SubjectInsight defaultSubjectInsight(LocalDateTime insightTime, LocalDateTime insightLastCalculationTime, boolean approved) {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
-            "insight", LocalDateTime.now().plusSeconds(10),
+            "insight",
+            insightTime,
+            insightLastCalculationTime,
             null,
-            false);
+            approved);
     }
 
     public static SubjectInsight subjectInsight() {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
-            "insight", LocalDateTime.now().plusSeconds(10),
+            "insight",
+            LocalDateTime.now().plusSeconds(10),
+            LocalDateTime.now().plusSeconds(10),
             UUID.randomUUID(),
             false);
     }
@@ -34,8 +40,22 @@ public class SubjectInsightMother {
     public static SubjectInsight subjectInsightMinInsightTime() {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
-            "insight", LocalDateTime.MIN,
+            "insight",
+            LocalDateTime.MIN,
+            LocalDateTime.MIN,
             UUID.randomUUID(),
             false);
+    }
+
+    public static SubjectInsight subjectWithInsightTimeAndModificationTime(LocalDateTime insightTime,
+                                                                           LocalDateTime lastModificationTIme,
+                                                                           boolean approved) {
+        return new SubjectInsight(UUID.randomUUID(),
+            2L,
+            "insight",
+            insightTime,
+            lastModificationTIme,
+            UUID.randomUUID(),
+            approved);
     }
 }
