@@ -14,7 +14,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 
 public interface GetAssessmentAttributesUseCase {
 
-    List<Result> getAssessmentAttributes(Param param);
+    Result getAssessmentAttributes(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
@@ -34,12 +34,15 @@ public interface GetAssessmentAttributesUseCase {
         }
     }
 
-    record Result(long id,
-                  String title,
-                  String description,
-                  int index,
-                  int weight,
-                  double confidenceValue) {
+    record Result(List<Attribute> attributes) {
+
+        record Attribute(long id,
+                         String title,
+                         String description,
+                         int index,
+                         int weight,
+                         double confidenceValue) {
+        }
 
         public record MaturityLevel(long id,
                                     String title,
