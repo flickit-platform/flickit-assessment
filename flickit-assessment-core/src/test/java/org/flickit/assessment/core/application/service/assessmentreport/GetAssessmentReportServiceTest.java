@@ -1,9 +1,11 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
+import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.core.application.domain.AdviceItem;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
@@ -32,8 +34,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_PREVIEW;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -114,7 +119,7 @@ class GetAssessmentReportServiceTest {
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
-        AssessmentReport report = AssessmentReportMother.reportWithMetadata(reportMetadata);
+        AssessmentReport report = AssessmentReportMother.publishedReportWithMetadata(reportMetadata);
         var adviceNarration = "assessor narration";
         var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
 
@@ -137,6 +142,81 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         var actualAdviceItem = result.advice().adviceItems().getFirst();
         assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
+    }
+
+    @Test
+    void testGetAssessmentReport_whenReportNotPublishedAndUserHasNotViewReportPreviewPermission_thenThrowException() {
+        var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+
+        AssessmentReportItem assessmentReport = createAssessmentReportItem(param);
+
+        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
+        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
+            "in very good state", 1, 3, 63.0, levelThree());
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
+            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
+        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
+        var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
+        AssessmentReport report = AssessmentReportMother.reportWithMetadata(reportMetadata);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
+            .thenReturn(false);
+
+        var throwable = assertThrows(InvalidStateException.class, () -> service.getAssessmentReport(param));
+        assertEquals(GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED, throwable.getMessage());
+        assertEquals(REPORT_UNPUBLISHED, throwable.getCode());
+
+        verify(assessmentAccessChecker, times(2))
+            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
+        verifyNoInteractions(loadAdviceItemsPort, loadAdviceNarrationPort);
+    }
+
+    @Test
+    void testGetAssessmentReport_whenReportNotPublishedAndUserHasViewReportPreviewPermission_thenReturnEmptyReport() {
+        var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+
+        var assessmentReport = createAssessmentReportItem(param);
+        var teamLevel = MaturityLevelMother.levelTwo();
+        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
+            "in very good state", 1, 3, 63.0, levelThree());
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
+            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
+        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
+        var adviceNarration = "assessor narration";
+        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
+            .thenReturn(true);
+
+        var result = service.getAssessmentReport(param);
+
+        assertAssessmentReport(assessmentReport, result, AssessmentReportMother.empty());
+        assertEquals(subjects.size(), result.subjects().size());
+        var expectedSubjectItem = subjects.getFirst();
+        var actualSubjectItem = result.subjects().getFirst();
+        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
+        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
+        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
+        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertEquals(adviceNarration, result.advice().narration());
+        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
+        var actualAdviceItem = result.advice().adviceItems().getFirst();
+        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
+
+        verify(assessmentAccessChecker, times(2))
+            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
