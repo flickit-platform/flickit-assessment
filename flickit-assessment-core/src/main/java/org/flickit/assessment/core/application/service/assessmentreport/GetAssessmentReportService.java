@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
 import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
@@ -28,7 +29,10 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_PREVIEW;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
 
 
 @Service
@@ -50,11 +54,25 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId());
-        var metadata = loadAssessmentReportPort.load(param.getAssessmentId())
-            .map(AssessmentReport::getMetadata)
-            .orElse(new AssessmentReportMetadata(null, null, null, null));
+        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId())
+            .orElseGet(this::emptyAssessmentReport);
 
-        return mapToResult(assessmentReportInfo, metadata);
+        if (!assessmentReport.isPublished() &&
+            !assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
+            throw new InvalidStateException(REPORT_UNPUBLISHED, GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED);
+
+        return mapToResult(assessmentReportInfo, assessmentReport.getMetadata());
+    }
+
+    private AssessmentReport emptyAssessmentReport() {
+        return new AssessmentReport(null,
+            null,
+            new AssessmentReportMetadata(null, null, null, null),
+            false,
+            null,
+            null,
+            null,
+            null);
     }
 
     private Result mapToResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo, AssessmentReportMetadata metadata) {
