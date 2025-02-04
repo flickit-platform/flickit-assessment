@@ -33,15 +33,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_PREVIEW;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -104,7 +102,7 @@ class GetAssessmentReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentReport_whenAssessmentCalculateIsValid_thenReturnReport() {
+    void testGetAssessmentReport_whenAssessmentCalculateIsValidUserHasNotViewDashboardPermission_thenReturnReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
@@ -127,6 +125,8 @@ class GetAssessmentReportServiceTest {
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
         when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+            .thenReturn(false);
 
         var result = service.getAssessmentReport(param);
 
@@ -142,6 +142,10 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         var actualAdviceItem = result.advice().adviceItems().getFirst();
         assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
+        assertFalse(result.permissions().canViewDashboard());
+
+        verify(assessmentAccessChecker, times(2))
+            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
     @Test
@@ -177,7 +181,7 @@ class GetAssessmentReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentReport_whenReportNotPublishedAndUserHasViewReportPreviewPermission_thenReturnEmptyReport() {
+    void testGetAssessmentReport_whenReportNotPublishedAndUserHasViewReportPreviewAndViewDashboardPermission_thenReturnEmptyReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
 
         var assessmentReport = createAssessmentReportItem(param);
@@ -199,6 +203,8 @@ class GetAssessmentReportServiceTest {
         when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
             .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+            .thenReturn(true);
 
         var result = service.getAssessmentReport(param);
 
@@ -214,8 +220,55 @@ class GetAssessmentReportServiceTest {
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
         var actualAdviceItem = result.advice().adviceItems().getFirst();
         assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
+        assertTrue(result.permissions().canViewDashboard());
 
-        verify(assessmentAccessChecker, times(2))
+        verify(assessmentAccessChecker, times(3))
+            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
+    }
+
+    @Test
+    void testGetAssessmentReport_whenReportNotPublishedAndUserHasNotViewReportPreviewAndViewDashboardPermission_thenReturnEmptyReport() {
+        var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+
+        var assessmentReport = createAssessmentReportItem(param);
+        var teamLevel = MaturityLevelMother.levelTwo();
+        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
+            "in very good state", 1, 3, 63.0, levelThree());
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
+            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
+        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
+        var adviceNarration = "assessor narration";
+        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
+            .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+            .thenReturn(false);
+
+        var result = service.getAssessmentReport(param);
+
+        assertAssessmentReport(assessmentReport, result, AssessmentReportMother.empty());
+        assertEquals(subjects.size(), result.subjects().size());
+        var expectedSubjectItem = subjects.getFirst();
+        var actualSubjectItem = result.subjects().getFirst();
+        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
+        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
+        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
+        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertEquals(adviceNarration, result.advice().narration());
+        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
+        var actualAdviceItem = result.advice().adviceItems().getFirst();
+        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
+        assertFalse(result.permissions().canViewDashboard());
+
+        verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
