@@ -5,66 +5,63 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CreateAssessmentInsightUseCaseParamTest {
 
     @Test
-    void testCreateAssessmentInsightParam_AssessmentIdIsNull_ErrorMessage() {
-        UUID currentUserId = UUID.randomUUID();
-        String insight = RandomStringUtils.random(100);
+    void testCreateAssessmentInsightUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentInsightUseCase.Param(null, insight, currentUserId));
+            () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + CREATE_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAssessmentInsightParam_InsightIsNull_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
+    void testCreateAssessmentInsightUseCaseParam_insightParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentInsightUseCase.Param(assessmentId, null, currentUserId));
+            () -> createParam(b -> b.insight(null)));
         assertThat(throwable).hasMessage("insight: " + CREATE_ASSESSMENT_INSIGHT_INSIGHT_NOT_NULL);
-    }
 
-    @Test
-    void testCreateAssessmentInsightParam_InsightIsLessThanMin_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        String insight = "   ab  ";
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentInsightUseCase.Param(assessmentId, insight, currentUserId));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.insight("   ab  ")));
         assertThat(throwable).hasMessage("insight: " + CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MIN);
-    }
 
-    @Test
-    void testCreateAssessmentInsightParam_InsightIsMoreThanMax_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        UUID currentUserId = UUID.randomUUID();
-        String insight = RandomStringUtils.random(1001);
-        var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentInsightUseCase.Param(assessmentId, insight, currentUserId));
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.insight(RandomStringUtils.random(1001))));
         assertThat(throwable).hasMessage("insight: " + CREATE_ASSESSMENT_INSIGHT_INSIGHT_SIZE_MAX);
     }
 
     @Test
-    void testCreateAssessmentInsightParam_CurrentUserIdIsNull_ErrorMessage() {
-        UUID assessmentId = UUID.randomUUID();
-        String insight = RandomStringUtils.random(100);
+    void testCreateAssessmentInsightUseCaseParam_currentUserIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> new CreateAssessmentInsightUseCase.Param(assessmentId, insight, null));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAssessmentInsightParam_validParams_Successful() {
+    void testCreateAssessmentInsightUseCaseParam_validParams_Successful() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         String insight = RandomStringUtils.random(20);
         assertDoesNotThrow(() -> new CreateAssessmentInsightUseCase.Param(assessmentId, insight, currentUserId));
+    }
+
+    private void createParam(Consumer<CreateAssessmentInsightUseCase.Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        paramBuilder.build();
+    }
+
+    private CreateAssessmentInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateAssessmentInsightUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .insight("insight")
+            .currentUserId(UUID.randomUUID());
     }
 }
