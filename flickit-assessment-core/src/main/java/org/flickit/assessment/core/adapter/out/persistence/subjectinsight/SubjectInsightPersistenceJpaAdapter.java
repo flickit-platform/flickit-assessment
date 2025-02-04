@@ -8,6 +8,7 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,10 +41,11 @@ public class SubjectInsightPersistenceJpaAdapter implements
 
     @Override
     public void update(SubjectInsight subjectInsight) {
-        repository.updateByAssessmentResultIdAndSubjectId(subjectInsight.getAssessmentResultId(),
+        repository.update(subjectInsight.getAssessmentResultId(),
             subjectInsight.getSubjectId(),
             subjectInsight.getInsight(),
             subjectInsight.getInsightTime(),
+            subjectInsight.getLastModificationTime(),
             subjectInsight.getInsightBy(),
             subjectInsight.isApproved());
     }
@@ -57,13 +59,13 @@ public class SubjectInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public void approve(UUID assessmentId, long subjectId) {
+    public void approve(UUID assessmentId, long subjectId, LocalDateTime lastModificationTime) {
         var resultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
         if (!repository.existsByAssessmentResultIdAndSubjectId(resultEntity.getId(), subjectId))
             throw new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND);
 
-        repository.approve(resultEntity.getId(), subjectId);
+        repository.approve(resultEntity.getId(), subjectId, lastModificationTime);
     }
 }

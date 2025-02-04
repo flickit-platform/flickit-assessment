@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.48-01" author="Maziyar Gerami">
+        <dropNotNullConstraint tableName="faa_advice_item" columnName="created_by"/>
+    </changeSet>
+
+    <changeSet id="0.48-02" author="Maziyar Gerami">
+        <dropNotNullConstraint tableName="faa_advice_item" columnName="last_modified_by"/>
+    </changeSet>
+
+    <changeSet id="0.48-03" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fac_subject_value" columnNames="subject_id, assessment_result_id"
+                             constraintName="uq_fac_subject_value_subjectid_assessmentresultid"/>
+    </changeSet>
+
+    <changeSet id="0.48-04" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_subject_insight">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="insight_time">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

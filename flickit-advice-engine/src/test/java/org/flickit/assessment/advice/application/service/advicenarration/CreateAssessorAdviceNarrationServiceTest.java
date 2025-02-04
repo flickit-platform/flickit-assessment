@@ -15,6 +15,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,8 +28,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_ASSESSOR_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -98,7 +98,7 @@ class CreateAssessorAdviceNarrationServiceTest {
         var param = createParam(CreateAssessorAdviceNarrationUseCase.Param.ParamBuilder::build);
         UUID assessmentResultId = UUID.randomUUID();
         AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
-        AdviceNarration adviceNarration = new AdviceNarration(null,
+        AdviceNarration adviceNarration = new AdviceNarration(UUID.randomUUID(),
             assessmentResultId,
             "aiNarration",
             null,
@@ -110,9 +110,16 @@ class CreateAssessorAdviceNarrationServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
-        doNothing().when(updateAdviceNarrationPort).updateAssessorNarration(any(AdviceNarration.class));
+        doNothing().when(updateAdviceNarrationPort).updateAssessorNarration(any(UpdateAdviceNarrationPort.AssessorNarrationParam.class));
 
         service.createAssessorAdviceNarration(param);
+
+        ArgumentCaptor<UpdateAdviceNarrationPort.AssessorNarrationParam> updateParamCaptor = ArgumentCaptor.forClass(UpdateAdviceNarrationPort.AssessorNarrationParam.class);
+        verify(updateAdviceNarrationPort).updateAssessorNarration(updateParamCaptor.capture());
+        assertEquals(adviceNarration.getId(), updateParamCaptor.getValue().id());
+        assertEquals(param.getAssessorNarration(), updateParamCaptor.getValue().narration());
+        assertNotNull(updateParamCaptor.getValue().id());
+        assertEquals(param.getCurrentUserId(), updateParamCaptor.getValue().createdBy());
 
         verifyNoInteractions(createAdviceNarrationPort);
     }

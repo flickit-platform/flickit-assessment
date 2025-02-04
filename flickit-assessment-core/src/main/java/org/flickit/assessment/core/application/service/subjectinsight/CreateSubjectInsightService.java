@@ -60,6 +60,7 @@ public class CreateSubjectInsightService implements CreateSubjectInsightUseCase 
             param.getSubjectId(),
             param.getInsight(),
             LocalDateTime.now(),
+            LocalDateTime.now(),
             param.getCurrentUserId(),
             true);
     }

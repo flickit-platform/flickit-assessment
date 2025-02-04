@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.ClassUtils;
+import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
@@ -12,6 +15,7 @@ import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceIt
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
@@ -25,6 +29,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.ClassUtils.countProvidedFields;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Slf4j
@@ -44,6 +49,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
+    private final LoadAssessmentReportPort loadAssessmentReportPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -53,10 +59,13 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()).
             orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND));
 
+        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId()).orElse(null);
+
         return new Result(
             buildQuestionsResult(param.getAssessmentId(), assessmentResult.getId()),
             buildInsightsResult(assessmentResult),
-            buildAdvices(assessmentResult.getId())
+            buildAdvices(assessmentResult.getId()),
+            buildReport(assessmentReport)
         );
     }
 
@@ -126,5 +135,21 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private Result.Advices buildAdvices(UUID assessmentResultId) {
         var adviceItemsCount = loadAdvicesDashboardPort.countAdviceItems(assessmentResultId);
         return new Result.Advices(adviceItemsCount);
+    }
+
+    private Result.Report buildReport(AssessmentReport assessmentReport) {
+        int allFieldsCount = ClassUtils.countAllFields(AssessmentReportMetadata.class);
+
+        if (assessmentReport == null)
+            return new Result.Report(true, allFieldsCount, 0, allFieldsCount);
+        if (assessmentReport.getMetadata() == null)
+            return new Result.Report(!assessmentReport.isPublished(), allFieldsCount, 0, allFieldsCount);
+
+        int providedFieldsCount = countProvidedFields(assessmentReport.getMetadata());
+
+        return new Result.Report(!assessmentReport.isPublished(),
+            Math.max(allFieldsCount - providedFieldsCount, 0),
+            providedFieldsCount,
+            allFieldsCount);
     }
 }

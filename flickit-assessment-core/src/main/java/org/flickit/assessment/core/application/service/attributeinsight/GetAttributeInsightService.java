@@ -46,17 +46,16 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
             (insight.getAiInsightTime() != null && insight.getAiInsightTime().isAfter(insight.getAssessorInsightTime()))) {
             Result.Insight aiInsight = new Result.Insight(insight.getAiInsight(),
                 insight.getAiInsightTime(),
-                isValid(assessmentResult.getLastCalculationTime(), insight.getAiInsightTime(), insight.getLastModificationTime()));
+                isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()));
             return new Result(aiInsight, null, editable, insight.isApproved());
         }
         Result.Insight assessorInsight = new Result.Insight(insight.getAssessorInsight(),
             insight.getAssessorInsightTime(),
-            isValid(assessmentResult.getLastCalculationTime(), insight.getAssessorInsightTime(), insight.getLastModificationTime()));
+            isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()));
         return new Result(null, assessorInsight, editable, insight.isApproved());
     }
 
-    private static boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightTime, LocalDateTime insightLastModificationTime) {
-        return lastCalculationTime.isBefore(insightTime) ||
-            lastCalculationTime.isBefore(insightLastModificationTime);
+    private static boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightLastModificationTime) {
+        return lastCalculationTime.isBefore(insightLastModificationTime);
     }
 }

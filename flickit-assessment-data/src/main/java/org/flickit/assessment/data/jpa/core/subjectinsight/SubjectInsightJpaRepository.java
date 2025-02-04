@@ -30,23 +30,27 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             UPDATE SubjectInsightJpaEntity si
             SET si.insight = :insight,
                 si.insightTime = :insightTime,
+                si.lastModificationTime = :lastModificationTime,
                 si.insightBy = :insightBy,
                 si.approved = :isApproved
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
-    void updateByAssessmentResultIdAndSubjectId(@Param("assessmentResultId") UUID assessmentResultId,
-                                                @Param("subjectId") Long subjectId,
-                                                @Param("insight") String insight,
-                                                @Param("insightTime") LocalDateTime insightTime,
-                                                @Param("insightBy") UUID insightBy,
-                                                @Param("isApproved") boolean isApproved);
+    void update(@Param("assessmentResultId") UUID assessmentResultId,
+                @Param("subjectId") Long subjectId,
+                @Param("insight") String insight,
+                @Param("insightTime") LocalDateTime insightTime,
+                @Param("lastModificationTime") LocalDateTime lastModificationTime,
+                @Param("insightBy") UUID insightBy,
+                @Param("isApproved") boolean isApproved);
 
     @Modifying
     @Query("""
             UPDATE SubjectInsightJpaEntity si
-            SET si.approved = true
+            SET si.approved = true,
+                si.lastModificationTime = :lastModificationTime
             WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId = :subjectId
         """)
     void approve(@Param("assessmentResultId") UUID assessmentResultId,
-                 @Param("subjectId") Long subjectId);
+                 @Param("subjectId") Long subjectId,
+                 @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }

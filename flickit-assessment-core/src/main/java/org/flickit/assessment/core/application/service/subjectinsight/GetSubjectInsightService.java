@@ -13,6 +13,8 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubje
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
@@ -53,7 +55,7 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
     private Result getDefaultInsight(AssessmentResult assessmentResult, SubjectInsight insight, boolean editable) {
         return new Result(new Result.Insight(insight.getInsight(),
             insight.getInsightTime(),
-            assessmentResult.getLastCalculationTime().isBefore(insight.getInsightTime())),
+            isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime())),
             null,
             editable,
             insight.isApproved());
@@ -63,8 +65,12 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
         return new Result(null,
             new Result.Insight(insight.getInsight(),
                 insight.getInsightTime(),
-                assessmentResult.getLastCalculationTime().isBefore(insight.getInsightTime())),
+                isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime())),
             editable,
             insight.isApproved());
+    }
+
+    private boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightLastModificationTime) {
+        return lastCalculationTime.isBefore(insightLastModificationTime);
     }
 }
