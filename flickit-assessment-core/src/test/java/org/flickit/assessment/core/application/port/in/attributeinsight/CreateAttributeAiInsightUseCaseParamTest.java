@@ -15,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateAttributeAiInsightUseCaseParamTest {
 
     @Test
-    void testCreateAttributeAiInsightUseCaseParam_AssessmentIdIsNull_ErrorMessage() {
+    void testCreateAttributeAiInsightUseCaseParam_assessmentIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAttributeAiInsightUseCaseParam_AttributeIdIsNull_ErrorMessage() {
+    void testCreateAttributeAiInsightUseCaseParam_attributeIdIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.attributeId(null)));
         assertThat(throwable).hasMessage("attributeId: " + CREATE_ATTRIBUTE_AI_INSIGHT_ATTRIBUTE_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAttributeAiInsightUseCaseParam_CurrentUserIsNull_ErrorMessage() {
+    void testCreateAttributeAiInsightUseCaseParam_currentUserIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

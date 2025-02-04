@@ -50,7 +50,7 @@ class GetAssessmentInsightServiceTest {
     private LoadAssessmentInsightPort loadAssessmentInsightPort;
 
     @Test
-    void testGetAssessmentInsight_UserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
+    void testGetAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(false);
@@ -63,7 +63,7 @@ class GetAssessmentInsightServiceTest {
     }
 
     @Test
-    void testGetAssessmentInsight_AssessmentResultNotFound_ThrowResourceNotFoundException() {
+    void testGetAssessmentInsight_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
@@ -76,7 +76,7 @@ class GetAssessmentInsightServiceTest {
     }
 
     @Test
-    void testGetAssessmentInsight_AssessmentInsightDoesNotExist_ThrowResourceNotFoundException() {
+    void testGetAssessmentInsight_whenAssessmentInsightDoesNotExist_thenReturnNullValues() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = validResult();
 
@@ -95,7 +95,7 @@ class GetAssessmentInsightServiceTest {
     }
 
     @Test
-    void testGetAssessmentInsight_AssessmentInsightExistsAndIsValidAndEditable_ReturnAssessorInsight() {
+    void testGetAssessmentInsight_whenAssessmentInsightExistsAndIsValidAndEditable_thenReturnAssessorInsight() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var assessmentInsight = createWithAssessmentResultId(assessmentResult.getId());
@@ -117,7 +117,7 @@ class GetAssessmentInsightServiceTest {
     }
 
     @Test
-    void testGetAssessmentInsight_AssessmentInsightExistsAndIsNotValidAndNotEditable_ReturnAssessorInsight() {
+    void testGetAssessmentInsight_whenAssessmentInsightExistsAndIsNotValidAndNotEditable_thenReturnAssessorInsight() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = validResult();
         var assessmentInsight = createWithMinInsightTime();
@@ -140,7 +140,7 @@ class GetAssessmentInsightServiceTest {
     }
 
     @Test
-    void testGetAssessmentInsight_InitialAssessmentInsightExists_ReturnDefaultInsightWithFullProgress() {
+    void testGetAssessmentInsight_whenDefaultInsightExists_ReturnDefaultInsight() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
         var assessmentInsight = AssessmentInsightMother.createInitialInsightWithAssessmentResultId(assessmentResult.getId());
@@ -151,7 +151,7 @@ class GetAssessmentInsightServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ASSESSMENT_INSIGHT)).thenReturn(true);
 
-        var result = assertDoesNotThrow(() -> service.getAssessmentInsight(param));
+        var result = service.getAssessmentInsight(param);
 
         assertNotNull(result.defaultInsight().insight());
         assertNull(result.assessorInsight());

@@ -33,7 +33,7 @@ class ApproveAssessmentInsightServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
-    void testApproveAssessmentInsight_whenCurrentUserDoesntHaveRequiredPermissions_thenThrowAccessDeniedException() {
+    void testApproveAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermissions_thenThrowAccessDeniedException() {
         var param = createParam(ApproveAssessmentInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ASSIGNMENT_INSIGHT))
