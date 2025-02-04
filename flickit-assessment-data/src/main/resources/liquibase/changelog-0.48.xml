@@ -25,4 +25,13 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.48-05" author="Mahdi Rezazadeh">
+        <addColumn tableName="fac_assessment_insight">
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}"
+                    valueComputed="insight_time">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

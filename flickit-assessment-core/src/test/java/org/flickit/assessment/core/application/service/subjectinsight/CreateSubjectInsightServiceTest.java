@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -17,12 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -49,19 +50,30 @@ class CreateSubjectInsightServiceTest {
     private UpdateSubjectInsightPort updateSubjectInsightPort;
 
     @Test
-    void testCreateSubjectInsight_ValidParam_Persists() {
-        CreateSubjectInsightUseCase.Param param = new CreateSubjectInsightUseCase.Param(UUID.randomUUID(),
-            115L,
-            "insight",
-            UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+    void testCreateSubjectInsight_whenCurrentUserDoesNotHasRequiredPermission_thenThrowAccessDeniedException() {
+        var param = createParam(CreateSubjectInsightUseCase.Param.ParamBuilder::build);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
+            .thenReturn(false);
+
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.createSubjectInsight(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
+
+        verifyNoInteractions(loadAssessmentResultPort,
+            createSubjectInsightPort,
+            createSubjectInsightPort,
+            updateSubjectInsightPort);
+    }
+
+    @Test
+    void testCreateSubjectInsight_whenInsightDoesNotExist_thenCreateInsight() {
+        var param = createParam(CreateSubjectInsightUseCase.Param.ParamBuilder::build);
+        AssessmentResult assessmentResult = validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessmentResult));
-        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
-            .thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
 
         doNothing().when(createSubjectInsightPort).persist(any());
 
@@ -80,32 +92,22 @@ class CreateSubjectInsightServiceTest {
     }
 
     @Test
-    void testCreateSubjectInsight_ValidParamAlreadyExists_Update() {
-        CreateSubjectInsightUseCase.Param param = new CreateSubjectInsightUseCase.Param(UUID.randomUUID(),
-            115L,
-            "insight",
-            UUID.randomUUID());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        SubjectInsight subjectInsight = new SubjectInsight(assessmentResult.getId(),
-            param.getSubjectId(),
-            "old insight",
-            LocalDateTime.of(2022, 2, 20, 0, 0),
-            LocalDateTime.of(2022, 2, 20, 0, 0),
-            param.getCurrentUserId(), true);
+    void testCreateSubjectInsight_whenInsightExists_thenUpdateInsight() {
+        var param = createParam(CreateSubjectInsightUseCase.Param.ParamBuilder::build);
+        var assessmentResult = validResult();
+        SubjectInsight subjectInsight = SubjectInsightMother.subjectInsight();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessmentResult));
-        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
-            .thenReturn(Optional.of(subjectInsight));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.of(subjectInsight));
 
         doNothing().when(updateSubjectInsightPort).update(any());
 
         service.createSubjectInsight(param);
 
         var updatePortParam = ArgumentCaptor.forClass(SubjectInsight.class);
-        verify(updateSubjectInsightPort, times(1)).update(updatePortParam.capture());
+        verify(updateSubjectInsightPort).update(updatePortParam.capture());
         assertEquals(assessmentResult.getId(), updatePortParam.getValue().getAssessmentResultId());
         assertEquals(param.getSubjectId(), updatePortParam.getValue().getSubjectId());
         assertEquals(param.getInsight(), updatePortParam.getValue().getInsight());
@@ -117,22 +119,17 @@ class CreateSubjectInsightServiceTest {
         verifyNoInteractions(createSubjectInsightPort);
     }
 
-    @Test
-    void testCreateSubjectInsight_UserHasNoAccess_ThrowsException() {
-        CreateSubjectInsightUseCase.Param param = new CreateSubjectInsightUseCase.Param(UUID.randomUUID(),
-            115L,
-            "insight",
-            UUID.randomUUID());
+    private CreateSubjectInsightUseCase.Param createParam(Consumer<CreateSubjectInsightUseCase.Param.ParamBuilder> changer) {
+        var param = paramBuilder();
+        changer.accept(param);
+        return param.build();
+    }
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
-            .thenReturn(false);
-
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.createSubjectInsight(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
-
-        verifyNoInteractions(loadAssessmentResultPort,
-            createSubjectInsightPort,
-            createSubjectInsightPort,
-            updateSubjectInsightPort);
+    private CreateSubjectInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return CreateSubjectInsightUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .subjectId(1L)
+            .insight("subject insight")
+            .currentUserId(UUID.randomUUID());
     }
 }

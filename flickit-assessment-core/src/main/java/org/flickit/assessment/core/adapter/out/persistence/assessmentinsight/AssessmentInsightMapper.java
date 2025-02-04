@@ -14,6 +14,7 @@ public class AssessmentInsightMapper {
             assessmentInsight.getAssessmentResultId(),
             assessmentInsight.getInsight(),
             assessmentInsight.getInsightTime(),
+            assessmentInsight.getLastModificationTime(),
             assessmentInsight.getInsightBy(),
             assessmentInsight.isApproved()
         );
@@ -25,6 +26,7 @@ public class AssessmentInsightMapper {
             entity.getAssessmentResultId(),
             entity.getInsight(),
             entity.getInsightTime(),
+            entity.getLastModificationTime(),
             entity.getInsightBy(),
             entity.getApproved()
         );
