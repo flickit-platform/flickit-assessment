@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.subjectinsight;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
@@ -45,12 +47,12 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        Param param = createParam();
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(false);
 
-        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> service.getSubjectInsight(param));
+        var exception = assertThrows(AccessDeniedException.class, () -> service.getSubjectInsight(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, exception.getMessage());
 
         verifyNoInteractions(validateAssessmentResultPort,
@@ -60,7 +62,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightCreatedByAssessorBeforeCalculationAndNotApprovedAndEditable_thenReturnInvalidAssessorInsight() {
-        Param param = createParam();
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
         var subjectInsight = subjectWithInsightTimeAndModificationTime(insightTime, insightTime, false);
@@ -86,7 +88,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightCreatedByAssessorAndApprovedBeforeCalculationAndNotEditable_thenReturnInvalidAssessorInsight() {
-        Param param = createParam();
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(2);
         var insightLastModificationTime = assessmentResult.getLastCalculationTime().minusDays(1);
@@ -113,7 +115,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightCreatedByAssessorBeforeCalculationAndApprovedAfterCalculationAndEditable_thenReturnValidAssessorInsight() {
-        Param param = createParam();
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
         var insightLastModificationTime = assessmentResult.getLastCalculationTime().plusDays(1);
@@ -136,12 +138,11 @@ class GetSubjectInsightServiceTest {
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-
     }
 
     @Test
     void testGetSubjectInsight_whenInsightInitializedBeforeCalculationAndNotApprovedAndEditable_thenReturnInvalidDefaultInsight() {
-        Param param = createParam();
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
         var subjectInsight = SubjectInsightMother.defaultSubjectInsight(insightTime, insightTime, false);
@@ -167,7 +168,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightInitializedAfterCalculationAndNotApprovedAndEditable_thenReturnValidDefaultInsight() {
-        Param param = createParam();
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().plusDays(1);
         var subjectInsight = SubjectInsightMother.defaultSubjectInsight(insightTime, insightTime, false);
@@ -193,7 +194,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightInitializedBeforeCalculationAndApprovedAfterCalculationAndEditable_thenReturnValidDefaultInsight() {
-        Param param = createParam();
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
         var insightLastCalculationTime = assessmentResult.getLastCalculationTime().plusDays(1);
@@ -220,7 +221,7 @@ class GetSubjectInsightServiceTest {
 
     @Test
     void testGetSubjectInsight_whenInsightDoesNotExist_thenReturnEmptyInsight() {
-        Param param = createParam();
+        var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -241,7 +242,16 @@ class GetSubjectInsightServiceTest {
         assertFalse(result.approved());
     }
 
-    private Param createParam() {
-        return new Param(UUID.randomUUID(), 153L, UUID.randomUUID());
+    private GetSubjectInsightUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var param = paramBuilder();
+        changer.accept(param);
+        return param.build();
+    }
+
+    private GetSubjectInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return GetSubjectInsightUseCase.Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .subjectId(1L)
+            .currentUserId(UUID.randomUUID());
     }
 }
