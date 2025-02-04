@@ -41,8 +41,8 @@ public class OpenAiProperties {
         The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
         The advice includes the current status (selected option) and the goal status for each relevant question.
         Task: Based on the provided Advice Recommendations, generate up to 10 Advice Items including only as many points as there are distinct pieces of actionable advice. Each Advice Recommendation includes the following details:
-            title : Up to 100 characters
-            description : Up to 1000 characters
+            title : Generate a concise, action-driven title (max 100 characters) that starts with a strong verb and clearly conveys the intended action.
+            description : Provide detailed recommendations (max 1000 characters) for relevant technologies, methods, and tools.
             cost : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
             priority : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
             impact : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
