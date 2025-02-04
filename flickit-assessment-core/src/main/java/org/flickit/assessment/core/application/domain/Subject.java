@@ -13,6 +13,7 @@ public class Subject {
 
     private final long id;
     private final String title;
+    private final String description;
     private final int weight;
     private List<Attribute> attributes;
 }

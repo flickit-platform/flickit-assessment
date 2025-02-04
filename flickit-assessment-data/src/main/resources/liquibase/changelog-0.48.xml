@@ -12,4 +12,8 @@
         <dropNotNullConstraint tableName="faa_advice_item" columnName="last_modified_by"/>
     </changeSet>
 
+    <changeSet id="0.48-03" author="Maziyar Gerami">
+        <addUniqueConstraint tableName="fac_subject_value" columnNames="subject_id, assessment_result_id"
+                             constraintName="uq_fac_subject_value_subjectid_assessmentresultid"/>
+    </changeSet>
 </databaseChangeLog>
