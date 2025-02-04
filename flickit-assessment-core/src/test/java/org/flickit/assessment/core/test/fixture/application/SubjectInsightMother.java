@@ -47,9 +47,9 @@ public class SubjectInsightMother {
             false);
     }
 
-    public static SubjectInsight subjectWithInsightTimeAndModificationTime(LocalDateTime insightTime,
-                                                                           LocalDateTime lastModificationTIme,
-                                                                           boolean approved) {
+    public static SubjectInsight subjectInsightWithTimesAndApproved(LocalDateTime insightTime,
+                                                                    LocalDateTime lastModificationTIme,
+                                                                    boolean approved) {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
             "insight",

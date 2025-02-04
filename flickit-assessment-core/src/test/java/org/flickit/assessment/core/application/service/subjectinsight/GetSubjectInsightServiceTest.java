@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.test.fixture.application.SubjectInsightMother.subjectWithInsightTimeAndModificationTime;
+import static org.flickit.assessment.core.test.fixture.application.SubjectInsightMother.subjectInsightWithTimesAndApproved;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -65,7 +65,7 @@ class GetSubjectInsightServiceTest {
         var param = createParam(GetSubjectInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(1);
-        var subjectInsight = subjectWithInsightTimeAndModificationTime(insightTime, insightTime, false);
+        var subjectInsight = subjectInsightWithTimesAndApproved(insightTime, insightTime, false);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -92,7 +92,7 @@ class GetSubjectInsightServiceTest {
         var assessmentResult = AssessmentResultMother.validResult();
         var insightTime = assessmentResult.getLastCalculationTime().minusDays(2);
         var insightLastModificationTime = assessmentResult.getLastCalculationTime().minusDays(1);
-        var subjectInsight = subjectWithInsightTimeAndModificationTime(insightTime, insightLastModificationTime, true);
+        var subjectInsight = subjectInsightWithTimesAndApproved(insightTime, insightLastModificationTime, true);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);

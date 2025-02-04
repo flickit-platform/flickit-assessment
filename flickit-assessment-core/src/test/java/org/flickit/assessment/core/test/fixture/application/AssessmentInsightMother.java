@@ -19,7 +19,7 @@ public class AssessmentInsightMother {
         );
     }
 
-    public static AssessmentInsight createInitialInsightWithAssessmentResultId(UUID assessmentResultId) {
+    public static AssessmentInsight createDefaultInsightWithAssessmentResultId(UUID assessmentResultId) {
         return new AssessmentInsight(
             null,
             assessmentResultId,
@@ -32,15 +32,7 @@ public class AssessmentInsightMother {
     }
 
     public static AssessmentInsight createSimpleAssessmentInsight() {
-        return new AssessmentInsight(
-            UUID.randomUUID(),
-            UUID.randomUUID(),
-            RandomStringUtils.random(50),
-            LocalDateTime.now().plusSeconds(1),
-            LocalDateTime.now().plusSeconds(1),
-            UUID.randomUUID(),
-            false
-        );
+        return createWithAssessmentResultId(UUID.randomUUID());
     }
 
     public static AssessmentInsight createWithMinInsightTime() {
