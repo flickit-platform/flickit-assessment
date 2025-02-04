@@ -59,7 +59,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         if (!assessmentReport.isPublished() &&
             !assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
-            throw new InvalidStateException(REPORT_UNPUBLISHED, GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED);
+            throw new InvalidStateException(GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED, REPORT_UNPUBLISHED);
 
         return mapToResult(assessmentReportInfo, assessmentReport.getMetadata());
     }
