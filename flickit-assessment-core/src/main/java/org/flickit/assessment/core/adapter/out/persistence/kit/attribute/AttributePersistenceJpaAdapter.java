@@ -128,7 +128,10 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public LoadAttributesPort.Result loadAttributes(UUID assessmentId) {
-        return null;
+    public List<LoadAttributesPort.Result> loadAttributes(long kitVersionId) {
+        var response = repository.findAllAttributes(kitVersionId);
+        return response.stream()
+            .map(AttributeMapper::mapToResult)
+            .toList();
     }
 }
