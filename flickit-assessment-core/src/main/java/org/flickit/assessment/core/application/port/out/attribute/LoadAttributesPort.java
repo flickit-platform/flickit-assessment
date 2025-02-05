@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.attribute;
+package org.flickit.assessment.core.application.port.out.attribute;
 
 import java.util.List;
 import java.util.UUID;
