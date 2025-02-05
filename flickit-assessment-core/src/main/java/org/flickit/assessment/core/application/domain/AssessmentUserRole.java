@@ -83,7 +83,8 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE_ATTACHMENT,
             DELETE_EVIDENCE_ATTACHMENT,
             VIEW_QUESTIONNAIRE_QUESTIONS,
-            VIEW_EVIDENCE)),
+            VIEW_EVIDENCE,
+            VIEW_ASSESSMENT_ATTRIBUTES)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
@@ -132,7 +133,8 @@ public enum AssessmentUserRole {
         REPORT_VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT,
             GRANT_ACCESS_TO_REPORT,
-            VIEW_GRAPHICAL_REPORT
+            VIEW_GRAPHICAL_REPORT,
+            VIEW_ASSESSMENT_ATTRIBUTES
             ));
 
         private final Set<AssessmentPermission> permissions;
