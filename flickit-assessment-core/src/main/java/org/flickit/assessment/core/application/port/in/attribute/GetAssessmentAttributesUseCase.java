@@ -41,7 +41,7 @@ public interface GetAssessmentAttributesUseCase {
                          String description,
                          int index,
                          int weight,
-                         double confidenceValue,
+                         Double confidenceValue,
                          MaturityLevel maturityLevel,
                          Subject subject) {
         }
