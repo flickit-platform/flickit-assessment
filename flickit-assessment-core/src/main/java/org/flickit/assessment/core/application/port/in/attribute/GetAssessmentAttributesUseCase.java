@@ -36,7 +36,7 @@ public interface GetAssessmentAttributesUseCase {
 
     record Result(List<Attribute> attributes) {
 
-        record Attribute(long id,
+        public record Attribute(long id,
                          String title,
                          String description,
                          int index,
