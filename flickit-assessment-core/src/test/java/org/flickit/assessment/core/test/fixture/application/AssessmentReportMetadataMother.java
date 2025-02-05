@@ -4,7 +4,7 @@ import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 
 public class AssessmentReportMetadataMother {
 
-    public static AssessmentReportMetadata createWithFullMetadata() {
+    public static AssessmentReportMetadata fullMetadata() {
         return new AssessmentReportMetadata(
             "intro",
             "prosAndCons",
@@ -13,7 +13,7 @@ public class AssessmentReportMetadataMother {
         );
     }
 
-    public static AssessmentReportMetadata createWithPartialMetadata() {
+    public static AssessmentReportMetadata partialMetadata() {
         return new AssessmentReportMetadata(
             null,
             "   ",
