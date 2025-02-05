@@ -149,12 +149,16 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                @Param("maturityLevelId") Long maturityLevelId);
 
     @Query("""
-            SELECT at AS attribute
+            SELECT
+                at AS attribute,
+                av AS attributeValue,
+                ml AS maturityLevel,
+                su AS subject
             FROM AttributeJpaEntity at
-            JOIN AttributeValueJpaEntity av ON at.id = av.attributeId
-            JOIN MaturityLevelJpaEntity ml ON av.maturityLevelId = ml.id
-            JOIN SubjectJpaEntity su ON su.id = at.subjectId
-            WHERE at.kitVersionId = :kitVersionId
+            JOIN AttributeValueJpaEntity av ON at.id = av.attributeId AND av.assessmentResult.kitVersionId = at.kitVersionId
+            JOIN MaturityLevelJpaEntity ml ON av.maturityLevelId = ml.id AND at.kitVersionId = ml.kitVersionId
+            JOIN SubjectJpaEntity su ON su.id = at.subjectId AND su.kitVersionId = ml.kitVersionId
+            WHERE av.assessmentResult.assessment.id = :assessmentId
         """)
-    List<AttributeMaturityLevelSubjectView> findAllAttributes(@Param("kitVersionId") Long kitVersionId);
+    List<AttributeMaturityLevelSubjectView> findAllAttributes(@Param("assessmentId") UUID assessmentId);
 }
