@@ -34,7 +34,7 @@ public class SubjectInsightMother {
             LocalDateTime.now().plusSeconds(10),
             LocalDateTime.now().plusSeconds(10),
             UUID.randomUUID(),
-            false);
+            true);
     }
 
     public static SubjectInsight subjectInsightMinInsightTime() {

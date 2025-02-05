@@ -16,7 +16,7 @@ public class AttributeInsightMother {
             LocalDateTime.now().plusSeconds(10),
             LocalDateTime.now().plusSeconds(10),
             "input path",
-            false,
+            true,
             LocalDateTime.now().plusSeconds(10));
     }
 
