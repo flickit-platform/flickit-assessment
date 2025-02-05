@@ -6,10 +6,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
-import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
-import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
-import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
-import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
+import org.flickit.assessment.core.application.port.out.attribute.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
@@ -31,7 +28,8 @@ public class AttributePersistenceJpaAdapter implements
     LoadAttributeScoreDetailPort,
     LoadAttributePort,
     LoadAttributeScoresPort,
-    CountAttributesPort {
+    CountAttributesPort,
+    LoadAttributesPort {
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -127,5 +125,10 @@ public class AttributePersistenceJpaAdapter implements
     @Override
     public int countAttributes(long kitVersionId) {
         return repository.countByKitVersionId(kitVersionId);
+    }
+
+    @Override
+    public LoadAttributesPort.Result loadAttributes(UUID assessmentId) {
+        return null;
     }
 }
