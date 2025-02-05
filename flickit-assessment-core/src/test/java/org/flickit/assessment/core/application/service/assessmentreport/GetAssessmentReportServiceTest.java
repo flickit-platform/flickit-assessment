@@ -31,12 +31,17 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_VALID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
+import static org.flickit.assessment.core.test.fixture.application.AdviceItemMother.adviceItem;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMetadataMother.fullMetadata;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentReportMother.publishedReportWithMetadata;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelThree;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelTwo;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -162,7 +167,7 @@ class GetAssessmentReportServiceTest {
         assertAdviceItem(adviceItems, result.advice().adviceItems());
         assertTrue(result.permissions().canViewDashboard());
 
-        verify(assessmentAccessChecker, times(2))
+        verify(assessmentAccessChecker, times(3))
             .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
