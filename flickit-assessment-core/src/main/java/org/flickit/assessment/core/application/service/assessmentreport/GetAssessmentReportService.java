@@ -28,8 +28,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_GRAPHICAL_REPORT;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_REPORT_PREVIEW;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.REPORT_UNPUBLISHED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED;
@@ -64,7 +63,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId());
 
-        return buildResult(assessmentReportInfo, reportMetadata);
+        return buildResult(assessmentReportInfo, reportMetadata, param);
     }
 
     private void validateReportPublication(Param param, boolean published) {
@@ -73,7 +72,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             throw new InvalidStateException(REPORT_UNPUBLISHED, GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED);
     }
 
-    private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo, AssessmentReportMetadata metadata) {
+    private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo, AssessmentReportMetadata metadata, Param param) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
 
@@ -85,7 +84,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap),
             toAdvice(assessment.assessmentResultId()),
-            toAssessmentProcess(metadata));
+            toAssessmentProcess(metadata),
+            toPermissions(param));
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -184,5 +184,10 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
     private AssessmentProcess toAssessmentProcess(AssessmentReportMetadata metadata) {
         return new AssessmentProcess(metadata.steps(), metadata.participants());
+    }
+
+    private Permissions toPermissions(Param param) {
+        var canViewDashboard = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD);
+        return new Permissions(canViewDashboard);
     }
 }
