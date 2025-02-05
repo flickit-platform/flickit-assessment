@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.attribute;
 
+import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubjectView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -146,4 +147,14 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                @Param("kitVersionId") Long kitVersionId,
                                                @Param("attributeId") Long attributeId,
                                                @Param("maturityLevelId") Long maturityLevelId);
+
+    @Query("""
+            SELECT at AS attribute
+            FROM AttributeJpaEntity at
+            JOIN AttributeValueJpaEntity av ON at.id = av.attributeId
+            JOIN MaturityLevelJpaEntity ml ON av.maturityLevelId = ml.id
+            JOIN SubjectJpaEntity su ON su.id = at.subjectId
+            WHERE at.kitVersionId = :kitVersionId
+        """)
+    List<AttributeMaturityLevelSubjectView> findAllAttributes(@Param("kitVersionId") Long kitVersionId);
 }
