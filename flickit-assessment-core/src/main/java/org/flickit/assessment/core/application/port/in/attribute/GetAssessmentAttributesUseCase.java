@@ -41,7 +41,9 @@ public interface GetAssessmentAttributesUseCase {
                          String description,
                          int index,
                          int weight,
-                         double confidenceValue) {
+                         double confidenceValue,
+                         MaturityLevel maturityLevel,
+                         Subject subject) {
         }
 
         public record MaturityLevel(long id,
