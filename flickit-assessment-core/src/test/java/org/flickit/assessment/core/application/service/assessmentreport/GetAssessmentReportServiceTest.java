@@ -106,6 +106,9 @@ class GetAssessmentReportServiceTest {
     @Test
     void testGetAssessmentReport_whenAssessmentCalculateIsValid_thenReturnReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+
+        AssessmentReport report = AssessmentReportMother.reportWithMetadata(fullMetadata());
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -118,8 +121,6 @@ class GetAssessmentReportServiceTest {
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
-        var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
-        AssessmentReport report = AssessmentReportMother.publishedReportWithMetadata(reportMetadata);
         var adviceNarration = "assessor narration";
         var adviceItems = List.of(adviceItem(), adviceItem());
 
@@ -189,6 +190,7 @@ class GetAssessmentReportServiceTest {
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
+        AssessmentReport report = publishedReportWithMetadata(fullMetadata());
         var adviceNarration = "assessor narration";
         var adviceItems = List.of(adviceItem(), adviceItem());
 

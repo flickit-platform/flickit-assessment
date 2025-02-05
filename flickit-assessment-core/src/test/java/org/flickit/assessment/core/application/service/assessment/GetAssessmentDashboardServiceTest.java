@@ -107,7 +107,7 @@ class GetAssessmentDashboardServiceTest {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var assessmentInsight = AssessmentInsightMother.createSimpleAssessmentInsight();
-        var metadata = AssessmentReportMetadataMother.createWithFullMetadata();
+        var metadata = AssessmentReportMetadataMother.fullMetadata();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
@@ -148,7 +148,7 @@ class GetAssessmentDashboardServiceTest {
     void testGetAssessmentDashboard_WhenAssessmentInsightNotExistsAndAssessmentReportHasPartialMetadata_ThenProduceResult() {
         var param = createParam(GetAssessmentDashboardUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        var metadata = AssessmentReportMetadataMother.createWithPartialMetadata();
+        var metadata = AssessmentReportMetadataMother.partialMetadata();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), AssessmentPermission.VIEW_DASHBOARD)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
