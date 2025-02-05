@@ -2,7 +2,6 @@ package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import java.util.List;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_ATTRIBUTES;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_ATTRIBUTES_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,10 +29,7 @@ public class GetAssessmentAttributesService implements GetAssessmentAttributesUs
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ATTRIBUTES_ASSESSMENT_RESULT_NOT_FOUND));
-
-        var portResult = loadAttributesPort.loadAttributes(assessmentResult.getKitVersionId());
+        var portResult = loadAttributesPort.loadAttributes(param.getAssessmentId());
         return toResult(portResult);
     }
 
