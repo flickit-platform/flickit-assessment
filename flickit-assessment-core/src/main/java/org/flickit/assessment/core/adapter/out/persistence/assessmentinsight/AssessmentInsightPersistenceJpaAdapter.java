@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.core.assessmentinsight.AssessmentInsightJ
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,12 +48,13 @@ public class AssessmentInsightPersistenceJpaAdapter implements
         repository.update(assessmentInsight.getId(),
             assessmentInsight.getInsight(),
             assessmentInsight.getInsightTime(),
+            assessmentInsight.getLastModificationTime(),
             assessmentInsight.getInsightBy(),
             assessmentInsight.isApproved());
     }
 
     @Override
-    public void approve(UUID assessmentId) {
+    public void approve(UUID assessmentId, LocalDateTime lastModificationTime) {
         var assessmentResultId = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND))
             .getId();
@@ -60,6 +62,6 @@ public class AssessmentInsightPersistenceJpaAdapter implements
         if (!repository.existsByAssessmentResultId(assessmentResultId))
             throw new ResourceNotFoundException(ASSESSMENT_INSIGHT_ID_NOT_FOUND);
 
-        repository.approve(assessmentResultId);
+        repository.approve(assessmentResultId, lastModificationTime);
     }
 }

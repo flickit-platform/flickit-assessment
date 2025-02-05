@@ -8,8 +8,6 @@ import org.flickit.assessment.common.exception.CalculateNotValidException;
 import org.flickit.assessment.common.exception.InvalidStateException;
 import org.flickit.assessment.core.application.domain.AdviceItem;
 import org.flickit.assessment.core.application.domain.AssessmentReport;
-import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
@@ -102,7 +100,74 @@ class GetAssessmentReportServiceTest {
     }
 
     @Test
-    void testGetAssessmentReport_whenAssessmentCalculateIsValidUserHasNotViewDashboardPermission_thenReturnReport() {
+    void testGetAssessmentReport_whenReportNotPublishedAndUserDoesNotHavePreviewPermission_thenThrowException() {
+        var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+
+        AssessmentReport report = AssessmentReportMother.reportWithMetadata(fullMetadata());
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
+            .thenReturn(false);
+
+        var throwable = assertThrows(InvalidStateException.class, () -> service.getAssessmentReport(param));
+        assertEquals(REPORT_UNPUBLISHED, throwable.getCode());
+        assertEquals(GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED, throwable.getMessage());
+
+        verify(assessmentAccessChecker, times(2))
+            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
+        verifyNoInteractions(loadAdviceItemsPort, loadAdviceNarrationPort);
+    }
+
+    @Test
+    void testGetAssessmentReport_whenReportReportEntityNotExistsAndUserHasPreviewPermission_thenReturnEmptyReport() {
+        var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
+
+        var assessmentReport = createAssessmentReportItem(param);
+        var teamLevel = levelTwo();
+        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
+            "in very good state", 1, 3, 63.0, levelThree());
+        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
+            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
+        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
+        var adviceNarration = "assessor narration";
+        var adviceItems = List.of(adviceItem(), adviceItem());
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
+            .thenReturn(true);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
+        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
+        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
+        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
+            .thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
+            .thenReturn(true);
+
+        var result = service.getAssessmentReport(param);
+
+        assertAssessmentReport(assessmentReport, result, AssessmentReportMother.empty());
+        assertEquals(subjects.size(), result.subjects().size());
+        var expectedSubjectItem = subjects.getFirst();
+        var actualSubjectItem = result.subjects().getFirst();
+        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
+        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
+        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
+        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
+        assertEquals(adviceNarration, result.advice().narration());
+        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
+        assertAdviceItem(adviceItems, result.advice().adviceItems());
+        assertTrue(result.permissions().canViewDashboard());
+
+        verify(assessmentAccessChecker, times(2))
+            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
+    }
+
+    @Test
+    void testGetAssessmentReport_whenAssessmentCalculateIsValidAndUserHasNotViewDashboardPermission_thenReturnReport() {
         var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
@@ -110,16 +175,15 @@ class GetAssessmentReportServiceTest {
 
         AssessmentReportItem assessmentReport = createAssessmentReportItem(param);
 
-        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
+        var teamLevel = levelTwo();
         var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
             "in very good state", 1, 3, 63.0, levelThree());
         var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
-        var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
-        AssessmentReport report = AssessmentReportMother.publishedReportWithMetadata(reportMetadata);
+        AssessmentReport report = publishedReportWithMetadata(fullMetadata());
         var adviceNarration = "assessor narration";
-        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
+        var adviceItems = List.of(adviceItem(), adviceItem());
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
@@ -140,136 +204,8 @@ class GetAssessmentReportServiceTest {
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        var actualAdviceItem = result.advice().adviceItems().getFirst();
-        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
+        assertAdviceItem(adviceItems, result.advice().adviceItems());
         assertFalse(result.permissions().canViewDashboard());
-
-        verify(assessmentAccessChecker, times(2))
-            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
-    }
-
-    @Test
-    void testGetAssessmentReport_whenReportNotPublishedAndUserHasNotViewReportPreviewPermission_thenThrowException() {
-        var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
-
-        AssessmentReportItem assessmentReport = createAssessmentReportItem(param);
-
-        MaturityLevel teamLevel = MaturityLevelMother.levelTwo();
-        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
-            "in very good state", 1, 3, 63.0, levelThree());
-        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
-            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
-        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
-        var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
-        AssessmentReport report = AssessmentReportMother.reportWithMetadata(reportMetadata);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
-            .thenReturn(true);
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
-        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
-            .thenReturn(false);
-
-        var throwable = assertThrows(InvalidStateException.class, () -> service.getAssessmentReport(param));
-        assertEquals(GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED, throwable.getMessage());
-        assertEquals(REPORT_UNPUBLISHED, throwable.getCode());
-
-        verify(assessmentAccessChecker, times(2))
-            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
-        verifyNoInteractions(loadAdviceItemsPort, loadAdviceNarrationPort);
-    }
-
-    @Test
-    void testGetAssessmentReport_whenReportNotPublishedAndUserHasViewReportPreviewAndViewDashboardPermission_thenReturnEmptyReport() {
-        var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
-
-        var assessmentReport = createAssessmentReportItem(param);
-        var teamLevel = MaturityLevelMother.levelTwo();
-        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
-            "in very good state", 1, 3, 63.0, levelThree());
-        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
-            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
-        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
-        var adviceNarration = "assessor narration";
-        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
-            .thenReturn(true);
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
-        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
-        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
-            .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
-            .thenReturn(true);
-
-        var result = service.getAssessmentReport(param);
-
-        assertAssessmentReport(assessmentReport, result, AssessmentReportMother.empty());
-        assertEquals(subjects.size(), result.subjects().size());
-        var expectedSubjectItem = subjects.getFirst();
-        var actualSubjectItem = result.subjects().getFirst();
-        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
-        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
-        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
-        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
-        assertEquals(adviceNarration, result.advice().narration());
-        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        var actualAdviceItem = result.advice().adviceItems().getFirst();
-        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
-        assertTrue(result.permissions().canViewDashboard());
-
-        verify(assessmentAccessChecker, times(3))
-            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
-    }
-
-    @Test
-    void testGetAssessmentReport_whenReportNotPublishedAndUserHasNotViewReportPreviewAndViewDashboardPermission_thenReturnEmptyReport() {
-        var param = createParam(GetAssessmentReportUseCase.Param.ParamBuilder::build);
-
-        var assessmentReport = createAssessmentReportItem(param);
-        var teamLevel = MaturityLevelMother.levelTwo();
-        var attributeReportItem = new AttributeReportItem(3L, "Agility", "agility of team",
-            "in very good state", 1, 3, 63.0, levelThree());
-        var subjects = List.of(new AssessmentSubjectReportItem(2L, "team", 2, "subjectDesc2",
-            "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
-        var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
-        var adviceNarration = "assessor narration";
-        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
-            .thenReturn(true);
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
-        when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
-        when(loadAdviceNarrationPort.load(assessmentReport.assessmentResultId())).thenReturn(adviceNarration);
-        when(loadAdviceItemsPort.loadAll(assessmentReport.assessmentResultId())).thenReturn(adviceItems);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
-            .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
-            .thenReturn(false);
-
-        var result = service.getAssessmentReport(param);
-
-        assertAssessmentReport(assessmentReport, result, AssessmentReportMother.empty());
-        assertEquals(subjects.size(), result.subjects().size());
-        var expectedSubjectItem = subjects.getFirst();
-        var actualSubjectItem = result.subjects().getFirst();
-        assertSubjectItem(expectedSubjectItem, actualSubjectItem);
-        var expectedAttributeItem = expectedSubjectItem.attributes().getFirst();
-        var actualAttributeItem = actualSubjectItem.attributes().getFirst();
-        assertAttributeItem(expectedAttributeItem, actualAttributeItem);
-        assertEquals(adviceNarration, result.advice().narration());
-        assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        var actualAdviceItem = result.advice().adviceItems().getFirst();
-        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
-        assertFalse(result.permissions().canViewDashboard());
-
-        verify(assessmentAccessChecker, times(3))
-            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
@@ -280,7 +216,7 @@ class GetAssessmentReportServiceTest {
             "shortAssessmentTitle",
             "assessment insight",
             createAssessmentKit(),
-            MaturityLevelMother.levelTwo(),
+            levelTwo(),
             1.5,
             true,
             true,
@@ -346,13 +282,15 @@ class GetAssessmentReportServiceTest {
         assertEquals(expectedAttributeItem.weight(), actualAttributeItem.weight());
     }
 
-    private void assertAdviceItem(AdviceItem adviceItem, AdviceItem actualAdviceItem) {
-        assertEquals(adviceItem.getId(), actualAdviceItem.getId());
-        assertEquals(adviceItem.getTitle(), actualAdviceItem.getTitle());
-        assertEquals(adviceItem.getTitle(), actualAdviceItem.getTitle());
-        assertEquals(adviceItem.getDescription(), actualAdviceItem.getDescription());
-        assertEquals(adviceItem.getCost(), actualAdviceItem.getCost());
-        assertEquals(adviceItem.getPriority(), actualAdviceItem.getPriority());
-        assertEquals(adviceItem.getImpact(), actualAdviceItem.getImpact());
+    private void assertAdviceItem(List<AdviceItem> expectedAdviceItems, List<AdviceItem> actualAdviceItems) {
+        assertThat(actualAdviceItems)
+            .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.getId());
+                assertEquals(expected.getTitle(), actual.getTitle());
+                assertEquals(expected.getDescription(), actual.getDescription());
+                assertEquals(expected.getCost(), actual.getCost());
+                assertEquals(expected.getPriority(), actual.getPriority());
+                assertEquals(expected.getImpact(), actual.getImpact());
+            });
     }
 }

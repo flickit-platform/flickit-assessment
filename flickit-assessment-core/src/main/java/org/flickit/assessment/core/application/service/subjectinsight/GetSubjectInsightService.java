@@ -44,7 +44,7 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
         var subjectInsight = loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId());
 
         if (subjectInsight.isEmpty())
-            return new Result(null, null, false, false);
+            return new Result(null, null, editable, false);
 
         var insight = subjectInsight.get();
         return (insight.getInsightBy() == null)

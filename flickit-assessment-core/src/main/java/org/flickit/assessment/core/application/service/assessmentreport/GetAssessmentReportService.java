@@ -48,45 +48,57 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
     @Override
     public Result getAssessmentReport(Param param) {
-        validateAccess(param);
-        validateAssessmentResultPort.validate(param.getAssessmentId());
-
-        var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId());
-        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId())
-            .orElseGet(this::emptyAssessmentReport);
-
-        validateReportPublication(param, assessmentReport);
-
-        return buildResult(assessmentReportInfo, assessmentReport.getMetadata(), param);
-    }
-
-    private void validateAccess(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
+        validateAssessmentResultPort.validate(param.getAssessmentId());
+
+        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId());
+        var published = assessmentReport.map(AssessmentReport::isPublished)
+            .orElse(false);
+        var reportMetadata = assessmentReport.map(AssessmentReport::getMetadata)
+            .orElse(new AssessmentReportMetadata(null, null, null, null));
+
+        validateReportPublication(param, published);
+
+        var assessmentReportInfo = loadAssessmentReportInfoPort.load(param.getAssessmentId());
+
+        return buildResult(assessmentReportInfo, reportMetadata, param);
     }
 
-    private void validateReportPublication(Param param, AssessmentReport assessmentReport) {
-        if (!assessmentReport.isPublished() &&
+    private void validateReportPublication(Param param, boolean published) {
+        if (!published &&
             !assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_REPORT_PREVIEW))
-            throw new InvalidStateException(GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED, REPORT_UNPUBLISHED);
+            throw new InvalidStateException(REPORT_UNPUBLISHED, GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED);
     }
 
     private Result buildResult(LoadAssessmentReportInfoPort.Result assessmentReportInfo, AssessmentReportMetadata metadata, Param param) {
         var assessment = assessmentReportInfo.assessment();
         var assessmentKitItem = assessment.assessmentKit();
 
-        var attributesCount = calculateAttributesCount(assessmentReportInfo);
         var maturityLevels = toMaturityLevels(assessmentKitItem);
-        var maturityLevelMap = maturityLevels.stream().collect(toMap(MaturityLevel::id, Function.identity()));
+        var attributesCount = countAttributes(assessmentReportInfo);
+        var maturityLevelMap = maturityLevels.stream()
+            .collect(toMap(MaturityLevel::id, Function.identity()));
 
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
-            toSubjects(assessmentReportInfo, maturityLevelMap),
+            toSubjects(assessmentReportInfo.subjects(), maturityLevelMap),
             toAdvice(assessment.assessmentResultId()),
             toAssessmentProcess(metadata),
             toPermissions(param));
     }
 
-    private int calculateAttributesCount(LoadAssessmentReportInfoPort.Result assessmentReportInfo) {
+    private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
+        return assessmentKitItem.maturityLevels().stream()
+            .map(l -> new MaturityLevel(l.getId(),
+                l.getTitle(),
+                l.getIndex(),
+                l.getValue(),
+                l.getDescription()))
+            .toList();
+    }
+
+    private int countAttributes(LoadAssessmentReportInfoPort.Result assessmentReportInfo) {
         return assessmentReportInfo.subjects().stream()
             .flatMap(s -> s.attributes().stream())
             .collect(toSet())
@@ -125,8 +137,16 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             levels);
     }
 
-    private List<Subject> toSubjects(LoadAssessmentReportInfoPort.Result assessmentReportInfo, Map<Long, MaturityLevel> maturityLevelMap) {
-        return assessmentReportInfo.subjects().stream()
+    private Questionnaire toQuestionnaire(QuestionnaireReportItem questionnaire) {
+        return new Questionnaire(questionnaire.id(),
+            questionnaire.title(),
+            questionnaire.description(),
+            questionnaire.index(),
+            questionnaire.questionCount());
+    }
+
+    private List<Subject> toSubjects(List<AssessmentSubjectReportItem> subjects, Map<Long, MaturityLevel> maturityLevelMap) {
+        return subjects.stream()
             .map(subject -> toSubject(subject, maturityLevelMap))
             .toList();
     }
@@ -156,28 +176,6 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             maturityLevelMap.get(attribute.maturityLevel().getId()));
     }
 
-    private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
-        return assessmentKitItem.maturityLevels().stream()
-            .map(this::toMaturityLevel)
-            .toList();
-    }
-
-    private MaturityLevel toMaturityLevel(org.flickit.assessment.core.application.domain.MaturityLevel maturityLevel) {
-        return new MaturityLevel(maturityLevel.getId(),
-            maturityLevel.getTitle(),
-            maturityLevel.getIndex(),
-            maturityLevel.getValue(),
-            maturityLevel.getDescription());
-    }
-
-    private Questionnaire toQuestionnaire(QuestionnaireReportItem questionnaire) {
-        return new Questionnaire(questionnaire.id(),
-            questionnaire.title(),
-            questionnaire.description(),
-            questionnaire.index(),
-            questionnaire.questionCount());
-    }
-
     private Advice toAdvice(UUID assessmentResultId) {
         var narration = loadAdviceNarrationPort.load(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
@@ -191,16 +189,5 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Permissions toPermissions(Param param) {
         var canViewDashboard = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD);
         return new Permissions(canViewDashboard);
-    }
-
-    private AssessmentReport emptyAssessmentReport() {
-        return new AssessmentReport(null,
-            null,
-            new AssessmentReportMetadata(null, null, null, null),
-            false,
-            null,
-            null,
-            null,
-            null);
     }
 }
