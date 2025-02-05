@@ -34,12 +34,9 @@ public interface GetAssessmentInsightUseCase {
         }
     }
 
-    record Result(DefaultInsight defaultInsight, AssessorInsight assessorInsight, boolean editable, boolean approved) {
+    record Result(Insight defaultInsight, Insight assessorInsight, boolean editable, boolean approved) {
 
-        public record DefaultInsight(String insight) {
-        }
-
-        public record AssessorInsight(String insight, LocalDateTime creationTime, boolean isValid) {
+        public record Insight(String insight, LocalDateTime creationTime, boolean isValid) {
         }
     }
 }

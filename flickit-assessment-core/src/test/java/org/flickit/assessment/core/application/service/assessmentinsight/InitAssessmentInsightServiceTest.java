@@ -30,7 +30,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createInitialInsightWithAssessmentResultId;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createDefaultInsightWithAssessmentResultId;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.junit.Assert.assertThrows;
@@ -135,7 +135,7 @@ class InitAssessmentInsightServiceTest {
     void testInitAssessmentInsight_whenInsightExistsAndAssessmentIsIncompleteWithNullConfidenceValue_thenUpdateInsight() {
         var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
-        var assessmentInsight = createInitialInsightWithAssessmentResultId(assessmentResult.getId());
+        var assessmentInsight = createDefaultInsightWithAssessmentResultId(assessmentResult.getId());
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 0, 15);
         var expectedInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
             assessmentResult.getMaturityLevel().getTitle(),
