@@ -121,7 +121,7 @@ class GetAssessmentReportServiceTest {
         var reportMetadata = new AssessmentReportMetadata("intro", "pros", "steps", "participants");
         AssessmentReport report = AssessmentReportMother.publishedReportWithMetadata(reportMetadata);
         var adviceNarration = "assessor narration";
-        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
+        var adviceItems = List.of(adviceItem(), adviceItem());
 
         when(loadAssessmentReportInfoPort.load(param.getAssessmentId())).thenReturn(assessmentReportInfo);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(report));
@@ -140,8 +140,10 @@ class GetAssessmentReportServiceTest {
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        var actualAdviceItem = result.advice().adviceItems().getFirst();
-        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
+        assertAdviceItem(adviceItems, result.advice().adviceItems());
+
+        verify(assessmentAccessChecker, times(2))
+            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
     }
 
     @Test
@@ -188,7 +190,7 @@ class GetAssessmentReportServiceTest {
             "subject Insight", 58.6, teamLevel, List.of(attributeReportItem)));
         var assessmentReportInfo = new LoadAssessmentReportInfoPort.Result(assessmentReport, subjects);
         var adviceNarration = "assessor narration";
-        var adviceItems = List.of(new AdviceItem(UUID.randomUUID(), "title", "desc", "Low", "High", "Medium"));
+        var adviceItems = List.of(adviceItem(), adviceItem());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_GRAPHICAL_REPORT))
             .thenReturn(true);
@@ -212,11 +214,7 @@ class GetAssessmentReportServiceTest {
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        var actualAdviceItem = result.advice().adviceItems().getFirst();
-        assertAdviceItem(adviceItems.getFirst(), actualAdviceItem);
-
-        verify(assessmentAccessChecker, times(2))
-            .isAuthorized(eq(param.getAssessmentId()), eq(param.getCurrentUserId()), any(AssessmentPermission.class));
+        assertAdviceItem(adviceItems, result.advice().adviceItems());
     }
 
     private AssessmentReportItem createAssessmentReportItem(GetAssessmentReportUseCase.Param param) {
@@ -293,13 +291,15 @@ class GetAssessmentReportServiceTest {
         assertEquals(expectedAttributeItem.weight(), actualAttributeItem.weight());
     }
 
-    private void assertAdviceItem(AdviceItem adviceItem, AdviceItem actualAdviceItem) {
-        assertEquals(adviceItem.getId(), actualAdviceItem.getId());
-        assertEquals(adviceItem.getTitle(), actualAdviceItem.getTitle());
-        assertEquals(adviceItem.getTitle(), actualAdviceItem.getTitle());
-        assertEquals(adviceItem.getDescription(), actualAdviceItem.getDescription());
-        assertEquals(adviceItem.getCost(), actualAdviceItem.getCost());
-        assertEquals(adviceItem.getPriority(), actualAdviceItem.getPriority());
-        assertEquals(adviceItem.getImpact(), actualAdviceItem.getImpact());
+    private void assertAdviceItem(List<AdviceItem> expectedAdviceItems, List<AdviceItem> actualAdviceItems) {
+        assertThat(actualAdviceItems)
+            .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.getId());
+                assertEquals(expected.getTitle(), actual.getTitle());
+                assertEquals(expected.getDescription(), actual.getDescription());
+                assertEquals(expected.getCost(), actual.getCost());
+                assertEquals(expected.getPriority(), actual.getPriority());
+                assertEquals(expected.getImpact(), actual.getImpact());
+            });
     }
 }
