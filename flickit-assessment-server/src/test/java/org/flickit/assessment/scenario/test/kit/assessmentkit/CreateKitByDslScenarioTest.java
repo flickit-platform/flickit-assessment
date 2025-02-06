@@ -104,6 +104,8 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertSubjectQuestionnaires(kitVersionId, teamSubject.getId(), developmentQuestionnaire.getId());
         var usageRangeAnswerRange = loadEntityByCode(AnswerRangeJpaEntity.class, kitVersionId, "UsageRange");
         assertAnswerRange(usageRangeAnswerRange, kitVersionId);
+        var q1Question = loadEntityByCode(QuestionJpaEntity.class, kitVersionId, "Q1");
+        assertQuestion(q1Question, kitVersionId, usageRangeAnswerRange.getId());
     }
 
     private void assertAssessmentKit(Number kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
@@ -327,5 +329,21 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertNotNull(firstAnswerOption.getLastModificationTime());
         assertEquals(getCurrentUserId(), firstAnswerOption.getCreatedBy());
         assertEquals(getCurrentUserId(), firstAnswerOption.getLastModifiedBy());
+    }
+
+    private void assertQuestion(QuestionJpaEntity entity, Long kitVersionId, Long answerRangeId) {
+        assertNotNull(entity.getId());
+        assertEquals(kitVersionId, entity.getKitVersionId());
+        assertEquals("Q1", entity.getCode());
+        assertEquals(1, entity.getIndex());
+        assertEquals("How efficiently are 'Code Editor' like Intellij, Eclipse and VSCode being employed?", entity.getTitle());
+        assertEquals("software tool for writing", entity.getHint());
+        assertFalse(entity.getMayNotBeApplicable());
+        assertTrue(entity.getAdvisable());
+        assertEquals(answerRangeId, entity.getAnswerRangeId());
+        assertNotNull(entity.getCreationTime());
+        assertNotNull(entity.getLastModificationTime());
+        assertEquals(getCurrentUserId(), entity.getCreatedBy());
+        assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
     }
 }
