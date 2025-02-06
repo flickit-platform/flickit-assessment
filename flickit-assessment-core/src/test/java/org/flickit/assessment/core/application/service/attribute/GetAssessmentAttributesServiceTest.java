@@ -44,7 +44,7 @@ class GetAssessmentAttributesServiceTest {
 
 
     @Test
-    void testGetAssessmentAttributesService_whenCurrentUserDoesNotHaveAccess_thenThrowsAccessDeniedException() {
+    void testGetAssessmentAttributes_whenCurrentUserDoesNotHaveAccess_thenThrowsAccessDeniedException() {
         var param = createParam(GetAssessmentAttributesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
@@ -55,7 +55,7 @@ class GetAssessmentAttributesServiceTest {
     }
 
     @Test
-    void testGetAssessmentAttributesService_whenNoAttributesExist_thenReturnEmptyResult() {
+    void testGetAssessmentAttributes_whenNoAttributesExist_thenReturnEmptyResult() {
         var param = createParam(GetAssessmentAttributesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
@@ -69,7 +69,7 @@ class GetAssessmentAttributesServiceTest {
     }
 
     @Test
-    void testGetAssessmentAttributesService_whenAttributesExist_thenReturnResult() {
+    void testGetAssessmentAttributes_whenAttributesExist_thenReturnResult() {
         var param = createParam(GetAssessmentAttributesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
