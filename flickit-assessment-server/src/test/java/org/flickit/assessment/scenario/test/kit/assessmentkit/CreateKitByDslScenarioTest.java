@@ -92,6 +92,8 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
 
         var lastMaturityLevel = loadEntityByCode(MaturityLevelJpaEntity.class, kitVersionId, "StateOfTheArt");
         assertMaturityLevel(lastMaturityLevel, kitVersionId);
+        var teamSubject = loadEntityByCode(SubjectJpaEntity.class, kitVersionId, "Team");
+        assertSubject(teamSubject, kitVersionId);
     }
 
     private void assertAssessmentKit(Number kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
@@ -200,5 +202,20 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertNotNull(competence.getLastModificationTime());
         assertEquals(getCurrentUserId(), competence.getCreatedBy());
         assertEquals(getCurrentUserId(), competence.getLastModifiedBy());
+    }
+
+    private void assertSubject(SubjectJpaEntity entity, Long kitVersionId) {
+        assertNotNull(entity.getId());
+        assertEquals(kitVersionId, entity.getKitVersionId());
+        assertEquals("Team", entity.getCode());
+        assertEquals(1, entity.getIndex());
+        assertEquals("Team", entity.getTitle());
+        assertEquals("How have the tools employed contributed to maintaining a well-being and high-performing team?",
+            entity.getDescription());
+        assertEquals(1, entity.getWeight());
+        assertNotNull(entity.getCreationTime());
+        assertNotNull(entity.getLastModificationTime());
+        assertEquals(getCurrentUserId(), entity.getCreatedBy());
+        assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
     }
 }
