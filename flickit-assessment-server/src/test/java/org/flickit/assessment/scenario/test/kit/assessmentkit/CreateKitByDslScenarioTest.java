@@ -96,6 +96,8 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertSubject(teamSubject, kitVersionId);
         var agileWorkflowAttribute = loadEntityByCode(AttributeJpaEntity.class, kitVersionId, "AgileWorkflow");
         assertAttribute(agileWorkflowAttribute, kitVersionId, teamSubject.getId());
+        var developmentQuestionnaire = loadEntityByCode(QuestionnaireJpaEntity.class, kitVersionId, "Development");
+        assertQuestionnaire(developmentQuestionnaire, kitVersionId);
     }
 
     private void assertAssessmentKit(Number kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
@@ -235,5 +237,18 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertEquals(getCurrentUserId(), entity.getCreatedBy());
         assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
         assertEquals(subjectId, entity.getSubjectId());
+    }
+
+    private void assertQuestionnaire(QuestionnaireJpaEntity entity, Long kitVersionId) {
+        assertNotNull(entity.getId());
+        assertEquals(kitVersionId, entity.getKitVersionId());
+        assertEquals("Development", entity.getCode());
+        assertEquals(1, entity.getIndex());
+        assertEquals("Development", entity.getTitle());
+        assertEquals("This category includes tools ", entity.getDescription());
+        assertNotNull(entity.getCreationTime());
+        assertNotNull(entity.getLastModificationTime());
+        assertEquals(getCurrentUserId(), entity.getCreatedBy());
+        assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
     }
 }
