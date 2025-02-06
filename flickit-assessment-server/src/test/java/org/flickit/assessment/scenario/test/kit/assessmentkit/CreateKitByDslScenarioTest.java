@@ -3,6 +3,7 @@ package org.flickit.assessment.scenario.test.kit.assessmentkit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.Predicate;
 import okhttp3.mockwebserver.MockResponse;
+import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
@@ -100,6 +101,8 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         var developmentQuestionnaire = loadEntityByCode(QuestionnaireJpaEntity.class, kitVersionId, "Development");
         assertQuestionnaire(developmentQuestionnaire, kitVersionId);
         assertSubjectQuestionnaires(kitVersionId, teamSubject.getId(), developmentQuestionnaire.getId());
+        var usageRangeAnswerRange = loadEntityByCode(AnswerRangeJpaEntity.class, kitVersionId, "UsageRange");
+        assertAnswerRange(usageRangeAnswerRange, kitVersionId);
     }
 
     private void assertAssessmentKit(Number kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
@@ -277,5 +280,17 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                     .getRestriction();
             });
         assertNotNull(entity);
+    }
+
+    private void assertAnswerRange(AnswerRangeJpaEntity entity, Long kitVersionId) {
+        assertNotNull(entity.getId());
+        assertEquals(kitVersionId, entity.getKitVersionId());
+        assertEquals("UsageRange", entity.getTitle());
+        assertEquals("UsageRange", entity.getCode());
+        assertTrue(entity.isReusable());
+        assertNotNull(entity.getCreationTime());
+        assertNotNull(entity.getLastModificationTime());
+        assertEquals(getCurrentUserId(), entity.getCreatedBy());
+        assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
     }
 }
