@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireJpaEntity;
@@ -341,6 +342,45 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertFalse(entity.getMayNotBeApplicable());
         assertTrue(entity.getAdvisable());
         assertEquals(answerRangeId, entity.getAnswerRangeId());
+        assertNotNull(entity.getCreationTime());
+        assertNotNull(entity.getLastModificationTime());
+        assertEquals(getCurrentUserId(), entity.getCreatedBy());
+        assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
+
+        assertQuestionImpacts(kitVersionId, entity.getId());
+    }
+
+    private void assertQuestionImpacts(Long kitVersionId, Long questionId) {
+        var impactsCount = jpaTemplate.count(QuestionImpactJpaEntity.class,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get(QuestionImpactJpaEntity.Fields.kitVersionId), kitVersionId));
+                predicates.add(cb.equal(root.get(QuestionImpactJpaEntity.Fields.questionId), questionId));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+        assertEquals(2, impactsCount);
+
+        var productivityAttribute = loadEntityByCode(AttributeJpaEntity.class, kitVersionId, "Productivity");
+        var preparedMaturityLevel = loadEntityByCode(MaturityLevelJpaEntity.class, kitVersionId, "Prepared");
+        var entity = jpaTemplate.findSingle(QuestionImpactJpaEntity.class,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get(QuestionImpactJpaEntity.Fields.kitVersionId), kitVersionId));
+                predicates.add(cb.equal(root.get(QuestionImpactJpaEntity.Fields.questionId), questionId));
+                predicates.add(cb.equal(root.get(QuestionImpactJpaEntity.Fields.attributeId), productivityAttribute.getId()));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+
+        assertNotNull(entity.getId());
+        assertEquals(kitVersionId, entity.getKitVersionId());
+        assertEquals(1, entity.getWeight());
+        assertEquals(questionId, entity.getQuestionId());
+        assertEquals(productivityAttribute.getId(), entity.getAttributeId());
+        assertEquals(preparedMaturityLevel.getId(), entity.getMaturityLevelId());
         assertNotNull(entity.getCreationTime());
         assertNotNull(entity.getLastModificationTime());
         assertEquals(getCurrentUserId(), entity.getCreatedBy());
