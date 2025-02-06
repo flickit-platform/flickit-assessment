@@ -1,6 +1,7 @@
 package org.flickit.assessment.scenario.test.kit.assessmentkit;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.Predicate;
 import okhttp3.mockwebserver.MockResponse;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
@@ -73,6 +75,7 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
             .getSingleResult();
 
         assertAssessmentKit(kitId, loadedAssessmentKit, request);
+        Long kitVersionId = loadedAssessmentKit.getKitVersionId();
 
         int maturityLevelsCountAfter = jpaTemplate.count(MaturityLevelJpaEntity.class);
         int subjectsCountAfter = jpaTemplate.count(SubjectJpaEntity.class);
@@ -85,6 +88,9 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertEquals(3, attributesCountAfter, attributesCountBefore);
         assertEquals(2, questionnairesCountAfter - questionnairesCountBefore);
         assertEquals(10, questionsCountAfter - questionsCountBefore);
+
+        var lastMaturityLevel = loadEntityByCode(MaturityLevelJpaEntity.class, kitVersionId, "StateOfTheArt");
+        assertMaturityLevel(lastMaturityLevel, kitVersionId);
     }
 
     private void assertAssessmentKit(Number kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
@@ -130,5 +136,33 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         KitTagJpaEntity kitTagEntity = new KitTagJpaEntity(1L, "tag-1", "tag 1");
         jpaTemplate.persist(kitTagEntity);
         return kitTagEntity.getId();
+    }
+
+    private <T> T loadEntityByCode(Class<T> clazz, Long kitVersionId, String code) {
+        return jpaTemplate.findSingle(clazz,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get("kitVersionId"), kitVersionId));
+                predicates.add(cb.equal(root.get("code"), code));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+    }
+
+    private void assertMaturityLevel(MaturityLevelJpaEntity entity, Long kitVersionId) {
+        assertNotNull(entity.getId());
+        assertEquals(kitVersionId, entity.getKitVersionId());
+        assertEquals("StateOfTheArt", entity.getCode());
+        assertEquals(4, entity.getIndex());
+        assertEquals("State of the Art", entity.getTitle());
+        assertEquals("Cutting-edge tools lead to exceptional software quality and peak team performance, " +
+                "supporting continuous improvement and innovation.",
+            entity.getDescription());
+        assertEquals(4, entity.getValue());
+        assertNotNull(entity.getCreationTime());
+        assertNotNull(entity.getLastModificationTime());
+        assertEquals(getCurrentUserId(), entity.getCreatedBy());
+        assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
     }
 }
