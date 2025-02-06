@@ -6,6 +6,7 @@ import okhttp3.mockwebserver.MockResponse;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
+import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
@@ -164,5 +165,40 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertNotNull(entity.getLastModificationTime());
         assertEquals(getCurrentUserId(), entity.getCreatedBy());
         assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
+
+        assertCompetences(kitVersionId, entity.getId());
+    }
+
+    private void assertCompetences(Long kitVersionId, Long stateOfTheArtLevelId) {
+        var competencesCount = jpaTemplate.count(LevelCompetenceJpaEntity.class,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get(LevelCompetenceJpaEntity.Fields.kitVersionId), kitVersionId));
+                predicates.add(cb.equal(root.get(LevelCompetenceJpaEntity.Fields.affectedLevelId), stateOfTheArtLevelId));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+        assertEquals(3, competencesCount);
+
+        var competence = jpaTemplate.findSingle(LevelCompetenceJpaEntity.class,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get(LevelCompetenceJpaEntity.Fields.kitVersionId), kitVersionId));
+                predicates.add(cb.equal(root.get(LevelCompetenceJpaEntity.Fields.affectedLevelId), stateOfTheArtLevelId));
+                predicates.add(cb.equal(root.get(LevelCompetenceJpaEntity.Fields.effectiveLevelId), stateOfTheArtLevelId));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+        assertNotNull(competence.getId());
+        assertEquals(kitVersionId, competence.getKitVersionId());
+        assertEquals(stateOfTheArtLevelId, competence.getAffectedLevelId());
+        assertEquals(stateOfTheArtLevelId, competence.getEffectiveLevelId());
+        assertEquals(40, competence.getValue());
+        assertNotNull(competence.getCreationTime());
+        assertNotNull(competence.getLastModificationTime());
+        assertEquals(getCurrentUserId(), competence.getCreatedBy());
+        assertEquals(getCurrentUserId(), competence.getLastModifiedBy());
     }
 }
