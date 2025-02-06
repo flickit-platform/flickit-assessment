@@ -11,6 +11,7 @@ import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
+import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireJpaEntity;
 import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.CreateKitByDslRequestDto;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.kit.kitdsl.KitDslTestHelper;
@@ -98,6 +99,7 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertAttribute(agileWorkflowAttribute, kitVersionId, teamSubject.getId());
         var developmentQuestionnaire = loadEntityByCode(QuestionnaireJpaEntity.class, kitVersionId, "Development");
         assertQuestionnaire(developmentQuestionnaire, kitVersionId);
+        assertSubjectQuestionnaires(kitVersionId, teamSubject.getId(), developmentQuestionnaire.getId());
     }
 
     private void assertAssessmentKit(Number kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
@@ -250,5 +252,30 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertNotNull(entity.getLastModificationTime());
         assertEquals(getCurrentUserId(), entity.getCreatedBy());
         assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
+    }
+
+    private void assertSubjectQuestionnaires(Long kitVersionId, Long subjectId, Long questionnaireId) {
+        var subjectQuestionnairesCount = jpaTemplate.count(SubjectQuestionnaireJpaEntity.class,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.kitVersionId), kitVersionId));
+                predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.subjectId), subjectId));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+        assertEquals(2, subjectQuestionnairesCount);
+
+        var entity = jpaTemplate.findSingle(SubjectQuestionnaireJpaEntity.class,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.kitVersionId), kitVersionId));
+                predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.subjectId), subjectId));
+                predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.questionnaireId), questionnaireId));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+        assertNotNull(entity);
     }
 }
