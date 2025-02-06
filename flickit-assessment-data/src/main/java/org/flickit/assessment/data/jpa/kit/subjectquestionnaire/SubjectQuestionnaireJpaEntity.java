@@ -1,7 +1,11 @@
 package org.flickit.assessment.data.jpa.kit.subjectquestionnaire;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 
 @Entity
 @Table(name = "fak_subject_questionnaire")
@@ -9,6 +13,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SubjectQuestionnaireJpaEntity {
 
