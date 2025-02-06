@@ -1,8 +1,11 @@
 package org.flickit.assessment.core.adapter.out.persistence.kit.attribute;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
@@ -10,6 +13,7 @@ import org.flickit.assessment.core.application.port.out.attribute.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +21,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -33,6 +39,7 @@ public class AttributePersistenceJpaAdapter implements
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
+    private final KitCustomJpaRepository kitCustomRepository;
 
     @Override
     public PaginatedResponse<LoadAttributeScoreDetailPort.Result> loadScoreDetail(LoadAttributeScoreDetailPort.Param param) {
@@ -130,8 +137,45 @@ public class AttributePersistenceJpaAdapter implements
     @Override
     public List<LoadAttributesPort.Result> loadAttributes(UUID assessmentId) {
         var response = repository.findAllAttributes(assessmentId);
-        return response.stream()
-            .map(AttributeMapper::mapToResult)
+        var attributes = response.stream()
+            .map(e -> AttributeMapper.mapToDomainModel(e.getAttribute()))
             .toList();
+
+        var assessmentResultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ATTRIBUTES_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var attributeIdToWeight = getAttributeIdToWeightMap(attributes,
+            assessmentResultEntity.getAssessment().getAssessmentKitId(),
+            assessmentResultEntity.getAssessment().getKitCustomId());
+
+        return response.stream()
+            .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight))
+            .toList();
+    }
+
+    @SneakyThrows
+    private Map<Long, Integer> getAttributeIdToWeightMap(List<Attribute> attributes, long kitId, Long kitCustomId) {
+        if (kitCustomId == null)
+            return attributes.stream()
+                .collect(Collectors.toMap(Attribute::getId, Attribute::getWeight));
+
+        var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, kitId)
+            .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
+
+        KitCustomData kitCustomData = new ObjectMapper()
+            .readValue(kitCustomEntity.getCustomData(), KitCustomData.class);
+
+        if (kitCustomData == null || kitCustomData.attributes() == null)
+            return attributes.stream()
+                .collect(Collectors.toMap(Attribute::getId, Attribute::getWeight));
+
+        Map<Long, Integer> attributeIdToCustomWeight = kitCustomData.attributes().stream()
+            .collect(Collectors.toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+
+        return attributes.stream()
+            .collect(Collectors.toMap(
+                Attribute::getId,
+                e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())
+            ));
     }
 }

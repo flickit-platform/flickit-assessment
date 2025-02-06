@@ -9,6 +9,7 @@ import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubj
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AttributeMapper {
@@ -33,13 +34,14 @@ public class AttributeMapper {
         );
     }
 
-    public static LoadAttributesPort.Result mapToResult(AttributeMaturityLevelSubjectView attributeMaturityLevelSubjectView) {
+    public static LoadAttributesPort.Result mapToResult(AttributeMaturityLevelSubjectView attributeMaturityLevelSubjectView, Map<Long, Integer> attributeIdToCustomWeight) {
         return new LoadAttributesPort.Result(
             attributeMaturityLevelSubjectView.getAttribute().getId(),
             attributeMaturityLevelSubjectView.getAttribute().getTitle(),
             attributeMaturityLevelSubjectView.getAttribute().getDescription(),
             attributeMaturityLevelSubjectView.getAttribute().getIndex(),
-            attributeMaturityLevelSubjectView.getAttribute().getWeight(),
+            attributeIdToCustomWeight.getOrDefault(attributeMaturityLevelSubjectView.getAttribute().getId(),
+                attributeMaturityLevelSubjectView.getAttribute().getWeight()),
             attributeMaturityLevelSubjectView.getAttributeValue().getConfidenceValue(),
             new LoadAttributesPort.MaturityLevel(
                 attributeMaturityLevelSubjectView.getMaturityLevel().getId(),
