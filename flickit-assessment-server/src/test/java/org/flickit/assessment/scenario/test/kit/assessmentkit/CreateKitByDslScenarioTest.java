@@ -3,6 +3,7 @@ package org.flickit.assessment.scenario.test.kit.assessmentkit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.Predicate;
 import okhttp3.mockwebserver.MockResponse;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
@@ -292,5 +293,39 @@ public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertNotNull(entity.getLastModificationTime());
         assertEquals(getCurrentUserId(), entity.getCreatedBy());
         assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
+
+        assertAnswerOption(kitVersionId, entity.getId());
+    }
+
+    private void assertAnswerOption(Long kitVersionId, Long answerRangeId) {
+        var answerOptionsCount = jpaTemplate.count(AnswerOptionJpaEntity.class,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get(AnswerOptionJpaEntity.Fields.kitVersionId), kitVersionId));
+                predicates.add(cb.equal(root.get(AnswerOptionJpaEntity.Fields.answerRangeId), answerRangeId));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+        assertEquals(4, answerOptionsCount);
+
+        var firstAnswerOption = jpaTemplate.findSingle(AnswerOptionJpaEntity.class,
+            (root, query, cb) -> {
+                var predicates = new ArrayList<>();
+                predicates.add(cb.equal(root.get(AnswerOptionJpaEntity.Fields.kitVersionId), kitVersionId));
+                predicates.add(cb.equal(root.get(AnswerOptionJpaEntity.Fields.answerRangeId), answerRangeId));
+                predicates.add(cb.equal(root.get(AnswerOptionJpaEntity.Fields.index), 1));
+                return query
+                    .where(cb.and(predicates.toArray(new Predicate[0])))
+                    .getRestriction();
+            });
+
+        assertNotNull(firstAnswerOption.getId());
+        assertEquals("Never-Not used at all.", firstAnswerOption.getTitle());
+        assertEquals(0, firstAnswerOption.getValue());
+        assertNotNull(firstAnswerOption.getCreationTime());
+        assertNotNull(firstAnswerOption.getLastModificationTime());
+        assertEquals(getCurrentUserId(), firstAnswerOption.getCreatedBy());
+        assertEquals(getCurrentUserId(), firstAnswerOption.getLastModifiedBy());
     }
 }
