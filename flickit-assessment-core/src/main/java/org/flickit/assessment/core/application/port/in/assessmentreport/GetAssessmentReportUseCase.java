@@ -39,7 +39,8 @@ public interface GetAssessmentReportUseCase {
     record Result(Assessment assessment,
                   List<Subject> subjects,
                   Advice advice,
-                  AssessmentProcess assessmentProcess) {
+                  AssessmentProcess assessmentProcess,
+                  Permissions permissions) {
     }
 
     record Assessment(String title,
@@ -100,5 +101,8 @@ public interface GetAssessmentReportUseCase {
 
     record AssessmentProcess(String steps,
                              String participant) {
+    }
+
+    record Permissions(boolean canViewDashboard) {
     }
 }

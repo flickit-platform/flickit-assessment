@@ -307,6 +307,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_REPORT_METADATA_PROS_AND_CONS_SIZE_MAX = "create-assessment-report-metadata.prosAndCons.size.max";
 
     public static final String GET_ASSESSMENT_REPORT_ASSESSMENT_ID_NOT_NULL = "get-assessment-report.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_REPORT_REPORT_NOT_PUBLISHED = "get-assessment-report.report-not-published";
 
     public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_ID_NOT_NULL = "update-assessment-report-publish-status.assessmentId.notNull";
     public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_ASSESSMENT_REPORT_NOT_FOUND = "update-assessment-report-publish-status.assessmentReport.notFound";

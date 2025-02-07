@@ -43,7 +43,7 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
 
         if (assessmentInsight.isEmpty())
-            return new Result(null, null, false, false);
+            return new Result(null, null, editable, false);
 
         var insight = assessmentInsight.get();
         return (insight.getInsightBy() == null)

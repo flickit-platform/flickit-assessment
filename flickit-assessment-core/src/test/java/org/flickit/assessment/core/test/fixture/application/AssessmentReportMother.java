@@ -31,4 +31,15 @@ public class AssessmentReportMother {
             userId,
             userId);
     }
+
+    public static AssessmentReport empty() {
+        return new AssessmentReport(null,
+            null,
+            new AssessmentReportMetadata(null, null, null, null),
+            false,
+            null,
+            null,
+            null,
+            null);
+    }
 }
