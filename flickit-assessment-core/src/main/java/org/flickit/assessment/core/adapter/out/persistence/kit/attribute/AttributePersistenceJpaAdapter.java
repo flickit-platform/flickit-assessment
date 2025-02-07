@@ -136,8 +136,8 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public List<LoadAttributesPort.Result> loadAttributes(UUID assessmentId) {
-        var response = repository.findAllAttributes(assessmentId);
-        var attributes = response.stream()
+        var views = repository.findAllAttributes(assessmentId);
+        var attributes = views.stream()
             .map(e -> AttributeMapper.mapToDomainModel(e.getAttribute()))
             .toList();
 
@@ -148,8 +148,8 @@ public class AttributePersistenceJpaAdapter implements
             assessmentResultEntity.getAssessment().getAssessmentKitId(),
             assessmentResultEntity.getAssessment().getKitCustomId());
 
-        return response.stream()
-            .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight))
+        return views.stream()
+            .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId())))
             .toList();
     }
 
