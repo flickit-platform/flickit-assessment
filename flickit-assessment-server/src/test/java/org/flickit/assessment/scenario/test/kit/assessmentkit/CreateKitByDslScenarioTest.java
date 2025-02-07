@@ -33,7 +33,7 @@ import static org.flickit.assessment.scenario.util.FileUtils.readFileToString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CreateKitByDslScenarioTest extends AbstractScenarioTest {
+class CreateKitByDslScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     KitTestHelper kitHelper;
