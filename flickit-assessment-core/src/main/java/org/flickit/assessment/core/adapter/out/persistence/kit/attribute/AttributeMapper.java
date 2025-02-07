@@ -33,24 +33,24 @@ public class AttributeMapper {
         );
     }
 
-    public static LoadAttributesPort.Result mapToResult(AttributeMaturityLevelSubjectView attributeMaturityLevelSubjectView, Integer customWeight) {
+    public static LoadAttributesPort.Result mapToResult(AttributeMaturityLevelSubjectView view, Integer customWeight) {
         return new LoadAttributesPort.Result(
-            attributeMaturityLevelSubjectView.getAttribute().getId(),
-            attributeMaturityLevelSubjectView.getAttribute().getTitle(),
-            attributeMaturityLevelSubjectView.getAttribute().getDescription(),
-            attributeMaturityLevelSubjectView.getAttribute().getIndex(),
-            customWeight != null ? customWeight : attributeMaturityLevelSubjectView.getAttribute().getWeight(),
-            attributeMaturityLevelSubjectView.getAttributeValue().getConfidenceValue(),
+            view.getAttribute().getId(),
+            view.getAttribute().getTitle(),
+            view.getAttribute().getDescription(),
+            view.getAttribute().getIndex(),
+            customWeight != null ? customWeight : view.getAttribute().getWeight(),
+            view.getAttributeValue().getConfidenceValue(),
             new LoadAttributesPort.MaturityLevel(
-                attributeMaturityLevelSubjectView.getMaturityLevel().getId(),
-                attributeMaturityLevelSubjectView.getMaturityLevel().getTitle(),
-                attributeMaturityLevelSubjectView.getMaturityLevel().getDescription(),
-                attributeMaturityLevelSubjectView.getMaturityLevel().getIndex(),
-                attributeMaturityLevelSubjectView.getMaturityLevel().getValue()
+                view.getMaturityLevel().getId(),
+                view.getMaturityLevel().getTitle(),
+                view.getMaturityLevel().getDescription(),
+                view.getMaturityLevel().getIndex(),
+                view.getMaturityLevel().getValue()
             ),
             new LoadAttributesPort.Subject(
-                attributeMaturityLevelSubjectView.getSubject().getId(),
-                attributeMaturityLevelSubjectView.getSubject().getTitle()
+                view.getSubject().getId(),
+                view.getSubject().getTitle()
             )
         );
     }
