@@ -276,7 +276,7 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
     }
 
     private void assertSubjectQuestionnaires(Long kitVersionId, Long subjectId, Long questionnaireId) {
-        var subjectQuestionnairesCount = jpaTemplate.count(SubjectQuestionnaireJpaEntity.class,
+        var subjectQuestionnaires = jpaTemplate.search(SubjectQuestionnaireJpaEntity.class,
             (root, query, cb) -> {
                 var predicates = new ArrayList<>();
                 predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.kitVersionId), kitVersionId));
@@ -285,19 +285,12 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                     .where(cb.and(predicates.toArray(new Predicate[0])))
                     .getRestriction();
             });
-        assertEquals(2, subjectQuestionnairesCount);
+        assertEquals(2, subjectQuestionnaires.size());
 
-        var entity = jpaTemplate.findSingle(SubjectQuestionnaireJpaEntity.class,
-            (root, query, cb) -> {
-                var predicates = new ArrayList<>();
-                predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.kitVersionId), kitVersionId));
-                predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.subjectId), subjectId));
-                predicates.add(cb.equal(root.get(SubjectQuestionnaireJpaEntity.Fields.questionnaireId), questionnaireId));
-                return query
-                    .where(cb.and(predicates.toArray(new Predicate[0])))
-                    .getRestriction();
-            });
-        assertNotNull(entity);
+        var questionnaireIds = subjectQuestionnaires.stream()
+            .map(SubjectQuestionnaireJpaEntity::getQuestionnaireId)
+            .toList();
+        assertTrue(questionnaireIds.contains(questionnaireId));
     }
 
     private void assertAnswerRange(AnswerRangeJpaEntity entity, Long kitVersionId) {
