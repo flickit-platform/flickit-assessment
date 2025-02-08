@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -121,6 +122,7 @@ class SubmitAnswerServiceTest {
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
+        assertEquals(APPROVED, saveAnswerParam.getValue().status());
 
         ArgumentCaptor<AnswerHistory> saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
@@ -195,6 +197,7 @@ class SubmitAnswerServiceTest {
         assertNull(saveAnswerParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
+        assertEquals(APPROVED, saveAnswerParam.getValue().status());
 
         ArgumentCaptor<AnswerHistory> saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
@@ -433,7 +436,6 @@ class SubmitAnswerServiceTest {
         assertEquals(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE, exception.getMessageKey());
 
         verifyNoInteractions(createAnswerPort,
-            createAnswerPort,
             updateAnswerPort,
             createAnswerHistoryPort,
             loadAnswerPort,
