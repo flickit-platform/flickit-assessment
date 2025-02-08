@@ -111,37 +111,6 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertQuestion(q1Question, kitVersionId, usageRangeAnswerRange.getId());
     }
 
-    private void assertAssessmentKit(Long kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
-        assertEquals(kitId.longValue(), loadedAssessmentKit.getId());
-        assertNotNull(loadedAssessmentKit.getCode());
-        assertEquals(request.title(), loadedAssessmentKit.getTitle());
-        assertEquals(request.summary(), loadedAssessmentKit.getSummary());
-        assertEquals(request.about(), loadedAssessmentKit.getAbout());
-        assertFalse(loadedAssessmentKit.getPublished());
-        assertEquals(request.isPrivate(), loadedAssessmentKit.getIsPrivate());
-        assertEquals(request.expertGroupId(), loadedAssessmentKit.getExpertGroupId());
-        assertNotNull(loadedAssessmentKit.getCreationTime());
-        assertNotNull(loadedAssessmentKit.getLastModificationTime());
-        assertEquals(getCurrentUserId(), loadedAssessmentKit.getCreatedBy());
-        assertEquals(getCurrentUserId(), loadedAssessmentKit.getLastModifiedBy());
-        assertFalse(loadedAssessmentKit.getAccessGrantedUsers().isEmpty());
-        assertEquals(getCurrentUserId(), loadedAssessmentKit.getAccessGrantedUsers().iterator().next().getId());
-        assertNotNull(loadedAssessmentKit.getLastMajorModificationTime());
-        assertNotNull(loadedAssessmentKit.getKitVersionId());
-    }
-
-    private void assertKitTagRelation(Long kitId, CreateKitByDslRequestDto request) {
-        var entities = jpaTemplate.search(KitTagRelationJpaEntity.class, (root, query, cb) -> {
-            ArrayList<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.equal(root.get(KitTagRelationJpaEntity.Fields.kitId), kitId));
-            return query
-                .where(cb.and(predicates.toArray(new Predicate[0])))
-                .getRestriction();
-        });
-        assertEquals(request.tagIds().size(), entities.size());
-        assertTrue(request.tagIds().containsAll(entities.stream().map(KitTagRelationJpaEntity::getTagId).toList()));
-    }
-
     private Number createExpertGroup() {
         var request = createExpertGroupRequestDto();
         var response = expertGroupHelper.create(context, request);
@@ -178,6 +147,37 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                     .where(cb.and(predicates.toArray(new Predicate[0])))
                     .getRestriction();
             });
+    }
+
+    private void assertAssessmentKit(Long kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
+        assertEquals(kitId.longValue(), loadedAssessmentKit.getId());
+        assertNotNull(loadedAssessmentKit.getCode());
+        assertEquals(request.title(), loadedAssessmentKit.getTitle());
+        assertEquals(request.summary(), loadedAssessmentKit.getSummary());
+        assertEquals(request.about(), loadedAssessmentKit.getAbout());
+        assertFalse(loadedAssessmentKit.getPublished());
+        assertEquals(request.isPrivate(), loadedAssessmentKit.getIsPrivate());
+        assertEquals(request.expertGroupId(), loadedAssessmentKit.getExpertGroupId());
+        assertNotNull(loadedAssessmentKit.getCreationTime());
+        assertNotNull(loadedAssessmentKit.getLastModificationTime());
+        assertEquals(getCurrentUserId(), loadedAssessmentKit.getCreatedBy());
+        assertEquals(getCurrentUserId(), loadedAssessmentKit.getLastModifiedBy());
+        assertFalse(loadedAssessmentKit.getAccessGrantedUsers().isEmpty());
+        assertEquals(getCurrentUserId(), loadedAssessmentKit.getAccessGrantedUsers().iterator().next().getId());
+        assertNotNull(loadedAssessmentKit.getLastMajorModificationTime());
+        assertNotNull(loadedAssessmentKit.getKitVersionId());
+    }
+
+    private void assertKitTagRelation(Long kitId, CreateKitByDslRequestDto request) {
+        var entities = jpaTemplate.search(KitTagRelationJpaEntity.class, (root, query, cb) -> {
+            ArrayList<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get(KitTagRelationJpaEntity.Fields.kitId), kitId));
+            return query
+                .where(cb.and(predicates.toArray(new Predicate[0])))
+                .getRestriction();
+        });
+        assertEquals(request.tagIds().size(), entities.size());
+        assertTrue(request.tagIds().containsAll(entities.stream().map(KitTagRelationJpaEntity::getTagId).toList()));
     }
 
     private void assertMaturityLevel(MaturityLevelJpaEntity entity, Long kitVersionId) {
