@@ -104,7 +104,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
             JOIN SpaceJpaEntity s ON a.spaceId = s.id
             WHERE a.id = :id AND a.deleted = FALSE
         """)
-    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
+    Optional<AssessmentKitSpaceJoinView> findKitSpaceByIdAndDeletedFalse(@Param(value = "id") UUID id);
 
     @Modifying
     @Query("""
