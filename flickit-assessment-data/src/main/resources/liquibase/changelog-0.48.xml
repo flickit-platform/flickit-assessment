@@ -37,7 +37,7 @@
 
     <changeSet id="0.48-06" author="Mahdi Rezazadeh">
         <addColumn tableName="fac_answer">
-            <column name="type" type="tinyint" valueComputed="0">
+            <column name="status" type="tinyint" valueComputed="0">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
