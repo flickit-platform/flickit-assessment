@@ -83,7 +83,8 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE_ATTACHMENT,
             DELETE_EVIDENCE_ATTACHMENT,
             VIEW_QUESTIONNAIRE_QUESTIONS,
-            VIEW_EVIDENCE)),
+            VIEW_EVIDENCE,
+            VIEW_ASSESSMENT_MATURITY_LEVELS)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
@@ -129,7 +130,8 @@ public enum AssessmentUserRole {
             VIEW_QUESTIONNAIRE_QUESTIONS,
             ANSWER_QUESTION,
             VIEW_EVIDENCE,
-            RESOLVE_COMMENT)),
+            RESOLVE_COMMENT,
+            VIEW_ASSESSMENT_MATURITY_LEVELS)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT,
             GRANT_ACCESS_TO_REPORT,
