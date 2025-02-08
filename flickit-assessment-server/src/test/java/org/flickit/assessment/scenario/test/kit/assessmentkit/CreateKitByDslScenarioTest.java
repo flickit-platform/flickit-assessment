@@ -8,6 +8,7 @@ import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittag.KitTagJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -79,7 +80,8 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
             .setParameter("kitId", kitId)
             .getSingleResult();
 
-        assertAssessmentKit(kitId, loadedAssessmentKit, request);
+        assertAssessmentKit(kitId.longValue(), loadedAssessmentKit, request);
+        assertKitTagRelation(kitId.longValue(), request);
         Long kitVersionId = loadedAssessmentKit.getKitVersionId();
 
         int maturityLevelsCountAfter = jpaTemplate.count(MaturityLevelJpaEntity.class);
@@ -109,7 +111,7 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertQuestion(q1Question, kitVersionId, usageRangeAnswerRange.getId());
     }
 
-    private void assertAssessmentKit(Number kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
+    private void assertAssessmentKit(Long kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
         assertEquals(kitId.longValue(), loadedAssessmentKit.getId());
         assertNotNull(loadedAssessmentKit.getCode());
         assertEquals(request.title(), loadedAssessmentKit.getTitle());
@@ -126,6 +128,18 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertEquals(getCurrentUserId(), loadedAssessmentKit.getAccessGrantedUsers().iterator().next().getId());
         assertNotNull(loadedAssessmentKit.getLastMajorModificationTime());
         assertNotNull(loadedAssessmentKit.getKitVersionId());
+    }
+
+    private void assertKitTagRelation(Long kitId, CreateKitByDslRequestDto request) {
+        var entities = jpaTemplate.search(KitTagRelationJpaEntity.class, (root, query, cb) -> {
+            ArrayList<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get(KitTagRelationJpaEntity.Fields.kitId), kitId));
+            return query
+                .where(cb.and(predicates.toArray(new Predicate[0])))
+                .getRestriction();
+        });
+        assertEquals(request.tagIds().size(), entities.size());
+        assertTrue(request.tagIds().containsAll(entities.stream().map(KitTagRelationJpaEntity::getTagId).toList()));
     }
 
     private Number createExpertGroup() {
