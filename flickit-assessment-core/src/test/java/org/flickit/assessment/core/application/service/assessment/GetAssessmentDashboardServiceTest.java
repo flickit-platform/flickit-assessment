@@ -29,6 +29,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,7 +38,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.*;
+import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.insightWithTimeAndApproved;
 import static org.flickit.assessment.core.test.fixture.application.SubjectInsightMother.subjectInsight;
 import static org.flickit.assessment.core.test.fixture.application.SubjectInsightMother.subjectInsightMinInsightTime;
 import static org.junit.jupiter.api.Assertions.*;
@@ -93,9 +94,9 @@ class GetAssessmentDashboardServiceTest {
     private final int unresolvedCommentsCount = 1;
     private final int questionsWithEvidenceCount = 3;
 
-    private final AttributeInsight attributeInsight1 = simpleAttributeInsight();
-    private final AttributeInsight attributeInsight2 = simpleAttributeInsightMinInsightTime();
-    private final AttributeInsight attributeInsight3 = simpleAttributeInsightMinInsightsTime();
+    private final AttributeInsight attributeInsight1 = insightWithTimeAndApproved(LocalDateTime.now().plusSeconds(10), true);
+    private final AttributeInsight attributeInsight2 = insightWithTimeAndApproved(LocalDateTime.now().plusSeconds(10), true);
+    private final AttributeInsight attributeInsight3 = insightWithTimeAndApproved(LocalDateTime.MIN, false);
 
     private final SubjectInsight subjectInsight1 = subjectInsight();
     private final SubjectInsight subjectInsight2 = subjectInsight();
@@ -173,7 +174,7 @@ class GetAssessmentDashboardServiceTest {
         //insights
         assertEquals(10, result.insights().expected());
         assertEquals(3, result.insights().notGenerated());
-        assertEquals(4, result.insights().unapproved());
+        assertEquals(3, result.insights().unapproved());
         assertEquals(2, result.insights().expired());
         //advices
         assertEquals(2, result.advices().total());
@@ -215,6 +216,7 @@ class GetAssessmentDashboardServiceTest {
         //insights
         assertEquals(10, result.insights().expected());
         assertEquals(4, result.insights().notGenerated());
+        assertEquals(2, result.insights().unapproved());
         assertEquals(2, result.insights().expired());
         //advices
         assertEquals(2, result.advices().total());
@@ -256,7 +258,7 @@ class GetAssessmentDashboardServiceTest {
         //insights
         assertEquals(10, result.insights().expected());
         assertEquals(3, result.insights().notGenerated());
-        assertEquals(4, result.insights().unapproved());
+        assertEquals(3, result.insights().unapproved());
         assertEquals(3, result.insights().expired());
         //advices
         assertEquals(2, result.advices().total());
