@@ -26,8 +26,8 @@ public class GetAssessmentAttributesService implements GetAssessmentAttributesUs
 
     @Override
     public Result getAssessmentAttributes(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+/*        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);*/
 
         var portResult = loadAttributesPort.loadAttributes(param.getAssessmentId());
         return toResult(portResult);

@@ -136,19 +136,20 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public List<LoadAttributesPort.Result> loadAttributes(UUID assessmentId) {
-        var views = repository.findAllAttributes(assessmentId);
-        var attributes = views.stream()
-            .map(e -> AttributeMapper.mapToDomainModel(e.getAttribute()))
-            .toList();
-
         var assessmentResultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ATTRIBUTES_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var attributeViews = repository.findAllAttributesByAssessmentId(assessmentId);
+        var attributes = attributeViews.stream()
+            .map(e -> AttributeMapper.mapToDomainModel(e.getAttribute()))
+            .toList();
 
         var attributeIdToWeight = getAttributeIdToWeightMap(attributes,
             assessmentResultEntity.getAssessment().getAssessmentKitId(),
             assessmentResultEntity.getAssessment().getKitCustomId());
 
-        return views.stream()
+        return attributeViews
+            .stream()
             .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId())))
             .toList();
     }
