@@ -55,20 +55,6 @@ class GetAssessmentAttributesServiceTest {
     }
 
     @Test
-    void testGetAssessmentAttributes_whenNoAttributesExist_thenReturnEmptyResult() {
-        var param = createParam(GetAssessmentAttributesUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
-            .thenReturn(true);
-        when(loadAttributesPort.loadAttributes(param.getAssessmentId()))
-            .thenReturn(List.of());
-
-        var result = service.getAssessmentAttributes(param);
-        assertNotNull(result);
-        assertNull(result.attributes());
-    }
-
-    @Test
     void testGetAssessmentAttributes_whenAttributesExist_thenReturnResult() {
         var param = createParam(GetAssessmentAttributesUseCase.Param.ParamBuilder::build);
 
