@@ -36,6 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.prompt.Prompt;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,8 +50,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUT
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.invalidResultWithSubjectValues;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
-import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.simpleAttributeInsight;
-import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.simpleAttributeInsightMinInsightTime;
+import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.aiInsightWithTime;
 import static org.flickit.assessment.core.test.fixture.application.AttributeMother.simpleAttribute;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -290,7 +290,7 @@ class CreateAttributeAiInsightServiceTest {
     void testCreateAttributeAiInsight_whenAiInsightExistsAndInsightTimeIsAfterCalculationTime_thenReturnExistingInsight() {
         var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
 
-        var attributeInsight = simpleAttributeInsight();
+        var attributeInsight = aiInsightWithTime(LocalDateTime.now().plusDays(1));
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -321,7 +321,7 @@ class CreateAttributeAiInsightServiceTest {
         var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
-        var attributeInsight = simpleAttributeInsightMinInsightTime();
+        var attributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
         String fileContent = "file content";
         var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
         var fileReportPath = "path/to/file";
@@ -365,7 +365,7 @@ class CreateAttributeAiInsightServiceTest {
         var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
-        var attributeInsight = simpleAttributeInsightMinInsightTime();
+        var attributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
         String fileContent = "file content";
         var file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
         AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, attribute.getId());
@@ -405,7 +405,7 @@ class CreateAttributeAiInsightServiceTest {
     @Test
     void testCreateAttributeAiInsight_whenAiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiDisabled_thenThrowUnsupportedOperationException() {
         var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var attributeInsight = simpleAttributeInsightMinInsightTime();
+        var attributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
         var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
         when(appAiProperties.isEnabled()).thenReturn(false);
