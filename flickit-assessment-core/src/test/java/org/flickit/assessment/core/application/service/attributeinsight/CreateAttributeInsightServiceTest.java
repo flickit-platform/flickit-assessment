@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -25,7 +26,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ATTRIBUTE_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.simpleAttributeInsight;
+import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.insightWithTimeAndApproved;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -108,7 +109,7 @@ class CreateAttributeInsightServiceTest {
     @Test
     void testCreateAttributeInsight_whenAttributeInsightExists_thenUpdateAttributeInsight() {
         var param = createParam(CreateAttributeInsightUseCase.Param.ParamBuilder::build);
-        AttributeInsight attributeInsight = simpleAttributeInsight();
+        AttributeInsight attributeInsight = insightWithTimeAndApproved(LocalDateTime.now().plusSeconds(10), true);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
             .thenReturn(true);

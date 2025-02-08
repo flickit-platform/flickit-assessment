@@ -23,7 +23,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
-import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.attributeAiInsightWithTimes;
+import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.aiInsightWithTime;
 import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.attributeInsightWithTimes;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -207,9 +207,7 @@ class GetAttributeInsightServiceTest {
     @Test
     void testGetAttributeInsight_whenAssessorInsightIsNull_AiInsightIsNotValid_thenReturnAiInsight() {
         var param = createParam(GetAttributeInsightUseCase.Param.ParamBuilder::build);
-        var attributeInsight = attributeAiInsightWithTimes(
-            LocalDateTime.now().minusDays(1),
-            LocalDateTime.now().minusDays(1));
+        var attributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -230,32 +228,7 @@ class GetAttributeInsightServiceTest {
     @Test
     void testGetAttributeInsight_whenAssessorInsightIsNull_AiInsightIsValidBasedOnInsightTime_thenReturnAiInsight() {
         var param = createParam(GetAttributeInsightUseCase.Param.ParamBuilder::build);
-        var attributeInsight = attributeAiInsightWithTimes(
-            LocalDateTime.now().plusDays(1),
-            LocalDateTime.now().plusDays(1));
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_SUBJECT_REPORT)).thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
-        when(assessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-
-        var result = service.getInsight(param);
-        assertNotNull(result);
-        assertNotNull(result.aiInsight());
-        assertEquals(attributeInsight.getAiInsight(), result.aiInsight().insight());
-        assertEquals(attributeInsight.getAiInsightTime(), result.aiInsight().creationTime());
-        assertTrue(result.aiInsight().isValid());
-        assertNull(result.assessorInsight());
-        assertTrue(result.editable());
-        assertFalse(result.approved());
-    }
-
-    @Test
-    void testGetAttributeInsight_whenAssessorInsightIsNull_AiInsightIsValidBasedOnLastModificationTime_thenReturnAiInsight() {
-        var param = createParam(GetAttributeInsightUseCase.Param.ParamBuilder::build);
-        var attributeInsight = attributeAiInsightWithTimes(
-            LocalDateTime.now().minusDays(1),
-            LocalDateTime.now().plusDays(1));
+        var attributeInsight = aiInsightWithTime(LocalDateTime.now().plusDays(1));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_SUBJECT_REPORT)).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);

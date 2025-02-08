@@ -7,16 +7,6 @@ import java.util.UUID;
 
 public class SubjectInsightMother {
 
-    public static SubjectInsight approvedSubjectInsight() {
-        return new SubjectInsight(UUID.randomUUID(),
-            2L,
-            "insight",
-            LocalDateTime.now().plusSeconds(10),
-            LocalDateTime.now().plusSeconds(10),
-            UUID.randomUUID(),
-            true);
-    }
-
     public static SubjectInsight defaultSubjectInsight(LocalDateTime insightTime, LocalDateTime insightLastCalculationTime, boolean approved) {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
@@ -34,7 +24,7 @@ public class SubjectInsightMother {
             LocalDateTime.now().plusSeconds(10),
             LocalDateTime.now().plusSeconds(10),
             UUID.randomUUID(),
-            false);
+            true);
     }
 
     public static SubjectInsight subjectInsightMinInsightTime() {

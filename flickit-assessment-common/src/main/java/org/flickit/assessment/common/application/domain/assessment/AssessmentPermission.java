@@ -54,7 +54,8 @@ public enum AssessmentPermission {
     APPROVE_ASSIGNMENT_INSIGHT("approveAssignmentInsight"),
     VIEW_GRAPHICAL_REPORT("viewGraphicalReport"),
     MANAGE_REPORT_METADATA("manageReportMetadata"),
-    PUBLISH_ASSESSMENT_REPORT("publishAssessmentReport"),;
+    PUBLISH_ASSESSMENT_REPORT("publishAssessmentReport"),
+    VIEW_REPORT_PREVIEW("viewReportPreview");
 
     private final String code;
 }
