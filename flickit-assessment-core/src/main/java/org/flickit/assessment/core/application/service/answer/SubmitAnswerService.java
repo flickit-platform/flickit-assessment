@@ -63,14 +63,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
         confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
 
-        if (loadedAnswer.isEmpty()) {
-            if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
-                return NotAffected.EMPTY;
-            var savedAnswerId = saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
-            var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), true);
-            log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), savedAnswerId);
-            return new Submitted(savedAnswerId, notificationCmd);
-        }
+        if (loadedAnswer.isEmpty())
+            return handelNewAnswer(assessmentResult, param, answerOptionId, confidenceLevelId);
 
         var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null : loadedAnswer.get().getSelectedOption().getId();
 
@@ -106,6 +100,15 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             if (!isMayNotBeApplicable)
                 throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
         }
+    }
+
+    private Result handelNewAnswer(AssessmentResult assessmentResult, Param param, Long answerOptionId, Integer confidenceLevelId) {
+        if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
+            return NotAffected.EMPTY;
+        var savedAnswerId = saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
+        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), true);
+        log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), savedAnswerId);
+        return new Submitted(savedAnswerId, notificationCmd);
     }
 
     private static boolean hasProgressed(Param param, Answer loadedAnswer) {
