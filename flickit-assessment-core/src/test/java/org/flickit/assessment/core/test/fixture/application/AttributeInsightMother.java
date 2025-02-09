@@ -8,40 +8,16 @@ import java.util.UUID;
 
 public class AttributeInsightMother {
 
-    public static AttributeInsight simpleAttributeInsight() {
+    public static AttributeInsight insightWithTimeAndApproved(LocalDateTime insightTime, boolean approved) {
         return new AttributeInsight(UUID.randomUUID(),
             new Random().nextLong(),
             "ai insight ",
             "assessor insight",
-            LocalDateTime.now().plusSeconds(10),
-            LocalDateTime.now().plusSeconds(10),
+            insightTime,
+            insightTime,
             "input path",
-            false,
-            LocalDateTime.now().plusSeconds(10));
-    }
-
-    public static AttributeInsight simpleAttributeInsightMinInsightTime() {
-        return new AttributeInsight(UUID.randomUUID(),
-            new Random().nextLong(),
-            "ai insight ",
-            "assessor insight",
-            LocalDateTime.MIN,
-            LocalDateTime.now().plusSeconds(10),
-            "input path",
-            false,
-            LocalDateTime.now().plusSeconds(10));
-    }
-
-    public static AttributeInsight simpleAttributeInsightMinInsightsTime() {
-        return new AttributeInsight(UUID.randomUUID(),
-            new Random().nextLong(),
-            "ai insight ",
-            "assessor insight",
-            LocalDateTime.MIN,
-            LocalDateTime.MIN,
-            "input path",
-            false,
-            LocalDateTime.MIN);
+            approved,
+            insightTime);
     }
 
     public static AttributeInsight attributeInsightWithTimes(LocalDateTime aiInsightTime, LocalDateTime assessorInsightTime, LocalDateTime lastModificationTime) {
@@ -56,15 +32,15 @@ public class AttributeInsightMother {
             lastModificationTime);
     }
 
-    public static AttributeInsight attributeAiInsightWithTimes(LocalDateTime aiInsightTime, LocalDateTime lastModificationTime) {
+    public static AttributeInsight aiInsightWithTime(LocalDateTime insightTime) {
         return new AttributeInsight(UUID.randomUUID(),
             new Random().nextLong(),
             "ai insight ",
             null,
-            aiInsightTime,
+            insightTime,
             null,
             "input path",
             false,
-            lastModificationTime);
+            insightTime);
     }
 }
