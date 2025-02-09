@@ -11,6 +11,7 @@ import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
+import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.kitcustom.KitCustomJpaRepository;
@@ -40,6 +41,7 @@ public class AttributePersistenceJpaAdapter implements
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final KitCustomJpaRepository kitCustomRepository;
+    private final AssessmentJpaRepository assessmentRepository;
 
     @Override
     public PaginatedResponse<LoadAttributeScoreDetailPort.Result> loadScoreDetail(LoadAttributeScoreDetailPort.Param param) {
@@ -136,8 +138,9 @@ public class AttributePersistenceJpaAdapter implements
 
     @Override
     public List<LoadAttributesPort.Result> loadAttributes(UUID assessmentId) {
-        var assessmentResultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_ATTRIBUTES_ASSESSMENT_RESULT_NOT_FOUND));
+        var assessment = assessmentRepository.findByIdAndDeletedFalse(assessmentId);
+        if (assessment == null)
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
 
         var attributeViews = repository.findAllAttributesByAssessmentId(assessmentId);
         var attributes = attributeViews.stream()
@@ -145,8 +148,8 @@ public class AttributePersistenceJpaAdapter implements
             .toList();
 
         var attributeIdToWeight = getAttributeIdToWeightMap(attributes,
-            assessmentResultEntity.getAssessment().getAssessmentKitId(),
-            assessmentResultEntity.getAssessment().getKitCustomId());
+            assessment.getAssessmentKitId(),
+            assessment.getKitCustomId());
 
         return attributeViews
             .stream()
