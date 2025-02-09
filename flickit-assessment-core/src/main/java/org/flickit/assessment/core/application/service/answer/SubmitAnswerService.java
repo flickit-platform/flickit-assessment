@@ -84,9 +84,9 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private Integer prepareConfidenceLevelId(Param param, Long answerOptionId) {
-        Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
-        confidenceLevelId = (answerOptionId != null || Objects.equals(TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
-        return confidenceLevelId;
+        if (answerOptionId != null || TRUE.equals(param.getIsNotApplicable()))
+            return param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
+        return null;
     }
 
     private Result handelNewAnswer(AssessmentResult assessmentResult, Param param, Long answerOptionId, Integer confidenceLevelId) {
