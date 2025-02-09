@@ -27,7 +27,6 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
     private final LoadAdviceNarrationPort loadAdviceNarrationPort;
     private final AppAiProperties appAiProperties;
 
-
     @Override
     public Result getAdviceNarration(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -39,26 +38,24 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
         boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
         boolean aiEnabled = appAiProperties.isEnabled();
 
-        return loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())
-            .map(narration -> determineResult(narration, editable, aiEnabled))
-            .orElse(new Result(null, null, editable, aiEnabled));
+        var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
+
+        if (adviceNarration.isEmpty())
+            return new Result(null, null, editable, aiEnabled);
+
+        var narration = adviceNarration.get();
+        return (narration.getCreatedBy() == null)
+            ? getAiNarration(narration, editable, aiEnabled)
+            : getAssessorNarration(narration, editable, aiEnabled);
     }
 
-    private Result determineResult(AdviceNarration narration, boolean editable, boolean aiEnabled) {
-        var aiNarration = narration.getAiNarration() != null
-            ? new Result.AdviceNarration(narration.getAiNarration(), narration.getAiNarrationTime())
-            : null;
+    private Result getAiNarration(AdviceNarration narration, boolean editable, boolean aiEnabled) {
+        var aiNarration = new Result.AdviceNarration(narration.getAiNarration(), narration.getAiNarrationTime());
+        return new Result(aiNarration, null, editable, aiEnabled);
+    }
 
-        var assessorNarration = narration.getAssessorNarration() != null
-            ? new Result.AdviceNarration(narration.getAssessorNarration(), narration.getAssessorNarrationTime())
-            : null;
-
-        if (aiNarration == null || aiNarration.narration().isEmpty() ) return new Result(null, assessorNarration, editable, aiEnabled);
-        if (assessorNarration== null || assessorNarration.narration().isEmpty())
-            return new Result(aiNarration, null, editable, aiEnabled);
-
-        return narration.getAssessorNarrationTime().isBefore(narration.getAiNarrationTime())
-            ? new Result(aiNarration, null, editable, aiEnabled)
-            : new Result(null, assessorNarration, editable, aiEnabled);
+    private Result getAssessorNarration(AdviceNarration narration, boolean editable, boolean aiEnabled) {
+        var assessorNarration = new Result.AdviceNarration(narration.getAssessorNarration(), narration.getAssessorNarrationTime());
+        return new Result(null, assessorNarration, editable, aiEnabled);
     }
 }
