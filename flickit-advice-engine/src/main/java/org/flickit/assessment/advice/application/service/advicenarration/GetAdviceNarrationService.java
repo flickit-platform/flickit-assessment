@@ -43,7 +43,18 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
             return new Result(null, null, editable, aiEnabled);
 
         var narration = adviceNarration.get();
-        if (narration.getAssessorNarration() == null) {
+
+        if(narration.getAiNarration() == null && narration.getAssessorNarration() != null){
+            var assessorNarration = new Result.AdviceNarration(narration.getAssessorNarration(), narration.getAssessorNarrationTime());
+            return new Result(null, assessorNarration, editable, aiEnabled);
+        }
+
+        if(narration.getAssessorNarration() == null && narration.getAiNarration() != null){
+            var aiNarration = new Result.AdviceNarration(narration.getAiNarration(), narration.getAiNarrationTime());
+            return new Result(aiNarration, null, editable, aiEnabled);
+        }
+
+        if (narration.getAiNarration() != null && narration.getAssessorNarrationTime().isBefore(narration.getAiNarrationTime())) {
             var aiNarration = new Result.AdviceNarration(narration.getAiNarration(), narration.getAiNarrationTime());
             return new Result(aiNarration, null, editable, aiEnabled);
         }
