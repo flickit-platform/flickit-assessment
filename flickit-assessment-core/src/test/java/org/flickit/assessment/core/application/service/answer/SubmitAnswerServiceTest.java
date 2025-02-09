@@ -88,7 +88,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerNotExistAndOptionIdIsNotNull_SavesAnswerAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_NewApplicableAnswerWithAnswerOptionIdSubmitted_SavesAnswerAndInvalidatesAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         UUID savedAnswerId = UUID.randomUUID();
@@ -139,7 +139,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerNotExistAndOptionIdIsNullAndIsNotApplicableIsFalse_DontSavesAnswerAndDontInvalidatesAssessmentResult() {
+    void testSubmitAnswer_NewApplicableAnswerWithNullAnswerOptionIdSubmitted_DontSavesAnswerAndDontInvalidatesAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
@@ -162,7 +162,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerNotExistsAndIsNotApplicableTrue_SavesAnswerAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_NewNotApplicableAnswerSubmitted_SavesAnswerAndInvalidatesAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID savedAnswerId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
@@ -214,7 +214,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerExistsAnswerOptionChanged_UpdatesAnswerAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_AnswerOptionIdChangedForExistsAnswer_UpdatesAnswerAndInvalidatesAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
@@ -265,7 +265,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerExistsAndIsNotApplicableTrue_SavesAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_NotApplicableAnswerSubmittedForExistsApplicableAnswer_UpdateAndInvalidatesAssessmentResult() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
@@ -307,7 +307,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerExistsAndIsNotApplicableTrueNewConfidenceChanges_SavesAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_ConfidenceIdChangedForExistsNotApplicableAnswer_UpdateAndInvalidatesAssessmentResult() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
@@ -351,7 +351,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerWithSameAnswerOption_DoNotInvalidateAssessmentResult() {
+    void testSubmitAnswer_AnswerWithSameAnswerOptionSubmittedForExistsAnswer_DoNotInvalidateAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         AnswerOption sameAnswerOption = AnswerOptionMother.optionFour();
@@ -375,7 +375,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerExistsNotApplicableChanged_UpdatesAnswerAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_NotApplicableOfAnswerChangedForExistsAnswer_UpdatesAnswerAndInvalidatesAssessmentResult() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         UUID savedAnswerHistoryId = UUID.randomUUID();
@@ -417,7 +417,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerIsNotApplicableAndQuestionNotMayNotBeApplicable_ThrowsException() {
+    void testSubmitAnswer_NotApplicableAnswerSubmittedForApplicableQuestion_ThrowsException() {
         UUID currentUserId = UUID.randomUUID();
         UUID assessmentId = UUID.randomUUID();
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
@@ -442,7 +442,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerWithSameIsNotApplicableExists_DoNotInvalidateAssessmentResult() {
+    void testSubmitAnswer_SameIsNotApplicableAnswerSubmittedForExistsAnswer_DoNotInvalidateAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(null);
@@ -467,7 +467,7 @@ class SubmitAnswerServiceTest {
     }
 
     @Test
-    void testSubmitAnswer_AnswerExistsConfidenceLevelChanged_UpdatesAnswerAndInvalidatesAssessmentResult() {
+    void testSubmitAnswer_ConfidenceIdChangedForExistsApplicableAnswer_UpdateAndInvalidatesAssessmentResult() {
         AssessmentResult assessmentResult = AssessmentResultMother.validResult();
         UUID assessmentId = UUID.randomUUID();
         Boolean isNotApplicable = Boolean.FALSE;
