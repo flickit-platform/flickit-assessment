@@ -56,11 +56,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
-            var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId());
-            if (!isMayNotBeApplicable)
-                throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
-        }
+        checkQuestionIsMatBeApplicable(param, assessmentResult.getKitVersionId());
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
@@ -102,6 +98,14 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     private void checkUserAccess(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ANSWER_QUESTION))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+    }
+
+    private void checkQuestionIsMatBeApplicable(Param param, long kitVersionId) {
+        if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
+            var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), kitVersionId);
+            if (!isMayNotBeApplicable)
+                throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
+        }
     }
 
     private static boolean hasProgressed(Param param, Answer loadedAnswer) {
