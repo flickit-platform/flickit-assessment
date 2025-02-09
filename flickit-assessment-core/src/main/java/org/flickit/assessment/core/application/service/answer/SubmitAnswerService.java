@@ -157,10 +157,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             answerOptionId,
             confidenceLevelId,
             PERSIST));
-        if (answerOptionId != null || confidenceLevelId != null || TRUE.equals(param.getIsNotApplicable())) {
-            invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResultId);
-            invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResultId);
-        }
+        invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResultId);
+        invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResultId);
         return savedAnswerId;
     }
 
