@@ -25,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.HistoryType.PERSIST;
@@ -59,34 +61,14 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         checkQuestionIsMatBeApplicable(param, assessmentResult.getKitVersionId());
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
-        var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
+        var answerOptionId = TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
         Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
-        confidenceLevelId = (answerOptionId != null || Objects.equals(Boolean.TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
+        confidenceLevelId = (answerOptionId != null || Objects.equals(TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
 
         if (loadedAnswer.isEmpty())
             return handelNewAnswer(assessmentResult, param, answerOptionId, confidenceLevelId);
 
-        var loadedAnswerOptionId = loadedAnswer.get().getSelectedOption() == null ? null : loadedAnswer.get().getSelectedOption().getId();
-
-        var isNotApplicableChanged = !Objects.equals(param.getIsNotApplicable(), loadedAnswer.get().getIsNotApplicable());
-        var isAnswerOptionChanged = Objects.equals(Boolean.TRUE, param.getIsNotApplicable()) ? Boolean.FALSE : !Objects.equals(answerOptionId, loadedAnswerOptionId);
-        var isConfidenceLevelChanged = !Objects.equals(confidenceLevelId, loadedAnswer.get().getConfidenceLevelId());
-        var loadedAnswerId = loadedAnswer.get().getId();
-
-        if (!(isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged))
-            return new NotAffected(loadedAnswerId);
-
-        var updateParam = toUpdateAnswerParam(loadedAnswerId, answerOptionId, confidenceLevelId,
-            param.getIsNotApplicable(), param.getCurrentUserId());
-        updateAnswerPort.update(updateParam);
-        createAnswerHistoryPort.persist(toAnswerHistory(loadedAnswerId, param, assessmentResult.getId(),
-            answerOptionId, confidenceLevelId, UPDATE));
-
-        invalidateAssessmentResult(assessmentResult, isAnswerOptionChanged, isNotApplicableChanged, isConfidenceLevelChanged);
-
-        log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswerId);
-        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), hasProgressed(param, loadedAnswer.get()));
-        return new Submitted(loadedAnswerId, notificationCmd);
+        return handleExistingAnswer(assessmentResult, loadedAnswer.get(), param, answerOptionId, confidenceLevelId);
     }
 
     private void checkUserAccess(Param param) {
@@ -95,7 +77,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private void checkQuestionIsMatBeApplicable(Param param, long kitVersionId) {
-        if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
+        if (TRUE.equals(param.getIsNotApplicable())) {
             var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), kitVersionId);
             if (!isMayNotBeApplicable)
                 throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
@@ -103,7 +85,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private Result handelNewAnswer(AssessmentResult assessmentResult, Param param, Long answerOptionId, Integer confidenceLevelId) {
-        if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
+        if (answerOptionId == null && !TRUE.equals(param.getIsNotApplicable()))
             return NotAffected.EMPTY;
         var savedAnswerId = saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId);
         var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), true);
@@ -111,8 +93,40 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new Submitted(savedAnswerId, notificationCmd);
     }
 
-    private static boolean hasProgressed(Param param, Answer loadedAnswer) {
-        return (!Boolean.TRUE.equals(loadedAnswer.getIsNotApplicable()) && Boolean.TRUE.equals(param.getIsNotApplicable())) ||
+    private Result handleExistingAnswer(AssessmentResult assessmentResult,
+                                        Answer loadedAnswer,
+                                        Param param,
+                                        Long answerOptionId,
+                                        Integer confidenceLevelId) {
+        var loadedAnswerOptionId = loadedAnswer.getSelectedOption() == null ? null : loadedAnswer.getSelectedOption().getId();
+        var isNotApplicableChanged = !Objects.equals(param.getIsNotApplicable(), loadedAnswer.getIsNotApplicable());
+        var isAnswerOptionChanged = Objects.equals(TRUE, param.getIsNotApplicable()) ? FALSE : !Objects.equals(answerOptionId, loadedAnswerOptionId);
+        var isConfidenceLevelChanged = !Objects.equals(confidenceLevelId, loadedAnswer.getConfidenceLevelId());
+        var loadedAnswerId = loadedAnswer.getId();
+
+        if (!(isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged))
+            return new NotAffected(loadedAnswerId);
+
+        updateAnswerPort.update(toUpdateAnswerParam(loadedAnswerId,
+            answerOptionId,
+            confidenceLevelId,
+            param.getIsNotApplicable(),
+            param.getCurrentUserId()));
+        createAnswerHistoryPort.persist(toAnswerHistory(loadedAnswerId,
+            param,
+            assessmentResult.getId(),
+            answerOptionId,
+            confidenceLevelId,
+            UPDATE));
+        invalidateAssessmentResult(assessmentResult, isAnswerOptionChanged, isNotApplicableChanged, isConfidenceLevelChanged);
+
+        log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswerId);
+        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), hasProgressed(param, loadedAnswer));
+        return new Submitted(loadedAnswerId, notificationCmd);
+    }
+
+    private boolean hasProgressed(Param param, Answer loadedAnswer) {
+        return (!TRUE.equals(loadedAnswer.getIsNotApplicable()) && TRUE.equals(param.getIsNotApplicable())) ||
             (loadedAnswer.getSelectedOption() == null && param.getAnswerOptionId() != null);
     }
 
@@ -120,7 +134,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param, assessmentResultId, answerOptionId, confidenceLevelId));
         createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId, param, assessmentResultId, answerOptionId,
             confidenceLevelId, PERSIST));
-        if (answerOptionId != null || confidenceLevelId != null || Boolean.TRUE.equals(param.getIsNotApplicable())) {
+        if (answerOptionId != null || confidenceLevelId != null || TRUE.equals(param.getIsNotApplicable())) {
             invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResultId);
             invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResultId);
         }
