@@ -3,8 +3,11 @@ package org.flickit.assessment.core.application.service.answer;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AnswerHistory;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.HistoryType;
 import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase;
+import org.flickit.assessment.core.application.port.in.answer.SubmitAnswerUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.answer.UpdateAnswerPort;
@@ -25,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -71,7 +75,7 @@ class SubmitAnswerServiceTest {
     @Test
     void testSubmitAnswer_UserHasNotAccess_ThrowException() {
         UUID assessmentId = UUID.randomUUID();
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, null, ConfidenceLevel.getDefault().getId(), Boolean.TRUE, UUID.randomUUID());
+        var param = createParam(b -> b.assessmentId(assessmentId));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(false);
 
@@ -89,13 +93,16 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_NewApplicableAnswerWithAnswerOptionIdSubmitted_SavesAnswerAndInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        UUID assessmentId = UUID.randomUUID();
-        UUID savedAnswerId = UUID.randomUUID();
-        UUID savedAnswerHistoryId = UUID.randomUUID();
-        Long answerOptionId = 2L;
-        Boolean isNotApplicable = Boolean.FALSE;
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, answerOptionId, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
+        var assessmentResult = AssessmentResultMother.validResult();
+        var assessmentId = UUID.randomUUID();
+        var savedAnswerId = UUID.randomUUID();
+        var savedAnswerHistoryId = UUID.randomUUID();
+        var answerOptionId = 2L;
+        var isNotApplicable = Boolean.FALSE;
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(answerOptionId)
+            .isNotApplicable(isNotApplicable));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
@@ -113,7 +120,7 @@ class SubmitAnswerServiceTest {
         assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
         assertTrue(submittedResult.notificationCmd().hasProgressed());
 
-        ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
+        var saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(createAnswerPort).persist(saveAnswerParam.capture());
         assertEquals(assessmentResult.getId(), saveAnswerParam.getValue().assessmentResultId());
         assertEquals(QUESTIONNAIRE_ID, saveAnswerParam.getValue().questionnaireId());
@@ -122,7 +129,7 @@ class SubmitAnswerServiceTest {
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
-        ArgumentCaptor<AnswerHistory> saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
+        var saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
         assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
@@ -140,10 +147,13 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_NewApplicableAnswerWithNullAnswerOptionIdSubmitted_DontSavesAnswerAndDontInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        UUID assessmentId = UUID.randomUUID();
-        Boolean isNotApplicable = Boolean.FALSE;
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, null, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
+        var assessmentResult = AssessmentResultMother.validResult();
+        var assessmentId = UUID.randomUUID();
+        var isNotApplicable = Boolean.FALSE;
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(null)
+            .isNotApplicable(isNotApplicable));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -163,13 +173,16 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_NewNotApplicableAnswerSubmitted_SavesAnswerAndInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        UUID savedAnswerId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        Long answerOptionId = 1L;
-        Boolean isNotApplicable = Boolean.TRUE;
-        UUID savedAnswerHistoryId = UUID.randomUUID();
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, answerOptionId, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
+        var assessmentResult = AssessmentResultMother.validResult();
+        var savedAnswerId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
+        var answerOptionId = 1L;
+        var isNotApplicable = Boolean.TRUE;
+        var savedAnswerHistoryId = UUID.randomUUID();
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(answerOptionId)
+            .isNotApplicable(isNotApplicable));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -187,7 +200,7 @@ class SubmitAnswerServiceTest {
         assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
         assertTrue(submittedResult.notificationCmd().hasProgressed());
 
-        ArgumentCaptor<CreateAnswerPort.Param> saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
+        var saveAnswerParam = ArgumentCaptor.forClass(CreateAnswerPort.Param.class);
         verify(createAnswerPort).persist(saveAnswerParam.capture());
         assertEquals(assessmentResult.getId(), saveAnswerParam.getValue().assessmentResultId());
         assertEquals(QUESTIONNAIRE_ID, saveAnswerParam.getValue().questionnaireId());
@@ -196,7 +209,7 @@ class SubmitAnswerServiceTest {
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
 
-        ArgumentCaptor<AnswerHistory> saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
+        var saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
         assertEquals(savedAnswerId, saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
@@ -215,14 +228,17 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerOptionIdChangedForExistsAnswer_UpdatesAnswerAndInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        UUID assessmentId = UUID.randomUUID();
-        Boolean isNotApplicable = Boolean.FALSE;
-        Long newAnswerOptionId = AnswerOptionMother.optionFour().getId();
-        AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
-        UUID savedAnswerHistoryId = UUID.randomUUID();
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, newAnswerOptionId, ConfidenceLevel.getDefault().getId(), isNotApplicable, UUID.randomUUID());
+        var assessmentResult = AssessmentResultMother.validResult();
+        var assessmentId = UUID.randomUUID();
+        var isNotApplicable = Boolean.FALSE;
+        var newAnswerOptionId = AnswerOptionMother.optionFour().getId();
+        var oldAnswerOption = AnswerOptionMother.optionOne();
+        var existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
+        var savedAnswerHistoryId = UUID.randomUUID();
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(newAnswerOptionId)
+            .isNotApplicable(isNotApplicable));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -239,14 +255,14 @@ class SubmitAnswerServiceTest {
         assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
         assertFalse(submittedResult.notificationCmd().hasProgressed());
 
-        ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
+        var updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
         assertEquals(existAnswer.getId(), updateAnswerParam.getValue().answerId());
         assertEquals(newAnswerOptionId, updateAnswerParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
 
-        ArgumentCaptor<AnswerHistory> saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
+        var saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
         assertEquals(existAnswer.getId(), saveAnswerHistoryParam.getValue().getAnswer().getId());
         assertEquals(assessmentResult.getId(), saveAnswerHistoryParam.getValue().getAssessmentResultId());
@@ -266,14 +282,19 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_NotApplicableAnswerSubmittedForExistsApplicableAnswer_UpdateAndInvalidatesAssessmentResult() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        Boolean isNotApplicable = Boolean.TRUE;
-        AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
-        UUID savedAnswerHistoryId = UUID.randomUUID();
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, oldAnswerOption.getId(), existAnswer.getConfidenceLevelId(), isNotApplicable, currentUserId);
+        var currentUserId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
+        var assessmentResult = AssessmentResultMother.validResult();
+        var isNotApplicable = Boolean.TRUE;
+        var oldAnswerOption = AnswerOptionMother.optionOne();
+        var existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
+        var savedAnswerHistoryId = UUID.randomUUID();
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(oldAnswerOption.getId())
+            .confidenceLevelId(existAnswer.getConfidenceLevelId())
+            .isNotApplicable(isNotApplicable)
+            .currentUserId(currentUserId));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -292,7 +313,7 @@ class SubmitAnswerServiceTest {
         assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
         assertTrue(submittedResult.notificationCmd().hasProgressed());
 
-        ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
+        var updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
         assertEquals(existAnswer.getId(), updateAnswerParam.getValue().answerId());
         assertNull(updateAnswerParam.getValue().answerOptionId());
@@ -308,15 +329,20 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_ConfidenceIdChangedForExistsNotApplicableAnswer_UpdateAndInvalidatesAssessmentResult() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        Boolean isNotApplicable = Boolean.TRUE;
-        AnswerOption oldAnswerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
-        UUID savedAnswerHistoryId = UUID.randomUUID();
-        ConfidenceLevel confidenceLevel = ConfidenceLevel.getMaxLevel();
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, oldAnswerOption.getId(), confidenceLevel.getId(), isNotApplicable, currentUserId);
+        var currentUserId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
+        var assessmentResult = AssessmentResultMother.validResult();
+        var isNotApplicable = Boolean.TRUE;
+        var oldAnswerOption = AnswerOptionMother.optionOne();
+        var existAnswer = AnswerMother.answerWithNotApplicableFalse(oldAnswerOption);
+        var savedAnswerHistoryId = UUID.randomUUID();
+        var confidenceLevel = ConfidenceLevel.getMaxLevel();
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(oldAnswerOption.getId())
+            .confidenceLevelId(confidenceLevel.getId())
+            .isNotApplicable(isNotApplicable)
+            .currentUserId(currentUserId));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -335,7 +361,7 @@ class SubmitAnswerServiceTest {
         assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
         assertTrue(submittedResult.notificationCmd().hasProgressed());
 
-        ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
+        var updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
         assertEquals(existAnswer.getId(), updateAnswerParam.getValue().answerId());
         assertNull(updateAnswerParam.getValue().answerOptionId());
@@ -352,11 +378,15 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_AnswerWithSameAnswerOptionSubmittedForExistsAnswer_DoNotInvalidateAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        UUID assessmentId = UUID.randomUUID();
-        AnswerOption sameAnswerOption = AnswerOptionMother.optionFour();
-        Answer existAnswer = AnswerMother.answerWithNullNotApplicable(sameAnswerOption);
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, sameAnswerOption.getId(), existAnswer.getConfidenceLevelId(), null, UUID.randomUUID());
+        var assessmentResult = AssessmentResultMother.validResult();
+        var assessmentId = UUID.randomUUID();
+        var sameAnswerOption = AnswerOptionMother.optionFour();
+        var existAnswer = AnswerMother.answerWithNullNotApplicable(sameAnswerOption);
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(sameAnswerOption.getId())
+            .confidenceLevelId(existAnswer.getConfidenceLevelId())
+            .isNotApplicable(null));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -376,14 +406,19 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_NotApplicableOfAnswerChangedForExistsAnswer_UpdatesAnswerAndInvalidatesAssessmentResult() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        UUID savedAnswerHistoryId = UUID.randomUUID();
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        Boolean newIsNotApplicable = Boolean.FALSE;
-        AnswerOption answerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(answerOption);
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, currentUserId);
+        var currentUserId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
+        var savedAnswerHistoryId = UUID.randomUUID();
+        var assessmentResult = AssessmentResultMother.validResult();
+        var newIsNotApplicable = Boolean.FALSE;
+        var answerOption = AnswerOptionMother.optionOne();
+        var existAnswer = AnswerMother.answerWithNotApplicableTrue(answerOption);
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(answerOption.getId())
+            .confidenceLevelId(ConfidenceLevel.getDefault().getId())
+            .isNotApplicable(newIsNotApplicable)
+            .currentUserId(currentUserId));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -401,7 +436,7 @@ class SubmitAnswerServiceTest {
         assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
         assertFalse(submittedResult.notificationCmd().hasProgressed());
 
-        ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
+        var updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
         assertEquals(existAnswer.getId(), updateAnswerParam.getValue().answerId());
         assertEquals(answerOption.getId(), updateAnswerParam.getValue().answerOptionId());
@@ -418,18 +453,23 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_NotApplicableAnswerSubmittedForApplicableQuestion_ThrowsException() {
-        UUID currentUserId = UUID.randomUUID();
-        UUID assessmentId = UUID.randomUUID();
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        Boolean newIsNotApplicable = Boolean.TRUE;
-        AnswerOption answerOption = AnswerOptionMother.optionOne();
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, currentUserId);
+        var currentUserId = UUID.randomUUID();
+        var assessmentId = UUID.randomUUID();
+        var assessmentResult = AssessmentResultMother.validResult();
+        var newIsNotApplicable = Boolean.TRUE;
+        var answerOption = AnswerOptionMother.optionOne();
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(answerOption.getId())
+            .confidenceLevelId(ConfidenceLevel.getDefault().getId())
+            .isNotApplicable(newIsNotApplicable)
+            .currentUserId(currentUserId));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(false);
 
-        ValidationException exception = assertThrows(ValidationException.class, () -> service.submitAnswer(param));
+        var exception = assertThrows(ValidationException.class, () -> service.submitAnswer(param));
         assertEquals(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE, exception.getMessageKey());
 
         verifyNoInteractions(createAnswerPort,
@@ -443,10 +483,14 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_SameIsNotApplicableAnswerSubmittedForExistsAnswer_DoNotInvalidateAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        UUID assessmentId = UUID.randomUUID();
-        Answer existAnswer = AnswerMother.answerWithNotApplicableTrue(null);
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, null, existAnswer.getConfidenceLevelId(), Boolean.TRUE, UUID.randomUUID());
+        var assessmentResult = AssessmentResultMother.validResult();
+        var assessmentId = UUID.randomUUID();
+        var existAnswer = AnswerMother.answerWithNotApplicableTrue(null);
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(null)
+            .confidenceLevelId(existAnswer.getConfidenceLevelId())
+            .isNotApplicable(Boolean.TRUE));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -468,13 +512,17 @@ class SubmitAnswerServiceTest {
 
     @Test
     void testSubmitAnswer_ConfidenceIdChangedForExistsApplicableAnswer_UpdateAndInvalidatesAssessmentResult() {
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
-        UUID assessmentId = UUID.randomUUID();
-        Boolean isNotApplicable = Boolean.FALSE;
-        Integer newConfidenceLevelId = 3;
-        AnswerOption answerOption = AnswerOptionMother.optionOne();
-        Answer existAnswer = AnswerMother.answerWithNotApplicableFalse(answerOption);
-        var param = new SubmitAnswerUseCase.Param(assessmentId, QUESTIONNAIRE_ID, QUESTION_ID, answerOption.getId(), newConfidenceLevelId, isNotApplicable, UUID.randomUUID());
+        var assessmentResult = AssessmentResultMother.validResult();
+        var assessmentId = UUID.randomUUID();
+        var isNotApplicable = Boolean.FALSE;
+        var newConfidenceLevelId = 3;
+        var answerOption = AnswerOptionMother.optionOne();
+        var existAnswer = AnswerMother.answerWithNotApplicableFalse(answerOption);
+        var param = createParam(b -> b
+            .assessmentId(assessmentId)
+            .answerOptionId(answerOption.getId())
+            .confidenceLevelId(newConfidenceLevelId)
+            .isNotApplicable(isNotApplicable));
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
@@ -488,7 +536,7 @@ class SubmitAnswerServiceTest {
         assertEquals(param.getCurrentUserId(), submittedResult.notificationCmd().assessorId());
         assertFalse(submittedResult.notificationCmd().hasProgressed());
 
-        ArgumentCaptor<UpdateAnswerPort.Param> updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
+        var updateAnswerParam = ArgumentCaptor.forClass(UpdateAnswerPort.Param.class);
         verify(updateAnswerPort).update(updateAnswerParam.capture());
         assertEquals(existAnswer.getId(), updateAnswerParam.getValue().answerId());
         assertEquals(answerOption.getId(), updateAnswerParam.getValue().answerOptionId());
@@ -500,5 +548,22 @@ class SubmitAnswerServiceTest {
         verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
         verify(invalidateAssessmentResultConfidencePort, times(1)).invalidateConfidence(assessmentResult.getId());
         verifyNoInteractions(loadQuestionMayNotBeApplicablePort, createAnswerPort, invalidateAssessmentResultCalculatePort);
+    }
+
+    private SubmitAnswerUseCase.Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .assessmentId(UUID.randomUUID())
+            .questionnaireId(QUESTIONNAIRE_ID)
+            .questionId(QUESTION_ID)
+            .answerOptionId(18663L)
+            .confidenceLevelId(ConfidenceLevel.getDefault().getId())
+            .isNotApplicable(Boolean.FALSE)
+            .currentUserId(UUID.randomUUID());
     }
 }
