@@ -208,7 +208,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public Optional<Assessment> getAssessmentById(UUID assessmentId) {
-        Optional<AssessmentKitSpaceJoinView> entity = repository.findKitSpaceByIdAndDeletedFalse(assessmentId);
+        Optional<AssessmentKitSpaceJoinView> entity = repository.findAssessmentKitSpaceByIdAndDeletedFalse(assessmentId);
         if (entity.isEmpty())
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
         return entity.map(AssessmentMapper::mapToDomainModel);
@@ -229,7 +229,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public void updateKitCustomId(UUID id, long kitCustomId) {
-        AssessmentKitSpaceJoinView view = repository.findKitSpaceByIdAndDeletedFalse(id)
+        AssessmentKitSpaceJoinView view = repository.findAssessmentKitSpaceByIdAndDeletedFalse(id)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         if (!kitCustomRepository.existsByIdAndKitId(kitCustomId, view.getKit().getId()))
