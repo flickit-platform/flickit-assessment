@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_MATURITY_LEVELS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,7 +34,7 @@ public class GetAssessmentMaturityLevelsService implements GetAssessmentMaturity
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException("Assessment not found"));
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_NOT_FOUND));
 
         var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessment.getAssessmentKit().getKitVersion())
             .stream()
