@@ -1,6 +1,7 @@
 package org.flickit.assessment.advice.application.service.advicenarration;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.advice.application.domain.AdviceNarration;
 import org.flickit.assessment.advice.application.port.in.advicenarration.GetAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -29,7 +30,7 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
 
     @Override
     public Result getAdviceNarration(Param param) {
-        if(!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
@@ -38,28 +39,26 @@ public class GetAdviceNarrationService implements GetAdviceNarrationUseCase {
         boolean editable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
         boolean aiEnabled = appAiProperties.isEnabled();
 
-        var adviceNarration = loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId());
-        if (adviceNarration.isEmpty())
-            return new Result(null, null, editable, aiEnabled);
+        return loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())
+            .map(narration -> determineResult(narration, editable, aiEnabled))
+            .orElse(new Result(null, null, editable, aiEnabled));
+    }
 
-        var narration = adviceNarration.get();
+    private Result determineResult(AdviceNarration narration, boolean editable, boolean aiEnabled) {
+        var aiNarration = narration.getAiNarration() != null
+            ? new Result.AdviceNarration(narration.getAiNarration(), narration.getAiNarrationTime())
+            : null;
 
-        if(narration.getAiNarration() == null && narration.getAssessorNarration() != null){
-            var assessorNarration = new Result.AdviceNarration(narration.getAssessorNarration(), narration.getAssessorNarrationTime());
-            return new Result(null, assessorNarration, editable, aiEnabled);
-        }
+        var assessorNarration = narration.getAssessorNarration() != null
+            ? new Result.AdviceNarration(narration.getAssessorNarration(), narration.getAssessorNarrationTime())
+            : null;
 
-        if(narration.getAssessorNarration() == null && narration.getAiNarration() != null){
-            var aiNarration = new Result.AdviceNarration(narration.getAiNarration(), narration.getAiNarrationTime());
+        if (aiNarration == null || aiNarration.narration().isEmpty() ) return new Result(null, assessorNarration, editable, aiEnabled);
+        if (assessorNarration== null || assessorNarration.narration().isEmpty())
             return new Result(aiNarration, null, editable, aiEnabled);
-        }
 
-        if (narration.getAiNarration() != null && narration.getAssessorNarrationTime().isBefore(narration.getAiNarrationTime())) {
-            var aiNarration = new Result.AdviceNarration(narration.getAiNarration(), narration.getAiNarrationTime());
-            return new Result(aiNarration, null, editable, aiEnabled);
-        }
-
-        var assessorNarration = new Result.AdviceNarration(narration.getAssessorNarration(), narration.getAssessorNarrationTime());
-        return new Result(null, assessorNarration, editable, aiEnabled);
+        return narration.getAssessorNarrationTime().isBefore(narration.getAiNarrationTime())
+            ? new Result(aiNarration, null, editable, aiEnabled)
+            : new Result(null, assessorNarration, editable, aiEnabled);
     }
 }
