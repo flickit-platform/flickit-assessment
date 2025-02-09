@@ -28,5 +28,3 @@ public class GetAssessmentMaturityLevelsRestController {
         return new Param(assessmentId, currentUserId);
     }
 }
-
-
