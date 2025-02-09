@@ -62,7 +62,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
-        Integer confidenceLevelId = prepareConfidenceLevelId(param, answerOptionId);
+        var confidenceLevelId = resolveConfidenceLevelId(param, answerOptionId);
 
         if (loadedAnswer.isEmpty())
             return handelNewAnswer(assessmentResult, param, answerOptionId, confidenceLevelId);
@@ -83,7 +83,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         }
     }
 
-    private Integer prepareConfidenceLevelId(Param param, Long answerOptionId) {
+    private Integer resolveConfidenceLevelId(Param param, Long answerOptionId) {
         if (answerOptionId != null || TRUE.equals(param.getIsNotApplicable()))
             return param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
         return null;
