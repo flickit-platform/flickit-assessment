@@ -38,6 +38,7 @@ public interface GetAssessmentMaturityLevelsUseCase {
 
         public record MaturityLevel(long id,
                                     String title,
+                                    String description,
                                     int index,
                                     int value) {
         }
