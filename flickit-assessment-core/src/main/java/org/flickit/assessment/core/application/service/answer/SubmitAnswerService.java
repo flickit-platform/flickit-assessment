@@ -155,12 +155,18 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             param.getIsNotApplicable());
     }
 
-    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId, Long answerOptionId, Integer confidenceLevelId,
-                                                       Boolean isNotApplicable, UUID currentUserId) {
+    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId,
+                                                       Long answerOptionId,
+                                                       Integer confidenceLevelId,
+                                                       Boolean isNotApplicable,
+                                                       UUID currentUserId) {
         return new UpdateAnswerPort.Param(answerId, answerOptionId, confidenceLevelId, isNotApplicable, currentUserId);
     }
 
-    private void invalidateAssessmentResult(AssessmentResult assessmentResult, boolean isAnswerOptionChanged, boolean isNotApplicableChanged, boolean isConfidenceLevelChanged) {
+    private void invalidateAssessmentResult(AssessmentResult assessmentResult,
+                                            boolean isAnswerOptionChanged,
+                                            boolean isNotApplicableChanged,
+                                            boolean isConfidenceLevelChanged) {
         if (isAnswerOptionChanged || isNotApplicableChanged)
             invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
         if (isConfidenceLevelChanged)
