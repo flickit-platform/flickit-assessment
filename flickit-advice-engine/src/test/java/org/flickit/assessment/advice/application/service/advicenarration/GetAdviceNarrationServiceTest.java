@@ -76,7 +76,7 @@ class GetAdviceNarrationServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(appAiProperties.isEnabled()).thenReturn(true);
 
@@ -106,7 +106,7 @@ class GetAdviceNarrationServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(appAiProperties.isEnabled()).thenReturn(false);
 
@@ -138,7 +138,73 @@ class GetAdviceNarrationServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
+        when(appAiProperties.isEnabled()).thenReturn(true);
+
+        var result = service.getAdviceNarration(param);
+
+        assertNotNull(result);
+        assertNull(result.aiNarration());
+        assertNotNull(result.assessorNarration());
+        assertEquals(adviceNarration.getAssessorNarration(), result.assessorNarration().narration());
+        assertEquals(adviceNarration.getAssessorNarrationTime(), result.assessorNarration().creationTime());
+        assertTrue(result.editable());
+        assertTrue(result.aiEnabled());
+    }
+
+    @Test
+    void testGetAdviceNarration_WhenAiAndAssessorAdviceNarrationExistAndAiNarrationIsNewer_thenReturnAiNarrationAsResult() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
+        LocalDateTime assessorNarrationTime = LocalDateTime.now().minusMinutes(1);
+        LocalDateTime aiAdviceNarrationTime = LocalDateTime.now();
+        var adviceNarration = new AdviceNarration(UUID.randomUUID(),
+            assessmentResult.getId(),
+            "aiNarration",
+            "assessorNarration",
+            aiAdviceNarrationTime,
+            assessorNarrationTime,
+            currentUserId);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
+        when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
+        when(appAiProperties.isEnabled()).thenReturn(true);
+
+        var result = service.getAdviceNarration(param);
+
+        assertNotNull(result);
+        assertNotNull(result.aiNarration());
+        assertNull(result.assessorNarration());
+        assertEquals(adviceNarration.getAiNarration(), result.aiNarration().narration());
+        assertEquals(adviceNarration.getAiNarrationTime(), result.aiNarration().creationTime());
+        assertTrue(result.editable());
+        assertTrue(result.aiEnabled());
+    }
+
+    @Test
+    void testGetAdviceNarration_WhenAiAndAssessorAdviceNarrationExistAndAssessorNarrationIsNewer_thenReturnAssessorNarrationAsResult() {
+        UUID assessmentId = UUID.randomUUID();
+        UUID currentUserId = UUID.randomUUID();
+        var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
+        var assessmentResult = AssessmentResultMother.createAssessmentResult();
+        LocalDateTime assessorNarrationTime = LocalDateTime.now();
+        LocalDateTime aiAdviceNarrationTime = LocalDateTime.now().minusMinutes(1);
+        var adviceNarration = new AdviceNarration(UUID.randomUUID(),
+            assessmentResult.getId(),
+            "aiNarration",
+            "assessorNarration",
+            aiAdviceNarrationTime,
+            assessorNarrationTime,
+            currentUserId);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(appAiProperties.isEnabled()).thenReturn(true);
 
