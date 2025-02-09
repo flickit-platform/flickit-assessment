@@ -314,4 +314,5 @@ public class ErrorMessageKey {
     public static final String UPDATE_ASSESSMENT_REPORT_PUBLISH_STATUS_PUBLISH_NOT_NULL = "update-assessment-report-publish-status.published.notNull";
 
     public static final String GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_ID_NOT_NULL = "get-assessment-maturity-levels.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_NOT_FOUND = "get-assessment-maturity-levels.assessment.notFound";
 }
