@@ -83,8 +83,7 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE_ATTACHMENT,
             DELETE_EVIDENCE_ATTACHMENT,
             VIEW_QUESTIONNAIRE_QUESTIONS,
-            VIEW_EVIDENCE,
-            VIEW_ASSESSMENT_MATURITY_LEVELS)),
+            VIEW_EVIDENCE)),
         ASSESSOR_PERMISSIONS(Set.of(
             ANSWER_QUESTION,
             VIEW_ATTRIBUTE_SCORE_DETAIL,
