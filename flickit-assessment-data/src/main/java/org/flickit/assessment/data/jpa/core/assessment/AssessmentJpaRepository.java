@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
 
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
+    boolean existsByIdAndDeletedFalse(UUID id);
 
     AssessmentJpaEntity findByIdAndDeletedFalse(UUID id);
 
