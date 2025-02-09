@@ -62,8 +62,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
-        Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
-        confidenceLevelId = (answerOptionId != null || Objects.equals(TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
+        Integer confidenceLevelId = prepareConfidenceLevelId(param, answerOptionId);
 
         if (loadedAnswer.isEmpty())
             return handelNewAnswer(assessmentResult, param, answerOptionId, confidenceLevelId);
@@ -82,6 +81,12 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             if (!isMayNotBeApplicable)
                 throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
         }
+    }
+
+    private Integer prepareConfidenceLevelId(Param param, Long answerOptionId) {
+        Integer confidenceLevelId = param.getConfidenceLevelId() == null ? ConfidenceLevel.getDefault().getId() : param.getConfidenceLevelId();
+        confidenceLevelId = (answerOptionId != null || Objects.equals(TRUE, param.getIsNotApplicable())) ? confidenceLevelId : null;
+        return confidenceLevelId;
     }
 
     private Result handelNewAnswer(AssessmentResult assessmentResult, Param param, Long answerOptionId, Integer confidenceLevelId) {
