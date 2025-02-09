@@ -154,7 +154,7 @@ class GetAdviceNarrationServiceTest {
     }
 
     @Test
-    void testGetAdviceNarration_WhenAiAndAssessorAdviceNarrationExistAndAiNarrationIsNewer_thenReturnAiNarrationAsResult() {
+    void testGetAdviceNarration_WhenAiNarrationIsNewer_ThenReturnAiNarration() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
@@ -187,7 +187,7 @@ class GetAdviceNarrationServiceTest {
     }
 
     @Test
-    void testGetAdviceNarration_WhenAiAndAssessorAdviceNarrationExistAndAssessorNarrationIsNewer_thenReturnAssessorNarrationAsResult() {
+    void testGetAdviceNarration_WhenAssessorNarrationIsNewer_ThenReturnAssessorNarration() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
