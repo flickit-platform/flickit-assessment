@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.attribute;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributesUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_ATTRIBUTES;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +33,9 @@ class GetAssessmentAttributesServiceTest {
 
     @Mock
     private LoadAttributesPort loadAttributesPort;
+
+    @Mock
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     private final LoadAttributesPort.Result result1 = new LoadAttributesPort.Result(1766L, "Team Agility", "How?", 1, 1, 0.0,
         new LoadAttributesPort.MaturityLevel(1991L, "Unprepared", "Tools are insufficient.", 1, 1),
@@ -62,6 +67,7 @@ class GetAssessmentAttributesServiceTest {
             .thenReturn(true);
         when(loadAttributesPort.loadAttributes(param.getAssessmentId()))
             .thenReturn(portResult);
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var result = service.getAssessmentAttributes(param);
         assertNotNull(result);
