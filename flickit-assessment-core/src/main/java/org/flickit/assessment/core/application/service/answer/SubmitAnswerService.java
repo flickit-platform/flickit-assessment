@@ -51,8 +51,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     @Override
     @SendNotification
     public Result submitAnswer(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ANSWER_QUESTION))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+        checkUserAccess(param);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
@@ -98,6 +97,11 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), loadedAnswerId);
         var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), hasProgressed(param, loadedAnswer.get()));
         return new Submitted(loadedAnswerId, notificationCmd);
+    }
+
+    private void checkUserAccess(Param param) {
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), ANSWER_QUESTION))
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
     private static boolean hasProgressed(Param param, Answer loadedAnswer) {
