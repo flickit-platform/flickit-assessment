@@ -129,12 +129,12 @@ public enum AssessmentUserRole {
             VIEW_QUESTIONNAIRE_QUESTIONS,
             ANSWER_QUESTION,
             VIEW_EVIDENCE,
-            RESOLVE_COMMENT,
-            VIEW_ASSESSMENT_MATURITY_LEVELS)),
+            RESOLVE_COMMENT)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT,
             GRANT_ACCESS_TO_REPORT,
-            VIEW_GRAPHICAL_REPORT
+            VIEW_GRAPHICAL_REPORT,
+            VIEW_ASSESSMENT_MATURITY_LEVELS
             ));
 
         private final Set<AssessmentPermission> permissions;
