@@ -1,9 +1,9 @@
 package org.flickit.assessment.core.application.service.maturitylevel;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.domain.Assessment;
-import org.flickit.assessment.core.application.internal.ValidateAssessmentResult;
 import org.flickit.assessment.core.application.port.in.maturitylevel.GetAssessmentMaturityLevelsUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -40,7 +40,7 @@ class GetAssessmentMaturityLevelsServiceTest {
     private LoadAssessmentPort loadAssessmentPort;
 
     @Mock
-    private ValidateAssessmentResult validateAssessmentResult;
+    private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
@@ -55,8 +55,8 @@ class GetAssessmentMaturityLevelsServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentMaturityLevels(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(validateAssessmentResult,
-            validateAssessmentResult,
+        verifyNoInteractions(validateAssessmentResultPort,
+            validateAssessmentResultPort,
             loadMaturityLevelsPort,
             loadAssessmentPort);
     }
@@ -82,7 +82,7 @@ class GetAssessmentMaturityLevelsServiceTest {
                 assertEquals(expected.getValue(), actual.value());
                 assertEquals(expected.getIndex(), actual.index());
             });
-        verify(validateAssessmentResult).validate(param.getAssessmentId());
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
     }
 
     private GetAssessmentMaturityLevelsUseCase.Param createParam(Consumer<GetAssessmentMaturityLevelsUseCase.Param.ParamBuilder> changer) {
