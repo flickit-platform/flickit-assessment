@@ -82,7 +82,12 @@ public class AnswerPersistenceJpaAdapter implements
                 throw new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND);
         }
 
-        repository.update(param.answerId(), param.answerOptionId(), param.confidenceLevelId(), param.isNotApplicable(), param.currentUserId());
+        repository.update(param.answerId(),
+            param.answerOptionId(),
+            param.confidenceLevelId(),
+            param.isNotApplicable(),
+            param.status().ordinal(),
+            param.currentUserId());
     }
 
     @Override
