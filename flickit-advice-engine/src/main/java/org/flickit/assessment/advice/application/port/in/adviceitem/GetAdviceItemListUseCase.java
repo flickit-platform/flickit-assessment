@@ -48,8 +48,11 @@ public interface GetAdviceItemListUseCase {
     record AdviceItemListItem(UUID id,
                               String title,
                               String description,
-                              String cost,
-                              String priority,
-                              String impact) {
+                              Level cost,
+                              Level priority,
+                              Level impact) {
+
+        public record Level(String code, String title) {
+        }
     }
 }
