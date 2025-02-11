@@ -27,12 +27,12 @@ class SearchKitOptionsUseCaseParamTest {
         assertThat(throwable).hasMessage("size: " + SEARCH_KIT_OPTIONS_SIZE_MAX);
 
         throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.size(-1)));
+            () -> createParam(b -> b.size(0)));
         assertThat(throwable).hasMessage("size: " + SEARCH_KIT_OPTION_SIZE_MIN);
     }
 
     @Test
-    void testSearchKitOptionsUseCaseParam_currentUserParamViolatesConstraintsErrorMessage() {
+    void testSearchKitOptionsUseCaseParam_currentUserParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

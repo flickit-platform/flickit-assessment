@@ -1,10 +1,10 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
+import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.SearchKitOptionsUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.SearchKitOptionsPort;
-import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +16,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.privateKit;
+import static org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother.simpleKit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -33,23 +36,34 @@ class SearchKitOptionsServiceTest {
     void testSearchKitOptions_ValidInput_ValidResult() {
         var param = createParam(SearchKitOptionsUseCase.Param.ParamBuilder::build);
 
-        AssessmentKit assessmentKit = AssessmentKitMother.simpleKit();
-        List<AssessmentKit> items = List.of(assessmentKit);
-        PaginatedResponse<AssessmentKit> kitPaginatedResponse = new PaginatedResponse<>(items,
-            0,
-            10,
+        var publicKit = simpleKit();
+        var privateKit = privateKit();
+        List<AssessmentKit> expectedItems = List.of(publicKit, privateKit);
+        PaginatedResponse<AssessmentKit> kitPaginatedResponse = new PaginatedResponse<>(expectedItems,
+            param.getPage(),
+            param.getSize(),
             Sort.Direction.ASC.name().toLowerCase(),
             "title",
-            items.size());
+            expectedItems.size());
 
         when(port.searchKitOptions(any(SearchKitOptionsPort.Param.class))).thenReturn(kitPaginatedResponse);
 
-        var response = service.searchKitOptions(param);
+        var result = service.searchKitOptions(param);
 
-        for (SearchKitOptionsUseCase.KitListItem item: response.getItems()) {
-            assertEquals(assessmentKit.getId(), item.id());
-            assertEquals(assessmentKit.getTitle(), item.title());
-        }
+        assertNotNull(result.getItems());
+        assertEquals(expectedItems.size(), result.getItems().size());
+        assertEquals(param.getPage(), result.getPage());
+        assertEquals(param.getSize(), result.getSize());
+        assertEquals(kitPaginatedResponse.getOrder(), result.getOrder());
+        assertEquals(kitPaginatedResponse.getSort(), result.getSort());
+        assertEquals(2, result.getTotal());
+
+        Assertions.assertThat(result.getItems())
+            .zipSatisfy(expectedItems, (actual, expected) -> {
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.isPrivate(), actual.isPrivate());
+            });
     }
 
     private SearchKitOptionsUseCase.Param createParam(Consumer<SearchKitOptionsUseCase.Param.ParamBuilder> changer) {
