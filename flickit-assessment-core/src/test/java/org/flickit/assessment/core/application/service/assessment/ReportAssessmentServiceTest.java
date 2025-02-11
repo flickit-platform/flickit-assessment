@@ -67,7 +67,16 @@ class ReportAssessmentServiceTest {
         List<MaturityLevel> maturityLevels = List.of(softwareLevel, teamLevel);
 
         var expertGroup = new AssessmentReportItem.AssessmentKitItem.ExpertGroup(1L, "expertGroupTitle1", "picture/link");
-        var kit = new AssessmentReportItem.AssessmentKitItem(1L, "kitTitle", "kitSummary", "about kit", KitLanguage.FA, 3, 156, maturityLevels, List.of(), expertGroup);
+        var kit = new AssessmentReportItem.AssessmentKitItem(1L,
+            "kitTitle",
+            "kitSummary",
+            "about kit",
+            KitLanguage.FA,
+            3,
+            156,
+            maturityLevels,
+            List.of(),
+            expertGroup);
         MaturityLevel assessmentMaturityLevel = MaturityLevelMother.levelThree();
         LocalDateTime creationTime = LocalDateTime.now();
         LocalDateTime lastModificationTime = LocalDateTime.now();
