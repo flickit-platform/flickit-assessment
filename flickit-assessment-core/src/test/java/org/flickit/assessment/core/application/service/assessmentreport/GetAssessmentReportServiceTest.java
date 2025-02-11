@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
@@ -235,6 +236,7 @@ class GetAssessmentReportServiceTest {
             "kit title",
             "kit summary",
             "about",
+            KitLanguage.FA,
             5,
             150,
             MaturityLevelMother.allLevels(),
