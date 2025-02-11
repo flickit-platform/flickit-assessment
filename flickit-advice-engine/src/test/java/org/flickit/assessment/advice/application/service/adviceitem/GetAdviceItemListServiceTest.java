@@ -91,9 +91,12 @@ class GetAdviceItemListServiceTest {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.getDescription(), actual.description());
-                assertEquals(expected.getCost().getTitle(), actual.cost());
-                assertEquals(expected.getPriority().getTitle(), actual.priority());
-                assertEquals(expected.getImpact().getTitle(), actual.impact());
+                assertEquals(expected.getCost().getTitle(), actual.cost().title());
+                assertEquals(expected.getCost().getCode(), actual.cost().code());
+                assertEquals(expected.getPriority().getTitle(), actual.priority().title());
+                assertEquals(expected.getPriority().getCode(), actual.priority().code());
+                assertEquals(expected.getImpact().getTitle(), actual.impact().title());
+                assertEquals(expected.getImpact().getCode(), actual.impact().code());
             });
     }
 
