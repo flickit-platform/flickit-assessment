@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermission;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.CalculateNotValidException;
@@ -27,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -164,7 +166,7 @@ class GetAssessmentReportServiceTest {
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        assertAdviceItem(adviceItems, result.advice().adviceItems());
+        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.assessmentKit().language());
         assertTrue(result.permissions().canViewDashboard());
 
         verify(assessmentAccessChecker, times(3))
@@ -209,7 +211,7 @@ class GetAssessmentReportServiceTest {
         assertAttributeItem(expectedAttributeItem, actualAttributeItem);
         assertEquals(adviceNarration, result.advice().narration());
         assertEquals(adviceItems.size(), result.advice().adviceItems().size());
-        assertAdviceItem(adviceItems, result.advice().adviceItems());
+        assertAdviceItem(adviceItems, result.advice().adviceItems(), assessmentReport.assessmentKit().language());
         assertFalse(result.permissions().canViewDashboard());
     }
 
@@ -235,6 +237,7 @@ class GetAssessmentReportServiceTest {
             "kit title",
             "kit summary",
             "about",
+            KitLanguage.FA,
             5,
             150,
             MaturityLevelMother.allLevels(),
@@ -287,17 +290,18 @@ class GetAssessmentReportServiceTest {
         assertEquals(expectedAttributeItem.weight(), actualAttributeItem.weight());
     }
 
-    private void assertAdviceItem(List<AdviceItem> expectedAdviceItems, List<GetAssessmentReportUseCase.AdviceItem> actualAdviceItems) {
+    private void assertAdviceItem(List<AdviceItem> expectedAdviceItems, List<GetAssessmentReportUseCase.AdviceItem> actualAdviceItems, KitLanguage kitLanguage) {
+        Locale locale = Locale.of(kitLanguage.name());
         assertThat(actualAdviceItems)
             .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
                 assertEquals(expected.getTitle(), actual.title());
                 assertEquals(expected.getDescription(), actual.description());
-                assertEquals(expected.getCost().getTitle(), actual.cost().title());
+                assertEquals(expected.getCost().getTitle(locale), actual.cost().title());
                 assertEquals(expected.getCost().getCode(), actual.cost().code());
-                assertEquals(expected.getPriority().getTitle(), actual.priority().title());
+                assertEquals(expected.getPriority().getTitle(locale), actual.priority().title());
                 assertEquals(expected.getPriority().getCode(), actual.priority().code());
-                assertEquals(expected.getImpact().getTitle(), actual.impact().title());
+                assertEquals(expected.getImpact().getTitle(locale), actual.impact().title());
                 assertEquals(expected.getImpact().getCode(), actual.impact().code());
             });
     }
