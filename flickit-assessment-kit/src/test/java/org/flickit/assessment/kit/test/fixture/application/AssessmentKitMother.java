@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.domain.*;
 
 import java.time.LocalDateTime;
