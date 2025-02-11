@@ -24,8 +24,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -161,7 +161,7 @@ public class AttributePersistenceJpaAdapter implements
     private Map<Long, Integer> getAttributeIdToWeightMap(List<Attribute> attributes, long kitId, Long kitCustomId) {
         if (kitCustomId == null)
             return attributes.stream()
-                .collect(Collectors.toMap(Attribute::getId, Attribute::getWeight));
+                .collect(toMap(Attribute::getId, Attribute::getWeight));
 
         var kitCustomEntity = kitCustomRepository.findByIdAndKitId(kitCustomId, kitId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_CUSTOM_ID_NOT_FOUND));
@@ -171,15 +171,14 @@ public class AttributePersistenceJpaAdapter implements
 
         if (kitCustomData == null || kitCustomData.attributes() == null)
             return attributes.stream()
-                .collect(Collectors.toMap(Attribute::getId, Attribute::getWeight));
+                .collect(toMap(Attribute::getId, Attribute::getWeight));
 
         Map<Long, Integer> attributeIdToCustomWeight = kitCustomData.attributes().stream()
-            .collect(Collectors.toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
+            .collect(toMap(KitCustomData.Attribute::id, KitCustomData.Attribute::weight));
 
         return attributes.stream()
-            .collect(Collectors.toMap(
+            .collect(toMap(
                 Attribute::getId,
-                e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())
-            ));
+                e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())));
     }
 }
