@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 
+import java.util.Locale;
+
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -24,6 +26,10 @@ public enum PriorityLevel {
 
     public String getTitle() {
         return MessageBundle.message(getClass().getSimpleName()+ "_" + name());
+    }
+
+    public String getTitle(Locale locale) {
+        return MessageBundle.message(getClass().getSimpleName() + "_" + name(), locale);
     }
 
     public static PriorityLevel valueOfById(int id) {
