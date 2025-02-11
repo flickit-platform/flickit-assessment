@@ -2654,7 +2654,7 @@
 			]
 		},
 		{
-			"name": "MaturityLevels",
+			"name": "MaturityLevel",
 			"item": [
 				{
 					"name": "Get Assessment Maturity Levels",
@@ -2672,14 +2672,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/maturity-levels",
+							"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/maturity-levels",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"8280e75b-ed71-4c82-9fac-920c52efb26c",
+								"f2b6317f-eb3c-49d0-99c8-e70e49533fac",
 								"maturity-levels"
 							]
 						}
