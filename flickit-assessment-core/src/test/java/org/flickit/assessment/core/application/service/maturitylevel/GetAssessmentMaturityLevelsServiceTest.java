@@ -44,7 +44,7 @@ class GetAssessmentMaturityLevelsServiceTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Test
-    void testGetAssessmentMaturityLevels_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowsAccessDeniedException() {
+    void testGetAssessmentMaturityLevels_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentMaturityLevelsUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_MATURITY_LEVELS))
