@@ -108,20 +108,10 @@ public interface GetAssessmentReportUseCase {
     record AdviceItem(UUID id,
                       String title,
                       String description,
-                      Cost cost,
-                      Priority priority,
-                      Impact impact) {
-
-        public record Cost(String title,
-                           String code) {
-        }
-
-        public record Priority(String title,
-                               String code) {
-        }
-
-        public record Impact(String title,
-                             String code) {
+                      Level cost,
+                      Level priority,
+                      Level impact) {
+        public record Level(String code, String title) {
         }
     }
 }

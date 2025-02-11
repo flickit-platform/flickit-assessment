@@ -1,9 +1,6 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
-import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
-import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -16,9 +13,7 @@ import org.flickit.assessment.core.application.domain.report.AssessmentSubjectRe
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Cost;
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Impact;
-import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Priority;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Level;
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
@@ -190,9 +185,10 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             .map(item -> new AdviceItem(item.getId(),
                 item.getTitle(),
                 item.getDescription(),
-                toAdviceItemCost(item.getCost(), locale),
-                toAdviceItemPriority(item.getPriority(), locale),
-                toAdviceItemImpact(item.getImpact(), locale))).toList();
+                new Level(item.getCost().getCode(), item.getCost().getTitle(locale)),
+                new Level(item.getPriority().getCode(), item.getPriority().getTitle(locale)),
+                new Level(item.getImpact().getCode(), item.getImpact().getTitle(locale))))
+            .toList();
     }
 
     private AssessmentProcess toAssessmentProcess(AssessmentReportMetadata metadata) {
@@ -202,17 +198,5 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Permissions toPermissions(Param param) {
         var canViewDashboard = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD);
         return new Permissions(canViewDashboard);
-    }
-
-    private Cost toAdviceItemCost(CostLevel cost, Locale locale) {
-        return new Cost(cost.getTitle(locale), cost.getCode());
-    }
-
-    private Priority toAdviceItemPriority(PriorityLevel priority, Locale locale) {
-        return new Priority(priority.getTitle(locale), priority.getCode());
-    }
-
-    private Impact toAdviceItemImpact(ImpactLevel impact, Locale locale) {
-        return new Impact(impact.getTitle(locale), impact.getCode());
     }
 }
