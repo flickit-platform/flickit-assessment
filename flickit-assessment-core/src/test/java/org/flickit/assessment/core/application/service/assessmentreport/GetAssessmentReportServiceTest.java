@@ -287,15 +287,18 @@ class GetAssessmentReportServiceTest {
         assertEquals(expectedAttributeItem.weight(), actualAttributeItem.weight());
     }
 
-    private void assertAdviceItem(List<AdviceItem> expectedAdviceItems, List<AdviceItem> actualAdviceItems) {
+    private void assertAdviceItem(List<AdviceItem> expectedAdviceItems, List<GetAssessmentReportUseCase.AdviceItem> actualAdviceItems) {
         assertThat(actualAdviceItems)
             .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
-                assertEquals(expected.getId(), actual.getId());
-                assertEquals(expected.getTitle(), actual.getTitle());
-                assertEquals(expected.getDescription(), actual.getDescription());
-                assertEquals(expected.getCost(), actual.getCost());
-                assertEquals(expected.getPriority(), actual.getPriority());
-                assertEquals(expected.getImpact(), actual.getImpact());
+                assertEquals(expected.getId(), actual.id());
+                assertEquals(expected.getTitle(), actual.title());
+                assertEquals(expected.getDescription(), actual.description());
+                assertEquals(expected.getCost().getTitle(), actual.cost().title());
+                assertEquals(expected.getCost().getCode(), actual.cost().code());
+                assertEquals(expected.getPriority().getTitle(), actual.priority().title());
+                assertEquals(expected.getPriority().getCode(), actual.priority().code());
+                assertEquals(expected.getImpact().getTitle(), actual.impact().title());
+                assertEquals(expected.getImpact().getCode(), actual.impact().code());
             });
     }
 }
