@@ -153,6 +153,8 @@ public class AttributePersistenceJpaAdapter implements
             assessment.getKitCustomId());
 
         return attributeViews.stream()
+            .sorted(Comparator.comparingInt((AttributeMaturityLevelSubjectView v) -> v.getSubject().getIndex())
+                .thenComparingInt(v -> v.getAttribute().getIndex()))
             .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId())))
             .toList();
     }
