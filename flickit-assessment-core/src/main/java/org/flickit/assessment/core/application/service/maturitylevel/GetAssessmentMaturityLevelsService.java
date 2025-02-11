@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.maturitylevel;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
@@ -33,8 +32,7 @@ public class GetAssessmentMaturityLevelsService implements GetAssessmentMaturity
         var assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_NOT_FOUND));
 
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessment.getAssessmentKit().getKitVersion())
-            .stream()
+        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessment.getAssessmentKit().getKitVersion()).stream()
             .map(this::toResult)
             .toList();
 

@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.maturitylevel;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Assessment;
@@ -45,7 +44,7 @@ class GetAssessmentMaturityLevelsServiceTest {
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Test
-    void testGetAssessmentMaturityLevels_whenUserHasNotAccess_thenThrowsAccessDeniedException() {
+    void testGetAssessmentMaturityLevels_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowsAccessDeniedException() {
         var param = createParam(GetAssessmentMaturityLevelsUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_MATURITY_LEVELS))
