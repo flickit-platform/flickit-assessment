@@ -1,6 +1,9 @@
 package org.flickit.assessment.core.application.service.assessmentreport;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -13,6 +16,9 @@ import org.flickit.assessment.core.application.domain.report.AssessmentSubjectRe
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Cost;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Impact;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Priority;
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
@@ -179,7 +185,17 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Advice toAdvice(UUID assessmentResultId) {
         var narration = loadAdviceNarrationPort.load(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
-        return new Advice(narration, adviceItems);
+        return new Advice(narration, toAdviceItems(adviceItems));
+    }
+
+    private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems) {
+        return adviceItems.stream()
+            .map(item -> new AdviceItem(item.getId(),
+                item.getTitle(),
+                item.getDescription(),
+                toAdviceItemCost(item.getCost()),
+                toAdviceItemPriority(item.getPriority()),
+                toAdviceItemImpact(item.getImpact()))).toList();
     }
 
     private AssessmentProcess toAssessmentProcess(AssessmentReportMetadata metadata) {
@@ -189,5 +205,17 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Permissions toPermissions(Param param) {
         var canViewDashboard = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD);
         return new Permissions(canViewDashboard);
+    }
+
+    private Cost toAdviceItemCost(CostLevel cost) {
+        return new Cost(cost.getTitle(), cost.getCode());
+    }
+
+    private Priority toAdviceItemPriority(PriorityLevel priority) {
+        return new Priority(priority.getTitle(), priority.getCode());
+    }
+
+    private Impact toAdviceItemImpact(ImpactLevel impact) {
+        return new Impact(impact.getTitle(), impact.getCode());
     }
 }

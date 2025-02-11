@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.core.application.domain.AdviceItem;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -104,5 +103,25 @@ public interface GetAssessmentReportUseCase {
     }
 
     record Permissions(boolean canViewDashboard) {
+    }
+
+    record AdviceItem(UUID id,
+                      String title,
+                      String description,
+                      Cost cost,
+                      Priority priority,
+                      Impact impact) {
+
+        public record Cost(String title,
+                           String code) {
+        }
+
+        public record Priority(String title,
+                               String code) {
+        }
+
+        public record Impact(String title,
+                             String code) {
+        }
     }
 }
