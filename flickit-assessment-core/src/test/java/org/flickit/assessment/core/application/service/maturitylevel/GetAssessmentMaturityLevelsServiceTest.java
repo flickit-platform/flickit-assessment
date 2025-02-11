@@ -3,11 +3,9 @@ package org.flickit.assessment.core.application.service.maturitylevel;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.maturitylevel.GetAssessmentMaturityLevelsUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,9 +22,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_MATURITY_LEVELS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentMaturityLevelsServiceTest {
@@ -53,12 +54,11 @@ class GetAssessmentMaturityLevelsServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentMaturityLevels(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadMaturityLevelsPort,
-            loadAssessmentResultPort);
+        verifyNoInteractions(loadMaturityLevelsPort, loadAssessmentResultPort);
     }
 
     @Test
-    void testGetAssessmentMaturityLevels_whenAssessmentNotFound_thenThrowsResourceNotFoundException() {
+    void testGetAssessmentMaturityLevels_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         var param = createParam(GetAssessmentMaturityLevelsUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_MATURITY_LEVELS))
@@ -69,15 +69,14 @@ class GetAssessmentMaturityLevelsServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentMaturityLevels(param));
         assertEquals(GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(
-            loadMaturityLevelsPort);
+        verifyNoInteractions(loadMaturityLevelsPort);
     }
 
     @Test
-    void testGetAssessmentMaturityLevels_whenParamsAreValid_thenReturnMaturityLevels() {
+    void testGetAssessmentMaturityLevels_whenUserHasPermissionAndAssessmentResultExists_thenReturnMaturityLevels() {
         var param = createParam(GetAssessmentMaturityLevelsUseCase.Param.ParamBuilder::build);
         var maturityLevels = List.of(MaturityLevelMother.levelOne(), MaturityLevelMother.levelTwo());
-        AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+        var assessmentResult = validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_MATURITY_LEVELS))
             .thenReturn(true);
@@ -86,6 +85,10 @@ class GetAssessmentMaturityLevelsServiceTest {
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
 
         var result = service.getAssessmentMaturityLevels(param);
+        assertNotNull(result);
+        assertNotNull(result.maturityLevels());
+        assertEquals(maturityLevels.size(), result.maturityLevels().size());
+
         assertThat(result.maturityLevels())
             .zipSatisfy(maturityLevels, (actual, expected) -> {
                 assertEquals(expected.getId(), actual.id());
