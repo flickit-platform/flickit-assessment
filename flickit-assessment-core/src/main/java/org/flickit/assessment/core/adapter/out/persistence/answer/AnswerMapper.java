@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 
@@ -33,7 +34,8 @@ public class AnswerMapper {
             answerOption,
             answer.getQuestionId(),
             answer.getConfidenceLevelId(),
-            answer.getIsNotApplicable()
+            answer.getIsNotApplicable(),
+            AnswerStatus.valueOfById(answer.getStatus())
         );
     }
 
@@ -43,7 +45,8 @@ public class AnswerMapper {
             answerOption,
             answer.getQuestionId(),
             answer.getConfidenceLevelId(),
-            answer.getIsNotApplicable()
+            answer.getIsNotApplicable(),
+            AnswerStatus.valueOfById(answer.getStatus())
         );
     }
 }

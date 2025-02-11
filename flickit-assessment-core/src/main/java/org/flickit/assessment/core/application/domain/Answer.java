@@ -20,4 +20,6 @@ public class Answer {
     private final Integer confidenceLevelId;
 
     private final Boolean isNotApplicable;
+
+    private final AnswerStatus answerStatus;
 }

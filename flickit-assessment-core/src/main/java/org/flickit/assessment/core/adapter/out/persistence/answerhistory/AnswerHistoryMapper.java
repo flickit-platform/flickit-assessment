@@ -6,6 +6,7 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.Answ
 import org.flickit.assessment.core.adapter.out.persistence.user.UserMapper;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.HistoryType;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
@@ -27,6 +28,7 @@ public class AnswerHistoryMapper {
                 null,
             answerHistory.getAnswer().getConfidenceLevelId(),
             answerHistory.getAnswer().getIsNotApplicable(),
+            answerHistory.getAnswer().getAnswerStatus().ordinal(),
             answerHistory.getCreatedBy().getId(),
             answerHistory.getCreationTime(),
             answerHistory.getHistoryType().ordinal()
@@ -49,6 +51,7 @@ public class AnswerHistoryMapper {
             selectedOption != null ? AnswerOptionMapper.mapToDomainModel(selectedOption) : null,
             entity.getQuestionId(),
             entity.getConfidenceLevelId(),
-            entity.getIsNotApplicable());
+            entity.getIsNotApplicable(),
+            AnswerStatus.valueOfById(entity.getStatus()));
     }
 }

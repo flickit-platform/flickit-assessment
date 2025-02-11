@@ -247,7 +247,8 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
                     answerOption,
                     entity.getQuestionId(),
                     entity.getConfidenceLevelId(),
-                    entity.getIsNotApplicable());
+                    entity.getIsNotApplicable(),
+                    AnswerStatus.valueOfById(entity.getStatus()));
             }).toList();
     }
 
