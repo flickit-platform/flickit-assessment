@@ -28,7 +28,7 @@ public class GetAssessmentAttributesService implements GetAssessmentAttributesUs
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var attributes = loadAttributesPort.loadAttributes(param.getAssessmentId()).stream()
+        var attributes = loadAttributesPort.loadAll(param.getAssessmentId()).stream()
             .map(this::toAttribute)
             .toList();
         return new Result(attributes);

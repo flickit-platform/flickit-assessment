@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface LoadAttributesPort {
 
-    List<Result> loadAttributes(UUID assessmentId);
+    List<Result> loadAll(UUID assessmentId);
 
     record Result(long id,
                   String title,
@@ -24,7 +24,6 @@ public interface LoadAttributesPort {
                          int value) {
     }
 
-    record Subject(long id,
-                   String title) {
+    record Subject(long id, String title) {
     }
 }

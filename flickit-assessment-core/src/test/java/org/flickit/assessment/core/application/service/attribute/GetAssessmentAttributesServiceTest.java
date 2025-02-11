@@ -64,7 +64,7 @@ class GetAssessmentAttributesServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
             .thenReturn(true);
-        when(loadAttributesPort.loadAttributes(param.getAssessmentId()))
+        when(loadAttributesPort.loadAll(param.getAssessmentId()))
             .thenReturn(portResult);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 

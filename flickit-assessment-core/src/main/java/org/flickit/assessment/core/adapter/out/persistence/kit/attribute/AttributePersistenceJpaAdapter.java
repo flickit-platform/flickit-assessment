@@ -139,7 +139,7 @@ public class AttributePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<LoadAttributesPort.Result> loadAttributes(UUID assessmentId) {
+    public List<LoadAttributesPort.Result> loadAll(UUID assessmentId) {
         var assessment = assessmentRepository.findByIdAndDeletedFalse(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
