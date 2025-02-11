@@ -51,6 +51,7 @@ public interface GetAdviceItemListUseCase {
                               Level cost,
                               Level priority,
                               Level impact) {
+
         public record Level(String code, String title) {
         }
     }

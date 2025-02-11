@@ -134,6 +134,7 @@ public enum AssessmentUserRole {
             VIEW_ASSESSMENT,
             GRANT_ACCESS_TO_REPORT,
             VIEW_GRAPHICAL_REPORT,
+            VIEW_ASSESSMENT_ATTRIBUTES,
             VIEW_ASSESSMENT_MATURITY_LEVELS
             ));
 
