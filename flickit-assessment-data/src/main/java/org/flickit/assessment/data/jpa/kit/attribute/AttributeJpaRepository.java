@@ -160,5 +160,5 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
             JOIN SubjectJpaEntity su ON su.id = at.subjectId AND su.kitVersionId = ml.kitVersionId
             WHERE av.assessmentResult.assessment.id = :assessmentId
         """)
-    List<AttributeMaturityLevelSubjectView> findAllAttributesByAssessmentId(@Param("assessmentId") UUID assessmentId);
+    List<AttributeMaturityLevelSubjectView> findAllByAssessmentIdWithSubjectAndMaturityLevel(@Param("assessmentId") UUID assessmentId);
 }

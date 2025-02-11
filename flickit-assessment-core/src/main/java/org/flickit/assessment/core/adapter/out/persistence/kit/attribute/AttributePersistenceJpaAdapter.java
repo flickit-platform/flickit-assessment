@@ -141,7 +141,7 @@ public class AttributePersistenceJpaAdapter implements
         var assessment = assessmentRepository.findByIdAndDeletedFalse(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
-        var attributeViews = repository.findAllAttributesByAssessmentId(assessmentId);
+        var attributeViews = repository.findAllByAssessmentIdWithSubjectAndMaturityLevel(assessmentId);
         var attributes = attributeViews.stream()
             .map(e -> AttributeMapper.mapToDomainModel(e.getAttribute()))
             .toList();
@@ -150,8 +150,7 @@ public class AttributePersistenceJpaAdapter implements
             assessment.getAssessmentKitId(),
             assessment.getKitCustomId());
 
-        return attributeViews
-            .stream()
+        return attributeViews.stream()
             .map(e -> AttributeMapper.mapToResult(e, attributeIdToWeight.get(e.getAttribute().getId())))
             .toList();
     }

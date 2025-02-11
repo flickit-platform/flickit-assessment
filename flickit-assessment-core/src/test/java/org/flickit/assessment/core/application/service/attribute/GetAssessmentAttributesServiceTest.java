@@ -19,8 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_ATTRIBUTES;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentAttributesServiceTest {
@@ -47,9 +46,8 @@ class GetAssessmentAttributesServiceTest {
 
     List<LoadAttributesPort.Result> portResult = List.of(result1, result2);
 
-
     @Test
-    void testGetAssessmentAttributes_whenCurrentUserDoesNotHaveAccess_thenThrowsAccessDeniedException() {
+    void testGetAssessmentAttributes_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentAttributesUseCase.Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
@@ -57,6 +55,7 @@ class GetAssessmentAttributesServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentAttributes(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+        verifyNoInteractions(loadAttributesPort, validateAssessmentResultPort);
     }
 
     @Test
