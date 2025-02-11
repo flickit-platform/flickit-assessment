@@ -33,13 +33,13 @@ public class AttributeMapper {
         );
     }
 
-    public static LoadAttributesPort.Result mapToResult(AttributeMaturityLevelSubjectView view, Integer customWeight) {
+    public static LoadAttributesPort.Result mapToResult(AttributeMaturityLevelSubjectView view, Integer weight) {
         return new LoadAttributesPort.Result(
             view.getAttribute().getId(),
             view.getAttribute().getTitle(),
             view.getAttribute().getDescription(),
             view.getAttribute().getIndex(),
-            customWeight != null ? customWeight : view.getAttribute().getWeight(),
+            weight,
             view.getAttributeValue().getConfidenceValue(),
             new LoadAttributesPort.MaturityLevel(
                 view.getMaturityLevel().getId(),
