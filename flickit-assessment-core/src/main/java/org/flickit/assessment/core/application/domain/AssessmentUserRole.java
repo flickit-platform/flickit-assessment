@@ -133,7 +133,8 @@ public enum AssessmentUserRole {
         REPORT_VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT,
             GRANT_ACCESS_TO_REPORT,
-            VIEW_GRAPHICAL_REPORT
+            VIEW_GRAPHICAL_REPORT,
+            VIEW_ASSESSMENT_ATTRIBUTES
             ));
 
         private final Set<AssessmentPermission> permissions;
