@@ -106,7 +106,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
             JOIN SpaceJpaEntity s ON a.spaceId = s.id
             WHERE a.id = :id AND a.deleted = FALSE
         """)
-    Optional<AssessmentKitSpaceJoinView> findAssessmentKitSpaceByIdAndDeletedFalse(@Param(value = "id") UUID id);
+    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalseWithKitAndSpace(@Param(value = "id") UUID id);
 
     @Modifying
     @Query("""
@@ -155,6 +155,3 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
         """)
     void updateKitCustomId(@Param("id") UUID id, @Param("kitCustomId") long kitCustomId);
 }
-
-
-
