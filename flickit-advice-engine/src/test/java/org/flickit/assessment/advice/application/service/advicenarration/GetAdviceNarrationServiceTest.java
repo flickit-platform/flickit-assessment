@@ -1,6 +1,5 @@
 package org.flickit.assessment.advice.application.service.advicenarration;
 
-import org.flickit.assessment.advice.application.domain.AdviceNarration;
 import org.flickit.assessment.advice.application.port.in.advicenarration.GetAdviceNarrationUseCase;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -15,11 +14,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.advice.common.ErrorMessageKey.GET_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.advice.test.fixture.application.AdviceNarrationMother.aiNarration;
+import static org.flickit.assessment.advice.test.fixture.application.AdviceNarrationMother.assessorNarration;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -45,7 +45,7 @@ class GetAdviceNarrationServiceTest {
     private AppAiProperties appAiProperties;
 
     @Test
-    void testGetAdviceNarration_WhenUserDoesNotHaveRequiredPermission_ThenThrowAccessDeniedException() {
+    void testGetAdviceNarration_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = new GetAdviceNarrationUseCase.Param(UUID.randomUUID(), UUID.randomUUID());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(false);
@@ -55,7 +55,7 @@ class GetAdviceNarrationServiceTest {
     }
 
     @Test
-    void testGetAdviceNarration_WhenAssessmentDoesNotHaveAnyResult_ThenThrowResourceNotFoundException() {
+    void testGetAdviceNarration_whenAssessmentResultNotExists_thenThrowResourceNotFoundException() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
@@ -68,7 +68,7 @@ class GetAdviceNarrationServiceTest {
     }
 
     @Test
-    void testGetAdviceNarration_WhenThereIsNoAdviceNarration_ThenAiNarrationAndAssessorNarrationAreNull() {
+    void testGetAdviceNarration_whenThereIsNoAdviceNarration_thenAiNarrationAndAssessorNarrationAreNull() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
@@ -76,7 +76,7 @@ class GetAdviceNarrationServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
         when(appAiProperties.isEnabled()).thenReturn(true);
 
@@ -90,23 +90,16 @@ class GetAdviceNarrationServiceTest {
     }
 
     @Test
-    void testGetAdviceNarration_WhenAdviceNarrationIsNotEmptyAndJustAssessorNarrationIsNull_ThenReturnAiNarrationAsResult() {
+    void testGetAdviceNarration_whenAdviceNarrationExistsAndCreatedByIsNull_ThenReturnAiNarrationAsResult() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
-        LocalDateTime aiNarrationTime = LocalDateTime.now();
-        var adviceNarration = new AdviceNarration(UUID.randomUUID(),
-            assessmentResult.getId(),
-            "aiNarration",
-            null,
-            aiNarrationTime,
-            null,
-            currentUserId);
+        var adviceNarration = aiNarration();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(appAiProperties.isEnabled()).thenReturn(false);
 
@@ -122,23 +115,16 @@ class GetAdviceNarrationServiceTest {
     }
 
     @Test
-    void testGetAdviceNarration_WhenAdviceNarrationIsNotEmptyAndJustAiNarrationIsNull_thenReturnAssessorNarrationAsResult() {
+    void testGetAdviceNarration_whenAdviceNarrationExistsAndCreatedByIsNotNull_thenReturnAssessorNarrationAsResult() {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
         var param = new GetAdviceNarrationUseCase.Param(assessmentId, currentUserId);
         var assessmentResult = AssessmentResultMother.createAssessmentResult();
-        LocalDateTime assessorNarrationTime = LocalDateTime.now();
-        var adviceNarration = new AdviceNarration(UUID.randomUUID(),
-            assessmentResult.getId(),
-            null,
-            "assessorNarration",
-            null,
-            assessorNarrationTime,
-            currentUserId);
+        var adviceNarration = assessorNarration();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(),CREATE_ADVICE)).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(adviceNarration));
         when(appAiProperties.isEnabled()).thenReturn(true);
 
@@ -149,7 +135,7 @@ class GetAdviceNarrationServiceTest {
         assertNotNull(result.assessorNarration());
         assertEquals(adviceNarration.getAssessorNarration(), result.assessorNarration().narration());
         assertEquals(adviceNarration.getAssessorNarrationTime(), result.assessorNarration().creationTime());
-        assertTrue(result.editable());
+        assertFalse(result.editable());
         assertTrue(result.aiEnabled());
     }
 }
