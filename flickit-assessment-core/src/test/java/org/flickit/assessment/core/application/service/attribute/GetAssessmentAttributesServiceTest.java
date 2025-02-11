@@ -36,16 +36,6 @@ class GetAssessmentAttributesServiceTest {
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
-    private final LoadAttributesPort.Result result1 = new LoadAttributesPort.Result(1766L, "Team Agility", "How?", 1, 1, 0.0,
-        new LoadAttributesPort.MaturityLevel(1991L, "Unprepared", "Tools are insufficient.", 1, 1),
-        new LoadAttributesPort.Subject(463L, "Team"));
-
-    private final LoadAttributesPort.Result result2 = new LoadAttributesPort.Result(1769L, "Software Reliability", "How?", 2, 3, 11.22,
-        new LoadAttributesPort.MaturityLevel(1991L, "Unprepared", "causing frequent issues and inefficiencies.", 4, 5),
-        new LoadAttributesPort.Subject(464L, "Software"));
-
-    List<LoadAttributesPort.Result> portResult = List.of(result1, result2);
-
     @Test
     void testGetAssessmentAttributes_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAssessmentAttributesUseCase.Param.ParamBuilder::build);
@@ -55,12 +45,18 @@ class GetAssessmentAttributesServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentAttributes(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
         verifyNoInteractions(loadAttributesPort, validateAssessmentResultPort);
     }
 
     @Test
     void testGetAssessmentAttributes_whenAttributesExist_thenReturnResult() {
         var param = createParam(GetAssessmentAttributesUseCase.Param.ParamBuilder::build);
+
+        LoadAttributesPort.Result attribute1 = createAttribute(1);
+        LoadAttributesPort.Result attribute2 = createAttribute(2);
+
+        List<LoadAttributesPort.Result> portResult = List.of(attribute1, attribute2);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_ATTRIBUTES))
             .thenReturn(true);
@@ -71,6 +67,7 @@ class GetAssessmentAttributesServiceTest {
         var result = service.getAssessmentAttributes(param);
         assertNotNull(result);
         assertNotNull(result.attributes());
+        assertEquals(portResult.size(), result.attributes().size());
 
         assertThat(result.attributes())
             .zipSatisfy(portResult, (actual, expected) -> {
@@ -90,6 +87,19 @@ class GetAssessmentAttributesServiceTest {
                 assertEquals(expected.subject().id(), actual.subject().id());
                 assertEquals(expected.subject().title(), actual.subject().title());
             });
+    }
+
+    private static LoadAttributesPort.Result createAttribute(int index) {
+        return new LoadAttributesPort.Result(1769L + index,
+            "Software Reliability" + index,
+            "How?",
+            index,
+            3 + index,
+            11.22 + index,
+            new LoadAttributesPort.MaturityLevel(1991L + index,
+                "Unprepared" + index,
+                "causing frequent issues and inefficiencies." + index, 4, 4),
+            new LoadAttributesPort.Subject(464L + index, "Software" + index));
     }
 
     private GetAssessmentAttributesUseCase.Param createParam(Consumer<GetAssessmentAttributesUseCase.Param.ParamBuilder> changer) {
