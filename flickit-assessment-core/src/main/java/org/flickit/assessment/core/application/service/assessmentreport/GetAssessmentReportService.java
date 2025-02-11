@@ -26,10 +26,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
@@ -89,7 +86,7 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap),
-            toAdvice(assessment.assessmentResultId()),
+            toAdvice(assessment.assessmentResultId(), Locale.of(assessmentKitItem.language().name())),
             toAssessmentProcess(metadata),
             toPermissions(param));
     }
@@ -182,20 +179,20 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             maturityLevelMap.get(attribute.maturityLevel().getId()));
     }
 
-    private Advice toAdvice(UUID assessmentResultId) {
+    private Advice toAdvice(UUID assessmentResultId, Locale locale) {
         var narration = loadAdviceNarrationPort.load(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
-        return new Advice(narration, toAdviceItems(adviceItems));
+        return new Advice(narration, toAdviceItems(adviceItems, locale));
     }
 
-    private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems) {
+    private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems, Locale locale) {
         return adviceItems.stream()
             .map(item -> new AdviceItem(item.getId(),
                 item.getTitle(),
                 item.getDescription(),
-                toAdviceItemCost(item.getCost()),
-                toAdviceItemPriority(item.getPriority()),
-                toAdviceItemImpact(item.getImpact()))).toList();
+                toAdviceItemCost(item.getCost(), locale),
+                toAdviceItemPriority(item.getPriority(), locale),
+                toAdviceItemImpact(item.getImpact(), locale))).toList();
     }
 
     private AssessmentProcess toAssessmentProcess(AssessmentReportMetadata metadata) {
@@ -207,15 +204,15 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
         return new Permissions(canViewDashboard);
     }
 
-    private Cost toAdviceItemCost(CostLevel cost) {
-        return new Cost(cost.getTitle(), cost.getCode());
+    private Cost toAdviceItemCost(CostLevel cost, Locale locale) {
+        return new Cost(cost.getTitle(locale), cost.getCode());
     }
 
-    private Priority toAdviceItemPriority(PriorityLevel priority) {
-        return new Priority(priority.getTitle(), priority.getCode());
+    private Priority toAdviceItemPriority(PriorityLevel priority, Locale locale) {
+        return new Priority(priority.getTitle(locale), priority.getCode());
     }
 
-    private Impact toAdviceItemImpact(ImpactLevel impact) {
-        return new Impact(impact.getTitle(), impact.getCode());
+    private Impact toAdviceItemImpact(ImpactLevel impact, Locale locale) {
+        return new Impact(impact.getTitle(locale), impact.getCode());
     }
 }
