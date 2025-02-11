@@ -22,7 +22,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 public class GetAssessmentMaturityLevelsService implements GetAssessmentMaturityLevelsUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
-    private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentPort loadAssessmentPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
 
@@ -30,8 +29,6 @@ public class GetAssessmentMaturityLevelsService implements GetAssessmentMaturity
     public Result getAssessmentMaturityLevels(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_MATURITY_LEVELS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
-        validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessment = loadAssessmentPort.getAssessmentById(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_NOT_FOUND));

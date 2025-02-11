@@ -42,9 +42,6 @@ class GetAssessmentMaturityLevelsServiceTest {
     private LoadAssessmentPort loadAssessmentPort;
 
     @Mock
-    private ValidateAssessmentResultPort validateAssessmentResultPort;
-
-    @Mock
     private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Test
@@ -57,9 +54,7 @@ class GetAssessmentMaturityLevelsServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentMaturityLevels(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(validateAssessmentResultPort,
-            validateAssessmentResultPort,
-            loadMaturityLevelsPort,
+        verifyNoInteractions(loadMaturityLevelsPort,
             loadAssessmentPort);
     }
 
@@ -77,7 +72,6 @@ class GetAssessmentMaturityLevelsServiceTest {
 
         verifyNoInteractions(
             loadMaturityLevelsPort);
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
     }
 
     @Test
@@ -101,7 +95,6 @@ class GetAssessmentMaturityLevelsServiceTest {
                 assertEquals(expected.getValue(), actual.value());
                 assertEquals(expected.getIndex(), actual.index());
             });
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
     }
 
     private GetAssessmentMaturityLevelsUseCase.Param createParam(Consumer<GetAssessmentMaturityLevelsUseCase.Param.ParamBuilder> changer) {
