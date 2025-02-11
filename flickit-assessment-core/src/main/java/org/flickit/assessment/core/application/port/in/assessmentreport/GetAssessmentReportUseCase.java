@@ -111,6 +111,7 @@ public interface GetAssessmentReportUseCase {
                       Level cost,
                       Level priority,
                       Level impact) {
+
         public record Level(String code, String title) {
         }
     }

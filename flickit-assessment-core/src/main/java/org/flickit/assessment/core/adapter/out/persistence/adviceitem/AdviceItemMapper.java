@@ -16,7 +16,7 @@ public class AdviceItemMapper {
             entity.getId(),
             entity.getTitle(),
             entity.getDescription(),
-            CostLevel.valueOfById(entity.getCost()) != null ? CostLevel.valueOfById(entity.getCost()) : null,
+            CostLevel.valueOfById(entity.getCost()),
             PriorityLevel.valueOfById(entity.getPriority()),
             ImpactLevel.valueOfById(entity.getImpact()));
     }
