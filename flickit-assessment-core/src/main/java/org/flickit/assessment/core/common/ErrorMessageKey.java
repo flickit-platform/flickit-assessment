@@ -315,4 +315,7 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_ATTRIBUTES_ASSESSMENT_ID_NOT_NULL = "get-assessment-attributes.assessmentId.notNull";
     public static final String GET_ASSESSMENT_ATTRIBUTES_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-attributes.assessment-result.notFound";
+
+    public static final String GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_ID_NOT_NULL = "get-assessment-maturity-levels.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-maturity-levels.assessmentResult.notFound";
 }
