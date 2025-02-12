@@ -46,9 +46,13 @@ public class OpenAiProperties {
                 Justify why a particular option is recommended over others, considering factors such as scalability, maintainability, performance, security, and industry best practices.
                 Additionally, outline the expected benefits and risks of implementation, including potential impacts on development time, resource allocation, and long-term sustainability.
                 Where applicable, provide real-world examples or case studies to strengthen the recommendation.
-            cost : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
-            priority : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
-            impact : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
+            cost : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This represents the estimated effort, time, and resources required to transition from the current state to the target goal, considering factors such as implementation complexity, required skill sets, tooling, and potential disruptions.
+                The larger the gap between the current status and the goal, the higher the cost.
+            priority : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This represents the urgency and significance of implementing this improvement in the context of software engineering best practices.
+                Factors influencing priority include the impact on software quality (e.g., security, performance, scalability, maintainability), business goals, regulatory compliance, and technical debt.
+                Higher priority items are those that, if left unaddressed, could lead to significant risks, inefficiencies, or long-term challenges.
+            impact : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This reflects the potential effect of implementing the change on the overall system. Impact takes into account how the change will influence key system attributes such as performance, scalability, security, maintainability, user experience, and business outcomes.
+                A higher impact indicates a more significant and transformative effect, such as major improvements in system efficiency or the resolution of critical issues, while a lower impact suggests incremental or localized changes.
         Additionally, provide a complete paragraph mentioning the attributes, their target levels, and the related advice and suggestions.
         Wrap this paragraph in an HTML <p> tag without any class attributes. Also, include the title of the assessment in your response.
         Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.
