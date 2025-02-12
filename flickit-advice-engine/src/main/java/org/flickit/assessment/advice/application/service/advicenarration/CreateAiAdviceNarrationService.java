@@ -21,15 +21,17 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
-import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -56,7 +58,6 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     private final CallAiPromptPort callAiPromptPort;
     private final CreateAdviceItemPort createAdviceItemPort;
     private final AppAiProperties appAiProperties;
-    private final OpenAiProperties openAiProperties;
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
     @Override
@@ -78,7 +79,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
 
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
-        var prompt = buildPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
+        var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         var adviceItems = aiAdvice.adviceItems().stream()
@@ -111,7 +112,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .toList();
     }
 
-    private String buildPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle) {
+    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle) {
         var maturityLevelsMap = loadMaturityLevelsPort.loadAll(kitVersionId).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
@@ -133,7 +134,9 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
                 maturityLevelsMap.getOrDefault(target.getMaturityLevelId(), "Unknown")))
             .toList();
 
-        return openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessmentTitle, targetAttributes.toString(), adviceRecommendations.toString());
+        return new PromptTemplate(appAiProperties.getAdviceNarrationAndItemsPrompt(),
+            Map.of("assessmentTitle", assessmentTitle, "attributeTargets", targetAttributes, "adviceRecommendations", adviceRecommendations))
+            .create();
     }
 
     record AdviceDto(String narration, List<AdviceItemDto> adviceItems) {

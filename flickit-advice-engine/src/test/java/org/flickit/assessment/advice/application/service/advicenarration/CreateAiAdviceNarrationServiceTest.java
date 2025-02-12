@@ -21,7 +21,6 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
-import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -32,6 +31,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ai.chat.prompt.Prompt;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -78,9 +78,6 @@ class CreateAiAdviceNarrationServiceTest {
     private LoadAttributesPort loadAttributesPort;
 
     @Mock
-    private OpenAiProperties openAiProperties;
-
-    @Mock
     private CallAiPromptPort callAiPromptPort;
 
     @Mock
@@ -108,7 +105,7 @@ class CreateAiAdviceNarrationServiceTest {
     private ArgumentCaptor<List<AdviceItem>> adviceItemsCaptor;
 
     private final String aiNarration = "aiNarration";
-    private final String prompt = "AI prompt";
+    private final Prompt prompt = new Prompt("AI prompt");
     private final AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
     private final List<CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto> adviceItems = List.of(
         new CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto("title1", "description1", 0, 1, 2),
@@ -118,12 +115,6 @@ class CreateAiAdviceNarrationServiceTest {
     private final CreateAiAdviceNarrationUseCase.Param param = createParam(CreateAiAdviceNarrationUseCase.Param.ParamBuilder::build);
     private final List<Attribute> attributes = List.of(new Attribute(param.getAttributeLevelTargets().getFirst().getAttributeId(), "Reliability"));
     private final List<MaturityLevel> maturityLevels = List.of(new MaturityLevel(param.getAttributeLevelTargets().getFirst().getMaturityLevelId(), "Great"));
-    private final List<CreateAiAdviceNarrationService.AdviceRecommendation> adviceRecommendations =
-        List.of(new CreateAiAdviceNarrationService.AdviceRecommendation(param.getAdviceListItems().getFirst().question().title(),
-            param.getAdviceListItems().getFirst().answeredOption().title(),
-            param.getAdviceListItems().getFirst().recommendedOption().title()));
-    private final List<CreateAiAdviceNarrationService.TargetAttribute> targetAttributes = List.of(new CreateAiAdviceNarrationService.TargetAttribute(
-        attributes.getFirst().getTitle(), maturityLevels.getFirst().getTitle()));
 
     @Test
     void testCreateAiAdviceNarration_WhenUserDoesNotHaveRequiredPermission_ThenShouldThrowAccessDeniedException() {
@@ -135,7 +126,6 @@ class CreateAiAdviceNarrationServiceTest {
         verifyNoInteractions(appAiProperties,
             loadAssessmentResultPort,
             validateAssessmentResultPort,
-            openAiProperties,
             callAiPromptPort,
             loadAdviceNarrationPort,
             createAdviceNarrationPort,
@@ -156,7 +146,6 @@ class CreateAiAdviceNarrationServiceTest {
 
         verifyNoInteractions(loadAssessmentResultPort,
             validateAssessmentResultPort,
-            openAiProperties,
             callAiPromptPort,
             loadAdviceNarrationPort,
             createAdviceNarrationPort,
@@ -177,7 +166,6 @@ class CreateAiAdviceNarrationServiceTest {
         assertEquals(CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(validateAssessmentResultPort,
-            openAiProperties,
             callAiPromptPort,
             loadAdviceNarrationPort,
             loadAssessmentPort,
@@ -191,6 +179,7 @@ class CreateAiAdviceNarrationServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(appAiProperties.isEnabled()).thenReturn(true);
+        when(appAiProperties.getAdviceNarrationAndItemsPrompt()).thenReturn(prompt.getContents());
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
@@ -199,7 +188,6 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
-        when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getShortTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt, AdviceDto.class)).thenReturn(aiAdvice);
 
         service.createAiAdviceNarration(param);
@@ -240,6 +228,7 @@ class CreateAiAdviceNarrationServiceTest {
         var assessment = AssessmentMother.assessmentWithShortTitle(null);
 
         when(appAiProperties.isEnabled()).thenReturn(true);
+        when(appAiProperties.getAdviceNarrationAndItemsPrompt()).thenReturn(prompt.getContents());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -249,7 +238,6 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
-        when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt, AdviceDto.class)).thenReturn(aiAdvice);
         doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(UpdateAdviceNarrationPort.AiNarrationParam.class));
 
@@ -287,6 +275,7 @@ class CreateAiAdviceNarrationServiceTest {
         var assessment = AssessmentMother.assessmentWithShortTitle("shortTitle");
 
         when(appAiProperties.isEnabled()).thenReturn(true);
+        when(appAiProperties.getAdviceNarrationAndItemsPrompt()).thenReturn(prompt.getContents());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -296,7 +285,6 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadMaturityLevelsPort.loadAll(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
-        when(openAiProperties.createAiAdviceNarrationAndItemsPrompt(assessment.getShortTitle(), targetAttributes.toString(), adviceRecommendations.toString())).thenReturn(prompt);
         when(callAiPromptPort.call(prompt, AdviceDto.class)).thenReturn(aiAdvice);
 
         doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(UpdateAdviceNarrationPort.AiNarrationParam.class));
@@ -348,7 +336,6 @@ class CreateAiAdviceNarrationServiceTest {
         verifyNoInteractions(loadAttributesPort,
             loadMaturityLevelsPort,
             callAiPromptPort,
-            openAiProperties,
             createAdviceNarrationPort);
     }
 
