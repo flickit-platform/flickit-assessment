@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
 import static org.flickit.assessment.core.application.domain.HistoryType.PERSIST;
 import static org.flickit.assessment.core.application.domain.HistoryType.UPDATE;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND;
@@ -124,6 +125,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             answerOptionId,
             confidenceLevelId,
             param.getIsNotApplicable(),
+            APPROVED,
             param.getCurrentUserId()
         );
     }

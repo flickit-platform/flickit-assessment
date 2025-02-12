@@ -7,8 +7,6 @@ import org.flickit.assessment.core.application.domain.AnswerOption;
 import org.flickit.assessment.core.application.port.out.answer.CreateAnswerPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 
-import java.util.ArrayList;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AnswerMapper {
 
@@ -21,6 +19,7 @@ public class AnswerMapper {
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
+            param.status().getId(),
             param.currentUserId(),
             param.currentUserId()
         );
