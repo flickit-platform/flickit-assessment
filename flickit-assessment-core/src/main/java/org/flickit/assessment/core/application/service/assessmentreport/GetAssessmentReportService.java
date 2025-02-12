@@ -203,6 +203,6 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     }
 
     private Language toLanguage(KitLanguage language) {
-        return new Language(language.name());
+        return new Language(language.getCode());
     }
 }
