@@ -20,7 +20,7 @@ public class AnswerJpaEntityMother {
             answerOptionId,
             ConfidenceLevel.getDefault().getId(),
             null,
-            APPROVED.ordinal(),
+            APPROVED.getId(),
             createdBy,
             createdBy
         );
@@ -36,7 +36,7 @@ public class AnswerJpaEntityMother {
             null,
             ConfidenceLevel.getDefault().getId(),
             null,
-            APPROVED.ordinal(),
+            APPROVED.getId(),
             createdBy,
             createdBy
         );
@@ -52,7 +52,7 @@ public class AnswerJpaEntityMother {
             null,
             ConfidenceLevel.getDefault().getId(),
             Boolean.TRUE,
-            APPROVED.ordinal(),
+            APPROVED.getId(),
             createdBy,
             createdBy
         );

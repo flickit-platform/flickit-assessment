@@ -17,4 +17,8 @@ public enum AnswerStatus {
     public String getCode() {
         return name();
     }
+
+    public int getId() {
+        return this.ordinal();
+    }
 }
