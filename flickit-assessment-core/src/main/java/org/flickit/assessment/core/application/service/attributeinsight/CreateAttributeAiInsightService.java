@@ -120,8 +120,11 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     }
 
     public Prompt createPrompt(String attributeTitle, String attributeDescription, String assessmentTitle, String fileContent) {
-        return new PromptTemplate(appAiProperties.getAttributeAiInsightPrompt(),
-            Map.of("attributeTitle", attributeTitle, "attributeDescription", attributeDescription, "assessmentTitle", assessmentTitle, "fileContent", fileContent))
+        return new PromptTemplate(appAiProperties.getPrompt().getAttributeInsight(),
+            Map.of("attributeTitle", attributeTitle,
+                "attributeDescription", attributeDescription,
+                "assessmentTitle", assessmentTitle,
+                "fileContent", fileContent))
             .create();
     }
 

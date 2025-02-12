@@ -134,8 +134,10 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
                 maturityLevelsMap.getOrDefault(target.getMaturityLevelId(), "Unknown")))
             .toList();
 
-        return new PromptTemplate(appAiProperties.getAdviceNarrationAndItemsPrompt(),
-            Map.of("assessmentTitle", assessmentTitle, "attributeTargets", targetAttributes, "adviceRecommendations", adviceRecommendations))
+        return new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
+            Map.of("assessmentTitle", assessmentTitle,
+                "attributeTargets", targetAttributes,
+                "adviceRecommendations", adviceRecommendations))
             .create();
     }
 
