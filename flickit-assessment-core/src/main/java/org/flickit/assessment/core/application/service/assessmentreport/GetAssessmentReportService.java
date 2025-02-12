@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.InvalidStateException;
@@ -13,6 +14,7 @@ import org.flickit.assessment.core.application.domain.report.AssessmentSubjectRe
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
 import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase;
+import org.flickit.assessment.core.application.port.in.assessmentreport.GetAssessmentReportUseCase.AdviceItem.Level;
 import org.flickit.assessment.core.application.port.out.adviceitem.LoadAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
@@ -20,10 +22,7 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
@@ -83,9 +82,10 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
 
         return new Result(toAssessment(assessment, assessmentKitItem, metadata, maturityLevels, attributesCount, maturityLevelMap),
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap),
-            toAdvice(assessment.assessmentResultId()),
+            toAdvice(assessment.assessmentResultId(), Locale.of(assessmentKitItem.language().name())),
             toAssessmentProcess(metadata),
-            toPermissions(param));
+            toPermissions(param),
+            toLanguage(assessmentKitItem.language()));
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -176,10 +176,21 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             maturityLevelMap.get(attribute.maturityLevel().getId()));
     }
 
-    private Advice toAdvice(UUID assessmentResultId) {
+    private Advice toAdvice(UUID assessmentResultId, Locale locale) {
         var narration = loadAdviceNarrationPort.load(assessmentResultId);
         var adviceItems = loadAdviceItemsPort.loadAll(assessmentResultId);
-        return new Advice(narration, adviceItems);
+        return new Advice(narration, toAdviceItems(adviceItems, locale));
+    }
+
+    private List<AdviceItem> toAdviceItems(List<org.flickit.assessment.core.application.domain.AdviceItem> adviceItems, Locale locale) {
+        return adviceItems.stream()
+            .map(item -> new AdviceItem(item.getId(),
+                item.getTitle(),
+                item.getDescription(),
+                new Level(item.getCost().getCode(), item.getCost().getTitle(locale)),
+                new Level(item.getPriority().getCode(), item.getPriority().getTitle(locale)),
+                new Level(item.getImpact().getCode(), item.getImpact().getTitle(locale))))
+            .toList();
     }
 
     private AssessmentProcess toAssessmentProcess(AssessmentReportMetadata metadata) {
@@ -189,5 +200,9 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Permissions toPermissions(Param param) {
         var canViewDashboard = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD);
         return new Permissions(canViewDashboard);
+    }
+
+    private Language toLanguage(KitLanguage language) {
+        return new Language(language.getCode());
     }
 }

@@ -1,4 +1,4 @@
-package org.flickit.assessment.kit.application.domain;
+package org.flickit.assessment.common.application.domain.kit;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -21,6 +21,10 @@ public enum KitLanguage {
 
     public int getId() {
         return this.ordinal();
+    }
+
+    public String getCode() {
+        return this.name();
     }
 
     public static KitLanguage valueOfById(int id) {
