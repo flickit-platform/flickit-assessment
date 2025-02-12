@@ -14,19 +14,11 @@ public class OpenAiAdapter implements CallAiPromptPort {
     private final ChatModel chatModel;
 
     @Override
-    public String call(Prompt prompt) {
-        return chatModel
-            .call(prompt)
-            .getResult()
-            .getOutput()
-            .getContent();
-    }
+    public <T> T call(Prompt prompt, Class<T> responseType) {
 
-    @Override
-    public <T> T call(String prompt, Class<T> responseType) {
         return ChatClient.create(chatModel)
             .prompt()
-            .system(prompt)
+            .system(prompt.getContents())
             .call()
             .entity(responseType);
     }
