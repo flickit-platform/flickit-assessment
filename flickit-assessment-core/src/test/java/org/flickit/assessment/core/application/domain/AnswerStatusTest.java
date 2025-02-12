@@ -13,6 +13,12 @@ class AnswerStatusTest {
     }
 
     @Test
+    void testAnswerStatus_IdOfItemsShouldNotBeChanged() {
+        assertEquals(0, AnswerStatus.APPROVED.getId());
+        assertEquals(1, AnswerStatus.UNAPPROVED.getId());
+    }
+
+    @Test
     void testAnswerStatus_NameOfItemsShouldNotBeChanged() {
         assertEquals("APPROVED", AnswerStatus.APPROVED.name());
         assertEquals("UNAPPROVED", AnswerStatus.UNAPPROVED.name());
