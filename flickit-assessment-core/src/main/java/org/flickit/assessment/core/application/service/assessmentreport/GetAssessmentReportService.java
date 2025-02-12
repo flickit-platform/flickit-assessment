@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentreport;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.InvalidStateException;
@@ -83,7 +84,8 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
             toSubjects(assessmentReportInfo.subjects(), maturityLevelMap),
             toAdvice(assessment.assessmentResultId(), Locale.of(assessmentKitItem.language().name())),
             toAssessmentProcess(metadata),
-            toPermissions(param));
+            toPermissions(param),
+            toLanguage(assessmentKitItem.language()));
     }
 
     private List<MaturityLevel> toMaturityLevels(AssessmentKitItem assessmentKitItem) {
@@ -198,5 +200,9 @@ public class GetAssessmentReportService implements GetAssessmentReportUseCase {
     private Permissions toPermissions(Param param) {
         var canViewDashboard = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD);
         return new Permissions(canViewDashboard);
+    }
+
+    private Language toLanguage(KitLanguage language) {
+        return new Language(language.getCode());
     }
 }

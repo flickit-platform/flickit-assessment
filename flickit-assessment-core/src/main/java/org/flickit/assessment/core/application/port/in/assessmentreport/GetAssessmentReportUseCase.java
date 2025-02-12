@@ -39,7 +39,8 @@ public interface GetAssessmentReportUseCase {
                   List<Subject> subjects,
                   Advice advice,
                   AssessmentProcess assessmentProcess,
-                  Permissions permissions) {
+                  Permissions permissions,
+                  Language lang) {
     }
 
     record Assessment(String title,
@@ -114,5 +115,8 @@ public interface GetAssessmentReportUseCase {
 
         public record Level(String code, String title) {
         }
+    }
+
+    record Language(String code) {
     }
 }

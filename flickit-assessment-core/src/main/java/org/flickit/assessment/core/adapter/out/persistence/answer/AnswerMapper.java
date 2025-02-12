@@ -20,7 +20,7 @@ public class AnswerMapper {
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
-            param.status().ordinal(),
+            param.status().getId(),
             param.currentUserId(),
             param.currentUserId()
         );
