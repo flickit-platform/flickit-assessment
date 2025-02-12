@@ -21,4 +21,14 @@ public enum AnswerStatus {
     public int getId() {
         return this.ordinal();
     }
+
+    public static AnswerStatus valueOfById(int id) {
+        if (!isValidId(id))
+            return null;
+        return values()[id];
+    }
+
+    public static boolean isValidId(int id) {
+        return id >= 0 && id < AnswerStatus.values().length;
+    }
 }
