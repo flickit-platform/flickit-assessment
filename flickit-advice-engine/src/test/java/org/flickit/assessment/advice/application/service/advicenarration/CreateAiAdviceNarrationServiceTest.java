@@ -85,9 +85,6 @@ class CreateAiAdviceNarrationServiceTest {
     @Mock
     private UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
-    @Spy
-    private AppAiProperties appAiProperties = appAiProperties();
-
     @Mock
     private CreateAdviceItemPort createAdviceItemPort;
 
@@ -99,6 +96,9 @@ class CreateAiAdviceNarrationServiceTest {
 
     @Captor
     private ArgumentCaptor<List<AdviceItem>> adviceItemsCaptor;
+
+    @Spy
+    private AppAiProperties appAiProperties = appAiProperties();
 
     private final String aiNarration = "aiNarration";
     private final Prompt prompt = new Prompt(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems());
