@@ -211,7 +211,7 @@ class CreateAttributeAiInsightServiceTest {
         when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
 
         var result = service.createAiInsight(param);
-        assertEquals("Report Content", result.content());
+        assertEquals("Insight Content", result.content());
         verify(createAttributeInsightPort).persist(attributeInsightArgumentCaptor.capture());
         assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue().getAiInsight());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getAiInsightTime());
@@ -243,7 +243,7 @@ class CreateAttributeAiInsightServiceTest {
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
 
         var result = service.createAiInsight(param);
-        assertEquals("Report Content", result.content());
+        assertEquals("Insight Content", result.content());
         verify(createAttributeInsightPort).persist(attributeInsightArgumentCaptor.capture());
         assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue().getAiInsight());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getAiInsightTime());
@@ -354,7 +354,7 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        when(callAiPromptPort.call(prompt, eq(String.class))).thenReturn(aiInsight);
+        when(callAiPromptPort.call(prompt, String.class)).thenReturn(aiInsight);
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
