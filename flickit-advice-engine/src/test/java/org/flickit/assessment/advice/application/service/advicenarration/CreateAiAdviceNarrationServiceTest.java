@@ -26,10 +26,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.prompt.Prompt;
 
@@ -47,7 +44,6 @@ import static org.flickit.assessment.advice.test.fixture.application.AttributeLe
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -89,8 +85,8 @@ class CreateAiAdviceNarrationServiceTest {
     @Mock
     private UpdateAdviceNarrationPort updateAdviceNarrationPort;
 
-    @Mock
-    private AppAiProperties appAiProperties;
+    @Spy
+    private AppAiProperties appAiProperties = appAiProperties();
 
     @Mock
     private CreateAdviceItemPort createAdviceItemPort;
@@ -105,7 +101,7 @@ class CreateAiAdviceNarrationServiceTest {
     private ArgumentCaptor<List<AdviceItem>> adviceItemsCaptor;
 
     private final String aiNarration = "aiNarration";
-    private final Prompt prompt = new Prompt("AI prompt");
+    private final Prompt prompt = new Prompt(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems());
     private final AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
     private final List<CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto> adviceItems = List.of(
         new CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto("title1", "description1", 0, 1, 2),
@@ -174,12 +170,10 @@ class CreateAiAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAiAdviceNarration_AdviceNarrationDoesNotExist_ShouldCreateAdviceNarration() {
+    void testCreateAiAdviceNarration_WhenAdviceNarrationDoesNotExist_ThenShouldCreateAdviceNarration() {
         var assessment = AssessmentMother.assessmentWithShortTitle("ShortTitle");
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
-        when(appAiProperties.isEnabled()).thenReturn(true);
-        when(appAiProperties.getAdviceNarrationAndItemsPrompt()).thenReturn(prompt.getContents());
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAdviceNarrationPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
@@ -220,15 +214,15 @@ class CreateAiAdviceNarrationServiceTest {
                 assertNull(actual.getCreatedBy());
                 assertNull(actual.getLastModifiedBy());
             });
+
+        verifyNoInteractions(updateAdviceNarrationPort);
     }
 
     @Test
-    void testCreateAiAdviceNarration_AdviceNarrationExistsAndShortTitleNotExists_ShouldUpdateAdviceNarration() {
+    void testCreateAiAdviceNarration_WhenAdviceNarrationExistsAndShortTitleNotExists_ThenShouldUpdateAdviceNarration() {
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
         var assessment = AssessmentMother.assessmentWithShortTitle(null);
 
-        when(appAiProperties.isEnabled()).thenReturn(true);
-        when(appAiProperties.getAdviceNarrationAndItemsPrompt()).thenReturn(prompt.getContents());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -239,7 +233,6 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(prompt, AdviceDto.class)).thenReturn(aiAdvice);
-        doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(UpdateAdviceNarrationPort.AiNarrationParam.class));
 
         service.createAiAdviceNarration(param);
 
@@ -267,15 +260,15 @@ class CreateAiAdviceNarrationServiceTest {
                 assertNull(actual.getCreatedBy());
                 assertNull(actual.getLastModifiedBy());
             });
+
+        verifyNoInteractions(createAdviceNarrationPort);
     }
 
     @Test
-    void testCreateAiAdviceNarration_AdviceNarrationExistsAndShortTitleExists_ShouldUpdateAdviceNarration() {
+    void testCreateAiAdviceNarration_WhenAdviceNarrationExistsAndShortTitleExists_ThenShouldUpdateAdviceNarration() {
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
         var assessment = AssessmentMother.assessmentWithShortTitle("shortTitle");
 
-        when(appAiProperties.isEnabled()).thenReturn(true);
-        when(appAiProperties.getAdviceNarrationAndItemsPrompt()).thenReturn(prompt.getContents());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -286,8 +279,6 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(prompt, AdviceDto.class)).thenReturn(aiAdvice);
-
-        doNothing().when(updateAdviceNarrationPort).updateAiNarration(any(UpdateAdviceNarrationPort.AiNarrationParam.class));
 
         service.createAiAdviceNarration(param);
 
@@ -315,14 +306,15 @@ class CreateAiAdviceNarrationServiceTest {
                 assertNull(actual.getCreatedBy());
                 assertNull(actual.getLastModifiedBy());
             });
+
+        verifyNoInteractions(createAdviceNarrationPort);
     }
 
     @Test
-    void testCreateAiAdviceNarration_NoValidTargetExists_ThrowValidationException() {
+    void testCreateAiAdviceNarration_WhenNoValidTargetExists_ThenThrowValidationException() {
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
 
-        when(appAiProperties.isEnabled()).thenReturn(true);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -337,6 +329,15 @@ class CreateAiAdviceNarrationServiceTest {
             loadMaturityLevelsPort,
             callAiPromptPort,
             createAdviceNarrationPort);
+    }
+
+    private AppAiProperties appAiProperties() {
+        var properties = new AppAiProperties();
+        properties.setEnabled(true);
+        properties.setPrompt(new AppAiProperties.Prompt());
+        properties.setSaveAiInputFileEnabled(true);
+        properties.getPrompt().setAdviceNarrationAndAdviceItems("Advice Narration And Advice Items Prompt");
+        return properties;
     }
 
     private CreateAiAdviceNarrationUseCase.Param createParam(Consumer<CreateAiAdviceNarrationUseCase.Param.ParamBuilder> changer) {
