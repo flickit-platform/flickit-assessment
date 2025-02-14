@@ -90,4 +90,15 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     List<QuestionnaireIdAndAnswerCountView> countByQuestionnaireIdWithConfidenceLessThan(@Param("assessmentResultId") UUID assessmentResultId,
                                                                                          @Param("questionnaireIds") Collection<Long> questionnaireId,
                                                                                          @Param("confidence") int confidence);
+
+    @Modifying
+    @Query("""
+            UPDATE AnswerJpaEntity a
+            SET a.status = :approvedStatusId,
+                a.lastModifiedBy = :approvedBy
+            WHERE a.id = :answerId
+        """)
+    void approve(@Param("answerId") UUID answerId,
+                 @Param("approvedBy") UUID approvedBy,
+                 @Param("approvedStatusId") int approvedStatusId);
 }

@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -27,7 +28,8 @@ public class AnswerPersistenceJpaAdapter implements
     LoadAnswerPort,
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
-    CountLowConfidenceAnswersPort {
+    CountLowConfidenceAnswersPort,
+    ApproveAnswerPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -111,5 +113,10 @@ public class AnswerPersistenceJpaAdapter implements
             .collect(toMap(
                 QuestionnaireIdAndAnswerCountView::getQuestionnaireId,
                 QuestionnaireIdAndAnswerCountView::getAnswerCount));
+    }
+
+    @Override
+    public void approve(UUID answerId, UUID approvedBy) {
+        repository.approve(answerId, approvedBy, AnswerStatus.APPROVED.ordinal());
     }
 }
