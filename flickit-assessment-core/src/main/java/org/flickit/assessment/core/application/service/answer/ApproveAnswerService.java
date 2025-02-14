@@ -3,10 +3,10 @@ package org.flickit.assessment.core.application.service.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceAlreadyExistsException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
-import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.in.answer.ApproveAnswerUseCase;
 import org.flickit.assessment.core.application.port.out.answer.ApproveAnswerPort;
@@ -17,12 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ANSWER;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
 import static org.flickit.assessment.core.application.domain.HistoryType.UPDATE;
+import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ANSWER_ANSWER_ALREADY_APPROVED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ANSWER_QUESTION_NOT_ANSWERED;
 
 @Service
 @Transactional
@@ -44,7 +48,11 @@ public class ApproveAnswerService implements ApproveAnswerUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var answer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED));
+        if (answer.getSelectedOption() == null)
+            throw new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED);
+        if (Objects.equals(answer.getAnswerStatus(), APPROVED))
+            throw new ResourceAlreadyExistsException(APPROVE_ANSWER_ANSWER_ALREADY_APPROVED);
 
         approveAnswerPort.approve(answer.getId(), param.getCurrentUserId());
         createAnswerHistoryPort.persist(toAnswerHistory(answer, param, assessmentResult.getId()));
@@ -66,6 +74,6 @@ public class ApproveAnswerService implements ApproveAnswerUseCase {
             answer.getQuestionId(),
             answer.getConfidenceLevelId(),
             answer.getIsNotApplicable(),
-            AnswerStatus.APPROVED);
+            APPROVED);
     }
 }

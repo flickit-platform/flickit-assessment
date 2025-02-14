@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface ApproveAnswerPort {
 
-    void approve(UUID answerId, UUID currentUserId);
+    void approve(UUID answerId, UUID approvedBy);
 }
