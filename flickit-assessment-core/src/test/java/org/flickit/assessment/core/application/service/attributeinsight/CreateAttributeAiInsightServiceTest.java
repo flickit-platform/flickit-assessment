@@ -109,6 +109,8 @@ class CreateAttributeAiInsightServiceTest {
     private final CreateAttributeScoresFilePort.Result file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
     private final AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, attribute.getId());
     private final List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+    private final CreateAttributeAiInsightUseCase.Param param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
+    private final GetAssessmentProgressPort.Result progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
     @Test
     void testCreateAttributeAiInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -132,9 +134,6 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAssessmentProgressIsNotCompleted_thenThrowValidationException() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 11);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
 
@@ -154,9 +153,6 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAssessmentResultIsNotFound_thenThrowResourceNotFoundException() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -175,8 +171,6 @@ class CreateAttributeAiInsightServiceTest {
     @Test
     void testCreateAttributeAiInsight_whenCalculatedResultIsNotValid_thenThrowCalculateNotValidException() {
         var invalidResult = invalidResultWithSubjectValues(null);
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
@@ -195,9 +189,6 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabled_thenGenerateAndPersistAiInsight() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -227,13 +218,9 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabledAndSaveFilesDisabled_thenGenerateAndNotSaveFileAndPersistInsight() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
-
         when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
@@ -243,8 +230,8 @@ class CreateAttributeAiInsightServiceTest {
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
 
         var result = service.createAiInsight(param);
-        assertEquals("Insight Content", result.content());
         verify(createAttributeInsightPort).persist(attributeInsightArgumentCaptor.capture());
+        assertEquals("Insight Content", result.content());
         assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue().getAiInsight());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getAiInsightTime());
         assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsight());
@@ -254,14 +241,12 @@ class CreateAttributeAiInsightServiceTest {
         assertNotNull(attributeInsightArgumentCaptor.getValue().getLastModificationTime());
         assertEquals(assessmentResult.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
 
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(updateAttributeInsightPort, uploadAttributeScoresFilePort);
     }
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiDisabled_thenThrowUnsupportedOperationException() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
-
         when(appAiProperties.isEnabled()).thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
@@ -283,10 +268,7 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightExistsAndInsightTimeIsAfterCalculationTime_thenReturnExistingInsight() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-
         var attributeInsight = aiInsightWithTime(LocalDateTime.now().plusDays(1));
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
@@ -311,8 +293,6 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiEnabled_thenRegenerateAndUpdateInsight() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
         var attributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
@@ -344,8 +324,6 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiEnabledSaveFilesDisabled_thenRegenerateAndNotSaveFileAndUpdateInsight() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
         var attributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
 
         when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
@@ -374,8 +352,6 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightExistsAndInsightTimeIsBeforeCalculationTime_AiDisabled_thenThrowUnsupportedOperationException() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
         var attributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
 
         when(appAiProperties.isEnabled()).thenReturn(false);
