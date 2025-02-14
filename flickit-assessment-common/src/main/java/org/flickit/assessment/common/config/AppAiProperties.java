@@ -62,8 +62,10 @@ public class AppAiProperties {
                     Higher priority items are those that, if left unaddressed, could lead to significant risks, inefficiencies, or long-term challenges.
                 impact: between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This reflects the potential effect of implementing the change on the overall system. Impact takes into account how the change will influence key system attributes such as performance, scalability, security, maintainability, user experience, and business outcomes.
                     A higher impact indicates a more significant and transformative effect, such as major improvements in system efficiency or the resolution of critical issues, while a lower impact suggests incremental or localized changes.
-            Additionally, provide a complete paragraph mentioning the attributes, their target levels, and the related advice and suggestions.
-            Wrap this paragraph in an HTML <p> tag without any class attributes. Also, include the title of the assessment in your response.
+            Additionally, provide a comprehensive paragraph discussing the significance of the suggested improvements and their expected outcomes. Explain how addressing these recommendations will enhance the targeted attributes, contributing to overall software quality.
+            Emphasize the benefits of implementing these changes, such as improved scalability, security, maintainability, or performance. Also, highlight the potential consequences of neglecting these improvements. Ensure the paragraph clearly connects the recommended actions to their intended impact on the assessment goals.
+            Ensure that the paragraph is fully connected to the advice items but remains clear and meaningful even when read independently, without direct reference to the individual items. It should provide a complete overview of why these improvements matter and how they align with the assessment’s goals.
+            Wrap this paragraph in an HTML <p> tag without any class attributes and include the title of the assessment.
             Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.
             Avoid referring to individual scores or negative phrasing. Keep the tone professional and supportive.
             Make sure the overall response size, including HTML tags, remains under 1000 characters and excludes any markdown.
