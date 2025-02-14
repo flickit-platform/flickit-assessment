@@ -255,7 +255,7 @@ class CreateAiAdviceNarrationServiceTest {
         assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
         assertEquals(aiNarration, capturedAdviceNarration.narration());
         assertEquals(expectedPrompt, promptArgumentCaptor.getValue().getContents());
-        assertNull(capturedAdviceNarration.narrationTime());
+        assertNotNull(capturedAdviceNarration.narrationTime());
         assertEquals(AdviceDto.class, classCaptor.getValue());
         assertThat(capturedAdviceItems)
             .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
