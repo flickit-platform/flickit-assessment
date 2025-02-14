@@ -134,6 +134,8 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAssessmentProgressIsNotCompleted_thenThrowValidationException() {
+        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 11);
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
 
