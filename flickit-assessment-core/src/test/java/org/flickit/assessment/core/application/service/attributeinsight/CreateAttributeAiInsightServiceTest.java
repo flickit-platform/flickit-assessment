@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.attributeinsight;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
@@ -228,7 +229,7 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabledAndLanguageIsPersian_thenGenerateAndPersistAiInsight() {
-        var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithPersianKitLanguage();
+        var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithKitLanguage(KitLanguage.FA);
         String expectedPrompt = "The attribute " + attribute.getTitle() + " with this description " + attribute.getDescription() +
             " for " + assessmentResultWithPersianKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in Persian.";
 
