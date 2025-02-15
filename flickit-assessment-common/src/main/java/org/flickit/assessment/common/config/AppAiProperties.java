@@ -39,7 +39,8 @@ public class AppAiProperties {
             Start directly with specific strengths and weaknesses, avoiding introductory sentences. Consider the use of the assessment title ("{assessmentTitle}") when discussing strengths and weaknesses.
             Use polite and considerate language, avoiding any derogatory terms, and do not mention the scores of individual questions.
             Please keep your summary descriptive and avoid prescribing actions or solutions. Do not include generic conclusions such as "Overall, the {attributeTitle} maturity level is deemed acceptable."
-            Please provide the result in the {language} language. It is necessary that the result be an exact translation of the summary, except for the assessment name ("{assessmentTitle}"), which must remain untranslated.
+            Please provide the result in the {language} language. It is necessary that the result be an exact translation of the summary, except for the assessment name ("{assessmentTitle}"), which must remain untranslated;
+            Also, always use the name of the assessment and put the name of assessment in double quotations.
             Keep specialized computer science words in English, or if you are sure about their translation, include them with the English term in parentheses. Be aware of the word count limit.
             Here is the file content: {fileContent}.
             """;
