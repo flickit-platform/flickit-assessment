@@ -28,7 +28,7 @@ public class AnswerHistoryMapper {
                 null,
             answerHistory.getAnswer().getConfidenceLevelId(),
             answerHistory.getAnswer().getIsNotApplicable(),
-            answerHistory.getAnswer().getAnswerStatus().ordinal(),
+            answerHistory.getAnswer().getAnswerStatus().getId(),
             answerHistory.getCreatedBy().getId(),
             answerHistory.getCreationTime(),
             answerHistory.getHistoryType().ordinal()

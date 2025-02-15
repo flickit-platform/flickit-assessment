@@ -23,6 +23,10 @@ public enum KitLanguage {
         return this.ordinal();
     }
 
+    public String getCode() {
+        return this.name();
+    }
+
     public static KitLanguage valueOfById(int id) {
         if (!isValidId(id))
             return getDefault();

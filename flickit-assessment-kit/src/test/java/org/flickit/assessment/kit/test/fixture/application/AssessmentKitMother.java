@@ -189,7 +189,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
-            KitLanguage.EN,
+            KitLanguage.FA,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,

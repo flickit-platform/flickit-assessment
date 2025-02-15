@@ -18,6 +18,10 @@ public enum AnswerStatus {
         return name();
     }
 
+    public int getId() {
+        return this.ordinal();
+    }
+
     public static AnswerStatus valueOfById(int id) {
         if (!isValidId(id))
             return null;

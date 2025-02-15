@@ -34,20 +34,4 @@
             </column>
         </addColumn>
     </changeSet>
-
-    <changeSet id="0.48-06" author="Mahdi Rezazadeh">
-        <addColumn tableName="fac_answer">
-            <column name="status" type="tinyint" valueComputed="0">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="0.48-07" author="Mahdi Rezazadeh">
-        <addColumn tableName="fac_answer_history">
-            <column name="status" type="tinyint" valueComputed="0">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
 </databaseChangeLog>
