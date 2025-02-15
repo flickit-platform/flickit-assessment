@@ -47,6 +47,9 @@ public class AnswerHistoryJpaEntity {
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 
+    @Column(name = "status", nullable = false)
+    private Integer status;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 

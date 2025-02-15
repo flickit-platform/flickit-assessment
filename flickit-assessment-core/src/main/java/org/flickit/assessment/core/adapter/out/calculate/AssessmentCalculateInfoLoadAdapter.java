@@ -266,7 +266,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                     answerOption,
                     entity.getQuestionId(),
                     entity.getConfidenceLevelId(),
-                    entity.getIsNotApplicable());
+                    entity.getIsNotApplicable(),
+                    AnswerStatus.valueOfById(entity.getStatus()));
             }).toList();
     }
 

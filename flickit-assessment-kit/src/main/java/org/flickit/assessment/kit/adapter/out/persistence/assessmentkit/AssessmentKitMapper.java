@@ -2,10 +2,10 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.KitWithDraftVersionIdView;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
-import org.flickit.assessment.kit.application.domain.KitLanguage;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CreateAssessmentKitPort;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.UpdateKitInfoPort;
 

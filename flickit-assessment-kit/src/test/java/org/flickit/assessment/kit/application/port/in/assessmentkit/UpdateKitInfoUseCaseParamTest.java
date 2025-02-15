@@ -2,7 +2,7 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.flickit.assessment.kit.application.domain.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

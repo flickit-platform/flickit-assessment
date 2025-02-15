@@ -41,6 +41,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             SET a.answerOptionId = :answerOptionId,
                 a.confidenceLevelId = :confidenceLevelId,
                 a.isNotApplicable = :isNotApplicable,
+                a.status = :status,
                 a.lastModifiedBy = :lastModifiedBy
             WHERE a.id = :answerId
         """)
@@ -48,6 +49,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 @Param("answerOptionId") Long answerOptionId,
                 @Param("confidenceLevelId") Integer confidenceLevelId,
                 @Param("isNotApplicable") Boolean isNotApplicable,
+                @Param("status") Integer status,
                 @Param("lastModifiedBy") UUID lastModifiedBy);
 
     @Query("""

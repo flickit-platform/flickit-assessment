@@ -4,6 +4,7 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.time.LocalDateTime;
 import java.util.List;

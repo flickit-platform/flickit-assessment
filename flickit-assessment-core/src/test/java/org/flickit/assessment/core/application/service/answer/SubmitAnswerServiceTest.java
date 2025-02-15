@@ -31,7 +31,10 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ANSWER;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
+import static org.flickit.assessment.core.application.domain.AnswerStatus.UNAPPROVED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -106,6 +109,7 @@ class SubmitAnswerServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(assessmentId)).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
@@ -128,6 +132,7 @@ class SubmitAnswerServiceTest {
         assertEquals(answerOptionId, saveAnswerParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
+        assertEquals(APPROVED, saveAnswerParam.getValue().status());
 
         var saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
@@ -138,6 +143,7 @@ class SubmitAnswerServiceTest {
         assertEquals(answerOptionId, saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
+        assertEquals(APPROVED, saveAnswerHistoryParam.getValue().getAnswer().getAnswerStatus());
         assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
 
         verify(invalidateAssessmentResultCalculatePort, times(1)).invalidateCalculate(assessmentResult.getId());
@@ -158,6 +164,7 @@ class SubmitAnswerServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(true);
 
         var result = service.submitAnswer(param);
         assertInstanceOf(SubmitAnswerUseCase.NotAffected.class, result);
@@ -187,6 +194,7 @@ class SubmitAnswerServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(false);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.empty());
         when(createAnswerPort.persist(any(CreateAnswerPort.Param.class))).thenReturn(savedAnswerId);
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
@@ -208,6 +216,7 @@ class SubmitAnswerServiceTest {
         assertNull(saveAnswerParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerParam.getValue().isNotApplicable());
+        assertEquals(UNAPPROVED, saveAnswerParam.getValue().status());
 
         var saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
@@ -217,6 +226,7 @@ class SubmitAnswerServiceTest {
         assertNull(saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
+        assertEquals(UNAPPROVED, saveAnswerHistoryParam.getValue().getAnswer().getAnswerStatus());
         assertEquals(HistoryType.PERSIST, saveAnswerHistoryParam.getValue().getHistoryType());
 
         verify(createAnswerPort, times(1)).persist(any(CreateAnswerPort.Param.class));
@@ -242,6 +252,7 @@ class SubmitAnswerServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
@@ -261,6 +272,7 @@ class SubmitAnswerServiceTest {
         assertEquals(newAnswerOptionId, updateAnswerParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
+        assertEquals(APPROVED, updateAnswerParam.getValue().status());
 
         var saveAnswerHistoryParam = ArgumentCaptor.forClass(AnswerHistory.class);
         verify(createAnswerHistoryPort).persist(saveAnswerHistoryParam.capture());
@@ -271,6 +283,7 @@ class SubmitAnswerServiceTest {
         assertEquals(newAnswerOptionId, saveAnswerHistoryParam.getValue().getAnswer().getSelectedOption().getId());
         assertEquals(ConfidenceLevel.getDefault().getId(), saveAnswerHistoryParam.getValue().getAnswer().getConfidenceLevelId());
         assertEquals(isNotApplicable, saveAnswerHistoryParam.getValue().getAnswer().getIsNotApplicable());
+        assertEquals(APPROVED, saveAnswerHistoryParam.getValue().getAnswer().getAnswerStatus());
         assertEquals(HistoryType.UPDATE, saveAnswerHistoryParam.getValue().getHistoryType());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
@@ -299,10 +312,11 @@ class SubmitAnswerServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(false);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
-        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable, currentUserId);
+        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, ConfidenceLevel.getDefault().getId(), isNotApplicable, UNAPPROVED, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
 
         var result = service.submitAnswer(param);
@@ -320,6 +334,7 @@ class SubmitAnswerServiceTest {
         assertEquals(ConfidenceLevel.getDefault().getId(), updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
         assertEquals(currentUserId, updateAnswerParam.getValue().currentUserId());
+        assertEquals(UNAPPROVED, updateAnswerParam.getValue().status());
 
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
         verify(createAnswerHistoryPort, times(1)).persist(any(AnswerHistory.class));
@@ -347,10 +362,11 @@ class SubmitAnswerServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(false);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
-        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, confidenceLevel.getId(), isNotApplicable, currentUserId);
+        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), null, confidenceLevel.getId(), isNotApplicable, UNAPPROVED, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
 
         var result = service.submitAnswer(param);
@@ -367,6 +383,7 @@ class SubmitAnswerServiceTest {
         assertNull(updateAnswerParam.getValue().answerOptionId());
         assertEquals(confidenceLevel.getId(), updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
+        assertEquals(UNAPPROVED, updateAnswerParam.getValue().status());
         assertEquals(currentUserId, updateAnswerParam.getValue().currentUserId());
 
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));
@@ -390,6 +407,7 @@ class SubmitAnswerServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
         var result = service.submitAnswer(param);
@@ -422,10 +440,11 @@ class SubmitAnswerServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(savedAnswerHistoryId);
 
-        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, currentUserId);
+        var updateParam = new UpdateAnswerPort.Param(existAnswer.getId(), answerOption.getId(), ConfidenceLevel.getDefault().getId(), newIsNotApplicable, APPROVED, currentUserId);
         doNothing().when(updateAnswerPort).update(updateParam);
 
         var result = service.submitAnswer(param);
@@ -442,6 +461,7 @@ class SubmitAnswerServiceTest {
         assertEquals(answerOption.getId(), updateAnswerParam.getValue().answerOptionId());
         assertEquals(ConfidenceLevel.getDefault().getId(), updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(newIsNotApplicable, updateAnswerParam.getValue().isNotApplicable());
+        assertEquals(APPROVED, updateAnswerParam.getValue().status());
         assertEquals(currentUserId, updateAnswerParam.getValue().currentUserId());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
@@ -472,8 +492,8 @@ class SubmitAnswerServiceTest {
         var exception = assertThrows(ValidationException.class, () -> service.submitAnswer(param));
         assertEquals(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE, exception.getMessageKey());
 
+        verify(assessmentAccessChecker, times(1)).isAuthorized(any(), any(), any());
         verifyNoInteractions(createAnswerPort,
-            createAnswerPort,
             updateAnswerPort,
             createAnswerHistoryPort,
             loadAnswerPort,
@@ -495,6 +515,7 @@ class SubmitAnswerServiceTest {
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
         when(loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), assessmentResult.getKitVersionId())).thenReturn(true);
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(true);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
         var result = service.submitAnswer(param);
@@ -526,6 +547,7 @@ class SubmitAnswerServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), ANSWER_QUESTION)).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(any())).thenReturn(Optional.of(assessmentResult));
+        when(assessmentAccessChecker.isAuthorized(assessmentId, param.getCurrentUserId(), APPROVE_ANSWER)).thenReturn(false);
         when(loadAnswerPort.load(assessmentResult.getId(), QUESTION_ID)).thenReturn(Optional.of(existAnswer));
 
         var result = service.submitAnswer(param);
@@ -542,6 +564,7 @@ class SubmitAnswerServiceTest {
         assertEquals(answerOption.getId(), updateAnswerParam.getValue().answerOptionId());
         assertEquals(newConfidenceLevelId, updateAnswerParam.getValue().confidenceLevelId());
         assertEquals(isNotApplicable, updateAnswerParam.getValue().isNotApplicable());
+        assertEquals(UNAPPROVED, updateAnswerParam.getValue().status());
 
         verify(loadAnswerPort, times(1)).load(assessmentResult.getId(), QUESTION_ID);
         verify(updateAnswerPort, times(1)).update(any(UpdateAnswerPort.Param.class));

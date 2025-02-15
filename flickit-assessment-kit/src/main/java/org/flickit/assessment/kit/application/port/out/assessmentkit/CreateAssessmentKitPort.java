@@ -1,6 +1,6 @@
 package org.flickit.assessment.kit.application.port.out.assessmentkit;
 
-import org.flickit.assessment.kit.application.domain.KitLanguage;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.util.UUID;
 

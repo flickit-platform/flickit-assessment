@@ -41,11 +41,18 @@ public class OpenAiProperties {
         The user has set maturity level targets for each attribute, and the platform has provided actionable advice items, highlighting which questions should be improved to achieve these targets.
         The advice includes the current status (selected option) and the goal status for each relevant question.
         Task: Based on the provided Advice Recommendations, generate up to 10 Advice Items including only as many points as there are distinct pieces of actionable advice. Each Advice Recommendation includes the following details:
-            title : Generate a concise, action-driven title (max 100 characters) that starts with a strong verb and clearly conveys the intended action.
-            description : Provide detailed recommendations (max 1000 characters) for relevant technologies, methods, and tools.
-            cost : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
-            priority : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
-            impact : between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH;
+            title: Generate a concise, action-driven title (max 100 characters) that starts with a strong verb and clearly conveys the intended action.
+            description: Provide a detailed recommendations paragraph (max 1000 characters) explaining relevant technologies, methods, and tools. Discuss the best approach and viable alternatives, carefully analyzing their advantages, trade-offs, and potential challenges.
+                Justify why a particular option is recommended over others, considering factors such as scalability, maintainability, performance, security, and industry best practices.
+                Additionally, outline the expected benefits and risks of implementation, including potential impacts on development time, resource allocation, and long-term sustainability.
+                Where applicable, provide real-world examples or case studies to strengthen the recommendation.
+            cost: between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This represents the estimated effort, time, and resources required to transition from the current state to the target goal, considering factors such as implementation complexity, required skill sets, tooling, and potential disruptions.
+                The larger the gap between the current status and the goal, the higher the cost.
+            priority: between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This represents the urgency and significance of implementing this improvement in the context of software engineering best practices.
+                Factors influencing priority include the impact on software quality (e.g., security, performance, scalability, maintainability), business goals, regulatory compliance, and technical debt.
+                Higher priority items are those that, if left unaddressed, could lead to significant risks, inefficiencies, or long-term challenges.
+            impact: between 0 to 2 where 0 LOW, 1 MEDIUM, 2 HIGH; This reflects the potential effect of implementing the change on the overall system. Impact takes into account how the change will influence key system attributes such as performance, scalability, security, maintainability, user experience, and business outcomes.
+                A higher impact indicates a more significant and transformative effect, such as major improvements in system efficiency or the resolution of critical issues, while a lower impact suggests incremental or localized changes.
         Additionally, provide a complete paragraph mentioning the attributes, their target levels, and the related advice and suggestions.
         Wrap this paragraph in an HTML <p> tag without any class attributes. Also, include the title of the assessment in your response.
         Ensure that the advice is polite, constructive, and focused on actionable improvements while being tailored for an expert software assessor.

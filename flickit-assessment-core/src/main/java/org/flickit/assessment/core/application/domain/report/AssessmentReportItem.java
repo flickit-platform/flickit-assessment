@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.domain.report;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public record AssessmentReportItem(UUID id,
         String title,
         String summary,
         String about,
+        KitLanguage language,
         Integer maturityLevelCount,
         Integer questionsCount,
         List<MaturityLevel> maturityLevels,

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.adapter.out.minio.MinioAdapter;
@@ -142,6 +143,7 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
             assessmentKitEntity.getTitle(),
             assessmentKitEntity.getSummary(),
             assessmentKitEntity.getAbout(),
+            KitLanguage.valueOfById(assessmentKitEntity.getLanguageId()),
             maturityLevels.size(),
             questionsCount,
             maturityLevels,
