@@ -87,10 +87,11 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
         if (!appAiProperties.isEnabled())
             throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
 
-        var assessmentTitle = getAssessmentTitle(assessmentResult);
-
+        var assessment = assessmentResult.getAssessment();
+        var assessmentTitle = getAssessmentTitle(assessment);
         var file = generateScoreFile(param, assessmentResult);
-        var prompt = createPrompt(attribute.getTitle(), attribute.getDescription(), assessmentTitle, file.text());
+        var prompt = createPrompt(attribute.getTitle(), attribute.getDescription(), assessmentTitle,
+            file.text(), assessment.getAssessmentKit().getLanguage().getTitle());
         String aiInsight = callAiPromptPort.call(prompt, String.class);
         String aiInputPath = uploadInputFile(attribute, file.stream());
 
@@ -107,10 +108,10 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             assessmentResult.getLastCalculationTime().isBefore(attributeInsight.getAiInsightTime());
     }
 
-    private String getAssessmentTitle(AssessmentResult assessmentResult) {
-        return assessmentResult.getAssessment().getShortTitle() != null ?
-            assessmentResult.getAssessment().getShortTitle() :
-            assessmentResult.getAssessment().getTitle();
+    private String getAssessmentTitle(Assessment assessment) {
+        return assessment.getShortTitle() != null
+            ? assessment.getShortTitle()
+            : assessment.getTitle();
     }
 
     private CreateAttributeScoresFilePort.Result generateScoreFile(Param param, AssessmentResult assessmentResult) {
@@ -119,12 +120,13 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
         return createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
     }
 
-    public Prompt createPrompt(String attributeTitle, String attributeDescription, String assessmentTitle, String fileContent) {
+    public Prompt createPrompt(String attributeTitle, String attributeDescription, String assessmentTitle, String fileContent, String language) {
         return new PromptTemplate(appAiProperties.getPrompt().getAttributeInsight(),
             Map.of("attributeTitle", attributeTitle,
                 "attributeDescription", attributeDescription,
                 "assessmentTitle", assessmentTitle,
-                "fileContent", fileContent))
+                "fileContent", fileContent,
+                "language", language))
             .create();
     }
 

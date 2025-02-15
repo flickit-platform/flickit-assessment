@@ -21,6 +21,7 @@ import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateA
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.AttributeValueMother;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.junit.jupiter.api.Test;
@@ -193,9 +194,43 @@ class CreateAttributeAiInsightServiceTest {
     }
 
     @Test
-    void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabled_thenGenerateAndPersistAiInsight() {
+    void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabledAndLanguageIsEnglish_thenGenerateAndPersistAiInsight() {
         String expectedPrompt = "The attribute " + attribute.getTitle() + " with this description " + attribute.getDescription() +
-            " for " + assessmentResult.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ".";
+            " for " + assessmentResult.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in English.";
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
+        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
+        when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
+        when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
+        when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
+        when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
+        when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
+
+        var result = service.createAiInsight(param);
+        assertEquals("Insight Content", result.content());
+        verify(createAttributeInsightPort).persist(attributeInsightArgumentCaptor.capture());
+        assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue().getAiInsight());
+        assertNotNull(attributeInsightArgumentCaptor.getValue().getAiInsightTime());
+        assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsight());
+        assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsightTime());
+        assertEquals(fileReportPath, attributeInsightArgumentCaptor.getValue().getAiInputPath());
+        assertFalse(attributeInsightArgumentCaptor.getValue().isApproved());
+        assertNotNull(attributeInsightArgumentCaptor.getValue().getLastModificationTime());
+        assertEquals(assessmentResult.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
+        assertEquals(expectedPrompt, promptArgumentCaptor.getValue().getContents());
+
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
+        verifyNoInteractions(updateAttributeInsightPort);
+    }
+
+    @Test
+    void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabledAndLanguageIsPersian_thenGenerateAndPersistAiInsight() {
+        var assessmentResult = AssessmentResultMother.validResultWithPersianKitLanguage();
+        String expectedPrompt = "The attribute " + attribute.getTitle() + " with this description " + attribute.getDescription() +
+            " for " + assessmentResult.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in Persian.";
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
@@ -400,7 +435,7 @@ class CreateAttributeAiInsightServiceTest {
         properties.setPrompt(new AppAiProperties.Prompt());
         properties.setSaveAiInputFileEnabled(true);
         properties.getPrompt().setAttributeInsight("The attribute {attributeTitle} " +
-            "with this description {attributeDescription} for {assessmentTitle} was reviewed in {fileContent}.");
+            "with this description {attributeDescription} for {assessmentTitle} was reviewed in {fileContent}. Provide the result in {language}.");
         return properties;
     }
 }
