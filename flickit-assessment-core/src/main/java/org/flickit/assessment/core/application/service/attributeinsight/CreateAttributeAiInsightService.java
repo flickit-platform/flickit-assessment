@@ -130,6 +130,10 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             .create();
     }
 
+    record AiResponseDto(
+        String value){
+    }
+
     @Nullable
     private String uploadInputFile(Attribute attribute, InputStream stream) {
         String aiInputPath = null;

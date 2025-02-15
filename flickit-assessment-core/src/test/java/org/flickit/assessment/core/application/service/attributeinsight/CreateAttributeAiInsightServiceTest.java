@@ -99,7 +99,7 @@ class CreateAttributeAiInsightServiceTest {
     private ArgumentCaptor<AttributeInsight> attributeInsightArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<Class<String>> classCaptor;
+    private ArgumentCaptor<Class<CreateAttributeAiInsightService.AiResponseDto>> classCaptor;
 
     @Captor
     private ArgumentCaptor<Prompt> promptArgumentCaptor;
@@ -111,7 +111,7 @@ class CreateAttributeAiInsightServiceTest {
     private final AssessmentResult assessmentResult = validResult();
     private final String fileContent = "file content";
     private final String fileReportPath = "path/to/file";
-    private final String aiInsight = "Insight Content";
+    private final CreateAttributeAiInsightService.AiResponseDto aiInsight = new CreateAttributeAiInsightService.AiResponseDto("Insight Content");
     private final CreateAttributeScoresFilePort.Result file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
     private final AttributeValue attributeValue = AttributeValueMother.hasFullScoreOnLevel23WithWeight(1, attribute.getId());
     private final List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
@@ -138,10 +138,10 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAssessmentProgressIsNotCompleted_thenThrowValidationException() {
-        var progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 11);
+        var incompleteProgress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 11);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
-        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
+        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(incompleteProgress);
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAiInsight(param));
         assertEquals(CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED, throwable.getMessageKey());
@@ -246,7 +246,7 @@ class CreateAttributeAiInsightServiceTest {
         var result = service.createAiInsight(param);
         assertEquals("Insight Content", result.content());
         verify(createAttributeInsightPort).persist(attributeInsightArgumentCaptor.capture());
-        assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue().getAiInsight());
+        assertEquals(aiInsight.value(), attributeInsightArgumentCaptor.getValue().getAiInsight());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getAiInsightTime());
         assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsight());
         assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsightTime());
@@ -276,7 +276,7 @@ class CreateAttributeAiInsightServiceTest {
         var result = service.createAiInsight(param);
         verify(createAttributeInsightPort).persist(attributeInsightArgumentCaptor.capture());
         assertEquals("Insight Content", result.content());
-        assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue().getAiInsight());
+        assertEquals(aiInsight.value(), attributeInsightArgumentCaptor.getValue().getAiInsight());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getAiInsightTime());
         assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsight());
         assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsightTime());
@@ -344,20 +344,19 @@ class CreateAttributeAiInsightServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
-        when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(attributeInsight.getAiInsight());
+        when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
 
         var result = service.createAiInsight(param);
-        assertEquals(attributeInsight.getAiInsight(), result.content());
+        assertEquals(aiInsight.value(), result.content());
 
         ArgumentCaptor<UpdateAttributeInsightPort.AiParam> captor = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AiParam.class);
         verify(updateAttributeInsightPort).updateAiInsight(captor.capture());
         assertEquals(assessmentResult.getId(), captor.getValue().assessmentResultId());
         assertEquals(param.getAttributeId(), captor.getValue().attributeId());
-        assertEquals(attributeInsight.getAiInsight(), captor.getValue().aiInsight());
         assertNotNull(captor.getValue().aiInsightTime());
         assertFalse(captor.getValue().isApproved());
         assertNotNull(captor.getValue().lastModificationTime());
@@ -382,7 +381,7 @@ class CreateAttributeAiInsightServiceTest {
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
 
         var result = service.createAiInsight(param);
-        assertEquals(aiInsight, result.content());
+        assertEquals(aiInsight.value(), result.content());
         ArgumentCaptor<UpdateAttributeInsightPort.AiParam> captor = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AiParam.class);
         verify(updateAttributeInsightPort).updateAiInsight(captor.capture());
         assertEquals(assessmentResult.getId(), captor.getValue().assessmentResultId());

@@ -15,7 +15,6 @@ public class OpenAiAdapter implements CallAiPromptPort {
 
     @Override
     public <T> T call(Prompt prompt, Class<T> responseType) {
-
         return ChatClient.create(chatModel)
             .prompt()
             .system(prompt.getContents())
