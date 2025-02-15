@@ -25,8 +25,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.ANSWER_QUESTION;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ANSWER;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -64,7 +62,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         checkQuestionIsMayBeApplicable(param, assessmentResult.getKitVersionId());
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
-        var answerOptionId = TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
+        var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
         var confidenceLevelId = resolveConfidenceLevelId(param, answerOptionId);
 
         if (loadedAnswer.isEmpty())
@@ -79,7 +77,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private void checkQuestionIsMayBeApplicable(Param param, long kitVersionId) {
-        if (TRUE.equals(param.getIsNotApplicable())) {
+        if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
             var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), kitVersionId);
             if (!isMayNotBeApplicable)
                 throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
@@ -87,7 +85,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private Integer resolveConfidenceLevelId(Param param, Long answerOptionId) {
-        if (answerOptionId != null || TRUE.equals(param.getIsNotApplicable()))
+        if (answerOptionId != null || Boolean.TRUE.equals(param.getIsNotApplicable()))
             return param.getConfidenceLevelId() == null
                 ? ConfidenceLevel.getDefault().getId()
                 : param.getConfidenceLevelId();
@@ -98,7 +96,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                                    Param param,
                                    Long answerOptionId,
                                    Integer confidenceLevelId) {
-        if (answerOptionId == null && !TRUE.equals(param.getIsNotApplicable()))
+        if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
             return NotAffected.EMPTY;
         var status = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER)
             ? APPROVED
@@ -118,8 +116,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             ? null
             : loadedAnswer.getSelectedOption().getId();
         var isNotApplicableChanged = !Objects.equals(param.getIsNotApplicable(), loadedAnswer.getIsNotApplicable());
-        var isAnswerOptionChanged = TRUE.equals(param.getIsNotApplicable())
-            ? FALSE
+        var isAnswerOptionChanged = Boolean.TRUE.equals(param.getIsNotApplicable())
+            ? Boolean.FALSE
             : !Objects.equals(answerOptionId, loadedAnswerOptionId);
         var isConfidenceLevelChanged = !Objects.equals(confidenceLevelId, loadedAnswer.getConfidenceLevelId());
         var loadedAnswerId = loadedAnswer.getId();
@@ -154,7 +152,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
     }
 
     private boolean hasProgressed(Param param, Answer loadedAnswer) {
-        return (!TRUE.equals(loadedAnswer.getIsNotApplicable()) && TRUE.equals(param.getIsNotApplicable())) ||
+        return (!Boolean.TRUE.equals(loadedAnswer.getIsNotApplicable()) && Boolean.TRUE.equals(param.getIsNotApplicable())) ||
             (loadedAnswer.getSelectedOption() == null && param.getAnswerOptionId() != null);
     }
 
