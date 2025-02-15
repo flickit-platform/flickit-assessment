@@ -14,7 +14,6 @@ import org.flickit.assessment.advice.application.port.out.maturitylevel.LoadMatu
 import org.flickit.assessment.advice.application.service.advicenarration.CreateAiAdviceNarrationService.AdviceDto;
 import org.flickit.assessment.advice.test.fixture.application.AdviceListItemMother;
 import org.flickit.assessment.advice.test.fixture.application.AssessmentMother;
-import org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -40,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.advice.common.ErrorMessageKey.CREATE_AI_ADVICE_NARRATION_ATTRIBUTE_LEVEL_TARGETS_SIZE_MIN;
 import static org.flickit.assessment.advice.common.MessageKey.ADVICE_NARRATION_AI_IS_DISABLED;
+import static org.flickit.assessment.advice.test.fixture.application.AssessmentResultMother.createAssessmentResult;
 import static org.flickit.assessment.advice.test.fixture.application.AttributeLevelTargetMother.createAttributeLevelTarget;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ADVICE;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -107,7 +107,7 @@ class CreateAiAdviceNarrationServiceTest {
     private AppAiProperties appAiProperties = appAiProperties();
 
     private final String aiNarration = "aiNarration";
-    private final AssessmentResult assessmentResult = AssessmentResultMother.createAssessmentResult();
+    private final AssessmentResult assessmentResult = createAssessmentResult();
     private final List<CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto> adviceItems = List.of(
         new CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto("title1", "description1", 0, 1, 2),
         new CreateAiAdviceNarrationService.AdviceDto.AdviceItemDto("title1", "description1", 2, 0, 1)
@@ -198,9 +198,6 @@ class CreateAiAdviceNarrationServiceTest {
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var capturedAdviceNarration = adviceNarrationCaptor.getValue();
-        var capturedAdviceItems = adviceItemsCaptor.getValue();
-        var expectedAdviceItems = aiAdvice.adviceItems();
-        assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
         assertEquals(aiNarration, adviceNarrationCaptor.getValue().getAiNarration());
         assertEquals(expectedPrompt, promptArgumentCaptor.getValue().getContents());
         assertEquals(AdviceDto.class, classCaptor.getValue());
@@ -209,19 +206,10 @@ class CreateAiAdviceNarrationServiceTest {
         assertNotNull(capturedAdviceNarration.getAiNarrationTime());
         assertNull(capturedAdviceNarration.getAssessorNarrationTime());
         assertEquals(assessmentResult.getId(), capturedAdviceNarration.getAssessmentResultId());
-        assertThat(capturedAdviceItems)
-            .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
-                assertEquals(expected.title(), actual.getTitle());
-                assertEquals(expected.description(), actual.getDescription());
-                assertEquals(assessmentResult.getId(), actual.getAssessmentResultId());
-                assertEquals(expected.cost(), actual.getCost().getId());
-                assertEquals(expected.impact(), actual.getImpact().getId());
-                assertEquals(expected.priority(), actual.getPriority().getId());
-                assertNotNull(actual.getCreationTime());
-                assertNotNull(actual.getLastModificationTime());
-                assertNull(actual.getCreatedBy());
-                assertNull(actual.getLastModifiedBy());
-            });
+
+        var capturedAdviceItems = adviceItemsCaptor.getValue();
+        var expectedAdviceItems = aiAdvice.adviceItems();
+        assertAdviceItems(expectedAdviceItems, capturedAdviceItems);
 
         verifyNoInteractions(updateAdviceNarrationPort);
     }
@@ -249,27 +237,14 @@ class CreateAiAdviceNarrationServiceTest {
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var capturedAdviceNarration = updateNarrationCaptor.getValue();
-        var capturedAdviceItems = adviceItemsCaptor.getValue();
-        var expectedAdviceItems = aiAdvice.adviceItems();
         assertEquals(adviceNarration.getId(), capturedAdviceNarration.id());
-        assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
         assertEquals(aiNarration, capturedAdviceNarration.narration());
         assertEquals(expectedPrompt, promptArgumentCaptor.getValue().getContents());
         assertNotNull(capturedAdviceNarration.narrationTime());
-        assertEquals(AdviceDto.class, classCaptor.getValue());
-        assertThat(capturedAdviceItems)
-            .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
-                assertEquals(expected.title(), actual.getTitle());
-                assertEquals(expected.description(), actual.getDescription());
-                assertEquals(assessmentResult.getId(), actual.getAssessmentResultId());
-                assertEquals(expected.cost(), actual.getCost().getId());
-                assertEquals(expected.impact(), actual.getImpact().getId());
-                assertEquals(expected.priority(), actual.getPriority().getId());
-                assertNotNull(actual.getCreationTime());
-                assertNotNull(actual.getLastModificationTime());
-                assertNull(actual.getCreatedBy());
-                assertNull(actual.getLastModifiedBy());
-            });
+
+        var capturedAdviceItems = adviceItemsCaptor.getValue();
+        var expectedAdviceItems = aiAdvice.adviceItems();
+        assertAdviceItems(expectedAdviceItems, capturedAdviceItems);
 
         verifyNoInteractions(createAdviceNarrationPort);
     }
@@ -297,27 +272,14 @@ class CreateAiAdviceNarrationServiceTest {
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
 
         var capturedAdviceNarration = updateNarrationCaptor.getValue();
-        var capturedAdviceItems = adviceItemsCaptor.getValue();
-        var expectedAdviceItems = aiAdvice.adviceItems();
         assertEquals(adviceNarration.getId(), capturedAdviceNarration.id());
-        assertEquals(aiAdvice.adviceItems().size(), capturedAdviceItems.size());
         assertEquals(aiNarration, capturedAdviceNarration.narration());
         assertEquals(expectedPrompt, promptArgumentCaptor.getValue().getContents());
         assertNotNull(capturedAdviceNarration.narrationTime());
-        assertEquals(AdviceDto.class, classCaptor.getValue());
-        assertThat(capturedAdviceItems)
-            .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
-                assertEquals(expected.title(), actual.getTitle());
-                assertEquals(expected.description(), actual.getDescription());
-                assertEquals(assessmentResult.getId(), actual.getAssessmentResultId());
-                assertEquals(expected.cost(), actual.getCost().getId());
-                assertEquals(expected.impact(), actual.getImpact().getId());
-                assertEquals(expected.priority(), actual.getPriority().getId());
-                assertNotNull(actual.getCreationTime());
-                assertNotNull(actual.getLastModificationTime());
-                assertNull(actual.getCreatedBy());
-                assertNull(actual.getLastModifiedBy());
-            });
+
+        var capturedAdviceItems = adviceItemsCaptor.getValue();
+        var expectedAdviceItems = aiAdvice.adviceItems();
+        assertAdviceItems(expectedAdviceItems, capturedAdviceItems);
 
         verifyNoInteractions(createAdviceNarrationPort);
     }
@@ -341,6 +303,24 @@ class CreateAiAdviceNarrationServiceTest {
             loadMaturityLevelsPort,
             callAiPromptPort,
             createAdviceNarrationPort);
+    }
+
+    private void assertAdviceItems(List<AdviceDto.AdviceItemDto> expectedAdviceItems, List<AdviceItem> capturedAdviceItems) {
+        assertEquals(expectedAdviceItems.size(), capturedAdviceItems.size());
+        assertEquals(AdviceDto.class, classCaptor.getValue());
+        assertThat(capturedAdviceItems)
+            .zipSatisfy(expectedAdviceItems, (actual, expected) -> {
+                assertEquals(expected.title(), actual.getTitle());
+                assertEquals(expected.description(), actual.getDescription());
+                assertEquals(assessmentResult.getId(), actual.getAssessmentResultId());
+                assertEquals(expected.cost(), actual.getCost().getId());
+                assertEquals(expected.impact(), actual.getImpact().getId());
+                assertEquals(expected.priority(), actual.getPriority().getId());
+                assertNotNull(actual.getCreationTime());
+                assertNotNull(actual.getLastModificationTime());
+                assertNull(actual.getCreatedBy());
+                assertNull(actual.getLastModifiedBy());
+            });
     }
 
     private AppAiProperties appAiProperties() {
