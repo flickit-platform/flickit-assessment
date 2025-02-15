@@ -73,6 +73,11 @@ public class AnswerMother {
     }
 
     public static Answer answerWithNotApplicableTrueAndUnapprovedStatus(AnswerOption option) {
-        return new Answer(UUID.randomUUID(), option, 1L, ConfidenceLevel.getDefault().getId(), Boolean.TRUE, UNAPPROVED);
+        return new Answer(UUID.randomUUID(),
+                option,
+                1L,
+                ConfidenceLevel.getDefault().getId(),
+                Boolean.TRUE,
+                UNAPPROVED);
     }
 }
