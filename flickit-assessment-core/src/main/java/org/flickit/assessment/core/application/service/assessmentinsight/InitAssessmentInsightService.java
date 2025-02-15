@@ -7,16 +7,19 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
+import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.port.in.assessmentinsight.InitAssessmentInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.CreateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
@@ -55,6 +58,8 @@ public class InitAssessmentInsightService implements InitAssessmentInsightUseCas
         int confidenceValue = assessmentResult.getConfidenceValue() != null ? (int) Math.ceil(assessmentResult.getConfidenceValue()) : 0;
         String maturityLevelTitle = assessmentResult.getMaturityLevel().getTitle();
 
+        AssessmentKit kit = assessmentResult.getAssessment().getAssessmentKit();
+        LocaleContextHolder.setLocale(Locale.of(kit.getLanguage().getCode()));
         String insight = (questionsCount == answersCount)
             ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED, maturityLevelTitle, questionsCount, confidenceValue)
             : MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE, maturityLevelTitle, answersCount, questionsCount, confidenceValue);
