@@ -30,6 +30,24 @@ public class AssessmentMother {
         );
     }
 
+    public static Assessment assessmentWithPersianKitLanguage() {
+        counter++;
+        return new Assessment(
+            UUID.randomUUID(),
+            "my-assessment-" + counter,
+            "My Assessment " + counter,
+            "Short title" + counter,
+            AssessmentKitMother.persianKit(),
+            new Space(123L, "title"),
+            234L,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            0L,
+            false,
+            UUID.randomUUID()
+        );
+    }
+
     public static Assessment assessmentWithoutActiveVersion() {
         counter++;
         return new Assessment(

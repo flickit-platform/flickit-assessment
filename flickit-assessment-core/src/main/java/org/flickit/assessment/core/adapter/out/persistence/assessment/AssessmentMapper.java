@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.assessment;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.Space;
@@ -31,7 +32,8 @@ public class AssessmentMapper {
     }
 
     public static Assessment mapToDomainModel(AssessmentKitSpaceJoinView view) {
-        AssessmentKit kit = new AssessmentKit(view.getKit().getId(), view.getKit().getTitle(), view.getKit().getKitVersionId(), null);
+        AssessmentKit kit = new AssessmentKit(view.getKit().getId(), view.getKit().getTitle(),
+            view.getKit().getKitVersionId(), KitLanguage.valueOfById(view.getKit().getLanguageId()), null);
         Space space = new Space(view.getSpace().getId(), view.getSpace().getTitle());
         return mapToDomainModel(view.getAssessment(), kit, space);
     }
