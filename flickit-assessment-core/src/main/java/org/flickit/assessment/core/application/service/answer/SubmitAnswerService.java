@@ -59,7 +59,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
 
-        checkQuestionIsMayBeApplicable(param, assessmentResult.getKitVersionId());
+        validateQuestionApplicability(param, assessmentResult.getKitVersionId());
 
         var loadedAnswer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId());
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
@@ -75,7 +75,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
     }
 
-    private void checkQuestionIsMayBeApplicable(Param param, long kitVersionId) {
+    private void validateQuestionApplicability(Param param, long kitVersionId) {
         if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
             var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), kitVersionId);
             if (!isMayNotBeApplicable)

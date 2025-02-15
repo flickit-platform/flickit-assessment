@@ -18,28 +18,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class SubmitAnswerUseCaseParamTest {
 
     @Test
-    void testSubmitAnswer_assessmentIdViolations_ErrorMessage() {
+    void testSubmitAnswerUseCaseParam_assessmentIdViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + SUBMIT_ANSWER_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testSubmitAnswer_questionnaireIdViolations_ErrorMessage() {
+    void testSubmitAnswerUseCaseParam_questionnaireIdViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.questionnaireId(null)));
         assertThat(throwable).hasMessage("questionnaireId: " + SUBMIT_ANSWER_QUESTIONNAIRE_ID_NOT_NULL);
     }
 
     @Test
-    void testSubmitAnswer_questionIdViolations_ErrorMessage() {
+    void testSubmitAnswerUseCaseParam_questionIdViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.questionId(null)));
         assertThat(throwable).hasMessage("questionId: " + SUBMIT_ANSWER_QUESTION_ID_NOT_NULL);
     }
 
     @Test
-    void testSubmitAnswer_currentUserIdViolations_ErrorMessage() {
+    void testSubmitAnswerUseCaseParam_currentUserIdViolations_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
