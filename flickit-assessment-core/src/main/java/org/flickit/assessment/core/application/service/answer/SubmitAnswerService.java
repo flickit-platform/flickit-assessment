@@ -77,8 +77,8 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
 
     private void validateQuestionApplicability(Param param, long kitVersionId) {
         if (Boolean.TRUE.equals(param.getIsNotApplicable())) {
-            var isMayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), kitVersionId);
-            if (!isMayNotBeApplicable)
+            var mayNotBeApplicable = loadQuestionMayNotBeApplicablePort.loadMayNotBeApplicableById(param.getQuestionId(), kitVersionId);
+            if (!mayNotBeApplicable)
                 throw new ValidationException(SUBMIT_ANSWER_QUESTION_ID_NOT_MAY_NOT_BE_APPLICABLE);
         }
     }
@@ -89,21 +89,6 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                 ? ConfidenceLevel.getDefault().getId()
                 : param.getConfidenceLevelId();
         return null;
-    }
-
-    private Result handelNewAnswer(AssessmentResult assessmentResult,
-                                   Param param,
-                                   Long answerOptionId,
-                                   Integer confidenceLevelId) {
-        if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
-            return NotAffected.EMPTY;
-        var status = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER)
-            ? APPROVED
-            : UNAPPROVED;
-        var savedAnswerId = saveAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId, status);
-        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), true);
-        log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), savedAnswerId);
-        return new Submitted(savedAnswerId, notificationCmd);
     }
 
     private Result handleExistingAnswer(AssessmentResult assessmentResult,
@@ -150,18 +135,57 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         return new Submitted(loadedAnswerId, notificationCmd);
     }
 
+    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId,
+                                                       Long answerOptionId,
+                                                       Integer confidenceLevelId,
+                                                       Boolean isNotApplicable,
+                                                       AnswerStatus status,
+                                                       UUID currentUserId) {
+        return new UpdateAnswerPort.Param(answerId,
+            answerOptionId,
+            confidenceLevelId,
+            isNotApplicable,
+            status,
+            currentUserId);
+    }
+
+    private void invalidateAssessmentResult(AssessmentResult assessmentResult,
+                                            boolean isAnswerOptionChanged,
+                                            boolean isNotApplicableChanged,
+                                            boolean isConfidenceLevelChanged) {
+        if (isAnswerOptionChanged || isNotApplicableChanged)
+            invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
+        if (isConfidenceLevelChanged)
+            invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResult.getId());
+    }
+
     private boolean hasProgressed(Param param, Answer loadedAnswer) {
         return (!Boolean.TRUE.equals(loadedAnswer.getIsNotApplicable()) && Boolean.TRUE.equals(param.getIsNotApplicable())) ||
             (loadedAnswer.getSelectedOption() == null && param.getAnswerOptionId() != null);
     }
 
-    private UUID saveAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId, AnswerStatus status) {
-        UUID savedAnswerId = createAnswerPort.persist(toCreateParam(param,
+    private Result handelNewAnswer(AssessmentResult assessmentResult,
+                                   Param param,
+                                   Long answerOptionId,
+                                   Integer confidenceLevelId) {
+        if (answerOptionId == null && !Boolean.TRUE.equals(param.getIsNotApplicable()))
+            return NotAffected.EMPTY;
+        var status = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER)
+            ? APPROVED
+            : UNAPPROVED;
+        var createdAnswerId = createAnswer(param, assessmentResult.getId(), answerOptionId, confidenceLevelId, status);
+        var notificationCmd = new SubmitAnswerNotificationCmd(param.getAssessmentId(), param.getCurrentUserId(), true);
+        log.info("Answer submitted for assessmentId=[{}] with answerId=[{}].", param.getAssessmentId(), createdAnswerId);
+        return new Submitted(createdAnswerId, notificationCmd);
+    }
+
+    private UUID createAnswer(Param param, UUID assessmentResultId, Long answerOptionId, Integer confidenceLevelId, AnswerStatus status) {
+        UUID createdAnswerId = createAnswerPort.persist(toCreateParam(param,
             assessmentResultId,
             answerOptionId,
             confidenceLevelId,
             status));
-        createAnswerHistoryPort.persist(toAnswerHistory(savedAnswerId,
+        createAnswerHistoryPort.persist(toAnswerHistory(createdAnswerId,
             param,
             assessmentResultId,
             answerOptionId,
@@ -170,7 +194,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             PERSIST));
         invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResultId);
         invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResultId);
-        return savedAnswerId;
+        return createdAnswerId;
     }
 
     private CreateAnswerPort.Param toCreateParam(Param param,
@@ -197,8 +221,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                                           Integer confidenceLevelId,
                                           AnswerStatus status,
                                           HistoryType historyType) {
-        return new AnswerHistory(
-            null,
+        return new AnswerHistory(null,
             toAnswer(answerId, param, answerOptionId, confidenceLevelId, status),
             assessmentResultId,
             new FullUser(param.getCurrentUserId(), null, null, null),
@@ -217,29 +240,5 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             confidenceLevelId,
             param.getIsNotApplicable(),
             status);
-    }
-
-    private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId,
-                                                       Long answerOptionId,
-                                                       Integer confidenceLevelId,
-                                                       Boolean isNotApplicable,
-                                                       AnswerStatus status,
-                                                       UUID currentUserId) {
-        return new UpdateAnswerPort.Param(answerId,
-            answerOptionId,
-            confidenceLevelId,
-            isNotApplicable,
-            status,
-            currentUserId);
-    }
-
-    private void invalidateAssessmentResult(AssessmentResult assessmentResult,
-                                            boolean isAnswerOptionChanged,
-                                            boolean isNotApplicableChanged,
-                                            boolean isConfidenceLevelChanged) {
-        if (isAnswerOptionChanged || isNotApplicableChanged)
-            invalidateAssessmentResultCalculatePort.invalidateCalculate(assessmentResult.getId());
-        if (isConfidenceLevelChanged)
-            invalidateAssessmentResultConfidencePort.invalidateConfidence(assessmentResult.getId());
     }
 }
