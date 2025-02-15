@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.InitSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -14,10 +15,12 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSub
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
@@ -48,6 +51,8 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
+        AssessmentKit kit = assessmentResult.getAssessment().getAssessmentKit();
+        LocaleContextHolder.setLocale(Locale.of(kit.getLanguage().getCode()));
         String defaultInsight = buildDefaultInsight(param.getSubjectId(), assessmentResult.getId(), assessmentResult.getKitVersionId());
         var subjectInsight = new SubjectInsight(assessmentResult.getId(),
             param.getSubjectId(),
