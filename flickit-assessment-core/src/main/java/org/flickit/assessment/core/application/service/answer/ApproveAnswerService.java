@@ -23,6 +23,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
+import static org.flickit.assessment.core.application.domain.AnswerStatus.UNAPPROVED;
 import static org.flickit.assessment.core.application.domain.HistoryType.UPDATE;
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ANSWER_QUESTION_NOT_ANSWERED;
 
@@ -43,34 +44,37 @@ public class ApproveAnswerService implements ApproveAnswerUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-                .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var answer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())
-                .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED));
-        if (answer.getSelectedOption() == null && !Boolean.TRUE.equals(answer.getIsNotApplicable()))
-            throw new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED);
-        if (Objects.equals(answer.getAnswerStatus(), APPROVED))
-            return;
+        var answer = loadAnswer(assessmentResult.getId(), param.getQuestionId());
 
-        approveAnswerPort.approve(answer.getId(), param.getCurrentUserId());
-        createAnswerHistoryPort.persist(toAnswerHistory(answer, param, assessmentResult.getId()));
+        if (Objects.equals(answer.getAnswerStatus(), UNAPPROVED)) {
+            approveAnswerPort.approve(answer.getId(), param.getCurrentUserId());
+            createAnswerHistoryPort.persist(toAnswerHistory(answer, param, assessmentResult.getId()));
+        }
+    }
+
+    private Answer loadAnswer(UUID assessmentResultId, long questionId) {
+        return loadAnswerPort.load(assessmentResultId, questionId)
+            .filter(ans -> ans.getSelectedOption() != null || Boolean.TRUE.equals(ans.getIsNotApplicable()))
+            .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED));
     }
 
     private AnswerHistory toAnswerHistory(Answer answer, Param param, UUID assessmentResultId) {
         return new AnswerHistory(null,
-                toApprovedAnswer(answer),
-                assessmentResultId,
-                new FullUser(param.getCurrentUserId(), null, null, null),
-                LocalDateTime.now(),
-                UPDATE);
+            toApprovedAnswer(answer),
+            assessmentResultId,
+            new FullUser(param.getCurrentUserId(), null, null, null),
+            LocalDateTime.now(),
+            UPDATE);
     }
 
     private Answer toApprovedAnswer(Answer answer) {
         return new Answer(answer.getId(),
-                answer.getSelectedOption(),
-                answer.getQuestionId(),
-                answer.getConfidenceLevelId(),
-                answer.getIsNotApplicable(),
-                APPROVED);
+            answer.getSelectedOption(),
+            answer.getQuestionId(),
+            answer.getConfidenceLevelId(),
+            answer.getIsNotApplicable(),
+            APPROVED);
     }
 }

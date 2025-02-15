@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.HistoryType;
 import org.flickit.assessment.core.application.port.in.answer.ApproveAnswerUseCase.Param;
 import org.flickit.assessment.core.application.port.out.answer.ApproveAnswerPort;
@@ -12,7 +13,6 @@ import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnsw
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AnswerOptionMother;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -29,6 +29,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSM
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ANSWER_QUESTION_NOT_ANSWERED;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -53,30 +54,32 @@ class ApproveAnswerServiceTest {
     @Mock
     private CreateAnswerHistoryPort createAnswerHistoryPort;
 
+    private final AssessmentResult assessmentResult = validResult();
+
     @Test
-    void testApproveAnswer_UserHasNotAccess_ThrowsException() {
+    void testApproveAnswer_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
-                .thenReturn(false);
+            .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.approveAnswer(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(loadAssessmentResultPort,
-                loadAnswerPort,
-                approveAnswerPort,
-                createAnswerHistoryPort);
+            loadAnswerPort,
+            approveAnswerPort,
+            createAnswerHistoryPort);
     }
 
     @Test
-    void testApproveAnswer_AssessmentResultNotExist_ThrowsException() {
+    void testApproveAnswer_whenAssessmentResultNotExists_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-                .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.approveAnswer(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
@@ -85,16 +88,15 @@ class ApproveAnswerServiceTest {
     }
 
     @Test
-    void testApproveAnswer_ApproveNotExistsAnswer_ThrowsException() {
+    void testApproveAnswer_whenAnswerNotExists_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
-        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-                .thenReturn(Optional.of(assessmentResult));
+            .thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
-                .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.approveAnswer(param));
         assertEquals(APPROVE_ANSWER_QUESTION_NOT_ANSWERED, throwable.getMessage());
@@ -103,16 +105,15 @@ class ApproveAnswerServiceTest {
     }
 
     @Test
-    void testApproveAnswer_ApproveNullAnswerOptionAsApplicableAnswer_ThrowsException() {
+    void testApproveAnswer_whenAnswerOptionIsNullAndNotApplicableIsNotTrue_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
-        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-                .thenReturn(Optional.of(assessmentResult));
+            .thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
-                .thenReturn(Optional.of(AnswerMother.answer(null)));
+            .thenReturn(Optional.of(AnswerMother.answer(null)));
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.approveAnswer(param));
         assertEquals(APPROVE_ANSWER_QUESTION_NOT_ANSWERED, throwable.getMessage());
@@ -121,17 +122,16 @@ class ApproveAnswerServiceTest {
     }
 
     @Test
-    void testApproveAnswer_ApproveApprovedAnswer_DoNothing() {
+    void testApproveAnswer_whenAnswerIsAlreadyApproved_thenDoNothing() {
         var answer = AnswerMother.answer(AnswerOptionMother.optionOne());
         var param = createParam(b -> b.questionId(answer.getQuestionId()));
-        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-                .thenReturn(Optional.of(assessmentResult));
+            .thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
-                .thenReturn(Optional.of(answer));
+            .thenReturn(Optional.of(answer));
 
         service.approveAnswer(param);
 
@@ -139,19 +139,18 @@ class ApproveAnswerServiceTest {
     }
 
     @Test
-    void testApproveAnswer_ApproveNotApplicableAnswer_UpdateAnswerStatus() {
+    void testApproveAnswer_whenAnswerIsMarkedAsNotApplicableAndUnapproved_thenUpdateAnswerStatus() {
         var answer = AnswerMother.answerWithNotApplicableTrueAndUnapprovedStatus(null);
         var param = createParam(b -> b.questionId(answer.getQuestionId()));
-        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-                .thenReturn(Optional.of(assessmentResult));
+            .thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
-                .thenReturn(Optional.of(answer));
+            .thenReturn(Optional.of(answer));
         doNothing()
-                .when(approveAnswerPort).approve(answer.getId(), param.getCurrentUserId());
+            .when(approveAnswerPort).approve(answer.getId(), param.getCurrentUserId());
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(UUID.randomUUID());
 
         service.approveAnswer(param);
@@ -169,19 +168,18 @@ class ApproveAnswerServiceTest {
     }
 
     @Test
-    void testApproveAnswer_ApproveApplicableAnswerWithNotNullAnswerOption_UpdateAnswerStatus() {
+    void testApproveAnswer_whenAnswerOptionIsNotNullAndUnapproved_thenUpdateAnswerStatus() {
         var answer = AnswerMother.answerWithNotApplicableTrueAndUnapprovedStatus(AnswerOptionMother.optionOne());
         var param = createParam(b -> b.questionId(answer.getQuestionId()));
-        var assessmentResult = AssessmentResultMother.validResult();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-                .thenReturn(Optional.of(assessmentResult));
+            .thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
-                .thenReturn(Optional.of(answer));
+            .thenReturn(Optional.of(answer));
         doNothing()
-                .when(approveAnswerPort).approve(answer.getId(), param.getCurrentUserId());
+            .when(approveAnswerPort).approve(answer.getId(), param.getCurrentUserId());
         when(createAnswerHistoryPort.persist(any(AnswerHistory.class))).thenReturn(UUID.randomUUID());
 
         service.approveAnswer(param);
@@ -207,8 +205,8 @@ class ApproveAnswerServiceTest {
 
     private Param.ParamBuilder paramBuilder() {
         return Param.builder()
-                .assessmentId(UUID.randomUUID())
-                .questionId(1563L)
-                .currentUserId(UUID.randomUUID());
+            .assessmentId(UUID.randomUUID())
+            .questionId(1563L)
+            .currentUserId(UUID.randomUUID());
     }
 }

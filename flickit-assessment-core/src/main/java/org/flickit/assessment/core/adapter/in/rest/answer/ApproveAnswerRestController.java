@@ -22,7 +22,7 @@ public class ApproveAnswerRestController {
 
     @PutMapping("/assessments/{assessmentId}/approve-answer")
     public ResponseEntity<Void> approveAnswer(@PathVariable("assessmentId") UUID assessmentId,
-                                             @RequestBody ApproveAnswerRequestDto requestDto) {
+                                              @RequestBody ApproveAnswerRequestDto requestDto) {
         UUID currentUserId = userContext.getUser().id();
         useCase.approveAnswer(toParam(assessmentId, requestDto, currentUserId));
         return new ResponseEntity<>(HttpStatus.OK);

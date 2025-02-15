@@ -117,6 +117,6 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public void approve(UUID answerId, UUID approvedBy) {
-        repository.approve(answerId, approvedBy, AnswerStatus.APPROVED.ordinal());
+        repository.approve(answerId, approvedBy, AnswerStatus.APPROVED.getId());
     }
 }
