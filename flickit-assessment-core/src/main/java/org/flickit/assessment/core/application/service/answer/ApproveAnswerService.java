@@ -49,7 +49,7 @@ public class ApproveAnswerService implements ApproveAnswerUseCase {
 
         var answer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED));
-        if (answer.getSelectedOption() == null)
+        if (answer.getSelectedOption() == null && !Boolean.TRUE.equals(answer.getIsNotApplicable()))
             throw new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED);
         if (Objects.equals(answer.getAnswerStatus(), APPROVED))
             throw new ResourceAlreadyExistsException(APPROVE_ANSWER_ANSWER_ALREADY_APPROVED);
