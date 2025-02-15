@@ -2,6 +2,7 @@ package org.flickit.assessment.data.jpa.kit.kittagrelation;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldNameConstants;
 import org.flickit.assessment.data.jpa.AbstractEntity;
 
 
@@ -12,6 +13,7 @@ import org.flickit.assessment.data.jpa.AbstractEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(KitTagRelationJpaEntity.KitTagRelationKey.class)
+@FieldNameConstants
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class KitTagRelationJpaEntity extends AbstractEntity<KitTagRelationJpaEntity.KitTagRelationKey> {
 
