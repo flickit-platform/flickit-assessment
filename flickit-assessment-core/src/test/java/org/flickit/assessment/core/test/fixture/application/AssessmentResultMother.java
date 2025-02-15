@@ -89,4 +89,20 @@ public class AssessmentResultMother {
         assessmentResult.setLastConfidenceCalculationTime(lastConfCalculationTime);
         return assessmentResult;
     }
+
+    public static AssessmentResult validResultWithPersianKitLanguage() {
+        var assessment = AssessmentMother.assessmentWithPersianKitLanguage();
+        var assessmentResult = new AssessmentResult(UUID.randomUUID(),
+            assessment,
+            assessment.getAssessmentKit().getKitVersion(),
+            new ArrayList<>(),
+            LocalDateTime.now(),
+            LocalDateTime.now());
+
+        assessmentResult.setIsCalculateValid(true);
+        assessmentResult.setMaturityLevel(levelFour());
+        assessmentResult.setIsConfidenceValid(true);
+        assessmentResult.setConfidenceValue(69.0);
+        return assessmentResult;
+    }
 }
