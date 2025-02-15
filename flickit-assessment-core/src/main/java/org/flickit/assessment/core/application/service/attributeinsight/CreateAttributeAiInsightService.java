@@ -130,8 +130,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             .create();
     }
 
-    record AiResponseDto(
-        String value){
+    record AiResponseDto(String value) {
     }
 
     @Nullable
