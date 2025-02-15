@@ -197,7 +197,8 @@ class CreateAttributeAiInsightServiceTest {
     @Test
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabled_thenGenerateAndPersistAiInsight() {
         String expectedPrompt = "The attribute " + attribute.getTitle() + " with this description " + attribute.getDescription() +
-            " for " + assessmentResultWithEnglishKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in English.";
+            " for " + assessmentResultWithEnglishKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
+            "Provide the result in " + assessmentResultWithEnglishKit.getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
@@ -231,7 +232,8 @@ class CreateAttributeAiInsightServiceTest {
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabledAndSaveFilesDisabled_thenGenerateAndNotSaveFileAndPersistInsight() {
         var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithKitLanguage(KitLanguage.FA);
         String expectedPrompt = "The attribute " + attribute.getTitle() + " with this description " + attribute.getDescription() +
-            " for " + assessmentResultWithPersianKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in Persian.";
+            " for " + assessmentResultWithPersianKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
+            "Provide the result in " + assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
         when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
