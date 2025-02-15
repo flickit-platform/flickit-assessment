@@ -120,7 +120,7 @@ class CreateAiAdviceNarrationServiceTest {
         "and recommendations AdviceRecommendation[question=title, currentOption=answeredOption, recommendedOption=recommendedOption] has been evaluated.";
 
     @Test
-    void testCreateAiAdviceNarration_WhenUserDoesNotHaveRequiredPermission_ThenShouldThrowAccessDeniedException() {
+    void testCreateAiAdviceNarration_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAiAdviceNarration(param));
@@ -140,7 +140,7 @@ class CreateAiAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAiAdviceNarration_WhenAiIsDisabled_ThenShouldReturnAiIsDisabledMessage() {
+    void testCreateAiAdviceNarration_whenAiIsDisabled_thenReturnAiIsDisabledMessage() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(appAiProperties.isEnabled()).thenReturn(false);
 
@@ -160,7 +160,7 @@ class CreateAiAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAiAdviceNarration_WhenAssessmentResultDoesNotExist_ThenShouldReturnResourceNoFound() {
+    void testCreateAiAdviceNarration_whenAssessmentResultDoesNotExist_thenReturnResourceNoFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE)).thenReturn(true);
         when(appAiProperties.isEnabled()).thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -177,7 +177,7 @@ class CreateAiAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAiAdviceNarration_WhenAdviceNarrationDoesNotExist_ThenShouldCreateAdviceNarration() {
+    void testCreateAiAdviceNarration_whenAdviceNarrationDoesNotExist_thenCreateAdviceNarration() {
         var assessment = AssessmentMother.assessmentWithShortTitle("ShortTitle");
         var expectedPrompt = String.format(rawPrompt, assessment.getShortTitle());
 
@@ -227,7 +227,7 @@ class CreateAiAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAiAdviceNarration_WhenAdviceNarrationExistsAndShortTitleNotExists_ThenShouldUpdateAdviceNarration() {
+    void testCreateAiAdviceNarration_whenAdviceNarrationExistsAndShortTitleNotExists_thenUpdateAdviceNarration() {
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
         var assessment = AssessmentMother.assessmentWithShortTitle(null);
         var expectedPrompt = String.format(rawPrompt, assessment.getTitle());
@@ -275,7 +275,7 @@ class CreateAiAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAiAdviceNarration_WhenAdviceNarrationExistsAndShortTitleExists_ThenShouldUpdateAdviceNarration() {
+    void testCreateAiAdviceNarration_whenAdviceNarrationExistsAndShortTitleExists_thenUpdateAdviceNarration() {
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
         var assessment = AssessmentMother.assessmentWithShortTitle("shortTitle");
         var expectedPrompt = String.format(rawPrompt, assessment.getShortTitle());
@@ -323,7 +323,7 @@ class CreateAiAdviceNarrationServiceTest {
     }
 
     @Test
-    void testCreateAiAdviceNarration_WhenNoValidTargetExists_ThenThrowValidationException() {
+    void testCreateAiAdviceNarration_whenNoValidTargetExists_thenThrowValidationException() {
         var attributeLevelTargets = List.of(createAttributeLevelTarget());
         var adviceNarration = new AdviceNarration(UUID.randomUUID(), assessmentResult.getId(), aiNarration, null, LocalDateTime.now(), null, UUID.randomUUID());
 
