@@ -91,7 +91,7 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
 
         var file = generateScoreFile(param, assessmentResult);
         var prompt = createPrompt(attribute.getTitle(), attribute.getDescription(), assessmentTitle, file.text());
-        String aiInsight = callAiPromptPort.call(prompt, String.class);
+        String aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
         String aiInputPath = uploadInputFile(attribute, file.stream());
 
         if (attributeInsight.isPresent())
@@ -126,6 +126,10 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
                 "assessmentTitle", assessmentTitle,
                 "fileContent", fileContent))
             .create();
+    }
+
+    record AiResponseDto(
+        String value){
     }
 
     @Nullable
