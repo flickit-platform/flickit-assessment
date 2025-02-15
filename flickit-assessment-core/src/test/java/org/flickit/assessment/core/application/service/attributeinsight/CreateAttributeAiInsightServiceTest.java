@@ -114,8 +114,6 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        var param = createParam(CreateAttributeAiInsightUseCase.Param.ParamBuilder::build);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAiInsight(param));
@@ -193,7 +191,6 @@ class CreateAttributeAiInsightServiceTest {
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabled_thenGenerateAndPersistAiInsight() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
         when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
         when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
@@ -215,6 +212,7 @@ class CreateAttributeAiInsightServiceTest {
         assertNotNull(attributeInsightArgumentCaptor.getValue().getLastModificationTime());
         assertEquals(assessmentResult.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
 
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(updateAttributeInsightPort);
     }
 
@@ -305,8 +303,7 @@ class CreateAttributeAiInsightServiceTest {
         when(callAiPromptPort.call(prompt, String.class)).thenReturn(attributeInsight.getAiInsight());
         when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
-        when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels))
-            .thenReturn(file);
+        when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
 
         var result = service.createAiInsight(param);
@@ -321,6 +318,7 @@ class CreateAttributeAiInsightServiceTest {
         assertFalse(captor.getValue().isApproved());
         assertNotNull(captor.getValue().lastModificationTime());
 
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createAttributeInsightPort);
     }
 
@@ -349,6 +347,7 @@ class CreateAttributeAiInsightServiceTest {
         assertFalse(captor.getValue().isApproved());
         assertNotNull(captor.getValue().lastModificationTime());
 
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createAttributeInsightPort, uploadAttributeScoresFilePort);
     }
 
