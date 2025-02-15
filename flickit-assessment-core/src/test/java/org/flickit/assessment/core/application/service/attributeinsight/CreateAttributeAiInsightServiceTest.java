@@ -212,7 +212,7 @@ class CreateAttributeAiInsightServiceTest {
         var result = service.createAiInsight(param);
         assertEquals("Insight Content", result.content());
         verify(createAttributeInsightPort).persist(attributeInsightArgumentCaptor.capture());
-        assertEquals(aiInsight, attributeInsightArgumentCaptor.getValue().getAiInsight());
+        assertEquals(aiInsight.value(), attributeInsightArgumentCaptor.getValue().getAiInsight());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getAiInsightTime());
         assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsight());
         assertNull(attributeInsightArgumentCaptor.getValue().getAssessorInsightTime());
