@@ -20,7 +20,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -31,7 +33,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createDefaultInsightWithAssessmentResultId;
-import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,10 +65,11 @@ class InitAssessmentInsightServiceTest {
     @Mock
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
+    private final InitAssessmentInsightUseCase.Param param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
+
+
     @Test
     void testInitAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(false);
 
@@ -83,8 +85,6 @@ class InitAssessmentInsightServiceTest {
 
     @Test
     void testInitAssessmentInsight_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
-        var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -101,9 +101,9 @@ class InitAssessmentInsightServiceTest {
 
     @Test
     void testInitAssessmentInsight_whenInsightNotExistsAndAssessmentIsComplete_thenCrateAssessmentInsight() {
-        var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
-        var assessmentResult = validResult();
+        var assessmentResult = AssessmentResultMother.validResultWithPersianKitLanguage();
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 15, 15);
+        LocaleContextHolder.setLocale(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()));
         var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
             assessmentResult.getMaturityLevel().getTitle(),
             progressResult.questionsCount(),
@@ -126,6 +126,7 @@ class InitAssessmentInsightServiceTest {
         assertNotNull(createCaptor.getValue().getInsightTime());
         assertNotNull(createCaptor.getValue().getLastModificationTime());
         assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
+        assertTrue(createCaptor.getValue().getInsight().contains("ارزیابی"));
         assertFalse(createCaptor.getValue().isApproved());
 
         verifyNoInteractions(updateAssessmentInsightPort);
@@ -133,10 +134,10 @@ class InitAssessmentInsightServiceTest {
 
     @Test
     void testInitAssessmentInsight_whenInsightExistsAndAssessmentIsIncompleteWithNullConfidenceValue_thenUpdateInsight() {
-        var param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
         var assessmentInsight = createDefaultInsightWithAssessmentResultId(assessmentResult.getId());
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 0, 15);
+        LocaleContextHolder.setLocale(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()));
         var expectedInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
             assessmentResult.getMaturityLevel().getTitle(),
             progressResult.answersCount(),
@@ -160,6 +161,7 @@ class InitAssessmentInsightServiceTest {
         assertNotNull(createCaptor.getValue().getInsightTime());
         assertNotNull(createCaptor.getValue().getLastModificationTime());
         assertEquals(expectedInsight, createCaptor.getValue().getInsight());
+        assertTrue(createCaptor.getValue().getInsight().contains("assessment"));
         assertFalse(createCaptor.getValue().isApproved());
 
         verifyNoInteractions(createAssessmentInsightPort);
