@@ -10,6 +10,5 @@ public record AdviceListItem(
     AdviceOption recommendedOption,
     @JsonIgnore double benefit,
     List<AdviceAttribute> attributes,
-    AdviceQuestionnaire questionnaire
-) {
+    AdviceQuestionnaire questionnaire) {
 }

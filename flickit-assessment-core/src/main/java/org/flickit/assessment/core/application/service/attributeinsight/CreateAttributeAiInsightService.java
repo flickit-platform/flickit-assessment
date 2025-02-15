@@ -6,7 +6,6 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.config.AppAiProperties;
-import org.flickit.assessment.common.config.OpenAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
@@ -23,12 +22,15 @@ import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttri
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ATTRIBUTE_INSIGHT;
@@ -57,7 +59,6 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
     private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
-    private final OpenAiProperties openAiProperties;
     private final CallAiPromptPort callAiPromptPort;
 
     @SneakyThrows
@@ -89,8 +90,8 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
         var assessmentTitle = getAssessmentTitle(assessmentResult);
 
         var file = generateScoreFile(param, assessmentResult);
-        var prompt = openAiProperties.createAttributeAiInsightPrompt(attribute.getTitle(), attribute.getDescription(), assessmentTitle, file.text());
-        String aiInsight = callAiPromptPort.call(prompt);
+        var prompt = createPrompt(attribute.getTitle(), attribute.getDescription(), assessmentTitle, file.text());
+        String aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
         String aiInputPath = uploadInputFile(attribute, file.stream());
 
         if (attributeInsight.isPresent())
@@ -116,6 +117,18 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
         AttributeValue attributeValue = loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId());
         List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
         return createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
+    }
+
+    public Prompt createPrompt(String attributeTitle, String attributeDescription, String assessmentTitle, String fileContent) {
+        return new PromptTemplate(appAiProperties.getPrompt().getAttributeInsight(),
+            Map.of("attributeTitle", attributeTitle,
+                "attributeDescription", attributeDescription,
+                "assessmentTitle", assessmentTitle,
+                "fileContent", fileContent))
+            .create();
+    }
+
+    record AiResponseDto(String value) {
     }
 
     @Nullable
