@@ -45,10 +45,10 @@ public class ApproveAnswerService implements ApproveAnswerUseCase {
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var answer = loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId())
-            .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED));
+                .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED));
         if (answer.getSelectedOption() == null && !Boolean.TRUE.equals(answer.getIsNotApplicable()))
             throw new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED);
         if (Objects.equals(answer.getAnswerStatus(), APPROVED))
@@ -60,20 +60,19 @@ public class ApproveAnswerService implements ApproveAnswerUseCase {
 
     private AnswerHistory toAnswerHistory(Answer answer, Param param, UUID assessmentResultId) {
         return new AnswerHistory(null,
-            toApprovedAnswer(answer),
-            assessmentResultId,
-            new FullUser(param.getCurrentUserId(), null, null, null),
-            LocalDateTime.now(),
-            UPDATE
-        );
+                toApprovedAnswer(answer),
+                assessmentResultId,
+                new FullUser(param.getCurrentUserId(), null, null, null),
+                LocalDateTime.now(),
+                UPDATE);
     }
 
     private Answer toApprovedAnswer(Answer answer) {
         return new Answer(answer.getId(),
-            answer.getSelectedOption(),
-            answer.getQuestionId(),
-            answer.getConfidenceLevelId(),
-            answer.getIsNotApplicable(),
-            APPROVED);
+                answer.getSelectedOption(),
+                answer.getQuestionId(),
+                answer.getConfidenceLevelId(),
+                answer.getIsNotApplicable(),
+                APPROVED);
     }
 }

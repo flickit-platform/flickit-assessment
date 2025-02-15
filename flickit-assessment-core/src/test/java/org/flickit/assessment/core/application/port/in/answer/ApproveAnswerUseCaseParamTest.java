@@ -23,7 +23,7 @@ class ApproveAnswerUseCaseParamTest {
     }
 
     @Test
-    void testApproveAnswerUseCaseParam_pageParamViolatesConstraint_ErrorMessage() {
+    void testApproveAnswerUseCaseParam_questionIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.questionId(null)));
         assertThat(throwable).hasMessage("questionId: " + APPROVE_ANSWER_QUESTION_ID_NOT_NULL);

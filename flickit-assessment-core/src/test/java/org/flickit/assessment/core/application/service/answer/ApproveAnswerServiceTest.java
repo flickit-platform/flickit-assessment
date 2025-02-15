@@ -70,7 +70,7 @@ class ApproveAnswerServiceTest {
     }
 
     @Test
-    void testApproveAnswer_AssessmentIdNotExist_ThrowsException() {
+    void testApproveAnswer_AssessmentResultNotExist_ThrowsException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
