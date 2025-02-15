@@ -180,7 +180,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
                                                  UUID assessmentResultId,
                                                  Long answerOptionId,
                                                  Integer confidenceLevelId,
-                                                 AnswerStatus status ) {
+                                                 AnswerStatus status) {
         return new CreateAnswerPort.Param(
             assessmentResultId,
             param.getQuestionnaireId(),
