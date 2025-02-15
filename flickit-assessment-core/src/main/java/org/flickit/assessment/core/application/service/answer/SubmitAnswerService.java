@@ -65,10 +65,9 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         var answerOptionId = Boolean.TRUE.equals(param.getIsNotApplicable()) ? null : param.getAnswerOptionId();
         var confidenceLevelId = resolveConfidenceLevelId(param, answerOptionId);
 
-        if (loadedAnswer.isEmpty())
-            return handelNewAnswer(assessmentResult, param, answerOptionId, confidenceLevelId);
-
-        return handleExistingAnswer(assessmentResult, loadedAnswer.get(), param, answerOptionId, confidenceLevelId);
+        return loadedAnswer
+            .map(answer -> handleExistingAnswer(assessmentResult, answer, param, answerOptionId, confidenceLevelId))
+            .orElseGet(() -> handelNewAnswer(assessmentResult, param, answerOptionId, confidenceLevelId));
     }
 
     private void checkUserAccess(Param param) {
