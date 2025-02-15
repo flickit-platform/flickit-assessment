@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.port.in.answer;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -39,6 +40,7 @@ public interface SubmitAnswerUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, Long questionnaireId, Long questionId, Long answerOptionId, Integer confidenceLevelId, Boolean isNotApplicable, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.questionnaireId = questionnaireId;
