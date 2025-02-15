@@ -108,7 +108,7 @@ class CreateAttributeAiInsightServiceTest {
     private AppAiProperties appAiProperties = appAiProperties();
 
     private final Attribute attribute = simpleAttribute();
-    private final AssessmentResult assessmentResult = validResult();
+    private final AssessmentResult assessmentResultWithEnglishKit = validResult();
     private final String fileContent = "file content";
     private final String fileReportPath = "path/to/file";
     private final CreateAttributeAiInsightService.AiResponseDto aiInsight = new CreateAttributeAiInsightService.AiResponseDto("Insight Content");
@@ -196,16 +196,16 @@ class CreateAttributeAiInsightServiceTest {
     @Test
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabledAndLanguageIsEnglish_thenGenerateAndPersistAiInsight() {
         String expectedPrompt = "The attribute " + attribute.getTitle() + " with this description " + attribute.getDescription() +
-            " for " + assessmentResult.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in English.";
+            " for " + assessmentResultWithEnglishKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in English.";
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithEnglishKit));
+        when(loadAttributePort.load(attribute.getId(), assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(Optional.empty());
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
-        when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
+        when(loadAttributeValuePort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(attributeValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
 
@@ -219,7 +219,7 @@ class CreateAttributeAiInsightServiceTest {
         assertEquals(fileReportPath, attributeInsightArgumentCaptor.getValue().getAiInputPath());
         assertFalse(attributeInsightArgumentCaptor.getValue().isApproved());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getLastModificationTime());
-        assertEquals(assessmentResult.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
+        assertEquals(assessmentResultWithEnglishKit.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
         assertEquals(expectedPrompt, promptArgumentCaptor.getValue().getContents());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -228,18 +228,18 @@ class CreateAttributeAiInsightServiceTest {
 
     @Test
     void testCreateAttributeAiInsight_whenAiInsightDoesNotExistAndAiEnabledAndLanguageIsPersian_thenGenerateAndPersistAiInsight() {
-        var assessmentResult = AssessmentResultMother.validResultWithPersianKitLanguage();
+        var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithPersianKitLanguage();
         String expectedPrompt = "The attribute " + attribute.getTitle() + " with this description " + attribute.getDescription() +
-            " for " + assessmentResult.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in Persian.";
+            " for " + assessmentResultWithPersianKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". Provide the result in Persian.";
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithPersianKit));
+        when(loadAttributePort.load(attribute.getId(), assessmentResultWithPersianKit.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResultWithPersianKit.getId(), param.getAttributeId())).thenReturn(Optional.empty());
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
-        when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
+        when(loadAttributeValuePort.load(assessmentResultWithPersianKit.getId(), param.getAttributeId())).thenReturn(attributeValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResultWithPersianKit.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
 
@@ -253,7 +253,7 @@ class CreateAttributeAiInsightServiceTest {
         assertEquals(fileReportPath, attributeInsightArgumentCaptor.getValue().getAiInputPath());
         assertFalse(attributeInsightArgumentCaptor.getValue().isApproved());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getLastModificationTime());
-        assertEquals(assessmentResult.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
+        assertEquals(assessmentResultWithPersianKit.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
         assertEquals(expectedPrompt, promptArgumentCaptor.getValue().getContents());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
@@ -265,12 +265,12 @@ class CreateAttributeAiInsightServiceTest {
         when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributePort.load(param.getAttributeId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithEnglishKit));
+        when(loadAttributePort.load(param.getAttributeId(), assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(Optional.empty());
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
-        when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
+        when(loadAttributeValuePort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(attributeValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
 
         var result = service.createAiInsight(param);
@@ -283,7 +283,7 @@ class CreateAttributeAiInsightServiceTest {
         assertNull(attributeInsightArgumentCaptor.getValue().getAiInputPath());
         assertFalse(attributeInsightArgumentCaptor.getValue().isApproved());
         assertNotNull(attributeInsightArgumentCaptor.getValue().getLastModificationTime());
-        assertEquals(assessmentResult.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
+        assertEquals(assessmentResultWithEnglishKit.getId(), attributeInsightArgumentCaptor.getValue().getAssessmentResultId());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(updateAttributeInsightPort, uploadAttributeScoresFilePort);
@@ -294,9 +294,9 @@ class CreateAttributeAiInsightServiceTest {
         when(appAiProperties.isEnabled()).thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.empty());
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithEnglishKit));
+        when(loadAttributePort.load(attribute.getId(), assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(UnsupportedOperationException.class, () -> service.createAiInsight(param));
         assertEquals(ASSESSMENT_AI_IS_DISABLED, throwable.getMessage());
@@ -316,16 +316,16 @@ class CreateAttributeAiInsightServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithEnglishKit));
+        when(loadAttributePort.load(attribute.getId(), assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
 
         var result = service.createAiInsight(param);
         assertEquals(result.content(), attributeInsight.getAiInsight());
 
         ArgumentCaptor<UpdateAttributeInsightPort.AiTimeParam> attributeInsightParam = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AiTimeParam.class);
         verify(updateAttributeInsightPort, times(1)).updateAiInsightTime(attributeInsightParam.capture());
-        assertEquals(assessmentResult.getId(), attributeInsightParam.getValue().assessmentResultId());
+        assertEquals(assessmentResultWithEnglishKit.getId(), attributeInsightParam.getValue().assessmentResultId());
         assertEquals(param.getAttributeId(), attributeInsightParam.getValue().attributeId());
         assertNotNull(attributeInsightParam.getValue().aiInsightTime());
         assertNotNull(attributeInsightParam.getValue().lastModificationTime());
@@ -341,12 +341,12 @@ class CreateAttributeAiInsightServiceTest {
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithEnglishKit));
+        when(loadAttributePort.load(attribute.getId(), assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
-        when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
+        when(loadAttributeValuePort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(attributeValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
         when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
 
@@ -355,7 +355,7 @@ class CreateAttributeAiInsightServiceTest {
 
         ArgumentCaptor<UpdateAttributeInsightPort.AiParam> captor = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AiParam.class);
         verify(updateAttributeInsightPort).updateAiInsight(captor.capture());
-        assertEquals(assessmentResult.getId(), captor.getValue().assessmentResultId());
+        assertEquals(assessmentResultWithEnglishKit.getId(), captor.getValue().assessmentResultId());
         assertEquals(param.getAttributeId(), captor.getValue().attributeId());
         assertNotNull(captor.getValue().aiInsightTime());
         assertFalse(captor.getValue().isApproved());
@@ -372,19 +372,19 @@ class CreateAttributeAiInsightServiceTest {
         when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithEnglishKit));
+        when(loadAttributePort.load(attribute.getId(), assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
-        when(loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(attributeValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(maturityLevels);
+        when(loadAttributeValuePort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(attributeValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(maturityLevels);
         when(generateAttributeValueReportFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
 
         var result = service.createAiInsight(param);
         assertEquals(aiInsight.value(), result.content());
         ArgumentCaptor<UpdateAttributeInsightPort.AiParam> captor = ArgumentCaptor.forClass(UpdateAttributeInsightPort.AiParam.class);
         verify(updateAttributeInsightPort).updateAiInsight(captor.capture());
-        assertEquals(assessmentResult.getId(), captor.getValue().assessmentResultId());
+        assertEquals(assessmentResultWithEnglishKit.getId(), captor.getValue().assessmentResultId());
         assertEquals(param.getAttributeId(), captor.getValue().attributeId());
         assertNotNull(captor.getValue().aiInsightTime());
         assertFalse(captor.getValue().isApproved());
@@ -401,9 +401,9 @@ class CreateAttributeAiInsightServiceTest {
         when(appAiProperties.isEnabled()).thenReturn(false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT)).thenReturn(true);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        when(loadAttributePort.load(attribute.getId(), assessmentResult.getKitVersionId())).thenReturn(attribute);
-        when(loadAttributeInsightPort.load(assessmentResult.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithEnglishKit));
+        when(loadAttributePort.load(attribute.getId(), assessmentResultWithEnglishKit.getKitVersionId())).thenReturn(attribute);
+        when(loadAttributeInsightPort.load(assessmentResultWithEnglishKit.getId(), param.getAttributeId())).thenReturn(Optional.of(attributeInsight));
 
         var throwable = assertThrows(UnsupportedOperationException.class, () -> service.createAiInsight(param));
         assertEquals(ASSESSMENT_AI_IS_DISABLED, throwable.getMessage());
@@ -423,7 +423,7 @@ class CreateAttributeAiInsightServiceTest {
 
     private CreateAttributeAiInsightUseCase.Param.ParamBuilder paramBuilder() {
         return CreateAttributeAiInsightUseCase.Param.builder()
-            .assessmentId(assessmentResult.getAssessment().getId())
+            .assessmentId(assessmentResultWithEnglishKit.getAssessment().getId())
             .attributeId(attribute.getId())
             .currentUserId(UUID.randomUUID());
     }
