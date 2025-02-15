@@ -15,6 +15,7 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSub
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,9 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -38,7 +41,6 @@ import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSI
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,11 +78,10 @@ class InitSubjectInsightServiceTest {
 
     private final AssessmentResult assessmentResult = validResult();
     private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
+    private final InitSubjectInsightUseCase.Param param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
 
     @Test
     void testInitSubjectInsight_whenCurrentUserDoesNotHaveRequiredPermission_throwAccessDeniedException() {
-        var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(false);
 
@@ -96,8 +97,6 @@ class InitSubjectInsightServiceTest {
 
     @Test
     void testInitSubjectInsight_whenAssessmentResultOfRequestedAssessmentNotExist_thenThrowResourceNotFoundException() {
-        var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
-
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -115,20 +114,18 @@ class InitSubjectInsightServiceTest {
 
     @Test
     void testInitSubjectInsight_whenSubjectInsightExists_thenUpdateSubjectInsight() {
-        var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
         var subjectInsight = SubjectInsightMother.subjectInsight();
+        LocaleContextHolder.setLocale(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId()))
             .thenReturn(Optional.of(subjectInsight));
         when(loadSubjectValuePort.load(param.getSubjectId(), assessmentResult.getId()))
             .thenReturn(subjectValue);
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(allLevels());
-        doNothing().when(updateSubjectInsightPort).update(any(SubjectInsight.class));
 
         service.initSubjectInsight(param);
 
@@ -141,36 +138,38 @@ class InitSubjectInsightServiceTest {
         assertNull(capturedSubjectInsight.getInsightBy());
         assertNotNull(capturedSubjectInsight.getInsightTime());
         assertFalse(capturedSubjectInsight.isApproved());
+        assertTrue(capturedSubjectInsight.getInsight().contains("assessment"));
 
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createSubjectInsightPort);
     }
 
     @Test
     void testInitSubjectInsight_whenSubjectInsightDoesNotExist_thenCreateDefaultSubjectInsight() {
-        var param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
-
+        var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithPersianKitLanguage();
+        LocaleContextHolder.setLocale(Locale.of(assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getCode()));
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadSubjectInsightPort.load(assessmentResult.getId(), param.getSubjectId())).thenReturn(Optional.empty());
-        when(loadSubjectValuePort.load(param.getSubjectId(), assessmentResult.getId())).thenReturn(subjectValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId())).thenReturn(allLevels());
-        doNothing().when(createSubjectInsightPort).persist(any(SubjectInsight.class));
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithPersianKit));
+        when(loadSubjectInsightPort.load(assessmentResultWithPersianKit.getId(), param.getSubjectId())).thenReturn(Optional.empty());
+        when(loadSubjectValuePort.load(param.getSubjectId(), assessmentResultWithPersianKit.getId())).thenReturn(subjectValue);
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResultWithPersianKit.getKitVersionId())).thenReturn(allLevels());
 
         service.initSubjectInsight(param);
 
         verify(createSubjectInsightPort).persist(subjectInsightArgumentCaptor.capture());
         SubjectInsight subjectInsight = subjectInsightArgumentCaptor.getValue();
         assertNotNull(subjectInsight);
-        assertEquals(assessmentResult.getId(), subjectInsight.getAssessmentResultId());
+        assertEquals(assessmentResultWithPersianKit.getId(), subjectInsight.getAssessmentResultId());
         assertEquals(param.getSubjectId(), subjectInsight.getSubjectId());
         assertEquals(expectedDefaultInsight(), subjectInsight.getInsight());
         assertNull(subjectInsight.getInsightBy());
         assertNotNull(subjectInsight.getInsightTime());
         assertNotNull(subjectInsight.getLastModificationTime());
         assertFalse(subjectInsight.isApproved());
+        assertTrue(subjectInsight.getInsight().contains("ارزیابی"));
 
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(updateSubjectInsightPort);
     }
 
