@@ -121,6 +121,24 @@ class ApproveAnswerServiceTest {
     }
 
     @Test
+    void testApproveAnswer_ApproveApprovedAnswer_DoNothing() {
+        var answer = AnswerMother.answer(AnswerOptionMother.optionOne());
+        var param = createParam(b -> b.questionId(answer.getQuestionId()));
+        var assessmentResult = AssessmentResultMother.validResult();
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER))
+                .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
+                .thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerPort.load(assessmentResult.getId(), param.getQuestionId()))
+                .thenReturn(Optional.of(answer));
+
+        service.approveAnswer(param);
+
+        verifyNoInteractions(approveAnswerPort, createAnswerHistoryPort);
+    }
+
+    @Test
     void testApproveAnswer_ApproveNotApplicableAnswer_UpdateAnswerStatus() {
         var answer = AnswerMother.answerWithNotApplicableTrueAndUnapprovedStatus(null);
         var param = createParam(b -> b.questionId(answer.getQuestionId()));

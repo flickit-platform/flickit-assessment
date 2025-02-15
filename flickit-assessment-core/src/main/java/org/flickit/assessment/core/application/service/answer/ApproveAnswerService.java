@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ANSWER;
@@ -48,6 +49,8 @@ public class ApproveAnswerService implements ApproveAnswerUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED));
         if (answer.getSelectedOption() == null && !Boolean.TRUE.equals(answer.getIsNotApplicable()))
             throw new ResourceNotFoundException(APPROVE_ANSWER_QUESTION_NOT_ANSWERED);
+        if (Objects.equals(answer.getAnswerStatus(), APPROVED))
+            return;
 
         approveAnswerPort.approve(answer.getId(), param.getCurrentUserId());
         createAnswerHistoryPort.persist(toAnswerHistory(answer, param, assessmentResult.getId()));
