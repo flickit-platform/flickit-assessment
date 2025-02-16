@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_INSIGHT_ID_NOT_FOUND;
 
@@ -67,5 +68,13 @@ public class SubjectInsightPersistenceJpaAdapter implements
             throw new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND);
 
         repository.approve(resultEntity.getId(), subjectId, lastModificationTime);
+    }
+
+    @Override
+    public void approveAll(UUID assessmentId, LocalDateTime lastModificationTime) {
+        var resultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        repository.approveAll(resultEntity.getId(), lastModificationTime);
     }
 }

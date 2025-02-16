@@ -53,4 +53,14 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
     void approve(@Param("assessmentResultId") UUID assessmentResultId,
                  @Param("subjectId") Long subjectId,
                  @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Modifying
+    @Query("""
+            UPDATE SubjectInsightJpaEntity si
+            SET si.approved = true,
+                si.lastModificationTime = :lastModificationTime
+            WHERE si.assessmentResultId = :assessmentResultId AND si.approved = false
+        """)
+    void approveAll(@Param("assessmentResultId") UUID assessmentResultId,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }
