@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -101,10 +102,11 @@ class InitAssessmentInsightServiceTest {
 
     @Test
     void testInitAssessmentInsight_whenInsightNotExistsAndAssessmentIsComplete_thenCrateAssessmentInsight() {
-        var assessmentResult = AssessmentResultMother.validResultWithPersianKitLanguage();
+        var assessmentResult = AssessmentResultMother.validResultWithKitLanguage(KitLanguage.FA);
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 15, 15);
-        LocaleContextHolder.setLocale(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()));
+        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
         var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
+            locale,
             assessmentResult.getMaturityLevel().getTitle(),
             progressResult.questionsCount(),
             Math.ceil(assessmentResult.getConfidenceValue()));
