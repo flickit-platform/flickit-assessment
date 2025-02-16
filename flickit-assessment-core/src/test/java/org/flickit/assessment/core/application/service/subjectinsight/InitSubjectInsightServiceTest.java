@@ -188,9 +188,9 @@ class InitSubjectInsightServiceTest {
     }
 
     private InitSubjectInsightUseCase.Param createParam(Consumer<InitSubjectInsightUseCase.Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
     }
 
     private InitSubjectInsightUseCase.Param.ParamBuilder paramBuilder() {
