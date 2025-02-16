@@ -88,7 +88,7 @@ public class AnswerPersistenceJpaAdapter implements
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
-            param.status().getId(),
+            param.status() != null ? param.status().getId() : null,
             param.currentUserId());
     }
 

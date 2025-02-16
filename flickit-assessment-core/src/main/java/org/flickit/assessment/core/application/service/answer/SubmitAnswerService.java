@@ -109,9 +109,7 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
         if (!(isNotApplicableChanged || isAnswerOptionChanged || isConfidenceLevelChanged))
             return new NotAffected(loadedAnswerId);
 
-        var status = assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER)
-            ? APPROVED
-            : UNAPPROVED;
+        var status = resolveAnswerStatus(param, answerOptionId);
 
         updateAnswerPort.update(toUpdateAnswerParam(loadedAnswerId,
             answerOptionId,
@@ -133,6 +131,14 @@ public class SubmitAnswerService implements SubmitAnswerUseCase {
             param.getCurrentUserId(),
             hasProgressed(param, loadedAnswer));
         return new Submitted(loadedAnswerId, notificationCmd);
+    }
+
+    private AnswerStatus resolveAnswerStatus(Param param, Long answerOptionId) {
+        if (answerOptionId != null || Boolean.TRUE.equals(param.getIsNotApplicable()))
+            return assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ANSWER)
+                ? APPROVED
+                : UNAPPROVED;
+        return null;
     }
 
     private UpdateAnswerPort.Param toUpdateAnswerParam(UUID answerId,

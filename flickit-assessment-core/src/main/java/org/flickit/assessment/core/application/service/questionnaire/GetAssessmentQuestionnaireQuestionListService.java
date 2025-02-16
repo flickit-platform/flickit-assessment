@@ -5,10 +5,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.domain.AnswerOption;
-import org.flickit.assessment.core.application.domain.ConfidenceLevel;
-import org.flickit.assessment.core.application.domain.Question;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -89,9 +86,12 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                     .orElse(null);
             }
             ConfidenceLevel confidenceLevel = null;
-            if (answerOption != null || Boolean.TRUE.equals(answer.getIsNotApplicable()))
+            Boolean approved = null;
+            if (answerOption != null || Boolean.TRUE.equals(answer.getIsNotApplicable())) {
                 confidenceLevel = ConfidenceLevel.valueOfById(answer.getConfidenceLevelId());
-            answerDto = new QuestionAnswer(answerOption, confidenceLevel, answer.getIsNotApplicable());
+                approved = AnswerStatus.APPROVED.equals(answer.getAnswerStatus());
+            }
+            answerDto = new QuestionAnswer(answerOption, confidenceLevel, answer.getIsNotApplicable(), approved);
         }
         return new Result(
             question.getId(),
