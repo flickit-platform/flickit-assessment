@@ -61,20 +61,20 @@ public class SubjectInsightPersistenceJpaAdapter implements
 
     @Override
     public void approve(UUID assessmentId, long subjectId, LocalDateTime lastModificationTime) {
-        var resultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (!repository.existsByAssessmentResultIdAndSubjectId(resultEntity.getId(), subjectId))
+        if (!repository.existsByAssessmentResultIdAndSubjectId(assessmentResult.getId(), subjectId))
             throw new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND);
 
-        repository.approve(resultEntity.getId(), subjectId, lastModificationTime);
+        repository.approve(assessmentResult.getId(), subjectId, lastModificationTime);
     }
 
     @Override
     public void approveAll(UUID assessmentId, LocalDateTime lastModificationTime) {
-        var resultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        repository.approveAll(resultEntity.getId(), lastModificationTime);
+        repository.approveAll(assessmentResult.getId(), lastModificationTime);
     }
 }
