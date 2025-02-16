@@ -318,5 +318,9 @@ public class ErrorMessageKey {
     public static final String GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_ID_NOT_NULL = "get-assessment-maturity-levels.assessmentId.notNull";
     public static final String GET_ASSESSMENT_MATURITY_LEVELS_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-maturity-levels.assessmentResult.notFound";
 
+    public static final String APPROVE_ANSWER_ASSESSMENT_ID_NOT_NULL = "approve-answer.assessmentId.notNull";
+    public static final String APPROVE_ANSWER_QUESTION_ID_NOT_NULL = "approve-answer.questionId.notNull";
+    public static final String APPROVE_ANSWER_QUESTION_NOT_ANSWERED = "approve-answer.question-not-answered";
+
     public static final String APPROVE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "approve-all-assessment-insights.assessmentId.notNull";
 }
