@@ -159,7 +159,8 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     @Query("""
             SELECT k.languageId
             FROM AssessmentKitJpaEntity k
-            WHERE k.kitVersionId = :kitVersionId
+            JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
+            WHERE a.id = :assessmentId
         """)
-    Optional<Integer> loadKitLanguageId(@Param("kitVersionId") Long kitVersionId);
+    Optional<Integer> loadKitLanguageId(@Param("assessmentId") UUID assessmentId);
 }

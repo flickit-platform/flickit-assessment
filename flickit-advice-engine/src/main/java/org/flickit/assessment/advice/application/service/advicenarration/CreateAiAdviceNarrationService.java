@@ -81,7 +81,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
 
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
-        var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
+        var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle, assessment.getId());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         var adviceItems = aiAdvice.adviceItems().stream()
@@ -114,7 +114,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .toList();
     }
 
-    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle) {
+    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle, UUID assessmentId) {
         var maturityLevelsMap = loadMaturityLevelsPort.loadAll(kitVersionId).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
@@ -136,7 +136,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
                 maturityLevelsMap.getOrDefault(target.getMaturityLevelId(), "Unknown")))
             .toList();
 
-        var kitLanguage = loadAssessmentKitLanguagePort.loadKitLanguage(kitVersionId);
+        var kitLanguage = loadAssessmentKitLanguagePort.loadKitLanguage(assessmentId);
         return new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
             Map.of("assessmentTitle", assessmentTitle,
                 "attributeTargets", targetAttributes,

@@ -204,7 +204,7 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
-        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessmentResult.getKitVersionId())).thenReturn(kitLanguage);
+        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessment.getId())).thenReturn(kitLanguage);
 
         service.createAiAdviceNarration(param);
 
@@ -249,7 +249,7 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
-        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessmentResult.getKitVersionId())).thenReturn(kitLanguage);
+        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessment.getId())).thenReturn(kitLanguage);
 
         service.createAiAdviceNarration(param);
 
@@ -290,7 +290,7 @@ class CreateAiAdviceNarrationServiceTest {
         when(loadAttributesPort.loadByIdsAndKitVersionId(List.of(param.getAttributeLevelTargets().getFirst().getAttributeId()), assessmentResult.getKitVersionId())).thenReturn(attributes);
         when(loadAssessmentPort.loadById(param.getAssessmentId())).thenReturn(assessment);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiAdvice);
-        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessmentResult.getKitVersionId())).thenReturn(KitLanguage.EN);
+        when(loadAssessmentKitLanguagePort.loadKitLanguage(assessment.getId())).thenReturn(KitLanguage.EN);
 
         service.createAiAdviceNarration(param);
 

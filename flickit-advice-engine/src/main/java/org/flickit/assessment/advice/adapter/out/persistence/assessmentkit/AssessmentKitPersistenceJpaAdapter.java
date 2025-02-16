@@ -7,6 +7,8 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 import static org.flickit.assessment.advice.common.ErrorMessageKey.KIT_VERSION_ID_NOT_FOUND;
 
 @Component("adviceAssessmentKitPersistenceJpaAdapter")
@@ -16,8 +18,8 @@ public class AssessmentKitPersistenceJpaAdapter implements LoadAssessmentKitLang
     private final AssessmentKitJpaRepository repository;
 
     @Override
-    public KitLanguage loadKitLanguage(long kitVersionId) {
-        int languageId = repository.loadKitLanguageId(kitVersionId)
+    public KitLanguage loadKitLanguage(UUID assessmentId) {
+        int languageId = repository.loadKitLanguageId(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(KIT_VERSION_ID_NOT_FOUND));
         return KitLanguage.valueOfById(languageId);
     }
