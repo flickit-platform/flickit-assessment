@@ -73,21 +73,28 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             SELECT k AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
-            WHERE k.published = TRUE AND k.isPrivate = FALSE
+            WHERE k.published = TRUE
+                AND k.isPrivate = FALSE
+                AND (:languageId IS NULL OR k.languageId = :languageId)
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(Pageable pageable);
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Param("languageId") Integer languageId,
+                                                                           Pageable pageable);
 
     @Query("""
             SELECT k AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
-            WHERE k.published = TRUE AND k.isPrivate = TRUE
+            WHERE k.published = TRUE
+                AND k.isPrivate = TRUE
                 AND kua.userId = :userId
+                AND (:languageId IS NULL OR k.languageId = :languageId)
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId") UUID userId, Pageable pageable);
+    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId") UUID userId,
+                                                                                @Param("languageId") Integer languageId,
+                                                                                Pageable pageable);
 
     @Query("""
             SELECT
@@ -121,7 +128,7 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                 AND (:includeUnpublished = TRUE OR k.published = TRUE)
                 AND (k.isPrivate = FALSE OR kua.userId IS NOT NULL)
             ORDER BY k.published DESC, k.lastModificationTime DESC
-    """)
+        """)
     Page<KitWithDraftVersionIdView> findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(
         @Param("expertGroupId") long expertGroupId,
         @Param("userId") UUID userId,

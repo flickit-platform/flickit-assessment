@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaRepository;
@@ -178,8 +179,9 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(int page, int size) {
-        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(PageRequest.of(page, size));
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(KitLanguage kitLanguage, int page, int size) {
+        var kitLanguageId = kitLanguage != null ? kitLanguage.getId() : null;
+        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(kitLanguageId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit()),
@@ -198,8 +200,14 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId, int page, int size) {
-        var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId, PageRequest.of(page, size));
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId,
+                                                                              KitLanguage kitLanguage,
+                                                                              int page,
+                                                                              int size) {
+        var kitLanguageId = kitLanguage != null ? kitLanguage.getId() : null;
+        var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId,
+            kitLanguageId,
+            PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit()),
