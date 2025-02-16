@@ -20,15 +20,7 @@ public class CreateAssessmentInsightRestController {
     private final CreateAssessmentInsightUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping("assessments/{assessmentId}/insights")
-    ResponseEntity<Void> createAssessmentInsightOld(@PathVariable("assessmentId") UUID assessmentId,
-                                                    @RequestBody CreateAssessmentInsightRequestDto requestDto) {
-        useCase.createAssessmentInsight(toParam(assessmentId, requestDto, userContext.getUser().id()));
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PostMapping("assessments/{assessmentId}/overall-insight")
+    @PostMapping("/assessments/{assessmentId}/overall-insight")
     ResponseEntity<Void> createAssessmentInsight(@PathVariable("assessmentId") UUID assessmentId,
                                                  @RequestBody CreateAssessmentInsightRequestDto requestDto) {
         var currentUserId = userContext.getUser().id();
