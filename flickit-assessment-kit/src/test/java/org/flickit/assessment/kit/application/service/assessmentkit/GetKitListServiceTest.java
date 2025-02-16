@@ -61,7 +61,7 @@ class GetKitListServiceTest {
         );
         var sampleTag = KitTagMother.createKitTag("sample tag");
 
-        when(loadPublishedKitListPort.loadPublicKits(KitLanguage.EN.getId(), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPublicKits(KitLanguage.EN, param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
@@ -90,7 +90,7 @@ class GetKitListServiceTest {
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
         assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
 
-        verify(loadPublishedKitListPort, never()).loadPrivateKits(any(), anyInt(), anyInt(), anyInt());
+        verify(loadPublishedKitListPort, never()).loadPrivateKits(any(), any(), anyInt(), anyInt());
     }
 
     @Test
@@ -155,7 +155,7 @@ class GetKitListServiceTest {
             0
         );
 
-        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), KitLanguage.EN.getId(), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), KitLanguage.EN, param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
         when(loadKitTagListPort.loadByKitIds(List.of())).thenReturn(List.of());
@@ -169,7 +169,7 @@ class GetKitListServiceTest {
         assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
         assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
 
-        verify(loadPublishedKitListPort, never()).loadPublicKits(anyInt(), anyInt(), anyInt());
+        verify(loadPublishedKitListPort, never()).loadPublicKits(any(), anyInt(), anyInt());
         verify(createFileDownloadLinkPort, never()).createDownloadLink(anyString(), any());
     }
 }

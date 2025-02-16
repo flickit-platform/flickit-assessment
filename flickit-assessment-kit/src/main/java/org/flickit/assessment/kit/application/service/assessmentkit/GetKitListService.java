@@ -32,17 +32,15 @@ public class GetKitListService implements GetKitListUseCase {
 
     @Override
     public PaginatedResponse<KitListItem> getKitList(Param param) {
-        var kitLanguageId = Optional.ofNullable(param.getLanguage())
-            .map(lang -> KitLanguage.valueOf(lang).getId())
+        var kitLanguage = Optional.ofNullable(param.getLanguage())
+            .map(KitLanguage::valueOf)
             .orElse(null);
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
         if (Boolean.FALSE.equals(param.getIsPrivate()))
-            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguageId,
-                param.getPage(),
-                param.getSize());
+            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguage, param.getPage(), param.getSize());
         else
             kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
-                kitLanguageId,
+                kitLanguage,
                 param.getPage(),
                 param.getSize());
 
