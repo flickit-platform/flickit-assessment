@@ -19,4 +19,8 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet id="0.49-03" author="Mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fac_answer" columnName="status"/>
+    </changeSet>
 </databaseChangeLog>
