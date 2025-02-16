@@ -8,10 +8,14 @@ public class AssessmentKitMother {
     private static long id = 134L;
 
     public static AssessmentKit kit() {
+        return kitWithLanguage(KitLanguage.EN);
+    }
+
+    public static AssessmentKit kitWithLanguage(KitLanguage language) {
         return new AssessmentKit(id++,
             "title" + id,
             id,
-            KitLanguage.EN,
+            language,
             MaturityLevelMother.allLevels());
     }
 
@@ -20,14 +24,6 @@ public class AssessmentKitMother {
             "title" + id,
             null,
             KitLanguage.EN,
-            MaturityLevelMother.allLevels());
-    }
-
-    public static AssessmentKit persianKit() {
-        return new AssessmentKit(id++,
-            "title" + id,
-            id,
-            KitLanguage.FA,
             MaturityLevelMother.allLevels());
     }
 }
