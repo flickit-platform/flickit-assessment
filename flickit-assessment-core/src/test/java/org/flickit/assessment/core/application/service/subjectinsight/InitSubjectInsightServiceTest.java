@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.subjectinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -27,7 +28,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -115,7 +115,7 @@ class InitSubjectInsightServiceTest {
     @Test
     void testInitSubjectInsight_whenSubjectInsightExists_thenUpdateSubjectInsight() {
         var subjectInsight = SubjectInsightMother.subjectInsight();
-        LocaleContextHolder.setLocale(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()));
+        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -134,7 +134,7 @@ class InitSubjectInsightServiceTest {
         assertNotNull(capturedSubjectInsight);
         assertEquals(assessmentResult.getId(), capturedSubjectInsight.getAssessmentResultId());
         assertEquals(param.getSubjectId(), capturedSubjectInsight.getSubjectId());
-        assertEquals(expectedDefaultInsight(), capturedSubjectInsight.getInsight());
+        assertEquals(expectedDefaultInsight(locale), capturedSubjectInsight.getInsight());
         assertNull(capturedSubjectInsight.getInsightBy());
         assertNotNull(capturedSubjectInsight.getInsightTime());
         assertFalse(capturedSubjectInsight.isApproved());
@@ -146,8 +146,8 @@ class InitSubjectInsightServiceTest {
 
     @Test
     void testInitSubjectInsight_whenSubjectInsightDoesNotExist_thenCreateDefaultSubjectInsight() {
-        var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithPersianKitLanguage();
-        LocaleContextHolder.setLocale(Locale.of(assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getCode()));
+        var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithKitLanguage(KitLanguage.FA);
+        var locale = Locale.of(assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getCode());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.of(assessmentResultWithPersianKit));
@@ -162,7 +162,7 @@ class InitSubjectInsightServiceTest {
         assertNotNull(subjectInsight);
         assertEquals(assessmentResultWithPersianKit.getId(), subjectInsight.getAssessmentResultId());
         assertEquals(param.getSubjectId(), subjectInsight.getSubjectId());
-        assertEquals(expectedDefaultInsight(), subjectInsight.getInsight());
+        assertEquals(expectedDefaultInsight(locale), subjectInsight.getInsight());
         assertNull(subjectInsight.getInsightBy());
         assertNotNull(subjectInsight.getInsightTime());
         assertNotNull(subjectInsight.getLastModificationTime());
@@ -173,8 +173,9 @@ class InitSubjectInsightServiceTest {
         verifyNoInteractions(updateSubjectInsightPort);
     }
 
-    private @NotNull String expectedDefaultInsight() {
+    private @NotNull String expectedDefaultInsight(Locale locale) {
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
+            locale,
             subjectValue.getSubject().getTitle(),
             subjectValue.getSubject().getDescription(),
             subjectValue.getConfidenceValue() != null ? (int) Math.ceil(subjectValue.getConfidenceValue()) : 0,
