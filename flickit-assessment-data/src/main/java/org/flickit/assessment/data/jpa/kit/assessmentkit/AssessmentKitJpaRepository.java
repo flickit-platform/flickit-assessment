@@ -111,17 +111,17 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     long countAllKitAssessments(@Param("kitId") Long kitId);
 
     @Query("""
-            SELECT
-                k AS kit,
-                kv.id AS draftVersionId
-            FROM AssessmentKitJpaEntity k
-            LEFT JOIN KitVersionJpaEntity kv ON kv.kit.id = k.id AND kv.status = :updatingStatusId
-            LEFT JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId AND kua.userId = :userId
-            WHERE k.expertGroupId = :expertGroupId
-                AND (:includeUnpublished = TRUE OR k.published = TRUE)
-                AND (k.isPrivate = FALSE OR kua.userId IS NOT NULL)
-            ORDER BY k.published DESC, k.lastModificationTime DESC
-    """)
+                SELECT
+                    k AS kit,
+                    kv.id AS draftVersionId
+                FROM AssessmentKitJpaEntity k
+                LEFT JOIN KitVersionJpaEntity kv ON kv.kit.id = k.id AND kv.status = :updatingStatusId
+                LEFT JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId AND kua.userId = :userId
+                WHERE k.expertGroupId = :expertGroupId
+                    AND (:includeUnpublished = TRUE OR k.published = TRUE)
+                    AND (k.isPrivate = FALSE OR kua.userId IS NOT NULL)
+                ORDER BY k.published DESC, k.lastModificationTime DESC
+        """)
     Page<KitWithDraftVersionIdView> findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(
         @Param("expertGroupId") long expertGroupId,
         @Param("userId") UUID userId,
@@ -155,4 +155,11 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     Page<AssessmentKitJpaEntity> findAllByTitleAndUserId(@Param("queryTerm") String query,
                                                          @Param("userId") UUID userId,
                                                          Pageable pageable);
+
+    @Query("""
+            SELECT k.languageId
+            FROM AssessmentKitJpaEntity k
+            WHERE k.kitVersionId = :kitVersionId
+        """)
+    Optional<Integer> loadKitLanguageId(@Param("kitVersionId") Long kitVersionId);
 }
