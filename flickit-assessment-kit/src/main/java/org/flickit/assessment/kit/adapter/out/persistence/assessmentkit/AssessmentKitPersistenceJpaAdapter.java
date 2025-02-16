@@ -178,8 +178,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(int page, int size) {
-        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(PageRequest.of(page, size));
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(Integer kitLanguageId, int page, int size) {
+        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(kitLanguageId, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit()),
@@ -198,8 +198,13 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId, int page, int size) {
-        var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId, PageRequest.of(page, size));
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId,
+                                                                              Integer kitLanguageId,
+                                                                              int page,
+                                                                              int size) {
+        var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId,
+            kitLanguageId,
+            PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit()),
