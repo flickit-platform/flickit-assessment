@@ -26,8 +26,7 @@ public class GetKitListRestController {
         @RequestParam(required = false) Boolean isPrivate, // validated in the use-case param
         @RequestParam(required = false) String lang,
         @RequestParam(defaultValue = "50") int size,
-        @RequestParam(defaultValue = "0") int page
-    ) {
+        @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
         var response = useCase.getKitList(toParam(isPrivate, lang, page, size, currentUserId));
         return new ResponseEntity<>(response, HttpStatus.OK);
