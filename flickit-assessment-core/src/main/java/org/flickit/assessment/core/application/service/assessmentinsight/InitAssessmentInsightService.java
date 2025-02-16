@@ -14,7 +14,6 @@ import org.flickit.assessment.core.application.port.out.assessmentinsight.Create
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,10 +58,10 @@ public class InitAssessmentInsightService implements InitAssessmentInsightUseCas
         String maturityLevelTitle = assessmentResult.getMaturityLevel().getTitle();
 
         AssessmentKit kit = assessmentResult.getAssessment().getAssessmentKit();
-        LocaleContextHolder.setLocale(Locale.of(kit.getLanguage().getCode()));
+        var locale = Locale.of(kit.getLanguage().getCode());
         String insight = (questionsCount == answersCount)
-            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED, maturityLevelTitle, questionsCount, confidenceValue)
-            : MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE, maturityLevelTitle, answersCount, questionsCount, confidenceValue);
+            ? MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED, locale, maturityLevelTitle, questionsCount, confidenceValue)
+            : MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE, locale, maturityLevelTitle, answersCount, questionsCount, confidenceValue);
 
         assessmentInsight.ifPresentOrElse(
             existingInsight -> updateAssessmentInsightPort.updateInsight(toAssessmentInsight(existingInsight.getId(), assessmentResult.getId(), insight)),

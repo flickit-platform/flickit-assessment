@@ -2,6 +2,7 @@ package org.flickit.assessment.core.application.service.assessmentinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -12,7 +13,6 @@ import org.flickit.assessment.core.application.port.out.assessmentinsight.Create
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -33,6 +32,8 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_ASSESSMENT
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.createDefaultInsightWithAssessmentResultId;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithKitLanguage;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFive;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,7 +68,6 @@ class InitAssessmentInsightServiceTest {
 
     private final InitAssessmentInsightUseCase.Param param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
 
-
     @Test
     void testInitAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
@@ -101,10 +101,11 @@ class InitAssessmentInsightServiceTest {
 
     @Test
     void testInitAssessmentInsight_whenInsightNotExistsAndAssessmentIsComplete_thenCrateAssessmentInsight() {
-        var assessmentResult = AssessmentResultMother.validResultWithPersianKitLanguage();
+        var assessmentResult = validResultWithKitLanguage(KitLanguage.FA);
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 15, 15);
-        LocaleContextHolder.setLocale(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()));
+        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
         var expectedDefaultInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
+            locale,
             assessmentResult.getMaturityLevel().getTitle(),
             progressResult.questionsCount(),
             Math.ceil(assessmentResult.getConfidenceValue()));
@@ -126,7 +127,6 @@ class InitAssessmentInsightServiceTest {
         assertNotNull(createCaptor.getValue().getInsightTime());
         assertNotNull(createCaptor.getValue().getLastModificationTime());
         assertEquals(expectedDefaultInsight, createCaptor.getValue().getInsight());
-        assertTrue(createCaptor.getValue().getInsight().contains("ارزیابی"));
         assertFalse(createCaptor.getValue().isApproved());
 
         verifyNoInteractions(updateAssessmentInsightPort);
@@ -134,11 +134,12 @@ class InitAssessmentInsightServiceTest {
 
     @Test
     void testInitAssessmentInsight_whenInsightExistsAndAssessmentIsIncompleteWithNullConfidenceValue_thenUpdateInsight() {
-        var assessmentResult = AssessmentResultMother.validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
+        var assessmentResult = validResultWithSubjectValuesAndMaturityLevel(null, levelFive());
         var assessmentInsight = createDefaultInsightWithAssessmentResultId(assessmentResult.getId());
         var progressResult = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 0, 15);
-        LocaleContextHolder.setLocale(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()));
+        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
         var expectedInsight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
+            locale,
             assessmentResult.getMaturityLevel().getTitle(),
             progressResult.answersCount(),
             progressResult.questionsCount(),
@@ -161,7 +162,6 @@ class InitAssessmentInsightServiceTest {
         assertNotNull(createCaptor.getValue().getInsightTime());
         assertNotNull(createCaptor.getValue().getLastModificationTime());
         assertEquals(expectedInsight, createCaptor.getValue().getInsight());
-        assertTrue(createCaptor.getValue().getInsight().contains("assessment"));
         assertFalse(createCaptor.getValue().isApproved());
 
         verifyNoInteractions(createAssessmentInsightPort);

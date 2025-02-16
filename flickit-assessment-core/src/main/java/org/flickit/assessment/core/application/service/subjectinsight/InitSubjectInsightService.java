@@ -15,7 +15,6 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSub
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,8 +51,8 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         AssessmentKit kit = assessmentResult.getAssessment().getAssessmentKit();
-        LocaleContextHolder.setLocale(Locale.of(kit.getLanguage().getCode()));
-        String defaultInsight = buildDefaultInsight(param.getSubjectId(), assessmentResult.getId(), assessmentResult.getKitVersionId());
+        var locale = Locale.of(kit.getLanguage().getCode());
+        String defaultInsight = buildDefaultInsight(param.getSubjectId(), assessmentResult.getId(), assessmentResult.getKitVersionId(), locale);
         var subjectInsight = new SubjectInsight(assessmentResult.getId(),
             param.getSubjectId(),
             defaultInsight,
@@ -69,10 +68,11 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             );
     }
 
-    private String buildDefaultInsight(long subjectId, UUID assessmentResultId, long kitVersionId) {
+    private String buildDefaultInsight(long subjectId, UUID assessmentResultId, long kitVersionId, Locale locale) {
         var subjectValue = loadSubjectValuePort.load(subjectId, assessmentResultId);
 
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
+            locale,
             subjectValue.getSubject().getTitle(),
             subjectValue.getSubject().getDescription(),
             subjectValue.getConfidenceValue() != null ? (int) Math.ceil(subjectValue.getConfidenceValue()) : 0,
