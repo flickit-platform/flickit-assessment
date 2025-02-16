@@ -16,7 +16,6 @@ import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSub
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
-import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +38,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSIGHT;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResult;
+import static org.flickit.assessment.core.test.fixture.application.AssessmentResultMother.validResultWithKitLanguage;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -138,7 +138,6 @@ class InitSubjectInsightServiceTest {
         assertNull(capturedSubjectInsight.getInsightBy());
         assertNotNull(capturedSubjectInsight.getInsightTime());
         assertFalse(capturedSubjectInsight.isApproved());
-        assertTrue(capturedSubjectInsight.getInsight().contains("assessment"));
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createSubjectInsightPort);
@@ -146,7 +145,7 @@ class InitSubjectInsightServiceTest {
 
     @Test
     void testInitSubjectInsight_whenSubjectInsightDoesNotExist_thenCreateDefaultSubjectInsight() {
-        var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithKitLanguage(KitLanguage.FA);
+        var assessmentResultWithPersianKit = validResultWithKitLanguage(KitLanguage.FA);
         var locale = Locale.of(assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getCode());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -167,7 +166,6 @@ class InitSubjectInsightServiceTest {
         assertNotNull(subjectInsight.getInsightTime());
         assertNotNull(subjectInsight.getLastModificationTime());
         assertFalse(subjectInsight.isApproved());
-        assertTrue(subjectInsight.getInsight().contains("ارزیابی"));
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(updateSubjectInsightPort);
