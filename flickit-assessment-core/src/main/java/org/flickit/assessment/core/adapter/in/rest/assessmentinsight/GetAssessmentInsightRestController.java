@@ -20,12 +20,6 @@ public class GetAssessmentInsightRestController {
     private final GetAssessmentInsightUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("assessments/{assessmentId}/insights")
-    ResponseEntity<Result> getAssessmentInsights(@PathVariable("assessmentId") UUID assessmentId) {
-        var result = useCase.getAssessmentInsight(toParam(assessmentId, userContext.getUser().id()));
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
     @GetMapping("assessments/{assessmentId}/overall-insight")
     ResponseEntity<Result> getAssessmentInsight(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();

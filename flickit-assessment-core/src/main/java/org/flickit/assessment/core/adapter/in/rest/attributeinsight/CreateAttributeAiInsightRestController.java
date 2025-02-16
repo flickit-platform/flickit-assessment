@@ -20,8 +20,7 @@ public class CreateAttributeAiInsightRestController {
     private final CreateAttributeAiInsightUseCase useCase;
     private final UserContext userContext;
 
-    @PostMapping({"/assessments/{assessmentId}/ai-report/attributes/{attributeId}",
-    "/assessments/{assessmentId}/attributes/{attributeId}/ai-insight"})
+    @PostMapping("/assessments/{assessmentId}/attributes/{attributeId}/ai-insight")
     ResponseEntity<CreateAttributeAiInsightResponseDto> createAttributeAiInsight(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId) {
