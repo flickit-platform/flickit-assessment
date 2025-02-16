@@ -68,7 +68,6 @@ class InitAssessmentInsightServiceTest {
 
     private final InitAssessmentInsightUseCase.Param param = createParam(InitAssessmentInsightUseCase.Param.ParamBuilder::build);
 
-
     @Test
     void testInitAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
