@@ -39,5 +39,4 @@ class ApproveAllAssessmentInsightsUseCaseParamTest {
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
-
 }
