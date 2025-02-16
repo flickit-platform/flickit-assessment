@@ -130,6 +130,32 @@
 			"name": "Assessment",
 			"item": [
 				{
+					"name": "Approve All Assessment Insights",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/approve-insights",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"approve-insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Calculate Confidence",
 					"request": {
 						"method": "POST",
