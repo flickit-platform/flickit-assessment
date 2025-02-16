@@ -9,6 +9,7 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.Create
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
+import org.flickit.assessment.advice.application.port.out.assessmentkit.LoadAssessmentKitLanguagePort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
@@ -59,6 +60,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
     private final CreateAdviceItemPort createAdviceItemPort;
     private final AppAiProperties appAiProperties;
     private final UpdateAdviceNarrationPort updateAdviceNarrationPort;
+    private final LoadAssessmentKitLanguagePort loadAssessmentKitLanguagePort;
 
     @Override
     public Result createAiAdviceNarration(Param param) {
@@ -79,7 +81,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
 
         var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
         var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
-        var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle);
+        var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle, assessment.getId());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         var adviceItems = aiAdvice.adviceItems().stream()
@@ -112,7 +114,7 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .toList();
     }
 
-    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle) {
+    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle, UUID assessmentId) {
         var maturityLevelsMap = loadMaturityLevelsPort.loadAll(kitVersionId).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
@@ -134,10 +136,12 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
                 maturityLevelsMap.getOrDefault(target.getMaturityLevelId(), "Unknown")))
             .toList();
 
+        var kitLanguage = loadAssessmentKitLanguagePort.loadKitLanguage(assessmentId);
         return new PromptTemplate(appAiProperties.getPrompt().getAdviceNarrationAndAdviceItems(),
             Map.of("assessmentTitle", assessmentTitle,
                 "attributeTargets", targetAttributes,
-                "adviceRecommendations", adviceRecommendations))
+                "adviceRecommendations", adviceRecommendations,
+                "language", kitLanguage.getTitle()))
             .create();
     }
 

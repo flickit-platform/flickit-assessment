@@ -8,6 +8,7 @@ public class ErrorMessageKey {
 
     public static final String ASSESSMENT_ID_NOT_FOUND = "assessment-id.notFound";
     public static final String ADVICE_ITEM_ID_NOT_FOUND = "advice-item-id.notFound";
+    public static final String KIT_VERSION_ID_NOT_FOUND = "kit-version.id.notFound";
 
     public static final String CREATE_ADVICE_ASSESSMENT_ID_NOT_NULL = "create-advice.assessmentId.notNull";
     public static final String CREATE_ADVICE_ATTRIBUTE_LEVEL_TARGETS_NOT_NULL = "create-advice.attributeLevelTargets.notNull";
