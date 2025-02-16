@@ -18,12 +18,6 @@ public class ApproveAssessmentInsightRestController {
     private final ApproveAssessmentInsightUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessments/{assessmentId}/approve-insight")
-    public ResponseEntity<Void> approveAssessmentInsightOld(@PathVariable("assessmentId") UUID assessmentId) {
-        useCase.approveAssessmentInsight(toParam(assessmentId, userContext.getUser().id()));
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PutMapping("/assessments/{assessmentId}/approve-overall-insight")
     public ResponseEntity<Void> approveAssessmentInsight(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
