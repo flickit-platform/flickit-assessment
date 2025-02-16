@@ -6,4 +6,6 @@ import java.util.UUID;
 public interface ApproveAttributeInsightPort {
 
     void approve(UUID assessmentId, long attributeId, LocalDateTime lastModificationTime);
+
+    void approveAll(UUID assessmentId, LocalDateTime lastModificationTime);
 }
