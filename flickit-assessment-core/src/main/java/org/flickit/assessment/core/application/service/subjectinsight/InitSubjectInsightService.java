@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AssessmentKit;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.subjectinsight.InitSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
@@ -48,7 +50,9 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(INIT_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        String defaultInsight = buildDefaultInsight(param.getSubjectId(), assessmentResult.getId(), assessmentResult.getKitVersionId());
+        AssessmentKit kit = assessmentResult.getAssessment().getAssessmentKit();
+        var locale = Locale.of(kit.getLanguage().getCode());
+        String defaultInsight = buildDefaultInsight(param.getSubjectId(), assessmentResult.getId(), assessmentResult.getKitVersionId(), locale);
         var subjectInsight = new SubjectInsight(assessmentResult.getId(),
             param.getSubjectId(),
             defaultInsight,
@@ -64,10 +68,11 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             );
     }
 
-    private String buildDefaultInsight(long subjectId, UUID assessmentResultId, long kitVersionId) {
+    private String buildDefaultInsight(long subjectId, UUID assessmentResultId, long kitVersionId, Locale locale) {
         var subjectValue = loadSubjectValuePort.load(subjectId, assessmentResultId);
 
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
+            locale,
             subjectValue.getSubject().getTitle(),
             subjectValue.getSubject().getDescription(),
             subjectValue.getConfidenceValue() != null ? (int) Math.ceil(subjectValue.getConfidenceValue()) : 0,
