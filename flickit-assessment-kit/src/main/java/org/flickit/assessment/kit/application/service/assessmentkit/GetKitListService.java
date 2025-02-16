@@ -2,6 +2,7 @@ package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.domain.ExpertGroup;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,11 +32,19 @@ public class GetKitListService implements GetKitListUseCase {
 
     @Override
     public PaginatedResponse<KitListItem> getKitList(Param param) {
+        var kitLanguageId = Optional.ofNullable(param.getLanguage())
+            .map(lang -> KitLanguage.valueOf(lang).getId())
+            .orElse(null);
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
         if (Boolean.FALSE.equals(param.getIsPrivate()))
-            kitsPage = loadPublishedKitListPort.loadPublicKits(param.getPage(), param.getSize());
-         else
-            kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), param.getPage(), param.getSize());
+            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguageId,
+                param.getPage(),
+                param.getSize());
+        else
+            kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
+                kitLanguageId,
+                param.getPage(),
+                param.getSize());
 
         var ids = kitsPage.getItems().stream()
             .map((Result t) -> t.kit().getId()).toList();

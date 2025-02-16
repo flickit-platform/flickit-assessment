@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public interface LoadPublishedKitListPort {
 
-    PaginatedResponse<Result> loadPublicKits(int page, int size);
+    PaginatedResponse<Result> loadPublicKits(Integer kitLanguageId, int page, int size);
 
-    PaginatedResponse<Result> loadPrivateKits(UUID userId, int page, int size);
+    PaginatedResponse<Result> loadPrivateKits(UUID userId, Integer kitLanguageId, int page, int size);
 
     record Result(AssessmentKit kit, ExpertGroup expertGroup) {
     }
