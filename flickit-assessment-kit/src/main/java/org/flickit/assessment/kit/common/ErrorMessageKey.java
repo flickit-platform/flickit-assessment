@@ -47,6 +47,7 @@ public class ErrorMessageKey {
     public static final String GET_KIT_TAG_LIST_SIZE_MAX = "get-kit-tag-list.size.max";
 
     public static final String GET_KIT_LIST_IS_PRIVATE_NOT_NULL = "get-kit-list.isPrivate.notNull";
+    public static final String GET_KIT_LIST_LANGUAGE_INVALID = "get-kit-list.language.invalid";
     public static final String GET_KIT_LIST_PAGE_MIN = "get-kit-list.page.min";
     public static final String GET_KIT_LIST_SIZE_MIN = "get-kit-list.size.min";
     public static final String GET_KIT_LIST_SIZE_MAX = "get-kit-list.size.max";
