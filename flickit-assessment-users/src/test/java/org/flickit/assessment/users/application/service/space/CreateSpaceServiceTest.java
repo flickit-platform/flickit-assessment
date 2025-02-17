@@ -1,5 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
+import org.flickit.assessment.common.application.domain.space.SpaceType;
+import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
@@ -14,9 +16,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CreateSpaceServiceTest {
@@ -39,9 +44,19 @@ class CreateSpaceServiceTest {
 
         service.createSpace(param);
 
-        ArgumentCaptor<SpaceUserAccess> captor = ArgumentCaptor.forClass(SpaceUserAccess.class);
-        verify(createSpaceUserAccessPort).persist(captor.capture());
-        var capturedAccess = captor.getValue();
+        ArgumentCaptor<Space> createSpaceCaptor = ArgumentCaptor.forClass(Space.class);
+        verify(createSpacePort).persist(createSpaceCaptor.capture());
+        var capturedSpace = createSpaceCaptor.getValue();
+        assertEquals(param.getTitle(), capturedSpace.getTitle());
+        assertEquals(generateSlugCode(param.getTitle()), capturedSpace.getCode());
+        assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
+        assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
+        assertNotNull(capturedSpace.getCreationTime());
+        assertNotNull(capturedSpace.getLastModificationTime());
+
+        ArgumentCaptor<SpaceUserAccess> userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
+        verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
+        var capturedAccess = userAccessCaptor.getValue();
         assertEquals(createdSpaceId, capturedAccess.getSpaceId());
         assertEquals(param.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());

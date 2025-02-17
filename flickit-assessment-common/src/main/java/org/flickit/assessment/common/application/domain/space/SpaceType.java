@@ -8,6 +8,10 @@ public enum SpaceType {
         return this.ordinal();
     }
 
+    public String getCode() {
+        return name();
+    }
+
     public static SpaceType valueOfById(int id) {
         if (!isValid(id))
             return null;
