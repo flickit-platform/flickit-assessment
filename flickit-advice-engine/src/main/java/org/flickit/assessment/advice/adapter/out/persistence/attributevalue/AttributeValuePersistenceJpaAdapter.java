@@ -29,7 +29,7 @@ public class AttributeValuePersistenceJpaAdapter implements LoadAttributeCurrent
     private final MaturityLevelJpaRepository maturityLevelRepository;
 
     @Override
-    public List<Result> loadAttributeCurrentAndTargetLevelIndex(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
+    public List<Result> load(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         var maturityLevels = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId());
