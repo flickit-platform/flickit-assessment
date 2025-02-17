@@ -8,8 +8,8 @@ import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdvic
 import org.flickit.assessment.advice.application.port.out.advicenarration.CreateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
-import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentKitLanguagePort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
@@ -79,9 +79,8 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
 
         var attributeLevelTargets = filterValidAttributeLevelTargets(param.getAssessmentId(), param.getAttributeLevelTargets());
 
-        var assessment = loadAssessmentPort.loadById(param.getAssessmentId());
-        var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
-        var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), assessmentTitle, assessment.getId());
+
+        var prompt = createPrompt(param.getAdviceListItems(), attributeLevelTargets, assessmentResult.getKitVersionId(), param.getAssessmentId());
         AdviceDto aiAdvice = callAiPromptPort.call(prompt, AdviceDto.class);
 
         var adviceItems = aiAdvice.adviceItems().stream()
@@ -114,7 +113,10 @@ public class CreateAiAdviceNarrationService implements CreateAiAdviceNarrationUs
             .toList();
     }
 
-    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, String assessmentTitle, UUID assessmentId) {
+    private Prompt createPrompt(List<AdviceListItem> adviceItems, List<AttributeLevelTarget> targets, long kitVersionId, UUID assessmentId) {
+        var assessment = loadAssessmentPort.loadById(assessmentId);
+        var assessmentTitle = assessment.getShortTitle() != null ? assessment.getShortTitle() : assessment.getTitle();
+
         var maturityLevelsMap = loadMaturityLevelsPort.loadAll(kitVersionId).stream()
             .collect(Collectors.toMap(MaturityLevel::getId, MaturityLevel::getTitle));
 
