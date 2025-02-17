@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,7 +46,7 @@ class GetKitListServiceTest {
 
     @Test
     void testGetKitList_GettingPublicKitsValidParams_ValidResult() {
-        var param = new Param(Boolean.FALSE, KitLanguage.EN.name(), 0, 10, UUID.randomUUID());
+        var param = createParam(Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
@@ -95,7 +96,9 @@ class GetKitListServiceTest {
 
     @Test
     void testGetKitList_GettingPrivateKitsValidParams_ValidResult() {
-        var param = new Param(Boolean.TRUE, null, 0, 10, UUID.randomUUID());
+        var param = createParam(p -> p
+            .isPrivate(true)
+            .language(null));
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
@@ -145,7 +148,7 @@ class GetKitListServiceTest {
 
     @Test
     void testGetKitList_GettingPrivateKitsValidParams_EmptyResult() {
-        var param = new Param(Boolean.TRUE, KitLanguage.EN.name(), 0, 10, UUID.randomUUID());
+        var param = createParam(p -> p.isPrivate(true));
 
         var expectedKitsPage = new PaginatedResponse<LoadPublishedKitListPort.Result>(List.of(),
             0,
@@ -171,5 +174,20 @@ class GetKitListServiceTest {
 
         verify(loadPublishedKitListPort, never()).loadPublicKits(any(), anyInt(), anyInt());
         verify(createFileDownloadLinkPort, never()).createDownloadLink(anyString(), any());
+    }
+
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .isPrivate(false)
+            .language(KitLanguage.EN.name())
+            .page(0)
+            .size(10)
+            .currentUserId(UUID.randomUUID());
     }
 }
