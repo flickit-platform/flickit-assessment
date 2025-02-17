@@ -51,7 +51,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public KitLanguage loadKitLanguage(UUID assessmentId) {
-        int languageId = repository.loadKitLanguageId(assessmentId)
+        int languageId = repository.loadKitLanguageByAssessmentId(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
         return KitLanguage.valueOfById(languageId);
     }

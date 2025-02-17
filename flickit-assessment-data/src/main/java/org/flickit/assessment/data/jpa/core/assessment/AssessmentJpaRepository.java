@@ -161,5 +161,5 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
             JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
             WHERE a.id = :assessmentId
         """)
-    Optional<Integer> loadKitLanguageId(@Param("assessmentId") UUID assessmentId);
+    Optional<Integer> loadKitLanguageByAssessmentId(@Param("assessmentId") UUID assessmentId);
 }
