@@ -3,21 +3,21 @@ package org.flickit.assessment.core.adapter.out.persistence.answer;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
+import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
@@ -28,7 +28,8 @@ public class AnswerPersistenceJpaAdapter implements
     LoadAnswerPort,
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
-    CountLowConfidenceAnswersPort {
+    CountLowConfidenceAnswersPort,
+    ApproveAnswerPort {
 
     private final AnswerJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
@@ -83,7 +84,12 @@ public class AnswerPersistenceJpaAdapter implements
                 throw new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_OPTION_ID_NOT_FOUND);
         }
 
-        repository.update(param.answerId(), param.answerOptionId(), param.confidenceLevelId(), param.isNotApplicable(), param.currentUserId());
+        repository.update(param.answerId(),
+            param.answerOptionId(),
+            param.confidenceLevelId(),
+            param.isNotApplicable(),
+            param.status().getId(),
+            param.currentUserId());
     }
 
     @Override
@@ -98,6 +104,19 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public int countWithConfidenceLessThan(UUID assessmentResultId, ConfidenceLevel confidence) {
-        return repository.countWithConfidenceLessThan(assessmentResultId, confidence.ordinal());
+        return repository.countWithConfidenceLessThan(assessmentResultId, confidence.getId());
+    }
+
+    @Override
+    public Map<Long, Integer> countWithConfidenceLessThan(UUID assessmentResultId, Set<Long> questionnaireIds, ConfidenceLevel confidence) {
+        return repository.countByQuestionnaireIdWithConfidenceLessThan(assessmentResultId, questionnaireIds, confidence.getId()).stream()
+            .collect(toMap(
+                QuestionnaireIdAndAnswerCountView::getQuestionnaireId,
+                QuestionnaireIdAndAnswerCountView::getAnswerCount));
+    }
+
+    @Override
+    public void approve(UUID answerId, UUID approvedBy) {
+        repository.approve(answerId, approvedBy, AnswerStatus.APPROVED.getId());
     }
 }

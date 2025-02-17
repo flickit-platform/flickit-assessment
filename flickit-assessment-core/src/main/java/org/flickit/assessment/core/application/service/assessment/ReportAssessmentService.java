@@ -39,7 +39,7 @@ public class ReportAssessmentService implements ReportAssessmentUseCase {
 
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        var assessmentReport = loadReportInfoPort.load(param.getAssessmentId(), param.getCurrentUserId());
+        var assessmentReport = loadReportInfoPort.load(param.getAssessmentId());
 
         log.debug("AssessmentReport returned for assessmentId=[{}].", param.getAssessmentId());
 

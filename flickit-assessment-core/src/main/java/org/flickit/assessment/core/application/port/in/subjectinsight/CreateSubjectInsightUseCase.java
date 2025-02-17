@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.port.in.subjectinsight;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -34,6 +35,7 @@ public interface CreateSubjectInsightUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, Long subjectId, String insight, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.subjectId = subjectId;

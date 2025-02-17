@@ -1,13 +1,13 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
 import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemCostLevelsUseCase;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GetAdviceItemCostLevelsServiceTest {
 

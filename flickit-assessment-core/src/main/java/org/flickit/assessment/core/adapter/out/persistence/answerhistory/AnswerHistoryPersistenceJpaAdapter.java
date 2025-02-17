@@ -10,6 +10,8 @@ import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
+import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaRepository;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +23,9 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapCreateParamToJpaEntity;
+import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
@@ -34,6 +38,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     private final AnswerJpaRepository answerRepository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
     private final UserJpaRepository userRepository;
+    private final AnswerOptionJpaRepository answerOptionRepository;
 
     @Override
     public UUID persist(AnswerHistory answerHistory) {
@@ -60,10 +65,13 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .map(AnswerHistoryJpaEntity::getCreatedBy)
             .collect(Collectors.toSet());
         var userIdToUserMap = userRepository.findAllById(userIds).stream()
-            .collect(Collectors.toMap(UserJpaEntity::getId, Function.identity()));
+            .collect(toMap(UserJpaEntity::getId, Function.identity()));
+
+        var idToOption = answerOptionRepository.findByQuestionIdAndKitVersionId(questionId, assessmentResult.getKitVersionId()).stream()
+            .collect(toMap(AnswerOptionJpaEntity::getId, Function.identity()));
 
         var items = pageResult.getContent().stream()
-            .map(e -> AnswerHistoryMapper.mapToDomainModel(e, userIdToUserMap.get(e.getCreatedBy())))
+            .map(e -> mapToDomainModel(e, userIdToUserMap.get(e.getCreatedBy()), idToOption.get(e.getAnswerOptionId())))
             .toList();
 
         return new PaginatedResponse<>(items,

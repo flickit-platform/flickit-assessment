@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.port.in.questionnaire;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
@@ -39,6 +40,7 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, Long questionnaireId, int size, int page, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.questionnaireId = questionnaireId;
@@ -55,7 +57,8 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
                   String hint,
                   Boolean mayNotBeApplicable,
                   List<Option> options,
-                  QuestionAnswer answer) {
+                  QuestionAnswer answer,
+                  Issues issues) {
     }
 
     record Option(Long id, Integer index, String title) {
@@ -64,5 +67,11 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
     record QuestionAnswer(Option selectedOption,
                           ConfidenceLevel confidenceLevel,
                           Boolean isNotApplicable) {
+    }
+
+    record Issues(boolean isUnanswered,
+                  boolean isAnsweredWithLowConfidence,
+                  boolean isAnsweredWithoutEvidences,
+                  int unresolvedCommentsCount){
     }
 }

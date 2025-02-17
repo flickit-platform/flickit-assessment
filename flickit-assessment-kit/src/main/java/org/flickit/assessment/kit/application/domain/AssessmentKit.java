@@ -4,6 +4,7 @@ import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,7 @@ public class AssessmentKit {
     private final String title;
     private final String summary;
     private final String about;
+    private final KitLanguage language;
     private final LocalDateTime creationTime;
     private final LocalDateTime lastModificationTime;
     private final boolean published;

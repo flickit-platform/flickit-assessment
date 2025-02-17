@@ -51,7 +51,15 @@ public enum AssessmentPermission {
     APPROVE_ATTRIBUTE_INSIGHT("approveAttributeInsight"),
     GRANT_ACCESS_TO_REPORT("grantAccessToReport"),
     APPROVE_SUBJECT_INSIGHT("approveSubjectInsight"),
-    APPROVE_ASSIGNMENT_INSIGHT("approveAssignmentInsight"),;
+    APPROVE_ASSIGNMENT_INSIGHT("approveAssignmentInsight"),
+    VIEW_GRAPHICAL_REPORT("viewGraphicalReport"),
+    MANAGE_REPORT_METADATA("manageReportMetadata"),
+    PUBLISH_ASSESSMENT_REPORT("publishAssessmentReport"),
+    VIEW_REPORT_PREVIEW("viewReportPreview"),
+    VIEW_ASSESSMENT_ATTRIBUTES("viewAssessmentAttributes"),
+    VIEW_ASSESSMENT_MATURITY_LEVELS("viewAssessmentMaturityLevels"),
+    APPROVE_ANSWER("approveAnswer"),
+    APPROVE_ALL_ASSESSMENT_INSIGHTS("approveAllAssessmentInsights");
 
     private final String code;
 }

@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.domain.*;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
@@ -40,6 +42,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.FALSE,
@@ -62,6 +65,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
@@ -81,6 +85,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
@@ -100,6 +105,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
@@ -123,6 +129,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
@@ -142,6 +149,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
@@ -161,6 +169,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
@@ -180,6 +189,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.FA,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,
@@ -199,6 +209,7 @@ public class AssessmentKitMother {
             TITLE + id,
             SUMMARY,
             ABOUT,
+            KitLanguage.EN,
             LocalDateTime.now(),
             LocalDateTime.now(),
             Boolean.TRUE,

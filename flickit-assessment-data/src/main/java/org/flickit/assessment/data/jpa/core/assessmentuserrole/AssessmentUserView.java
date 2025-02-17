@@ -14,7 +14,5 @@ public interface AssessmentUserView {
 
     int getRoleId();
 
-    String getTitle();
-
     boolean getEditable();
 }

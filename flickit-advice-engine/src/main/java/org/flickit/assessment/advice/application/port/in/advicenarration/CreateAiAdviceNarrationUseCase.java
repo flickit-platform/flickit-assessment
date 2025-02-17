@@ -1,6 +1,7 @@
 package org.flickit.assessment.advice.application.port.in.advicenarration;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.advice.application.domain.AttributeLevelTarget;
@@ -33,6 +34,7 @@ public interface CreateAiAdviceNarrationUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
+        @Builder
         public Param(UUID assessmentId, List<AdviceListItem> adviceListItems, List<AttributeLevelTarget> attributeLevelTargets, UUID currentUserId) {
             this.assessmentId = assessmentId;
             this.adviceListItems = adviceListItems;

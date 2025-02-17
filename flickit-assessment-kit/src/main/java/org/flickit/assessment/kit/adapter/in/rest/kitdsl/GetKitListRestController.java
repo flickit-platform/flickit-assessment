@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase.KitListItem;
+import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,16 +23,16 @@ public class GetKitListRestController {
 
     @GetMapping("/assessment-kits")
     public ResponseEntity<PaginatedResponse<KitListItem>> getKitList(
-        @RequestParam(required = false) Boolean isPrivate, // validated in the use-case param)
+        @RequestParam(required = false) Boolean isPrivate, // validated in the use-case param
+        @RequestParam(required = false) String lang,
         @RequestParam(defaultValue = "50") int size,
-        @RequestParam(defaultValue = "0") int page
-    ) {
+        @RequestParam(defaultValue = "0") int page) {
         UUID currentUserId = userContext.getUser().id();
-        var response = useCase.getKitList(toParam(isPrivate, page, size, currentUserId));
+        var response = useCase.getKitList(toParam(isPrivate, lang, page, size, currentUserId));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private GetKitListUseCase.Param toParam(Boolean isPrivate, int page, int size, UUID currentUserId) {
-        return new GetKitListUseCase.Param(isPrivate, page, size, currentUserId);
+    private Param toParam(Boolean isPrivate, String lang, int page, int size, UUID currentUserId) {
+        return new Param(isPrivate, lang, page, size, currentUserId);
     }
 }
