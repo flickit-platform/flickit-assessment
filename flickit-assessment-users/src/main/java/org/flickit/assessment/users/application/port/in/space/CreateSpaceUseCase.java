@@ -7,13 +7,13 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.common.validation.EnumValue;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
+import org.flickit.assessment.common.validation.EnumValue;
 
 import java.util.UUID;
 
-import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.users.common.ErrorMessageKey.*;
 
 public interface CreateSpaceUseCase {
 
@@ -38,7 +38,7 @@ public interface CreateSpaceUseCase {
         @Builder
         public Param(String title, String type, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
-            this.type = type != null ? type.strip() : SpaceType.PERSONAL.name(); //TODO: Remove the default
+            this.type = type != null ? type.strip() : SpaceType.BASIC.name(); //TODO: Remove the default
             this.currentUserId = currentUserId;
             this.validateSelf();
         }

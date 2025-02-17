@@ -56,7 +56,7 @@ class CreateSpaceServiceTest {
     private CreateSpaceUseCase.Param.ParamBuilder paramBuilder() {
         return CreateSpaceUseCase.Param.builder()
             .title("title")
-            .type("PERSONAL")
+            .type(SpaceType.BASIC.getCode())
             .currentUserId(UUID.randomUUID());
     }
 }

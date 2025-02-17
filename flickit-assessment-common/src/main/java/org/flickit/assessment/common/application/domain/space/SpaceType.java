@@ -1,7 +1,7 @@
 package org.flickit.assessment.common.application.domain.space;
 
 public enum SpaceType {
-    PERSONAL,
+    BASIC,
     PREMIUM;
 
     public int getId() {
