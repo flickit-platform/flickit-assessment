@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.port.in.space;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -56,7 +57,7 @@ class CreateSpaceUseCaseParamsTest {
     private CreateSpaceUseCase.Param.ParamBuilder paramBuilder() {
         return CreateSpaceUseCase.Param.builder()
             .title("title")
-            .type("PERSONAL")
+            .type(SpaceType.BASIC.getCode())
             .currentUserId(UUID.randomUUID());
     }
 }
