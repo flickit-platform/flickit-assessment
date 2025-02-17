@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 
+import java.util.Collection;
 import java.util.Map;
 
 @UtilityClass
@@ -19,7 +20,19 @@ public class ClassUtils {
 
         return (int) notNullFields.entrySet()
             .stream()
-            .filter(entry -> !(entry.getValue().toString().isBlank()))
+            .filter(entry -> !isMetadataEmpty(entry.getValue()))
             .count();
+    }
+
+    public static boolean isMetadataEmpty(Object object) {
+        if (object == null) return true;
+
+        return switch (object) {
+            case String str -> str.isBlank();
+            case Collection<?> collection -> collection.isEmpty();
+            case Map<?, ?> map -> map.isEmpty();
+            case Object[] array -> array.length == 0;
+            default -> object.getClass().isArray() && java.lang.reflect.Array.getLength(object) == 0;
+        };
     }
 }
