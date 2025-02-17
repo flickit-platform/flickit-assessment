@@ -24,7 +24,7 @@ public class ClassUtils {
             .count();
     }
 
-    public static boolean isMetadataEmpty(Object object) {
+    boolean isMetadataEmpty(Object object) {
         if (object == null) return true;
 
         return switch (object) {
