@@ -242,7 +242,7 @@ class CreateAdviceServiceTest {
             .thenReturn(Set.of(1L));
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets()))
+        when(loadAttributeCurrentAndTargetLevelIndexPort.load(param.getAssessmentId(), param.getAttributeLevelTargets()))
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 2)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
@@ -251,7 +251,7 @@ class CreateAdviceServiceTest {
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(assessmentAccessChecker, times(1)).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
         verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
-            .loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets());
+            .load(param.getAssessmentId(), param.getAttributeLevelTargets());
         Mockito.verifyNoInteractions(
             loadInfoPort,
             solverManager,
@@ -276,7 +276,7 @@ class CreateAdviceServiceTest {
             .thenReturn(Set.of(1L));
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets()))
+        when(loadAttributeCurrentAndTargetLevelIndexPort.load(param.getAssessmentId(), param.getAttributeLevelTargets()))
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
@@ -304,7 +304,7 @@ class CreateAdviceServiceTest {
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(assessmentAccessChecker, times(1)).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
         verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
-            .loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets());
+            .load(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
@@ -329,7 +329,7 @@ class CreateAdviceServiceTest {
             .thenReturn(Set.of(1L));
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets()))
+        when(loadAttributeCurrentAndTargetLevelIndexPort.load(param.getAssessmentId(), param.getAttributeLevelTargets()))
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
@@ -357,7 +357,7 @@ class CreateAdviceServiceTest {
         verify(validateAssessmentResultPort, times(1)).validate(param.getAssessmentId());
         verify(assessmentAccessChecker, times(1)).isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ADVICE);
         verify(loadAttributeCurrentAndTargetLevelIndexPort, times(1))
-            .loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets());
+            .load(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(loadInfoPort, times(1)).loadAdviceCalculationInfo(param.getAssessmentId(), param.getAttributeLevelTargets());
         verify(solverManager, times(1)).solve(any(), any());
         Mockito.verifyNoInteractions(
@@ -403,7 +403,7 @@ class CreateAdviceServiceTest {
             .thenReturn(Set.of(1L));
         when(loadSelectedLevelIdsRelatedToAssessmentPort.loadSelectedLevelIdsRelatedToAssessment(param.getAssessmentId(), Set.of(2L)))
             .thenReturn(Set.of(2L));
-        when(loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(param.getAssessmentId(), param.getAttributeLevelTargets()))
+        when(loadAttributeCurrentAndTargetLevelIndexPort.load(param.getAssessmentId(), param.getAttributeLevelTargets()))
             .thenReturn(List.of(new LoadAttributeCurrentAndTargetLevelIndexPort.Result(1L, 2, 3)));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
