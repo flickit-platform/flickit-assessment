@@ -23,7 +23,6 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
-import static org.flickit.assessment.core.application.domain.AnswerStatus.UNAPPROVED;
 import static org.flickit.assessment.core.application.domain.HistoryType.UPDATE;
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ANSWER_QUESTION_NOT_ANSWERED;
 
@@ -48,7 +47,7 @@ public class ApproveAnswerService implements ApproveAnswerUseCase {
 
         var answer = loadAnswer(assessmentResult.getId(), param.getQuestionId());
 
-        if (Objects.equals(answer.getAnswerStatus(), UNAPPROVED)) {
+        if (!Objects.equals(answer.getAnswerStatus(), APPROVED)) {
             approveAnswerPort.approve(answer.getId(), param.getCurrentUserId());
             createAnswerHistoryPort.persist(toAnswerHistory(answer, param, assessmentResult.getId()));
         }
