@@ -104,7 +104,8 @@ public enum AssessmentUserRole {
             PUBLISH_ASSESSMENT_REPORT,
             VIEW_REPORT_PREVIEW,
             APPROVE_ANSWER,
-            APPROVE_ALL_ASSESSMENT_INSIGHTS)),
+            APPROVE_ALL_ASSESSMENT_INSIGHTS,
+            GENERATE_ALL_ASSESSMENT_INSIGHTS)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -138,7 +139,7 @@ public enum AssessmentUserRole {
             VIEW_GRAPHICAL_REPORT,
             VIEW_ASSESSMENT_ATTRIBUTES,
             VIEW_ASSESSMENT_MATURITY_LEVELS
-            ));
+        ));
 
         private final Set<AssessmentPermission> permissions;
     }
