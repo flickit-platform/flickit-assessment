@@ -155,12 +155,4 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
     Page<AssessmentKitJpaEntity> findAllByTitleAndUserId(@Param("queryTerm") String query,
                                                          @Param("userId") UUID userId,
                                                          Pageable pageable);
-
-    @Query("""
-            SELECT k.languageId
-            FROM AssessmentKitJpaEntity k
-            JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
-            WHERE a.id = :assessmentId
-        """)
-    Optional<Integer> loadKitLanguageId(@Param("assessmentId") UUID assessmentId);
 }

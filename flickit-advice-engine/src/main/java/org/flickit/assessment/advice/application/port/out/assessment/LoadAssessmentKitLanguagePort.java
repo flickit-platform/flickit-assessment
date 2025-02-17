@@ -1,4 +1,4 @@
-package org.flickit.assessment.advice.application.port.out.assessmentkit;
+package org.flickit.assessment.advice.application.port.out.assessment;
 
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 

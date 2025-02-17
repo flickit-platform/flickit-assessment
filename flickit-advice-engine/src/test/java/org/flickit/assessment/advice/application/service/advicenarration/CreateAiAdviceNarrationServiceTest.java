@@ -7,7 +7,7 @@ import org.flickit.assessment.advice.application.port.out.advicenarration.Create
 import org.flickit.assessment.advice.application.port.out.advicenarration.LoadAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.advicenarration.UpdateAdviceNarrationPort;
 import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentPort;
-import org.flickit.assessment.advice.application.port.out.assessmentkit.LoadAssessmentKitLanguagePort;
+import org.flickit.assessment.advice.application.port.out.assessment.LoadAssessmentKitLanguagePort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.advice.application.port.out.atribute.LoadAttributesPort;
 import org.flickit.assessment.advice.application.port.out.attributevalue.LoadAttributeCurrentAndTargetLevelIndexPort;
