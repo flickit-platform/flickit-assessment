@@ -20,11 +20,11 @@ public class ClassUtils {
 
         return (int) notNullFields.entrySet()
             .stream()
-            .filter(entry -> !isMetadataEmpty(entry.getValue()))
+            .filter(entry -> !isFieldEmpty(entry.getValue()))
             .count();
     }
 
-    boolean isMetadataEmpty(Object object) {
+    boolean isFieldEmpty(Object object) {
         if (object == null) return true;
 
         return switch (object) {
