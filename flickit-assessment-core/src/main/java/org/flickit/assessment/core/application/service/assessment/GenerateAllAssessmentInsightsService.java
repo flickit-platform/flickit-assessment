@@ -3,7 +3,9 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
+import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
+import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
@@ -12,17 +14,27 @@ import org.flickit.assessment.core.application.port.out.assessment.GetAssessment
 import org.flickit.assessment.core.application.port.out.assessmentinsight.CreateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
+import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -38,9 +50,19 @@ import static org.flickit.assessment.core.common.MessageKey.*;
 @RequiredArgsConstructor
 public class GenerateAllAssessmentInsightsService implements GenerateAllAssessmentInsightsUseCase {
 
+    private static final String AI_INPUT_FILE_EXTENSION = ".xlsx";
+
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
+    private final LoadAttributesPort loadAttributesPort;
+    private final LoadAttributeInsightsPort loadAttributeInsightsPort;
+    private final AppAiProperties appAiProperties;
+    private final LoadAttributeValuePort loadAttributeValuePort;
+    private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
+    private final CallAiPromptPort callAiPromptPort;
+    private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
+    private final CreateAttributeInsightPort createAttributeInsightPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
@@ -59,12 +81,101 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
 
-        initSubjectsInsight(assessmentResult, locale);
+        initAttributesInsight(param.getAssessmentId(), assessmentResult, maturityLevels, locale);
+        initSubjectsInsight(assessmentResult, maturityLevels.size(), locale);
         initAssessmentInsight(assessmentResult, locale);
     }
 
-    private void initSubjectsInsight(AssessmentResult assessmentResult, Locale locale) {
+    private void initAttributesInsight(UUID assessmentId,
+                                       AssessmentResult assessmentResult,
+                                       List<MaturityLevel> maturityLevels,
+                                       Locale locale) {
+        var attributeIds = loadAttributesPort.loadAll(assessmentId).stream()
+            .map(LoadAttributesPort.Result::id)
+            .collect(toList());
+        var attributeInsightIds = loadAttributeInsightsPort.loadInsights(assessmentResult.getId()).stream()
+            .map(AttributeInsight::getAttributeId)
+            .toList();
+        attributeIds.removeAll(attributeInsightIds);
+        if (!attributeIds.isEmpty())
+            createAttributesInsight(assessmentResult, attributeIds, maturityLevels, locale);
+    }
+
+    private void createAttributesInsight(AssessmentResult assessmentResult,
+                                         List<Long> attributeIds,
+                                         List<MaturityLevel> maturityLevels,
+                                         Locale locale) {
+        if (!appAiProperties.isEnabled())
+            throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
+        var assessment = assessmentResult.getAssessment();
+        var assessmentTitle = getAssessmentTitle(assessment);
+        var attributeValues = loadAttributeValuePort.loadAll(assessmentResult.getId(), attributeIds);
+        attributeValues.forEach(av -> {
+            var file = createAttributeScoresFilePort.generateFile(av, maturityLevels);
+            var prompt = createPrompt(av.getAttribute().getTitle(),
+                av.getAttribute().getDescription(),
+                assessmentTitle,
+                file.text(),
+                locale.getLanguage()); //TODO check it to be same as assessment.getAssessmentKit().getLanguage().getTitle()
+            var aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
+            var aiInputPath = uploadInputFile(av.getAttribute(), file.stream());
+            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(),
+                av.getAttribute().getId(),
+                aiInsight,
+                aiInputPath));
+        });
+    }
+
+    private String getAssessmentTitle(Assessment assessment) {
+        return assessment.getShortTitle() != null
+            ? assessment.getShortTitle()
+            : assessment.getTitle();
+    }
+
+    public Prompt createPrompt(String attributeTitle,
+                               String attributeDescription,
+                               String assessmentTitle,
+                               String fileContent,
+                               String language) {
+        return new PromptTemplate(appAiProperties.getPrompt().getAttributeInsight(),
+            Map.of("attributeTitle", attributeTitle,
+                "attributeDescription", attributeDescription,
+                "assessmentTitle", assessmentTitle,
+                "fileContent", fileContent,
+                "language", language))
+            .create();
+    }
+
+    record AiResponseDto(String value) {
+    }
+
+    private String uploadInputFile(Attribute attribute, InputStream stream) {
+        String aiInputPath = null;
+        if (appAiProperties.isSaveAiInputFileEnabled()) {
+            var fileName = attribute.getTitle() + AI_INPUT_FILE_EXTENSION;
+            aiInputPath = uploadAttributeScoresFilePort.uploadExcel(stream, fileName);
+        }
+        return aiInputPath;
+    }
+
+    private AttributeInsight toAttributeInsight(UUID assessmentResultId,
+                                                long attributeId,
+                                                String aiInsight,
+                                                String aiInputPath) {
+        return new AttributeInsight(assessmentResultId,
+            attributeId,
+            aiInsight,
+            null,
+            LocalDateTime.now(),
+            null,
+            aiInputPath,
+            false,
+            LocalDateTime.now());
+    }
+
+    private void initSubjectsInsight(AssessmentResult assessmentResult, int maturityLevelsCount, Locale locale) {
         var subjectIds = loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()).stream()
             .map(Subject::getId)
             .collect(toList());
@@ -73,11 +184,13 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
             .toList();
         subjectIds.removeAll(subjectInsightIds);
         if (!subjectIds.isEmpty())
-            createSubjectsInsight(assessmentResult, subjectIds, locale);
+            createSubjectsInsight(assessmentResult, subjectIds, maturityLevelsCount, locale);
     }
 
-    private void createSubjectsInsight(AssessmentResult assessmentResult, List<Long> subjectIds, Locale locale) {
-        var maturityLevelsCount = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()).size();
+    private void createSubjectsInsight(AssessmentResult assessmentResult,
+                                       List<Long> subjectIds,
+                                       int maturityLevelsCount,
+                                       Locale locale) {
         var subjectIdToValueMap = loadSubjectValuePort.loadAll(subjectIds, assessmentResult.getId()).stream()
             .collect(toMap(sv -> sv.getSubject().getId(), Function.identity()));
         subjectIds.forEach(subjectId -> {
