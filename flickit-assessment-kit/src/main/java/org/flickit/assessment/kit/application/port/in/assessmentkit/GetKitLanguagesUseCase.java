@@ -6,9 +6,9 @@ public interface GetKitLanguagesUseCase {
 
     Result getKitLanguages();
 
-    record Result(List<Language> languages) {
+    record Result(List<KitLanguage> kitLanguages) {
 
-        record Language(String code, String title) {
+        public record KitLanguage(String code, String title) {
         }
     }
 }
