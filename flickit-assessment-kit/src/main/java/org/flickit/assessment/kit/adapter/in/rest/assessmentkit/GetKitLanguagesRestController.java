@@ -16,7 +16,6 @@ public class GetKitLanguagesRestController {
 
     @GetMapping("/kit-languages")
     public ResponseEntity<Result> getKitLanguages() {
-        var response = getKitLanguagesUseCase.getKitLanguages();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(getKitLanguagesUseCase.getKitLanguages(), HttpStatus.OK);
     }
 }
