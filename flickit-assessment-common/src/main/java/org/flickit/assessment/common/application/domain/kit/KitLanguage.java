@@ -6,6 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.EnumUtils;
 import org.flickit.assessment.common.application.MessageBundle;
 
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
+
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -14,6 +19,9 @@ public enum KitLanguage {
     EN("en"), FA("fa");
 
     private final String title;
+
+    private static final Map<String, KitLanguage> NAME_MAP = Stream.of(values())
+        .collect(toMap(Enum::name, e -> e));
 
     public String getTitle() {
         return MessageBundle.message(getClass().getSimpleName() + "_" + name());
@@ -39,6 +47,10 @@ public enum KitLanguage {
 
     public static KitLanguage getDefault() {
         return EN;
+    }
+
+    public static KitLanguage valueOfOrNull(String name) {
+        return NAME_MAP.get(name);
     }
 
     public static KitLanguage getEnum(String name) {

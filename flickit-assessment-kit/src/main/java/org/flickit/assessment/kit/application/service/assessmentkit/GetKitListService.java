@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,9 +31,7 @@ public class GetKitListService implements GetKitListUseCase {
 
     @Override
     public PaginatedResponse<KitListItem> getKitList(Param param) {
-        var kitLanguage = Optional.ofNullable(param.getLanguage())
-            .map(KitLanguage::valueOf)
-            .orElse(null);
+        var kitLanguage = KitLanguage.valueOfOrNull(param.getLanguage());
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
         if (Boolean.FALSE.equals(param.getIsPrivate()))
             kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguage, param.getPage(), param.getSize());
