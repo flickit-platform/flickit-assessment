@@ -103,7 +103,8 @@ public enum AssessmentUserRole {
             MANAGE_REPORT_METADATA,
             PUBLISH_ASSESSMENT_REPORT,
             VIEW_REPORT_PREVIEW,
-            APPROVE_ANSWER)),
+            APPROVE_ANSWER,
+            APPROVE_ALL_ASSESSMENT_INSIGHTS)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,

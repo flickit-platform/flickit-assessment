@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
@@ -31,20 +32,12 @@ public class AssessmentResultMother {
         return assessmentResult;
     }
 
-    public static AssessmentResult validResultWithSubjectValuesAndMaturityLevelAndConfidenceValue(List<SubjectValue> subjectValues, MaturityLevel maturityLevel, double confidenceValue) {
-        Assessment assessment = AssessmentMother.assessment();
-        AssessmentResult assessmentResult = new AssessmentResult(UUID.randomUUID(), assessment, assessment.getAssessmentKit().getKitVersion(),
-            subjectValues, LocalDateTime.now(), LocalDateTime.now());
-        assessmentResult.setIsCalculateValid(true);
-        assessmentResult.setMaturityLevel(maturityLevel);
-        assessmentResult.setLastCalculationTime(LocalDateTime.now());
-        assessmentResult.setLastConfidenceCalculationTime(LocalDateTime.now());
-        assessmentResult.setConfidenceValue(confidenceValue);
-        return assessmentResult;
+    public static AssessmentResult validResult() {
+        return validResultWithKitLanguage(KitLanguage.EN);
     }
 
-    public static AssessmentResult validResult() {
-        var assessment = AssessmentMother.assessment();
+    public static AssessmentResult validResultWithKitLanguage(KitLanguage language) {
+        var assessment = AssessmentMother.assessmentWithKitLanguage(language);
         var assessmentResult = new AssessmentResult(UUID.randomUUID(),
             assessment,
             assessment.getAssessmentKit().getKitVersion(),

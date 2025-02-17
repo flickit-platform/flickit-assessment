@@ -3,10 +3,13 @@ package org.flickit.assessment.kit.application.port.in.assessmentkit;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
+import org.flickit.assessment.common.validation.EnumValue;
 import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
@@ -26,6 +29,9 @@ public interface GetKitListUseCase {
         @NotNull(message = GET_KIT_LIST_IS_PRIVATE_NOT_NULL)
         Boolean isPrivate;
 
+        @EnumValue(enumClass = KitLanguage.class, message = GET_KIT_LIST_LANGUAGE_INVALID)
+        String language;
+
         @Min(value = 0, message = GET_KIT_LIST_PAGE_MIN)
         int page;
 
@@ -36,8 +42,10 @@ public interface GetKitListUseCase {
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
 
-        public Param(Boolean isPrivate, int page, int size, UUID currentUserId) {
+        @Builder
+        public Param(Boolean isPrivate, String language, int page, int size, UUID currentUserId) {
             this.isPrivate = isPrivate;
+            this.language = language;
             this.page = page;
             this.size = size;
             this.currentUserId = currentUserId;

@@ -81,4 +81,14 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
     void approve(@Param("assessmentResultId") UUID assessmentResultId,
                  @Param("attributeId") long attributeId,
                  @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Modifying
+    @Query("""
+            UPDATE AttributeInsightJpaEntity a
+            SET a.approved = true,
+                a.lastModificationTime = :lastModificationTime
+            WHERE a.assessmentResultId = :assessmentResultId AND a.approved = false
+        """)
+    void approveAll(@Param("assessmentResultId") UUID assessmentResultId,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }
