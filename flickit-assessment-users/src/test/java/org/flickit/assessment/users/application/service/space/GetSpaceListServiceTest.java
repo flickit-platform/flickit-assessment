@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
@@ -39,8 +40,8 @@ class GetSpaceListServiceTest {
         var space2 = SpaceMother.createSpace(UUID.randomUUID());
         String ownerName = "sample name";
         var spacePortList = List.of(
-            new LoadSpaceListPort.Result(space1, ownerName, 2, 5),
-            new LoadSpaceListPort.Result(space2, ownerName, 4, 3));
+            new LoadSpaceListPort.Result(space1, ownerName, 0, 2, 5),
+            new LoadSpaceListPort.Result(space2, ownerName, 1, 4, 3));
 
         PaginatedResponse<LoadSpaceListPort.Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
@@ -66,6 +67,8 @@ class GetSpaceListServiceTest {
         assertEquals(spacePortList.getFirst().space().getLastModificationTime(), result.getItems().getFirst().lastModificationTime());
         assertEquals(spacePortList.getFirst().assessmentsCount(), result.getItems().getFirst().assessmentsCount());
         assertEquals(spacePortList.getFirst().membersCount(), result.getItems().getFirst().membersCount());
+        assertEquals(SpaceType.BASIC.getCode(), result.getItems().getFirst().spaceType().code());
+        assertEquals(SpaceType.BASIC.getTitle(), result.getItems().getFirst().spaceType().title());
 
         assertEquals(spacePortList.get(1).space().getId(), result.getItems().get(1).id());
         assertEquals(spacePortList.get(1).space().getTitle(), result.getItems().get(1).title());
@@ -75,6 +78,8 @@ class GetSpaceListServiceTest {
         assertEquals(spacePortList.get(1).space().getLastModificationTime(), result.getItems().get(1).lastModificationTime());
         assertEquals(spacePortList.get(1).assessmentsCount(), result.getItems().get(1).assessmentsCount());
         assertEquals(spacePortList.get(1).membersCount(), result.getItems().get(1).membersCount());
+        assertEquals(SpaceType.PREMIUM.getCode(), result.getItems().get(1).spaceType().code());
+        assertEquals(SpaceType.PREMIUM.getTitle(), result.getItems().get(1).spaceType().title());
     }
 
     @Test
