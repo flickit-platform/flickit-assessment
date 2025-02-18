@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.CreateAssessmentKitUseCase;
@@ -56,6 +57,7 @@ public class CreateAssessmentKitService implements CreateAssessmentKitUseCase {
             param.getTitle(),
             param.getSummary(),
             param.getAbout(),
+            KitLanguage.valueOf(param.getLang()),
             Boolean.FALSE,
             param.getIsPrivate(),
             param.getExpertGroupId(),

@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
@@ -32,11 +33,10 @@ class GetSpaceListServiceTest {
 
     @Test
     void testGetSpaceList_validInputs_validResults() {
-        int size = 10;
-        int page = 0;
         UUID currentUserId = UUID.randomUUID();
-        var space1 = SpaceMother.createPersonalSpace(currentUserId);
-        var space2 = SpaceMother.createPersonalSpace(UUID.randomUUID());
+        GetSpaceListUseCase.Param param = new GetSpaceListUseCase.Param(10, 1, currentUserId);
+        var space1 = SpaceMother.basicSpace(currentUserId);
+        var space2 = SpaceMother.premiumSpace(UUID.randomUUID());
         String ownerName = "sample name";
         var spacePortList = List.of(
             new LoadSpaceListPort.Result(space1, ownerName, 2, 5),
@@ -44,15 +44,14 @@ class GetSpaceListServiceTest {
 
         PaginatedResponse<LoadSpaceListPort.Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
-            page,
-            size,
+            param.getPage(),
+            param.getSize(),
             SpaceUserAccessJpaEntity.Fields.lastSeen,
             Sort.Direction.DESC.name().toLowerCase(),
             spacePortList.size());
 
-        when(loadSpaceListPort.loadSpaceList(currentUserId, page, size)).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadSpaceList(currentUserId, paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
-        GetSpaceListUseCase.Param param = new GetSpaceListUseCase.Param(size, page, currentUserId);
         var result = service.getSpaceList(param);
 
         assertNotNull(paginatedResponse);
@@ -66,6 +65,8 @@ class GetSpaceListServiceTest {
         assertEquals(spacePortList.getFirst().space().getLastModificationTime(), result.getItems().getFirst().lastModificationTime());
         assertEquals(spacePortList.getFirst().assessmentsCount(), result.getItems().getFirst().assessmentsCount());
         assertEquals(spacePortList.getFirst().membersCount(), result.getItems().getFirst().membersCount());
+        assertEquals(SpaceType.BASIC.getCode(), result.getItems().getFirst().type().code());
+        assertEquals(SpaceType.BASIC.getTitle(), result.getItems().getFirst().type().title());
 
         assertEquals(spacePortList.get(1).space().getId(), result.getItems().get(1).id());
         assertEquals(spacePortList.get(1).space().getTitle(), result.getItems().get(1).title());
@@ -75,6 +76,8 @@ class GetSpaceListServiceTest {
         assertEquals(spacePortList.get(1).space().getLastModificationTime(), result.getItems().get(1).lastModificationTime());
         assertEquals(spacePortList.get(1).assessmentsCount(), result.getItems().get(1).assessmentsCount());
         assertEquals(spacePortList.get(1).membersCount(), result.getItems().get(1).membersCount());
+        assertEquals(SpaceType.PREMIUM.getCode(), result.getItems().get(1).type().code());
+        assertEquals(SpaceType.PREMIUM.getTitle(), result.getItems().get(1).type().title());
     }
 
     @Test

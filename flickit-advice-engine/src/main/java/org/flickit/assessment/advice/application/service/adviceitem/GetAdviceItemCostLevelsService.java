@@ -1,11 +1,10 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
+import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemCostLevelsUseCase;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
-
-import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemCostLevelsUseCase;
 
 import java.util.Arrays;
 import java.util.List;

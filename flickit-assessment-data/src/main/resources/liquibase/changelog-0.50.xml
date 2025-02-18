@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.50-01" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="type" type="tinyint" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.50-02" author="Mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fac_answer" columnName="status"/>
+    </changeSet>
+
+    <changeSet id="0.50-03" author="Mahdi Rezazadeh">
+        <update tableName="fac_answer">
+            <column name="status" value="NULL"/>
+            <where>answer_option_id IS NULL AND (is_not_applicable IS NULL OR is_not_applicable = FALSE)</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.50-04" author="Mahdi Rezazadeh">
+        <dropNotNullConstraint tableName="fac_answer_history" columnName="status"/>
+    </changeSet>
+
+    <changeSet id="0.50-05" author="Mahdi Rezazadeh">
+        <update tableName="fac_answer_history">
+            <column name="status" value="NULL"/>
+            <where>answer_option_id IS NULL AND (is_not_applicable IS NULL OR is_not_applicable = FALSE)</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="0.50-06" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="subscription_expiry" type="${datetime_with_time_zone_type}">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

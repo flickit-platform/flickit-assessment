@@ -34,9 +34,9 @@ class UpdateSpaceLastSeenServiceTest {
     UpdateSpaceLastSeenPort updateSpaceLastSeenPort;
 
     @Test
-    void testUpdateSpaceLastSeenService_isMember_success() {
+    void testUpdateSpaceLastSeen_WhenUserIsMember_ThenUpdateSpaceLastSeen() {
         UUID currentUserId = UUID.randomUUID();
-        Space space = SpaceMother.createPersonalSpace(currentUserId);
+        Space space = SpaceMother.basicSpace(currentUserId);
         UpdateSpaceLastSeenUseCase.Param param = new UpdateSpaceLastSeenUseCase.Param(space.getId(), currentUserId);
 
         when(checkSpaceAccessPort.checkIsMember(space.getId(), currentUserId)).thenReturn(true);
@@ -49,9 +49,9 @@ class UpdateSpaceLastSeenServiceTest {
     }
 
     @Test
-    void testUpdateSpaceLastSeenService_isNotMember_accessDenied() {
+    void testUpdateSpaceLastSeen_WhenUserIsNotMember_ThenThrowAccessDenied() {
         UUID ownerId = UUID.randomUUID();
-        Space space = SpaceMother.createPersonalSpace(ownerId);
+        Space space = SpaceMother.basicSpace(ownerId);
         UUID currentUserId = UUID.randomUUID();
         UpdateSpaceLastSeenUseCase.Param param = new UpdateSpaceLastSeenUseCase.Param(space.getId(), currentUserId);
 

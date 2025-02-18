@@ -70,7 +70,6 @@ public enum AssessmentUserRole {
             CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
-            VIEW_ASSESSMENT,
             VIEW_SUBJECT_PROGRESS,
             VIEW_SUBJECT_REPORT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
@@ -100,7 +99,12 @@ public enum AssessmentUserRole {
             VIEW_DASHBOARD,
             APPROVE_ATTRIBUTE_INSIGHT,
             APPROVE_SUBJECT_INSIGHT,
-            APPROVE_ASSIGNMENT_INSIGHT)),
+            APPROVE_ASSIGNMENT_INSIGHT,
+            MANAGE_REPORT_METADATA,
+            PUBLISH_ASSESSMENT_REPORT,
+            VIEW_REPORT_PREVIEW,
+            APPROVE_ANSWER,
+            APPROVE_ALL_ASSESSMENT_INSIGHTS)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -129,7 +133,12 @@ public enum AssessmentUserRole {
             VIEW_EVIDENCE,
             RESOLVE_COMMENT)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
-            GRANT_ACCESS_TO_REPORT));
+            VIEW_ASSESSMENT,
+            GRANT_ACCESS_TO_REPORT,
+            VIEW_GRAPHICAL_REPORT,
+            VIEW_ASSESSMENT_ATTRIBUTES,
+            VIEW_ASSESSMENT_MATURITY_LEVELS
+            ));
 
         private final Set<AssessmentPermission> permissions;
     }

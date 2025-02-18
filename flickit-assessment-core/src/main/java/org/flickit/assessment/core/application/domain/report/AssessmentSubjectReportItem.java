@@ -9,6 +9,7 @@ public record AssessmentSubjectReportItem(
     String title,
     Integer index,
     String description,
+    String insight,
     Double confidenceValue,
     MaturityLevel maturityLevel,
     List<AttributeReportItem> attributes) {

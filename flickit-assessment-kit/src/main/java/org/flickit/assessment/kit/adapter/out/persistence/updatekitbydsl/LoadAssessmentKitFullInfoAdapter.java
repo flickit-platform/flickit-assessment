@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.adapter.out.persistence.updatekitbydsl;
 
 import lombok.AllArgsConstructor;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
@@ -103,6 +104,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             entity.getTitle(),
             entity.getSummary(),
             entity.getAbout(),
+            KitLanguage.valueOfById(entity.getLanguageId()),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
             entity.getPublished(),

@@ -189,14 +189,14 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                 .computeIfAbsent(questionId, k -> new QuestionWithImpacts(question, new ArrayList<>()))
                 .add(questionImpact);
         }
-        return  impactfulQuestionsWithImpact;
+        return impactfulQuestionsWithImpact;
     }
 
     /**
      * build attributeValues domain
      * with all information needed for calculate their maturity levels
      *
-     * @param context      all previously loaded data
+     * @param context           all previously loaded data
      * @param attributeEntities list of all attribute entities
      * @return a map of each attributeId to it's corresponding attributeValue
      */
@@ -242,7 +242,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
 
     /**
      * @param impactfulQuestions subset of questions extracted in {@linkplain AssessmentCalculateInfoLoadAdapter#questionsWithImpact} method
-     * @param context all previously loaded data
+     * @param context            all previously loaded data
      * @return list of answers related to the given list of questions,
      * it is possible that no answer is submitted for any of these questions
      * returning list has {minSize = 0}, {maxSize = size of input questionList}
@@ -266,7 +266,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                     answerOption,
                     entity.getQuestionId(),
                     entity.getConfidenceLevelId(),
-                    entity.getIsNotApplicable());
+                    entity.getIsNotApplicable(),
+                    AnswerStatus.valueOfById(entity.getStatus()));
             }).toList();
     }
 
@@ -274,8 +275,8 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
      * build subjectValues domain with all information needed for calculate their maturity levels
      *
      * @param attrIdToValue        map of attributeIds to their corresponding value
-     * @param subjectEntities    list of subjects
-     * @param attributeEntities  list of attributes
+     * @param subjectEntities      list of subjects
+     * @param attributeEntities    list of attributes
      * @param subjectValueEntities list of subjectValue entities
      * @return list of subjectValues
      */
@@ -315,7 +316,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
     private Assessment buildAssessment(AssessmentJpaEntity assessmentEntity, long kitVersionId) {
         Long kitId = assessmentEntity.getAssessmentKitId();
         List<MaturityLevel> maturityLevels = maturityLevelJpaAdapter.loadByKitVersionIdWithCompetences(kitVersionId);
-        AssessmentKit kit = new AssessmentKit(kitId, null, kitVersionId, maturityLevels);
+        AssessmentKit kit = new AssessmentKit(kitId, null, kitVersionId, null, maturityLevels);
         return mapToDomainModel(assessmentEntity, kit, null);
     }
 

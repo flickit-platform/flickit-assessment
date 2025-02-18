@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.Space;
@@ -13,13 +14,17 @@ public class AssessmentMother {
     private static int counter = 341;
 
     public static Assessment assessment() {
+        return assessmentWithKitLanguage(KitLanguage.EN);
+    }
+
+    public static Assessment assessmentWithKitLanguage(KitLanguage language) {
         counter++;
         return new Assessment(
             UUID.randomUUID(),
             "my-assessment-" + counter,
             "My Assessment " + counter,
             "Short title" + counter,
-            AssessmentKitMother.kit(),
+            AssessmentKitMother.kitWithLanguage(language),
             new Space(123L, "title"),
             234L,
             LocalDateTime.now(),
@@ -49,6 +54,10 @@ public class AssessmentMother {
     }
 
     public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId) {
+        return assessmentListItem(spaceId, kitId, Boolean.FALSE);
+    }
+
+    public static AssessmentListItem assessmentListItem(Long spaceId, Long kitId, boolean manageable) {
         counter++;
         return new AssessmentListItem(
             UUID.randomUUID(),
@@ -60,8 +69,7 @@ public class AssessmentMother {
             new Random().nextDouble() * 100,
             Boolean.TRUE,
             Boolean.TRUE,
-            Boolean.FALSE,
-            true
-        );
+            manageable,
+            Boolean.FALSE);
     }
 }

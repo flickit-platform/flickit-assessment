@@ -1,8 +1,8 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
 import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemImpactLevelsUseCase;
+import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

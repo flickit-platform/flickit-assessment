@@ -34,6 +34,9 @@ public class SubjectInsightJpaEntity extends AbstractEntity<SubjectInsightJpaEnt
     @Column(name = "insight_time", nullable = false)
     private LocalDateTime insightTime;
 
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
+
     @Column(name = "insight_by")
     private UUID insightBy;
 

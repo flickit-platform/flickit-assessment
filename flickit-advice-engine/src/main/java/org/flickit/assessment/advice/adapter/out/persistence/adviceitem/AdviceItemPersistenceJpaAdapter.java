@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.adapter.out.persistence.adviceitem;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
+import org.flickit.assessment.advice.application.domain.AdviceItem;
 import org.flickit.assessment.advice.application.port.out.adviceitem.*;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +32,14 @@ public class AdviceItemPersistenceJpaAdapter implements
     public UUID persist(AdviceItem adviceItem) {
         var entity = AdviceItemMapper.toJpaEntity(adviceItem);
         return repository.save(entity).getId();
+    }
+
+    @Override
+    public void persistAll(List<AdviceItem> adviceItems) {
+        var entities = adviceItems.stream()
+            .map(AdviceItemMapper::toJpaEntity)
+            .toList();
+        repository.saveAll(entities);
     }
 
     @Override
