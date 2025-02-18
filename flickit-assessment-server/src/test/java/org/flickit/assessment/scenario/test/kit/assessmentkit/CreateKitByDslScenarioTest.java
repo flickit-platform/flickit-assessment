@@ -83,14 +83,14 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         var request = createKitByDslRequestDto(a -> a
                 .expertGroupId(expertGroupId)
                 .kitDslId(kitDslId)
-            .tagIds(List.of(kitTagId))
+                .tagIds(List.of(kitTagId))
         );
 
         var response = kitHelper.create(context, request);
 
         response.then()
-            .statusCode(201)
-            .body("kitId", notNullValue());
+                .statusCode(201)
+                .body("kitId", notNullValue());
         final Number kitId = response.path("kitId");
 
         AssessmentKitJpaEntity loadedAssessmentKit = jpaTemplate.load(kitId, AssessmentKitJpaEntity.class);
