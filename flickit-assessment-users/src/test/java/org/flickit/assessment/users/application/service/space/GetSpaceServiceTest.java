@@ -37,7 +37,7 @@ class GetSpaceServiceTest {
     @Test
     void testGetSpace_WhenUserIsOwner_ThenReturnSpaceWithEditableTrue() {
         UUID currentUserId = UUID.randomUUID();
-        Space space = SpaceMother.createPersonalSpace(currentUserId);
+        Space space = SpaceMother.basicSpace(currentUserId);
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
         LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(space, 1, 1);
 
@@ -53,7 +53,7 @@ class GetSpaceServiceTest {
     @Test
     void testGetSpace_WhenUserIsNotOwner_ThenReturnSpaceWithEditableFalse() {
         UUID ownerId = UUID.randomUUID();
-        Space space = SpaceMother.createPersonalSpace(ownerId);
+        Space space = SpaceMother.basicSpace(ownerId);
         UUID currentUserId = UUID.randomUUID();
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
         LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(space, 1, 1);
