@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.users.application.domain.SpaceType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -40,13 +41,10 @@ public interface GetSpaceListUseCase {
         }
     }
 
-    record SpaceListItem(long id, String title, Owner owner, Type type,
+    record SpaceListItem(long id, String title, Owner owner, SpaceType type,
                          LocalDateTime lastModificationTime, int membersCount, int assessmentsCount) {
 
         public record Owner(UUID id, String displayName, Boolean isCurrentUserOwner) {
-        }
-
-        public record Type(String code, String title) {
         }
     }
 }
