@@ -34,6 +34,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
             generateSlugCode(title),
             title,
             currentUserId,
+            null,
             creationTime,
             creationTime,
             currentUserId,

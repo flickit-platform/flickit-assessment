@@ -7,7 +7,6 @@ import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceDetailsPort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.flickit.assessment.users.test.fixture.application.SpaceMother;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,10 +35,9 @@ class GetSpaceServiceTest {
     LoadSpaceDetailsPort loadSpaceDetailsPort;
 
     @Test
-    @DisplayName("When the current user is owner, 'editable' field in service result must be true")
-    void testGetSpaceService_isOwner_successFullWithEditableTrue() {
+    void testGetSpace_WhenUserIsOwner_ThenReturnSpaceWithEditableTrue() {
         UUID currentUserId = UUID.randomUUID();
-        Space space = SpaceMother.createSpace(currentUserId);
+        Space space = SpaceMother.createPersonalSpace(currentUserId);
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
         LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(space, 1, 1);
 
@@ -53,10 +51,9 @@ class GetSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("When the current user is not owner, 'editable' field in service result must be true")
-    void testGetSpaceService_isNotOwner_successFullWithEditableFalse() {
+    void testGetSpace_WhenUserIsNotOwner_ThenReturnSpaceWithEditableFalse() {
         UUID ownerId = UUID.randomUUID();
-        Space space = SpaceMother.createSpace(ownerId);
+        Space space = SpaceMother.createPersonalSpace(ownerId);
         UUID currentUserId = UUID.randomUUID();
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
         LoadSpaceDetailsPort.Result portResult = new LoadSpaceDetailsPort.Result(space, 1, 1);
@@ -70,8 +67,7 @@ class GetSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("When the 'space' does not exist, update last seen should not be executed.")
-    void testGetSpace_spaceDoesNotExist_throwException() {
+    void testGetSpace_WhenSpaceDoesNotExist_ThenThrowResourceNotFoundException() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
@@ -85,8 +81,7 @@ class GetSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("Only members can see the Space")
-    void testGetSpace_spaceAccessNotFound_accessDeniedException() {
+    void testGetSpace_WhenSpaceAccessNotFound_ThenThrowAccessDeniedException() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);

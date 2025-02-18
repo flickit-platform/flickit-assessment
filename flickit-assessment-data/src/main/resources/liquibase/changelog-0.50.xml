@@ -34,4 +34,12 @@
         </update>
     </changeSet>
 
+    <changeSet id="0.50-06" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="subscription_expiry" type="${datetime_with_time_zone_type}">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
