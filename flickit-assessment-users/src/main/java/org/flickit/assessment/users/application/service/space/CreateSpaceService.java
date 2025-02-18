@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
@@ -22,23 +23,24 @@ public class CreateSpaceService implements CreateSpaceUseCase {
 
     @Override
     public Result createSpace(Param param) {
-        long id = createSpacePort.persist(mapToDomain(param.getTitle(), param.getCurrentUserId()));
+        long id = createSpacePort.persist(mapToDomain(param));
 
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
         return new Result(id);
     }
 
-    private Space mapToDomain(String title, UUID currentUserId) {
+    private Space mapToDomain(Param param) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new Space(null,
-            generateSlugCode(title),
-            title,
-            currentUserId,
+            generateSlugCode(param.getTitle()),
+            param.getTitle(),
+            SpaceType.valueOf(param.getType()),
+            param.getCurrentUserId(),
             null,
             creationTime,
             creationTime,
-            currentUserId,
-            currentUserId
+            param.getCurrentUserId(),
+            param.getCurrentUserId()
         );
     }
 

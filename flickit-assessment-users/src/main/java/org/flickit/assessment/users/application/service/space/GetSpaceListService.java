@@ -19,27 +19,32 @@ public class GetSpaceListService implements GetSpaceListUseCase {
 
     @Override
     public PaginatedResponse<SpaceListItem> getSpaceList(Param param) {
-        var loadPortResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), param.getPage(), param.getSize());
+        var portResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), param.getPage(), param.getSize());
 
         return new PaginatedResponse<>(
-            mapToSpaceListItems(loadPortResult.getItems(), param.getCurrentUserId()),
-            loadPortResult.getPage(),
-            loadPortResult.getSize(),
-            loadPortResult.getSort(),
-            loadPortResult.getOrder(),
-            loadPortResult.getTotal()
+            mapToSpaceListItems(portResult.getItems(), param.getCurrentUserId()),
+            portResult.getPage(),
+            portResult.getSize(),
+            portResult.getSort(),
+            portResult.getOrder(),
+            portResult.getTotal()
         );
     }
 
     private List<GetSpaceListUseCase.SpaceListItem> mapToSpaceListItems(List<LoadSpaceListPort.Result> items, UUID currentUserId) {
         return items.stream()
-            .map(item -> new GetSpaceListUseCase.SpaceListItem(
-                item.space().getId(),
-                item.space().getTitle(),
-                new SpaceListItem.Owner(item.space().getOwnerId(), item.ownerName(), item.space().getOwnerId().equals(currentUserId)),
-                item.space().getLastModificationTime(),
-                item.membersCount(),
-                item.assessmentsCount()
-            )).toList();
+            .map(item -> {
+                var space = item.space();
+                return new GetSpaceListUseCase.SpaceListItem(
+                    space.getId(),
+                    space.getTitle(),
+                    new SpaceListItem.Owner(space.getOwnerId(), item.ownerName(), space.getOwnerId().equals(currentUserId)),
+                    new SpaceListItem.Type(space.getType().getCode(), space.getType().getTitle()),
+                    space.getLastModificationTime(),
+                    item.membersCount(),
+                    item.assessmentsCount()
+                );
+            })
+            .toList();
     }
 }

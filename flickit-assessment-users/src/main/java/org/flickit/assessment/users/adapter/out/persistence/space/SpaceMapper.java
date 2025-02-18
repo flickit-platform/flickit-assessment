@@ -2,9 +2,9 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
-import org.flickit.assessment.common.application.domain.space.SpaceType;
 
 import static org.flickit.assessment.users.application.service.constant.SpaceConstants.NOT_DELETED_DELETION_TIME;
 
@@ -16,7 +16,7 @@ public class SpaceMapper {
             null,
             space.getCode(),
             space.getTitle(),
-            SpaceType.BASIC.getId(), //TODO: Should consider based on input
+            space.getType().getId(),
             space.getOwnerId(),
             space.getSubscriptionExpiry(),
             space.getCreationTime(),
@@ -32,6 +32,7 @@ public class SpaceMapper {
             entity.getId(),
             entity.getCode(),
             entity.getTitle(),
+            SpaceType.valueOfById(entity.getType()),
             entity.getOwnerId(),
             entity.getSubscriptionExpiry(),
             entity.getCreationTime(),
