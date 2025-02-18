@@ -47,7 +47,7 @@ public class AnswerHistoryJpaEntity {
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private Integer status;
 
     @Column(name = "created_by", nullable = false)

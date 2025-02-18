@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_QUESTIONNAIRE_QUESTIONS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.domain.AnswerStatus.APPROVED;
+import static org.flickit.assessment.core.application.domain.AnswerStatus.UNAPPROVED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -121,6 +122,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertNotNull(answer.getSelectedOption());
         assertEquals(answer.getSelectedOption().getId(), item.answer().selectedOption().id());
         assertEquals(question.getOptions().getFirst().getTitle(), item.answer().selectedOption().title());
+        assertTrue(item.answer().approved());
         //Assert Issues
         assertFalse(item.issues().isUnanswered());
         assertTrue(item.issues().isAnsweredWithLowConfidence());
@@ -134,7 +136,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndAnswerIsNotApplicable_ValidResult() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
         Answer answer = new Answer(UUID.randomUUID(), new AnswerOption(question.getOptions().getFirst().getId(), 2,
-            null, null), question.getId(), 3, Boolean.TRUE, APPROVED);
+            null, null), question.getId(), 3, Boolean.TRUE, UNAPPROVED);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -158,6 +160,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertNull(item.answer().selectedOption());
         assertTrue(item.answer().isNotApplicable());
         assertNotNull(item.answer().confidenceLevel());
+        assertFalse(item.answer().approved());
         //Assert Issues
         assertFalse(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
@@ -192,6 +195,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertNull(item.answer().selectedOption());
         assertTrue(item.answer().isNotApplicable());
         assertNotNull(item.answer().confidenceLevel());
+        assertTrue(item.answer().approved());
         //Assert Issues
         assertFalse(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());
@@ -202,7 +206,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     @Test
     void testGetAssessmentQuestionnaireQuestionList_ValidParamsAndSelectedOptionIsNullAndIsNotApplicableFalse_ValidResult() {
         Param param = createParam(GetAssessmentQuestionnaireQuestionListUseCase.Param.ParamBuilder::build);
-        Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE, APPROVED);
+        Answer answer = new Answer(UUID.randomUUID(), null, question.getId(), 1, Boolean.FALSE, null);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             .thenReturn(true);
@@ -226,6 +230,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.answer().isNotApplicable());
         assertNull(item.answer().selectedOption());
         assertNull(item.answer().confidenceLevel());
+        assertNull(item.answer().approved());
         //Assert Issues
         assertTrue(item.issues().isUnanswered());
         assertFalse(item.issues().isAnsweredWithLowConfidence());

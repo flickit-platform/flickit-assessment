@@ -66,12 +66,13 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
 
     record QuestionAnswer(Option selectedOption,
                           ConfidenceLevel confidenceLevel,
-                          Boolean isNotApplicable) {
+                          Boolean isNotApplicable,
+                          Boolean approved) {
     }
 
     record Issues(boolean isUnanswered,
                   boolean isAnsweredWithLowConfidence,
                   boolean isAnsweredWithoutEvidences,
-                  int unresolvedCommentsCount){
+                  int unresolvedCommentsCount) {
     }
 }
