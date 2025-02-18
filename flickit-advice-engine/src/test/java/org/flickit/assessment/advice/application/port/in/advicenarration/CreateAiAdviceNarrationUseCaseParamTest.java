@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateAiAdviceNarrationUseCaseParamTest {
 
     @Test
-    void testCreateAiAdviceNarrationParam_assessmentIdIsParamViolatesConstrain_ErrorMessage() {
+    void testCreateAiAdviceNarrationParam_assessmentIdIsParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + CREATE_AI_ADVICE_NARRATION_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testCreateAiAdviceNarrationParam_adviceAiListItemsParamViolatesConstrain_ErrorMessage() {
+    void testCreateAiAdviceNarrationParam_adviceAiListItemsParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.adviceListItems(null)));
         assertThat(throwable).hasMessage("adviceListItems: " + CREATE_AI_ADVICE_NARRATION_ADVICE_LIST_ITEMS_NOT_NULL);
