@@ -1,6 +1,7 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
@@ -33,6 +34,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
         return new Space(null,
             generateSlugCode(title),
             title,
+            new Space.SpaceType (SpaceType.BASIC.getCode(), SpaceType.BASIC.getTitle()), //TODO: Consider to fix it
             currentUserId,
             null,
             creationTime,
