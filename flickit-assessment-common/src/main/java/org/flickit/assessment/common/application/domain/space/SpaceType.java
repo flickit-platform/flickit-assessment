@@ -4,20 +4,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
 
-import static org.flickit.assessment.common.error.MessageKey.SPACE_TYPE_BASIC;
-import static org.flickit.assessment.common.error.MessageKey.SPACE_TYPE_PREMIUM;
-
 @Getter
 @RequiredArgsConstructor
 public enum SpaceType {
 
-    BASIC(SPACE_TYPE_BASIC),
-    PREMIUM(SPACE_TYPE_PREMIUM);
-
-    private final String title;
+    BASIC(),
+    PREMIUM();
 
     public String getTitle() {
-        return MessageBundle.message(title);
+        return MessageBundle.message(getClass().getSimpleName() + "_" + name());
     }
 
     public int getId() {
@@ -29,12 +24,16 @@ public enum SpaceType {
     }
 
     public static SpaceType valueOfById(int id) {
-        if (!isValid(id))
+        if (!isValidId(id))
             return null;
         return SpaceType.values()[id];
     }
 
-    private static boolean isValid(int id) {
+    public static SpaceType getDefault() {
+        return BASIC;
+    }
+
+    private static boolean isValidId(int id) {
         return id >= 0 && id <= SpaceType.values().length;
     }
 }
