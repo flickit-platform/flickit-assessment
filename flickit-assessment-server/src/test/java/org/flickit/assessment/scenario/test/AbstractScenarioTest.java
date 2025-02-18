@@ -57,9 +57,9 @@ public abstract class AbstractScenarioTest {
     @SneakyThrows
     void setup() {
         RestAssured.port = port;
-        if (enableCreateCurrentUser())
-            context = new ScenarioContext(
-                currentUser -> userHelper.create(createUserRequestDto(b -> b.id(currentUser.getUserId()))));
+        context = enableCreateCurrentUser() ?
+            new ScenarioContext(currentUser -> userHelper.create(createUserRequestDto(b -> b.id(currentUser.getUserId())))) :
+            new ScenarioContext();
         mockDslWebServer = new MockWebServer();
         mockDslWebServer.start(8181);
         context.setMockDslWebServer(mockDslWebServer);

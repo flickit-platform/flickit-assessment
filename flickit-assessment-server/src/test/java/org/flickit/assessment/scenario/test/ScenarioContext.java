@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.flickit.assessment.scenario.fixture.auth.JwtTokenTestUtils.generateJwtToken;
 
 public class ScenarioContext {
@@ -30,7 +31,12 @@ public class ScenarioContext {
         this.currentUser = getCurrentUser();
     }
 
+    public ScenarioContext() {
+        this.changeCurrentUserListener = null;
+    }
+
     public CurrentUser getCurrentUser() {
+        checkNotNull(changeCurrentUserListener);
         if (currentUser == null) {
             currentUser = new CurrentUser(UUID.randomUUID());
             changeCurrentUserListener.accept(currentUser);
