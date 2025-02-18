@@ -40,7 +40,7 @@ public class GetSpaceListService implements GetSpaceListUseCase {
             item.space().getId(),
             item.space().getTitle(),
             new SpaceListItem.Owner(item.space().getOwnerId(), item.ownerName(), item.space().getOwnerId().equals(currentUserId)),
-            new SpaceListItem.SpaceType(Objects.requireNonNull(spaceType).getCode(), spaceType.getTitle()),
+            new SpaceListItem.Type(Objects.requireNonNull(spaceType).getCode(), spaceType.getTitle()),
             item.space().getLastModificationTime(),
             item.membersCount(),
             item.assessmentsCount()

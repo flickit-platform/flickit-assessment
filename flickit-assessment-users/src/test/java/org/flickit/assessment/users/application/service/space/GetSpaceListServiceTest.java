@@ -67,8 +67,8 @@ class GetSpaceListServiceTest {
         assertEquals(spacePortList.getFirst().space().getLastModificationTime(), result.getItems().getFirst().lastModificationTime());
         assertEquals(spacePortList.getFirst().assessmentsCount(), result.getItems().getFirst().assessmentsCount());
         assertEquals(spacePortList.getFirst().membersCount(), result.getItems().getFirst().membersCount());
-        assertEquals(SpaceType.BASIC.getCode(), result.getItems().getFirst().spaceType().code());
-        assertEquals(SpaceType.BASIC.getTitle(), result.getItems().getFirst().spaceType().title());
+        assertEquals(SpaceType.BASIC.getCode(), result.getItems().getFirst().type().code());
+        assertEquals(SpaceType.BASIC.getTitle(), result.getItems().getFirst().type().title());
 
         assertEquals(spacePortList.get(1).space().getId(), result.getItems().get(1).id());
         assertEquals(spacePortList.get(1).space().getTitle(), result.getItems().get(1).title());
@@ -78,8 +78,8 @@ class GetSpaceListServiceTest {
         assertEquals(spacePortList.get(1).space().getLastModificationTime(), result.getItems().get(1).lastModificationTime());
         assertEquals(spacePortList.get(1).assessmentsCount(), result.getItems().get(1).assessmentsCount());
         assertEquals(spacePortList.get(1).membersCount(), result.getItems().get(1).membersCount());
-        assertEquals(SpaceType.PREMIUM.getCode(), result.getItems().get(1).spaceType().code());
-        assertEquals(SpaceType.PREMIUM.getTitle(), result.getItems().get(1).spaceType().title());
+        assertEquals(SpaceType.PREMIUM.getCode(), result.getItems().get(1).type().code());
+        assertEquals(SpaceType.PREMIUM.getTitle(), result.getItems().get(1).type().title());
     }
 
     @Test
