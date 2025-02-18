@@ -40,9 +40,13 @@ public interface GetSpaceListUseCase {
         }
     }
 
-    record SpaceListItem(long id, String title, Owner owner, LocalDateTime lastModificationTime,
-                         int membersCount, int assessmentsCount) {
+    record SpaceListItem(long id, String title, Owner owner, SpaceType spaceType,
+                         LocalDateTime lastModificationTime, int membersCount, int assessmentsCount) {
 
-        public record Owner(UUID id, String displayName, Boolean isCurrentUserOwner) {}
+        public record Owner(UUID id, String displayName, Boolean isCurrentUserOwner) {
+        }
+
+        public record SpaceType(String code, String title) {
+        }
     }
 }
