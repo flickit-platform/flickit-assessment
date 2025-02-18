@@ -4,7 +4,6 @@ import lombok.experimental.UtilityClass;
 import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.CreateKitByDslRequestDto;
 import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.CreateKitByDslRequestDto.CreateKitByDslRequestDtoBuilder;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @UtilityClass
@@ -29,9 +28,6 @@ public class CreateKitByDslRequestDtoMother {
             .summary("kit summary " + index)
             .about("about kit " + index)
             .lang("en")
-            .isPrivate(false)
-            .kitDslId(6350L + index)
-            .expertGroupId(1560L + index)
-            .tagIds(List.of(1L, 2L));
+            .isPrivate(false);
     }
 }
