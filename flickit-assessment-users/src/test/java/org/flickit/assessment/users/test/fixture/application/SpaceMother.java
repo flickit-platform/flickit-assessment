@@ -10,14 +10,29 @@ public class SpaceMother {
 
     private static Long id = 134L;
 
-    public static Space createPersonalSpace(UUID ownerId) {
+    public static Space basicSpace(UUID ownerId) {
         return new Space(
             id++,
             "Code" + id,
             "Title",
-            new Space.SpaceType(SpaceType.BASIC.getCode(), SpaceType.BASIC.getTitle()),
+            SpaceType.BASIC,
             ownerId,
             null,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        );
+    }
+
+    public static Space premiumSpace(UUID ownerId) {
+        return new Space(
+            id++,
+            "Code" + id,
+            "Title",
+            SpaceType.PREMIUM,
+            ownerId,
+            LocalDateTime.now().minusMonths(3),
             LocalDateTime.now(),
             LocalDateTime.now(),
             UUID.randomUUID(),

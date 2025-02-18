@@ -33,27 +33,25 @@ class GetSpaceListServiceTest {
 
     @Test
     void testGetSpaceList_validInputs_validResults() {
-        int size = 10;
-        int page = 0;
         UUID currentUserId = UUID.randomUUID();
-        var space1 = SpaceMother.createPersonalSpace(currentUserId);
-        var space2 = SpaceMother.createPersonalSpace(UUID.randomUUID());
+        GetSpaceListUseCase.Param param = new GetSpaceListUseCase.Param(10, 1, currentUserId);
+        var space1 = SpaceMother.basicSpace(currentUserId);
+        var space2 = SpaceMother.premiumSpace(UUID.randomUUID());
         String ownerName = "sample name";
         var spacePortList = List.of(
-            new LoadSpaceListPort.Result(space1, ownerName, SpaceType.BASIC.getId(), 2, 5),
-            new LoadSpaceListPort.Result(space2, ownerName, SpaceType.PREMIUM.getId(), 4, 3));
+            new LoadSpaceListPort.Result(space1, ownerName, 2, 5),
+            new LoadSpaceListPort.Result(space2, ownerName, 4, 3));
 
         PaginatedResponse<LoadSpaceListPort.Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
-            page,
-            size,
+            param.getPage(),
+            param.getSize(),
             SpaceUserAccessJpaEntity.Fields.lastSeen,
             Sort.Direction.DESC.name().toLowerCase(),
             spacePortList.size());
 
-        when(loadSpaceListPort.loadSpaceList(currentUserId, page, size)).thenReturn(paginatedResponse);
+        when(loadSpaceListPort.loadSpaceList(currentUserId, paginatedResponse.getPage(), param.getSize())).thenReturn(paginatedResponse);
 
-        GetSpaceListUseCase.Param param = new GetSpaceListUseCase.Param(size, page, currentUserId);
         var result = service.getSpaceList(param);
 
         assertNotNull(paginatedResponse);
