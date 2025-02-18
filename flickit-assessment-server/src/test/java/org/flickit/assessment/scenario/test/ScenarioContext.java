@@ -1,6 +1,9 @@
 package org.flickit.assessment.scenario.test;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Value;
+import okhttp3.mockwebserver.MockWebServer;
 import org.flickit.assessment.scenario.test.users.user.UserTestHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,8 +17,13 @@ public class ScenarioContext {
     @Autowired
     private UserTestHelper userTestHelper;
 
+    @Getter
+    @Setter
+    private MockWebServer mockDslWebServer;
+
     private CurrentUser currentUser;
     private final Consumer<CurrentUser> changeCurrentUserListener;
+
 
     public ScenarioContext(Consumer<CurrentUser> changeCurrentUserListener) {
         this.changeCurrentUserListener = changeCurrentUserListener;
