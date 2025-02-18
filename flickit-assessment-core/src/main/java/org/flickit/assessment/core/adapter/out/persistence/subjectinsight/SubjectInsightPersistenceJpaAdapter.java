@@ -9,6 +9,7 @@ import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepo
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class SubjectInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public void persistAll(List<SubjectInsight> subjectInsights) {
+    public void persistAll(Collection<SubjectInsight> subjectInsights) {
         var entities = subjectInsights.stream()
             .map(SubjectInsightMapper::mapToJpaEntity)
             .toList();
