@@ -67,7 +67,7 @@ class GetSpaceServiceTest {
     }
 
     @Test
-    void testGetSpace_WhenSpaceDoesNotExist_ThenThrowException() {
+    void testGetSpace_WhenSpaceDoesNotExist_ThenThrowResourceNotFoundException() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
