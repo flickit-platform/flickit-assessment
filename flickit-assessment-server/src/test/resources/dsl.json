@@ -286,7 +286,7 @@
       "answers": null
     },
     {
-      "code": "Q20",
+      "code": "Q6",
       "index": 1,
       "title": "How efficiently are 'Code Review and Collaboration' like Gitlab, Azure, Crucible, Review Board, Collaborator and GitHub Pull Requests being employed?",
       "description": "streamline the process of sharing",
@@ -337,7 +337,7 @@
       "answers": null
     },
     {
-      "code": "Q21",
+      "code": "Q7",
       "index": 2,
       "title": "How efficiently are 'Project Management and Issue Tracking' like JIRA, Trello, Asana, ClickUp and Monday.com being employed?",
       "description": "streamline software development",
@@ -388,7 +388,7 @@
       "answers": null
     },
     {
-      "code": "Q22",
+      "code": "Q8",
       "index": 3,
       "title": "How efficiently are 'Team Communication and Collaboration' like Slack, Microsoft Teams, Discord, Google Chat and Mattermost being employed?",
       "description": "facilitate communication and collaboration ",
@@ -439,7 +439,7 @@
       "answers": null
     },
     {
-      "code": "Q23",
+      "code": "Q9",
       "index": 4,
       "title": "How efficiently are 'Virtual Whiteboards' like Miro, MURAL and Microsoft Whiteboard being employed?",
       "description": "Virtual Whiteboards are digital platforms ",
@@ -471,7 +471,7 @@
       "answers": null
     },
     {
-      "code": "Q24",
+      "code": "Q10",
       "index": 5,
       "title": "How efficiently are 'Team Analytics and Performance Insights' like Codacy Pulse, Oobeya, Swarmia, Linearb and Faros.ai being employed?",
       "description": "software solutions that gather data from various team collaboration tools ",
