@@ -34,7 +34,7 @@ class UpdateSpaceLastSeenServiceTest {
     UpdateSpaceLastSeenPort updateSpaceLastSeenPort;
 
     @Test
-    void testUpdateSpaceLastSeenService_isMember_success() {
+    void testUpdateSpaceLastSeen_WhenUserIsMember_ThenUpdateSpaceLastSeen() {
         UUID currentUserId = UUID.randomUUID();
         Space space = SpaceMother.createPersonalSpace(currentUserId);
         UpdateSpaceLastSeenUseCase.Param param = new UpdateSpaceLastSeenUseCase.Param(space.getId(), currentUserId);
@@ -49,7 +49,7 @@ class UpdateSpaceLastSeenServiceTest {
     }
 
     @Test
-    void testUpdateSpaceLastSeenService_isNotMember_accessDenied() {
+    void testUpdateSpaceLastSeen_WhenUserIsNotMember_ThenThrowAccessDenied() {
         UUID ownerId = UUID.randomUUID();
         Space space = SpaceMother.createPersonalSpace(ownerId);
         UUID currentUserId = UUID.randomUUID();

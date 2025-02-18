@@ -35,7 +35,7 @@ class GetSpaceServiceTest {
     LoadSpaceDetailsPort loadSpaceDetailsPort;
 
     @Test
-    void testGetSpaceService_UserIsOwner_successFullWithEditableTrue() {
+    void testGetSpace_WhenUserIsOwner_ThenReturnSpaceWithEditableTrue() {
         UUID currentUserId = UUID.randomUUID();
         Space space = SpaceMother.createPersonalSpace(currentUserId);
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(space.getId(), currentUserId);
@@ -51,7 +51,7 @@ class GetSpaceServiceTest {
     }
 
     @Test
-    void testGetSpaceService_UserIsNotOwner_successFullWithEditableFalse() {
+    void testGetSpace_WhenUserIsNotOwner_ThenReturnSpaceWithEditableFalse() {
         UUID ownerId = UUID.randomUUID();
         Space space = SpaceMother.createPersonalSpace(ownerId);
         UUID currentUserId = UUID.randomUUID();
@@ -67,7 +67,7 @@ class GetSpaceServiceTest {
     }
 
     @Test
-    void testGetSpace_spaceDoesNotExist_throwException() {
+    void testGetSpace_WhenSpaceDoesNotExist_ThenThrowException() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
@@ -81,7 +81,7 @@ class GetSpaceServiceTest {
     }
 
     @Test
-    void testGetSpace_spaceAccessNotFound_accessDeniedException() {
+    void testGetSpace_WhenSpaceAccessNotFound_ThenThrowAccessDeniedException() {
         long spaceId = 0L;
         UUID currentUserId = UUID.randomUUID();
         GetSpaceUseCase.Param param = new GetSpaceUseCase.Param(spaceId, currentUserId);
