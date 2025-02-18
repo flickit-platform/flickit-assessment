@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.springframework.stereotype.Service;
@@ -37,9 +38,14 @@ public class GetSpaceListService implements GetSpaceListUseCase {
                 item.space().getId(),
                 item.space().getTitle(),
                 new SpaceListItem.Owner(item.space().getOwnerId(), item.ownerName(), item.space().getOwnerId().equals(currentUserId)),
+                new SpaceListItem.SpaceType(getSpaceType(item.spaceType()).getCode(), getSpaceType(item.spaceType()).getTitle()),
                 item.space().getLastModificationTime(),
                 item.membersCount(),
                 item.assessmentsCount()
             )).toList();
+    }
+
+    private SpaceType getSpaceType(int spaceType) {
+        return SpaceType.valueOfById(spaceType);
     }
 }
