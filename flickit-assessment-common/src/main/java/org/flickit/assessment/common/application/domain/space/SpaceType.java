@@ -29,10 +29,6 @@ public enum SpaceType {
         return SpaceType.values()[id];
     }
 
-    public static SpaceType getDefault() {
-        return BASIC;
-    }
-
     private static boolean isValid(int id) {
         return id >= 0 && id <= SpaceType.values().length;
     }
