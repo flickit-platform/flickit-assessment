@@ -11,7 +11,6 @@ public interface LoadSpaceListPort {
 
     record Result(Space space,
                   String ownerName,
-                  int spaceType,
                   int membersCount,
                   int assessmentsCount) {
     }

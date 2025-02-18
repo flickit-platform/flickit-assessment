@@ -2,14 +2,12 @@ package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.application.domain.space.SpaceType;
-import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,9 +22,7 @@ public class GetSpaceListService implements GetSpaceListUseCase {
         var portResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), param.getPage(), param.getSize());
 
         return new PaginatedResponse<>(
-            portResult.getItems().stream()
-                .map(e -> mapToSpaceListItems(e, param.getCurrentUserId()))
-                .toList(),
+            mapToSpaceListItems(portResult.getItems(), param.getCurrentUserId()),
             portResult.getPage(),
             portResult.getSize(),
             portResult.getSort(),
@@ -35,16 +31,20 @@ public class GetSpaceListService implements GetSpaceListUseCase {
         );
     }
 
-    private GetSpaceListUseCase.SpaceListItem mapToSpaceListItems(LoadSpaceListPort.Result item, UUID currentUserId) {
-        var spaceType = SpaceType.valueOfById(item.spaceType());
-        return new GetSpaceListUseCase.SpaceListItem(
-            item.space().getId(),
-            item.space().getTitle(),
-            new SpaceListItem.Owner(item.space().getOwnerId(), item.ownerName(), item.space().getOwnerId().equals(currentUserId)),
-            new Space.SpaceType(Objects.requireNonNull(spaceType).getCode(), spaceType.getTitle()),
-            item.space().getLastModificationTime(),
-            item.membersCount(),
-            item.assessmentsCount()
-        );
+    private List<GetSpaceListUseCase.SpaceListItem> mapToSpaceListItems(List<LoadSpaceListPort.Result> items, UUID currentUserId) {
+        return items.stream()
+            .map(item -> {
+                var space = item.space();
+                return new GetSpaceListUseCase.SpaceListItem(
+                    space.getId(),
+                    space.getTitle(),
+                    new SpaceListItem.Owner(space.getOwnerId(), item.ownerName(), space.getOwnerId().equals(currentUserId)),
+                    new SpaceListItem.Type(space.getType().getCode(), space.getType().getTitle()),
+                    space.getLastModificationTime(),
+                    item.membersCount(),
+                    item.assessmentsCount()
+                );
+            })
+            .toList();
     }
 }

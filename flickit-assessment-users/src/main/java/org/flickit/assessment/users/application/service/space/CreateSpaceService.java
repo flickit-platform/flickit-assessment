@@ -23,24 +23,24 @@ public class CreateSpaceService implements CreateSpaceUseCase {
 
     @Override
     public Result createSpace(Param param) {
-        long id = createSpacePort.persist(mapToDomain(param.getTitle(), param.getCurrentUserId()));
+        long id = createSpacePort.persist(mapToDomain(param));
 
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
         return new Result(id);
     }
 
-    private Space mapToDomain(String title, UUID currentUserId) {
+    private Space mapToDomain(Param param) {
         LocalDateTime creationTime = LocalDateTime.now();
         return new Space(null,
-            generateSlugCode(title),
-            title,
-            new Space.SpaceType (SpaceType.BASIC.getCode(), SpaceType.BASIC.getTitle()), //TODO: Consider to fix it
-            currentUserId,
+            generateSlugCode(param.getTitle()),
+            param.getTitle(),
+            SpaceType.valueOf(param.getType()),
+            param.getCurrentUserId(),
             null,
             creationTime,
             creationTime,
-            currentUserId,
-            currentUserId
+            param.getCurrentUserId(),
+            param.getCurrentUserId()
         );
     }
 
