@@ -1,6 +1,7 @@
 package org.flickit.assessment.scenario.test.kit.assessmentkit;
 
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.tuple.Pair;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
@@ -25,7 +26,6 @@ import org.flickit.assessment.scenario.test.users.expertgroup.ExpertGroupTestHel
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.testcontainers.shaded.org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +38,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
 import static org.flickit.assessment.scenario.util.FileUtils.readFileToString;
@@ -136,21 +137,16 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         return objectMapper.readValue(dslJsonContent, AssessmentKitDslModel.class);
     }
 
-    private void assertAssessmentKit(Long kitId, AssessmentKitJpaEntity loadedAssessmentKit, CreateKitByDslRequestDto request) {
-        assertEquals(kitId.longValue(), loadedAssessmentKit.getId());
-        assertNotNull(loadedAssessmentKit.getCode());
-        assertEquals(request.title(), loadedAssessmentKit.getTitle());
-        assertEquals(request.summary(), loadedAssessmentKit.getSummary());
-        assertEquals(request.about(), loadedAssessmentKit.getAbout());
-        assertFalse(loadedAssessmentKit.getPublished());
-        assertEquals(request.isPrivate(), loadedAssessmentKit.getIsPrivate());
-        assertEquals(request.expertGroupId(), loadedAssessmentKit.getExpertGroupId());
-        assertNotNull(loadedAssessmentKit.getCreationTime());
-        assertNotNull(loadedAssessmentKit.getLastModificationTime());
-        assertEquals(getCurrentUserId(), loadedAssessmentKit.getCreatedBy());
-        assertEquals(getCurrentUserId(), loadedAssessmentKit.getLastModifiedBy());
-        assertNotNull(loadedAssessmentKit.getLastMajorModificationTime());
-        assertNotNull(loadedAssessmentKit.getKitVersionId());
+    private void assertAssessmentKit(CreateKitByDslRequestDto request, AssessmentKitJpaEntity loaded) {
+        assertNotNull(loaded.getKitVersionId());
+        assertNotNull(generateSlugCode(request.title()), loaded.getCode());
+        assertEquals(request.title(), loaded.getTitle());
+        assertEquals(request.summary(), loaded.getSummary());
+        assertEquals(request.about(), loaded.getAbout());
+        assertFalse(loaded.getPublished());
+        assertEquals(request.isPrivate(), loaded.getIsPrivate());
+        assertEquals(request.expertGroupId(), loaded.getExpertGroupId());
+        assertNotNull(loaded.getLastMajorModificationTime());
 
         assertNotNull(loaded.getCreationTime());
         assertNotNull(loaded.getLastModificationTime());
@@ -263,7 +259,8 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                     assertEquals(getCurrentUserId(), entity.getCreatedBy());
                     assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
 
-                    assertAttributes(subjectCodeToAttributeModels.get(model.getCode()), kitVersionId, entity.getId());
+                    List<AttributeDslModel> subjectAttributes = subjectCodeToAttributeModels.get(model.getCode());
+                    assertAttributes(subjectAttributes, kitVersionId, entity.getId());
                 });
     }
 
@@ -316,12 +313,10 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                     var dslOptions = model.getAnswerOptions().stream()
                             .sorted(comparingInt(AnswerOptionDslModel::getIndex))
                             .toList();
-
                     var loadedOptions = rangeIdToOptions.get(entity.getId()).stream()
                             .sorted(comparingInt(AnswerOptionJpaEntity::getIndex))
                             .toList();
                     assertAnswerOptions(dslOptions, loadedOptions);
-
                 });
     }
 
@@ -344,13 +339,10 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
 
         var questionnaireCodeToQuestionModels = kitDslModel.getQuestions().stream()
                 .collect(groupingBy(QuestionDslModel::getQuestionnaireCode));
-
         var questionIdToImpacts = loadByKitVersionId(QuestionImpactJpaEntity.class, kitVersionId).stream()
                 .collect(groupingBy(QuestionImpactJpaEntity::getQuestionId));
-
         var codeToAttribute = loadByKitVersionId(AttributeJpaEntity.class, kitVersionId).stream()
                 .collect(toMap(AttributeJpaEntity::getCode, Function.identity()));
-
         var maturityLevelIdToCode = loadByKitVersionId(MaturityLevelJpaEntity.class, kitVersionId).stream()
                 .collect(toMap(MaturityLevelJpaEntity::getId, MaturityLevelJpaEntity::getCode));
 
@@ -366,7 +358,8 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                     assertEquals(getCurrentUserId(), entity.getCreatedBy());
                     assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
 
-                    assertQuestions(questionnaireCodeToQuestionModels.get(model.getCode()),
+                    List<QuestionDslModel> dslQuestions = questionnaireCodeToQuestionModels.get(model.getCode());
+                    assertQuestions(dslQuestions,
                             kitVersionId,
                             entity.getId(),
                             questionIdToImpacts,
@@ -388,7 +381,6 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         var loadedQuestions = loadQuestionnaireQuestions(kitVersionId, questionnaireId).stream()
                 .sorted(comparingInt(QuestionJpaEntity::getIndex))
                 .toList();
-
         dslQuestions = dslQuestions.stream()
                 .sorted(comparingInt(QuestionDslModel::getIndex))
                 .toList();
@@ -413,7 +405,7 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                     var idToRange = answerRanges.stream()
                             .collect(Collectors.toMap(AnswerRangeJpaEntity::getId, Function.identity()));
 
-                    if (model.getAnswerRangeCode() != null)
+                    if (model.getAnswerRangeCode() != null) // Question uses a reusable answer-range
                         assertEquals(model.getAnswerRangeCode(), idToRange.get(entity.getAnswerRangeId()).getCode());
                     else {
                         assertFalse(idToRange.get(entity.getAnswerRangeId()).isReusable());
@@ -464,7 +456,6 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                     assertNotNull(entity.getLastModificationTime());
                     assertEquals(getCurrentUserId(), entity.getCreatedBy());
                     assertEquals(getCurrentUserId(), entity.getLastModifiedBy());
-
                 });
     }
 
@@ -477,6 +468,7 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
 
         var subjectQuestionnaires = loadByKitVersionId(SubjectQuestionnaireJpaEntity.class, kitVersionId);
 
+        // from 'dsl.json' file
         var subjectQuestionnairePairs = List.of(
                 Pair.of("Team", "Development"),
                 Pair.of("Team", "TeamCollaboration"),
@@ -489,8 +481,11 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         subjectQuestionnairePairs.forEach(a -> {
             var subjectId = subjectCodeToId.get(a.getKey());
             var questionnaireId = questionnaireCodeToId.get(a.getValue());
-            assertTrue(subjectQuestionnaires.stream()
-                    .anyMatch(sq -> subjectId.equals(sq.getSubjectId()) && questionnaireId.equals(sq.getQuestionnaireId())));
+            assertThat(subjectQuestionnaires)
+                    .anySatisfy(x -> {
+                        assertEquals(subjectId, x.getSubjectId());
+                        assertEquals(questionnaireId, x.getQuestionnaireId());
+                    });
         });
     }
 
