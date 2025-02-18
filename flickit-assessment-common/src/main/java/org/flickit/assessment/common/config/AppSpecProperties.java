@@ -38,6 +38,9 @@ public class AppSpecProperties {
     @Valid
     private Email email = new Email();
 
+    @Valid
+    private Space space = new Space();
+
     @Setter
     @Getter
     @ToString
@@ -45,5 +48,14 @@ public class AppSpecProperties {
 
         @NotBlank
         String fromDisplayName = "Flickit";
+    }
+
+    @Setter
+    @Getter
+    @ToString
+    public static class Space {
+
+        int maxBasicSpaces = 1;
+        int maxBasicSpaceAssessments = 2;
     }
 }
