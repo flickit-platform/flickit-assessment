@@ -197,7 +197,7 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
                                        List<Long> subjectIds,
                                        int maturityLevelsCount,
                                        Locale locale) {
-        var subjectIdToValueMap = loadSubjectValuePort.loadAll(subjectIds, assessmentResult.getId()).stream()
+        var subjectIdToValueMap = loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectIds).stream()
             .collect(toMap(sv -> sv.getSubject().getId(), Function.identity()));
         var subjectInsights = subjectIds.stream()
             .map(subjectId -> {
