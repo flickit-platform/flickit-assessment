@@ -18,7 +18,7 @@ public class SpaceMapper {
             null,
             space.getCode(),
             space.getTitle(),
-            SpaceType.valueOf(space.getType().getCode()).getId(),
+            SpaceType.valueOf(space.getType().code()).getId(),
             space.getOwnerId(),
             space.getSubscriptionExpiry(),
             space.getCreationTime(),

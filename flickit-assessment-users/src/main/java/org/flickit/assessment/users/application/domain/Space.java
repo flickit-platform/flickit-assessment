@@ -21,11 +21,6 @@ public class Space {
     private final UUID createdBy;
     private final UUID lastModifiedBy;
 
-    @Getter
-    @RequiredArgsConstructor
-    public static class SpaceType {
-
-        private final String code;
-        private final String title;
+    public record SpaceType(String code, String title) {
     }
 }
