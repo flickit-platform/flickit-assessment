@@ -109,23 +109,28 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
                                          Locale locale) {
         if (!appAiProperties.isEnabled())
             throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
+        var attributeValues = loadAttributeValuePort.loadAll(assessmentResult.getId(), attributeIds);
         var assessment = assessmentResult.getAssessment();
         var assessmentTitle = getAssessmentTitle(assessment);
-        var attributeValues = loadAttributeValuePort.loadAll(assessmentResult.getId(), attributeIds);
-        attributeValues.forEach(av -> {
-            var file = createAttributeScoresFilePort.generateFile(av, maturityLevels);
-            var prompt = createPrompt(av.getAttribute().getTitle(),
-                av.getAttribute().getDescription(),
-                assessmentTitle,
-                file.text(),
-                locale.getLanguage()); //TODO check it to be same as assessment.getAssessmentKit().getLanguage().getTitle()
-            var aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
-            var aiInputPath = uploadInputFile(av.getAttribute(), file.stream());
-            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(),
-                av.getAttribute().getId(),
-                aiInsight,
-                aiInputPath));
-        });
+        var promptTemplate = appAiProperties.getPrompt().getAttributeInsight();
+        var attributeInsights = attributeValues.stream()
+            .map(av -> {
+                var file = createAttributeScoresFilePort.generateFile(av, maturityLevels);
+                var prompt = createPrompt(promptTemplate,
+                    av.getAttribute().getTitle(),
+                    av.getAttribute().getDescription(),
+                    assessmentTitle,
+                    file.text(),
+                    locale.getLanguage()); //TODO check it to be same as assessment.getAssessmentKit().getLanguage().getTitle()
+                var aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
+                var aiInputPath = uploadInputFile(av.getAttribute(), file.stream());
+                return toAttributeInsight(assessmentResult.getId(),
+                    av.getAttribute().getId(),
+                    aiInsight,
+                    aiInputPath);
+            })
+            .toList();
+        createAttributeInsightPort.persistAll(attributeInsights);
     }
 
     private String getAssessmentTitle(Assessment assessment) {
@@ -134,12 +139,13 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
             : assessment.getTitle();
     }
 
-    public Prompt createPrompt(String attributeTitle,
+    public Prompt createPrompt(String promptTemplate,
+                               String attributeTitle,
                                String attributeDescription,
                                String assessmentTitle,
                                String fileContent,
                                String language) {
-        return new PromptTemplate(appAiProperties.getPrompt().getAttributeInsight(),
+        return new PromptTemplate(promptTemplate,
             Map.of("attributeTitle", attributeTitle,
                 "attributeDescription", attributeDescription,
                 "assessmentTitle", assessmentTitle,
