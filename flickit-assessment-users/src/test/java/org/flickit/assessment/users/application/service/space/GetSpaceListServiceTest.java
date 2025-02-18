@@ -40,8 +40,8 @@ class GetSpaceListServiceTest {
         var space2 = SpaceMother.createSpace(UUID.randomUUID());
         String ownerName = "sample name";
         var spacePortList = List.of(
-            new LoadSpaceListPort.Result(space1, ownerName, 0, 2, 5),
-            new LoadSpaceListPort.Result(space2, ownerName, 1, 4, 3));
+            new LoadSpaceListPort.Result(space1, ownerName, SpaceType.BASIC.getId(), 2, 5),
+            new LoadSpaceListPort.Result(space2, ownerName, SpaceType.PREMIUM.getId(), 4, 3));
 
         PaginatedResponse<LoadSpaceListPort.Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
