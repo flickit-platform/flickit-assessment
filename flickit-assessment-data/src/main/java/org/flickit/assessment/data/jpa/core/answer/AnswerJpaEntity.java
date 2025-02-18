@@ -44,6 +44,9 @@ public class AnswerJpaEntity {
     @Column(name = "is_not_applicable")
     private Boolean isNotApplicable;
 
+    @Column(name = "status")
+    private Integer status;
+
     @Column(name = "created_by", nullable = false)
     private UUID createdBy;
 

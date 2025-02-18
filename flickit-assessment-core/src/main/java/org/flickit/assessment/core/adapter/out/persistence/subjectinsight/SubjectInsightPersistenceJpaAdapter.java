@@ -8,10 +8,12 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.subjectinsight.SubjectInsightJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.SUBJECT_INSIGHT_ID_NOT_FOUND;
 
@@ -40,10 +42,11 @@ public class SubjectInsightPersistenceJpaAdapter implements
 
     @Override
     public void update(SubjectInsight subjectInsight) {
-        repository.updateByAssessmentResultIdAndSubjectId(subjectInsight.getAssessmentResultId(),
+        repository.update(subjectInsight.getAssessmentResultId(),
             subjectInsight.getSubjectId(),
             subjectInsight.getInsight(),
             subjectInsight.getInsightTime(),
+            subjectInsight.getLastModificationTime(),
             subjectInsight.getInsightBy(),
             subjectInsight.isApproved());
     }
@@ -57,13 +60,21 @@ public class SubjectInsightPersistenceJpaAdapter implements
     }
 
     @Override
-    public void approve(UUID assessmentId, long subjectId) {
-        var resultEntity = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+    public void approve(UUID assessmentId, long subjectId, LocalDateTime lastModificationTime) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(APPROVE_SUBJECT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        if (!repository.existsByAssessmentResultIdAndSubjectId(resultEntity.getId(), subjectId))
+        if (!repository.existsByAssessmentResultIdAndSubjectId(assessmentResult.getId(), subjectId))
             throw new ResourceNotFoundException(SUBJECT_INSIGHT_ID_NOT_FOUND);
 
-        repository.approve(resultEntity.getId(), subjectId);
+        repository.approve(assessmentResult.getId(), subjectId, lastModificationTime);
+    }
+
+    @Override
+    public void approveAll(UUID assessmentId, LocalDateTime lastModificationTime) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        repository.approveAll(assessmentResult.getId(), lastModificationTime);
     }
 }

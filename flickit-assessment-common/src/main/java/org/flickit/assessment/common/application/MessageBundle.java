@@ -16,7 +16,7 @@ public class MessageBundle {
         return message(key, LocaleContextHolder.getLocale(), args);
     }
 
-    private static String message(String key, Locale locale, Object... args) {
+    public static String message(String key, Locale locale, Object... args) {
 		return messageSource.getMessage(key, args, locale);
 	}
 

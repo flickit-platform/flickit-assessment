@@ -54,6 +54,7 @@ public class CreateAssessmentInsightService implements CreateAssessmentInsightUs
             assessmentResultId,
             param.getInsight(),
             LocalDateTime.now(),
+            LocalDateTime.now(),
             param.getCurrentUserId(),
             true);
     }

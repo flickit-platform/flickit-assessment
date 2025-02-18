@@ -34,7 +34,7 @@ public class AttributeInsightJpaEntity extends AbstractEntity<AttributeInsightJp
     @Column(name = "assessor_insight")
     private String assessorInsight;
 
-    @Column(name = "ai_insight_time", nullable = false)
+    @Column(name = "ai_insight_time")
     private LocalDateTime aiInsightTime;
 
     @Column(name = "assessor_insight_time")
@@ -45,6 +45,9 @@ public class AttributeInsightJpaEntity extends AbstractEntity<AttributeInsightJp
 
     @Column(name = "approved", nullable = false)
     private Boolean approved;
+
+    @Column(name = "last_modification_time", nullable = false)
+    private LocalDateTime lastModificationTime;
 
     @Override
     public EntityId getId() {

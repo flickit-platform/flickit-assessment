@@ -1,13 +1,13 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.adviceitem.CostLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.ImpactLevel;
-import org.flickit.assessment.advice.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.advice.application.port.in.adviceitem.UpdateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.adviceitem.UpdateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.common.application.domain.adviceitem.CostLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.ImpactLevel;
+import org.flickit.assessment.common.application.domain.adviceitem.PriorityLevel;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;

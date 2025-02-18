@@ -13,6 +13,8 @@ import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAss
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_INSIGHT;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -41,24 +43,33 @@ public class GetAssessmentInsightService implements GetAssessmentInsightUseCase 
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
 
         if (assessmentInsight.isEmpty())
-            return new Result(null, null, false, false);
+            return new Result(null, null, editable, false);
 
         var insight = assessmentInsight.get();
         return (insight.getInsightBy() == null)
-            ? getDefaultInsight(insight, editable)
+            ? getDefaultInsight(assessmentResult, insight, editable)
             : getAssessorInsight(assessmentResult, insight, editable);
     }
 
-    private Result getDefaultInsight(AssessmentInsight assessmentInsight, boolean editable) {
-        return new Result(new Result.DefaultInsight(assessmentInsight.getInsight()), null, editable, assessmentInsight.isApproved());
+    private Result getDefaultInsight(AssessmentResult assessmentResult, AssessmentInsight insight, boolean editable) {
+        return new Result(new Result.Insight(insight.getInsight(),
+            insight.getInsightTime(),
+            isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime())),
+            null,
+            editable,
+            insight.isApproved());
     }
 
-    private Result getAssessorInsight(AssessmentResult assessmentResult, AssessmentInsight assessmentInsight, boolean editable) {
+    private Result getAssessorInsight(AssessmentResult assessmentResult, AssessmentInsight insight, boolean editable) {
         return new Result(null,
-            new Result.AssessorInsight(assessmentInsight.getInsight(),
-                assessmentInsight.getInsightTime(),
-                assessmentResult.getLastCalculationTime().isBefore(assessmentInsight.getInsightTime())),
+            new Result.Insight(insight.getInsight(),
+                insight.getInsightTime(),
+                isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime())),
             editable,
-            assessmentInsight.isApproved());
+            insight.isApproved());
+    }
+
+    private boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightLastModificationTime) {
+        return lastCalculationTime.isBefore(insightLastModificationTime);
     }
 }

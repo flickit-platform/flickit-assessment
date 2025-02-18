@@ -14,6 +14,7 @@ public class SubjectInsight {
     private final Long subjectId;
     private final String insight;
     private final LocalDateTime insightTime;
+    private final LocalDateTime lastModificationTime;
     private final UUID insightBy;
     private final boolean approved;
 }

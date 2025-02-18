@@ -3,7 +3,8 @@ package org.flickit.assessment.core.adapter.in.rest.assessmentinsight;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.assessmentinsight.GetAssessmentInsightUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentinsight.GetAssessmentInsightUseCase.*;
+import org.flickit.assessment.core.application.port.in.assessmentinsight.GetAssessmentInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.assessmentinsight.GetAssessmentInsightUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +20,10 @@ public class GetAssessmentInsightRestController {
     private final GetAssessmentInsightUseCase useCase;
     private final UserContext userContext;
 
-    @GetMapping("assessments/{assessmentId}/insights")
-    ResponseEntity<Result> getAssessmentInsights(@PathVariable("assessmentId") UUID assessmentId) {
-        var result = useCase.getAssessmentInsight(toParam(assessmentId, userContext.getUser().id()));
+    @GetMapping("assessments/{assessmentId}/overall-insight")
+    ResponseEntity<Result> getAssessmentInsight(@PathVariable("assessmentId") UUID assessmentId) {
+        var currentUserId = userContext.getUser().id();
+        var result = useCase.getAssessmentInsight(toParam(assessmentId, currentUserId));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

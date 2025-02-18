@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.domain.report;
 
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 
 import java.time.LocalDateTime;
@@ -7,8 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 public record AssessmentReportItem(UUID id,
+                                   UUID assessmentResultId,
                                    String title,
                                    String shortTitle,
+                                   String insight,
                                    AssessmentKitItem assessmentKit,
                                    MaturityLevel maturityLevel,
                                    Double confidenceValue,
@@ -23,8 +26,11 @@ public record AssessmentReportItem(UUID id,
         String title,
         String summary,
         String about,
+        KitLanguage language,
         Integer maturityLevelCount,
+        Integer questionsCount,
         List<MaturityLevel> maturityLevels,
+        List<QuestionnaireReportItem> questionnaires,
         ExpertGroup expertGroup) {
 
         public record ExpertGroup(Long id, String title, String picture) {

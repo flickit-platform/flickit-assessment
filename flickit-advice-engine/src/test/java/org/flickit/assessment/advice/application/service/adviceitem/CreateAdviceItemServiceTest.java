@@ -1,6 +1,6 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
-import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
+import org.flickit.assessment.advice.application.domain.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.adviceitem.CreateAdviceItemUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.CreateAdviceItemPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;

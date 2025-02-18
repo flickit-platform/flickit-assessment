@@ -107,7 +107,7 @@ public class CreateAdviceService implements CreateAdviceUseCase {
     }
 
     private List<AttributeLevelTarget> filterValidAttributeLevelTargets(UUID assessmentId, List<AttributeLevelTarget> attributeLevelTargets) {
-        var attributeCurrentAndTargetLevelIndexes = loadAttributeCurrentAndTargetLevelIndexPort.loadAttributeCurrentAndTargetLevelIndex(assessmentId, attributeLevelTargets);
+        var attributeCurrentAndTargetLevelIndexes = loadAttributeCurrentAndTargetLevelIndexPort.load(assessmentId, attributeLevelTargets);
         var validAttributeIds = attributeCurrentAndTargetLevelIndexes.stream()
             .filter(a -> a.targetMaturityLevelIndex() > a.currentMaturityLevelIndex())
             .map(LoadAttributeCurrentAndTargetLevelIndexPort.Result::attributeId)

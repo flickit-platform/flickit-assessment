@@ -1,11 +1,15 @@
 package org.flickit.assessment.common.application.domain.space;
 
 public enum SpaceType {
-    PERSONAL,
+    BASIC,
     PREMIUM;
 
     public int getId() {
         return this.ordinal();
+    }
+
+    public String getCode() {
+        return name();
     }
 
     public static SpaceType valueOfById(int id) {

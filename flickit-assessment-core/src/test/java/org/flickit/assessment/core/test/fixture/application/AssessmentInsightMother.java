@@ -13,31 +13,40 @@ public class AssessmentInsightMother {
             assessmentResultId,
             RandomStringUtils.random(50),
             LocalDateTime.now().plusSeconds(1),
+            LocalDateTime.now().plusSeconds(1),
             UUID.randomUUID(),
             false
         );
     }
 
-    public static AssessmentInsight createInitialInsightWithAssessmentResultId(UUID assessmentResultId) {
+    public static AssessmentInsight createDefaultInsightWithAssessmentResultId(UUID assessmentResultId) {
         return new AssessmentInsight(
             null,
             assessmentResultId,
             RandomStringUtils.random(50),
             LocalDateTime.now().plusSeconds(1),
+            LocalDateTime.now().plusSeconds(1),
             null,
             false
         );
     }
 
-    public static AssessmentInsight createSimpleAssessmentInsight() {
+    public static AssessmentInsight createDefaultInsightWithTimesAndApprove(LocalDateTime insightTime,
+                                                                            LocalDateTime lastModificationTIme,
+                                                                            boolean approved) {
         return new AssessmentInsight(
-            UUID.randomUUID(),
+            null,
             UUID.randomUUID(),
             RandomStringUtils.random(50),
-            LocalDateTime.now().plusSeconds(1),
-            UUID.randomUUID(),
-            false
+            insightTime,
+            lastModificationTIme,
+            null,
+            approved
         );
+    }
+
+    public static AssessmentInsight createSimpleAssessmentInsight() {
+        return createWithAssessmentResultId(UUID.randomUUID());
     }
 
     public static AssessmentInsight createWithMinInsightTime() {
@@ -45,6 +54,7 @@ public class AssessmentInsightMother {
             UUID.randomUUID(),
             UUID.randomUUID(),
             RandomStringUtils.random(50),
+            LocalDateTime.MIN,
             LocalDateTime.MIN,
             UUID.randomUUID(),
             false
