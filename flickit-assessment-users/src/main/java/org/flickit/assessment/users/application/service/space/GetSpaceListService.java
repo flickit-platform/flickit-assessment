@@ -8,7 +8,7 @@ import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -23,7 +23,9 @@ public class GetSpaceListService implements GetSpaceListUseCase {
         var portResult = loadSpaceListPort.loadSpaceList(param.getCurrentUserId(), param.getPage(), param.getSize());
 
         return new PaginatedResponse<>(
-            mapToSpaceListItems(portResult.getItems(), param.getCurrentUserId()),
+            portResult.getItems().stream()
+                .map(e -> mapToSpaceListItems(e, param.getCurrentUserId()))
+                .toList(),
             portResult.getPage(),
             portResult.getSize(),
             portResult.getSort(),
