@@ -7,6 +7,7 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kittagrelation.KitTagRelationJpaEntity;
 import org.flickit.assessment.data.jpa.kit.kituseraccess.KitUserAccessJpaEntity;
+import org.flickit.assessment.data.jpa.kit.kitversion.KitVersionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaEntity;
@@ -15,6 +16,7 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subjectquestionnaire.SubjectQuestionnaireJpaEntity;
 import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.CreateKitByDslRequestDto;
+import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.domain.dsl.*;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.kit.kitdsl.KitDslTestHelper;
@@ -93,11 +95,14 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
                 .body("kitId", notNullValue());
         final Number kitId = response.path("kitId");
 
-        AssessmentKitJpaEntity loadedAssessmentKit = jpaTemplate.load(kitId, AssessmentKitJpaEntity.class);
+        AssessmentKitJpaEntity loadedKit = jpaTemplate.load(kitId, AssessmentKitJpaEntity.class);
 
-        assertAssessmentKit(kitId.longValue(), loadedAssessmentKit, request);
+        assertAssessmentKit(request, loadedKit);
+        assertKitVersion(loadedKit);
+        assertKitUserAccess(loadedKit);
         assertKitTagRelation(kitId.longValue(), request);
-        Long kitVersionId = loadedAssessmentKit.getKitVersionId();
+
+        Long kitVersionId = loadedKit.getKitVersionId();
 
         assertMaturityLevels(kitDslModel.getMaturityLevels(), kitVersionId);
         assertSubjects(kitDslModel, kitVersionId);
@@ -147,9 +152,29 @@ class CreateKitByDslScenarioTest extends AbstractScenarioTest {
         assertNotNull(loadedAssessmentKit.getLastMajorModificationTime());
         assertNotNull(loadedAssessmentKit.getKitVersionId());
 
-        var kitUsers = loadKitUserAccesses(kitId);
-        assertEquals(1, kitUsers.size());
-        assertEquals(getCurrentUserId(), kitUsers.getFirst().getUserId());
+        assertNotNull(loaded.getCreationTime());
+        assertNotNull(loaded.getLastModificationTime());
+        assertEquals(getCurrentUserId(), loaded.getCreatedBy());
+        assertEquals(getCurrentUserId(), loaded.getLastModifiedBy());
+    }
+
+    private void assertKitVersion(AssessmentKitJpaEntity loadedKit) {
+        var kitVersion = jpaTemplate.load(loadedKit.getKitVersionId(), KitVersionJpaEntity.class);
+        assertEquals(loadedKit.getId(), kitVersion.getKit().getKitVersionId());
+        assertEquals(KitVersionStatus.ACTIVE.getId(), kitVersion.getStatus());
+        assertEquals(0, kitVersion.getStatusVersion());
+
+        assertNotNull(kitVersion.getCreationTime());
+        assertNotNull(kitVersion.getLastModificationTime());
+        assertEquals(getCurrentUserId(), kitVersion.getCreatedBy());
+        assertEquals(getCurrentUserId(), kitVersion.getLastModifiedBy());
+    }
+
+    private void assertKitUserAccess(AssessmentKitJpaEntity loadedKit) {
+        var kitUsers = loadKitUserAccesses(loadedKit.getId());
+        assertThat(kitUsers)
+                .singleElement()
+                .satisfies(x -> assertEquals(getCurrentUserId(), x.getUserId()));
     }
 
     private void assertKitTagRelation(Long kitId, CreateKitByDslRequestDto request) {
