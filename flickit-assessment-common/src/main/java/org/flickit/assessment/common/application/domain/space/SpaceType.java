@@ -8,8 +8,8 @@ import org.flickit.assessment.common.application.MessageBundle;
 @RequiredArgsConstructor
 public enum SpaceType {
 
-    BASIC(),
-    PREMIUM();
+    BASIC,
+    PREMIUM;
 
     public String getTitle() {
         return MessageBundle.message(getClass().getSimpleName() + "_" + name());

@@ -11,7 +11,7 @@ import org.flickit.assessment.common.application.MessageBundle;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum KitLanguage {
 
-    EN(), FA();
+    EN, FA;
 
     public String getTitle() {
         return MessageBundle.message(getClass().getSimpleName() + "_" + name());
