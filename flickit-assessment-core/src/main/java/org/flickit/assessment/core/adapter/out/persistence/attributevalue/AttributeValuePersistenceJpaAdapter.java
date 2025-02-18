@@ -37,6 +37,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.core.adapter.out.persistence.attributevalue.AttributeValueMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 @Component
@@ -72,7 +73,7 @@ public class AttributeValuePersistenceJpaAdapter implements
 
         return persistedEntities.stream().map(q -> {
             AttributeJpaEntity attributeEntity = attrIdToAttrEntity.get(q.getAttributeId());
-            return AttributeValueMapper.mapToDomainModel(q, attributeEntity);
+            return mapToDomainModel(q, attributeEntity);
         }).toList();
     }
 
@@ -95,7 +96,7 @@ public class AttributeValuePersistenceJpaAdapter implements
             .map(ml -> MaturityLevelMapper.mapToDomainModel(ml, null))
             .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
 
-        return AttributeValueMapper.mapToDomainModel(attributeValueEntity, attribute, answers, maturityLevel);
+        return mapToDomainModel(attributeValueEntity, attribute, answers, maturityLevel);
     }
 
     private List<Question> loadQuestionsByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId) {

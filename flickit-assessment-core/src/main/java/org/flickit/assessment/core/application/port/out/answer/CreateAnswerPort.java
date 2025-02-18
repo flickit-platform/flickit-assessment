@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.port.out.answer;
 
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public interface CreateAnswerPort {
                  Long answerOptionId,
                  Integer confidenceLevelId,
                  Boolean isNotApplicable,
+                 AnswerStatus status,
                  UUID currentUserId) {
     }
 }

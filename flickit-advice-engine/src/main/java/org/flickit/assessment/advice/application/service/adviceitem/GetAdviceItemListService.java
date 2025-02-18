@@ -1,7 +1,7 @@
 package org.flickit.assessment.advice.application.service.adviceitem;
 
 import lombok.RequiredArgsConstructor;
-import org.flickit.assessment.advice.application.domain.adviceitem.AdviceItem;
+import org.flickit.assessment.advice.application.domain.AdviceItem;
 import org.flickit.assessment.advice.application.port.in.adviceitem.GetAdviceItemListUseCase;
 import org.flickit.assessment.advice.application.port.out.adviceitem.LoadAdviceItemListPort;
 import org.flickit.assessment.advice.application.port.out.assessmentresult.LoadAssessmentResultPort;
@@ -57,8 +57,8 @@ public class GetAdviceItemListService implements GetAdviceItemListUseCase {
         return new AdviceItemListItem(adviceItem.getId(),
             adviceItem.getTitle(),
             adviceItem.getDescription(),
-            adviceItem.getCost().getTitle(),
-            adviceItem.getPriority().getTitle(),
-            adviceItem.getImpact().getTitle());
+            new AdviceItemListItem.Level(adviceItem.getCost().getCode(), adviceItem.getCost().getTitle()),
+            new AdviceItemListItem.Level(adviceItem.getPriority().getCode(), adviceItem.getPriority().getTitle()),
+            new AdviceItemListItem.Level(adviceItem.getImpact().getCode(), adviceItem.getImpact().getTitle()));
     }
 }

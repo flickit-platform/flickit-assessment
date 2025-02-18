@@ -34,6 +34,7 @@ public class GetKitEditableInfoRestController {
             kitEditableInfo.id(),
             kitEditableInfo.title(),
             kitEditableInfo.summary(),
+            kitEditableInfo.lang(),
             kitEditableInfo.published(),
             kitEditableInfo.isPrivate(),
             kitEditableInfo.price(),

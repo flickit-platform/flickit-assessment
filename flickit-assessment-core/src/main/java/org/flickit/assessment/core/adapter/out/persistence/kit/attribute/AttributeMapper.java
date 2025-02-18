@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.Question;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
+import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubjectView;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 
 import java.util.List;
@@ -28,6 +30,28 @@ public class AttributeMapper {
             entity.getDescription(),
             entity.getWeight(),
             questions
+        );
+    }
+
+    public static LoadAttributesPort.Result mapToResult(AttributeMaturityLevelSubjectView view, Integer weight) {
+        return new LoadAttributesPort.Result(
+            view.getAttribute().getId(),
+            view.getAttribute().getTitle(),
+            view.getAttribute().getDescription(),
+            view.getAttribute().getIndex(),
+            weight,
+            view.getAttributeValue().getConfidenceValue(),
+            new LoadAttributesPort.MaturityLevel(
+                view.getMaturityLevel().getId(),
+                view.getMaturityLevel().getTitle(),
+                view.getMaturityLevel().getDescription(),
+                view.getMaturityLevel().getIndex(),
+                view.getMaturityLevel().getValue()
+            ),
+            new LoadAttributesPort.Subject(
+                view.getSubject().getId(),
+                view.getSubject().getTitle()
+            )
         );
     }
 }

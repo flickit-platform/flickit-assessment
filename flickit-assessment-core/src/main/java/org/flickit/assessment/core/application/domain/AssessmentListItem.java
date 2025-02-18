@@ -13,7 +13,7 @@ public record AssessmentListItem(UUID id,
                                  boolean isCalculateValid,
                                  boolean isConfidenceValid,
                                  Boolean manageable,
-                                 boolean viewable) {
+                                 boolean hasReport) {
 
     public record Kit(long id, String title, int maturityLevelsCount) {
     }

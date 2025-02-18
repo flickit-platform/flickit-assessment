@@ -80,7 +80,7 @@ class InviteSpaceMemberServiceTest {
     }
 
     @Test
-    void testnviteMember_inviteeIsAnApplicationUser_AddAsSpaceMember() {
+    void testInviteMember_inviteeIsAnApplicationUser_AddAsSpaceMember() {
         UUID inviteeUserId = UUID.randomUUID();
         var param = createParam(InviteSpaceMemberUseCase.Param.ParamBuilder::build);
 
