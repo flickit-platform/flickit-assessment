@@ -24,7 +24,7 @@ public enum SpaceType {
     }
 
     public static SpaceType valueOfById(int id) {
-        if (!isValidId(id))
+        if (!isValid(id))
             return null;
         return SpaceType.values()[id];
     }
@@ -33,7 +33,7 @@ public enum SpaceType {
         return BASIC;
     }
 
-    private static boolean isValidId(int id) {
+    private static boolean isValid(int id) {
         return id >= 0 && id <= SpaceType.values().length;
     }
 }
