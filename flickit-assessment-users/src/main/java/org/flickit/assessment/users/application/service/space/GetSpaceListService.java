@@ -32,20 +32,16 @@ public class GetSpaceListService implements GetSpaceListUseCase {
         );
     }
 
-    private List<GetSpaceListUseCase.SpaceListItem> mapToSpaceListItems(List<LoadSpaceListPort.Result> items, UUID currentUserId) {
-        return items.stream()
-            .map(item -> new GetSpaceListUseCase.SpaceListItem(
-                item.space().getId(),
-                item.space().getTitle(),
-                new SpaceListItem.Owner(item.space().getOwnerId(), item.ownerName(), item.space().getOwnerId().equals(currentUserId)),
-                new SpaceListItem.SpaceType(getSpaceType(item.spaceType()).getCode(), getSpaceType(item.spaceType()).getTitle()),
-                item.space().getLastModificationTime(),
-                item.membersCount(),
-                item.assessmentsCount()
-            )).toList();
-    }
-
-    private SpaceType getSpaceType(int spaceType) {
-        return SpaceType.valueOfById(spaceType);
+    private GetSpaceListUseCase.SpaceListItem mapToSpaceListItems(LoadSpaceListPort.Result item, UUID currentUserId) {
+        var spaceType = SpaceType.valueOfById(item.spaceType());
+        return new GetSpaceListUseCase.SpaceListItem(
+            item.space().getId(),
+            item.space().getTitle(),
+            new SpaceListItem.Owner(item.space().getOwnerId(), item.ownerName(), item.space().getOwnerId().equals(currentUserId)),
+            new SpaceListItem.SpaceType(Objects.requireNonNull(spaceType).getCode(), spaceType.getTitle()),
+            item.space().getLastModificationTime(),
+            item.membersCount(),
+            item.assessmentsCount()
+        );
     }
 }
