@@ -41,6 +41,14 @@ public class SubjectInsightPersistenceJpaAdapter implements
     }
 
     @Override
+    public void persistAll(List<SubjectInsight> subjectInsights) {
+        var entities = subjectInsights.stream()
+            .map(SubjectInsightMapper::mapToJpaEntity)
+            .toList();
+        repository.saveAll(entities);
+    }
+
+    @Override
     public void update(SubjectInsight subjectInsight) {
         repository.update(subjectInsight.getAssessmentResultId(),
             subjectInsight.getSubjectId(),
