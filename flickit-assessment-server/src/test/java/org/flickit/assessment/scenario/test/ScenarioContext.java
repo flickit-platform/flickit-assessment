@@ -31,11 +31,11 @@ public class ScenarioContext {
     }
 
     public CurrentUser getNextCurrentUser() {
-        clear();
+        clearUser();
         return getCurrentUser();
     }
 
-    private void clear() {
+    private void clearUser() {
         currentUser = null;
     }
 
