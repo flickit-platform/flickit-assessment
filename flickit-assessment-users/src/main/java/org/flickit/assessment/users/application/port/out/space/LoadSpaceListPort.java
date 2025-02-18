@@ -9,6 +9,10 @@ public interface LoadSpaceListPort {
 
     PaginatedResponse<Result> loadSpaceList(UUID currentUserId, int size, int page);
 
-    record Result(Space space, String ownerName, int membersCount, int assessmentsCount) {
+    record Result(Space space,
+                  String ownerName,
+                  int spaceType,
+                  int membersCount,
+                  int assessmentsCount) {
     }
 }
