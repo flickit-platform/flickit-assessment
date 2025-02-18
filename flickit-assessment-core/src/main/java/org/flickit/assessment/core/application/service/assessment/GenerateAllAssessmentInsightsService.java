@@ -193,20 +193,19 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
                                        Locale locale) {
         var subjectIdToValueMap = loadSubjectValuePort.loadAll(subjectIds, assessmentResult.getId()).stream()
             .collect(toMap(sv -> sv.getSubject().getId(), Function.identity()));
-        subjectIds.forEach(subjectId -> {
-            var defaultInsight = buildDefaultInsight(
-                subjectIdToValueMap.get(subjectId),
-                maturityLevelsCount,
-                locale);
-            var subjectInsight = new SubjectInsight(assessmentResult.getId(),
-                subjectId,
-                defaultInsight,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                null,
-                false);
-            createSubjectInsightPort.persist(subjectInsight);
-        });
+        var subjectInsights = subjectIds.stream()
+            .map(subjectId -> {
+                var insight = buildDefaultInsight(subjectIdToValueMap.get(subjectId), maturityLevelsCount, locale);
+                return new SubjectInsight(assessmentResult.getId(),
+                    subjectId,
+                    insight,
+                    LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    null,
+                    false);
+            })
+            .toList();
+        createSubjectInsightPort.persistAll(subjectInsights);
     }
 
     private String buildDefaultInsight(SubjectValue subjectValue, int maturityLevelsCount, Locale locale) {
