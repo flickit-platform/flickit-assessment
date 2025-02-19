@@ -1084,6 +1084,30 @@
 							]
 						}
 					},
+                  "response": []
+                },
+              {
+                "name": "Get Tenant",
+                "request": {
+                  "method": "GET",
+                  "header": [
+                    {
+                      "key": "Accept-Language",
+                      "value": "{{accept_langage}}",
+                      "type": "text"
+                    }
+                  ],
+                  "url": {
+                    "raw": "{{base_url}}/{{api_path}}/tenant",
+                    "host": [
+                      "{{base_url}}"
+                    ],
+                    "path": [
+                      "{{api_path}}",
+                      "tenant"
+                    ]
+                  }
+                },
 					"response": []
 				}
 			]
