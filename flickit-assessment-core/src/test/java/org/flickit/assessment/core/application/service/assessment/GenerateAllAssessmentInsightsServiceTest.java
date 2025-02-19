@@ -291,10 +291,7 @@ class GenerateAllAssessmentInsightsServiceTest {
             assessmentResultWithPersianKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
             "Provide the result in " +
             assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
-
-        AppAiProperties.Prompt prompt = mock(AppAiProperties.Prompt.class);
-        when(prompt.getAttributeInsight()).thenReturn(attributePromptTemplate);
-        when(appAiProperties.getPrompt()).thenReturn(prompt);
+        var prompt = mock(AppAiProperties.Prompt.class);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
@@ -303,8 +300,7 @@ class GenerateAllAssessmentInsightsServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResultWithPersianKit.getKitVersionId()))
             .thenReturn(maturityLevels);
-        var completeProgress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 11, 11);
-        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(completeProgress);
+        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResultWithPersianKit.getId())).thenReturn(List.of());
         when(appAiProperties.isEnabled()).thenReturn(true);
@@ -312,6 +308,8 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         when(loadAttributeValuePort.load(assessmentResultWithPersianKit.getId(), attribute.id())).thenReturn(attributeValue);
         when(createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
+        when(prompt.getAttributeInsight()).thenReturn(attributePromptTemplate);
+        when(appAiProperties.getPrompt()).thenReturn(prompt);
         when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
 
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResultWithPersianKit.getKitVersionId())).thenReturn(List.of());
@@ -335,6 +333,63 @@ class GenerateAllAssessmentInsightsServiceTest {
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(uploadAttributeScoresFilePort,
             loadSubjectValuePort,
+            createSubjectInsightPort,
+            createAssessmentInsightPort);
+    }
+
+    @Test
+    void testGenerateAllAssessmentInsights_whenAiInsightDoesNotExistAndAiEnabledAndSaveFilesEnabled_thenGenerateAndSaveFileAndPersistInsight() {
+        var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithKitLanguage(KitLanguage.FA);
+        var attributePromptTemplate = "The attribute {attributeTitle} with this description {attributeDescription} " +
+            "for {assessmentTitle} was reviewed in {fileContent}. Provide the result in {language}.";
+        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
+            attributeValue.getAttribute().getDescription() + " for " +
+            assessmentResultWithPersianKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
+            "Provide the result in " +
+            assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
+            .thenReturn(Optional.of(assessmentResultWithPersianKit));
+        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResultWithPersianKit.getKitVersionId()))
+            .thenReturn(maturityLevels);
+        var prompt = mock(AppAiProperties.Prompt.class);
+        var fileReportPath = "path/to/file";
+        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
+        when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
+        when(loadAttributeInsightsPort.loadInsights(assessmentResultWithPersianKit.getId())).thenReturn(List.of());
+        when(appAiProperties.isEnabled()).thenReturn(true);
+        when(appAiProperties.isSaveAiInputFileEnabled()).thenReturn(true);
+
+        when(loadAttributeValuePort.load(assessmentResultWithPersianKit.getId(), attribute.id())).thenReturn(attributeValue);
+        when(createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels)).thenReturn(file);
+        when(prompt.getAttributeInsight()).thenReturn(attributePromptTemplate);
+        when(appAiProperties.getPrompt()).thenReturn(prompt);
+        when(callAiPromptPort.call(promptArgumentCaptor.capture(), classCaptor.capture())).thenReturn(aiInsight);
+        when(uploadAttributeScoresFilePort.uploadExcel(eq(file.stream()), any())).thenReturn(fileReportPath);
+
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResultWithPersianKit.getKitVersionId())).thenReturn(List.of());
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResultWithPersianKit.getKitVersionId())).thenReturn(List.of());
+        when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResultWithPersianKit.getId())).thenReturn(List.of());
+        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResultWithPersianKit.getId()))
+            .thenReturn(Optional.of(AssessmentInsightMother.createSimpleAssessmentInsight()));
+
+        service.generateAllAssessmentInsights(param);
+        verify(createAttributeInsightPort).persistAll(attributeInsightArgumentCaptor.capture());
+        assertEquals(aiInsight.value(), attributeInsightArgumentCaptor.getValue().getFirst().getAiInsight());
+        assertNotNull(attributeInsightArgumentCaptor.getValue().getFirst().getAiInsightTime());
+        assertEquals(fileReportPath, attributeInsightArgumentCaptor.getValue().getFirst().getAiInputPath());
+        assertNull(attributeInsightArgumentCaptor.getValue().getFirst().getAssessorInsight());
+        assertNull(attributeInsightArgumentCaptor.getValue().getFirst().getAssessorInsightTime());
+        assertFalse(attributeInsightArgumentCaptor.getValue().getFirst().isApproved());
+        assertNotNull(attributeInsightArgumentCaptor.getValue().getFirst().getLastModificationTime());
+        assertEquals(assessmentResultWithPersianKit.getId(), attributeInsightArgumentCaptor.getValue().getFirst().getAssessmentResultId());
+        assertEquals(expectedPrompt, promptArgumentCaptor.getValue().getContents());
+
+        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
+        verifyNoInteractions(loadSubjectValuePort,
             createSubjectInsightPort,
             createAssessmentInsightPort);
     }
