@@ -2,11 +2,11 @@ package org.flickit.assessment.common.config;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Map;
 
 @Setter
 @Getter
@@ -26,6 +26,26 @@ public class AppSpecProperties {
 
     @NotBlank
     private String name = "Flickit";
+
+    private String nameFa = "";
+
+    private String nameDefault = "Flickit";
+
+    private LocaleProps defaultLocaleProp = new LocaleProps("Flickit");
+
+    private Map<String, LocaleProps> localeProps = Map.of(
+        "en", new LocaleProps("Flickit"),
+        "fa", new LocaleProps("فلیکیت")
+    );
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LocaleProps {
+
+        String appName;
+    }
 
     @NotBlank
     private String logo;
