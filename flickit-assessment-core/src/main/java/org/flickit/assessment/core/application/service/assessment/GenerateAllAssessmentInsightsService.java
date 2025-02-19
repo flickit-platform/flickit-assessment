@@ -121,18 +121,18 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
         var promptTemplate = appAiProperties.getPrompt().getAttributeInsight();
         var attributeInsights = attributeIds.stream()
             .map(attributeId -> {
-                var attributeValues = loadAttributeValuePort.load(assessmentResult.getId(), attributeId);
-                var file = createAttributeScoresFilePort.generateFile(attributeValues, maturityLevels);
+                var attributeValue = loadAttributeValuePort.load(assessmentResult.getId(), attributeId);
+                var file = createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
                 var prompt = createPrompt(promptTemplate,
-                    attributeValues.getAttribute().getTitle(),
-                    attributeValues.getAttribute().getDescription(),
+                    attributeValue.getAttribute().getTitle(),
+                    attributeValue.getAttribute().getDescription(),
                     assessmentTitle,
                     file.text(),
                     locale.getDisplayLanguage());
                 var aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value();
-                var aiInputPath = uploadInputFile(attributeValues.getAttribute(), file.stream());
+                var aiInputPath = uploadInputFile(attributeValue.getAttribute(), file.stream());
                 return toAttributeInsight(assessmentResult.getId(),
-                    attributeValues.getAttribute().getId(),
+                    attributeValue.getAttribute().getId(),
                     aiInsight,
                     aiInputPath);
             })
