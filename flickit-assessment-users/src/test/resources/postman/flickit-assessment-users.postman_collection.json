@@ -706,6 +706,34 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Space Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/space-types",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"space-types"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
