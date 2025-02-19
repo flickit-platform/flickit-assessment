@@ -43,4 +43,16 @@ public class AttributeInsightMother {
             false,
             insightTime);
     }
+
+    public static AttributeInsight aiInsightAttributeId(Long attributeId) {
+        return new AttributeInsight(UUID.randomUUID(),
+            attributeId,
+            "ai insight ",
+            null,
+            LocalDateTime.now(),
+            null,
+            "input path",
+            false,
+            LocalDateTime.now());
+    }
 }
