@@ -127,7 +127,7 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     private final Param param = createParam(Param.ParamBuilder::build);
     private final AssessmentResult assessmentResult = validResult();
-    private final LoadAttributesPort.Result attribute = createAttribute(13);
+    private final LoadAttributesPort.Result attribute = createAttribute();
     private final String fileContent = "file content";
     private final GenerateAllAssessmentInsightsService.AiResponseDto aiInsight = new GenerateAllAssessmentInsightsService.AiResponseDto("Insight Content");
     private final CreateAttributeScoresFilePort.Result file = new CreateAttributeScoresFilePort.Result(new ByteArrayInputStream(fileContent.getBytes()), fileContent);
@@ -137,7 +137,6 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     @Test
     void testGenerateAllAssessmentInsights_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.generateAllAssessmentInsights(param));
@@ -165,7 +164,6 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     @Test
     void testGenerateAllAssessmentInsights_whenAssessmentResultIsNotFound_thenThrowResourceNotFoundException() {
-        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -195,7 +193,6 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     @Test
     void testGenerateAllAssessmentInsights_whenCalculatedResultIsNotValid_thenThrowCalculateNotValidException() {
-        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -226,7 +223,6 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     @Test
     void testGenerateAllAssessmentInsights_whenOneAttributeInsightDoesNotExistAndAssessmentProgressIsNotCompleted_thenThrowValidationException() {
-        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -257,7 +253,6 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     @Test
     void testGenerateAllAssessmentInsights_whenOneAttributeInsightDoesNotExistAndAiDisabled_thenThrowUnsupportedOperationException() {
-        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -290,17 +285,17 @@ class GenerateAllAssessmentInsightsServiceTest {
     void testGenerateAllAssessmentInsights_whenAiInsightDoesNotExistAndAiEnabledAndSaveFilesDisabled_thenGenerateAndNotSaveFileAndPersistInsight() {
         var assessmentResultWithPersianKit = AssessmentResultMother.validResultWithKitLanguage(KitLanguage.FA);
         var attributePromptTemplate = "The attribute {attributeTitle} with this description {attributeDescription} " +
-            "for {assessmentTitle} was reviewed in {fileContent}. " +
-            "Provide the result in {language}.";
-        var expectedPrompt = "The attribute " + attribute.title() + " with this description " + attribute.description() +
-            " for " + assessmentResultWithPersianKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
-            "Provide the result in " + assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
+            "for {assessmentTitle} was reviewed in {fileContent}. Provide the result in {language}.";
+        var expectedPrompt = "The attribute " + attributeValue.getAttribute().getTitle() + " with this description " +
+            attributeValue.getAttribute().getDescription() + " for " +
+            assessmentResultWithPersianKit.getAssessment().getShortTitle() + " was reviewed in " + fileContent + ". " +
+            "Provide the result in " +
+            assessmentResultWithPersianKit.getAssessment().getAssessmentKit().getLanguage().getTitle() + ".";
 
         AppAiProperties.Prompt prompt = mock(AppAiProperties.Prompt.class);
         when(prompt.getAttributeInsight()).thenReturn(attributePromptTemplate);
         when(appAiProperties.getPrompt()).thenReturn(prompt);
 
-        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -344,23 +339,23 @@ class GenerateAllAssessmentInsightsServiceTest {
             createAssessmentInsightPort);
     }
 
-    private static LoadAttributesPort.Result createAttribute(int index) {
-        return new LoadAttributesPort.Result(1769L + index,
-            "Software Reliability" + index,
+    private static LoadAttributesPort.Result createAttribute() {
+        return new LoadAttributesPort.Result(1769L,
+            "Software Reliability" + 13,
             "How?",
-            index,
-            3 + index,
-            11.22 + index,
-            new LoadAttributesPort.MaturityLevel(1991L + index,
-                "Unprepared" + index,
-                "causing frequent issues and inefficiencies." + index, 4, 4),
-            new LoadAttributesPort.Subject(464L + index, "Software" + index));
+            13,
+            3,
+            11.22,
+            new LoadAttributesPort.MaturityLevel(1991L,
+                "Unprepared" + 13,
+                "causing frequent issues and inefficiencies. " + 13, 13, 4),
+            new LoadAttributesPort.Subject(464L, "Software" + 13));
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
-        var param = paramBuilder();
-        changer.accept(param);
-        return param.build();
+        var newParam = paramBuilder();
+        changer.accept(newParam);
+        return newParam.build();
     }
 
     private Param.ParamBuilder paramBuilder() {
