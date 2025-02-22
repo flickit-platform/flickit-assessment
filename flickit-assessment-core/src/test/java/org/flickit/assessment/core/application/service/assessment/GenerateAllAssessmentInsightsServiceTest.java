@@ -407,7 +407,7 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId()))
-            .thenReturn(List.of(AttributeInsightMother.aiInsightAttributeId(attribute.id())));
+            .thenReturn(List.of(AttributeInsightMother.aiInsightWithAttributeId(attribute.id())));
 
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()))
             .thenReturn(List.of(subject));
@@ -461,7 +461,7 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId()))
-            .thenReturn(List.of(AttributeInsightMother.aiInsightAttributeId(attribute.id())));
+            .thenReturn(List.of(AttributeInsightMother.aiInsightWithAttributeId(attribute.id())));
 
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()))
             .thenReturn(List.of(subject));
@@ -516,7 +516,7 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId()))
-            .thenReturn(List.of(AttributeInsightMother.aiInsightAttributeId(attribute.id())));
+            .thenReturn(List.of(AttributeInsightMother.aiInsightWithAttributeId(attribute.id())));
 
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()))
             .thenReturn(List.of(subject));

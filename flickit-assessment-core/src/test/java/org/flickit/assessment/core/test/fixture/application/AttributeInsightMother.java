@@ -44,7 +44,7 @@ public class AttributeInsightMother {
             insightTime);
     }
 
-    public static AttributeInsight aiInsightAttributeId(Long attributeId) {
+    public static AttributeInsight aiInsightWithAttributeId(Long attributeId) {
         return new AttributeInsight(UUID.randomUUID(),
             attributeId,
             "ai insight ",
