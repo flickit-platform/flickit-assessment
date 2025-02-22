@@ -10,10 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
@@ -75,10 +72,10 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
                 AND k.isPrivate = FALSE
-                AND (:languageId IS NULL OR k.languageId = :languageId)
+                AND k.languageId IN :languageIds
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Param("languageId") Integer languageId,
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Param("languageIds") Collection<Integer> languageIds,
                                                                            Pageable pageable);
 
     @Query("""
@@ -89,11 +86,11 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.published = TRUE
                 AND k.isPrivate = TRUE
                 AND kua.userId = :userId
-                AND (:languageId IS NULL OR k.languageId = :languageId)
+                AND k.languageId IN :languageIds
             ORDER BY k.title
         """)
     Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId") UUID userId,
-                                                                                @Param("languageId") Integer languageId,
+                                                                                @Param("languageIds") Collection<Integer> languageIds,
                                                                                 Pageable pageable);
 
     @Query("""
