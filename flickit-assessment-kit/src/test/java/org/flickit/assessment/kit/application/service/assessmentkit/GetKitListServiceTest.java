@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -62,7 +63,7 @@ class GetKitListServiceTest {
         );
         var sampleTag = KitTagMother.createKitTag("sample tag");
 
-        when(loadPublishedKitListPort.loadPublicKits(KitLanguage.EN, param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
@@ -98,7 +99,7 @@ class GetKitListServiceTest {
     void testGetKitList_GettingPrivateKitsValidParams_ValidResult() {
         var param = createParam(p -> p
             .isPrivate(true)
-            .language(null));
+            .langs(null));
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
@@ -114,7 +115,7 @@ class GetKitListServiceTest {
         );
         var sampleTag = KitTagMother.createKitTag("sample tag");
 
-        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), Set.of(), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
@@ -158,7 +159,7 @@ class GetKitListServiceTest {
             0
         );
 
-        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), KitLanguage.EN, param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
         when(loadKitTagListPort.loadByKitIds(List.of())).thenReturn(List.of());
@@ -185,7 +186,7 @@ class GetKitListServiceTest {
     private Param.ParamBuilder paramBuilder() {
         return Param.builder()
             .isPrivate(false)
-            .language(KitLanguage.EN.name())
+            .langs(Set.of(KitLanguage.EN.name()))
             .page(0)
             .size(10)
             .currentUserId(UUID.randomUUID());
