@@ -3,6 +3,7 @@ package org.flickit.assessment.users.adapter.in.rest.space;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase;
+import org.flickit.assessment.users.application.port.in.space.GetSpaceUseCase.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,15 +26,17 @@ public class GetSpaceRestController {
         return new ResponseEntity<>(toResponse(space), HttpStatus.OK);
     }
 
-    private GetSpaceUseCase.Param toParam(long id, UUID currentUserId) {
-        return new GetSpaceUseCase.Param(id, currentUserId);
+    private Param toParam(long id, UUID currentUserId) {
+        return new Param(id, currentUserId);
     }
 
-    private GetSpaceResponseDto toResponse(GetSpaceUseCase.Result result) {
+    private GetSpaceResponseDto toResponse(Result result) {
         return new GetSpaceResponseDto(
             result.space().getId(),
             result.space().getCode(),
             result.space().getTitle(),
+            new GetSpaceResponseDto.SpaceTypeDto(result.type().getCode(),
+                result.type().getTitle()),
             result.editable(),
             result.space().getLastModificationTime(),
             result.membersCount(),

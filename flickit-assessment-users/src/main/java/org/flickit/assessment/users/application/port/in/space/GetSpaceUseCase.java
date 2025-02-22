@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.domain.Space;
 
 import java.util.UUID;
@@ -32,6 +33,10 @@ public interface GetSpaceUseCase {
         }
     }
 
-    record Result(Space space, boolean editable, int membersCount, int assessmentsCount) {
+    record Result(Space space,
+                  SpaceType type,
+                  boolean editable,
+                  int membersCount,
+                  int assessmentsCount) {
     }
 }
