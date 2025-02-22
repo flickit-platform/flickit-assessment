@@ -9,4 +9,7 @@ public record GetSpaceResponseDto(long id,
                                   LocalDateTime lastModificationTime,
                                   int membersCount,
                                   int assessmentsCount) {
+
+    public record SpaceTypeDto(String code, String title) {
+    }
 }
