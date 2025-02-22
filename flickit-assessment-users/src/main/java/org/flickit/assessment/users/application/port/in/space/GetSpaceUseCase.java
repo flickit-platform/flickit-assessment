@@ -34,7 +34,6 @@ public interface GetSpaceUseCase {
     }
 
     record Result(Space space,
-                  SpaceType type,
                   boolean editable,
                   int membersCount,
                   int assessmentsCount) {
