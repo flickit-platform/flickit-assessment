@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase.Param;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -23,10 +24,10 @@ class GetKitListUseCaseParamTest {
     }
 
     @Test
-    void testGetAssessmentKitListUseCaseParam_LanguageParamViolatesConstraint_ErrorMessage() {
+    void testGetAssessmentKitListUseCaseParam_LangsParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-            () -> createParam(b -> b.language("invalid")));
-        assertThat(throwable).hasMessage("language: " + GET_KIT_LIST_LANGUAGE_INVALID);
+            () -> createParam(b -> b.langs(Set.of("invalid"))));
+        assertThat(throwable).hasMessage("langs: " + GET_KIT_LIST_LANGS_INVALID);
     }
 
     @Test
@@ -62,7 +63,7 @@ class GetKitListUseCaseParamTest {
     private Param.ParamBuilder paramBuilder() {
         return Param.builder()
             .isPrivate(true)
-            .language(KitLanguage.EN.name())
+            .langs(Set.of(KitLanguage.EN.name()))
             .page(0)
             .size(10)
             .currentUserId(UUID.randomUUID());
