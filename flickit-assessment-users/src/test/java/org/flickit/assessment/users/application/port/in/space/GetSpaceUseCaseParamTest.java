@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class GetSpaceUseCaseParamTest {
 
     @Test
-    void testGetSpaceUseCaseParam_IdParamIsNull_ErrorMessage() {
+    void testGetSpaceUseCaseParam_idParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.id(null)));
         assertThat(throwable).hasMessage("id: " + GET_SPACE_SPACE_ID_NOT_NULL);
