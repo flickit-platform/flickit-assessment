@@ -49,6 +49,10 @@ class CreateSpaceServiceTest {
         var capturedSpace = createSpaceCaptor.getValue();
         assertEquals(param.getTitle(), capturedSpace.getTitle());
         assertEquals(generateSlugCode(param.getTitle()), capturedSpace.getCode());
+        SpaceType expectedSpaceType = SpaceType.valueOf(param.getType());
+        assertEquals(expectedSpaceType.getId(), capturedSpace.getType().getId());
+        assertEquals(expectedSpaceType.getCode(), capturedSpace.getType().getCode());
+        assertEquals(expectedSpaceType.getTitle(), capturedSpace.getType().getTitle());
         assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
         assertNotNull(capturedSpace.getCreationTime());
