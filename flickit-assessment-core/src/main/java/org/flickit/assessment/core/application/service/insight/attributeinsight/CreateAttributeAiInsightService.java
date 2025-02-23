@@ -3,73 +3,53 @@ package org.flickit.assessment.core.application.service.insight.attributeinsight
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
-import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
-import org.flickit.assessment.common.config.AppAiProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.AttributeInsight;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.port.in.insight.attributeinsight.CreateAttributeAiInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
-import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.insight.attributeinsight.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attributeinsight.LoadAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
-import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ATTRIBUTE_INSIGHT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CreateAttributeAiInsightService implements CreateAttributeAiInsightUseCase {
 
-    private static final String AI_INPUT_FILE_EXTENSION = ".xlsx";
-
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
-    private final LoadAttributeValuePort loadAttributeValuePort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final LoadAttributePort loadAttributePort;
     private final LoadAttributeInsightPort loadAttributeInsightPort;
-    private final AppAiProperties appAiProperties;
-    private final CreateAttributeInsightPort createAttributeInsightPort;
-    private final CreateAttributeScoresFilePort createAttributeScoresFilePort;
-    private final UploadAttributeScoresFilePort uploadAttributeScoresFilePort;
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
-    private final CallAiPromptPort callAiPromptPort;
+    private final CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
+    private final CreateAttributeInsightPort createAttributeInsightPort;
 
     @SneakyThrows
     @Override
     public Result createAiInsight(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
-
-        var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
-        if (progress.answersCount() != progress.questionsCount())
-            throw new ValidationException(CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(CREATE_ATTRIBUTE_AI_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
@@ -83,64 +63,27 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             updateAttributeInsightPort.updateAiInsightTime(toUpdateTimeParam(assessmentResult.getId(), attribute.getId()));
             return new Result(attributeInsight.get().getAiInsight());
         }
+        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
 
-        if (!appAiProperties.isEnabled())
-            throw new UnsupportedOperationException(ASSESSMENT_AI_IS_DISABLED);
-
-        var assessment = assessmentResult.getAssessment();
-        var assessmentTitle = getAssessmentTitle(assessment);
-        var file = generateScoreFile(param, assessmentResult);
-        var prompt = createPrompt(attribute.getTitle(), attribute.getDescription(), assessmentTitle,
-            file.text(), assessment.getAssessmentKit().getLanguage().getTitle());
-        String aiInsight = callAiPromptPort.call(prompt, AiResponseDto.class).value;
-        String aiInputPath = uploadInputFile(attribute, file.stream());
+        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
+        var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
+        var attributeAiInsight = createAttributeAiInsightHelper.createAttributeAiInsight(toCreateAiInsightParam(param,
+            assessmentResult,
+            maturityLevels,
+            progress,
+            locale));
 
         if (attributeInsight.isPresent())
-            updateAttributeInsightPort.updateAiInsight(toUpdateParam(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
+            updateAttributeInsightPort.updateAiInsight(toUpdateParam(attributeAiInsight));
         else
-            createAttributeInsightPort.persist(toAttributeInsight(assessmentResult.getId(), attribute.getId(), aiInsight, aiInputPath));
+            createAttributeInsightPort.persist(attributeAiInsight);
 
-        return new Result(aiInsight);
+        return new Result(attributeAiInsight.getAiInsight());
     }
 
     private boolean isInsightValid(AttributeInsight attributeInsight, AssessmentResult assessmentResult) {
         return attributeInsight.getAiInsightTime() != null &&
             assessmentResult.getLastCalculationTime().isBefore(attributeInsight.getAiInsightTime());
-    }
-
-    private String getAssessmentTitle(Assessment assessment) {
-        return assessment.getShortTitle() != null
-            ? assessment.getShortTitle()
-            : assessment.getTitle();
-    }
-
-    private CreateAttributeScoresFilePort.Result generateScoreFile(Param param, AssessmentResult assessmentResult) {
-        AttributeValue attributeValue = loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId());
-        List<MaturityLevel> maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
-        return createAttributeScoresFilePort.generateFile(attributeValue, maturityLevels);
-    }
-
-    public Prompt createPrompt(String attributeTitle, String attributeDescription, String assessmentTitle, String fileContent, String language) {
-        return new PromptTemplate(appAiProperties.getPrompt().getAttributeInsight(),
-            Map.of("attributeTitle", attributeTitle,
-                "attributeDescription", attributeDescription,
-                "assessmentTitle", assessmentTitle,
-                "fileContent", fileContent,
-                "language", language))
-            .create();
-    }
-
-    record AiResponseDto(String value) {
-    }
-
-    @Nullable
-    private String uploadInputFile(Attribute attribute, InputStream stream) {
-        String aiInputPath = null;
-        if (appAiProperties.isSaveAiInputFileEnabled()) {
-            var fileName = attribute.getTitle() + AI_INPUT_FILE_EXTENSION;
-            aiInputPath = uploadAttributeScoresFilePort.uploadExcel(stream, fileName);
-        }
-        return aiInputPath;
     }
 
     private UpdateAttributeInsightPort.AiTimeParam toUpdateTimeParam(UUID assessmentResultId, long attributeId) {
@@ -150,24 +93,24 @@ public class CreateAttributeAiInsightService implements CreateAttributeAiInsight
             LocalDateTime.now());
     }
 
-    private UpdateAttributeInsightPort.AiParam toUpdateParam(UUID assessmentResultId, long attributeId, String aiInsight, String aiInputPath) {
-        return new UpdateAttributeInsightPort.AiParam(assessmentResultId,
-            attributeId,
-            aiInsight,
-            LocalDateTime.now(),
-            aiInputPath,
-            false,
-            LocalDateTime.now());
+    private CreateAttributeAiInsightHelper.Param toCreateAiInsightParam(Param param,
+                                                                        AssessmentResult assessmentResult,
+                                                                        List<MaturityLevel> maturityLevels,
+                                                                        GetAssessmentProgressPort.Result progress,
+                                                                        Locale locale) {
+        return new CreateAttributeAiInsightHelper.Param(assessmentResult,
+            param.getAttributeId(),
+            maturityLevels,
+            progress,
+            locale);
     }
 
-    private AttributeInsight toAttributeInsight(UUID assessmentResultId, long attributeId, String aiInsight, String aiInputPath) {
-        return new AttributeInsight(assessmentResultId,
-            attributeId,
-            aiInsight,
-            null,
+    private UpdateAttributeInsightPort.AiParam toUpdateParam(AttributeInsight attributeAiInsight) {
+        return new UpdateAttributeInsightPort.AiParam(attributeAiInsight.getAssessmentResultId(),
+            attributeAiInsight.getAttributeId(),
+            attributeAiInsight.getAiInsight(),
             LocalDateTime.now(),
-            null,
-            aiInputPath,
+            attributeAiInsight.getAiInputPath(),
             false,
             LocalDateTime.now());
     }
