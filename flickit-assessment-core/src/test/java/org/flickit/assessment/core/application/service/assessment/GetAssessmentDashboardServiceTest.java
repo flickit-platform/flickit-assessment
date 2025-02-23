@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
@@ -87,6 +88,9 @@ class GetAssessmentDashboardServiceTest {
     @Mock
     private LoadAssessmentReportPort loadAssessmentReportPort;
 
+    @Mock
+    private CountAnswersPort countAnswersPort;
+
     private final int attributeCount = 7;
     private final int subjectsCount = 2;
     private final int questionCount = 15;
@@ -119,7 +123,8 @@ class GetAssessmentDashboardServiceTest {
             countEvidencesPort,
             getAssessmentProgressPort,
             countAttributesPort,
-            countSubjectsPort);
+            countSubjectsPort,
+            countAnswersPort);
     }
 
     @Test
@@ -139,7 +144,8 @@ class GetAssessmentDashboardServiceTest {
             countEvidencesPort,
             getAssessmentProgressPort,
             countAttributesPort,
-            countSubjectsPort);
+            countSubjectsPort,
+            countAnswersPort);
     }
 
     @Test

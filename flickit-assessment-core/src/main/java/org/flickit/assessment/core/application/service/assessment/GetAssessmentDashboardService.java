@@ -9,6 +9,7 @@ import org.flickit.assessment.common.util.ClassUtils;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
@@ -49,6 +50,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
+    private final CountAnswersPort countAnswersPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -75,6 +77,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var lowConfidenceAnswersCount = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResultId, ConfidenceLevel.SOMEWHAT_UNSURE);
         var answeredQuestionsWithEvidenceCount = countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentId);
         var unresolvedCommentsCount = countEvidencesPort.countUnresolvedComments(assessmentId);
+        var unapprovedAnswers = countAnswersPort.countUnapprovedAnswers(assessmentId);
 
         return new Result.Questions(
             questionsCount,
@@ -82,7 +85,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             questionsCount - answersCount,
             lowConfidenceAnswersCount,
             answersCount - answeredQuestionsWithEvidenceCount,
-            unresolvedCommentsCount);
+            unresolvedCommentsCount,
+            unapprovedAnswers);
     }
 
     private Result.Insights buildInsightsResult(AssessmentResult assessmentResult) {
