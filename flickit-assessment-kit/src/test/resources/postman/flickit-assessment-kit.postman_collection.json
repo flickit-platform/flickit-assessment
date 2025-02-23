@@ -565,37 +565,6 @@
 					"response": []
 				},
 				{
-					"name": "Get Kit Dsl",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/399/dsl",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"399",
-								"dsl"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get Kit Languages",
 					"request": {
 						"method": "GET",
@@ -614,6 +583,72 @@
 							"path": [
 								"{{api_path}}",
 								"kit-languages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kit List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits"
+							],
+							"query": [
+								{
+									"key": "isPrivate",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kit Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/details",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"302",
+								"details"
 							]
 						}
 					},
@@ -892,37 +927,6 @@
 			"name": "KitDsl",
 			"item": [
 				{
-					"name": "Get Kit Detail",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits/302/details",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits",
-								"302",
-								"details"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get Dsl Download Link",
 					"request": {
 						"method": "GET",
@@ -948,41 +952,6 @@
 								"assessment-kits",
 								"144",
 								"dsl-download-link"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Kit List",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessment-kits?isPrivate=true",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessment-kits"
-							],
-							"query": [
-								{
-									"key": "isPrivate",
-									"value": "true"
-								}
 							]
 						}
 					},
@@ -1028,6 +997,37 @@
 								"{{api_path}}",
 								"assessment-kits",
 								"upload-dsl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Kit Dsl",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessment-kits/399/dsl",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessment-kits",
+								"399",
+								"dsl"
 							]
 						}
 					},
