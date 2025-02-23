@@ -105,11 +105,10 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Query("""
             SELECT COUNT(a)
             FROM AnswerJpaEntity a
-            JOIN AssessmentResultJpaEntity r on a.assessmentResult.id=r.id
-            WHERE r.assessment.id = :assessmentId
+            WHERE a.assessmentResult.id = :assessmentResultId
                 AND (a.status = :status)
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
         """)
-    int countUnapprovedAnswersByAssessmentId(@Param("assessmentId") UUID assessmentId,
-                                             @Param("status") Integer status);
+    int countUnapprovedAnswersByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
+                                                   @Param("status") Integer status);
 }

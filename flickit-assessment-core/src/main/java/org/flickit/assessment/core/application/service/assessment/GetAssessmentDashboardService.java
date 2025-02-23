@@ -77,7 +77,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var lowConfidenceAnswersCount = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResultId, ConfidenceLevel.SOMEWHAT_UNSURE);
         var answeredQuestionsWithEvidenceCount = countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentId);
         var unresolvedCommentsCount = countEvidencesPort.countUnresolvedComments(assessmentId);
-        var unapprovedAnswers = countAnswersPort.countUnapprovedAnswers(assessmentId);
+        var unapprovedAnswers = countAnswersPort.countUnapprovedAnswers(assessmentResultId);
 
         return new Result.Questions(
             questionsCount,

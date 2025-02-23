@@ -169,7 +169,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(2);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.publishedReportWithMetadata(metadata)));
-        when(countAnswersPort.countUnapprovedAnswers(param.getAssessmentId())).thenReturn(unapprovedAnswerCount);
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswerCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -213,7 +213,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unresolvedCommentsCount);
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.publishedReportWithMetadata(metadata)));
-        when(countAnswersPort.countUnapprovedAnswers(param.getAssessmentId())).thenReturn(unapprovedAnswerCount);
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswerCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -257,7 +257,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unresolvedCommentsCount);
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
-        when(countAnswersPort.countUnapprovedAnswers(param.getAssessmentId())).thenReturn(unapprovedAnswerCount);
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswerCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
