@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,10 +73,12 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
                 AND k.isPrivate = FALSE
-                AND k.languageId IN :languageIds
+                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Param("languageIds") Collection<Integer> languageIds,
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Nullable
+                                                                           @Param("languageIds")
+                                                                           Collection<Integer> languageIds,
                                                                            Pageable pageable);
 
     @Query("""
@@ -86,11 +89,14 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.published = TRUE
                 AND k.isPrivate = TRUE
                 AND kua.userId = :userId
-                AND k.languageId IN :languageIds
+                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId") UUID userId,
-                                                                                @Param("languageIds") Collection<Integer> languageIds,
+    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId")
+                                                                                UUID userId,
+                                                                                @Nullable
+                                                                                @Param("languageIds")
+                                                                                Collection<Integer> languageIds,
                                                                                 Pageable pageable);
 
     @Query("""
