@@ -9,6 +9,7 @@ import org.flickit.assessment.data.jpa.core.insight.subjectinsight.SubjectInsigh
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +39,14 @@ public class SubjectInsightPersistenceJpaAdapter implements
     @Override
     public void persist(SubjectInsight subjectInsight) {
         repository.save(SubjectInsightMapper.mapToJpaEntity(subjectInsight));
+    }
+
+    @Override
+    public void persistAll(Collection<SubjectInsight> subjectInsights) {
+        var entities = subjectInsights.stream()
+            .map(SubjectInsightMapper::mapToJpaEntity)
+            .toList();
+        repository.saveAll(entities);
     }
 
     @Override

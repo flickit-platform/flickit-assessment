@@ -26,6 +26,9 @@ public class GetSpaceService implements GetSpaceUseCase {
         LoadSpaceDetailsPort.Result spaceDetails = loadSpaceDetailsPort.loadSpace(param.getId());
         boolean editable = param.getCurrentUserId().equals(spaceDetails.space().getOwnerId());
 
-        return new Result(spaceDetails.space(), editable, spaceDetails.membersCount(), spaceDetails.assessmentsCount());
+        return new Result(spaceDetails.space(),
+            editable,
+            spaceDetails.membersCount(),
+            spaceDetails.assessmentsCount());
     }
 }
