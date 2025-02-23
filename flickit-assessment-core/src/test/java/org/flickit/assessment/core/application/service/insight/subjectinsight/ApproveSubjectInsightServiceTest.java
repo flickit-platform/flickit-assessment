@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.insight.subjectinsight;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.insight.subjectinsight.ApproveSubjectInsightUseCase;
-import org.flickit.assessment.core.application.port.out.subjectinsight.ApproveSubjectInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.subjectinsight.ApproveSubjectInsightPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

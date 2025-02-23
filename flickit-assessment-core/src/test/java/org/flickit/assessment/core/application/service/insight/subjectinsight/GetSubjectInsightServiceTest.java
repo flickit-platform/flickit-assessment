@@ -8,7 +8,7 @@ import org.flickit.assessment.core.application.port.in.insight.subjectinsight.Ge
 import org.flickit.assessment.core.application.port.in.insight.subjectinsight.GetSubjectInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.in.insight.subjectinsight.GetSubjectInsightUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
 import org.junit.jupiter.api.Test;

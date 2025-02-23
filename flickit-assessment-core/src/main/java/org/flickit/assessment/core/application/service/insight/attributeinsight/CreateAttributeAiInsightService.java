@@ -15,10 +15,10 @@ import org.flickit.assessment.core.application.port.out.assessment.GetAssessment
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributePort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.CreateAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.insight.attributeinsight.CreateAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.attributeinsight.LoadAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.attributeinsight.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.minio.UploadAttributeScoresFilePort;
 import org.jetbrains.annotations.Nullable;

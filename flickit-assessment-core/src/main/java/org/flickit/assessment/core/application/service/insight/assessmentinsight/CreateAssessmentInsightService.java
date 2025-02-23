@@ -7,10 +7,10 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.insight.assessmentinsight.CreateAssessmentInsightUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentinsight.CreateAssessmentInsightPort;
-import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
-import org.flickit.assessment.core.application.port.out.assessmentinsight.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.insight.assessmentinsight.CreateAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.assessmentinsight.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.assessmentinsight.UpdateAssessmentInsightPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

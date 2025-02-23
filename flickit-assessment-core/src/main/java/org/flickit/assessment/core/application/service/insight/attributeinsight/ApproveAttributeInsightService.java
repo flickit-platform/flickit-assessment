@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.insight.attributeinsight.ApproveAttributeInsightUseCase;
-import org.flickit.assessment.core.application.port.out.attributeinsight.ApproveAttributeInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.attributeinsight.ApproveAttributeInsightPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
