@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -14,8 +15,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,13 +38,13 @@ public class GetKitListService implements GetKitListUseCase {
 
     @Override
     public PaginatedResponse<KitListItem> getKitList(Param param) {
-        var kitLanguage = param.getLanguage() != null ? KitLanguage.valueOf(param.getLanguage()) : null;
+        var kitLanguages = resolveKitLanguages(param.getLangs());
         PaginatedResponse<LoadPublishedKitListPort.Result> kitsPage;
         if (Boolean.FALSE.equals(param.getIsPrivate()))
-            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguage, param.getPage(), param.getSize());
+            kitsPage = loadPublishedKitListPort.loadPublicKits(kitLanguages, param.getPage(), param.getSize());
         else
             kitsPage = loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(),
-                kitLanguage,
+                kitLanguages,
                 param.getPage(),
                 param.getSize());
 
@@ -50,18 +57,11 @@ public class GetKitListService implements GetKitListUseCase {
         var idToKitTagsMap = loadKitTagListPort.loadByKitIds(ids).stream()
             .collect(Collectors.groupingBy(LoadKitTagListPort.Result::kitId));
 
-        var items = kitsPage.getItems().stream().map(k -> new KitListItem(
-            k.kit().getId(),
-            k.kit().getTitle(),
-            k.kit().getSummary(),
-            k.kit().isPrivate(),
-            idToStatsMap.get(k.kit().getId()).likes(),
-            idToStatsMap.get(k.kit().getId()).assessmentsCount(),
-            toExpertGroup(k.expertGroup()),
-            idToKitTagsMap.get(k.kit().getId()).stream()
-                .flatMap(result -> result.kitTags().stream())
-                .toList()
-        )).toList();
+        var items = kitsPage.getItems().stream()
+            .map(item -> toAssessmentKit(item,
+                idToStatsMap.get(item.kit().getId()),
+                idToKitTagsMap.get(item.kit().getId())))
+            .toList();
 
         return new PaginatedResponse<>(
             items,
@@ -71,6 +71,31 @@ public class GetKitListService implements GetKitListUseCase {
             kitsPage.getOrder(),
             kitsPage.getTotal()
         );
+    }
+
+    @Nullable
+    private Set<KitLanguage> resolveKitLanguages(Collection<String> languages) {
+        if (isNotEmpty(languages))
+            return languages.stream()
+                .map(KitLanguage::valueOf)
+                .collect(toSet());
+        return null;
+    }
+
+    private KitListItem toAssessmentKit(Result item,
+                                        CountKitListStatsPort.Result stats,
+                                        List<LoadKitTagListPort.Result> kitTags) {
+        return new KitListItem(
+            item.kit().getId(),
+            item.kit().getTitle(),
+            item.kit().getSummary(),
+            item.kit().isPrivate(),
+            stats.likes(),
+            stats.assessmentsCount(),
+            toExpertGroup(item.expertGroup()),
+            kitTags.stream()
+                .flatMap(result -> result.kitTags().stream())
+                .toList());
     }
 
     private KitListItem.ExpertGroup toExpertGroup(ExpertGroup expertGroup) {
