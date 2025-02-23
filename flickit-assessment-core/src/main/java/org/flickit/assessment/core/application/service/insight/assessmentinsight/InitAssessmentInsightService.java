@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.assessmentinsight;
+package org.flickit.assessment.core.application.service.insight.assessmentinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.MessageBundle;
@@ -8,7 +8,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.AssessmentKit;
-import org.flickit.assessment.core.application.port.in.assessmentinsight.InitAssessmentInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.assessmentinsight.InitAssessmentInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.CreateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;

@@ -1,11 +1,11 @@
-package org.flickit.assessment.core.application.service.assessmentinsight;
+package org.flickit.assessment.core.application.service.insight.assessmentinsight;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.assessmentinsight.GetAssessmentInsightUseCase;
-import org.flickit.assessment.core.application.port.in.assessmentinsight.GetAssessmentInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.assessmentinsight.GetAssessmentInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.assessmentinsight.GetAssessmentInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_ASSESSMENT_INSIGHT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother.*;

@@ -1,8 +1,8 @@
-package org.flickit.assessment.core.application.service.assessmentinsight;
+package org.flickit.assessment.core.application.service.insight.assessmentinsight;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.in.assessmentinsight.ApproveAssessmentInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.assessmentinsight.ApproveAssessmentInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.ApproveAssessmentInsightPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

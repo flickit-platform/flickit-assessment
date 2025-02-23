@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.assessmentinsight;
+package org.flickit.assessment.core.application.port.in.insight.assessmentinsight;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.lang3.RandomStringUtils;
