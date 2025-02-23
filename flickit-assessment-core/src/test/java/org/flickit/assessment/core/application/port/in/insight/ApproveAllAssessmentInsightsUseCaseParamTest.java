@@ -1,7 +1,7 @@
-package org.flickit.assessment.core.application.port.in.assessment;
+package org.flickit.assessment.core.application.port.in.insight;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.core.application.port.in.assessment.ApproveAllAssessmentInsightsUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.ApproveAllAssessmentInsightsUseCase.Param;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

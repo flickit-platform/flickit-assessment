@@ -1,8 +1,8 @@
-package org.flickit.assessment.core.application.service.assessment;
+package org.flickit.assessment.core.application.service.insight;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.in.assessment.ApproveAllAssessmentInsightsUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.ApproveAllAssessmentInsightsUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentinsight.ApproveAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.attributeinsight.ApproveAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.ApproveSubjectInsightPort;
