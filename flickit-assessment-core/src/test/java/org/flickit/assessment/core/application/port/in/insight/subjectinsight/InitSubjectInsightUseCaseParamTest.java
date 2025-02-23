@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.subjectinsight;
+package org.flickit.assessment.core.application.port.in.insight.subjectinsight;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
@@ -17,21 +17,21 @@ class InitSubjectInsightUseCaseParamTest {
     @Test
     void testInitSubjectInsightUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-                () -> createParam(b -> b.assessmentId(null)));
+            () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + INIT_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
     void testInitSubjectInsightUseCaseParam_subjectIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-                () -> createParam(b -> b.subjectId(null)));
+            () -> createParam(b -> b.subjectId(null)));
         assertThat(throwable).hasMessage("subjectId: " + INIT_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL);
     }
 
     @Test
     void testInitSubjectInsightUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
-                () -> createParam(b -> b.currentUserId(null)));
+            () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 

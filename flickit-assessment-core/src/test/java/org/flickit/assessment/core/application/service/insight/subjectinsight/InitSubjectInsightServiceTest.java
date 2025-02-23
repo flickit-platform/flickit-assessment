@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.subjectinsight;
+package org.flickit.assessment.core.application.service.insight.subjectinsight;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
@@ -9,7 +9,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.domain.SubjectValue;
-import org.flickit.assessment.core.application.port.in.subjectinsight.InitSubjectInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.subjectinsight.InitSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.CreateSubjectInsightPort;

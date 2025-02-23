@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.subjectinsight;
+package org.flickit.assessment.core.application.port.in.insight.subjectinsight;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

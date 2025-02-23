@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.subjectinsight;
+package org.flickit.assessment.core.application.port.in.insight.subjectinsight;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -9,21 +9,21 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.INIT_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL;
 
-public interface InitSubjectInsightUseCase {
+public interface ApproveSubjectInsightUseCase {
 
-    void initSubjectInsight(Param param);
+    void approveSubjectInsight(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = INIT_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = APPROVE_SUBJECT_INSIGHT_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = INIT_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL)
+        @NotNull(message = APPROVE_SUBJECT_INSIGHT_SUBJECT_ID_NOT_NULL)
         Long subjectId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

@@ -1,12 +1,12 @@
-package org.flickit.assessment.core.application.service.subjectinsight;
+package org.flickit.assessment.core.application.service.insight.subjectinsight;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase;
-import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase.Param;
-import org.flickit.assessment.core.application.port.in.subjectinsight.GetSubjectInsightUseCase.Result;
+import org.flickit.assessment.core.application.port.in.insight.subjectinsight.GetSubjectInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.subjectinsight.GetSubjectInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.subjectinsight.GetSubjectInsightUseCase.Result;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
@@ -21,7 +21,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.CREATE_SUBJECT_INSIGHT;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.test.fixture.application.SubjectInsightMother.subjectInsightWithTimesAndApproved;

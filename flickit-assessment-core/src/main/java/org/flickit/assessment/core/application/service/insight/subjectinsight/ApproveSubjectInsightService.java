@@ -1,9 +1,9 @@
-package org.flickit.assessment.core.application.service.subjectinsight;
+package org.flickit.assessment.core.application.service.insight.subjectinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.in.subjectinsight.ApproveSubjectInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.subjectinsight.ApproveSubjectInsightUseCase;
 import org.flickit.assessment.core.application.port.out.subjectinsight.ApproveSubjectInsightPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
