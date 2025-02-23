@@ -24,7 +24,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AnswerPersistenceJpaAdapter implements
     CreateAnswerPort,
-    CountAnswersByQuestionIdsPort,
+    CountAnswersPort,
     LoadAnswerPort,
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
