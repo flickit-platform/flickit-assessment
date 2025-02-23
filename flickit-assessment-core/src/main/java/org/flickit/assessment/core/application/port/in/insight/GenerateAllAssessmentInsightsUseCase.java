@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.assessment;
+package org.flickit.assessment.core.application.port.in.insight;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
