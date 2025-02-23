@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -33,9 +34,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
@@ -182,7 +183,8 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(Collection<KitLanguage> kitLanguages,
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable
+                                                                             Collection<KitLanguage> kitLanguages,
                                                                              int page,
                                                                              int size) {
         var kitLanguageIds = resolveKitLanguages(kitLanguages);
@@ -206,6 +208,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId,
+                                                                              @Nullable
                                                                               Collection<KitLanguage> kitLanguages,
                                                                               int page,
                                                                               int size) {
@@ -213,6 +216,7 @@ public class AssessmentKitPersistenceJpaAdapter implements
         var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId,
             kitLanguageIds,
             PageRequest.of(page, size));
+
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit()),
@@ -229,15 +233,13 @@ public class AssessmentKitPersistenceJpaAdapter implements
         );
     }
 
+    @Nullable
     private Set<Integer> resolveKitLanguages(Collection<KitLanguage> languages) {
-        if (languages != null && !languages.isEmpty()) {
+        if (isNotEmpty(languages))
             return languages.stream()
                 .map(KitLanguage::getId)
                 .collect(toSet());
-        }
-        return Stream.of(KitLanguage.values())
-            .map(KitLanguage::getId)
-            .collect(toSet());
+        return null;
     }
 
     @Override

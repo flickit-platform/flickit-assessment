@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -21,6 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
 @Transactional(readOnly = true)
@@ -71,13 +73,13 @@ public class GetKitListService implements GetKitListUseCase {
         );
     }
 
+    @Nullable
     private Set<KitLanguage> resolveKitLanguages(Collection<String> languages) {
-        if (languages != null && !languages.isEmpty()) {
+        if (isNotEmpty(languages))
             return languages.stream()
                 .map(KitLanguage::valueOf)
                 .collect(toSet());
-        }
-        return Set.of();
+        return null;
     }
 
     private KitListItem toAssessmentKit(Result item,
