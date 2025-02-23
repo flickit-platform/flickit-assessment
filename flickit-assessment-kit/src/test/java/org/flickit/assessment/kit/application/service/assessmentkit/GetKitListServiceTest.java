@@ -115,7 +115,7 @@ class GetKitListServiceTest {
         );
         var sampleTag = KitTagMother.createKitTag("sample tag");
 
-        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), Set.of(), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
