@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.insight.attributeinsight;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.port.out.CallAiPromptPort;
@@ -13,7 +14,7 @@ import org.flickit.assessment.core.application.port.out.minio.UploadAttributeSco
 import org.jetbrains.annotations.Nullable;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
@@ -26,7 +27,7 @@ import java.util.UUID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 
-@Service
+@Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CreateAttributeAiInsightHelper {
@@ -64,6 +65,7 @@ public class CreateAttributeAiInsightHelper {
         return toAttributeInsight(param.assessmentResult().getId(), attribute.getId(), aiInsight, aiInputPath);
     }
 
+    @Builder
     public record Param(AssessmentResult assessmentResult,
                         Long attributeId,
                         List<MaturityLevel> maturityLevels,
