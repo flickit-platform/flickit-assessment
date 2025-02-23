@@ -48,4 +48,14 @@ public class SubjectInsightMother {
             UUID.randomUUID(),
             approved);
     }
+
+    public static SubjectInsight subjectInsightWithSubjectId(Long subjectId) {
+        return new SubjectInsight(UUID.randomUUID(),
+            subjectId,
+            "insight",
+            LocalDateTime.now().plusSeconds(10),
+            LocalDateTime.now().plusSeconds(10),
+            UUID.randomUUID(),
+            true);
+    }
 }

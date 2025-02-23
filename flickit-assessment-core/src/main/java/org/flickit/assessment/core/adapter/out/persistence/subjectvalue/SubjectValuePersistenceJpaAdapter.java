@@ -9,18 +9,22 @@ import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpa
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaEntity;
 import org.flickit.assessment.data.jpa.core.subjectvalue.SubjectValueJpaRepository;
+import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaEntity;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
-import static org.flickit.assessment.common.error.ErrorMessageKey.*;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.subjectvalue.SubjectValueMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -67,10 +71,27 @@ public class SubjectValuePersistenceJpaAdapter implements
         var subjectValueWithSubjectView = repository.findBySubjectIdAndAssessmentResultId(subjectId, assessmentResult.getId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_VALUE_NOT_FOUND));
         var maturityLevelEntity = maturityLevelRepository.findByIdAndKitVersionId(subjectValueWithSubjectView.getSubjectValue().getMaturityLevelId(),
-            assessmentResult.getKitVersionId())
+                assessmentResult.getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
         var attributesEntity = attributeRepository.findAllBySubjectIdAndKitVersionId(subjectId, assessmentResult.getKitVersionId());
 
         return SubjectValueMapper.mapToDomainModel(subjectValueWithSubjectView, maturityLevelEntity, attributesEntity);
+    }
+
+    @Override
+    public List<SubjectValue> loadAll(UUID assessmentResultId, Collection<Long> subjectId) {
+        var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var subjectValues = repository.findAllWithSubjectByAssessmentResultId(assessmentResultId);
+        var maturityLevelIdToEntityMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId())
+            .stream().collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+        var subjectIdToAttributesMap = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
+            .collect(groupingBy(AttributeJpaEntity::getSubjectId));
+
+        return subjectValues.stream()
+            .map(sv -> SubjectValueMapper.mapToDomainModel(sv,
+                maturityLevelIdToEntityMap.get(sv.getSubjectValue().getMaturityLevelId()),
+                subjectIdToAttributesMap.get(sv.getSubject().getId())))
+            .toList();
     }
 }
