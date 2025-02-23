@@ -65,7 +65,7 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public int countUnapprovedAnswers(UUID assessmentId) {
-        return 0;
+        return repository.countUnapprovedAnswersByAssessmentId(assessmentId, AnswerStatus.UNAPPROVED.getId());
     }
 
     @Override
