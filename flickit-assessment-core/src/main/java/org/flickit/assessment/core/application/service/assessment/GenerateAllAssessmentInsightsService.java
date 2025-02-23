@@ -239,9 +239,8 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
                                        GetAssessmentProgressPort.Result progress,
                                        Locale locale) {
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
-        if (assessmentInsight.isEmpty()) {
+        if (assessmentInsight.isEmpty())
             createAssessmentInsight(assessmentResult, progress, locale);
-        }
     }
 
     private void createAssessmentInsight(AssessmentResult assessmentResult,
