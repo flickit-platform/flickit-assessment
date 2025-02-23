@@ -31,11 +31,12 @@ public class GetSpaceRestController {
     }
 
     private GetSpaceResponseDto toResponse(Result result) {
+        var type = result.space().getType();
         return new GetSpaceResponseDto(
             result.space().getId(),
             result.space().getCode(),
             result.space().getTitle(),
-            new GetSpaceResponseDto.SpaceTypeDto(result.space().getType().getCode(), result.space().getType().getTitle()),
+            new GetSpaceResponseDto.SpaceTypeDto(type.getCode(), type.getTitle()),
             result.editable(),
             result.space().getLastModificationTime(),
             result.membersCount(),
