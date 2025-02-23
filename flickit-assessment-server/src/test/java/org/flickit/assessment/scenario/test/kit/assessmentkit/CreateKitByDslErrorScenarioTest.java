@@ -62,8 +62,22 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
         return id.longValue();
     }
 
-    //@Test
+    @Test
     public void createKitByDslErrorScenario_currentUserIsNotOwner() {
+        final Long expertGroupId = createExpertGroup();
+        final Long kitDslId = uploadDsl(expertGroupId);
+        final Long kitTagId = kitTagHelper.createKitTag();
 
+        var request = createKitByDslRequestDto(a -> a
+            .expertGroupId(expertGroupId)
+            .kitDslId(kitDslId)
+            .tagIds(List.of(kitTagId))
+        );
+
+        context.getNextCurrentUser();
+        kitHelper.create(context, request)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
     }
 }
