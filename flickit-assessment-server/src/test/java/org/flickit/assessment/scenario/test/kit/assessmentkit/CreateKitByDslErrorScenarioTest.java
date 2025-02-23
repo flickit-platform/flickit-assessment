@@ -49,19 +49,6 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
             .extract().as(ErrorResponseDto.class);
     }
 
-    private Long createExpertGroup() {
-        var request = createExpertGroupRequestDto();
-        var response = expertGroupHelper.create(context, request);
-        Number id = response.path("id");
-        return id.longValue();
-    }
-
-    private Long uploadDsl(Long expertGroupId) {
-        var response = kitDslHelper.uploadDsl(context, "dummy-dsl.zip", "dsl.json", expertGroupId);
-        Number id = response.path("kitDslId");
-        return id.longValue();
-    }
-
     @Test
     public void createKitByDslErrorScenario_currentUserIsNotOwner() {
         final Long expertGroupId = createExpertGroup();
@@ -79,5 +66,18 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
             .then()
             .statusCode(403)
             .extract().as(ErrorResponseDto.class);
+    }
+
+    private Long createExpertGroup() {
+        var request = createExpertGroupRequestDto();
+        var response = expertGroupHelper.create(context, request);
+        Number id = response.path("id");
+        return id.longValue();
+    }
+
+    private Long uploadDsl(Long expertGroupId) {
+        var response = kitDslHelper.uploadDsl(context, "dummy-dsl.zip", "dsl.json", expertGroupId);
+        Number id = response.path("kitDslId");
+        return id.longValue();
     }
 }
