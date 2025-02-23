@@ -1,8 +1,6 @@
 package org.flickit.assessment.scenario.test.kit.assessmentkit;
 
-import lombok.SneakyThrows;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
-import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.kit.kitdsl.KitDslTestHelper;
 import org.flickit.assessment.scenario.test.kit.tag.KitTagTestHelper;
@@ -35,19 +33,18 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
         final Long kitDslId = uploadDsl(expertGroupId);
         final Long kitTagId = kitTagHelper.createKitTag();
 
-        var request1 = createKitByDslRequestDto(a -> a
+        var request = createKitByDslRequestDto(a -> a
             .expertGroupId(expertGroupId)
             .kitDslId(kitDslId)
             .tagIds(List.of(kitTagId))
         );
 
-        var response = kitHelper.create(context, request1);
-        response.then()
+        kitHelper.create(context, request)
+            .then()
             .statusCode(201);
 
-        var response2 = kitHelper.create(context, request1);
-
-        response2.then()
+        kitHelper.create(context, request)
+            .then()
             .statusCode(400)
             .extract().as(ErrorResponseDto.class);
     }
