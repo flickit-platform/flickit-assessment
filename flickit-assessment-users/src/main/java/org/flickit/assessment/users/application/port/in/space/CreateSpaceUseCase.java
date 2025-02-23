@@ -38,7 +38,7 @@ public interface CreateSpaceUseCase {
         @Builder
         public Param(String title, String type, UUID currentUserId) {
             this.title = title != null ? title.strip() : null;
-            this.type = type != null ? type.strip() : null;
+            this.type = type != null && !type.isBlank() ? type.strip() : null;
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
