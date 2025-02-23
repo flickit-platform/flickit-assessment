@@ -15,9 +15,9 @@ import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAss
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
-import org.flickit.assessment.core.application.port.out.insight.assessmentinsight.LoadAssessmentInsightPort;
-import org.flickit.assessment.core.application.port.out.insight.attributeinsight.LoadAttributeInsightsPort;
-import org.flickit.assessment.core.application.port.out.insight.subjectinsight.LoadSubjectInsightsPort;
+import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
+import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentInsightMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentReportMetadataMother;
