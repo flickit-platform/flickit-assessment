@@ -7,4 +7,5 @@ public interface CountAnswersPort {
 
     int countByQuestionIds(UUID assessmentResultId, List<Long> questionIds);
 
+    int countUnapprovedAnswers(UUID assessmentId);
 }
