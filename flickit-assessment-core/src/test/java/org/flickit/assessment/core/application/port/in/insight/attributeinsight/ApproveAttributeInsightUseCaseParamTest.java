@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.attributeinsight;
+package org.flickit.assessment.core.application.port.in.insight.attributeinsight;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ATTRIBUTE_INSIGHT_ATTRIBUTE_ID_NOT_NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ApproveAttributeInsightUseCaseParamTest {
 

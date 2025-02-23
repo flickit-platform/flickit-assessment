@@ -1,12 +1,15 @@
-package org.flickit.assessment.core.adapter.in.rest.attributeinsight;
+package org.flickit.assessment.core.adapter.in.rest.insight.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.attributeinsight.CreateAttributeInsightUseCase;
-import org.flickit.assessment.core.application.port.in.attributeinsight.CreateAttributeInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.attributeinsight.CreateAttributeInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.attributeinsight.CreateAttributeInsightUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.port.in.attributeinsight;
+package org.flickit.assessment.core.application.port.in.insight.attributeinsight;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -17,7 +17,7 @@ public interface ApproveAttributeInsightUseCase {
     void approveAttributeInsight(Param param);
 
     @Value
-    @EqualsAndHashCode(callSuper=false)
+    @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
         @NotNull(message = APPROVE_ATTRIBUTE_INSIGHT_ASSESSMENT_ID_NOT_NULL)

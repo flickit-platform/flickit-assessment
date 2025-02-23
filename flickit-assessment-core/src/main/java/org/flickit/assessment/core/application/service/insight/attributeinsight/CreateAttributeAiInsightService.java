@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.attributeinsight;
+package org.flickit.assessment.core.application.service.insight.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -10,7 +10,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.*;
-import org.flickit.assessment.core.application.port.in.attributeinsight.CreateAttributeAiInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.attributeinsight.CreateAttributeAiInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CreateAttributeScoresFilePort;

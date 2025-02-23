@@ -1,8 +1,8 @@
-package org.flickit.assessment.core.adapter.in.rest.attributeinsight;
+package org.flickit.assessment.core.adapter.in.rest.insight.attributeinsight;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.attributeinsight.ApproveAttributeInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.attributeinsight.ApproveAttributeInsightUseCase;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +19,7 @@ public class ApproveAttributeInsightRestController {
     private final UserContext userContext;
 
     @PutMapping("/assessments/{assessmentId}/attributes/{attributeId}/approve-insight")
-    public ResponseEntity<Void> approveAttributeInsight(@PathVariable("assessmentId")UUID assessmentId,
+    public ResponseEntity<Void> approveAttributeInsight(@PathVariable("assessmentId") UUID assessmentId,
                                                         @PathVariable("attributeId") Long attributeId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.approveAttributeInsight(toParam(assessmentId, attributeId, currentUserId));
