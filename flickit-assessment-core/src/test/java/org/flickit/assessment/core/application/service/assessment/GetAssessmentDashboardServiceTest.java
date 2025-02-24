@@ -97,7 +97,7 @@ class GetAssessmentDashboardServiceTest {
     private final int answerCount = 10;
     private final int unresolvedCommentsCount = 1;
     private final int questionsWithEvidenceCount = 3;
-    private final int unapprovedAnswerCount = 4;
+    private final int unapprovedAnswersCount = 4;
 
     private final AttributeInsight attributeInsight1 = insightWithTimeAndApproved(LocalDateTime.now().plusSeconds(10), true);
     private final AttributeInsight attributeInsight2 = insightWithTimeAndApproved(LocalDateTime.now().plusSeconds(10), true);
@@ -169,7 +169,7 @@ class GetAssessmentDashboardServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.of(assessmentInsight));
         when(loadAdvicesDashboardPort.countAdviceItems(assessmentResult.getId())).thenReturn(2);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.publishedReportWithMetadata(metadata)));
-        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswerCount);
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -213,7 +213,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unresolvedCommentsCount);
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.of(AssessmentReportMother.publishedReportWithMetadata(metadata)));
-        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswerCount);
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
@@ -257,7 +257,7 @@ class GetAssessmentDashboardServiceTest {
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId())).thenReturn(unresolvedCommentsCount);
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(param.getAssessmentId())).thenReturn(questionsWithEvidenceCount);
         when(loadAssessmentReportPort.load(param.getAssessmentId())).thenReturn(Optional.empty());
-        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswerCount);
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId())).thenReturn(unapprovedAnswersCount);
 
         var result = service.getAssessmentDashboard(param);
         //questions
