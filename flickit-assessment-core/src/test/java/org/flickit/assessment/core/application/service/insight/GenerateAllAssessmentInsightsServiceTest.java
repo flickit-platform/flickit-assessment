@@ -99,7 +99,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     private CreateAssessmentInsightPort createAssessmentInsightPort;
 
     @Captor
-    private ArgumentCaptor<CreateAttributeAiInsightHelper.Param> helperParamArgumentCaptor;
+    private ArgumentCaptor<CreateAttributeAiInsightHelper.Param> attributeHelperParamArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<List<AttributeInsight>> attributeInsightArgumentCaptor;
@@ -206,7 +206,7 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of());
 
-        when(createAttributeAiInsightHelper.createAttributeAiInsight(helperParamArgumentCaptor.capture()))
+        when(createAttributeAiInsightHelper.createAttributeAiInsight(attributeHelperParamArgumentCaptor.capture()))
             .thenReturn(newAttributeAiInsight);
 
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()))
@@ -217,12 +217,12 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         service.generateAllAssessmentInsights(param);
 
-        assertEquals(assessmentResult, helperParamArgumentCaptor.getValue().assessmentResult());
-        assertEquals(attribute.id(), helperParamArgumentCaptor.getValue().attributeId());
-        assertEquals(maturityLevels, helperParamArgumentCaptor.getValue().maturityLevels());
-        assertEquals(progress, helperParamArgumentCaptor.getValue().assessmentProgress());
+        assertEquals(assessmentResult, attributeHelperParamArgumentCaptor.getValue().assessmentResult());
+        assertEquals(attribute.id(), attributeHelperParamArgumentCaptor.getValue().attributeId());
+        assertEquals(maturityLevels, attributeHelperParamArgumentCaptor.getValue().maturityLevels());
+        assertEquals(progress, attributeHelperParamArgumentCaptor.getValue().assessmentProgress());
         assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
-            helperParamArgumentCaptor.getValue().locale());
+            attributeHelperParamArgumentCaptor.getValue().locale());
 
         verify(createAttributeInsightPort, times(1)).persistAll(attributeInsightArgumentCaptor.capture());
         assertEquals(newAttributeAiInsight, attributeInsightArgumentCaptor.getValue().getFirst());
