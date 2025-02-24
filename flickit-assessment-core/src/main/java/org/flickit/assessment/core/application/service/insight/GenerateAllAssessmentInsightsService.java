@@ -19,8 +19,8 @@ import org.flickit.assessment.core.application.port.out.insight.subject.CreateSu
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
-import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,14 +28,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GENERATE_ALL_ASSESSMENT_INSIGHTS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.MessageKey.*;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 
 @Service
 @Transactional
@@ -53,7 +52,7 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
     private final CreateAttributeInsightPort createAttributeInsightPort;
     private final LoadSubjectsPort loadSubjectsPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
-    private final LoadSubjectValuePort loadSubjectValuePort;
+    private final CreateSubjectInsightsHelper createSubjectInsightsHelper;
     private final CreateSubjectInsightPort createSubjectInsightPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
     private final CreateAssessmentInsightPort createAssessmentInsightPort;
@@ -71,7 +70,7 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
         var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
 
         initAttributesInsight(param.getAssessmentId(), assessmentResult, maturityLevels, progress, locale);
-        initSubjectsInsight(assessmentResult, maturityLevels.size(), locale);
+        initSubjectsInsight(assessmentResult, locale);
         initAssessmentInsight(assessmentResult, progress, locale);
     }
 
@@ -109,7 +108,7 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
         createAttributeInsightPort.persistAll(attributeInsights);
     }
 
-    private void initSubjectsInsight(AssessmentResult assessmentResult, int maturityLevelsCount, Locale locale) {
+    private void initSubjectsInsight(AssessmentResult assessmentResult, Locale locale) {
         var subjectIds = loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()).stream()
             .map(Subject::getId)
             .collect(toList());
@@ -118,42 +117,13 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
             .toList();
         subjectIds.removeAll(subjectInsightIds);
         if (!subjectIds.isEmpty())
-            createSubjectsInsight(assessmentResult, subjectIds, maturityLevelsCount, locale);
+            createSubjectsInsight(assessmentResult, subjectIds, locale);
     }
 
-    private void createSubjectsInsight(AssessmentResult assessmentResult,
-                                       List<Long> subjectIds,
-                                       int maturityLevelsCount,
-                                       Locale locale) {
-        var subjectIdToValueMap = loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectIds).stream()
-            .collect(toMap(sv -> sv.getSubject().getId(), Function.identity()));
-        var subjectInsights = subjectIds.stream()
-            .map(subjectId -> {
-                var insight = buildDefaultInsight(subjectIdToValueMap.get(subjectId), maturityLevelsCount, locale);
-                return new SubjectInsight(assessmentResult.getId(),
-                    subjectId,
-                    insight,
-                    LocalDateTime.now(),
-                    LocalDateTime.now(),
-                    null,
-                    false);
-            })
-            .toList();
+    private void createSubjectsInsight(AssessmentResult assessmentResult, List<Long> subjectIds, Locale locale) {
+        var subjectInsights = createSubjectInsightsHelper
+            .initSubjectInsights(new CreateSubjectInsightsHelper.Param(assessmentResult, subjectIds, locale));
         createSubjectInsightPort.persistAll(subjectInsights);
-    }
-
-    private String buildDefaultInsight(SubjectValue subjectValue, int maturityLevelsCount, Locale locale) {
-        return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
-            locale,
-            subjectValue.getSubject().getTitle(),
-            subjectValue.getSubject().getDescription(),
-            subjectValue.getConfidenceValue() != null ? (int) Math.ceil(subjectValue.getConfidenceValue()) : 0,
-            subjectValue.getSubject().getTitle(),
-            subjectValue.getMaturityLevel().getIndex(),
-            maturityLevelsCount,
-            subjectValue.getMaturityLevel().getTitle(),
-            subjectValue.getSubject().getAttributes().size(),
-            subjectValue.getSubject().getTitle());
     }
 
     private void initAssessmentInsight(AssessmentResult assessmentResult,
