@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
-import org.flickit.assessment.core.application.domain.SubjectInsight;
+import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

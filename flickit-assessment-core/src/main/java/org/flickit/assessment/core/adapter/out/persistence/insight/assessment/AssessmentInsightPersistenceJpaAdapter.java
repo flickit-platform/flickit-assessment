@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.insight.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentInsight;
+import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.port.out.insight.assessment.ApproveAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.CreateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
