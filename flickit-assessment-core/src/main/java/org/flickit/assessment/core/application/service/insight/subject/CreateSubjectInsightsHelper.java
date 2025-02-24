@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.subjectinsight;
+package org.flickit.assessment.core.application.service.insight.subject;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;

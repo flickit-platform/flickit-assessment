@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.service.subjectinsight;
+package org.flickit.assessment.core.application.service.insight.subject;
 
 import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
-import org.flickit.assessment.core.application.service.subjectinsight.CreateSubjectInsightsHelper.Param;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.Param;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
