@@ -12,14 +12,14 @@ import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceIt
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
-import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
+import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
+import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
-import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
