@@ -118,14 +118,11 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
             .map(SubjectInsight::getSubjectId)
             .toList();
         subjectIds.removeAll(subjectInsightIds);
-        if (!subjectIds.isEmpty())
-            createSubjectsInsight(assessmentResult, subjectIds, locale);
-    }
-
-    private void createSubjectsInsight(AssessmentResult assessmentResult, List<Long> subjectIds, Locale locale) {
-        var subjectInsights = createSubjectInsightsHelper
-            .createSubjectInsight(new CreateSubjectInsightsHelper.Param(assessmentResult, subjectIds, locale));
-        createSubjectInsightPort.persistAll(subjectInsights);
+        if (!subjectIds.isEmpty()) {
+            var subjectInsights = createSubjectInsightsHelper
+                .createSubjectInsight(new CreateSubjectInsightsHelper.Param(assessmentResult, subjectIds, locale));
+            createSubjectInsightPort.persistAll(subjectInsights);
+        }
     }
 
     private void initAssessmentInsight(AssessmentResult assessmentResult,
