@@ -11,7 +11,6 @@ import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Param;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase.Result;
-import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -82,9 +81,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionnaireQuestionList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadQuestionnaireQuestionListPort,
-            loadAssessmentResultPort,
-            loadQuestionsAnswerListPort);
+        verifyNoInteractions(loadQuestionnaireQuestionListPort, loadAssessmentResultPort, loadQuestionsAnswerListPort);
     }
 
     @Test
