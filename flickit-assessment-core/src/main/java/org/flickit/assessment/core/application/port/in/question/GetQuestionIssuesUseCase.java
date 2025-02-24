@@ -40,6 +40,7 @@ public interface GetQuestionIssuesUseCase {
     record Result(boolean isUnanswered,
                   boolean isAnsweredWithLowConfidence,
                   boolean isAnsweredWithoutEvidences,
-                  int unresolvedCommentsCount) {
+                  int unresolvedCommentsCount,
+                  boolean isUnapproved) {
     }
 }
