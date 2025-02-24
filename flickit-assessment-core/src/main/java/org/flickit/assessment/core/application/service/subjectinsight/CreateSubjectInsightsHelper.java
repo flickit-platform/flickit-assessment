@@ -21,7 +21,7 @@ import static org.flickit.assessment.core.common.MessageKey.SUBJECT_DEFAULT_INSI
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class InitSubjectInsightsHelper {
+public class CreateSubjectInsightsHelper {
 
     private final LoadSubjectValuePort loadSubjectValuePort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;

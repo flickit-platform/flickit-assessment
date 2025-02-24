@@ -7,7 +7,7 @@ import org.flickit.assessment.core.application.domain.SubjectInsight;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
-import org.flickit.assessment.core.application.service.subjectinsight.InitSubjectInsightsHelper.Param;
+import org.flickit.assessment.core.application.service.subjectinsight.CreateSubjectInsightsHelper.Param;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class InitSubjectInsightsHelperTest {
+class CreateSubjectInsightsHelperTest {
 
     @InjectMocks
-    private InitSubjectInsightsHelper helper;
+    private CreateSubjectInsightsHelper helper;
 
     @Mock
     private LoadSubjectValuePort loadSubjectValuePort;
