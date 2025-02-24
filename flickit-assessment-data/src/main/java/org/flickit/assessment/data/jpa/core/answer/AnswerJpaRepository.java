@@ -5,10 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
@@ -111,4 +108,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         """)
     int countUnapprovedAnswersByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
                                                    @Param("status") Integer status);
+
+    Map<Long, Integer> countQuestionnaireQuestionsUnapprovedAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                    @Param("questionnaireId") long questionnaireId,
+                                                                    @Param("Status") Integer status);
 }

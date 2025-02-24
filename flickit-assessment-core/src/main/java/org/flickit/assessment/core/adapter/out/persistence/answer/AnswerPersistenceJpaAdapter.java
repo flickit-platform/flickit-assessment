@@ -70,8 +70,8 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public int countUnapprovedAnswers(AssessmentResult assessmentResult, long questionnaireId) {
-        return 0;
+    public Map<Long, Integer> countUnapprovedAnswers(UUID assessmentResultId, long questionnaireId) {
+        return repository.countQuestionnaireQuestionsUnapprovedAnswers(assessmentResultId, questionnaireId, AnswerStatus.UNAPPROVED.getId());
     }
 
     @Override
