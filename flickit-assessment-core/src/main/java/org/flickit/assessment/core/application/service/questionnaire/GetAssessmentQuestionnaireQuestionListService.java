@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireQuestionListUseCase;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadQuestionsAnswerListPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -33,18 +34,18 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadQuestionsAnswerListPort loadQuestionsAnswerListPort;
     private final CountEvidencesPort countEvidencesPort;
+    private final CountAnswersPort countAnswersPort;
 
     @Override
     public PaginatedResponse<Result> getQuestionnaireQuestionList(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var kitVersionId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND))
-            .getKitVersionId();
+        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
 
         var pageResult = loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(),
-            kitVersionId,
+            assessmentResult.getKitVersionId(),
             param.getSize(),
             param.getPage());
 
@@ -58,11 +59,13 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
 
         var questionIdToEvidencesCountMap = countEvidencesPort.countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
         var questionIdToUnresolvedCommentsCountMap = countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId());
+        var questionIdToUnapprovedAnswersCountMap = countAnswersPort.countUnapprovedAnswers(assessmentResult.getId(), param.getQuestionnaireId());
         var items = pageResult.getItems().stream()
             .map((Question q) -> mapToResult(q,
                 questionIdToAnswerMap.get(q.getId()),
                 questionIdToEvidencesCountMap.getOrDefault(q.getId(), 0),
-                questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0)))
+                questionIdToUnresolvedCommentsCountMap.getOrDefault(q.getId(), 0),
+                questionIdToUnapprovedAnswersCountMap.getOrDefault(q.getId(), 0)))
             .toList();
 
         return new PaginatedResponse<>(
@@ -74,7 +77,7 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
             pageResult.getTotal());
     }
 
-    private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount) {
+    private Result mapToResult(Question question, Answer answer, int evidencesCount, int unresolvedCommentsCount, int unapprovedAnswers) {
         QuestionAnswer answerDto = null;
         if (answer != null) {
             Option answerOption = null;
@@ -107,7 +110,8 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 !hasAnswer(answer),
                 hasAnswer(answer) && answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
                 hasAnswer(answer) && evidencesCount == 0,
-                unresolvedCommentsCount
+                unresolvedCommentsCount,
+                hasAnswer(answer) && unapprovedAnswers > 0
             ));
     }
 

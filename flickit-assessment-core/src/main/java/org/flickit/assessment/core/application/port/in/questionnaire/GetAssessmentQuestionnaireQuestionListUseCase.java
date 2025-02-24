@@ -74,6 +74,6 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
                   boolean isAnsweredWithLowConfidence,
                   boolean isAnsweredWithoutEvidences,
                   int unresolvedCommentsCount,
-                  int unapprovedAnswers) {
+                  boolean isUnapproved) {
     }
 }
