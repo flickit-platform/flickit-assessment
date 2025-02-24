@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.port.out.answer;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface CountAnswersPort {
@@ -25,5 +26,5 @@ public interface CountAnswersPort {
      */
     int countUnapprovedAnswers(UUID assessmentResultId);
 
-    int countUnapprovedAnswers(AssessmentResult assessmentResult, long questionnaireId);
+    Map<Long, Integer> countUnapprovedAnswers(UUID assessmentResultId, long questionnaireId);
 }
