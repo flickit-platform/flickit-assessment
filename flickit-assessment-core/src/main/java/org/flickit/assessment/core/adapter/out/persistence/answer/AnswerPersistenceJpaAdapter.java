@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -66,6 +67,11 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public int countUnapprovedAnswers(UUID assessmentResultId) {
         return repository.countUnapprovedAnswersByAssessmentResultId(assessmentResultId, AnswerStatus.UNAPPROVED.getId());
+    }
+
+    @Override
+    public int countUnapprovedAnswers(AssessmentResult assessmentResult, long questionnaireId) {
+        return 0;
     }
 
     @Override
