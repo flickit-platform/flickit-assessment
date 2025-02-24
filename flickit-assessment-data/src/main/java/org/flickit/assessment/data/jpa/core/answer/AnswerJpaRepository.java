@@ -115,7 +115,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Query("""
     SELECT EXISTS (
         SELECT 1 FROM AnswerJpaEntity a
-            join AssessmentResultJpaEntity ar ON a.assessmentResult.id = ar.id
+            JOIN AssessmentResultJpaEntity ar ON a.assessmentResult.id = ar.id
             JOIN QuestionJpaEntity q ON a.questionId = q.id AND q.kitVersionId = ar.kitVersionId
         WHERE a.assessmentResult.id = :assessmentResultId
             AND a.questionId = :questionId
