@@ -8,7 +8,6 @@ import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
-import org.flickit.assessment.data.jpa.core.answer.AnswersQuestionAndCountView;
 import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
@@ -17,7 +16,6 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -68,14 +66,6 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public int countUnapprovedAnswers(UUID assessmentResultId) {
         return repository.countUnapprovedAnswersByAssessmentResultId(assessmentResultId, AnswerStatus.UNAPPROVED.getId());
-    }
-
-    @Override
-    public Map<Long, Integer> countUnapprovedAnswers(UUID assessmentResultId, long questionnaireId) {
-        return repository.countQuestionnaireQuestionsUnapprovedAnswers(assessmentResultId, questionnaireId, AnswerStatus.UNAPPROVED.getId()).stream()
-            .collect(Collectors.toMap(AnswersQuestionAndCountView::getQuestionId,
-                AnswersQuestionAndCountView::getCount
-            ));
     }
 
     @Override

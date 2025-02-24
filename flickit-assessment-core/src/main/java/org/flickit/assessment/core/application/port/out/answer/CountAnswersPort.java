@@ -1,9 +1,6 @@
 package org.flickit.assessment.core.application.port.out.answer;
 
-import org.flickit.assessment.core.application.domain.AssessmentResult;
-
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public interface CountAnswersPort {
@@ -25,14 +22,4 @@ public interface CountAnswersPort {
      * @return the count of unapproved answers in the assessment result
      */
     int countUnapprovedAnswers(UUID assessmentResultId);
-
-    /**
-     * Counts the number of unapproved answers for a specific questionnaire
-     * within a given assessment result.
-     *
-     * @param assessmentResultId the unique identifier of the assessment result
-     * @param questionnaireId    the ID of the questionnaire for which unapproved answers are counted
-     * @return a map where the key is the question ID, and the value is the count of unapproved answers per question
-     */
-    Map<Long, Integer> countUnapprovedAnswers(UUID assessmentResultId, long questionnaireId);
 }
