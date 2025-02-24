@@ -121,7 +121,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             .thenReturn(unresolvedCommentsCount);
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), questionnaireIds))
             .thenReturn(answeredWithEvidence);
-        when(countAnswersPort.countQuestionnaireUnapprovedAnswers(assessmentResult.getId(), questionnaireIds))
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId(), questionnaireIds))
             .thenReturn(unapprovedAnswers);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);

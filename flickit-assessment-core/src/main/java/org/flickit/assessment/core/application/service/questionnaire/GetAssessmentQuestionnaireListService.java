@@ -67,7 +67,7 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             assessmentResult.getAssessment().getId(), questionnaireIds);
         var questionnaireIdToEvidenceCount = countEvidencesPort.countAnsweredQuestionsHavingEvidence(
             assessmentResult.getAssessment().getId(), questionnaireIds);
-        var questionnaireIdToUnapprovedAnswersCount = countAnswersPort.countQuestionnaireUnapprovedAnswers(
+        var questionnaireIdToUnapprovedAnswersCount = countAnswersPort.countUnapprovedAnswers(
             assessmentResult.getId(), questionnaireIds);
 
         var items = questionnaires.getItems().stream()

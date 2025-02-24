@@ -33,5 +33,5 @@ public interface CountAnswersPort {
      * @param questionnaireIds   a set of questionnaire IDs for which the unapproved answers are counted
      * @return a map where the key is the questionnaire ID and the value is the count of unapproved answers
      */
-    Map<Long, Integer> countQuestionnaireUnapprovedAnswers(UUID assessmentResultId, Set<Long> questionnaireIds);
+    Map<Long, Integer> countUnapprovedAnswers(UUID assessmentResultId, Set<Long> questionnaireIds);
 }
