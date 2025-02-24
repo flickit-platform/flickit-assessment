@@ -141,11 +141,9 @@ class GetAssessmentQuestionnaireListServiceTest {
                 assertNotNull(actual.issues());
             });
 
-        assertEquals(loadPortResult.getSort(), actualResult.getSort());
-        assertEquals(loadPortResult.getPage(), actualResult.getPage());
-        assertEquals(loadPortResult.getTotal(), actualResult.getTotal());
-        assertEquals(loadPortResult.getOrder(), actualResult.getOrder());
-        assertEquals(loadPortResult.getSize(), actualResult.getSize());
+        Assertions.assertThat(actualResult)
+            .extracting("sort", "page", "total", "order", "size")
+            .containsExactly(loadPortResult.getSort(), loadPortResult.getPage(), loadPortResult.getTotal(), loadPortResult.getOrder(), loadPortResult.getSize());
 
         var questionnaireOneIssues = actualResult.getItems().getFirst().issues();
         var questionnaireTwoIssues = actualResult.getItems().getLast().issues();
