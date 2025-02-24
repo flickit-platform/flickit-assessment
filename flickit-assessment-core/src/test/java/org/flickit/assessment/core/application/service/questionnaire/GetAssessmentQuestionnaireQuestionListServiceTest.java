@@ -59,9 +59,6 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
     @Mock
     private CountEvidencesPort countEvidencesPort;
 
-    @Mock
-    private CountAnswersPort countAnswersPort;
-
     private final Question question = QuestionMother.withOptions();
 
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
@@ -87,8 +84,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
         verifyNoInteractions(loadQuestionnaireQuestionListPort,
             loadAssessmentResultPort,
-            loadQuestionsAnswerListPort,
-            countAnswersPort);
+            loadQuestionsAnswerListPort);
     }
 
     @Test
@@ -103,8 +99,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionnaireQuestionList(param));
         assertEquals(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND, exception.getMessage());
 
-        verifyNoInteractions(loadQuestionsAnswerListPort,
-            countAnswersPort);
+        verifyNoInteractions(loadQuestionsAnswerListPort);
     }
 
     @Test
@@ -141,7 +136,6 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isUnapproved());
 
         verify(countEvidencesPort).countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
-        verify(countAnswersPort).countUnapprovedAnswers(assessmentResult.getId(), param.getQuestionnaireId());
     }
 
     @Test
@@ -161,8 +155,6 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of(question.getId(), 1));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of(question.getId(), 2));
-        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), 1));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
         //Assert Pagination params
@@ -199,8 +191,6 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
             .thenReturn(Map.of(question.getId(), 1));
         when(countEvidencesPort.countUnresolvedComments(param.getAssessmentId(), param.getQuestionnaireId()))
             .thenReturn(Map.of());
-        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId(), param.getQuestionnaireId()))
-            .thenReturn(Map.of(question.getId(), 1));
 
         PaginatedResponse<Result> result = service.getQuestionnaireQuestionList(param);
         //Assert Pagination params
@@ -218,7 +208,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(0, item.issues().unresolvedCommentsCount());
-        assertTrue(item.issues().isUnapproved());
+        assertFalse(item.issues().isUnapproved());
     }
 
     @Test
@@ -255,8 +245,6 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(1, item.issues().unresolvedCommentsCount());
         assertFalse(item.issues().isUnapproved());
-
-        verify(countAnswersPort).countUnapprovedAnswers(assessmentResult.getId(), param.getQuestionnaireId());
     }
 
     private void assertPaginationProperties(PaginatedResponse<Result> result) {
