@@ -73,6 +73,7 @@ public interface GetAssessmentQuestionnaireQuestionListUseCase {
     record Issues(boolean isUnanswered,
                   boolean isAnsweredWithLowConfidence,
                   boolean isAnsweredWithoutEvidences,
-                  int unresolvedCommentsCount) {
+                  int unresolvedCommentsCount,
+                  int unapprovedAnswers) {
     }
 }
