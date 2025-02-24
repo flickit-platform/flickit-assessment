@@ -14,7 +14,7 @@ import org.flickit.assessment.core.application.port.out.minio.UploadAttributeSco
 import org.jetbrains.annotations.Nullable;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
@@ -27,7 +27,7 @@ import java.util.UUID;
 import static org.flickit.assessment.core.common.ErrorMessageKey.CREATE_ATTRIBUTE_AI_INSIGHT_ALL_QUESTIONS_NOT_ANSWERED;
 import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_AI_IS_DISABLED;
 
-@Component
+@Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CreateAttributeAiInsightHelper {
