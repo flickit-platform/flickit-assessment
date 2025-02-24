@@ -20,8 +20,8 @@ import org.flickit.assessment.core.application.port.out.insight.subject.CreateSu
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
-import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +40,8 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GENERATE_ALL_ASSESSMENT_INSIGHTS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
-import static org.flickit.assessment.core.common.MessageKey.*;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
+import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.aiInsightWithTime;
 import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFour;
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,7 +87,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     private LoadSubjectInsightsPort loadSubjectInsightsPort;
 
     @Mock
-    private LoadSubjectValuePort loadSubjectValuePort;
+    private CreateSubjectInsightsHelper createSubjectInsightsHelper;
 
     @Mock
     private CreateSubjectInsightPort createSubjectInsightPort;
@@ -102,6 +103,9 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     @Captor
     private ArgumentCaptor<List<AttributeInsight>> attributeInsightArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<CreateSubjectInsightsHelper.Param> subjectHelperParamArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<List<SubjectInsight>> subjectInsightArgumentCaptor;
@@ -129,7 +133,7 @@ class GenerateAllAssessmentInsightsServiceTest {
             loadSubjectsPort,
             loadSubjectInsightsPort,
             loadMaturityLevelsPort,
-            loadSubjectValuePort,
+            createSubjectInsightsHelper,
             createSubjectInsightPort,
             loadAssessmentInsightPort,
             getAssessmentProgressPort,
@@ -155,7 +159,7 @@ class GenerateAllAssessmentInsightsServiceTest {
             createAttributeInsightPort,
             loadSubjectsPort,
             loadSubjectInsightsPort,
-            loadSubjectValuePort,
+            createSubjectInsightsHelper,
             createSubjectInsightPort,
             loadAssessmentInsightPort,
             createAssessmentInsightPort);
@@ -181,7 +185,7 @@ class GenerateAllAssessmentInsightsServiceTest {
             createAttributeInsightPort,
             loadSubjectsPort,
             loadSubjectInsightsPort,
-            loadSubjectValuePort,
+            createSubjectInsightsHelper,
             createSubjectInsightPort,
             loadAssessmentInsightPort,
             createAssessmentInsightPort);
@@ -224,15 +228,15 @@ class GenerateAllAssessmentInsightsServiceTest {
         assertEquals(newAttributeAiInsight, attributeInsightArgumentCaptor.getValue().getFirst());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-        verifyNoInteractions(loadSubjectValuePort,
+        verifyNoInteractions(createSubjectInsightsHelper,
             createSubjectInsightPort,
             createAssessmentInsightPort);
     }
 
     @Test
-    void testGenerateAllAssessmentInsights_whenOneSubjectInsightDoesNotExist_thenInitSubjectInsightAndPersist() {
+    void testGenerateAllAssessmentInsights_whenOneSubjectInsightDoesNotExist_thenCreateSubjectInsightAndPersist() {
         var subject = subjectValue.getSubject();
-        var insight = createSubjectDefaultInsight(assessmentResult, subjectValue);
+        var newSubjectInsight = SubjectInsightMother.defaultSubjectInsight();
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -249,8 +253,8 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()))
             .thenReturn(List.of(subject));
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of());
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), List.of(subject.getId())))
-            .thenReturn(List.of(subjectValue));
+        when(createSubjectInsightsHelper.initSubjectInsights(subjectHelperParamArgumentCaptor.capture()))
+            .thenReturn(List.of(newSubjectInsight));
         doNothing().when(createSubjectInsightPort).persistAll(anyList());
 
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()))
@@ -258,16 +262,15 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         service.generateAllAssessmentInsights(param);
 
+        assertEquals(assessmentResult, subjectHelperParamArgumentCaptor.getValue().assessmentResult());
+        assertEquals(List.of(subject.getId()), subjectHelperParamArgumentCaptor.getValue().subjectIds());
+        assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+            subjectHelperParamArgumentCaptor.getValue().locale());
+
         verify(createSubjectInsightPort, times(1)).persistAll(subjectInsightArgumentCaptor.capture());
 
         var subjectInsightArgument = subjectInsightArgumentCaptor.getValue().getFirst();
-        assertEquals(assessmentResult.getId(), subjectInsightArgument.getAssessmentResultId());
-        assertEquals(subject.getId(), subjectInsightArgument.getSubjectId());
-        assertEquals(insight, subjectInsightArgument.getInsight());
-        assertNotNull(subjectInsightArgument.getInsightTime());
-        assertNotNull(subjectInsightArgument.getLastModificationTime());
-        assertNull(subjectInsightArgument.getInsightBy());
-        assertFalse(subjectInsightArgument.isApproved());
+        assertEquals(newSubjectInsight, subjectInsightArgument);
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createAttributeAiInsightHelper,
@@ -320,7 +323,7 @@ class GenerateAllAssessmentInsightsServiceTest {
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createAttributeAiInsightHelper,
             createAttributeInsightPort,
-            loadSubjectValuePort,
+            createSubjectInsightsHelper,
             createSubjectInsightPort);
     }
 
@@ -371,7 +374,7 @@ class GenerateAllAssessmentInsightsServiceTest {
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createAttributeAiInsightHelper,
             createAttributeInsightPort,
-            loadSubjectValuePort,
+            createSubjectInsightsHelper,
             createSubjectInsightPort);
     }
 
@@ -386,20 +389,6 @@ class GenerateAllAssessmentInsightsServiceTest {
                 "Unprepared" + 13,
                 "causing frequent issues and inefficiencies. " + 13, 13, 4),
             new LoadAttributesPort.Subject(464L, "Software" + 13));
-    }
-
-    private String createSubjectDefaultInsight(AssessmentResult assessmentResult, SubjectValue subjectValue) {
-        return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
-            Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
-            subjectValue.getSubject().getTitle(),
-            subjectValue.getSubject().getDescription(),
-            (int) Math.ceil(subjectValue.getConfidenceValue()),
-            subjectValue.getSubject().getTitle(),
-            subjectValue.getMaturityLevel().getIndex(),
-            maturityLevels.size(),
-            subjectValue.getMaturityLevel().getTitle(),
-            subjectValue.getSubject().getAttributes().size(),
-            subjectValue.getSubject().getTitle());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
