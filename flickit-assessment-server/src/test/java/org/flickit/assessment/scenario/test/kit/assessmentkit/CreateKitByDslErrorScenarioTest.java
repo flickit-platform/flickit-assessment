@@ -12,6 +12,7 @@ import java.util.List;
 
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
 
@@ -43,10 +44,12 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
             .then()
             .statusCode(201);
 
-        kitHelper.create(context, request)
+        var error = kitHelper.create(context, request)
             .then()
             .statusCode(400)
             .extract().as(ErrorResponseDto.class);
+
+        assertEquals("INVALID_INPUT", error.code());
     }
 
     @Test
@@ -62,10 +65,12 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
         );
 
         context.getNextCurrentUser();
-        kitHelper.create(context, request)
+        var error = kitHelper.create(context, request)
             .then()
             .statusCode(403)
             .extract().as(ErrorResponseDto.class);
+
+        assertEquals("ACCESS_DENIED", error.code());
     }
 
     private Long createExpertGroup() {
