@@ -39,11 +39,12 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_QUESTIONNAIRE_QUESTIONS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND));
+        var kitVersionId = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND))
+            .getKitVersionId();
 
         var pageResult = loadQuestionnaireQuestionListPort.loadByQuestionnaireId(param.getQuestionnaireId(),
-            assessmentResult.getKitVersionId(),
+            kitVersionId,
             param.getSize(),
             param.getPage());
 
