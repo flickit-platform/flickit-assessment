@@ -123,7 +123,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
     )
     """)
-    boolean countQuestionUnapprovedAnswer(@Param("assessmentResultId") UUID assessmentResultId,
-                                          @Param("questionId") Long questionId,
-                                          @Param("status") int status);
+    boolean existsUnapprovedAnswer(@Param("assessmentResultId") UUID assessmentResultId,
+                                   @Param("questionId") Long questionId,
+                                   @Param("status") int status);
 }

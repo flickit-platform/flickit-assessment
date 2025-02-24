@@ -70,7 +70,7 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public boolean hasUnapprovedAnswer(UUID assessmentResultId, Long questionId) {
-        return repository.countQuestionUnapprovedAnswer(assessmentResultId, questionId, AnswerStatus.UNAPPROVED.getId());
+        return repository.existsUnapprovedAnswer(assessmentResultId, questionId, AnswerStatus.UNAPPROVED.getId());
     }
 
     @Override
