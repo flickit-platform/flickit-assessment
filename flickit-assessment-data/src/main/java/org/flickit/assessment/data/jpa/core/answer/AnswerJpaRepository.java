@@ -120,8 +120,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
         WHERE a.assessmentResult.id = :assessmentResultId
             AND a.questionId = :questionId
             AND a.status = :status
-            AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
-    )
+            AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true))
     """)
     boolean existsUnapprovedAnswer(@Param("assessmentResultId") UUID assessmentResultId,
                                    @Param("questionId") Long questionId,
