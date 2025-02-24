@@ -22,4 +22,13 @@ public interface CountAnswersPort {
      * @return the count of unapproved answers in the assessment result
      */
     int countUnapprovedAnswers(UUID assessmentResultId);
+
+    /**
+     * Checks if the answer to a given question in a specific assessment result is unapproved.
+     *
+     * @param assessmentResultId the unique identifier of the assessment result
+     * @param questionId         the unique identifier of the question
+     * @return {@code true} if the answer is unapproved, otherwise {@code false}
+     */
+    boolean hasUnapprovedAnswer(UUID assessmentResultId, Long questionId);
 }
