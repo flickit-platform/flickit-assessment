@@ -8,6 +8,7 @@ import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
+import org.flickit.assessment.data.jpa.core.answer.AnswersQuestionnairesAndCountView;
 import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
@@ -70,7 +71,11 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public Map<Long, Integer> countUnapprovedAnswers(UUID assessmentResultId, Set<Long> questionnaireIds) {
-        return repository.countQuestionnairesUnapprovedAnswers(assessmentResultId, questionnaireIds);
+        return repository.countQuestionnairesUnapprovedAnswers(assessmentResultId, questionnaireIds, AnswerStatus.UNAPPROVED.getId()).stream()
+            .collect(toMap(
+                AnswersQuestionnairesAndCountView::getQuestionnaireId,
+                AnswersQuestionnairesAndCountView::getCount
+            ));
     }
 
     @Override
