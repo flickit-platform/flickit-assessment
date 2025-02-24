@@ -142,7 +142,7 @@ class GetAssessmentQuestionnaireListServiceTest {
             });
 
         Assertions.assertThat(actualResult)
-            .extracting("sort", "page", "total", "order", "size")
+            .extracting(PaginatedResponse::getSort, PaginatedResponse::getPage, PaginatedResponse::getTotal, PaginatedResponse::getOrder, PaginatedResponse::getSize)
             .containsExactly(loadPortResult.getSort(), loadPortResult.getPage(), loadPortResult.getTotal(), loadPortResult.getOrder(), loadPortResult.getSize());
 
         var questionnaireOneIssues = actualResult.getItems().getFirst().issues();
