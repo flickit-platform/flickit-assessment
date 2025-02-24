@@ -98,7 +98,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var answeredWithLowConfidenceCount = Map.of(questionnaireOne.id(), 1, questionnaireTwo.id(), 3);
         var unresolvedCommentsCount = Map.of(questionnaireOne.id(), 3);
         var answeredWithEvidence = Map.of(questionnaireOne.id(), 3, questionnaireTwo.id(), 0);
-        var unapprovedAnswers = Map.of(questionnaireOne.id(), 3);
+        var unapprovedAnswers = Map.of(questionnaireOne.id(), 4);
 
         var questionnaireIds = Set.of(questionnaireOne.id(), questionnaireTwo.id());
 
@@ -154,11 +154,13 @@ class GetAssessmentQuestionnaireListServiceTest {
         assertEquals(1, questionnaireOneIssues.answeredWithLowConfidence());
         assertEquals(3, questionnaireOneIssues.unresolvedComments());
         assertEquals(7, questionnaireOneIssues.answeredWithoutEvidence());
+        assertEquals(4, questionnaireOneIssues.unapprovedAnswers());
 
         assertEquals(5, questionnaireTwoIssues.unanswered());
         assertEquals(3, questionnaireTwoIssues.answeredWithLowConfidence());
         assertEquals(0, questionnaireTwoIssues.unresolvedComments());
         assertEquals(5, questionnaireTwoIssues.answeredWithoutEvidence());
+        assertEquals(0, questionnaireTwoIssues.unapprovedAnswers());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
