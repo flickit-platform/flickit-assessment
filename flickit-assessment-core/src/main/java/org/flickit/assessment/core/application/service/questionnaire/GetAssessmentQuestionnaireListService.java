@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.domain.QuestionnaireListItem;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireListUseCase;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -35,6 +36,7 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final CountLowConfidenceAnswersPort lowConfidenceAnswersPort;
     private final CountEvidencesPort countEvidencesPort;
+    private final CountAnswersPort countAnswersPort;
 
     @Override
     public PaginatedResponse<QuestionnaireListItem> getAssessmentQuestionnaireList(Param param) {
@@ -65,13 +67,16 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
             assessmentResult.getAssessment().getId(), questionnaireIds);
         var questionnaireIdToEvidenceCount = countEvidencesPort.countAnsweredQuestionsHavingEvidence(
             assessmentResult.getAssessment().getId(), questionnaireIds);
+        var questionnaireIdToUnapprovedAnswersCount = countAnswersPort.countQuestionnaireUnapprovedAnswers(
+            assessmentResult.getId(), questionnaireIds);
 
         var items = questionnaires.getItems().stream()
             .map(questionnaire -> {
                 var issues = buildQuestionnaireIssues(questionnaire,
                     questionnaireIdToLowConfidenceAnswersCount,
                     questionnaireIdToUnresolvedCommentsCount,
-                    questionnaireIdToEvidenceCount);
+                    questionnaireIdToEvidenceCount,
+                    questionnaireIdToUnapprovedAnswersCount);
                 return questionnaire.withIssues(issues);
             })
             .toList();
@@ -87,7 +92,8 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
     private QuestionnaireListItem.Issues buildQuestionnaireIssues(QuestionnaireListItem questionnaire,
                                                                   Map<Long, Integer> lowConfidenceAnswersCount,
                                                                   Map<Long, Integer> questionnairesUnresolvedComments,
-                                                                  Map<Long, Integer> questionnairesEvidenceCount) {
+                                                                  Map<Long, Integer> questionnairesEvidenceCount,
+                                                                  Map<Long, Integer> questionnairesUnapprovedAnswers) {
         int unanswered = Math.max(questionnaire.questionCount() - questionnaire.answerCount(), 0);
         if (questionnaire.answerCount() > questionnaire.questionCount())
             log.error("AnswerCount exceeds the questions count: answerCount:[{}], questionCount:[{}]",
@@ -102,10 +108,12 @@ public class GetAssessmentQuestionnaireListService implements GetAssessmentQuest
                 evidencesCount, questionnaire.answerCount());
 
         int unresolvedComments = questionnairesUnresolvedComments.getOrDefault(questionnaire.id(), 0);
+        int unapprovedAnswers = questionnairesUnapprovedAnswers.getOrDefault(questionnaire.id(), 0);
 
         return new QuestionnaireListItem.Issues(unanswered,
             answeredWithLowConfidence,
             answeredWithoutEvidence,
-            unresolvedComments);
+            unresolvedComments,
+            unapprovedAnswers);
     }
 }

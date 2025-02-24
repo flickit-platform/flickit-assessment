@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireListUseCase.Param;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -50,6 +51,9 @@ class GetAssessmentQuestionnaireListServiceTest {
     @Mock
     private CountEvidencesPort countEvidencesPort;
 
+    @Mock
+    private CountAnswersPort countAnswersPort;
+
     @Test
     void testGetQuestionnaireList_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID());
@@ -62,7 +66,8 @@ class GetAssessmentQuestionnaireListServiceTest {
         verifyNoInteractions(loadQuestionnairesByAssessmentIdPort,
             loadAssessmentResultPort,
             countEvidencesPort,
-            countLowConfidenceAnswersPort);
+            countLowConfidenceAnswersPort,
+            countAnswersPort);
     }
 
     @Test
@@ -77,7 +82,8 @@ class GetAssessmentQuestionnaireListServiceTest {
 
         verifyNoInteractions(loadQuestionnairesByAssessmentIdPort,
             countEvidencesPort,
-            countLowConfidenceAnswersPort);
+            countLowConfidenceAnswersPort,
+            countAnswersPort);
     }
 
     @Test
@@ -92,6 +98,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var answeredWithLowConfidenceCount = Map.of(questionnaireOne.id(), 1, questionnaireTwo.id(), 3);
         var unresolvedCommentsCount = Map.of(questionnaireOne.id(), 3);
         var answeredWithEvidence = Map.of(questionnaireOne.id(), 3, questionnaireTwo.id(), 0);
+        var unapprovedAnswers = Map.of(questionnaireOne.id(), 3);
 
         var questionnaireIds = Set.of(questionnaireOne.id(), questionnaireTwo.id());
 
@@ -114,6 +121,8 @@ class GetAssessmentQuestionnaireListServiceTest {
             .thenReturn(unresolvedCommentsCount);
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), questionnaireIds))
             .thenReturn(answeredWithEvidence);
+        when(countAnswersPort.countQuestionnaireUnapprovedAnswers(assessmentResult.getId(), questionnaireIds))
+            .thenReturn(unapprovedAnswers);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);
 
