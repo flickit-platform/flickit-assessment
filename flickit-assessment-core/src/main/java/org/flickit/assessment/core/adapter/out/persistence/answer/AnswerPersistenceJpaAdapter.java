@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
-import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.out.answer.*;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
+import org.flickit.assessment.data.jpa.core.answer.AnswersQuestionAndCountView;
 import org.flickit.assessment.data.jpa.core.answer.QuestionnaireIdAndAnswerCountView;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
@@ -17,6 +17,7 @@ import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -71,7 +72,10 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public Map<Long, Integer> countUnapprovedAnswers(UUID assessmentResultId, long questionnaireId) {
-        return repository.countQuestionnaireQuestionsUnapprovedAnswers(assessmentResultId, questionnaireId, AnswerStatus.UNAPPROVED.getId());
+        return repository.countQuestionnaireQuestionsUnapprovedAnswers(assessmentResultId, questionnaireId, AnswerStatus.UNAPPROVED.getId()).stream()
+            .collect(Collectors.toMap(AnswersQuestionAndCountView::getQuestionId,
+                AnswersQuestionAndCountView::getCount
+            ));
     }
 
     @Override

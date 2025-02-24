@@ -109,7 +109,19 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     int countUnapprovedAnswersByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
                                                    @Param("status") Integer status);
 
-    Map<Long, Integer> countQuestionnaireQuestionsUnapprovedAnswers(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                    @Param("questionnaireId") long questionnaireId,
-                                                                    @Param("Status") Integer status);
+    @Query("""
+            SELECT a.questionId as questionId,
+                    COUNT(a) as count
+            FROM AnswerJpaEntity a
+            JOIN QuestionJpaEntity q ON a.questionId = q.id
+            JOIN AssessmentResultJpaEntity r ON a.assessmentResult.id = r.id AND q.kitVersionId = r.kitVersionId
+            WHERE a.assessmentResult.id = :assessmentResultId
+                AND q.questionnaireId = :questionnaireId
+                AND (a.status = :status)
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+            GROUP BY questionId
+        """)
+    List<AnswersQuestionAndCountView> countQuestionnaireQuestionsUnapprovedAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                                   @Param("questionnaireId") long questionnaireId,
+                                                                                   @Param("status") Integer status);
 }
