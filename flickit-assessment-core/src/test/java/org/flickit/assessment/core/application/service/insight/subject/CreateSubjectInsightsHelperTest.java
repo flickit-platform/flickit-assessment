@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.insight.subject;
 
 import org.flickit.assessment.common.application.MessageBundle;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.SubjectValue;
@@ -74,7 +75,7 @@ class CreateSubjectInsightsHelperTest {
 
         var result = helper.initSubjectInsights(param);
         assertFalse(result.isEmpty());
-        String defaultInsight = createSubjectDefaultInsight(assessmentResult, subjectValue);
+        String defaultInsight = createSubjectDefaultInsight(subjectValue, param.locale());
         SubjectInsight subjectInsight = result.getFirst();
 
         assertEquals(assessmentResult.getId(), subjectInsight.getAssessmentResultId());
@@ -86,9 +87,31 @@ class CreateSubjectInsightsHelperTest {
         assertFalse(subjectInsight.isApproved());
     }
 
-    private String createSubjectDefaultInsight(AssessmentResult assessmentResult, SubjectValue subjectValue) {
+    @Test
+    void testInitSubjectInsights_WhenLocaleIsPersian_ThenReturnSubjectInsightsInPersian() {
+        var paramWithPersianLocale = createParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
+        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), paramWithPersianLocale.subjectIds()))
+            .thenReturn(List.of(subjectValue));
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevels);
+
+        var result = helper.initSubjectInsights(paramWithPersianLocale);
+        assertFalse(result.isEmpty());
+        String defaultInsight = createSubjectDefaultInsight(subjectValue, paramWithPersianLocale.locale());
+        SubjectInsight subjectInsight = result.getFirst();
+
+        assertEquals(assessmentResult.getId(), subjectInsight.getAssessmentResultId());
+        assertEquals(subjectValue.getSubject().getId(), subjectInsight.getSubjectId());
+        assertEquals(defaultInsight, subjectInsight.getInsight());
+        assertNotNull(subjectInsight.getInsightTime());
+        assertNotNull(subjectInsight.getLastModificationTime());
+        assertNull(subjectInsight.getInsightBy());
+        assertFalse(subjectInsight.isApproved());
+    }
+
+    private String createSubjectDefaultInsight(SubjectValue subjectValue, Locale locale) {
         return MessageBundle.message(SUBJECT_DEFAULT_INSIGHT,
-            Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
+            locale,
             subjectValue.getSubject().getTitle(),
             subjectValue.getSubject().getDescription(),
             (int) Math.ceil(subjectValue.getConfidenceValue()),
