@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.question.GetQuestionIssuesUseCase;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -24,8 +25,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_QUESTION_ISSUES_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetQuestionIssuesServiceTest {
@@ -45,6 +45,9 @@ class GetQuestionIssuesServiceTest {
     @Mock
     private CountEvidencesPort countEvidencesPort;
 
+    @Mock
+    private CountAnswersPort countAnswersPort;
+
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
     @Test
@@ -57,7 +60,7 @@ class GetQuestionIssuesServiceTest {
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getQuestionIssues(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
-        verifyNoInteractions(loadAssessmentResultPort, loadAnswerPort, countEvidencesPort);
+        verifyNoInteractions(loadAssessmentResultPort, loadAnswerPort, countEvidencesPort, countAnswersPort);
     }
 
     @Test
@@ -71,7 +74,7 @@ class GetQuestionIssuesServiceTest {
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionIssues(param));
         assertEquals(GET_QUESTION_ISSUES_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
-        verifyNoInteractions(loadAnswerPort, countEvidencesPort);
+        verifyNoInteractions(loadAnswerPort, countEvidencesPort, countAnswersPort);
     }
 
     @Test
@@ -88,6 +91,10 @@ class GetQuestionIssuesServiceTest {
         assertFalse(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
+        assertFalse(result.isUnapproved());
+
+        verify(countEvidencesPort).countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId());
+        verifyNoInteractions(countAnswersPort);
     }
 
     @Test
@@ -105,6 +112,10 @@ class GetQuestionIssuesServiceTest {
         assertFalse(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
+        assertFalse(result.isUnapproved());
+
+        verify(countEvidencesPort).countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId());
+        verifyNoInteractions(countAnswersPort);
     }
 
     @Test
@@ -121,12 +132,15 @@ class GetQuestionIssuesServiceTest {
             .thenReturn(1);
         when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(0);
+        when(countAnswersPort.hasUnapprovedAnswer(assessmentResult.getId(), param.getQuestionId()))
+            .thenReturn(true);
 
         var result = service.getQuestionIssues(param);
         assertFalse(result.isUnanswered());
         assertTrue(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
+        assertTrue(result.isUnapproved());
     }
 
     @Test
@@ -143,12 +157,15 @@ class GetQuestionIssuesServiceTest {
             .thenReturn(0);
         when(countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()))
             .thenReturn(2);
+        when(countAnswersPort.hasUnapprovedAnswer(assessmentResult.getId(), param.getQuestionId()))
+            .thenReturn(false);
 
         var result = service.getQuestionIssues(param);
         assertFalse(result.isUnanswered());
         assertFalse(result.isAnsweredWithLowConfidence());
         assertTrue(result.isAnsweredWithoutEvidences());
         assertEquals(2, result.unresolvedCommentsCount());
+        assertFalse(result.isUnapproved());
     }
 
     private GetQuestionIssuesUseCase.Param createParam
