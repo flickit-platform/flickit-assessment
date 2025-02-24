@@ -267,6 +267,7 @@ class GetAssessmentDashboardServiceTest {
         assertEquals(2, result.questions().answeredWithLowConfidence());
         assertEquals(7, result.questions().withoutEvidence());
         assertEquals(1, result.questions().unresolvedComments());
+        assertEquals(4, result.questions().unapprovedAnswers());
         //insights
         assertEquals(10, result.insights().expected());
         assertEquals(3, result.insights().notGenerated());
