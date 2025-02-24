@@ -49,7 +49,7 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(INIT_SUBJECT_INSIGHT_SUBJECT_NOT_FOUND));
         var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
         var subjectInsight = createSubjectInsightsHelper
-            .initSubjectInsights(new CreateSubjectInsightsHelper.Param(assessmentResult, List.of(subject.getId()), locale))
+            .createSubjectInsight(new CreateSubjectInsightsHelper.Param(assessmentResult, List.of(subject.getId()), locale))
             .getFirst();
 
         loadSubjectInsightPort.load(assessmentResult.getId(), subject.getId())

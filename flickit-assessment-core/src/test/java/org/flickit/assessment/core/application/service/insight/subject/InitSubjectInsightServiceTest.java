@@ -128,7 +128,7 @@ class InitSubjectInsightServiceTest {
             .thenReturn(Optional.of(subjectInsight));
         when(loadSubjectPort.loadByIdAndKitVersionId(param.getSubjectId(), assessmentResult.getKitVersionId()))
             .thenReturn(Optional.of(subjectValue.getSubject()));
-        when(createSubjectInsightsHelper.initSubjectInsights(initInsightParamArgumentCaptor.capture()))
+        when(createSubjectInsightsHelper.createSubjectInsight(initInsightParamArgumentCaptor.capture()))
             .thenReturn(List.of(newSubjectInsight));
 
         service.initSubjectInsight(param);
@@ -157,7 +157,7 @@ class InitSubjectInsightServiceTest {
             .thenReturn(Optional.empty());
         when(loadSubjectPort.loadByIdAndKitVersionId(paramForPersianKit.getSubjectId(), assessmentResultWithPersianKit.getKitVersionId()))
             .thenReturn(Optional.of(subjectValue.getSubject()));
-        when(createSubjectInsightsHelper.initSubjectInsights(initInsightParamArgumentCaptor.capture()))
+        when(createSubjectInsightsHelper.createSubjectInsight(initInsightParamArgumentCaptor.capture()))
             .thenReturn(List.of(newSubjectInsight));
 
         service.initSubjectInsight(paramForPersianKit);

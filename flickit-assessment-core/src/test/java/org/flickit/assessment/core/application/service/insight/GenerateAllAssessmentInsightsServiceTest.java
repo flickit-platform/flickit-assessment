@@ -256,7 +256,7 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()))
             .thenReturn(List.of(subject));
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of());
-        when(createSubjectInsightsHelper.initSubjectInsights(subjectHelperParamArgumentCaptor.capture()))
+        when(createSubjectInsightsHelper.createSubjectInsight(subjectHelperParamArgumentCaptor.capture()))
             .thenReturn(List.of(newSubjectInsight));
         doNothing().when(createSubjectInsightPort).persistAll(anyList());
 

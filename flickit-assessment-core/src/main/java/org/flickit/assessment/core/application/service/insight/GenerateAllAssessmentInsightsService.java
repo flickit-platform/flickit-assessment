@@ -124,7 +124,7 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
 
     private void createSubjectsInsight(AssessmentResult assessmentResult, List<Long> subjectIds, Locale locale) {
         var subjectInsights = createSubjectInsightsHelper
-            .initSubjectInsights(new CreateSubjectInsightsHelper.Param(assessmentResult, subjectIds, locale));
+            .createSubjectInsight(new CreateSubjectInsightsHelper.Param(assessmentResult, subjectIds, locale));
         createSubjectInsightPort.persistAll(subjectInsights);
     }
 
