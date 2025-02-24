@@ -24,7 +24,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @RequiredArgsConstructor
 public class AnswerPersistenceJpaAdapter implements
     CreateAnswerPort,
-    CountAnswersByQuestionIdsPort,
+    CountAnswersPort,
     LoadAnswerPort,
     UpdateAnswerPort,
     LoadQuestionsAnswerListPort,
@@ -61,6 +61,11 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public int countByQuestionIds(UUID assessmentResultId, List<Long> questionIds) {
         return repository.getCountByQuestionIds(assessmentResultId, questionIds);
+    }
+
+    @Override
+    public int countUnapprovedAnswers(UUID assessmentResultId) {
+        return repository.countUnapprovedAnswersByAssessmentResultId(assessmentResultId, AnswerStatus.UNAPPROVED.getId());
     }
 
     @Override

@@ -101,4 +101,14 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     void approve(@Param("answerId") UUID answerId,
                  @Param("approvedBy") UUID approvedBy,
                  @Param("approvedStatusId") int approvedStatusId);
+
+    @Query("""
+            SELECT COUNT(a)
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id = :assessmentResultId
+                AND (a.status = :status)
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+        """)
+    int countUnapprovedAnswersByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
+                                                   @Param("status") Integer status);
 }
