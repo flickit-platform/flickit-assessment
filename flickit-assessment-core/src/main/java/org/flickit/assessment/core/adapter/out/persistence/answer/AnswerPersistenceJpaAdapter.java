@@ -69,6 +69,11 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
+    public Map<Long, Integer> countQuestionnaireUnapprovedAnswers(UUID assessmentResultId, Set<Long> questionnaireIds) {
+        return Map.of();
+    }
+
+    @Override
     public Optional<Answer> load(UUID assessmentResultId, Long questionId) {
         return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
             .map(AnswerMapper::mapToDomainModel);
