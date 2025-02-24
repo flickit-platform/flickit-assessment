@@ -121,7 +121,7 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
             GROUP BY questionnaireId
         """)
-    List<AnswersQuestionnairesAndCountView> countQuestionnairesUnapprovedAnswers(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                                 @Param("questionnaireIds") Set<Long> questionnaireIds,
-                                                                                 @Param("status") Integer status);
+    List<AnswersQuestionnaireAndCountView> countQuestionnairesUnapprovedAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                                @Param("questionnaireIds") Set<Long> questionnaireIds,
+                                                                                @Param("status") Integer status);
 }

@@ -1,6 +1,6 @@
 package org.flickit.assessment.data.jpa.core.answer;
 
-public interface AnswersQuestionnairesAndCountView {
+public interface AnswersQuestionnaireAndCountView {
 
     long getQuestionnaireId();
 
