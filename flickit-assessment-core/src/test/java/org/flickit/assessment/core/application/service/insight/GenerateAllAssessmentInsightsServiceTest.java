@@ -65,9 +65,6 @@ class GenerateAllAssessmentInsightsServiceTest {
     private ValidateAssessmentResultPort validateAssessmentResultPort;
 
     @Mock
-    private LoadMaturityLevelsPort loadMaturityLevelsPort;
-
-    @Mock
     private GetAssessmentProgressPort getAssessmentProgressPort;
 
     @Mock
@@ -78,6 +75,9 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     @Mock
     private LoadAttributeInsightsPort loadAttributeInsightsPort;
+
+    @Mock
+    private LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     @Mock
     private CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
@@ -133,11 +133,11 @@ class GenerateAllAssessmentInsightsServiceTest {
             loadAssessmentResultPort,
             loadAttributesPort,
             loadAttributeInsightsPort,
+            loadMaturityLevelsPort,
             createAttributeAiInsightHelper,
             createAttributeInsightPort,
             loadSubjectsPort,
             loadSubjectInsightsPort,
-            loadMaturityLevelsPort,
             createSubjectInsightsHelper,
             createSubjectInsightPort,
             loadAssessmentInsightPort,
@@ -156,11 +156,11 @@ class GenerateAllAssessmentInsightsServiceTest {
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(validateAssessmentResultPort,
-            loadMaturityLevelsPort,
             getAssessmentProgressPort,
             loadAttributesPort,
             loadAttributeInsightsPort,
             createAttributeAiInsightHelper,
+            loadMaturityLevelsPort,
             createAttributeInsightPort,
             loadSubjectsPort,
             loadSubjectInsightsPort,
@@ -182,10 +182,10 @@ class GenerateAllAssessmentInsightsServiceTest {
         var throwable = assertThrows(CalculateNotValidException.class, () -> service.generateAllAssessmentInsights(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
-        verifyNoInteractions(loadMaturityLevelsPort,
-            getAssessmentProgressPort,
+        verifyNoInteractions(getAssessmentProgressPort,
             loadAttributesPort,
             loadAttributeInsightsPort,
+            loadMaturityLevelsPort,
             createAttributeAiInsightHelper,
             createAttributeInsightPort,
             loadSubjectsPort,
@@ -205,12 +205,12 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of());
 
+        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevels);
         when(createAttributeAiInsightHelper.createAttributeAiInsight(attributeHelperParamArgumentCaptor.capture()))
             .thenReturn(newAttributeAiInsight);
 
@@ -247,8 +247,6 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
 
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
@@ -278,7 +276,8 @@ class GenerateAllAssessmentInsightsServiceTest {
         assertEquals(newSubjectInsight, subjectInsightArgument);
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-        verifyNoInteractions(createAttributeAiInsightHelper,
+        verifyNoInteractions(loadMaturityLevelsPort,
+            createAttributeAiInsightHelper,
             createAttributeInsightPort,
             createAssessmentInsightPort);
     }
@@ -296,8 +295,6 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
 
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
@@ -326,7 +323,8 @@ class GenerateAllAssessmentInsightsServiceTest {
         assertFalse(assessmentInsightArgumentCaptor.getValue().isApproved());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-        verifyNoInteractions(createAttributeAiInsightHelper,
+        verifyNoInteractions(loadMaturityLevelsPort,
+            createAttributeAiInsightHelper,
             createAttributeInsightPort,
             createSubjectInsightsHelper,
             createSubjectInsightPort);
@@ -347,8 +345,6 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
         when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(incompleteProgress);
 
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
@@ -377,7 +373,8 @@ class GenerateAllAssessmentInsightsServiceTest {
         assertFalse(assessmentInsightArgumentCaptor.getValue().isApproved());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-        verifyNoInteractions(createAttributeAiInsightHelper,
+        verifyNoInteractions(loadMaturityLevelsPort,
+            createAttributeAiInsightHelper,
             createAttributeInsightPort,
             createSubjectInsightsHelper,
             createSubjectInsightPort);

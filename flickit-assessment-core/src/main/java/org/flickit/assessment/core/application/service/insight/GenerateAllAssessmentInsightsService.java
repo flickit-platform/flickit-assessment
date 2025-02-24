@@ -7,7 +7,6 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
@@ -49,10 +48,10 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final LoadAttributesPort loadAttributesPort;
     private final LoadAttributeInsightsPort loadAttributeInsightsPort;
+    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
     private final CreateAttributeInsightPort createAttributeInsightPort;
     private final LoadSubjectsPort loadSubjectsPort;
@@ -71,17 +70,15 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
-        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
         var progress = getAssessmentProgressPort.getProgress(param.getAssessmentId());
 
-        initAttributesInsight(param.getAssessmentId(), assessmentResult, maturityLevels, progress, locale);
+        initAttributesInsight(param.getAssessmentId(), assessmentResult, progress, locale);
         initSubjectsInsight(assessmentResult, locale);
         initAssessmentInsight(assessmentResult, progress, locale);
     }
 
     private void initAttributesInsight(UUID assessmentId,
                                        AssessmentResult assessmentResult,
-                                       List<MaturityLevel> maturityLevels,
                                        GetAssessmentProgressPort.Result progress,
                                        Locale locale) {
         var attributeIds = loadAttributesPort.loadAll(assessmentId).stream()
@@ -92,14 +89,14 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
             .toList();
         attributeIds.removeAll(attributeInsightIds);
         if (!attributeIds.isEmpty())
-            createAttributesInsight(assessmentResult, attributeIds, maturityLevels, progress, locale);
+            createAttributesInsight(assessmentResult, attributeIds, progress, locale);
     }
 
     private void createAttributesInsight(AssessmentResult assessmentResult,
                                          List<Long> attributeIds,
-                                         List<MaturityLevel> maturityLevels,
                                          GetAssessmentProgressPort.Result progress,
                                          Locale locale) {
+        var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
         var attributeInsights = attributeIds.stream()
             .map(id -> {
                 var createAiInsightParam = new CreateAttributeAiInsightHelper.Param(assessmentResult,
