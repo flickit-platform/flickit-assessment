@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.service.insight;
 
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
@@ -25,6 +24,7 @@ import org.flickit.assessment.core.application.port.out.insight.subject.CreateSu
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
+import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
 import org.flickit.assessment.core.test.fixture.application.*;
@@ -45,10 +45,7 @@ import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GENERATE_ALL_ASSESSMENT_INSIGHTS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.*;
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED;
-import static org.flickit.assessment.core.common.MessageKey.ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE;
 import static org.flickit.assessment.core.test.fixture.application.AttributeInsightMother.aiInsightWithTime;
-import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.levelFour;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -99,6 +96,9 @@ class GenerateAllAssessmentInsightsServiceTest {
 
     @Mock
     private LoadAssessmentInsightPort loadAssessmentInsightPort;
+
+    @Mock
+    private CreateAssessmentInsightHelper createAssessmentInsightHelper;
 
     @Mock
     private CreateAssessmentInsightPort createAssessmentInsightPort;
@@ -205,12 +205,12 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId())).thenReturn(List.of());
 
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(maturityLevels);
+        when(getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId())).thenReturn(progress);
         when(createAttributeAiInsightHelper.createAttributeAiInsight(attributeHelperParamArgumentCaptor.capture()))
             .thenReturn(newAttributeAiInsight);
 
@@ -247,7 +247,6 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
 
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId()))
@@ -277,25 +276,21 @@ class GenerateAllAssessmentInsightsServiceTest {
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(loadMaturityLevelsPort,
+            getAssessmentProgressPort,
             createAttributeAiInsightHelper,
             createAttributeInsightPort,
             createAssessmentInsightPort);
     }
 
     @Test
-    void testGenerateAllAssessmentInsights_whenAssessmentInsightDoesNotExistAndAssessmentProgressIsCompleted_thenInitAssessmentInsightAndPersist() {
+    void testGenerateAllAssessmentInsights_whenAssessmentInsightDoesNotExist_thenCreateAssessmentInsightAndPersist() {
         var subject = subjectValue.getSubject();
-        var insight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
-            Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
-            levelFour().getTitle(),
-            progress.questionsCount(),
-            (int) Math.ceil(assessmentResult.getConfidenceValue()));
+        var newAssessmentInsight = AssessmentInsightMother.createDefaultInsightWithAssessmentResultId(assessmentResult.getId());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(progress);
 
         when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
         when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId()))
@@ -306,7 +301,11 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId()))
             .thenReturn(List.of(SubjectInsightMother.subjectInsightWithSubjectId(subject.getId())));
 
+        var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
+
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
+        when(createAssessmentInsightHelper.createAssessmentInsight(assessmentResult, locale))
+            .thenReturn(newAssessmentInsight);
         when(createAssessmentInsightPort.persist(any(AssessmentInsight.class))).thenReturn(UUID.randomUUID());
         service.generateAllAssessmentInsights(param);
 
@@ -315,65 +314,11 @@ class GenerateAllAssessmentInsightsServiceTest {
             .persist(assessmentInsightArgumentCaptor.capture());
 
         assertNull(assessmentInsightArgumentCaptor.getValue().getId());
-        assertEquals(assessmentResult.getId(), assessmentInsightArgumentCaptor.getValue().getAssessmentResultId());
-        assertEquals(insight, assessmentInsightArgumentCaptor.getValue().getInsight());
-        assertNotNull(assessmentInsightArgumentCaptor.getValue().getInsightTime());
-        assertNotNull(assessmentInsightArgumentCaptor.getValue().getLastModificationTime());
-        assertNull(assessmentInsightArgumentCaptor.getValue().getInsightBy());
-        assertFalse(assessmentInsightArgumentCaptor.getValue().isApproved());
+        assertEquals(newAssessmentInsight, assessmentInsightArgumentCaptor.getValue());
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(loadMaturityLevelsPort,
-            createAttributeAiInsightHelper,
-            createAttributeInsightPort,
-            createSubjectInsightsHelper,
-            createSubjectInsightPort);
-    }
-
-    @Test
-    void testGenerateAllAssessmentInsights_whenAssessmentInsightDoesNotExistAndAssessmentProgressIsNotCompleted_thenInitAssessmentInsightAndPersist() {
-        var subject = subjectValue.getSubject();
-        var incompleteProgress = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 10, 11);
-        var insight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
-            Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
-            levelFour().getTitle(),
-            incompleteProgress.answersCount(),
-            incompleteProgress.questionsCount(),
-            (int) Math.ceil(assessmentResult.getConfidenceValue()));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
-            .thenReturn(true);
-        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessmentResult));
-        doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
-        when(getAssessmentProgressPort.getProgress(param.getAssessmentId())).thenReturn(incompleteProgress);
-
-        when(loadAttributesPort.loadAll(param.getAssessmentId())).thenReturn(List.of(attribute));
-        when(loadAttributeInsightsPort.loadInsights(assessmentResult.getId()))
-            .thenReturn(List.of(AttributeInsightMother.aiInsightWithAttributeId(attribute.id())));
-
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()))
-            .thenReturn(List.of(subject));
-        when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId()))
-            .thenReturn(List.of(SubjectInsightMother.subjectInsightWithSubjectId(subject.getId())));
-
-        when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId())).thenReturn(Optional.empty());
-        when(createAssessmentInsightPort.persist(any(AssessmentInsight.class))).thenReturn(UUID.randomUUID());
-        service.generateAllAssessmentInsights(param);
-
-        var assessmentInsightArgumentCaptor = ArgumentCaptor.forClass(AssessmentInsight.class);
-        verify(createAssessmentInsightPort, times(1))
-            .persist(assessmentInsightArgumentCaptor.capture());
-
-        assertNull(assessmentInsightArgumentCaptor.getValue().getId());
-        assertEquals(assessmentResult.getId(), assessmentInsightArgumentCaptor.getValue().getAssessmentResultId());
-        assertEquals(insight, assessmentInsightArgumentCaptor.getValue().getInsight());
-        assertNotNull(assessmentInsightArgumentCaptor.getValue().getInsightTime());
-        assertNotNull(assessmentInsightArgumentCaptor.getValue().getLastModificationTime());
-        assertNull(assessmentInsightArgumentCaptor.getValue().getInsightBy());
-        assertFalse(assessmentInsightArgumentCaptor.getValue().isApproved());
-
-        verify(validateAssessmentResultPort).validate(param.getAssessmentId());
-        verifyNoInteractions(loadMaturityLevelsPort,
+            getAssessmentProgressPort,
             createAttributeAiInsightHelper,
             createAttributeInsightPort,
             createSubjectInsightsHelper,
