@@ -26,7 +26,7 @@ public class CreateSubjectInsightsHelper {
     private final LoadSubjectValuePort loadSubjectValuePort;
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
 
-    public SubjectInsight createSubjectInsight(CreateSubjectInsightParam param) {
+    public SubjectInsight createSubjectInsight(SubjectInsightParam param) {
         var subjectValues = loadSubjectValuePort.load(param.assessmentResult().getId(), param.subjectId());
         int maturityLevelsSize = loadMaturityLevelsPort.loadByKitVersionId(param.assessmentResult().getKitVersionId())
             .size();
@@ -41,9 +41,9 @@ public class CreateSubjectInsightsHelper {
     }
 
     @Builder
-    public record CreateSubjectInsightParam(AssessmentResult assessmentResult,
-                                            Long subjectId,
-                                            Locale locale) {
+    public record SubjectInsightParam(AssessmentResult assessmentResult,
+                                      Long subjectId,
+                                      Locale locale) {
     }
 
     public List<SubjectInsight> createSubjectInsights(SubjectInsightsParam param) {

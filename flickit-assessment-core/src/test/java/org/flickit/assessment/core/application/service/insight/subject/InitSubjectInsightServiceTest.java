@@ -14,7 +14,7 @@ import org.flickit.assessment.core.application.port.out.insight.subject.CreateSu
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
-import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.CreateSubjectInsightParam;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightParam;
 import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Assertions;
@@ -72,7 +72,7 @@ class InitSubjectInsightServiceTest {
     private LoadSubjectInsightPort loadSubjectInsightPort;
 
     @Captor
-    private ArgumentCaptor<CreateSubjectInsightParam> createInsightParamArgumentCaptor;
+    private ArgumentCaptor<SubjectInsightParam> createInsightParamArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<SubjectInsight> subjectInsightArgumentCaptor;
