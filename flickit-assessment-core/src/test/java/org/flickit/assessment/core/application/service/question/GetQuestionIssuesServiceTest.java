@@ -88,7 +88,7 @@ class GetQuestionIssuesServiceTest {
         assertFalse(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
-        assertFalse(result.isUnapproved());
+        assertFalse(result.hasUnapprovedAnswer());
 
         verify(countEvidencesPort).countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId());
     }
@@ -108,7 +108,7 @@ class GetQuestionIssuesServiceTest {
         assertFalse(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
-        assertFalse(result.isUnapproved());
+        assertFalse(result.hasUnapprovedAnswer());
 
         verify(countEvidencesPort).countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId());
     }
@@ -133,7 +133,7 @@ class GetQuestionIssuesServiceTest {
         assertTrue(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
-        assertFalse(result.isUnapproved());
+        assertFalse(result.hasUnapprovedAnswer());
     }
 
     @Test
@@ -156,7 +156,7 @@ class GetQuestionIssuesServiceTest {
         assertTrue(result.isAnsweredWithLowConfidence());
         assertTrue(result.isAnsweredWithoutEvidences());
         assertEquals(2, result.unresolvedCommentsCount());
-        assertTrue(result.isUnapproved());
+        assertTrue(result.hasUnapprovedAnswer());
     }
 
     private GetQuestionIssuesUseCase.Param createParam

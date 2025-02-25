@@ -41,6 +41,6 @@ public interface GetQuestionIssuesUseCase {
                   boolean isAnsweredWithLowConfidence,
                   boolean isAnsweredWithoutEvidences,
                   int unresolvedCommentsCount,
-                  boolean isUnapproved) {
+                  boolean hasUnapprovedAnswer) {
     }
 }
