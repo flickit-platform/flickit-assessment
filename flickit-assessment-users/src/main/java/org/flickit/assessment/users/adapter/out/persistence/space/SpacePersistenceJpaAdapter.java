@@ -102,7 +102,7 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public int countBasicSpaces(UUID userId) {
-        return 0;
+    public int countBasicSpaces(UUID ownerId) {
+        return repository.countByOwnerIdAndDeletedFalse(ownerId);
     }
 }
