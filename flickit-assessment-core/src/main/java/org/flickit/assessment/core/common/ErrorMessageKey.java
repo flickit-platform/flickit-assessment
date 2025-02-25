@@ -326,4 +326,6 @@ public class ErrorMessageKey {
     public static final String APPROVE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "approve-all-assessment-insights.assessmentId.notNull";
 
     public static final String GENERATE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "generate-all-assessment-insights.assessmentId.notNull";
+
+    public static final String REGENERATE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "regenerate-all-assessment-insights.assessmentId.notNull";
 }
