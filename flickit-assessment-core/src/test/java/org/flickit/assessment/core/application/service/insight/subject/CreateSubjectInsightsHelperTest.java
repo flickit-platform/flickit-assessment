@@ -8,7 +8,8 @@ import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
-import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.Param;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam.SubjectInsightsParamBuilder;
 import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
@@ -41,41 +42,42 @@ class CreateSubjectInsightsHelperTest {
     private final AssessmentResult assessmentResult = validResult();
     private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
     private final List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
-    private final Param param = createParam(Param.ParamBuilder::build);
+    private final SubjectInsightsParam subjectInsightsParam =
+        createSubjectInsightsParam(SubjectInsightsParamBuilder::build);
 
     @Test
     void testCreateSubjectInsights_WhenSubjectIdsIsEmpty_ThenReturnEmptyList() {
-        var paramWithEmptySubjectIds = createParam(b -> b.subjectIds(List.of()));
+        var paramWithEmptySubjectIds = createSubjectInsightsParam(b -> b.subjectIds(List.of()));
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), paramWithEmptySubjectIds.subjectIds()))
             .thenReturn(List.of());
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(maturityLevels);
 
-        var result = helper.createSubjectInsight(paramWithEmptySubjectIds);
+        var result = helper.createSubjectInsights(paramWithEmptySubjectIds);
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testCreateSubjectInsights_WhenSubjectIdDoesNotExist_ThenReturnEmptyList() {
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), param.subjectIds()))
+        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of());
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(maturityLevels);
 
-        var result = helper.createSubjectInsight(param);
+        var result = helper.createSubjectInsights(subjectInsightsParam);
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testCreateSubjectInsights_WhenSubjectIdIsValid_ThenReturnSubjectInsight() {
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), param.subjectIds()))
+        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of(subjectValue));
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(maturityLevels);
 
-        var result = helper.createSubjectInsight(param);
+        var result = helper.createSubjectInsights(subjectInsightsParam);
         assertFalse(result.isEmpty());
-        String defaultInsight = createSubjectDefaultInsight(subjectValue, param.locale());
+        String defaultInsight = createSubjectDefaultInsight(subjectValue, subjectInsightsParam.locale());
         SubjectInsight subjectInsight = result.getFirst();
 
         assertEquals(assessmentResult.getId(), subjectInsight.getAssessmentResultId());
@@ -89,13 +91,13 @@ class CreateSubjectInsightsHelperTest {
 
     @Test
     void testCreateSubjectInsights_WhenLocaleIsPersian_ThenReturnSubjectInsightInPersian() {
-        var paramWithPersianLocale = createParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
+        var paramWithPersianLocale = createSubjectInsightsParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), paramWithPersianLocale.subjectIds()))
             .thenReturn(List.of(subjectValue));
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
             .thenReturn(maturityLevels);
 
-        var result = helper.createSubjectInsight(paramWithPersianLocale);
+        var result = helper.createSubjectInsights(paramWithPersianLocale);
         assertFalse(result.isEmpty());
         String defaultInsight = createSubjectDefaultInsight(subjectValue, paramWithPersianLocale.locale());
         SubjectInsight subjectInsight = result.getFirst();
@@ -123,14 +125,14 @@ class CreateSubjectInsightsHelperTest {
             subjectValue.getSubject().getTitle());
     }
 
-    private Param createParam(Consumer<Param.ParamBuilder> changer) {
-        var paramBuilder = paramBuilder();
+    private SubjectInsightsParam createSubjectInsightsParam(Consumer<SubjectInsightsParamBuilder> changer) {
+        var paramBuilder = subjectInsightsParamBuilder();
         changer.accept(paramBuilder);
         return paramBuilder.build();
     }
 
-    private Param.ParamBuilder paramBuilder() {
-        return Param.builder()
+    private SubjectInsightsParamBuilder subjectInsightsParamBuilder() {
+        return SubjectInsightsParam.builder()
             .assessmentResult(assessmentResult)
             .subjectIds(List.of(subjectValue.getSubject().getId()))
             .locale(Locale.ENGLISH);

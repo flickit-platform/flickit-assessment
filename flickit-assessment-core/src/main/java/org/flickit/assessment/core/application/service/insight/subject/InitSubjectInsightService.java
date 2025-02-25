@@ -11,10 +11,10 @@ import org.flickit.assessment.core.application.port.out.insight.subject.CreateSu
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.CreateSubjectInsightParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Locale;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ASSESSMENT_REPORT;
@@ -49,8 +49,7 @@ public class InitSubjectInsightService implements InitSubjectInsightUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(INIT_SUBJECT_INSIGHT_SUBJECT_NOT_FOUND));
         var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
         var subjectInsight = createSubjectInsightsHelper
-            .createSubjectInsight(new CreateSubjectInsightsHelper.Param(assessmentResult, List.of(subject.getId()), locale))
-            .getFirst();
+            .createSubjectInsight(new CreateSubjectInsightParam(assessmentResult, subject.getId(), locale));
 
         loadSubjectInsightPort.load(assessmentResult.getId(), subject.getId())
             .ifPresentOrElse(

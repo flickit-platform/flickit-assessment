@@ -25,6 +25,7 @@ import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturi
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,7 +121,7 @@ public class GenerateAllAssessmentInsightsService implements GenerateAllAssessme
         subjectIds.removeAll(subjectInsightIds);
         if (!subjectIds.isEmpty()) {
             var subjectInsights = createSubjectInsightsHelper
-                .createSubjectInsight(new CreateSubjectInsightsHelper.Param(assessmentResult, subjectIds, locale));
+                .createSubjectInsights(new SubjectInsightsParam(assessmentResult, subjectIds, locale));
             createSubjectInsightPort.persistAll(subjectInsights);
         }
     }

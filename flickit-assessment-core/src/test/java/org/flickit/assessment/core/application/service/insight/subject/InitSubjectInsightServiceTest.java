@@ -14,6 +14,7 @@ import org.flickit.assessment.core.application.port.out.insight.subject.CreateSu
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.CreateSubjectInsightParam;
 import org.flickit.assessment.core.test.fixture.application.SubjectInsightMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Assertions;
@@ -25,7 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,7 +72,7 @@ class InitSubjectInsightServiceTest {
     private LoadSubjectInsightPort loadSubjectInsightPort;
 
     @Captor
-    private ArgumentCaptor<CreateSubjectInsightsHelper.Param> initInsightParamArgumentCaptor;
+    private ArgumentCaptor<CreateSubjectInsightParam> createInsightParamArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<SubjectInsight> subjectInsightArgumentCaptor;
@@ -128,14 +128,14 @@ class InitSubjectInsightServiceTest {
             .thenReturn(Optional.of(subjectInsight));
         when(loadSubjectPort.loadByIdAndKitVersionId(param.getSubjectId(), assessmentResult.getKitVersionId()))
             .thenReturn(Optional.of(subjectValue.getSubject()));
-        when(createSubjectInsightsHelper.createSubjectInsight(initInsightParamArgumentCaptor.capture()))
-            .thenReturn(List.of(newSubjectInsight));
+        when(createSubjectInsightsHelper.createSubjectInsight(createInsightParamArgumentCaptor.capture()))
+            .thenReturn(newSubjectInsight);
 
         service.initSubjectInsight(param);
 
-        assertEquals(assessmentResult, initInsightParamArgumentCaptor.getValue().assessmentResult());
-        assertEquals(List.of(param.getSubjectId()), initInsightParamArgumentCaptor.getValue().subjectIds());
-        assertEquals(locale, initInsightParamArgumentCaptor.getValue().locale());
+        assertEquals(assessmentResult, createInsightParamArgumentCaptor.getValue().assessmentResult());
+        assertEquals(param.getSubjectId(), createInsightParamArgumentCaptor.getValue().subjectId());
+        assertEquals(locale, createInsightParamArgumentCaptor.getValue().locale());
 
         verify(updateSubjectInsightPort).update(subjectInsightArgumentCaptor.capture());
         assertEquals(newSubjectInsight, subjectInsightArgumentCaptor.getValue());
@@ -157,14 +157,14 @@ class InitSubjectInsightServiceTest {
             .thenReturn(Optional.empty());
         when(loadSubjectPort.loadByIdAndKitVersionId(paramForPersianKit.getSubjectId(), assessmentResultWithPersianKit.getKitVersionId()))
             .thenReturn(Optional.of(subjectValue.getSubject()));
-        when(createSubjectInsightsHelper.createSubjectInsight(initInsightParamArgumentCaptor.capture()))
-            .thenReturn(List.of(newSubjectInsight));
+        when(createSubjectInsightsHelper.createSubjectInsight(createInsightParamArgumentCaptor.capture()))
+            .thenReturn(newSubjectInsight);
 
         service.initSubjectInsight(paramForPersianKit);
 
-        assertEquals(assessmentResultWithPersianKit, initInsightParamArgumentCaptor.getValue().assessmentResult());
-        assertEquals(List.of(paramForPersianKit.getSubjectId()), initInsightParamArgumentCaptor.getValue().subjectIds());
-        assertEquals(locale, initInsightParamArgumentCaptor.getValue().locale());
+        assertEquals(assessmentResultWithPersianKit, createInsightParamArgumentCaptor.getValue().assessmentResult());
+        assertEquals(paramForPersianKit.getSubjectId(), createInsightParamArgumentCaptor.getValue().subjectId());
+        assertEquals(locale, createInsightParamArgumentCaptor.getValue().locale());
 
         verify(createSubjectInsightPort).persist(subjectInsightArgumentCaptor.capture());
         assertEquals(newSubjectInsight, subjectInsightArgumentCaptor.getValue());
