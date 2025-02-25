@@ -6,13 +6,14 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.insight.RegenerateAllAssessmentInsightsUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.insight.assessment.CreateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.assessment.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.CreateSubjectInsightPort;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.GENERATE_ALL_ASSESSMENT_INSIGHTS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
@@ -50,7 +52,7 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
     private final CreateSubjectInsightPort createSubjectInsightPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
     private final CreateAssessmentInsightHelper createAssessmentInsightHelper;
-    private final CreateAssessmentInsightPort createAssessmentInsightPort;
+    private final UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
     @Override
     public void regenerateAllAssessmentInsights(Param param) {
@@ -97,18 +99,28 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
             .map(SubjectInsight::getSubjectId)
             .toList();
         if (!expiredInsightIds.isEmpty()) {
-            var subjectInsights = createSubjectInsightsHelper
+            var insights = createSubjectInsightsHelper
                 .createSubjectInsights(new SubjectInsightsParam(assessmentResult, expiredInsightIds, locale));
-            createSubjectInsightPort.persistAll(subjectInsights);
+            createSubjectInsightPort.persistAll(insights);
         }
     }
 
     private void regenerateExpiredAssessmentInsight(AssessmentResult assessmentResult, Locale locale) {
-        var loadedAssessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
-        if (loadedAssessmentInsight.isPresent() &&
-            loadedAssessmentInsight.get().getInsightTime().isBefore(assessmentResult.getLastModificationTime())) {
-            var assessmentInsight = createAssessmentInsightHelper.createAssessmentInsight(assessmentResult, locale);
-            createAssessmentInsightPort.persist(assessmentInsight);
+        var loadedInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId());
+        if (loadedInsight.isPresent() &&
+            loadedInsight.get().getLastModificationTime().isBefore(assessmentResult.getLastCalculationTime())) {
+            var insight = createAssessmentInsightHelper.createAssessmentInsight(assessmentResult, locale);
+            updateAssessmentInsightPort.updateInsight(assignIdToAssessmentInsight(loadedInsight.get().getId(), insight));
         }
+    }
+
+    private AssessmentInsight assignIdToAssessmentInsight(UUID id, AssessmentInsight assessmentInsight) {
+        return new AssessmentInsight(id,
+            assessmentInsight.getAssessmentResultId(),
+            assessmentInsight.getInsight(),
+            assessmentInsight.getInsightTime(),
+            assessmentInsight.getLastModificationTime(),
+            assessmentInsight.getInsightBy(),
+            assessmentInsight.isApproved());
     }
 }
