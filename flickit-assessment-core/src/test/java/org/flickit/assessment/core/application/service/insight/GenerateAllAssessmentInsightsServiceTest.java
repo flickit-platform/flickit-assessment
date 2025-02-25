@@ -27,6 +27,7 @@ import org.flickit.assessment.core.application.port.out.subject.LoadSubjectsPort
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper;
+import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightsParam;
 import org.flickit.assessment.core.test.fixture.application.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -110,7 +111,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     private ArgumentCaptor<List<AttributeInsight>> attributeInsightArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<CreateSubjectInsightsHelper.Param> subjectHelperParamArgumentCaptor;
+    private ArgumentCaptor<SubjectInsightsParam> subjectHelperParamArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<List<SubjectInsight>> subjectInsightArgumentCaptor;
@@ -255,7 +256,7 @@ class GenerateAllAssessmentInsightsServiceTest {
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(assessmentResult.getKitVersionId()))
             .thenReturn(List.of(subject));
         when(loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId())).thenReturn(List.of());
-        when(createSubjectInsightsHelper.createSubjectInsight(subjectHelperParamArgumentCaptor.capture()))
+        when(createSubjectInsightsHelper.createSubjectInsights(subjectHelperParamArgumentCaptor.capture()))
             .thenReturn(List.of(newSubjectInsight));
         doNothing().when(createSubjectInsightPort).persistAll(anyList());
 
