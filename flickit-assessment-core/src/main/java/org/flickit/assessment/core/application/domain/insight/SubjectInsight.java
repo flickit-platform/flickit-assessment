@@ -1,4 +1,4 @@
-package org.flickit.assessment.core.application.domain;
+package org.flickit.assessment.core.application.domain.insight;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +8,10 @@ import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
-public class AssessmentInsight {
+public class SubjectInsight {
 
-    private final UUID id;
     private final UUID assessmentResultId;
+    private final Long subjectId;
     private final String insight;
     private final LocalDateTime insightTime;
     private final LocalDateTime lastModificationTime;

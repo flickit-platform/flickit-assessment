@@ -65,7 +65,7 @@ public class SubjectValuePersistenceJpaAdapter implements
     }
 
     @Override
-    public SubjectValue load(long subjectId, UUID assessmentResultId) {
+    public SubjectValue load(UUID assessmentResultId, long subjectId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         var subjectValueWithSubjectView = repository.findBySubjectIdAndAssessmentResultId(subjectId, assessmentResult.getId())

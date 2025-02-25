@@ -2,7 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.insight.subject;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.flickit.assessment.core.application.domain.SubjectInsight;
+import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.data.jpa.core.insight.subject.SubjectInsightJpaEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

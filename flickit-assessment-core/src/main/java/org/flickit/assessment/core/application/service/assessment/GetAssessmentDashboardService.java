@@ -6,7 +6,13 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.ClassUtils;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
+import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
+import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
 import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
