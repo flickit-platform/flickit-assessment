@@ -42,7 +42,7 @@ public class GetQuestionIssuesService implements GetQuestionIssuesUseCase {
             isAnswered && (answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
             isAnswered && countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()) == 0,
             countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()),
-            isAnswered && answer.getAnswerStatus().equals(AnswerStatus.UNAPPROVED));
+            isAnswered && AnswerStatus.UNAPPROVED.equals(answer.getAnswerStatus()));
     }
 
     private boolean hasAnswer(Answer answer) {
