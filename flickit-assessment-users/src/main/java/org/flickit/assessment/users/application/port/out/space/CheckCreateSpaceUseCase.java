@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
 
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ public interface CheckCreateSpaceUseCase {
 
     @Value
     @EqualsAndHashCode(callSuper = false)
-    class Param extends SelfValidating<CreateSpaceUseCase.Param> {
+    class Param extends SelfValidating<Param> {
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
         UUID currentUserId;
