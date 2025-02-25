@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,10 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
@@ -75,10 +73,12 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             WHERE k.published = TRUE
                 AND k.isPrivate = FALSE
-                AND (:languageId IS NULL OR k.languageId = :languageId)
+                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Param("languageId") Integer languageId,
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Nullable
+                                                                           @Param("languageIds")
+                                                                           Collection<Integer> languageIds,
                                                                            Pageable pageable);
 
     @Query("""
@@ -89,11 +89,14 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             WHERE k.published = TRUE
                 AND k.isPrivate = TRUE
                 AND kua.userId = :userId
-                AND (:languageId IS NULL OR k.languageId = :languageId)
+                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId") UUID userId,
-                                                                                @Param("languageId") Integer languageId,
+    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId")
+                                                                                UUID userId,
+                                                                                @Nullable
+                                                                                @Param("languageIds")
+                                                                                Collection<Integer> languageIds,
                                                                                 Pageable pageable);
 
     @Query("""

@@ -1,5 +1,6 @@
 package org.flickit.assessment.kit.adapter.out.persistence.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
@@ -28,11 +29,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.flickit.assessment.kit.adapter.out.persistence.assessmentkit.AssessmentKitMapper.mapToDomainModel;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.*;
 
@@ -106,12 +110,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(EXPERT_GROUP_ID_NOT_FOUND));
 
         return new GetKitMinimalInfoUseCase.Result(
-                kitEntity.getId(),
-                kitEntity.getTitle(),
-                new GetKitMinimalInfoUseCase.MinimalExpertGroup(
-                        expertGroupEntity.getId(),
-                        expertGroupEntity.getTitle()
-                )
+            kitEntity.getId(),
+            kitEntity.getTitle(),
+            new GetKitMinimalInfoUseCase.MinimalExpertGroup(
+                expertGroupEntity.getId(),
+                expertGroupEntity.getTitle()
+            )
         );
     }
 
@@ -179,9 +183,12 @@ public class AssessmentKitPersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(KitLanguage kitLanguage, int page, int size) {
-        var kitLanguageId = kitLanguage != null ? kitLanguage.getId() : null;
-        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(kitLanguageId, PageRequest.of(page, size));
+    public PaginatedResponse<LoadPublishedKitListPort.Result> loadPublicKits(@Nullable
+                                                                             Collection<KitLanguage> kitLanguages,
+                                                                             int page,
+                                                                             int size) {
+        var kitLanguageIds = resolveKitLanguages(kitLanguages);
+        var pageResult = repository.findAllPublishedAndNotPrivateOrderByTitle(kitLanguageIds, PageRequest.of(page, size));
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit()),
@@ -201,13 +208,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<LoadPublishedKitListPort.Result> loadPrivateKits(UUID userId,
-                                                                              KitLanguage kitLanguage,
+                                                                              @Nullable
+                                                                              Collection<KitLanguage> kitLanguages,
                                                                               int page,
                                                                               int size) {
-        var kitLanguageId = kitLanguage != null ? kitLanguage.getId() : null;
+        var kitLanguageIds = resolveKitLanguages(kitLanguages);
         var pageResult = repository.findAllPublishedAndPrivateByUserIdOrderByTitle(userId,
-            kitLanguageId,
+            kitLanguageIds,
             PageRequest.of(page, size));
+
         var items = pageResult.getContent().stream()
             .map(v -> new LoadPublishedKitListPort.Result(
                 mapToDomainModel(v.getKit()),
@@ -222,6 +231,15 @@ public class AssessmentKitPersistenceJpaAdapter implements
             Sort.Direction.ASC.name().toLowerCase(),
             (int) pageResult.getTotalElements()
         );
+    }
+
+    @Nullable
+    private Set<Integer> resolveKitLanguages(Collection<KitLanguage> languages) {
+        if (isNotEmpty(languages))
+            return languages.stream()
+                .map(KitLanguage::getId)
+                .collect(toSet());
+        return null;
     }
 
     @Override

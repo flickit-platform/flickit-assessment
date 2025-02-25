@@ -40,7 +40,8 @@ public interface GetAssessmentDashboardUseCase {
                                 int unanswered,
                                 int answeredWithLowConfidence,
                                 int withoutEvidence,
-                                int unresolvedComments) {
+                                int unresolvedComments,
+                                int unapprovedAnswers) {
         }
 
         public record Insights(int expected,

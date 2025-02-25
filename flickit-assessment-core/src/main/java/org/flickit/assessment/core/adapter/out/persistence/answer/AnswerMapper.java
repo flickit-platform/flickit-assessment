@@ -20,7 +20,7 @@ public class AnswerMapper {
             param.answerOptionId(),
             param.confidenceLevelId(),
             param.isNotApplicable(),
-            param.status().getId(),
+            param.status() != null ? param.status().getId() : null,
             param.currentUserId(),
             param.currentUserId()
         );
@@ -35,7 +35,7 @@ public class AnswerMapper {
             answer.getQuestionId(),
             answer.getConfidenceLevelId(),
             answer.getIsNotApplicable(),
-            AnswerStatus.valueOfById(answer.getStatus())
+            answer.getStatus() != null ? AnswerStatus.valueOfById(answer.getStatus()) : null
         );
     }
 
@@ -46,7 +46,7 @@ public class AnswerMapper {
             answer.getQuestionId(),
             answer.getConfidenceLevelId(),
             answer.getIsNotApplicable(),
-            AnswerStatus.valueOfById(answer.getStatus())
+            answer.getStatus() != null ? AnswerStatus.valueOfById(answer.getStatus()) : null
         );
     }
 }

@@ -13,6 +13,7 @@ import org.flickit.assessment.common.validation.EnumValue;
 import org.flickit.assessment.kit.application.domain.KitTag;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -29,8 +30,8 @@ public interface GetKitListUseCase {
         @NotNull(message = GET_KIT_LIST_IS_PRIVATE_NOT_NULL)
         Boolean isPrivate;
 
-        @EnumValue(enumClass = KitLanguage.class, message = GET_KIT_LIST_LANGUAGE_INVALID)
-        String language;
+        @EnumValue(enumClass = KitLanguage.class, message = GET_KIT_LIST_LANGS_INVALID)
+        Set<String> langs;
 
         @Min(value = 0, message = GET_KIT_LIST_PAGE_MIN)
         int page;
@@ -43,9 +44,9 @@ public interface GetKitListUseCase {
         UUID currentUserId;
 
         @Builder
-        public Param(Boolean isPrivate, String language, int page, int size, UUID currentUserId) {
+        public Param(Boolean isPrivate, Set<String> langs, int page, int size, UUID currentUserId) {
             this.isPrivate = isPrivate;
-            this.language = language;
+            this.langs = langs;
             this.page = page;
             this.size = size;
             this.currentUserId = currentUserId;
