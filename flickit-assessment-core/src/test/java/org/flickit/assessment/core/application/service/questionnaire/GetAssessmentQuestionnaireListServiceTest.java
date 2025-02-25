@@ -56,7 +56,7 @@ class GetAssessmentQuestionnaireListServiceTest {
 
     @Test
     void testGetQuestionnaireList_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID());
+        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(false);
 
@@ -72,7 +72,7 @@ class GetAssessmentQuestionnaireListServiceTest {
 
     @Test
     void testGetQuestionnaireList_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
-        Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID());
+        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
