@@ -4,9 +4,9 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.question.GetQuestionIssuesUseCase;
-import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -27,7 +27,6 @@ public class GetQuestionIssuesService implements GetQuestionIssuesUseCase {
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final LoadAnswerPort loadAnswerPort;
     private final CountEvidencesPort countEvidencesPort;
-    private final CountAnswersPort countAnswersPort;
 
     @Override
     public Result getQuestionIssues(Param param) {
@@ -43,7 +42,7 @@ public class GetQuestionIssuesService implements GetQuestionIssuesUseCase {
             isAnswered && (answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
             isAnswered && countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()) == 0,
             countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()),
-            isAnswered && countAnswersPort.hasUnapprovedAnswer(assessmentResult.getId(), param.getQuestionId()));
+            isAnswered && answer.getAnswerStatus().equals(AnswerStatus.UNAPPROVED));
     }
 
     private boolean hasAnswer(Answer answer) {
