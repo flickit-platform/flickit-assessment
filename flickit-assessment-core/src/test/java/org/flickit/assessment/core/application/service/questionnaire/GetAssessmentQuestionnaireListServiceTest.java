@@ -7,6 +7,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.questionnaire.GetAssessmentQuestionnaireListUseCase.Param;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
@@ -50,9 +51,12 @@ class GetAssessmentQuestionnaireListServiceTest {
     @Mock
     private CountEvidencesPort countEvidencesPort;
 
+    @Mock
+    private CountAnswersPort countAnswersPort;
+
     @Test
     void testGetQuestionnaireList_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID());
+        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(false);
 
@@ -62,12 +66,13 @@ class GetAssessmentQuestionnaireListServiceTest {
         verifyNoInteractions(loadQuestionnairesByAssessmentIdPort,
             loadAssessmentResultPort,
             countEvidencesPort,
-            countLowConfidenceAnswersPort);
+            countLowConfidenceAnswersPort,
+            countAnswersPort);
     }
 
     @Test
     void testGetQuestionnaireList_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
-        Param param = new Param(UUID.randomUUID(), 10, 0, UUID.randomUUID());
+        var param = createParam(Param.ParamBuilder::build);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_QUESTIONNAIRE_LIST))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -77,7 +82,8 @@ class GetAssessmentQuestionnaireListServiceTest {
 
         verifyNoInteractions(loadQuestionnairesByAssessmentIdPort,
             countEvidencesPort,
-            countLowConfidenceAnswersPort);
+            countLowConfidenceAnswersPort,
+            countAnswersPort);
     }
 
     @Test
@@ -92,6 +98,7 @@ class GetAssessmentQuestionnaireListServiceTest {
         var answeredWithLowConfidenceCount = Map.of(questionnaireOne.id(), 1, questionnaireTwo.id(), 3);
         var unresolvedCommentsCount = Map.of(questionnaireOne.id(), 3);
         var answeredWithEvidence = Map.of(questionnaireOne.id(), 3, questionnaireTwo.id(), 0);
+        var unapprovedAnswers = Map.of(questionnaireOne.id(), 4);
 
         var questionnaireIds = Set.of(questionnaireOne.id(), questionnaireTwo.id());
 
@@ -114,6 +121,8 @@ class GetAssessmentQuestionnaireListServiceTest {
             .thenReturn(unresolvedCommentsCount);
         when(countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentResult.getAssessment().getId(), questionnaireIds))
             .thenReturn(answeredWithEvidence);
+        when(countAnswersPort.countUnapprovedAnswers(assessmentResult.getId(), questionnaireIds))
+            .thenReturn(unapprovedAnswers);
 
         var actualResult = service.getAssessmentQuestionnaireList(param);
 
@@ -132,11 +141,9 @@ class GetAssessmentQuestionnaireListServiceTest {
                 assertNotNull(actual.issues());
             });
 
-        assertEquals(loadPortResult.getSort(), actualResult.getSort());
-        assertEquals(loadPortResult.getPage(), actualResult.getPage());
-        assertEquals(loadPortResult.getTotal(), actualResult.getTotal());
-        assertEquals(loadPortResult.getOrder(), actualResult.getOrder());
-        assertEquals(loadPortResult.getSize(), actualResult.getSize());
+        Assertions.assertThat(actualResult)
+            .extracting(PaginatedResponse::getSort, PaginatedResponse::getPage, PaginatedResponse::getTotal, PaginatedResponse::getOrder, PaginatedResponse::getSize)
+            .containsExactly(loadPortResult.getSort(), loadPortResult.getPage(), loadPortResult.getTotal(), loadPortResult.getOrder(), loadPortResult.getSize());
 
         var questionnaireOneIssues = actualResult.getItems().getFirst().issues();
         var questionnaireTwoIssues = actualResult.getItems().getLast().issues();
@@ -145,11 +152,13 @@ class GetAssessmentQuestionnaireListServiceTest {
         assertEquals(1, questionnaireOneIssues.answeredWithLowConfidence());
         assertEquals(3, questionnaireOneIssues.unresolvedComments());
         assertEquals(7, questionnaireOneIssues.answeredWithoutEvidence());
+        assertEquals(4, questionnaireOneIssues.unapprovedAnswers());
 
         assertEquals(5, questionnaireTwoIssues.unanswered());
         assertEquals(3, questionnaireTwoIssues.answeredWithLowConfidence());
         assertEquals(0, questionnaireTwoIssues.unresolvedComments());
         assertEquals(5, questionnaireTwoIssues.answeredWithoutEvidence());
+        assertEquals(0, questionnaireTwoIssues.unapprovedAnswers());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
