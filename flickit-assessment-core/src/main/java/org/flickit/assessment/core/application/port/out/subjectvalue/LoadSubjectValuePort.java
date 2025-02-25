@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface LoadSubjectValuePort {
 
-    SubjectValue load(long subjectId, UUID assessmentResultId);
+    SubjectValue load(UUID assessmentResultId, long subjectId);
 
     List<SubjectValue> loadAll(UUID assessmentResultId, Collection<Long> subjectId);
 }
