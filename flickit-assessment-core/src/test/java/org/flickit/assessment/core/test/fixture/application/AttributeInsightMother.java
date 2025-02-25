@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
-import org.flickit.assessment.core.application.domain.AttributeInsight;
+import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 
 import java.time.LocalDateTime;
 import java.util.Random;
