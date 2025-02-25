@@ -582,7 +582,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\" : \"title\"\n}",
+							"raw": "{\n    \"title\" : \"title\",\n    \"type\" : \"BASIC\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -29,7 +29,8 @@ public class SpacePersistenceJpaAdapter implements
     UpdateSpaceLastSeenPort,
     CountSpaceAssessmentPort,
     DeleteSpacePort,
-    UpdateSpacePort {
+    UpdateSpacePort,
+    CountSpacePort {
 
     private final SpaceJpaRepository repository;
 
@@ -98,5 +99,10 @@ public class SpacePersistenceJpaAdapter implements
     @Override
     public void updateSpace(Param param) {
         repository.update(param.id(), param.title(), param.code(), param.lastModificationTime(), param.lastModifiedBy());
+    }
+
+    @Override
+    public int countBasicSpaces(UUID userId) {
+        return 0;
     }
 }
