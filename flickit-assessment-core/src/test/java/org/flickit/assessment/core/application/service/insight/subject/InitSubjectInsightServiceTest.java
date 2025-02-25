@@ -77,7 +77,7 @@ class InitSubjectInsightServiceTest {
     private final InitSubjectInsightUseCase.Param param = createParam(InitSubjectInsightUseCase.Param.ParamBuilder::build);
 
     @Test
-    void testInitSubjectInsight_whenCurrentUserDoesNotHaveRequiredPermission_throwAccessDeniedException() {
+    void testInitSubjectInsight_WhenCurrentUserDoesNotHaveRequiredPermission_ThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(false);
 
@@ -93,7 +93,7 @@ class InitSubjectInsightServiceTest {
     }
 
     @Test
-    void testInitSubjectInsight_whenAssessmentResultOfRequestedAssessmentNotExist_thenThrowResourceNotFoundException() {
+    void testInitSubjectInsight_WhenAssessmentResultOfRequestedAssessmentNotExist_ThenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
@@ -109,7 +109,7 @@ class InitSubjectInsightServiceTest {
     }
 
     @Test
-    void testInitSubjectInsight_whenSubjectInsightExists_thenUpdateSubjectInsight() {
+    void testInitSubjectInsight_WhenSubjectInsightExists_ThenUpdateSubjectInsight() {
         var subjectInsight = SubjectInsightMother.subjectInsight();
         var newSubjectInsight = SubjectInsightMother.defaultSubjectInsight();
         var locale = Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode());
@@ -136,7 +136,7 @@ class InitSubjectInsightServiceTest {
     }
 
     @Test
-    void testInitSubjectInsight_whenSubjectInsightDoesNotExist_thenCreateDefaultSubjectInsight() {
+    void testInitSubjectInsight_WhenSubjectInsightDoesNotExist_ThenCreateDefaultSubjectInsight() {
         var assessmentResultWithPersianKit = validResultWithKitLanguage(KitLanguage.FA);
         var paramForPersianKit = createParam(b -> b.assessmentId(assessmentResultWithPersianKit.getAssessment().getId()));
         var newSubjectInsight = SubjectInsightMother.defaultSubjectInsight();

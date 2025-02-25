@@ -124,7 +124,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
 
     @Test
-    void testGenerateAllAssessmentInsights_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testGenerateAllAssessmentInsights_WhenCurrentUserDoesNotHaveRequiredPermission_ThenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS)).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.generateAllAssessmentInsights(param));
@@ -147,7 +147,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testGenerateAllAssessmentInsights_whenAssessmentResultIsNotFound_thenThrowResourceNotFoundException() {
+    void testGenerateAllAssessmentInsights_WhenAssessmentResultIsNotFound_ThenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -172,7 +172,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testGenerateAllAssessmentInsights_whenCalculatedResultIsNotValid_thenThrowCalculateNotValidException() {
+    void testGenerateAllAssessmentInsights_WhenCalculatedResultIsNotValid_ThenThrowCalculateNotValidException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -198,7 +198,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testGenerateAllAssessmentInsights_whenOneAttributeInsightDoesNotExist_thenCreateAttributeAiInsightAndPersist() {
+    void testGenerateAllAssessmentInsights_WhenOneAttributeInsightDoesNotExist_ThenCreateAttributeAiInsightAndPersist() {
         var newAttributeAiInsight = aiInsightWithTime(LocalDateTime.now());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
@@ -240,7 +240,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testGenerateAllAssessmentInsights_whenOneSubjectInsightDoesNotExist_thenCreateSubjectInsightAndPersist() {
+    void testGenerateAllAssessmentInsights_WhenOneSubjectInsightDoesNotExist_ThenCreateSubjectInsightAndPersist() {
         var subject = subjectValue.getSubject();
         var newSubjectInsight = SubjectInsightMother.defaultSubjectInsight();
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
@@ -284,7 +284,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testGenerateAllAssessmentInsights_whenAssessmentInsightDoesNotExistAndAssessmentProgressIsCompleted_thenInitAssessmentInsightAndPersist() {
+    void testGenerateAllAssessmentInsights_WhenAssessmentInsightDoesNotExistAndAssessmentProgressIsCompleted_ThenInitAssessmentInsightAndPersist() {
         var subject = subjectValue.getSubject();
         var insight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_COMPLETED,
             Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
@@ -332,7 +332,7 @@ class GenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testGenerateAllAssessmentInsights_whenAssessmentInsightDoesNotExistAndAssessmentProgressIsNotCompleted_thenInitAssessmentInsightAndPersist() {
+    void testGenerateAllAssessmentInsights_WhenAssessmentInsightDoesNotExistAndAssessmentProgressIsNotCompleted_ThenInitAssessmentInsightAndPersist() {
         var subject = subjectValue.getSubject();
         var incompleteProgress = new GetAssessmentProgressPort.Result(UUID.randomUUID(), 10, 11);
         var insight = MessageBundle.message(ASSESSMENT_DEFAULT_INSIGHT_DEFAULT_INCOMPLETE,
