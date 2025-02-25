@@ -130,7 +130,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertTrue(item.issues().isAnsweredWithLowConfidence());
         assertTrue(item.issues().isAnsweredWithoutEvidences());
         assertEquals(0, item.issues().unresolvedCommentsCount());
-        assertFalse(item.issues().isUnapproved());
+        assertFalse(item.issues().hasUnapprovedAnswer());
 
         verify(countEvidencesPort).countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
     }
@@ -169,7 +169,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(2, item.issues().unresolvedCommentsCount());
-        assertTrue(item.issues().isUnapproved());
+        assertTrue(item.issues().hasUnapprovedAnswer());
     }
 
     @Test
@@ -205,7 +205,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(0, item.issues().unresolvedCommentsCount());
-        assertFalse(item.issues().isUnapproved());
+        assertFalse(item.issues().hasUnapprovedAnswer());
     }
 
     @Test
@@ -241,7 +241,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(1, item.issues().unresolvedCommentsCount());
-        assertFalse(item.issues().isUnapproved());
+        assertFalse(item.issues().hasUnapprovedAnswer());
     }
 
     private void assertPaginationProperties(PaginatedResponse<Result> result) {
