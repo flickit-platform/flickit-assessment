@@ -60,7 +60,7 @@ class CreateSubjectInsightsHelperTest {
         createSubjectInsightParam(SubjectInsightParamBuilder::build);
 
     @Test
-    void testCreateSubjectInsight_WhenSubjectIdDoesNotExist_ThenThrowsException() {
+    void testCreateSubjectInsight_whenSubjectIdDoesNotExist_thenThrowsException() {
         when(loadSubjectPort.loadByIdAndKitVersionId(assessmentResult.getKitVersionId(), subjectInsightParam.subjectId()))
             .thenReturn(Optional.empty());
 
@@ -70,7 +70,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsight_WhenSubjectIdIsValid_ThenReturnSubjectInsight() {
+    void testCreateSubjectInsight_whenSubjectIdIsValid_thenReturnSubjectInsight() {
         when(loadSubjectPort.loadByIdAndKitVersionId(assessmentResult.getKitVersionId(), subjectInsightParam.subjectId()))
             .thenReturn(Optional.of(subject));
         when(loadSubjectValuePort.load(assessmentResult.getId(), subjectInsightParam.subjectId()))
@@ -91,7 +91,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsight_WhenLocaleIsPersian_ThenReturnSubjectInsightInPersian() {
+    void testCreateSubjectInsight_whenLocaleIsPersian_thenReturnSubjectInsightInPersian() {
         when(loadSubjectPort.loadByIdAndKitVersionId(assessmentResult.getKitVersionId(), subjectInsightParam.subjectId()))
             .thenReturn(Optional.of(subject));
         var paramWithPersianLocale = createSubjectInsightParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
@@ -113,7 +113,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsights_WhenSubjectIdsIsEmpty_ThenReturnEmptyList() {
+    void testCreateSubjectInsights_whenSubjectIdsIsEmpty_thenReturnEmptyList() {
         var paramWithEmptySubjectIds = createSubjectInsightsParam(b -> b.subjectIds(List.of()));
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), paramWithEmptySubjectIds.subjectIds()))
             .thenReturn(List.of());
@@ -126,7 +126,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsights_WhenSubjectIdDoesNotExist_ThenReturnEmptyList() {
+    void testCreateSubjectInsights_whenSubjectIdDoesNotExist_thenReturnEmptyList() {
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of());
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
@@ -138,7 +138,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsights_WhenSubjectIdIsValid_ThenReturnSubjectInsight() {
+    void testCreateSubjectInsights_whenSubjectIdIsValid_thenReturnSubjectInsight() {
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of(subjectValue));
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
@@ -160,7 +160,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsights_WhenLocaleIsPersian_ThenReturnSubjectInsightInPersian() {
+    void testCreateSubjectInsights_whenLocaleIsPersian_thenReturnSubjectInsightInPersian() {
         var paramWithPersianLocale = createSubjectInsightsParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), paramWithPersianLocale.subjectIds()))
             .thenReturn(List.of(subjectValue));
