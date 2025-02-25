@@ -17,6 +17,9 @@ public class CheckCreateSpaceService implements CheckCreateSpaceUseCase {
 
     @Override
     public Result checkCreateSpace(Param param) {
-        return new Result(countSpacesPort.countBasicSpaces(param.getCurrentUserId()) < appSpecProperties.getSpace().getMaxBasicSpaces());
+        int userBasicSpaces = countSpacesPort.countBasicSpaces(param.getCurrentUserId());
+        int maxAllowedSpaces = appSpecProperties.getSpace().getMaxBasicSpaces();
+
+        return new Result(userBasicSpaces < maxAllowedSpaces);
     }
 }
