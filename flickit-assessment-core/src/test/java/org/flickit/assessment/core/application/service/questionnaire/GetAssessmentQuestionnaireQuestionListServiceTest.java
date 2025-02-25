@@ -95,6 +95,8 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> service.getQuestionnaireQuestionList(param));
         assertEquals(GET_ASSESSMENT_QUESTIONNAIRE_QUESTION_LIST_ASSESSMENT_ID_NOT_FOUND, exception.getMessage());
+
+        verifyNoInteractions(loadQuestionsAnswerListPort);
     }
 
     @Test
@@ -128,6 +130,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertTrue(item.issues().isAnsweredWithLowConfidence());
         assertTrue(item.issues().isAnsweredWithoutEvidences());
         assertEquals(0, item.issues().unresolvedCommentsCount());
+        assertFalse(item.issues().isUnapproved());
 
         verify(countEvidencesPort).countQuestionnaireQuestionsEvidences(param.getAssessmentId(), param.getQuestionnaireId());
     }
@@ -166,6 +169,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(2, item.issues().unresolvedCommentsCount());
+        assertTrue(item.issues().isUnapproved());
     }
 
     @Test
@@ -201,6 +205,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(0, item.issues().unresolvedCommentsCount());
+        assertFalse(item.issues().isUnapproved());
     }
 
     @Test
@@ -236,6 +241,7 @@ class GetAssessmentQuestionnaireQuestionListServiceTest {
         assertFalse(item.issues().isAnsweredWithLowConfidence());
         assertFalse(item.issues().isAnsweredWithoutEvidences());
         assertEquals(1, item.issues().unresolvedCommentsCount());
+        assertFalse(item.issues().isUnapproved());
     }
 
     private void assertPaginationProperties(PaginatedResponse<Result> result) {
