@@ -107,7 +107,8 @@ public class GetAssessmentQuestionnaireQuestionListService implements GetAssessm
                 !hasAnswer(answer),
                 hasAnswer(answer) && answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId(),
                 hasAnswer(answer) && evidencesCount == 0,
-                unresolvedCommentsCount
+                unresolvedCommentsCount,
+                answerDto != null && answerDto.approved() != null && !answerDto.approved()
             ));
     }
 
