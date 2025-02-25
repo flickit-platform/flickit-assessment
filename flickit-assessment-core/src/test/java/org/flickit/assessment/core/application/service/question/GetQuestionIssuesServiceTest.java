@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
+import org.flickit.assessment.core.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -138,7 +139,7 @@ class GetQuestionIssuesServiceTest {
     @Test
     void testGetQuestionIssues_whenQuestionIsAnsweredWithoutEvidencesAndHasUnresolvedComments_thenSuccessfulWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
-        var answer = AnswerMother.answerWithConfidenceLevel(3, param.getQuestionId());
+        var answer = AnswerMother.answerWithNotApplicableTrueAndUnapprovedStatus(AnswerOptionMother.optionOne());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
@@ -152,10 +153,10 @@ class GetQuestionIssuesServiceTest {
 
         var result = service.getQuestionIssues(param);
         assertFalse(result.isUnanswered());
-        assertFalse(result.isAnsweredWithLowConfidence());
+        assertTrue(result.isAnsweredWithLowConfidence());
         assertTrue(result.isAnsweredWithoutEvidences());
         assertEquals(2, result.unresolvedCommentsCount());
-        assertFalse(result.isUnapproved());
+        assertTrue(result.isUnapproved());
     }
 
     private GetQuestionIssuesUseCase.Param createParam
