@@ -69,11 +69,6 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public boolean hasUnapprovedAnswer(UUID assessmentResultId, Long questionId) {
-        return repository.existsUnapprovedAnswer(assessmentResultId, questionId, AnswerStatus.UNAPPROVED.getId());
-    }
-
-    @Override
     public Optional<Answer> load(UUID assessmentResultId, Long questionId) {
         return repository.findByAssessmentResultIdAndQuestionId(assessmentResultId, questionId)
             .map(AnswerMapper::mapToDomainModel);
