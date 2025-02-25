@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CheckCreateSpaceServiceTest {
@@ -32,38 +32,43 @@ class CheckCreateSpaceServiceTest {
     private final int maxBasicSpaces = 2;
 
     @Test
-    public void testCheckCreateSpace_WhenUserPrivateSpacesExceedsTheLimit_ThenReturnFalse() {
+    public void testCheckCreateSpace_WhenUserSpacesExceedTheBasicSpacesLimit_ThenReturnFalse() {
         when(countSpacesPort.countBasicSpaces(param.getCurrentUserId()))
             .thenReturn(maxBasicSpaces + 1);
 
         var result = service.checkCreateSpace(param);
         assertFalse(result.allowCreateBasic());
+
+        verify(appSpecProperties, times(1)).getSpace();
     }
 
     @Test
-    public void testCheckCreateSpace_WhenUserPrivateSpacesEqualsToLimit_ThenReturnFalse() {
+    public void testCheckCreateSpace_WhenUserSpacesEqualTheBasicSpacesLimit_ThenReturnFalse() {
         when(countSpacesPort.countBasicSpaces(param.getCurrentUserId()))
             .thenReturn(maxBasicSpaces);
 
         var result = service.checkCreateSpace(param);
         assertFalse(result.allowCreateBasic());
+
+        verify(appSpecProperties, times(1)).getSpace();
     }
 
     @Test
-    public void testCheckCreateSpace_WhenUserPrivateSpacesIsLessThanLimit_ThenReturnFalse() {
+    public void testCheckCreateSpace_WhenUserSpacesAreLessThanBasicSpacesLimit_ThenReturnTrue() {
         when(countSpacesPort.countBasicSpaces(param.getCurrentUserId()))
             .thenReturn(maxBasicSpaces - 1);
 
         var result = service.checkCreateSpace(param);
         assertTrue(result.allowCreateBasic());
+
+        verify(appSpecProperties, times(1)).getSpace();
     }
 
     private AppSpecProperties appSpecProperties() {
-        var appSpecProperties = new AppSpecProperties();
-        var space = new AppSpecProperties().getSpace();
-        space.setMaxBasicSpaces(maxBasicSpaces);
-        appSpecProperties.setSpace(space);
-        return appSpecProperties;
+        var properties = new AppSpecProperties();
+        properties.setSpace(new AppSpecProperties.Space());
+        properties.getSpace().setMaxBasicSpaces(maxBasicSpaces);
+        return properties;
     }
 
     private CheckCreateSpaceUseCase.Param createParam(Consumer<CheckCreateSpaceUseCase.Param.ParamBuilder> changer) {
