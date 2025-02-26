@@ -59,7 +59,7 @@ class CreateSpaceServiceTest {
     }
 
     @Test
-    void testCreateSpace_whenValidParams_successful() {
+    void testCreateSpace_whenValidParamsAndBasicSpace_successful() {
         long createdSpaceId = 0L;
 
         when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces - 1);
@@ -87,6 +87,40 @@ class CreateSpaceServiceTest {
         assertEquals(createdSpaceId, capturedAccess.getSpaceId());
         assertEquals(param.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());
+
+        verify(appSpecProperties, times(1)).getSpace();
+    }
+
+    @Test
+    void testCreateSpace_whenValidParamsAndPremiumSpace_successful() {
+        var premiumParam = createParam(b -> b.type(SpaceType.PREMIUM.getCode()));
+        long createdSpaceId = 0L;
+
+        when(countSpacePort.countBasicSpaces(premiumParam.getCurrentUserId())).thenReturn(maxBasicSpaces);
+        when(createSpacePort.persist(any())).thenReturn(createdSpaceId);
+
+        service.createSpace(premiumParam);
+
+        ArgumentCaptor<Space> createSpaceCaptor = ArgumentCaptor.forClass(Space.class);
+        verify(createSpacePort).persist(createSpaceCaptor.capture());
+        var capturedSpace = createSpaceCaptor.getValue();
+        assertEquals(premiumParam.getTitle(), capturedSpace.getTitle());
+        assertEquals(generateSlugCode(premiumParam.getTitle()), capturedSpace.getCode());
+        SpaceType expectedSpaceType = SpaceType.valueOf(premiumParam.getType());
+        assertEquals(expectedSpaceType.getId(), capturedSpace.getType().getId());
+        assertEquals(expectedSpaceType.getCode(), capturedSpace.getType().getCode());
+        assertEquals(expectedSpaceType.getTitle(), capturedSpace.getType().getTitle());
+        assertEquals(premiumParam.getCurrentUserId(), capturedSpace.getCreatedBy());
+        assertEquals(premiumParam.getCurrentUserId(), capturedSpace.getLastModifiedBy());
+        assertNotNull(capturedSpace.getCreationTime());
+        assertNotNull(capturedSpace.getLastModificationTime());
+
+        ArgumentCaptor<SpaceUserAccess> userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
+        verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
+        var capturedAccess = userAccessCaptor.getValue();
+        assertEquals(createdSpaceId, capturedAccess.getSpaceId());
+        assertEquals(premiumParam.getCurrentUserId(), capturedAccess.getCreatedBy());
+        assertEquals(premiumParam.getCurrentUserId(), capturedAccess.getUserId());
 
         verify(appSpecProperties, times(1)).getSpace();
     }
