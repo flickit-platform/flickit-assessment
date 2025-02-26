@@ -79,10 +79,10 @@ public class SubjectValuePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<SubjectValue> loadAll(UUID assessmentResultId, Collection<Long> subjectId) {
+    public List<SubjectValue> loadAll(UUID assessmentResultId, Collection<Long> subjectIds) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
-        var subjectValues = repository.findAllWithSubjectByAssessmentResultId(assessmentResultId);
+        var subjectValues = repository.findAllWithSubjectByAssessmentResultId(assessmentResultId, subjectIds);
         var maturityLevelIdToEntityMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId())
             .stream().collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
         var subjectIdToAttributesMap = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
