@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.in.subject.GetSubjectProgressUseCase;
-import org.flickit.assessment.core.application.port.out.answer.CountAnswersByQuestionIdsPort;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.question.LoadQuestionsBySubjectPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
@@ -30,7 +30,7 @@ public class GetSubjectProgressService implements GetSubjectProgressUseCase {
     private final LoadQuestionsBySubjectPort loadQuestionsBySubjectPort;
     private final LoadSubjectPort loadSubjectPort;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final CountAnswersByQuestionIdsPort countAnswersByQuestionIdsPort;
+    private final CountAnswersPort countAnswersPort;
 
     @Override
     public Result getSubjectProgress(Param param) {
@@ -48,7 +48,7 @@ public class GetSubjectProgressService implements GetSubjectProgressUseCase {
             .toList();
         var questionCount = new HashSet<>(questionIds).size();
 
-        int answerCount = countAnswersByQuestionIdsPort.countByQuestionIds(assessmentResult.getId(), questionIds);
+        int answerCount = countAnswersPort.countByQuestionIds(assessmentResult.getId(), questionIds);
         return new Result(param.getSubjectId(), subject.getTitle(), questionCount, answerCount);
     }
 

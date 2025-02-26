@@ -6,19 +6,26 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.util.ClassUtils;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
+import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
+import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
-import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
+import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
+import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
-import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +56,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
     private final LoadAssessmentReportPort loadAssessmentReportPort;
+    private final CountAnswersPort countAnswersPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -75,6 +83,7 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var lowConfidenceAnswersCount = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResultId, ConfidenceLevel.SOMEWHAT_UNSURE);
         var answeredQuestionsWithEvidenceCount = countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentId);
         var unresolvedCommentsCount = countEvidencesPort.countUnresolvedComments(assessmentId);
+        var unapprovedAnswers = countAnswersPort.countUnapprovedAnswers(assessmentResultId);
 
         return new Result.Questions(
             questionsCount,
@@ -82,7 +91,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             questionsCount - answersCount,
             lowConfidenceAnswersCount,
             answersCount - answeredQuestionsWithEvidenceCount,
-            unresolvedCommentsCount);
+            unresolvedCommentsCount,
+            unapprovedAnswers);
     }
 
     private Result.Insights buildInsightsResult(AssessmentResult assessmentResult) {

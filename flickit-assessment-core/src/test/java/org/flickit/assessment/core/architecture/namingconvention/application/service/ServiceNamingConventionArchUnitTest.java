@@ -21,6 +21,8 @@ public class ServiceNamingConventionArchUnitTest {
             .resideOutsideOfPackages(APPLICATION_SERVICE_CONSTANT)
             .and()
             .areAnnotatedWith(Service.class)
+            .and()
+            .haveNameNotMatching(HELPER_SERVICE)
             .should()
             .haveSimpleNameEndingWith(SERVICE_SUFFIX);
 

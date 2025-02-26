@@ -9,6 +9,7 @@ import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
 import org.flickit.assessment.core.test.fixture.application.AnswerMother;
+import org.flickit.assessment.core.test.fixture.application.AnswerOptionMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +25,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_QUESTION_ISSUES_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetQuestionIssuesServiceTest {
@@ -88,6 +88,9 @@ class GetQuestionIssuesServiceTest {
         assertFalse(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
+        assertFalse(result.hasUnapprovedAnswer());
+
+        verify(countEvidencesPort).countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId());
     }
 
     @Test
@@ -105,6 +108,9 @@ class GetQuestionIssuesServiceTest {
         assertFalse(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
+        assertFalse(result.hasUnapprovedAnswer());
+
+        verify(countEvidencesPort).countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId());
     }
 
     @Test
@@ -127,12 +133,13 @@ class GetQuestionIssuesServiceTest {
         assertTrue(result.isAnsweredWithLowConfidence());
         assertFalse(result.isAnsweredWithoutEvidences());
         assertEquals(0, result.unresolvedCommentsCount());
+        assertFalse(result.hasUnapprovedAnswer());
     }
 
     @Test
     void testGetQuestionIssues_whenQuestionIsAnsweredWithoutEvidencesAndHasUnresolvedComments_thenSuccessfulWithIssues() {
         var param = createParam(GetQuestionIssuesUseCase.Param.ParamBuilder::build);
-        var answer = AnswerMother.answerWithConfidenceLevel(3, param.getQuestionId());
+        var answer = AnswerMother.answerWithNotApplicableTrueAndUnapprovedStatus(AnswerOptionMother.optionOne());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_DASHBOARD))
             .thenReturn(true);
@@ -146,9 +153,10 @@ class GetQuestionIssuesServiceTest {
 
         var result = service.getQuestionIssues(param);
         assertFalse(result.isUnanswered());
-        assertFalse(result.isAnsweredWithLowConfidence());
+        assertTrue(result.isAnsweredWithLowConfidence());
         assertTrue(result.isAnsweredWithoutEvidences());
         assertEquals(2, result.unresolvedCommentsCount());
+        assertTrue(result.hasUnapprovedAnswer());
     }
 
     private GetQuestionIssuesUseCase.Param createParam

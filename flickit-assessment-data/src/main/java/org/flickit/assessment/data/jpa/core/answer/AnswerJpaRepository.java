@@ -5,10 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID> {
 
@@ -101,4 +98,30 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     void approve(@Param("answerId") UUID answerId,
                  @Param("approvedBy") UUID approvedBy,
                  @Param("approvedStatusId") int approvedStatusId);
+
+    @Query("""
+            SELECT COUNT(a)
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id = :assessmentResultId
+                AND (a.status = :status)
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+        """)
+    int countUnapprovedAnswersByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
+                                                   @Param("status") Integer status);
+
+    @Query("""
+            SELECT q.questionnaireId as questionnaireId,
+                COUNT(q) as count
+            FROM AnswerJpaEntity a
+            JOIN QuestionJpaEntity q ON a.questionId = q.id
+            JOIN AssessmentResultJpaEntity r ON a.assessmentResult.id = r.id AND q.kitVersionId = r.kitVersionId
+            WHERE a.assessmentResult.id = :assessmentResultId
+                AND q.questionnaireId IN :questionnaireIds
+                AND (a.status = :status)
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+            GROUP BY questionnaireId
+        """)
+    List<AnswersQuestionnaireAndCountView> countQuestionnairesUnapprovedAnswers(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                                @Param("questionnaireIds") Set<Long> questionnaireIds,
+                                                                                @Param("status") Integer status);
 }
