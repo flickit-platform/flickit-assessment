@@ -49,6 +49,7 @@ class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
                 .statusCode(201);
 
         final int countBefore = jpaTemplate.count(AssessmentKitJpaEntity.class);
+
         // Create another kit with same title
         var error = kitHelper.create(context, request)
                 .then()
