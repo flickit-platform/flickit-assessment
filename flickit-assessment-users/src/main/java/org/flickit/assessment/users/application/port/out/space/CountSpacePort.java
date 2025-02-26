@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public interface CountSpacePort {
 
-    int countBasicSpaces(UUID userId);
+    int countBasicSpaces(UUID ownerId);
 }
