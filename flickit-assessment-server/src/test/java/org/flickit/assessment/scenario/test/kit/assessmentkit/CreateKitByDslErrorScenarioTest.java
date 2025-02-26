@@ -17,7 +17,7 @@ import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequ
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
+class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     KitTestHelper kitHelper;
@@ -32,7 +32,7 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
     KitTagTestHelper kitTagHelper;
 
     @Test
-    public void createKitByDslErrorScenario_duplicateTitle() {
+    void createKitByDslErrorScenario_duplicateTitle() {
         final Long expertGroupId = createExpertGroup();
         final Long kitDslId = uploadDsl(expertGroupId);
         final Long kitTagId = kitTagHelper.createKitTag();
@@ -57,7 +57,7 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
     }
 
     @Test
-    public void createKitByDslErrorScenario_currentUserIsNotOwner() {
+    void createKitByDslErrorScenario_currentUserIsNotOwner() {
         final Long expertGroupId = createExpertGroup();
         final Long kitDslId = uploadDsl(expertGroupId);
         final Long kitTagId = kitTagHelper.createKitTag();
