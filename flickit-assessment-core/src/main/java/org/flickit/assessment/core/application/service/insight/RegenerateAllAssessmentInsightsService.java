@@ -14,8 +14,8 @@ import org.flickit.assessment.core.application.port.out.assessment.GetAssessment
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.UpdateAssessmentInsightPort;
-import org.flickit.assessment.core.application.port.out.insight.attribute.CreateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
+import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
@@ -46,7 +46,7 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
     private final GetAssessmentProgressPort getAssessmentProgressPort;
     private final CreateAttributeAiInsightHelper createAttributeAiInsightHelper;
-    private final CreateAttributeInsightPort createAttributeInsightPort;
+    private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final CreateSubjectInsightsHelper createSubjectInsightsHelper;
     private final CreateSubjectInsightPort createSubjectInsightPort;
@@ -74,10 +74,10 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
             .map(AttributeInsight::getAttributeId)
             .toList();
         if (!expiredInsightIds.isEmpty())
-            createAttributesInsight(assessmentResult, expiredInsightIds, locale);
+            updateAttributesInsights(assessmentResult, expiredInsightIds, locale);
     }
 
-    private void createAttributesInsight(AssessmentResult assessmentResult, List<Long> attributeIds, Locale locale) {
+    private void updateAttributesInsights(AssessmentResult assessmentResult, List<Long> attributeIds, Locale locale) {
         var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
         var attributeInsights = attributeIds.stream()
@@ -87,10 +87,21 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
                     maturityLevels,
                     progress,
                     locale);
-                return createAttributeAiInsightHelper.createAttributeAiInsight(createAiInsightParam);
+                var attributeAiInsight = createAttributeAiInsightHelper.createAttributeAiInsight(createAiInsightParam);
+                return toUpdateParam(attributeAiInsight);
             })
             .toList();
-        createAttributeInsightPort.persistAll(attributeInsights);
+        updateAttributeInsightPort.updateAiInsights(attributeInsights);
+    }
+
+    private UpdateAttributeInsightPort.AiParam toUpdateParam(AttributeInsight attributeAiInsight) {
+        return new UpdateAttributeInsightPort.AiParam(attributeAiInsight.getAssessmentResultId(),
+            attributeAiInsight.getAttributeId(),
+            attributeAiInsight.getAiInsight(),
+            attributeAiInsight.getAiInsightTime(),
+            attributeAiInsight.getAiInputPath(),
+            attributeAiInsight.isApproved(),
+            attributeAiInsight.getLastModificationTime());
     }
 
     private void regenerateExpiredSubjectsInsight(AssessmentResult assessmentResult, Locale locale) {
