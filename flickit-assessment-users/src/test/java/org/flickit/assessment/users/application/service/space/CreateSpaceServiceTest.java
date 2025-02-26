@@ -44,24 +44,25 @@ class CreateSpaceServiceTest {
     @Spy
     AppSpecProperties appSpecProperties = appSpecProperties();
 
+    private final CreateSpaceUseCase.Param param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
+    private final int maxBasicSpaces = 2;
+
     @Test
     void testCreateSpace_basicSpacesIn_successful() { //TODO: Consider
-        var param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
-
-        when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(1);
+        when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createSpace(param));
         assertEquals(CREATE_SPACE_BASIC_SPACE_MAX, throwable.getMessage());
 
+        verify(appSpecProperties, times(1)).getSpace();
         verifyNoInteractions(createSpacePort);
     }
 
     @Test
     void testCreateSpace_validParams_successful() {
-        var param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
         long createdSpaceId = 0L;
 
-        when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(0);
+        when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces - 1);
         when(createSpacePort.persist(any())).thenReturn(createdSpaceId);
 
         service.createSpace(param);
@@ -86,13 +87,14 @@ class CreateSpaceServiceTest {
         assertEquals(createdSpaceId, capturedAccess.getSpaceId());
         assertEquals(param.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());
+
+        verify(appSpecProperties, times(1)).getSpace();
     }
 
     AppSpecProperties appSpecProperties() {
         AppSpecProperties properties = new AppSpecProperties();
-        AppSpecProperties.Space space = new AppSpecProperties.Space();
-        space.setMaxBasicSpaces(1);
-        properties.setSpace(space);
+        properties.setSpace(new AppSpecProperties.Space());
+        properties.getSpace().setMaxBasicSpaces(maxBasicSpaces);
         return properties;
     }
 
