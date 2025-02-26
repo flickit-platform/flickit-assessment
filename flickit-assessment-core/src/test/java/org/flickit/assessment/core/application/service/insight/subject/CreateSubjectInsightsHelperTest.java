@@ -60,12 +60,13 @@ class CreateSubjectInsightsHelperTest {
         createSubjectInsightParam(SubjectInsightParamBuilder::build);
 
     @Test
-    void testCreateSubjectInsight_whenSubjectIdDoesNotExist_thenThrowsException() {
+    void testCreateSubjectInsight_whenSubjectIdDoesNotExist_thenThrowResourceNotFoundException() {
         when(loadSubjectPort.loadByIdAndKitVersionId(assessmentResult.getKitVersionId(), subjectInsightParam.subjectId()))
             .thenReturn(Optional.empty());
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> helper.createSubjectInsight(subjectInsightParam));
         assertEquals(SUBJECT_NOT_FOUND, exception.getMessage());
+
         verifyNoInteractions(loadSubjectValuePort, loadMaturityLevelsPort);
     }
 
@@ -79,6 +80,7 @@ class CreateSubjectInsightsHelperTest {
             .thenReturn(maturityLevels);
 
         var result = helper.createSubjectInsight(subjectInsightParam);
+
         assertNotNull(result);
         String defaultInsight = createSubjectDefaultInsight(subjectValue, subjectInsightsParam.locale());
         assertEquals(assessmentResult.getId(), result.getAssessmentResultId());
@@ -101,6 +103,7 @@ class CreateSubjectInsightsHelperTest {
             .thenReturn(maturityLevels);
 
         var result = helper.createSubjectInsight(paramWithPersianLocale);
+
         assertNotNull(result);
         String defaultInsight = createSubjectDefaultInsight(subjectValue, paramWithPersianLocale.locale());
         assertEquals(assessmentResult.getId(), result.getAssessmentResultId());
@@ -120,7 +123,9 @@ class CreateSubjectInsightsHelperTest {
             .thenReturn(maturityLevels);
 
         var result = helper.createSubjectInsights(subjectInsightsParam);
+
         assertTrue(result.isEmpty());
+
         verifyNoInteractions(loadSubjectPort);
     }
 
@@ -143,6 +148,7 @@ class CreateSubjectInsightsHelperTest {
         assertNotNull(subjectInsight.getLastModificationTime());
         assertNull(subjectInsight.getInsightBy());
         assertFalse(subjectInsight.isApproved());
+
         verifyNoInteractions(loadSubjectPort);
     }
 
@@ -166,6 +172,7 @@ class CreateSubjectInsightsHelperTest {
         assertNotNull(subjectInsight.getLastModificationTime());
         assertNull(subjectInsight.getInsightBy());
         assertFalse(subjectInsight.isApproved());
+
         verifyNoInteractions(loadSubjectPort);
     }
 
