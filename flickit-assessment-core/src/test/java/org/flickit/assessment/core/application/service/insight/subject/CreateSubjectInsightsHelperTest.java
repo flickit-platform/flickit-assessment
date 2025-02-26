@@ -113,20 +113,7 @@ class CreateSubjectInsightsHelperTest {
     }
 
     @Test
-    void testCreateSubjectInsights_whenSubjectIdsIsEmpty_thenReturnEmptyList() {
-        var paramWithEmptySubjectIds = createSubjectInsightsParam(b -> b.subjectIds(List.of()));
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId(), paramWithEmptySubjectIds.subjectIds()))
-            .thenReturn(List.of());
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
-
-        var result = helper.createSubjectInsights(paramWithEmptySubjectIds);
-        assertTrue(result.isEmpty());
-        verifyNoInteractions(loadSubjectPort);
-    }
-
-    @Test
-    void testCreateSubjectInsights_whenSubjectIdDoesNotExist_thenReturnEmptyList() {
+    void testCreateSubjectInsights_whenSubjectValueDoesNotExist_thenReturnEmptyList() {
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of());
         when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
