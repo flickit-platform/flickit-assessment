@@ -17,8 +17,8 @@ import org.flickit.assessment.core.application.port.out.insight.assessment.LoadA
 import org.flickit.assessment.core.application.port.out.insight.assessment.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.insight.subject.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
+import org.flickit.assessment.core.application.port.out.insight.subject.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
@@ -91,7 +91,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
     private CreateSubjectInsightsHelper createSubjectInsightsHelper;
 
     @Mock
-    private CreateSubjectInsightPort createSubjectInsightPort;
+    private UpdateSubjectInsightPort updateSubjectInsightPort;
 
     @Mock
     private LoadAssessmentInsightPort loadAssessmentInsightPort;
@@ -135,7 +135,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
             updateAttributeInsightPort,
             loadSubjectInsightsPort,
             createSubjectInsightsHelper,
-            createSubjectInsightPort,
+            updateSubjectInsightPort,
             loadAssessmentInsightPort,
             getAssessmentProgressPort,
             updateAssessmentInsightPort);
@@ -159,7 +159,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
             updateAttributeInsightPort,
             loadSubjectInsightsPort,
             createSubjectInsightsHelper,
-            createSubjectInsightPort,
+            updateSubjectInsightPort,
             loadAssessmentInsightPort,
             updateAssessmentInsightPort);
     }
@@ -183,7 +183,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
             updateAttributeInsightPort,
             loadSubjectInsightsPort,
             createSubjectInsightsHelper,
-            createSubjectInsightPort,
+            updateSubjectInsightPort,
             loadAssessmentInsightPort,
             updateAssessmentInsightPort);
     }
@@ -231,7 +231,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
 
         verify(validateAssessmentResultPort).validate(param.getAssessmentId());
         verifyNoInteractions(createSubjectInsightsHelper,
-            createSubjectInsightPort,
+            updateSubjectInsightPort,
             updateAssessmentInsightPort);
     }
 
@@ -253,7 +253,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
             .thenReturn(List.of(expiredSubjectInsight));
         when(createSubjectInsightsHelper.createSubjectInsights(subjectHelperParamArgumentCaptor.capture()))
             .thenReturn(List.of(newSubjectInsight));
-        doNothing().when(createSubjectInsightPort).persistAll(anyList());
+        doNothing().when(updateSubjectInsightPort).updateAll(anyList());
 
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()))
             .thenReturn(Optional.of(AssessmentInsightMother.createSimpleAssessmentInsight()));
@@ -265,7 +265,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
         assertEquals(Locale.of(assessmentResult.getAssessment().getAssessmentKit().getLanguage().getCode()),
             subjectHelperParamArgumentCaptor.getValue().locale());
 
-        verify(createSubjectInsightPort, times(1)).persistAll(subjectInsightArgumentCaptor.capture());
+        verify(updateSubjectInsightPort, times(1)).updateAll(subjectInsightArgumentCaptor.capture());
 
         var subjectInsightArgument = subjectInsightArgumentCaptor.getValue().getFirst();
         assertEquals(newSubjectInsight, subjectInsightArgument);
@@ -324,7 +324,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
             createAttributeAiInsightHelper,
             updateAttributeInsightPort,
             createSubjectInsightsHelper,
-            createSubjectInsightPort);
+            updateSubjectInsightPort);
     }
 
     private static LoadAttributesPort.Result createAttribute() {

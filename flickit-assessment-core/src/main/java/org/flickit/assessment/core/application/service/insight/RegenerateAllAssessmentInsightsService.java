@@ -16,8 +16,8 @@ import org.flickit.assessment.core.application.port.out.insight.assessment.LoadA
 import org.flickit.assessment.core.application.port.out.insight.assessment.UpdateAssessmentInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.insight.attribute.UpdateAttributeInsightPort;
-import org.flickit.assessment.core.application.port.out.insight.subject.CreateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
+import org.flickit.assessment.core.application.port.out.insight.subject.UpdateSubjectInsightPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.CreateAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.CreateAttributeAiInsightHelper;
@@ -49,7 +49,7 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
     private final UpdateAttributeInsightPort updateAttributeInsightPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final CreateSubjectInsightsHelper createSubjectInsightsHelper;
-    private final CreateSubjectInsightPort createSubjectInsightPort;
+    private final UpdateSubjectInsightPort updateSubjectInsightPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
     private final CreateAssessmentInsightHelper createAssessmentInsightHelper;
     private final UpdateAssessmentInsightPort updateAssessmentInsightPort;
@@ -112,7 +112,7 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
         if (!expiredInsightIds.isEmpty()) {
             var insights = createSubjectInsightsHelper
                 .createSubjectInsights(new SubjectInsightsParam(assessmentResult, expiredInsightIds, locale));
-            createSubjectInsightPort.persistAll(insights);
+            updateSubjectInsightPort.updateAll(insights);
         }
     }
 
