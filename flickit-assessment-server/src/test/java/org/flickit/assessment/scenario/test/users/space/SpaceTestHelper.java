@@ -33,4 +33,15 @@ public class SpaceTestHelper {
             .extract()
             .response();
     }
+
+    public Response checkCreateSpace(ScenarioContext context) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .when()
+            .get("/assessment-core/api/check-create-space")
+            .then()
+            .extract()
+            .response();
+    }
 }
