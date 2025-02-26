@@ -67,7 +67,6 @@ public class AttributeInsightPersistenceJpaAdapter implements
             .map(AttributeInsightMapper::mapToJpaEntity)
             .toList();
         repository.saveAll(entities);
-
     }
 
     @Override

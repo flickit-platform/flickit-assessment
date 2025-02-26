@@ -58,6 +58,7 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
     public void regenerateAllAssessmentInsights(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
+
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
@@ -80,7 +81,7 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
     private void updateAttributesInsights(AssessmentResult assessmentResult, List<Long> attributeIds, Locale locale) {
         var maturityLevels = loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId());
         var progress = getAssessmentProgressPort.getProgress(assessmentResult.getAssessment().getId());
-        var attributeInsights = attributeIds.stream()
+        var insightUpdateParams = attributeIds.stream()
             .map(id -> {
                 var createAiInsightParam = new CreateAttributeAiInsightHelper.Param(assessmentResult,
                     id,
@@ -91,7 +92,7 @@ public class RegenerateAllAssessmentInsightsService implements RegenerateAllAsse
                 return toUpdateParam(attributeAiInsight);
             })
             .toList();
-        updateAttributeInsightPort.updateAiInsights(attributeInsights);
+        updateAttributeInsightPort.updateAiInsights(insightUpdateParams);
     }
 
     private UpdateAttributeInsightPort.AiParam toUpdateParam(AttributeInsight attributeAiInsight) {
