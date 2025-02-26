@@ -47,6 +47,7 @@ class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
             .then()
             .statusCode(201);
 
+        // Create another kit with same title
         var error = kitHelper.create(context, request)
             .then()
             .statusCode(400)
@@ -68,6 +69,7 @@ class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
             .tagIds(List.of(kitTagId))
         );
 
+        // Change currentUser which is not an owner of the expert group
         context.getNextCurrentUser();
         var error = kitHelper.create(context, request)
             .then()
