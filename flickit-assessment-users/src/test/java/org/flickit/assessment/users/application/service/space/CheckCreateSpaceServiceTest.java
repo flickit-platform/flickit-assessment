@@ -32,7 +32,7 @@ class CheckCreateSpaceServiceTest {
     private final int maxBasicSpaces = 2;
 
     @Test
-    void testCheckCreateSpace_WhenUserSpacesExceedTheBasicSpacesLimit_ThenReturnFalse() {
+    void testCheckCreateSpace_whenUserBasicSpacesExceedsTheLimit_thenReturnFalse() {
         when(countSpacesPort.countBasicSpaces(param.getCurrentUserId()))
             .thenReturn(maxBasicSpaces + 1);
 
@@ -43,7 +43,7 @@ class CheckCreateSpaceServiceTest {
     }
 
     @Test
-    void testCheckCreateSpace_WhenUserSpacesEqualTheBasicSpacesLimit_ThenReturnFalse() {
+    void testCheckCreateSpace_whenUserBasicSpacesIsEqualToTheLimit_thenReturnFalse() {
         when(countSpacesPort.countBasicSpaces(param.getCurrentUserId()))
             .thenReturn(maxBasicSpaces);
 
@@ -54,7 +54,7 @@ class CheckCreateSpaceServiceTest {
     }
 
     @Test
-    void testCheckCreateSpace_WhenUserSpacesAreLessThanBasicSpacesLimit_ThenReturnTrue() {
+    void testCheckCreateSpace_whenUserBasicSpacesIsLessThanTheLimit_thenReturnTrue() {
         when(countSpacesPort.countBasicSpaces(param.getCurrentUserId()))
             .thenReturn(maxBasicSpaces - 1);
 
