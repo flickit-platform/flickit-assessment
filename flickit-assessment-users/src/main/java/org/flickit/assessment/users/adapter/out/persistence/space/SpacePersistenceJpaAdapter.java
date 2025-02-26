@@ -2,6 +2,7 @@ package org.flickit.assessment.users.adapter.out.persistence.space;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
@@ -103,6 +104,6 @@ public class SpacePersistenceJpaAdapter implements
 
     @Override
     public int countBasicSpaces(UUID ownerId) {
-        return repository.countByOwnerIdAndDeletedFalse(ownerId);
+        return repository.countByOwnerIdAndTypeAndDeletedFalse(ownerId, SpaceType.BASIC.getId());
     }
 }
