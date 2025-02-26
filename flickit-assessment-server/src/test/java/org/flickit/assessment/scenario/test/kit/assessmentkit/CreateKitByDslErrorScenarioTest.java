@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
 
@@ -49,7 +52,8 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
             .statusCode(400)
             .extract().as(ErrorResponseDto.class);
 
-        assertEquals("INVALID_INPUT", error.code());
+        assertEquals(INVALID_INPUT, error.code());
+        assertNotNull(error.message());
     }
 
     @Test
@@ -70,7 +74,8 @@ public class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
             .statusCode(403)
             .extract().as(ErrorResponseDto.class);
 
-        assertEquals("ACCESS_DENIED", error.code());
+        assertEquals(ACCESS_DENIED, error.code());
+        assertNotNull(error.message());
     }
 
     private Long createExpertGroup() {
