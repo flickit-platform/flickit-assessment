@@ -1,6 +1,7 @@
 package org.flickit.assessment.scenario.test.kit.assessmentkit;
 
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
+import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.flickit.assessment.scenario.test.kit.kitdsl.KitDslTestHelper;
 import org.flickit.assessment.scenario.test.kit.tag.KitTagTestHelper;
@@ -38,23 +39,27 @@ class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
         final Long kitTagId = kitTagHelper.createKitTag();
 
         var request = createKitByDslRequestDto(a -> a
-            .expertGroupId(expertGroupId)
-            .kitDslId(kitDslId)
-            .tagIds(List.of(kitTagId))
+                .expertGroupId(expertGroupId)
+                .kitDslId(kitDslId)
+                .tagIds(List.of(kitTagId))
         );
 
         kitHelper.create(context, request)
-            .then()
-            .statusCode(201);
+                .then()
+                .statusCode(201);
 
+        final int countBefore = jpaTemplate.count(AssessmentKitJpaEntity.class);
         // Create another kit with same title
         var error = kitHelper.create(context, request)
-            .then()
-            .statusCode(400)
-            .extract().as(ErrorResponseDto.class);
+                .then()
+                .statusCode(400)
+                .extract().as(ErrorResponseDto.class);
 
         assertEquals(INVALID_INPUT, error.code());
         assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentKitJpaEntity.class);
+        assertEquals(countBefore, countAfter);
     }
 
     @Test
@@ -64,20 +69,25 @@ class CreateKitByDslErrorScenarioTest extends AbstractScenarioTest {
         final Long kitTagId = kitTagHelper.createKitTag();
 
         var request = createKitByDslRequestDto(a -> a
-            .expertGroupId(expertGroupId)
-            .kitDslId(kitDslId)
-            .tagIds(List.of(kitTagId))
+                .expertGroupId(expertGroupId)
+                .kitDslId(kitDslId)
+                .tagIds(List.of(kitTagId))
         );
+
+        final int countBefore = jpaTemplate.count(AssessmentKitJpaEntity.class);
 
         // Change currentUser which is not an owner of the expert group
         context.getNextCurrentUser();
         var error = kitHelper.create(context, request)
-            .then()
-            .statusCode(403)
-            .extract().as(ErrorResponseDto.class);
+                .then()
+                .statusCode(403)
+                .extract().as(ErrorResponseDto.class);
 
         assertEquals(ACCESS_DENIED, error.code());
         assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentKitJpaEntity.class);
+        assertEquals(countBefore, countAfter);
     }
 
     private Long createExpertGroup() {
