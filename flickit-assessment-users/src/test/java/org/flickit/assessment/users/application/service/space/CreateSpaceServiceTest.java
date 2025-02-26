@@ -48,7 +48,7 @@ class CreateSpaceServiceTest {
     private final int maxBasicSpaces = 2;
 
     @Test
-    void testCreateSpace_basicSpacesIn_successful() { //TODO: Consider
+    void testCreateSpace_whenReachedBasicSpaceLimit_thenShouldThrowUpgradeRequiredException() {
         when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createSpace(param));
@@ -59,7 +59,7 @@ class CreateSpaceServiceTest {
     }
 
     @Test
-    void testCreateSpace_validParams_successful() {
+    void testCreateSpace_whenValidParams_successful() {
         long createdSpaceId = 0L;
 
         when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces - 1);
