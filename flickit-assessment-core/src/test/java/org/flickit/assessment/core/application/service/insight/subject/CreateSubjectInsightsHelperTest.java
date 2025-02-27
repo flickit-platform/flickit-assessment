@@ -61,7 +61,7 @@ class CreateSubjectInsightsHelperTest {
 
     @Test
     void testCreateSubjectInsight_whenSubjectIdDoesNotExist_thenThrowResourceNotFoundException() {
-        when(loadSubjectPort.loadByIdAndKitVersionId(assessmentResult.getKitVersionId(), subjectInsightParam.subjectId()))
+        when(loadSubjectPort.loadByIdAndKitVersionId(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId()))
             .thenReturn(Optional.empty());
 
         var exception = assertThrows(ResourceNotFoundException.class, () -> helper.createSubjectInsight(subjectInsightParam));
@@ -72,7 +72,7 @@ class CreateSubjectInsightsHelperTest {
 
     @Test
     void testCreateSubjectInsight_whenSubjectIdIsValid_thenReturnSubjectInsight() {
-        when(loadSubjectPort.loadByIdAndKitVersionId(assessmentResult.getKitVersionId(), subjectInsightParam.subjectId()))
+        when(loadSubjectPort.loadByIdAndKitVersionId(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId()))
             .thenReturn(Optional.of(subject));
         when(loadSubjectValuePort.load(assessmentResult.getId(), subjectInsightParam.subjectId()))
             .thenReturn(subjectValue);
@@ -94,7 +94,7 @@ class CreateSubjectInsightsHelperTest {
 
     @Test
     void testCreateSubjectInsight_whenLocaleIsPersian_thenReturnSubjectInsightInPersian() {
-        when(loadSubjectPort.loadByIdAndKitVersionId(assessmentResult.getKitVersionId(), subjectInsightParam.subjectId()))
+        when(loadSubjectPort.loadByIdAndKitVersionId(subjectInsightParam.subjectId(), assessmentResult.getKitVersionId()))
             .thenReturn(Optional.of(subject));
         var paramWithPersianLocale = createSubjectInsightParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
         when(loadSubjectValuePort.load(assessmentResult.getId(), paramWithPersianLocale.subjectId()))
