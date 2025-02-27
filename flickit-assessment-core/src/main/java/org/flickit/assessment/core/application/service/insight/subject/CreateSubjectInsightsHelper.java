@@ -31,7 +31,7 @@ public class CreateSubjectInsightsHelper {
     private final LoadMaturityLevelsPort loadMaturityLevelsPort;
 
     public SubjectInsight createSubjectInsight(SubjectInsightParam param) {
-        var subject = loadSubjectPort.loadByIdAndKitVersionId(param.assessmentResult().getKitVersionId(), param.subjectId())
+        var subject = loadSubjectPort.loadByIdAndKitVersionId(param.subjectId(), param.assessmentResult().getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_NOT_FOUND));
         var subjectValues = loadSubjectValuePort.load(param.assessmentResult().getId(), subject.getId());
         int maturityLevelsSize = loadMaturityLevelsPort.loadByKitVersionId(param.assessmentResult().getKitVersionId())
