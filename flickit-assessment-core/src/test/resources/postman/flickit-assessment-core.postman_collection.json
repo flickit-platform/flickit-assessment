@@ -2528,7 +2528,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/regenerate-insights",
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/regenerate-expired-insights",
 							"host": [
 								"{{base_url}}"
 							],
@@ -2536,7 +2536,7 @@
 								"{{api_path}}",
 								"assessments",
 								"53028c27-83f5-4c10-9105-56e2a4f58a09",
-								"regenerate-insights"
+								"regenerate-expired-insights"
 							]
 						}
 					},

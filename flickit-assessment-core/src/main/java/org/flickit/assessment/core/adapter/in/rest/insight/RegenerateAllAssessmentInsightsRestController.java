@@ -19,7 +19,7 @@ public class RegenerateAllAssessmentInsightsRestController {
     private final RegenerateExpiredAssessmentInsightsUseCase useCase;
     private final UserContext userContext;
 
-    @PutMapping("/assessments/{assessmentId}/regenerate-insights")
+    @PutMapping("/assessments/{assessmentId}/regenerate-expired-insights")
     public ResponseEntity<Void> regenerateExpiredAssessmentInsights(@PathVariable("assessmentId") UUID assessmentId) {
         UUID currentUserId = userContext.getUser().id();
         useCase.regenerateExpiredAssessmentInsights(toParam(assessmentId, currentUserId));
