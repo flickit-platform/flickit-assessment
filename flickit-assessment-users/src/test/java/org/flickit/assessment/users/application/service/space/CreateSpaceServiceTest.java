@@ -11,10 +11,7 @@ import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
@@ -23,7 +20,6 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.users.common.ErrorMessageKey.CREATE_SPACE_BASIC_SPACE_MAX;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +40,14 @@ class CreateSpaceServiceTest {
     @Spy
     AppSpecProperties appSpecProperties = appSpecProperties();
 
+    @Captor
+    ArgumentCaptor<Space> spaceCaptor;
+
+    @Captor
+    ArgumentCaptor<SpaceUserAccess> userAccessCaptor;
+
     private final CreateSpaceUseCase.Param param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
+    private final long createdSpaceId = 0L;
     private final int maxBasicSpaces = 2;
 
     @Test
@@ -59,17 +62,14 @@ class CreateSpaceServiceTest {
     }
 
     @Test
-    void testCreateSpace_whenValidParamsAndBasicSpace_successful() {
-        long createdSpaceId = 0L;
-
-        when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces - 1);
-        when(createSpacePort.persist(any())).thenReturn(createdSpaceId);
+    void testCreateSpace_whenValidParamsWithBasicSpace_thenSuccessfullyCreateSpace() {
+        when(countSpacePort.countBasicSpaces(param.getCurrentUserId()))
+            .thenReturn(maxBasicSpaces - 1);
 
         service.createSpace(param);
 
-        ArgumentCaptor<Space> createSpaceCaptor = ArgumentCaptor.forClass(Space.class);
-        verify(createSpacePort).persist(createSpaceCaptor.capture());
-        var capturedSpace = createSpaceCaptor.getValue();
+        verify(createSpacePort).persist(spaceCaptor.capture());
+        var capturedSpace = spaceCaptor.getValue();
         assertEquals(param.getTitle(), capturedSpace.getTitle());
         assertEquals(generateSlugCode(param.getTitle()), capturedSpace.getCode());
         SpaceType expectedSpaceType = SpaceType.valueOf(param.getType());
@@ -81,7 +81,6 @@ class CreateSpaceServiceTest {
         assertNotNull(capturedSpace.getCreationTime());
         assertNotNull(capturedSpace.getLastModificationTime());
 
-        ArgumentCaptor<SpaceUserAccess> userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
         var capturedAccess = userAccessCaptor.getValue();
         assertEquals(createdSpaceId, capturedAccess.getSpaceId());
@@ -92,18 +91,16 @@ class CreateSpaceServiceTest {
     }
 
     @Test
-    void testCreateSpace_whenValidParamsAndPremiumSpace_successful() {
+    void testCreateSpace_whenValidParamsWithPremiumSpace_thenSuccessfullyCreateSpace() {
         var premiumParam = createParam(b -> b.type(SpaceType.PREMIUM.getCode()));
-        long createdSpaceId = 0L;
 
-        when(countSpacePort.countBasicSpaces(premiumParam.getCurrentUserId())).thenReturn(maxBasicSpaces);
-        when(createSpacePort.persist(any())).thenReturn(createdSpaceId);
+        when(countSpacePort.countBasicSpaces(premiumParam.getCurrentUserId()))
+            .thenReturn(maxBasicSpaces);
 
         service.createSpace(premiumParam);
 
-        ArgumentCaptor<Space> createSpaceCaptor = ArgumentCaptor.forClass(Space.class);
-        verify(createSpacePort).persist(createSpaceCaptor.capture());
-        var capturedSpace = createSpaceCaptor.getValue();
+        verify(createSpacePort).persist(spaceCaptor.capture());
+        var capturedSpace = spaceCaptor.getValue();
         assertEquals(premiumParam.getTitle(), capturedSpace.getTitle());
         assertEquals(generateSlugCode(premiumParam.getTitle()), capturedSpace.getCode());
         SpaceType expectedSpaceType = SpaceType.valueOf(premiumParam.getType());
@@ -115,7 +112,6 @@ class CreateSpaceServiceTest {
         assertNotNull(capturedSpace.getCreationTime());
         assertNotNull(capturedSpace.getLastModificationTime());
 
-        ArgumentCaptor<SpaceUserAccess> userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
         var capturedAccess = userAccessCaptor.getValue();
         assertEquals(createdSpaceId, capturedAccess.getSpaceId());
