@@ -21,7 +21,7 @@ public interface ApproveSubjectInsightPort {
     void approveAll(UUID assessmentId, LocalDateTime lastModificationTime);
 
     /**
-     * Approves all the insights associated with the subjects of assessment specified with assessment ID and subjectIds,
+     * Approves all insights associated with the specified subject IDs for a given assessment,
      * and updates the last modification time of those insights.
      *
      * @param assessmentId         The unique identifier (UUID) of the assessment.
