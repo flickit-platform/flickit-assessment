@@ -27,7 +27,7 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
             .body("id", notNullValue());
 
         Number spaceId = createResponse.body().path("id");
-        spaceHelper.delete(context, spaceId.toString()).then()
+        spaceHelper.delete(context, spaceId).then()
             .statusCode(204);
 
         SpaceJpaEntity deletedSpace = jpaTemplate.load(spaceId, SpaceJpaEntity.class);
@@ -49,7 +49,7 @@ class DeleteSpaceScenarioTest extends AbstractScenarioTest {
         context.getNextCurrentUser();
 
         // Delete space by non owner user
-        var response = spaceHelper.delete(context, spaceId.toString());
+        var response = spaceHelper.delete(context, spaceId);
 
         var error = response.then()
             .statusCode(403)

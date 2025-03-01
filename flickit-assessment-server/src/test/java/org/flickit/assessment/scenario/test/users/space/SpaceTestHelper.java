@@ -23,7 +23,7 @@ public class SpaceTestHelper {
             .response();
     }
 
-    public Response delete(ScenarioContext context, String spaceId) {
+    public Response delete(ScenarioContext context, Number spaceId) {
         return given()
             .contentType(JSON)
             .auth().oauth2(context.getCurrentUser().getJwt())
