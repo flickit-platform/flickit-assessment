@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.application.port.in.insight;
 
 import jakarta.validation.ConstraintViolationException;
-import org.flickit.assessment.core.application.port.in.insight.RegenerateExpiredAssessmentInsightsUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.RegenerateExpiredInsightsUseCase.Param;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -9,20 +9,20 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.REGENERATE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.REGENERATE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class RegenerateExpiredAssessmentInsightsUseCaseParamTest {
+class RegenerateExpiredInsightsUseCaseParamTest {
 
     @Test
-    void testRegenerateExpiredAssessmentInsightsUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
+    void testRegenerateExpiredInsightsUseCaseParam_IdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
-        assertThat(throwable).hasMessage("assessmentId: " + REGENERATE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("assessmentId: " + REGENERATE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testRegenerateExpiredAssessmentInsightsUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
+    void testRegenerateExpiredInsightsUseCaseParam_currentUserIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);

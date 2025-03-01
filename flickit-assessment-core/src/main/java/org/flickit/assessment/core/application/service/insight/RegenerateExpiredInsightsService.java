@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
-import org.flickit.assessment.core.application.port.in.insight.RegenerateExpiredAssessmentInsightsUseCase;
+import org.flickit.assessment.core.application.port.in.insight.RegenerateExpiredInsightsUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
@@ -37,7 +37,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class RegenerateExpiredAssessmentInsightsService implements RegenerateExpiredAssessmentInsightsUseCase {
+public class RegenerateExpiredInsightsService implements RegenerateExpiredInsightsUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
@@ -55,7 +55,7 @@ public class RegenerateExpiredAssessmentInsightsService implements RegenerateExp
     private final UpdateAssessmentInsightPort updateAssessmentInsightPort;
 
     @Override
-    public void regenerateExpiredAssessmentInsights(Param param) {
+    public void regenerateExpiredInsights(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 

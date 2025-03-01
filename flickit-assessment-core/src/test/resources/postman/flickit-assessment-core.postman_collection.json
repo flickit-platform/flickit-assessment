@@ -2517,7 +2517,7 @@
 					"response": []
 				},
 				{
-					"name": "Regenerate Expired Assessment Insights",
+					"name": "Regenerate Expired Insights",
 					"request": {
 						"method": "PUT",
 						"header": [

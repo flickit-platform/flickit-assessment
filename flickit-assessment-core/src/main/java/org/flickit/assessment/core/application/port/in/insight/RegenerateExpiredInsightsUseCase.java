@@ -9,17 +9,17 @@ import org.flickit.assessment.common.application.SelfValidating;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.REGENERATE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.REGENERATE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL;
 
-public interface RegenerateExpiredAssessmentInsightsUseCase {
+public interface RegenerateExpiredInsightsUseCase {
 
-    void regenerateExpiredAssessmentInsights(Param param);
+    void regenerateExpiredInsights(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = REGENERATE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = REGENERATE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)
