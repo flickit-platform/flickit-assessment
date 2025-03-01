@@ -62,6 +62,14 @@ public class AttributeInsightPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateAiInsights(List<AiParam> attributeInsight) {
+        var entities = attributeInsight.stream()
+            .map(AttributeInsightMapper::mapToJpaEntity)
+            .toList();
+        repository.saveAll(entities);
+    }
+
+    @Override
     public void updateAiInsightTime(AiTimeParam attributeInsight) {
         repository.updateAiInsightTime(attributeInsight.assessmentResultId(),
             attributeInsight.attributeId(),
