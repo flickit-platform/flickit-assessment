@@ -34,7 +34,7 @@ public class SpaceTestHelper {
             .response();
     }
 
-    public Response checkCreateSpace(ScenarioContext context) {
+    public Response checkCreate(ScenarioContext context) {
         return given()
             .contentType(JSON)
             .auth().oauth2(context.getCurrentUser().getJwt())
