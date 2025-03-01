@@ -132,7 +132,7 @@ class ApproveExpiredInsightsServiceTest {
     }
 
     @Test
-    void testApproveExpiredInsights_whenOneAttributeInsightExpired_thenApproveAttributeInsights() {
+    void testApproveExpiredInsights_whenOneAttributeInsightIsExpired_thenApproveAttributeInsights() {
         var oldInsightTime = LocalDateTime.now().minusDays(1);
         var expiredAttributeInsight = aiInsightWithTime(oldInsightTime);
 
@@ -162,7 +162,7 @@ class ApproveExpiredInsightsServiceTest {
     }
 
     @Test
-    void testApproveExpiredInsights_whenOneSubjectInsightExpired_thenApproveSubjectInsights() {
+    void testApproveExpiredInsights_whenOneSubjectInsightIsExpired_thenApproveSubjectInsights() {
         var oldInsightTime = LocalDateTime.now().minusDays(1);
         var expiredSubjectInsight = defaultSubjectInsight(oldInsightTime, oldInsightTime, false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
@@ -191,7 +191,7 @@ class ApproveExpiredInsightsServiceTest {
     }
 
     @Test
-    void testApproveExpiredInsights_whenAssessmentInsightExpired_thenApproveAssessmentInsight() {
+    void testApproveExpiredInsights_whenAssessmentInsightIsExpired_thenApproveAssessmentInsight() {
         var oldInsightTime = LocalDateTime.now().minusDays(1);
         var expiredAssessmentInsight = createDefaultInsightWithTimesAndApprove(oldInsightTime, oldInsightTime, false);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
