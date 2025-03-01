@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.insight.assessment;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AssessmentInsight;
+import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.port.in.insight.assessment.CreateAssessmentInsightUseCase;
 import org.flickit.assessment.core.application.port.in.insight.assessment.CreateAssessmentInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;

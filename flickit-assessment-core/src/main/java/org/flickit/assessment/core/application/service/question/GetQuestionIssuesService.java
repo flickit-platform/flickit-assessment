@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
 import org.flickit.assessment.core.application.port.in.question.GetQuestionIssuesUseCase;
 import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
@@ -40,7 +41,8 @@ public class GetQuestionIssuesService implements GetQuestionIssuesUseCase {
         return new Result(!isAnswered,
             isAnswered && (answer.getConfidenceLevelId() < ConfidenceLevel.SOMEWHAT_UNSURE.getId()),
             isAnswered && countEvidencesPort.countQuestionEvidences(param.getAssessmentId(), param.getQuestionId()) == 0,
-            countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()));
+            countEvidencesPort.countQuestionUnresolvedComments(param.getAssessmentId(), param.getQuestionId()),
+            isAnswered && AnswerStatus.UNAPPROVED.equals(answer.getAnswerStatus()));
     }
 
     private boolean hasAnswer(Answer answer) {

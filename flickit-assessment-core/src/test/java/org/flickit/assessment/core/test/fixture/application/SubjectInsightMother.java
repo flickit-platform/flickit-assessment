@@ -1,6 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
-import org.flickit.assessment.core.application.domain.SubjectInsight;
+import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,6 +15,16 @@ public class SubjectInsightMother {
             insightLastCalculationTime,
             null,
             approved);
+    }
+
+    public static SubjectInsight defaultSubjectInsight() {
+        return new SubjectInsight(UUID.randomUUID(),
+            2L,
+            "insight",
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            null,
+            false);
     }
 
     public static SubjectInsight subjectInsight() {

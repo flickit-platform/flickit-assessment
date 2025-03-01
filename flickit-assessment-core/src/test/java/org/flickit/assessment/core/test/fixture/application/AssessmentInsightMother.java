@@ -1,7 +1,7 @@
 package org.flickit.assessment.core.test.fixture.application;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.flickit.assessment.core.application.domain.AssessmentInsight;
+import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
