@@ -94,9 +94,6 @@ class CreateSpaceServiceTest {
     void testCreateSpace_whenValidParamsWithPremiumSpace_thenSuccessfullyCreateSpace() {
         var premiumParam = createParam(b -> b.type(SpaceType.PREMIUM.getCode()));
 
-        when(countSpacePort.countBasicSpaces(premiumParam.getCurrentUserId()))
-            .thenReturn(maxBasicSpaces);
-
         service.createSpace(premiumParam);
 
         verify(createSpacePort).persist(spaceCaptor.capture());
@@ -119,6 +116,7 @@ class CreateSpaceServiceTest {
         assertEquals(premiumParam.getCurrentUserId(), capturedAccess.getUserId());
 
         verify(appSpecProperties, times(1)).getSpace();
+        verifyNoInteractions(countSpacePort);
     }
 
     AppSpecProperties appSpecProperties() {

@@ -29,9 +29,10 @@ public class CreateSpaceService implements CreateSpaceUseCase {
 
     @Override
     public Result createSpace(Param param) {
-        var userBasicSpaces = countSpacePort.countBasicSpaces(param.getCurrentUserId());
         var maxBasicSpaces = appSpecProperties.getSpace().getMaxBasicSpaces();
-        if (SpaceType.BASIC.getCode().equals(param.getType()) && userBasicSpaces >= maxBasicSpaces)
+        boolean isBasicSpaceLimitReached = SpaceType.BASIC.getCode().equals(param.getType())
+            && countSpacePort.countBasicSpaces(param.getCurrentUserId()) >= maxBasicSpaces;
+        if (isBasicSpaceLimitReached)
             throw new UpgradeRequiredException(CREATE_SPACE_BASIC_SPACE_MAX);
 
         long id = createSpacePort.persist(mapToDomain(param));
