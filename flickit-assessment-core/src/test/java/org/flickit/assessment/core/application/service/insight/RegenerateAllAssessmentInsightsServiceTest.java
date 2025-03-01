@@ -9,7 +9,7 @@ import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
-import org.flickit.assessment.core.application.port.in.insight.RegenerateAllAssessmentInsightsUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.RegenerateExpiredAssessmentInsightsUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributesPort;
@@ -55,10 +55,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RegenerateAllAssessmentInsightsServiceTest {
+class RegenerateExpiredAssessmentInsightsServiceTest {
 
     @InjectMocks
-    private RegenerateAllAssessmentInsightsService service;
+    private RegenerateExpiredAssessmentInsightsService service;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -121,10 +121,10 @@ class RegenerateAllAssessmentInsightsServiceTest {
     private final GetAssessmentProgressPort.Result progress = new GetAssessmentProgressPort.Result(param.getAssessmentId(), 10, 10);
 
     @Test
-    void testRegenerateAllAssessmentInsights_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testRegenerateExpiredAssessmentInsights_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS)).thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.regenerateAllAssessmentInsights(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.regenerateExpiredAssessmentInsights(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
 
         verifyNoInteractions(validateAssessmentResultPort,
@@ -142,13 +142,13 @@ class RegenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testRegenerateAllAssessmentInsights_whenAssessmentResultIsNotFound_thenThrowResourceNotFoundException() {
+    void testRegenerateExpiredAssessmentInsights_whenAssessmentResultIsNotFound_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.empty());
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.regenerateAllAssessmentInsights(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.regenerateExpiredAssessmentInsights(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_FOUND, throwable.getMessage());
 
         verifyNoInteractions(validateAssessmentResultPort,
@@ -165,7 +165,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testRegenerateAllAssessmentInsights_whenCalculatedResultIsNotValid_thenThrowCalculateNotValidException() {
+    void testRegenerateExpiredAssessmentInsights_whenCalculatedResultIsNotValid_thenThrowCalculateNotValidException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), GENERATE_ALL_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -173,7 +173,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
         doThrow(new CalculateNotValidException(COMMON_ASSESSMENT_RESULT_NOT_VALID))
             .when(validateAssessmentResultPort).validate(param.getAssessmentId());
 
-        var throwable = assertThrows(CalculateNotValidException.class, () -> service.regenerateAllAssessmentInsights(param));
+        var throwable = assertThrows(CalculateNotValidException.class, () -> service.regenerateExpiredAssessmentInsights(param));
         assertEquals(COMMON_ASSESSMENT_RESULT_NOT_VALID, throwable.getMessage());
 
         verifyNoInteractions(getAssessmentProgressPort,
@@ -189,7 +189,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testRegenerateAllAssessmentInsights_whenOneAttributeInsightExpired_thenCreateAttributeAiInsightAndPersist() {
+    void testRegenerateExpiredAssessmentInsights_whenOneAttributeInsightExpired_thenCreateAttributeAiInsightAndPersist() {
         var expiredAttributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
         var newAttributeAiInsight = aiInsightWithAttributeId(expiredAttributeInsight.getAttributeId());
 
@@ -210,7 +210,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()))
             .thenReturn(Optional.of(AssessmentInsightMother.createWithAssessmentResultId(assessmentResult.getId())));
 
-        service.regenerateAllAssessmentInsights(param);
+        service.regenerateExpiredAssessmentInsights(param);
 
         assertEquals(assessmentResult, attributeHelperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(expiredAttributeInsight.getAttributeId(), attributeHelperParamArgumentCaptor.getValue().attributeId());
@@ -236,7 +236,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testRegenerateAllAssessmentInsights_whenOneSubjectInsightExpired_thenCreateSubjectInsightAndPersist() {
+    void testRegenerateExpiredAssessmentInsights_whenOneSubjectInsightExpired_thenCreateSubjectInsightAndPersist() {
         var oldInsightTime = LocalDateTime.now().minusDays(1);
         var expiredSubjectInsight = defaultSubjectInsight(oldInsightTime, oldInsightTime, false);
         var newSubjectInsight = defaultSubjectInsight();
@@ -258,7 +258,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
         when(loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()))
             .thenReturn(Optional.of(AssessmentInsightMother.createSimpleAssessmentInsight()));
 
-        service.regenerateAllAssessmentInsights(param);
+        service.regenerateExpiredAssessmentInsights(param);
 
         assertEquals(assessmentResult, subjectHelperParamArgumentCaptor.getValue().assessmentResult());
         assertEquals(List.of(expiredSubjectInsight.getSubjectId()), subjectHelperParamArgumentCaptor.getValue().subjectIds());
@@ -279,7 +279,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
     }
 
     @Test
-    void testRegenerateAllAssessmentInsights_whenAssessmentInsightExpired_thenCreateAssessmentInsightAndPersist() {
+    void testRegenerateExpiredAssessmentInsights_whenAssessmentInsightExpired_thenCreateAssessmentInsightAndPersist() {
         var oldInsightTime = LocalDateTime.now().minusDays(1);
         var expiredAssessmentInsight = createDefaultInsightWithTimesAndApprove(oldInsightTime, oldInsightTime, false);
         var newAssessmentInsight = createDefaultInsightWithAssessmentResultId(assessmentResult.getId());
@@ -302,7 +302,7 @@ class RegenerateAllAssessmentInsightsServiceTest {
             .thenReturn(newAssessmentInsight);
         doNothing()
             .when(updateAssessmentInsightPort).updateInsight(any(AssessmentInsight.class));
-        service.regenerateAllAssessmentInsights(param);
+        service.regenerateExpiredAssessmentInsights(param);
 
         var assessmentInsightArgumentCaptor = ArgumentCaptor.forClass(AssessmentInsight.class);
         verify(updateAssessmentInsightPort, times(1))

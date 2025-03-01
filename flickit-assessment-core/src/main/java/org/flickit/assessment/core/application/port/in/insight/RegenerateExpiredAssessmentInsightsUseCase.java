@@ -11,9 +11,9 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.REGENERATE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL;
 
-public interface RegenerateAllAssessmentInsightsUseCase {
+public interface RegenerateExpiredAssessmentInsightsUseCase {
 
-    void regenerateAllAssessmentInsights(Param param);
+    void regenerateExpiredAssessmentInsights(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = false)
