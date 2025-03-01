@@ -68,6 +68,9 @@ public class AppSpecProperties {
 
         @NotBlank
         String fromDisplayName = "Flickit";
+
+        @NotBlank
+        String adminAddress;
     }
 
     @Setter
