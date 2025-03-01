@@ -1,9 +1,12 @@
 package org.flickit.assessment.users.application.service.space;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
+import org.flickit.assessment.users.application.domain.notification.CreateSpaceNotificationCmd;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
@@ -20,13 +23,15 @@ public class CreateSpaceService implements CreateSpaceUseCase {
 
     private final CreateSpacePort createSpacePort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
+    private final AppSpecProperties appSpecProperties;
 
     @Override
+    @SendNotification
     public Result createSpace(Param param) {
         long id = createSpacePort.persist(mapToDomain(param));
 
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
-        return new Result(id);
+        return new Result(id, new CreateSpaceNotificationCmd(appSpecProperties.getEmail().getAdminAddress(), id));
     }
 
     private Space mapToDomain(Param param) {
