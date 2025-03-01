@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,5 +63,16 @@ public interface SubjectInsightJpaRepository extends JpaRepository<SubjectInsigh
             WHERE si.assessmentResultId = :assessmentResultId AND si.approved = false
         """)
     void approveAll(@Param("assessmentResultId") UUID assessmentResultId,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Modifying
+    @Query("""
+            UPDATE SubjectInsightJpaEntity si
+            SET si.approved = true,
+                si.lastModificationTime = :lastModificationTime
+            WHERE si.assessmentResultId = :assessmentResultId AND si.subjectId IN :subjectIds
+        """)
+    void approveAll(@Param("assessmentResultId") UUID id,
+                    @Param("subjectIds") Collection<Long> subjectIds,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }

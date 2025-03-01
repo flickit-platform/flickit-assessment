@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -90,5 +91,16 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
             WHERE a.assessmentResultId = :assessmentResultId AND a.approved = false
         """)
     void approveAll(@Param("assessmentResultId") UUID assessmentResultId,
+                    @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Modifying
+    @Query("""
+            UPDATE AttributeInsightJpaEntity a
+            SET a.approved = true,
+                a.lastModificationTime = :lastModificationTime
+            WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId IN :attributeIds
+        """)
+    void approveAll(@Param("assessmentResultId") UUID assessmentResultId,
+                    @Param("attributeIds") Collection<Long> attributeIds,
                     @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }

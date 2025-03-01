@@ -86,4 +86,12 @@ public class SubjectInsightPersistenceJpaAdapter implements
 
         repository.approveAll(assessmentResult.getId(), lastModificationTime);
     }
+
+    @Override
+    public void approveAll(UUID assessmentId, Collection<Long> subjectIds, LocalDateTime lastModificationTime) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        repository.approveAll(assessmentResult.getId(), subjectIds, lastModificationTime);
+    }
 }
