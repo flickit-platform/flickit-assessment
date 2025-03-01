@@ -1,5 +1,6 @@
 package org.flickit.assessment.scenario.test.users.space;
 
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
@@ -48,7 +49,7 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
 
     @Test
     void createSpace_duplicateTitle() {
-        final var request = createSpaceRequestDto();
+        final var request = createSpaceRequestDto(b-> b.type(SpaceType.PREMIUM.getCode()));
         // First invoke
         var response = spaceHelper.create(context, request);
         response.then()
