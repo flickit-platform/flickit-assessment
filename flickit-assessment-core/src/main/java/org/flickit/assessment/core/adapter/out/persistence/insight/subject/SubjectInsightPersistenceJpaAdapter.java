@@ -100,6 +100,6 @@ public class SubjectInsightPersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        repository.approveAll(assessmentResult.getId(), subjectIds, lastModificationTime);
+        repository.approveBySubjectIds(assessmentResult.getId(), subjectIds, lastModificationTime);
     }
 }

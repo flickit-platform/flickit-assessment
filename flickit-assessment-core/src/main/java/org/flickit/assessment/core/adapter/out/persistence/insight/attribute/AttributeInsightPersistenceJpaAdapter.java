@@ -122,6 +122,6 @@ public class AttributeInsightPersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        repository.approveAll(assessmentResult.getId(), attributeIds, lastModificationTime);
+        repository.approveByAttributeIds(assessmentResult.getId(), attributeIds, lastModificationTime);
     }
 }

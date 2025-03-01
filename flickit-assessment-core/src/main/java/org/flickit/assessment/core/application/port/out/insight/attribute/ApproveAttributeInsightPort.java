@@ -21,7 +21,7 @@ public interface ApproveAttributeInsightPort {
     void approveAll(UUID assessmentId, LocalDateTime lastModificationTime);
 
     /**
-     * Approves all the expired insights associated with the attributes of assessment specified with assessment ID
+     * Approves all the insights associated with the attributes of assessment specified with assessment ID
      * and attribute IDs, and updates the last modification time of those insights.
      *
      * @param assessmentId         The unique identifier (UUID) of the assessment.

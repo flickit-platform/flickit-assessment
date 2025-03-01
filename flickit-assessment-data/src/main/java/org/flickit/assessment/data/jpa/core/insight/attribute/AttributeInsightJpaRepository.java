@@ -100,7 +100,7 @@ public interface AttributeInsightJpaRepository extends JpaRepository<AttributeIn
                 a.lastModificationTime = :lastModificationTime
             WHERE a.assessmentResultId = :assessmentResultId AND a.attributeId IN :attributeIds
         """)
-    void approveAll(@Param("assessmentResultId") UUID assessmentResultId,
-                    @Param("attributeIds") Collection<Long> attributeIds,
-                    @Param("lastModificationTime") LocalDateTime lastModificationTime);
+    void approveByAttributeIds(@Param("assessmentResultId") UUID assessmentResultId,
+                               @Param("attributeIds") Collection<Long> attributeIds,
+                               @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }
