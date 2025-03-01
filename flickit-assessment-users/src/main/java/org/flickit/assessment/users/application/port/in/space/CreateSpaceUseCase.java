@@ -7,8 +7,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.validation.EnumValue;
+import org.flickit.assessment.users.application.domain.notification.CreateSpaceNotificationCmd;
 
 import java.util.UUID;
 
@@ -44,6 +46,6 @@ public interface CreateSpaceUseCase {
         }
     }
 
-    record Result(long id) {
+    record Result(long id, CreateSpaceNotificationCmd notificationCmd) implements HasNotificationCmd {
     }
 }
