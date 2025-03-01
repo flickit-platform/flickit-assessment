@@ -189,7 +189,7 @@ class RegenerateExpiredInsightsServiceTest {
     }
 
     @Test
-    void testRegenerateExpiredInsights_whenOneAttributeInsightExpired_thenCreateAttributeAiInsightAndPersist() {
+    void testRegenerateExpiredInsights_whenOneAttributeInsightIsExpired_thenCreateAttributeAiInsightAndPersist() {
         var expiredAttributeInsight = aiInsightWithTime(LocalDateTime.now().minusDays(1));
         var newAttributeAiInsight = aiInsightWithAttributeId(expiredAttributeInsight.getAttributeId());
 
@@ -236,7 +236,7 @@ class RegenerateExpiredInsightsServiceTest {
     }
 
     @Test
-    void testRegenerateExpiredInsights_whenOneSubjectInsightExpired_thenCreateSubjectInsightAndPersist() {
+    void testRegenerateExpiredInsights_whenOneSubjectInsightIsExpired_thenCreateSubjectInsightAndPersist() {
         var oldInsightTime = LocalDateTime.now().minusDays(1);
         var expiredSubjectInsight = defaultSubjectInsight(oldInsightTime, oldInsightTime, false);
         var newSubjectInsight = defaultSubjectInsight();
@@ -279,7 +279,7 @@ class RegenerateExpiredInsightsServiceTest {
     }
 
     @Test
-    void testRegenerateExpiredInsights_whenAssessmentInsightExpired_thenCreateAssessmentInsightAndPersist() {
+    void testRegenerateExpiredInsights_whenAssessmentInsightIsExpired_thenCreateAssessmentInsightAndPersist() {
         var oldInsightTime = LocalDateTime.now().minusDays(1);
         var expiredAssessmentInsight = createDefaultInsightWithTimesAndApprove(oldInsightTime, oldInsightTime, false);
         var newAssessmentInsight = createDefaultInsightWithAssessmentResultId(assessmentResult.getId());

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RegenerateExpiredInsightsUseCaseParamTest {
 
     @Test
-    void testRegenerateExpiredInsightsUseCaseParam_IdParamViolatesConstraints_ErrorMessage() {
+    void testRegenerateExpiredInsightsUseCaseParam_assessmentIdParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + REGENERATE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL);
