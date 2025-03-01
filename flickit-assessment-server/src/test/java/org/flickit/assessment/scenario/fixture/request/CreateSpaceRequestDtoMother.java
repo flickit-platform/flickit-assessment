@@ -1,6 +1,7 @@
 package org.flickit.assessment.scenario.fixture.request;
 
 import lombok.experimental.UtilityClass;
+import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.adapter.in.rest.space.CreateSpaceRequestDto;
 
 import java.util.function.Consumer;
@@ -23,6 +24,7 @@ public class CreateSpaceRequestDtoMother {
     private static CreateSpaceRequestDto.CreateSpaceRequestDtoBuilder builder() {
         index++;
         return CreateSpaceRequestDto.builder()
-            .title("My Space " + index);
+            .title("My Space " + index)
+            .type(SpaceType.BASIC.getCode());
     }
 }
