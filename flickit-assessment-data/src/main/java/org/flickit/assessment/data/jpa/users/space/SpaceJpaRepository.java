@@ -15,7 +15,7 @@ public interface SpaceJpaRepository extends JpaRepository<SpaceJpaEntity, Long> 
 
     boolean existsByIdAndDeletedFalse(long id);
 
-    int countByOwnerIdAndDeletedFalse(UUID ownerId);
+    int countByOwnerIdAndTypeAndDeletedFalse(UUID ownerId, Integer type);
 
     @Query("""
             SELECT s.ownerId
