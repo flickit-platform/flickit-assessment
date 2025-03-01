@@ -2515,6 +2515,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Regenerate Expired Insights",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/regenerate-expired-insights",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"regenerate-expired-insights"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
