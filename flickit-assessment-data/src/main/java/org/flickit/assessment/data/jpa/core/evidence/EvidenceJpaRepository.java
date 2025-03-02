@@ -30,30 +30,15 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             FROM EvidenceJpaEntity e
             LEFT JOIN EvidenceAttachmentJpaEntity a ON e.id = a.evidenceId
             WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
-                AND e.type IS NOT NULL AND e.resolved IS NULL
+                AND CASE WHEN (:hasType = TRUE)
+                        THEN (e.type IS NOT NULL AND e.resolved IS NULL)
+                        ELSE (e.type IS NULL AND (e.resolved IS NULL OR e.resolved = false)) END
             GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
         """)
-    Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentIdHavingEvidenceType(@Param("questionId") Long questionId,
-                                                                                             @Param("assessmentId") UUID assessmentId,
-                                                                                             Pageable pageable);
-
-    @Query("""
-            SELECT
-                e.id as id,
-                e.description as description,
-                e.type as type,
-                e.createdBy as createdBy,
-                e.lastModificationTime as lastModificationTime,
-                COUNT (a) as attachmentsCount
-            FROM EvidenceJpaEntity e
-            LEFT JOIN EvidenceAttachmentJpaEntity a ON e.id = a.evidenceId
-            WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
-                AND e.type IS NULL AND (e.resolved IS NULL OR e.resolved = false)
-            GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
-        """)
-    Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentIdNotHavingEvidenceType(@Param("questionId") Long questionId,
-                                                                                                @Param("assessmentId") UUID assessmentId,
-                                                                                                Pageable pageable);
+    Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentId(@Param("questionId") Long questionId,
+                                                                           @Param("assessmentId") UUID assessmentId,
+                                                                           @Param("hasType") Boolean hasType,
+                                                                           Pageable pageable);
 
     @Modifying
     @Query("""

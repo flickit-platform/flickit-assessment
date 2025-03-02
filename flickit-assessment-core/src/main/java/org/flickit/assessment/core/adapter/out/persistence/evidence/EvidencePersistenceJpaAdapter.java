@@ -67,7 +67,7 @@ public class EvidencePersistenceJpaAdapter implements
 
         var order = EvidenceJpaEntity.Fields.lastModificationTime;
         var sort = Sort.Direction.DESC;
-        var pageResult = repository.findByQuestionIdAndAssessmentIdHavingEvidenceType(questionId, assessmentId, PageRequest.of(page, size, sort, order));
+        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, true, PageRequest.of(page, size, sort, order));
         var userIds = pageResult.getContent().stream()
             .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();
@@ -93,7 +93,7 @@ public class EvidencePersistenceJpaAdapter implements
 
         var order = EvidenceJpaEntity.Fields.lastModificationTime;
         var sort = Sort.Direction.DESC;
-        var pageResult = repository.findByQuestionIdAndAssessmentIdNotHavingEvidenceType(questionId, assessmentId, PageRequest.of(page, size, sort, order));
+        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, false, PageRequest.of(page, size, sort, order));
         var userIds = pageResult.getContent().stream()
             .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();
