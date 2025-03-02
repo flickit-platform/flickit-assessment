@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelPersistenceJpaAdapter;
@@ -261,13 +262,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
                 if (optionEntity != null)
                     answerOption = AnswerOptionMapper.mapToDomainModel(optionEntity);
 
-                return new Answer(
-                    entity.getId(),
-                    answerOption,
-                    entity.getQuestionId(),
-                    entity.getConfidenceLevelId(),
-                    entity.getIsNotApplicable(),
-                    AnswerStatus.valueOfById(entity.getStatus()));
+                return AnswerMapper.mapToDomainModel(entity, answerOption);
             }).toList();
     }
 
