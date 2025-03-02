@@ -59,7 +59,8 @@ class CreateSpaceServiceTest {
         assertEquals(param.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());
 
-        assertNull(result.notificationCmd());
+        assertNull(result.notificationCmd().adminEmail());
+        assertEquals(SpaceType.BASIC.getCode(), result.notificationCmd().space().getType().getCode());
 
         verifyNoInteractions(appSpecProperties);
     }
@@ -87,8 +88,10 @@ class CreateSpaceServiceTest {
         assertEquals(param.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());
 
-        assertEquals(result.id(), result.notificationCmd().spaceId());
         assertEquals(appSpecProperties.getEmail().getAdminEmail(), result.notificationCmd().adminEmail());
+        assertEquals(SpaceType.PREMIUM.getCode(), result.notificationCmd().space().getType().getCode());
+        assertNotNull(result.notificationCmd().space().getCreationTime());
+        assertEquals(param.getTitle(), result.notificationCmd().space().getTitle());
     }
 
     AppSpecProperties appSpecProperties() {

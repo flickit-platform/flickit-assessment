@@ -30,12 +30,16 @@ public class CreateSpaceService implements CreateSpaceUseCase {
     @Override
     @SendNotification
     public Result createSpace(Param param) {
-        long id = createSpacePort.persist(mapToDomain(param));
+        var space = mapToDomain(param);
+        long id = createSpacePort.persist(space);
 
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
-        if (SpaceType.BASIC.getCode().equals(param.getType()))
-            return new Result(id, null);
-        return new Result(id, new CreatePremiumSpaceNotificationCmd(appSpecProperties.getEmail().getAdminEmail(), id));
+
+        String adminEmail = SpaceType.BASIC.getCode().equals(param.getType())
+            ? null
+            : appSpecProperties.getEmail().getAdminEmail();
+
+        return new Result(id, new CreatePremiumSpaceNotificationCmd(adminEmail, space));
     }
 
     private Space mapToDomain(Param param) {
