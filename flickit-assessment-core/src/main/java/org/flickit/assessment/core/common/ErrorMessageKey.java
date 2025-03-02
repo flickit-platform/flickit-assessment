@@ -328,4 +328,10 @@ public class ErrorMessageKey {
     public static final String GENERATE_ALL_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "generate-all-assessment-insights.assessmentId.notNull";
 
     public static final String REGENERATE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "regenerate-expired-insights.assessmentId.notNull";
+
+    public static final String GET_COMMENT_LIST_QUESTION_ID_NOT_NULL = "get-comment-list.questionId.notNull";
+    public static final String GET_COMMENT_LIST_ASSESSMENT_ID_NOT_NULL = "get-comment-list.assessmentId.notNull";
+    public static final String GET_COMMENT_LIST_SIZE_MIN = "get-comment-list.size.min";
+    public static final String GET_COMMENT_LIST_SIZE_MAX = "get-comment-list.size.max";
+    public static final String GET_COMMENT_LIST_PAGE_MIN = "get-comment-list.page.min";
 }
