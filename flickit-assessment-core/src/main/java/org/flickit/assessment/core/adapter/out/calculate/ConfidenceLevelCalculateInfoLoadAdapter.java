@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
@@ -242,13 +243,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
                 if (entity.getAnswerOptionId() != null) {
                     answerOption = new AnswerOption(entity.getAnswerOptionId(), null, null, null);
                 }
-                return new Answer(
-                    entity.getId(),
-                    answerOption,
-                    entity.getQuestionId(),
-                    entity.getConfidenceLevelId(),
-                    entity.getIsNotApplicable(),
-                    AnswerStatus.valueOfById(entity.getStatus()));
+                return AnswerMapper.mapToDomainModel(entity, answerOption);
             }).toList();
     }
 
