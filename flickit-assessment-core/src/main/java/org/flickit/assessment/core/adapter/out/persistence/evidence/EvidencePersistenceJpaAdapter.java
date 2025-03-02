@@ -67,7 +67,33 @@ public class EvidencePersistenceJpaAdapter implements
 
         var order = EvidenceJpaEntity.Fields.lastModificationTime;
         var sort = Sort.Direction.DESC;
-        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, PageRequest.of(page, size, sort, order));
+        var pageResult = repository.findByQuestionIdAndAssessmentIdHavingEvidenceType(questionId, assessmentId, PageRequest.of(page, size, sort, order));
+        var userIds = pageResult.getContent().stream()
+            .map(EvidenceWithAttachmentsCountView::getCreatedBy)
+            .toList();
+        var userIdToUserMap = userRepository.findAllById(userIds).stream()
+            .collect(toMap(UserJpaEntity::getId, Function.identity()));
+        var items = pageResult.getContent().stream()
+            .map(e -> toEvidenceListItem(e, userIdToUserMap.get(e.getCreatedBy())))
+            .toList();
+        return new PaginatedResponse<>(
+            items,
+            pageResult.getNumber(),
+            pageResult.getSize(),
+            order,
+            sort.name().toLowerCase(),
+            (int) pageResult.getTotalElements()
+        );
+    }
+
+    @Override
+    public PaginatedResponse<EvidenceListItem> loadNotDeletedComments(Long questionId, UUID assessmentId, int page, int size) {
+        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
+            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
+
+        var order = EvidenceJpaEntity.Fields.lastModificationTime;
+        var sort = Sort.Direction.DESC;
+        var pageResult = repository.findByQuestionIdAndAssessmentIdNotHavingEvidenceType(questionId, assessmentId, PageRequest.of(page, size, sort, order));
         var userIds = pageResult.getContent().stream()
             .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();
