@@ -61,6 +61,14 @@ public class SubjectInsightPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateAll(List<SubjectInsight> subjectInsights) {
+        var entities = subjectInsights.stream()
+            .map(SubjectInsightMapper::mapToJpaEntity)
+            .toList();
+        repository.saveAll(entities);
+    }
+
+    @Override
     public List<SubjectInsight> loadSubjectInsights(UUID assessmentResultId) {
         return repository.findByAssessmentResultId(assessmentResultId)
             .stream()
@@ -85,5 +93,13 @@ public class SubjectInsightPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         repository.approveAll(assessmentResult.getId(), lastModificationTime);
+    }
+
+    @Override
+    public void approveAll(UUID assessmentId, Collection<Long> subjectIds, LocalDateTime lastModificationTime) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        repository.approveBySubjectIds(assessmentResult.getId(), subjectIds, lastModificationTime);
     }
 }

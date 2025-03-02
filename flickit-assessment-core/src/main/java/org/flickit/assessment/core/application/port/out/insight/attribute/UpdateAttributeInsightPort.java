@@ -1,11 +1,14 @@
 package org.flickit.assessment.core.application.port.out.insight.attribute;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface UpdateAttributeInsightPort {
 
     void updateAiInsight(AiParam attributeInsight);
+
+    void updateAiInsights(List<AiParam> attributeInsight);
 
     record AiParam(UUID assessmentResultId,
                    Long attributeId,

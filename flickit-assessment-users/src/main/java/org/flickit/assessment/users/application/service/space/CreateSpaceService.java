@@ -11,6 +11,7 @@ import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CreateSpaceService implements CreateSpaceUseCase {
 
