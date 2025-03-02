@@ -12,7 +12,7 @@ public enum NotificationType {
     CREATE_ASSESSMENT,
     COMPLETE_ASSESSMENT,
     ACCEPT_ASSESSMENT_INVITATION,
-    CREATE_SPACE;
+    CREATE_PREMIUM_SPACE;
 
     final String code;
 

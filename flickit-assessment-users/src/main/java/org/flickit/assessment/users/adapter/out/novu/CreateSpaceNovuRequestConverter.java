@@ -4,14 +4,14 @@ import org.flickit.assessment.common.adapter.out.novu.AbstractNovuRequestConvert
 import org.flickit.assessment.users.application.service.space.notification.CreateSpaceNotificationPayload;
 import org.springframework.stereotype.Component;
 
-import static org.flickit.assessment.common.adapter.out.novu.NotificationType.CREATE_SPACE;
+import static org.flickit.assessment.common.adapter.out.novu.NotificationType.CREATE_PREMIUM_SPACE;
 
 @Component
 public class CreateSpaceNovuRequestConverter extends AbstractNovuRequestConverter {
 
     @Override
     protected String getEventName() {
-        return CREATE_SPACE.getCode();
+        return CREATE_PREMIUM_SPACE.getCode();
     }
 
     @Override
