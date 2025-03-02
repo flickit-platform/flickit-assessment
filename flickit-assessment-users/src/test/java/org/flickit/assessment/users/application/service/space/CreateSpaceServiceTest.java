@@ -37,7 +37,7 @@ class CreateSpaceServiceTest {
 
 
     @Test
-    void testCreateSpace_whenValidParamsAndSpaceIsBasic_thenSuccessful() {
+    void testCreateSpace_whenValidParamsAndSpaceIsBasic_thenSuccessfulSpaceCreationWithoutNotification() {
         var param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
 
         var result = service.createSpace(param);
@@ -65,8 +65,8 @@ class CreateSpaceServiceTest {
     }
 
     @Test
-    void testCreateSpace_whenValidParamsAndSpaceIsPremium_successful() {
-        var param = createParam(b -> b.type("PREMIUM"));
+    void testCreateSpace_whenValidParamsAndSpaceIsPremium_thenSuccessfulSpaceCreationWithNotification() {
+        var param = createParam(b -> b.type(SpaceType.PREMIUM.getCode()));
 
         var result = service.createSpace(param);
 
