@@ -33,7 +33,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
         long id = createSpacePort.persist(mapToDomain(param));
 
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
-        return new Result(id, new CreateSpaceNotificationCmd(appSpecProperties.getEmail().getAdminAddress(), id));
+        return new Result(id, new CreateSpaceNotificationCmd(appSpecProperties.getEmail().getAdminEmail(), id));
     }
 
     private Space mapToDomain(Param param) {

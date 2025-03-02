@@ -70,7 +70,7 @@ public class AppSpecProperties {
         String fromDisplayName = "Flickit";
 
         @NotBlank
-        String adminAddress;
+        String adminEmail;
     }
 
     @Setter
