@@ -10,7 +10,7 @@ import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.notification.HasNotificationCmd;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.validation.EnumValue;
-import org.flickit.assessment.users.application.domain.notification.CreateSpaceNotificationCmd;
+import org.flickit.assessment.users.application.domain.notification.CreatePremiumSpaceNotificationCmd;
 
 import java.util.UUID;
 
@@ -46,6 +46,6 @@ public interface CreateSpaceUseCase {
         }
     }
 
-    record Result(long id, CreateSpaceNotificationCmd notificationCmd) implements HasNotificationCmd {
+    record Result(long id, CreatePremiumSpaceNotificationCmd notificationCmd) implements HasNotificationCmd {
     }
 }

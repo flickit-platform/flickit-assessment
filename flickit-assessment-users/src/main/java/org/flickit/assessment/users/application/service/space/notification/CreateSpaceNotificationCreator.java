@@ -6,7 +6,7 @@ import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.notification.NotificationCreator;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope.User;
-import org.flickit.assessment.users.application.domain.notification.CreateSpaceNotificationCmd;
+import org.flickit.assessment.users.application.domain.notification.CreatePremiumSpaceNotificationCmd;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceDetailsPort;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 
@@ -21,13 +21,13 @@ import static org.flickit.assessment.users.common.MessageKey.NOTIFICATION_TITLE_
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class CreateSpaceNotificationCreator implements NotificationCreator<CreateSpaceNotificationCmd> {
+public class CreateSpaceNotificationCreator implements NotificationCreator<CreatePremiumSpaceNotificationCmd> {
 
     private final LoadUserPort loadUserPort;
     private final LoadSpaceDetailsPort loadSpaceDetailsPort;
 
     @Override
-    public List<NotificationEnvelope> create(CreateSpaceNotificationCmd cmd) {
+    public List<NotificationEnvelope> create(CreatePremiumSpaceNotificationCmd cmd) {
         var spaceDetails = loadSpaceDetailsPort.loadSpace(cmd.spaceId());
 
         var user = loadUserPort.loadUser(spaceDetails.space().getCreatedBy());
@@ -47,7 +47,7 @@ public class CreateSpaceNotificationCreator implements NotificationCreator<Creat
     }
 
     @Override
-    public Class<CreateSpaceNotificationCmd> cmdClass() {
-        return CreateSpaceNotificationCmd.class;
+    public Class<CreatePremiumSpaceNotificationCmd> cmdClass() {
+        return CreatePremiumSpaceNotificationCmd.class;
     }
 }
