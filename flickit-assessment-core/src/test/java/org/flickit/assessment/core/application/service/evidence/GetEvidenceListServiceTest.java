@@ -3,10 +3,8 @@ package org.flickit.assessment.core.application.service.evidence;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase;
 import org.flickit.assessment.core.application.port.in.evidence.GetEvidenceListUseCase.Param;
-import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.junit.jupiter.api.Test;
@@ -19,7 +17,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -45,14 +42,11 @@ class GetEvidenceListServiceTest {
     @Mock
     private CreateFileDownloadLinkPort createFileDownloadLinkPort;
 
-    @Mock
-    private LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
-
     @Test
     void testGetEvidenceList_ResultsFound_2ItemsReturned() {
         Long question1Id = 1L;
         UUID currentUserId = UUID.randomUUID();
-        LoadEvidencesPort.EvidenceListItem evidence1Q1 = createEvidenceWithType(null, currentUserId);
+        LoadEvidencesPort.EvidenceListItem evidence1Q1 = createEvidenceWithType("Positive", currentUserId);
         LoadEvidencesPort.EvidenceListItem evidence2Q1 = createEvidenceWithType("Negative", UUID.randomUUID());
         UUID assessmentId = UUID.randomUUID();
 
@@ -65,7 +59,6 @@ class GetEvidenceListServiceTest {
                 "lastModificationTime",
                 "DESC",
                 2));
-        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
         when(createFileDownloadLinkPort.createDownloadLink(any(), any())).thenReturn("pictureLink");
 
         var result = service.getEvidenceList(new Param(question1Id, assessmentId, 10, 0, currentUserId));
@@ -79,7 +72,7 @@ class GetEvidenceListServiceTest {
         assertEquals(evidence1Q1.attachmentsCount(), result.getItems().getFirst().attachmentsCount());
         assertTrue(result.getItems().getFirst().editable());
         assertTrue(result.getItems().getFirst().deletable());
-        assertTrue(result.getItems().getFirst().resolvable());
+        assertFalse(result.getItems().getFirst().resolvable());
         assertEquals(evidence2Q1.id(), result.getItems().get(1).id());
         assertEquals(evidence2Q1.type(), result.getItems().get(1).type());
         assertEquals(evidence2Q1.createdBy().id(), result.getItems().get(1).createdBy().id());
@@ -107,7 +100,6 @@ class GetEvidenceListServiceTest {
                 "lastModificationTime",
                 "DESC",
                 0));
-        when(loadUserRoleForAssessmentPort.load(assessmentId, currentUserId)).thenReturn(Optional.of(AssessmentUserRole.MANAGER));
 
         var result = service.getEvidenceList(new Param(questionId, assessmentId, 10, 0, currentUserId));
 
@@ -120,7 +112,7 @@ class GetEvidenceListServiceTest {
         UUID assessmentId = UUID.randomUUID();
         UUID currentUserId = UUID.randomUUID();
 
-        var param = new GetEvidenceListUseCase.Param(123L, assessmentId, 10,0,currentUserId);
+        var param = new GetEvidenceListUseCase.Param(123L, assessmentId, 10, 0, currentUserId);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getEvidenceList(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
