@@ -18,7 +18,6 @@ import java.util.function.Consumer;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class CreateSpaceServiceTest {
@@ -59,10 +58,9 @@ class CreateSpaceServiceTest {
         assertEquals(param.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());
 
-        assertNull(result.notificationCmd().adminEmail());
         assertEquals(SpaceType.BASIC.getCode(), result.notificationCmd().space().getType().getCode());
 
-        verifyNoInteractions(appSpecProperties);
+        verify(appSpecProperties).getEmail();
     }
 
     @Test

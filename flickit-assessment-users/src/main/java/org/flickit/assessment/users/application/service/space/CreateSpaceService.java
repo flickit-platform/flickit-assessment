@@ -35,10 +35,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
 
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
 
-        String adminEmail = SpaceType.BASIC.getCode().equals(param.getType())
-            ? null
-            : appSpecProperties.getEmail().getAdminEmail();
-
+        String adminEmail = appSpecProperties.getEmail().getAdminEmail();
         return new Result(id, new CreatePremiumSpaceNotificationCmd(adminEmail, space));
     }
 
