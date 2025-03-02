@@ -38,11 +38,10 @@ public class CreateSpaceNotificationCreator implements NotificationCreator<Creat
             return List.of();
         }
 
-
-        var userModel = new CreateSpaceNotificationPayload.UserModel(user.getDisplayName(), user.getEmail());
-        var spaceModel = new CreateSpaceNotificationPayload.SpaceModel(spaceDetails.space().getTitle(), spaceDetails.space().getCreationTime());
+        var userModel = new CreatePremiumSpaceNotificationPayload.UserModel(user.getDisplayName(), user.getEmail());
+        var spaceModel = new CreatePremiumSpaceNotificationPayload.SpaceModel(spaceDetails.space().getTitle(), spaceDetails.space().getCreationTime());
         var title = MessageBundle.message(NOTIFICATION_TITLE_CREATE_PREMIUM_SPACE);
-        var payload = new CreateSpaceNotificationPayload(userModel, spaceModel);
+        var payload = new CreatePremiumSpaceNotificationPayload(userModel, spaceModel);
 
         return List.of(new NotificationEnvelope(new User(adminId.get(), cmd.adminEmail()), title, payload));
     }

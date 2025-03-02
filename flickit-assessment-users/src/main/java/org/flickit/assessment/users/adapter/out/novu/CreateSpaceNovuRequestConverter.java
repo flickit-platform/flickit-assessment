@@ -1,7 +1,7 @@
 package org.flickit.assessment.users.adapter.out.novu;
 
 import org.flickit.assessment.common.adapter.out.novu.AbstractNovuRequestConverter;
-import org.flickit.assessment.users.application.service.space.notification.CreateSpaceNotificationPayload;
+import org.flickit.assessment.users.application.service.space.notification.CreatePremiumSpaceNotificationPayload;
 import org.springframework.stereotype.Component;
 
 import static org.flickit.assessment.common.adapter.out.novu.NotificationType.CREATE_PREMIUM_SPACE;
@@ -15,7 +15,7 @@ public class CreateSpaceNovuRequestConverter extends AbstractNovuRequestConverte
     }
 
     @Override
-    public Class<CreateSpaceNotificationPayload> payloadClass() {
-        return CreateSpaceNotificationPayload.class;
+    public Class<CreatePremiumSpaceNotificationPayload> payloadClass() {
+        return CreatePremiumSpaceNotificationPayload.class;
     }
 }
