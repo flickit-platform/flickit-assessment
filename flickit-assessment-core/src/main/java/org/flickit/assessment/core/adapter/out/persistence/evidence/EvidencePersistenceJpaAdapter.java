@@ -62,38 +62,21 @@ public class EvidencePersistenceJpaAdapter implements
 
     @Override
     public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
-        if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
-            throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
-
-        var order = EvidenceJpaEntity.Fields.lastModificationTime;
-        var sort = Sort.Direction.DESC;
-        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, true, PageRequest.of(page, size, sort, order));
-        var userIds = pageResult.getContent().stream()
-            .map(EvidenceWithAttachmentsCountView::getCreatedBy)
-            .toList();
-        var userIdToUserMap = userRepository.findAllById(userIds).stream()
-            .collect(toMap(UserJpaEntity::getId, Function.identity()));
-        var items = pageResult.getContent().stream()
-            .map(e -> toEvidenceListItem(e, userIdToUserMap.get(e.getCreatedBy())))
-            .toList();
-        return new PaginatedResponse<>(
-            items,
-            pageResult.getNumber(),
-            pageResult.getSize(),
-            order,
-            sort.name().toLowerCase(),
-            (int) pageResult.getTotalElements()
-        );
+        return loadNotDeletedEvidencesWorker(assessmentId, questionId, true, page, size);
     }
 
     @Override
     public PaginatedResponse<EvidenceListItem> loadNotDeletedComments(Long questionId, UUID assessmentId, int page, int size) {
+        return loadNotDeletedEvidencesWorker(assessmentId, questionId, false, page, size);
+    }
+
+    private PaginatedResponse<EvidenceListItem> loadNotDeletedEvidencesWorker(UUID assessmentId, Long questionId, boolean hasType, int page, int size) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
 
         var order = EvidenceJpaEntity.Fields.lastModificationTime;
         var sort = Sort.Direction.DESC;
-        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, false, PageRequest.of(page, size, sort, order));
+        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, hasType, PageRequest.of(page, size, sort, order));
         var userIds = pageResult.getContent().stream()
             .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();
