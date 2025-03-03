@@ -330,4 +330,6 @@ public class ErrorMessageKey {
     public static final String REGENERATE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "regenerate-expired-insights.assessmentId.notNull";
 
     public static final String APPROVE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "approve-expired-insights.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights.assessmentId.notNull";
 }
