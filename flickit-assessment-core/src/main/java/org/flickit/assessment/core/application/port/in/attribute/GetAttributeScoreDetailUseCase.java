@@ -89,8 +89,8 @@ public interface GetAttributeScoreDetailUseCase {
         public record Answer(Integer index,
                              String title,
                              Boolean isNotApplicable,
-                             Double missedScore,
                              Double gainedScore,
+                             Double missedScore,
                              Integer confidenceLevel) {
         }
     }
