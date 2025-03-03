@@ -33,8 +33,6 @@
         <appender-ref ref="ASYNC_CONSOLE"/>
     </root>
 
-    <logger name="org.flickit.assessment.common.application.domain.notification.NotificationAspect" level="trace"/>
-
     <logger name="org.flickit.assessment" level="info" additivity="false">
         <appender-ref ref="ASYNC_CONSOLE"/>
     </logger>
