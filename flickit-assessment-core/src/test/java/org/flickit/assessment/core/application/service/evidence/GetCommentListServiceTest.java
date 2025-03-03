@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE_LIST;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_COMMENT_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,7 +53,7 @@ class GetCommentListServiceTest {
 
     @Test
     void testGetCommentList_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_COMMENT_LIST))
             .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getCommentList(param));
@@ -62,7 +62,7 @@ class GetCommentListServiceTest {
 
     @Test
     void testGetCommentList_whenThereAreNoCommentsForQuestion_thenReturnsEmptyPage() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_COMMENT_LIST))
             .thenReturn(true);
         when(loadEvidencesPort.loadNotDeletedComments(param.getQuestionId(), param.getAssessmentId(), param.getPage(), param.getSize()))
             .thenReturn(new PaginatedResponse<>(
@@ -86,7 +86,7 @@ class GetCommentListServiceTest {
         var comment1Q1 = createComment(param.getCurrentUserId());
         var comment2Q1 = createComment(UUID.randomUUID());
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_COMMENT_LIST))
             .thenReturn(true);
         when(loadEvidencesPort.loadNotDeletedComments(param.getQuestionId(), param.getAssessmentId(), param.getPage(), param.getSize()))
             .thenReturn(new PaginatedResponse<>(

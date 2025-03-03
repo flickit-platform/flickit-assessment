@@ -60,7 +60,8 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_MATURITY_LEVELS("viewAssessmentMaturityLevels"),
     APPROVE_ANSWER("approveAnswer"),
     APPROVE_ALL_ASSESSMENT_INSIGHTS("approveAllAssessmentInsights"),
-    GENERATE_ALL_ASSESSMENT_INSIGHTS("generateAllAssessmentInsights");
+    GENERATE_ALL_ASSESSMENT_INSIGHTS("generateAllAssessmentInsights"),
+    VIEW_COMMENT_LIST("viewCommentList");
 
     private final String code;
 }

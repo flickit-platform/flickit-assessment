@@ -16,7 +16,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_EVIDENCE_LIST;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_COMMENT_LIST;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -33,7 +33,7 @@ public class GetCommentListService implements GetCommentListUseCase {
 
     @Override
     public PaginatedResponse<CommentListItem> getCommentList(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_COMMENT_LIST))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var portResult = loadEvidencesPort.loadNotDeletedComments(
