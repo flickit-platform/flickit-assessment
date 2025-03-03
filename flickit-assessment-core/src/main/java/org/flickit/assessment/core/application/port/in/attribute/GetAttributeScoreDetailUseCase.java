@@ -67,8 +67,8 @@ public interface GetAttributeScoreDetailUseCase {
         public enum Sort {
             QUESTIONNAIRE("questionnaire"),
             WEIGHT("weight"),
-            MISSED_SCORE("missedScore"),
             GAINED_SCORE("gainedScore"),
+            MISSED_SCORE("missedScore"),
             CONFIDENCE("confidence"),
             EVIDENCE_COUNT("evidenceCount");
 
