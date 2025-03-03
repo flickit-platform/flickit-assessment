@@ -93,10 +93,10 @@ class CreateSpaceServiceTest {
     }
 
     AppSpecProperties appSpecProperties() {
-        AppSpecProperties appSpecProperties = new AppSpecProperties();
-        appSpecProperties.setEmail(new AppSpecProperties.Email());
-        appSpecProperties.getEmail().setAdminEmail("admin@email.com");
-        return appSpecProperties;
+        AppSpecProperties properties = new AppSpecProperties();
+        properties.setEmail(new AppSpecProperties.Email());
+        properties.getEmail().setAdminEmail("admin@email.com");
+        return properties;
     }
 
     private CreateSpaceUseCase.Param createParam(Consumer<CreateSpaceUseCase.Param.ParamBuilder> changer) {

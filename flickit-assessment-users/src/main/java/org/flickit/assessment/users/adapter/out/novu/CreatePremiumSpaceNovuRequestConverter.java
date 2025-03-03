@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import static org.flickit.assessment.common.adapter.out.novu.NotificationType.CREATE_PREMIUM_SPACE;
 
 @Component
-public class CreateSpaceNovuRequestConverter extends AbstractNovuRequestConverter {
+public class CreatePremiumSpaceNovuRequestConverter extends AbstractNovuRequestConverter {
 
     @Override
     protected String getEventName() {
