@@ -67,8 +67,8 @@ public interface GetAttributeScoreDetailUseCase {
         public enum Sort {
             QUESTIONNAIRE("questionnaire"),
             WEIGHT("weight"),
-            SCORE("score"),
-            WEIGHTED_SCORE("weightedScore"),
+            SCORE("missedScore"),
+            WEIGHTED_SCORE("gainedScore"),
             CONFIDENCE("confidence"),
             EVIDENCE_COUNT("evidenceCount");
 
@@ -89,8 +89,8 @@ public interface GetAttributeScoreDetailUseCase {
         public record Answer(Integer index,
                              String title,
                              Boolean isNotApplicable,
-                             Double score,
-                             Double weightedScore,
+                             Double missedScore,
+                             Double gainedScore,
                              Integer confidenceLevel) {
         }
     }

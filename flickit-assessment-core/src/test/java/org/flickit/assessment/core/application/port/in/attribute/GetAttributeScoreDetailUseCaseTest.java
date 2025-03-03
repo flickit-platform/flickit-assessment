@@ -97,8 +97,8 @@ class GetAttributeScoreDetailUseCaseTest {
     void testGetAttributeScoreDetailUseCaseParam_SortItemTitlesShouldNotBeChanged() {
         assertEquals("questionnaire", GetAttributeScoreDetailUseCase.Param.Sort.QUESTIONNAIRE.getTitle());
         assertEquals("weight", GetAttributeScoreDetailUseCase.Param.Sort.WEIGHT.getTitle());
-        assertEquals("score", GetAttributeScoreDetailUseCase.Param.Sort.SCORE.getTitle());
-        assertEquals("weightedScore", GetAttributeScoreDetailUseCase.Param.Sort.WEIGHTED_SCORE.getTitle());
+        assertEquals("missedScore", GetAttributeScoreDetailUseCase.Param.Sort.SCORE.getTitle());
+        assertEquals("gainedScore", GetAttributeScoreDetailUseCase.Param.Sort.WEIGHTED_SCORE.getTitle());
         assertEquals("confidence", GetAttributeScoreDetailUseCase.Param.Sort.CONFIDENCE.getTitle());
         assertEquals("evidenceCount", GetAttributeScoreDetailUseCase.Param.Sort.EVIDENCE_COUNT.getTitle());
     }
