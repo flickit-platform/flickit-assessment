@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
 import org.flickit.assessment.core.application.port.in.evidence.GetCommentListUseCase;
-import org.flickit.assessment.core.application.port.out.assessmentuserrole.LoadUserRoleForAssessmentPort;
 import org.flickit.assessment.core.application.port.out.evidence.LoadEvidencesPort;
 import org.flickit.assessment.core.application.port.out.minio.CreateFileDownloadLinkPort;
 import org.springframework.stereotype.Service;
@@ -15,8 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
-import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_COMMENT_LIST;
+import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
@@ -29,7 +28,6 @@ public class GetCommentListService implements GetCommentListUseCase {
     private final LoadEvidencesPort loadEvidencesPort;
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final CreateFileDownloadLinkPort createFileDownloadLinkPort;
-    private final LoadUserRoleForAssessmentPort loadUserRoleForAssessmentPort;
 
     @Override
     public PaginatedResponse<CommentListItem> getCommentList(Param param) {
@@ -52,13 +50,10 @@ public class GetCommentListService implements GetCommentListUseCase {
     }
 
     private List<CommentListItem> enrichEvidenceItems(List<LoadEvidencesPort.EvidenceListItem> items, Param param) {
-        var role = loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId())
-            .orElseThrow(() -> new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED));
-
-        return items.stream().map(e -> {
+        return items.stream()
+            .map(e -> {
             var isCreator = Objects.equals(e.createdBy().id(), param.getCurrentUserId());
-            var resolvable = AssessmentUserRole.MANAGER.equals(role) || AssessmentUserRole.ASSESSOR.equals(role) ||
-                (AssessmentUserRole.ASSOCIATE.equals(role) && isCreator);
+                var resolvable = isResolvable(param.getAssessmentId(), e.createdBy().id(), param.getCurrentUserId());
 
             return new CommentListItem(
                 e.id(),
@@ -70,6 +65,12 @@ public class GetCommentListService implements GetCommentListUseCase {
                 isCreator,
                 resolvable);
         }).toList();
+    }
+
+    private boolean isResolvable(UUID assessmentId, UUID commenterId, UUID currentUserId) {
+        return commenterId.equals(currentUserId)
+            ? assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, RESOLVE_OWN_COMMENT)
+            : assessmentAccessChecker.isAuthorized(assessmentId, currentUserId, RESOLVE_COMMENT);
     }
 
     private User addPictureLinkToUser(LoadEvidencesPort.User user) {
