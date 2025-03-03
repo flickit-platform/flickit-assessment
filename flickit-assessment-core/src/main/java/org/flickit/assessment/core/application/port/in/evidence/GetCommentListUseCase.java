@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -18,9 +17,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetCommentListUseCase {
 
-    /**
-     * @throws ResourceNotFoundException if no assessment found by the given assessmentId
-     */
     PaginatedResponse<CommentListItem> getCommentList(Param param);
 
     @Value
