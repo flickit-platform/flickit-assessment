@@ -52,19 +52,19 @@ public class GetCommentListService implements GetCommentListUseCase {
     private List<CommentListItem> enrichEvidenceItems(List<LoadEvidencesPort.EvidenceListItem> items, Param param) {
         return items.stream()
             .map(e -> {
-            var isCreator = Objects.equals(e.createdBy().id(), param.getCurrentUserId());
+                var isCreator = Objects.equals(e.createdBy().id(), param.getCurrentUserId());
                 var resolvable = isResolvable(param.getAssessmentId(), e.createdBy().id(), param.getCurrentUserId());
 
-            return new CommentListItem(
-                e.id(),
-                e.description(),
-                e.lastModificationTime(),
-                e.attachmentsCount(),
-                addPictureLinkToUser(e.createdBy()),
-                isCreator,
-                isCreator,
-                resolvable);
-        }).toList();
+                return new CommentListItem(
+                    e.id(),
+                    e.description(),
+                    e.lastModificationTime(),
+                    e.attachmentsCount(),
+                    addPictureLinkToUser(e.createdBy()),
+                    isCreator,
+                    isCreator,
+                    resolvable);
+            }).toList();
     }
 
     private boolean isResolvable(UUID assessmentId, UUID commenterId, UUID currentUserId) {
