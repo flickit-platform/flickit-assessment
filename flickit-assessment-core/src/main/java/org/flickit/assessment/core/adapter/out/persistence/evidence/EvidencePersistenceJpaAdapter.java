@@ -61,16 +61,26 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
-        return loadNotDeletedEvidencesWorker(assessmentId, questionId, true, page, size);
+    public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId,
+                                                                       UUID assessmentId,
+                                                                       int page,
+                                                                       int size) {
+        return loadNotDeletedEvidences(assessmentId, questionId, true, page, size);
     }
 
     @Override
-    public PaginatedResponse<EvidenceListItem> loadNotDeletedComments(Long questionId, UUID assessmentId, int page, int size) {
-        return loadNotDeletedEvidencesWorker(assessmentId, questionId, false, page, size);
+    public PaginatedResponse<EvidenceListItem> loadNotDeletedComments(Long questionId,
+                                                                      UUID assessmentId,
+                                                                      int page,
+                                                                      int size) {
+        return loadNotDeletedEvidences(assessmentId, questionId, false, page, size);
     }
 
-    private PaginatedResponse<EvidenceListItem> loadNotDeletedEvidencesWorker(UUID assessmentId, Long questionId, boolean hasType, int page, int size) {
+    private PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(UUID assessmentId,
+                                                                        Long questionId,
+                                                                        boolean hasType,
+                                                                        int page,
+                                                                        int size) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
 
