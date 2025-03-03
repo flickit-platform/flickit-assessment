@@ -47,6 +47,7 @@ public enum AssessmentPermission {
     MANAGE_ADD_ON("manageAddOn"),
     MANAGE_KIT_CUSTOM("manageKitCustom"),
     RESOLVE_COMMENT("resolveComment"),
+    RESOLVE_OWN_COMMENT("resolveOwnComment"),
     VIEW_DASHBOARD("viewDashboard"),
     APPROVE_ATTRIBUTE_INSIGHT("approveAttributeInsight"),
     GRANT_ACCESS_TO_REPORT("grantAccessToReport"),

@@ -97,6 +97,7 @@ public enum AssessmentUserRole {
             MANAGE_KIT_CUSTOM,
             MANAGE_ADVICE_ITEM,
             RESOLVE_COMMENT,
+            RESOLVE_OWN_COMMENT,
             VIEW_DASHBOARD,
             APPROVE_ATTRIBUTE_INSIGHT,
             APPROVE_SUBJECT_INSIGHT,
@@ -134,7 +135,7 @@ public enum AssessmentUserRole {
             VIEW_QUESTIONNAIRE_QUESTIONS,
             ANSWER_QUESTION,
             VIEW_EVIDENCE,
-            RESOLVE_COMMENT)),
+            RESOLVE_OWN_COMMENT)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
             VIEW_ASSESSMENT,
             GRANT_ACCESS_TO_REPORT,
