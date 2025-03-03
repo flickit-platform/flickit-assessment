@@ -53,7 +53,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
     private List<EvidenceListItem> enrichEvidenceItems(List<LoadEvidencesPort.EvidenceListItem> items, Param param) {
         return items.stream()
             .map(e -> {
-                var isCommentOwner = Objects.equals(e.createdBy().id(), param.getCurrentUserId());
+                var isCreator = Objects.equals(e.createdBy().id(), param.getCurrentUserId());
                 return new EvidenceListItem(
                     e.id(),
                     e.description(),
@@ -61,8 +61,8 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
                     e.lastModificationTime(),
                     e.attachmentsCount(),
                     addPictureLinkToUser(e.createdBy()),
-                    isCommentOwner,
-                    isCommentOwner);
+                    isCreator,
+                    isCreator);
             })
             .toList();
     }

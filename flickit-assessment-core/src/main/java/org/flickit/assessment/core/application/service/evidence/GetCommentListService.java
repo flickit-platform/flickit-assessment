@@ -56,9 +56,9 @@ public class GetCommentListService implements GetCommentListUseCase {
             .orElseThrow(() -> new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED));
 
         return items.stream().map(e -> {
-            var isCommentOwner = Objects.equals(e.createdBy().id(), param.getCurrentUserId());
+            var isCreator = Objects.equals(e.createdBy().id(), param.getCurrentUserId());
             var resolvable = AssessmentUserRole.MANAGER.equals(role) || AssessmentUserRole.ASSESSOR.equals(role) ||
-                (AssessmentUserRole.ASSOCIATE.equals(role) && isCommentOwner);
+                (AssessmentUserRole.ASSOCIATE.equals(role) && isCreator);
 
             return new CommentListItem(
                 e.id(),
@@ -66,8 +66,8 @@ public class GetCommentListService implements GetCommentListUseCase {
                 e.lastModificationTime(),
                 e.attachmentsCount(),
                 addPictureLinkToUser(e.createdBy()),
-                isCommentOwner,
-                isCommentOwner,
+                isCreator,
+                isCreator,
                 resolvable);
         }).toList();
     }
