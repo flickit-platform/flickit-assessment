@@ -72,7 +72,6 @@ class GetEvidenceListServiceTest {
         assertEquals(evidence1Q1.attachmentsCount(), result.getItems().getFirst().attachmentsCount());
         assertTrue(result.getItems().getFirst().editable());
         assertTrue(result.getItems().getFirst().deletable());
-        assertFalse(result.getItems().getFirst().resolvable());
         assertEquals(evidence2Q1.id(), result.getItems().get(1).id());
         assertEquals(evidence2Q1.type(), result.getItems().get(1).type());
         assertEquals(evidence2Q1.createdBy().id(), result.getItems().get(1).createdBy().id());
@@ -81,7 +80,6 @@ class GetEvidenceListServiceTest {
         assertEquals(evidence2Q1.attachmentsCount(), result.getItems().get(1).attachmentsCount());
         assertFalse(result.getItems().get(1).editable());
         assertFalse(result.getItems().get(1).deletable());
-        assertFalse(result.getItems().get(1).resolvable());
         verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(), any(Duration.class));
     }
 

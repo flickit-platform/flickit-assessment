@@ -62,8 +62,7 @@ public class GetEvidenceListService implements GetEvidenceListUseCase {
                     e.attachmentsCount(),
                     addPictureLinkToUser(e.createdBy()),
                     isCommentOwner,
-                    isCommentOwner,
-                    false);
+                    isCommentOwner);
             })
             .toList();
     }
