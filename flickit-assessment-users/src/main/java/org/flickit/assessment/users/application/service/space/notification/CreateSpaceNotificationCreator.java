@@ -39,7 +39,7 @@ public class CreateSpaceNotificationCreator implements NotificationCreator<Creat
         }
 
         var userModel = new CreatePremiumSpaceNotificationPayload.UserModel(user.getDisplayName(), user.getEmail());
-        var spaceModel = new CreatePremiumSpaceNotificationPayload.SpaceModel(cmd.space().getTitle(), cmd.space().getCreationTime());
+        var spaceModel = new CreatePremiumSpaceNotificationPayload.SpaceModel(cmd.space().getTitle(), cmd.space().getCreationTime().toString());
         var title = MessageBundle.message(NOTIFICATION_TITLE_CREATE_PREMIUM_SPACE);
         var payload = new CreatePremiumSpaceNotificationPayload(userModel, spaceModel);
 
