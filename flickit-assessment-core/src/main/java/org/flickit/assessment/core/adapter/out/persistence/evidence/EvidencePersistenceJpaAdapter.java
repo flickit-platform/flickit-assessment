@@ -61,13 +61,32 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
-    public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size) {
+    public PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId,
+                                                                       UUID assessmentId,
+                                                                       int page,
+                                                                       int size) {
+        return loadNotDeletedEvidences(assessmentId, questionId, true, page, size);
+    }
+
+    @Override
+    public PaginatedResponse<EvidenceListItem> loadNotDeletedComments(Long questionId,
+                                                                      UUID assessmentId,
+                                                                      int page,
+                                                                      int size) {
+        return loadNotDeletedEvidences(assessmentId, questionId, false, page, size);
+    }
+
+    private PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(UUID assessmentId,
+                                                                        Long questionId,
+                                                                        boolean hasType,
+                                                                        int page,
+                                                                        int size) {
         if (!assessmentRepository.existsByIdAndDeletedFalse(assessmentId))
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
 
         var order = EvidenceJpaEntity.Fields.lastModificationTime;
         var sort = Sort.Direction.DESC;
-        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, PageRequest.of(page, size, sort, order));
+        var pageResult = repository.findByQuestionIdAndAssessmentId(questionId, assessmentId, hasType, PageRequest.of(page, size, sort, order));
         var userIds = pageResult.getContent().stream()
             .map(EvidenceWithAttachmentsCountView::getCreatedBy)
             .toList();

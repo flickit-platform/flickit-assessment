@@ -54,6 +54,7 @@ class AssessmentPermissionTest {
             Map.entry(MANAGE_ADD_ON, "manageAddOn"),
             Map.entry(MANAGE_KIT_CUSTOM, "manageKitCustom"),
             Map.entry(RESOLVE_COMMENT, "resolveComment"),
+            Map.entry(RESOLVE_OWN_COMMENT, "resolveOwnComment"),
             Map.entry(VIEW_DASHBOARD, "viewDashboard"),
             Map.entry(APPROVE_ATTRIBUTE_INSIGHT, "approveAttributeInsight"),
             Map.entry(GRANT_ACCESS_TO_REPORT, "grantAccessToReport"),
@@ -67,12 +68,13 @@ class AssessmentPermissionTest {
             Map.entry(VIEW_ASSESSMENT_MATURITY_LEVELS, "viewAssessmentMaturityLevels"),
             Map.entry(APPROVE_ANSWER, "approveAnswer"),
             Map.entry(APPROVE_ALL_ASSESSMENT_INSIGHTS, "approveAllAssessmentInsights"),
-            Map.entry(GENERATE_ALL_ASSESSMENT_INSIGHTS, "generateAllAssessmentInsights"));
+            Map.entry(GENERATE_ALL_ASSESSMENT_INSIGHTS, "generateAllAssessmentInsights"),
+            Map.entry(VIEW_COMMENT_LIST, "viewCommentList"));
 
         permissionCodesMap.forEach((key, value) -> assertEquals(value, key.getCode()));
         Arrays.stream(AssessmentPermission.values()).forEach(e ->
             assertTrue(permissionCodesMap.containsValue(e.getCode()))
         );
-        assertEquals(54, AssessmentPermission.values().length);
+        assertEquals(56, AssessmentPermission.values().length);
     }
 }

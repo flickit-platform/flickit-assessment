@@ -9,6 +9,8 @@ public interface LoadEvidencesPort {
 
     PaginatedResponse<EvidenceListItem> loadNotDeletedEvidences(Long questionId, UUID assessmentId, int page, int size);
 
+    PaginatedResponse<EvidenceListItem> loadNotDeletedComments(Long questionId, UUID assessmentId, int page, int size);
+
     record EvidenceListItem(UUID id,
                             String description,
                             String type,

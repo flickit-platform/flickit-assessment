@@ -47,6 +47,7 @@ public enum AssessmentPermission {
     MANAGE_ADD_ON("manageAddOn"),
     MANAGE_KIT_CUSTOM("manageKitCustom"),
     RESOLVE_COMMENT("resolveComment"),
+    RESOLVE_OWN_COMMENT("resolveOwnComment"),
     VIEW_DASHBOARD("viewDashboard"),
     APPROVE_ATTRIBUTE_INSIGHT("approveAttributeInsight"),
     GRANT_ACCESS_TO_REPORT("grantAccessToReport"),
@@ -60,7 +61,8 @@ public enum AssessmentPermission {
     VIEW_ASSESSMENT_MATURITY_LEVELS("viewAssessmentMaturityLevels"),
     APPROVE_ANSWER("approveAnswer"),
     APPROVE_ALL_ASSESSMENT_INSIGHTS("approveAllAssessmentInsights"),
-    GENERATE_ALL_ASSESSMENT_INSIGHTS("generateAllAssessmentInsights");
+    GENERATE_ALL_ASSESSMENT_INSIGHTS("generateAllAssessmentInsights"),
+    VIEW_COMMENT_LIST("viewCommentList");
 
     private final String code;
 }
