@@ -46,6 +46,32 @@ public interface CreateSpaceUseCase {
         }
     }
 
-    record Result(long id, CreatePremiumSpaceNotificationCmd notificationCmd) implements HasNotificationCmd {
+    /**
+     * Represents the result of creating a space.
+     */
+    sealed interface Result permits CreateBasic, CreatePremium {
+
+        /**
+         * @return the ID of the created space.
+         */
+        long id();
+    }
+
+    /**
+     * Represents the case where the created space is of type basic.
+     *
+     * @param id the ID of the created space.
+     */
+    record CreateBasic(long id) implements Result {
+    }
+
+    /**
+     * Represents the case where the created space is of type premium.
+     *
+     * @param id              the ID of the created space.
+     * @param notificationCmd the command that may trigger a notification
+     */
+    record CreatePremium(long id,
+                         CreatePremiumSpaceNotificationCmd notificationCmd) implements Result, HasNotificationCmd {
     }
 }

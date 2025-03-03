@@ -6,10 +6,8 @@ import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.notification.NotificationCreator;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope;
 import org.flickit.assessment.common.application.domain.notification.NotificationEnvelope.User;
-import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.domain.notification.CreatePremiumSpaceNotificationCmd;
 import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +25,6 @@ public class CreateSpaceNotificationCreator implements NotificationCreator<Creat
 
     @Override
     public List<NotificationEnvelope> create(CreatePremiumSpaceNotificationCmd cmd) {
-        if(SpaceType.BASIC.getCode().equals(cmd.space().getType().getCode()))
-            return List.of();
-
         var user = loadUserPort.loadUser(cmd.space().getCreatedBy());
         var adminId = loadUserPort.loadUserIdByEmail(cmd.adminEmail());
 
