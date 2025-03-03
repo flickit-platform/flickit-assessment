@@ -19,7 +19,7 @@ import static org.flickit.assessment.users.common.MessageKey.NOTIFICATION_TITLE_
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class CreateSpaceNotificationCreator implements NotificationCreator<CreatePremiumSpaceNotificationCmd> {
+public class CreatePremiumSpaceNotificationCreator implements NotificationCreator<CreatePremiumSpaceNotificationCmd> {
 
     private final LoadUserPort loadUserPort;
 
