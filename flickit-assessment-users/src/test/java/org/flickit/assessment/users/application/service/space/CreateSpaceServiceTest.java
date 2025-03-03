@@ -9,7 +9,10 @@ import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
@@ -58,9 +61,7 @@ class CreateSpaceServiceTest {
         assertEquals(param.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());
 
-        assertEquals(SpaceType.BASIC.getCode(), result.notificationCmd().space().getType().getCode());
-
-        verify(appSpecProperties).getEmail();
+        assertInstanceOf(CreateSpaceUseCase.CreateBasic.class, result);
     }
 
     @Test
@@ -86,10 +87,14 @@ class CreateSpaceServiceTest {
         assertEquals(param.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());
 
-        assertEquals(appSpecProperties.getEmail().getAdminEmail(), result.notificationCmd().adminEmail());
-        assertEquals(SpaceType.PREMIUM.getCode(), result.notificationCmd().space().getType().getCode());
-        assertNotNull(result.notificationCmd().space().getCreationTime());
-        assertEquals(param.getTitle(), result.notificationCmd().space().getTitle());
+        assertInstanceOf(CreateSpaceUseCase.CreatePremium.class, result);
+
+        var premiumResult = (CreateSpaceUseCase.CreatePremium) result;
+
+        assertEquals(appSpecProperties.getEmail().getAdminEmail(), premiumResult.notificationCmd().adminEmail());
+        assertEquals(SpaceType.PREMIUM.getCode(), premiumResult.notificationCmd().space().getType().getCode());
+        assertNotNull(premiumResult.notificationCmd().space().getCreationTime());
+        assertEquals(param.getTitle(), premiumResult.notificationCmd().space().getTitle());
     }
 
     AppSpecProperties appSpecProperties() {
