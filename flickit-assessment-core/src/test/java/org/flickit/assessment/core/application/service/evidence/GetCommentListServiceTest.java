@@ -52,7 +52,37 @@ class GetCommentListServiceTest {
     private final Param param = createParam(Param.ParamBuilder::build);
 
     @Test
-    void testGetCommentList_ResultsFound_2ItemsReturned() {
+    void testGetCommentList_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
+            .thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getCommentList(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
+    void testGetCommentList_whenThereAreNoCommentsForQuestion_thenReturnsEmptyPage() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
+            .thenReturn(true);
+        when(loadEvidencesPort.loadNotDeletedComments(param.getQuestionId(), param.getAssessmentId(), param.getPage(), param.getSize()))
+            .thenReturn(new PaginatedResponse<>(
+                new ArrayList<>(),
+                0,
+                0,
+                "lastModificationTime",
+                "DESC",
+                0));
+        when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId()))
+            .thenReturn(Optional.of(AssessmentUserRole.MANAGER));
+
+        var result = service.getCommentList(param);
+
+        assertEquals(0, result.getItems().size());
+        verifyNoInteractions(createFileDownloadLinkPort);
+    }
+
+    @Test
+    void testGetCommentList_whenThereAreTwoCommentsForQuestion_thenReturnsPaginatedResponseWithTwoComments() {
         var comment1Q1 = createComment(param.getCurrentUserId());
         var comment2Q1 = createComment(UUID.randomUUID());
 
@@ -90,36 +120,6 @@ class GetCommentListServiceTest {
         assertFalse(result.getItems().get(1).deletable());
         assertTrue(result.getItems().get(1).resolvable());
         verify(createFileDownloadLinkPort, times(2)).createDownloadLink(anyString(), any(Duration.class));
-    }
-
-    @Test
-    void testGetCommentList_ResultsFound_NoItemReturned() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
-            .thenReturn(true);
-        when(loadEvidencesPort.loadNotDeletedComments(param.getQuestionId(), param.getAssessmentId(), param.getPage(), param.getSize()))
-            .thenReturn(new PaginatedResponse<>(
-                new ArrayList<>(),
-                0,
-                0,
-                "lastModificationTime",
-                "DESC",
-                0));
-        when(loadUserRoleForAssessmentPort.load(param.getAssessmentId(), param.getCurrentUserId()))
-            .thenReturn(Optional.of(AssessmentUserRole.MANAGER));
-
-        var result = service.getCommentList(param);
-
-        assertEquals(0, result.getItems().size());
-        verifyNoInteractions(createFileDownloadLinkPort);
-    }
-
-    @Test
-    void testGetEvidenceList_InvalidUser_ThrowsException() {
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_EVIDENCE_LIST))
-            .thenReturn(false);
-
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.getCommentList(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
     }
 
     private EvidenceListItem createComment(UUID createdBy) {
