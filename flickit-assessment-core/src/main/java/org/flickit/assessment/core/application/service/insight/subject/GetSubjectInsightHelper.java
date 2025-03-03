@@ -39,7 +39,7 @@ public class GetSubjectInsightHelper {
             .orElse(new Insight(null, null, editable, false));
     }
 
-    public Map<Long, Insight> getSubjectsInsight(AssessmentResult assessmentResult, UUID currentUserId) {
+    public Map<Long, Insight> getSubjectInsights(AssessmentResult assessmentResult, UUID currentUserId) {
         var editable = assessmentAccessChecker.isAuthorized(assessmentResult.getAssessment().getId(), currentUserId, CREATE_SUBJECT_INSIGHT);
         var subjectInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
 
