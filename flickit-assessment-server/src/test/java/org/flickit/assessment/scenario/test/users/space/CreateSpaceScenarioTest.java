@@ -7,7 +7,7 @@ import org.flickit.assessment.scenario.test.AbstractScenarioTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.ALREADY_EXISTS;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
 import static org.hamcrest.Matchers.notNullValue;
@@ -59,10 +59,10 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
         // Second invoke with the same request
         var response2 = spaceHelper.create(context, request);
         var error = response2.then()
-            .statusCode(400)
+            .statusCode(409)
             .extract().as(ErrorResponseDto.class);
 
-        assertEquals(INVALID_INPUT, error.code());
+        assertEquals(ALREADY_EXISTS, error.code());
         assertNotNull(error.message());
 
         int countAfter = jpaTemplate.count(SpaceJpaEntity.class);
