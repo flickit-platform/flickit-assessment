@@ -1,12 +1,12 @@
 package org.flickit.assessment.core.application.service.evidence;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.evidence.ResolveAssessmentCommentsUseCase;
 import org.flickit.assessment.core.application.port.out.evidence.ResolveCommentPort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
