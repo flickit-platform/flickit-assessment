@@ -185,4 +185,18 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     int countQuestionUnresolvedComments(@Param("assessmentId") UUID assessmentId,
                                         @Param("questionId") long questionId);
+
+    @Modifying
+    @Query("""
+            UPDATE EvidenceJpaEntity e
+            SET e.resolved = true,
+                e.lastModifiedBy = :lastModifiedBy,
+                e.lastModificationTime = :lastModificationTime
+            WHERE e.assessmentId = :assessmentId
+                    AND e.deleted = false
+                    AND e.type IS NULL
+        """)
+    void resolveAllAssessmentComments(@Param("assessmentId") UUID assessmentId,
+                                      @Param("lastModifiedBy") UUID lastModifiedBy,
+                                      @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }
