@@ -7,8 +7,8 @@ import org.flickit.assessment.core.application.port.in.evidence.ResolveAssessmen
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
-import retrofit2.http.PUT;
 
 import java.util.UUID;
 
@@ -19,7 +19,7 @@ public class ResolveAllCommentsRestController {
     private final ResolveAssessmentCommentsUseCase useCase;
     private final UserContext userContext;
 
-    @PUT("/assessments/{assessmentId}/resolve-comments")
+    @PutMapping("/assessments/{assessmentId}/resolve-comments")
     public ResponseEntity<Void> resolveAssessmentComments(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
 
