@@ -43,8 +43,8 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
         return new PaginatedResponse<>(items,
             result.getPage(),
             result.getSize(),
-            result.getOrder(),
             result.getSort(),
+            result.getOrder(),
             result.getTotal());
     }
 
