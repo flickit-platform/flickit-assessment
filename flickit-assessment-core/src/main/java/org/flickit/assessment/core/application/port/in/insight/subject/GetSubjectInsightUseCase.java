@@ -15,7 +15,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_SUBJECT_INS
 
 public interface GetSubjectInsightUseCase {
 
-    Insight getSubjectInsight(Param param);
+    Result getSubjectInsight(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
@@ -37,5 +37,11 @@ public interface GetSubjectInsightUseCase {
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
+    }
+
+    record Result(Insight.InsightDetail defaultInsight,
+                  Insight.InsightDetail assessorInsight,
+                  boolean editable,
+                  Boolean approved) {
     }
 }

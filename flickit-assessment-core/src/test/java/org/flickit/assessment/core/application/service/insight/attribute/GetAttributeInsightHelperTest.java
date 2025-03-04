@@ -54,6 +54,7 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertNull(result.approved());
+        assertNull(result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -69,6 +70,7 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertFalse(result.editable());
         assertNull(result.approved());
+        assertNull(result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -92,6 +94,7 @@ class GetAttributeInsightHelperTest {
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -114,6 +117,7 @@ class GetAttributeInsightHelperTest {
         assertTrue(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -136,6 +140,7 @@ class GetAttributeInsightHelperTest {
         assertFalse(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -158,6 +163,7 @@ class GetAttributeInsightHelperTest {
         assertFalse(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -177,6 +183,7 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -196,6 +203,7 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -220,6 +228,7 @@ class GetAttributeInsightHelperTest {
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -244,6 +253,7 @@ class GetAttributeInsightHelperTest {
         assertTrue(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -268,6 +278,7 @@ class GetAttributeInsightHelperTest {
         assertFalse(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -292,6 +303,7 @@ class GetAttributeInsightHelperTest {
         assertFalse(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -313,6 +325,7 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -334,6 +347,7 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
+        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 }

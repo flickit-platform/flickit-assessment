@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
+import org.flickit.assessment.core.application.domain.insight.Insight;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
@@ -39,9 +39,9 @@ public interface GetAttributeInsightUseCase {
         }
     }
 
-    record Result(Insight aiInsight, Insight assessorInsight, boolean editable, Boolean approved) {
-
-        public record Insight(String insight, LocalDateTime creationTime, boolean isValid) {
-        }
+    record Result(Insight.InsightDetail aiInsight,
+                  Insight.InsightDetail assessorInsight,
+                  boolean editable,
+                  Boolean approved) {
     }
 }

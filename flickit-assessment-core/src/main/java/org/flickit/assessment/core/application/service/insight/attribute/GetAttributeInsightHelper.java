@@ -35,7 +35,7 @@ public class GetAttributeInsightHelper {
             .map(insight -> isAiInsightValid(insight)
                 ? getAiInsight(assessmentResult, insight, editable)
                 : getDefaultInsight(assessmentResult, insight, editable))
-            .orElse(new Insight(null, null, editable, null));
+            .orElse(new Insight(null, null, editable, null, null));
     }
 
     public Map<Long, Insight> getAttributeInsights(AssessmentResult assessmentResult, UUID currentUserId) {
@@ -57,14 +57,14 @@ public class GetAttributeInsightHelper {
         var aiInsight = new InsightDetail(insight.getAiInsight(),
             insight.getAiInsightTime(),
             isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()));
-        return new Insight(aiInsight, null, editable, insight.isApproved());
+        return new Insight(aiInsight, null, editable, insight.isApproved(), insight.getLastModificationTime());
     }
 
     private Insight getDefaultInsight(AssessmentResult assessmentResult, AttributeInsight insight, boolean editable) {
         var assessorInsight = new InsightDetail(insight.getAssessorInsight(),
             insight.getAssessorInsightTime(),
             isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()));
-        return new Insight(null, assessorInsight, editable, insight.isApproved());
+        return new Insight(null, assessorInsight, editable, insight.isApproved(), insight.getLastModificationTime());
     }
 
     private boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightLastModificationTime) {

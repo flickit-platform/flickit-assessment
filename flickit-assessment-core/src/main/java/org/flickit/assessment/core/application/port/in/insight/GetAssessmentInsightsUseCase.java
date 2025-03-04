@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
-import org.flickit.assessment.core.application.domain.insight.Insight;
+import org.flickit.assessment.core.application.domain.insight.Insight.InsightDetail;
 
 import java.util.List;
 import java.util.UUID;
@@ -47,7 +47,13 @@ public interface GetAssessmentInsightsUseCase {
                       Double confidenceValue,
                       boolean isCalculateValid,
                       boolean isConfidenceValid,
-                      Insight insight) {
+                      InsightModel insight) {
+    }
+
+    record InsightModel(InsightDetail defaultInsight,
+                        InsightDetail assessorInsight,
+                        boolean editable,
+                        Boolean approved) {
     }
 
     record Subject(Long id,
@@ -57,18 +63,18 @@ public interface GetAssessmentInsightsUseCase {
                    Integer weight,
                    AssessmentListItem.MaturityLevel maturityLevel,
                    Double confidenceValue,
-                   Insight insight,
-                   List<Attribute> attributes) {
+                   InsightModel insight,
+                   List<AttributeModel> attributes) {
     }
 
-    record Attribute(Long id,
-                     String title,
-                     String description,
-                     Integer index,
-                     Integer weight,
-                     AssessmentListItem.MaturityLevel maturityLevel,
-                     Double confidenceValue,
-                     Insight insight) {
+    record AttributeModel(Long id,
+                          String title,
+                          String description,
+                          Integer index,
+                          Integer weight,
+                          AssessmentListItem.MaturityLevel maturityLevel,
+                          Double confidenceValue,
+                          InsightModel insight) {
     }
 
     record Issues(int notGenerated,

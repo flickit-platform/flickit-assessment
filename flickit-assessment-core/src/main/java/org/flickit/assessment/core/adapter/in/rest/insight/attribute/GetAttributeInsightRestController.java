@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.in.rest.insight.attribute;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
 import org.flickit.assessment.core.application.port.in.insight.attribute.GetAttributeInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.attribute.GetAttributeInsightUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class GetAttributeInsightRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/attributes/{attributeId}/insight")
-    public ResponseEntity<GetAttributeInsightUseCase.Result> getAttributeInsight(
+    public ResponseEntity<Result> getAttributeInsight(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId) {
         UUID currentUserId = userContext.getUser().id();

@@ -30,7 +30,7 @@ public class GetAssessmentInsightHelper {
             .map(insight -> (insight.getInsightBy() == null)
                 ? getDefaultInsight(assessmentResult.getLastCalculationTime(), insight, editable)
                 : getAssessorInsight(assessmentResult.getLastCalculationTime(), insight, editable))
-            .orElseGet(() -> new Insight(null, null, editable, false));
+            .orElseGet(() -> new Insight(null, null, editable, false, null));
     }
 
     private Insight getDefaultInsight(LocalDateTime lastCalculationTime, AssessmentInsight insight, boolean editable) {
@@ -39,7 +39,8 @@ public class GetAssessmentInsightHelper {
             isValid(lastCalculationTime, insight.getLastModificationTime())),
             null,
             editable,
-            insight.isApproved());
+            insight.isApproved(),
+            insight.getLastModificationTime());
     }
 
     private Insight getAssessorInsight(LocalDateTime lastCalculationTime, AssessmentInsight insight, boolean editable) {
@@ -48,7 +49,8 @@ public class GetAssessmentInsightHelper {
                 insight.getInsightTime(),
                 isValid(lastCalculationTime, insight.getLastModificationTime())),
             editable,
-            insight.isApproved());
+            insight.isApproved(),
+            insight.getLastModificationTime());
     }
 
     private boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightLastModificationTime) {

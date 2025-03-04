@@ -75,7 +75,11 @@ class GetAssessmentInsightServiceTest {
     void testGetAssessmentInsight_whenHelperReturnsInsight_thenReturnsSameInsight() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        Insight insight = new Insight(null, new Insight.InsightDetail("insight", LocalDateTime.now(), true), true, true);
+        var insight = new Insight(null,
+            new Insight.InsightDetail("insight", LocalDateTime.now(), true),
+            true,
+            true,
+            LocalDateTime.now());
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -86,7 +90,10 @@ class GetAssessmentInsightServiceTest {
 
         var result = service.getAssessmentInsight(param);
 
-        assertEquals(insight, result);
+        assertEquals(insight.defaultInsight(), result.defaultInsight());
+        assertEquals(insight.assessorInsight(), result.assessorInsight());
+        assertEquals(insight.editable(), result.editable());
+        assertEquals(insight.approved(), result.approved());
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {

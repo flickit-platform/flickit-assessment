@@ -26,7 +26,7 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
     private final GetSubjectInsightHelper getSubjectInsightHelper;
 
     @Override
-    public Insight getSubjectInsight(Param param) {
+    public Result getSubjectInsight(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -34,6 +34,14 @@ public class GetSubjectInsightService implements GetSubjectInsightUseCase {
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
-        return getSubjectInsightHelper.getSubjectInsight(assessmentResult, param.getSubjectId(), param.getCurrentUserId());
+        var insight = getSubjectInsightHelper.getSubjectInsight(assessmentResult, param.getSubjectId(), param.getCurrentUserId());
+        return toResult(insight);
+    }
+
+    private Result toResult(Insight insight) {
+        return new Result(insight.defaultInsight(),
+            insight.assessorInsight(),
+            insight.editable(),
+            insight.approved());
     }
 }

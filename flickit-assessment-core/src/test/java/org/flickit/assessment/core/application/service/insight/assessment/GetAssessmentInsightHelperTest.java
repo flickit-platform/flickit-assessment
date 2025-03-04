@@ -45,6 +45,7 @@ class GetAssessmentInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
+        assertNull(result.lastModificationTime());
     }
 
     @Test
@@ -62,6 +63,7 @@ class GetAssessmentInsightHelperTest {
         assertEquals(assessmentInsight.getInsightTime(), result.assessorInsight().creationTime());
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
+        assertEquals(assessmentInsight.getLastModificationTime(), result.lastModificationTime());
     }
 
     @Test
@@ -80,6 +82,7 @@ class GetAssessmentInsightHelperTest {
         assertNull(result.defaultInsight());
         assertFalse(result.editable());
         assertFalse(result.approved());
+        assertEquals(assessmentInsight.getLastModificationTime(), result.lastModificationTime());
     }
 
     @Test
@@ -98,6 +101,7 @@ class GetAssessmentInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
+        assertEquals(assessmentInsight.getLastModificationTime(), result.lastModificationTime());
     }
 
     @Test
@@ -119,5 +123,6 @@ class GetAssessmentInsightHelperTest {
         assertNull(result.assessorInsight());
         assertFalse(result.editable());
         assertTrue(result.approved());
+        assertEquals(assessmentInsight.getLastModificationTime(), result.lastModificationTime());
     }
 }
