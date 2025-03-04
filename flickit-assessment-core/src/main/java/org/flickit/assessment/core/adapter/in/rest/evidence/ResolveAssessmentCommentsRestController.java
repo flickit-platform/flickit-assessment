@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class ResolveAllCommentsRestController {
+public class ResolveAssessmentCommentsRestController {
 
     private final ResolveAssessmentCommentsUseCase useCase;
     private final UserContext userContext;
