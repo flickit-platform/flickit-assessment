@@ -36,7 +36,7 @@ class ResolveAssessmentCommentsServiceTest {
     private final ResolveAssessmentCommentsUseCase.Param param = createParam(ResolveAssessmentCommentsUseCase.Param.ParamBuilder::build);
 
     @Test
-    void testResolveAssessmentComments_WhenCurrentUserDoesNotHaveRequiredPermission_ThenThrowAccessDeniedException() {
+    void testResolveAssessmentComments_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), RESOLVE_ALL_COMMENTS))
             .thenReturn(false);
 
