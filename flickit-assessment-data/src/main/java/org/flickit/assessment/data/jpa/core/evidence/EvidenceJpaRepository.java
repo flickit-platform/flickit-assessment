@@ -195,6 +195,7 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             WHERE e.assessmentId = :assessmentId
                     AND e.deleted = false
                     AND e.type IS NULL
+                    AND (e.resolved IS NULL OR e.resolved = false)
         """)
     void resolveAllAssessmentComments(@Param("assessmentId") UUID assessmentId,
                                       @Param("lastModifiedBy") UUID lastModifiedBy,
