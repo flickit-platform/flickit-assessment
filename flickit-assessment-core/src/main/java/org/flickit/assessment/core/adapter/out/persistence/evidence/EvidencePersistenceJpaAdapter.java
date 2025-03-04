@@ -135,6 +135,11 @@ public class EvidencePersistenceJpaAdapter implements
     }
 
     @Override
+    public void resolveAllComments(UUID assessmentId, UUID lastModifiedBy, LocalDateTime lastModificationTime) {
+        repository.resolveAllAssessmentComments(assessmentId, lastModifiedBy, lastModificationTime);
+    }
+
+    @Override
     public int countAnsweredQuestionsHavingEvidence(UUID assessmentId) {
         return repository.countAnsweredQuestionsHavingEvidence(assessmentId);
     }
