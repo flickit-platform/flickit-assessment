@@ -7,5 +7,5 @@ public interface ResolveCommentPort {
 
     void resolveComment(UUID commentId, UUID lastModifiedBy, LocalDateTime lastModificationTime);
 
-    void resolveAllComments(UUID assessmentId);
+    void resolveAllComments(UUID assessmentId, UUID lastModifiedBy, LocalDateTime lastModificationTime);
 }
