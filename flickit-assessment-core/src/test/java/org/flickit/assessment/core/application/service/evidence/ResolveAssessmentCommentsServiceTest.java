@@ -6,7 +6,6 @@ import org.flickit.assessment.core.application.port.in.evidence.ResolveAssessmen
 import org.flickit.assessment.core.application.port.out.evidence.ResolveCommentPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -51,16 +50,13 @@ class ResolveAssessmentCommentsServiceTest {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), RESOLVE_ALL_COMMENTS))
             .thenReturn(true);
 
-        ArgumentCaptor<UUID> assessmentIdCaptor = ArgumentCaptor.forClass(UUID.class);
-        ArgumentCaptor<UUID> lastModifiedByCaptor = ArgumentCaptor.forClass(UUID.class);
-        ArgumentCaptor<LocalDateTime> lastModificationTimeCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
-
         service.resolveAllComments(param);
 
-        verify(resolveCommentPort).resolveAllComments(assessmentIdCaptor.capture(), lastModifiedByCaptor.capture(), lastModificationTimeCaptor.capture());
-        assertThat(assessmentIdCaptor.getValue()).isEqualTo(param.getAssessmentId());
-        assertThat(lastModifiedByCaptor.getValue()).isEqualTo(param.getCurrentUserId());
-        assertThat(lastModificationTimeCaptor.getValue()).isNotNull();
+        verify(resolveCommentPort).resolveAllComments(
+            eq(param.getAssessmentId()),
+            eq(param.getCurrentUserId()),
+            any(LocalDateTime.class)
+        );
     }
 
     private ResolveAssessmentCommentsUseCase.Param createParam(Consumer<ResolveAssessmentCommentsUseCase.Param.ParamBuilder> changer) {
