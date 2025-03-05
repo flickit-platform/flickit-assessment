@@ -24,21 +24,13 @@ public class GetAttributeInsightService implements GetAttributeInsightUseCase {
     private final GetAttributeInsightHelper getAttributeInsightHelper;
 
     @Override
-    public Result getInsight(Param param) {
+    public Insight getInsight(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_SUBJECT_REPORT))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var insight = getAttributeInsightHelper.getAttributeInsight(assessmentResult, param.getAttributeId(), param.getCurrentUserId());
-        return mapToResult(insight);
-    }
-
-    private Result mapToResult(Insight insight) {
-        return new Result(insight.defaultInsight(),
-            insight.assessorInsight(),
-            insight.editable(),
-            insight.approved());
+        return getAttributeInsightHelper.getAttributeInsight(assessmentResult, param.getAttributeId(), param.getCurrentUserId());
     }
 }

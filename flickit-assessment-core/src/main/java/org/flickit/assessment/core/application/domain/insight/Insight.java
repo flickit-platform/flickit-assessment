@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 public record Insight(InsightDetail defaultInsight,
                       InsightDetail assessorInsight,
                       boolean editable,
-                      Boolean approved,
-                      LocalDateTime lastModificationTime) {
+                      Boolean approved) {
     public record InsightDetail(String insight,
                                 LocalDateTime creationTime,
-                                boolean isValid) {
+                                boolean isValid,
+                                LocalDateTime lastModificationTime) {
     }
 }

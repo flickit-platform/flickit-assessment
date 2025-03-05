@@ -4,18 +4,17 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.insight.Insight;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.core.test.fixture.application.InsightMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -28,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetAssessmentOverallInsightServiceTest {
+class GetAssessmentInsightServiceTest {
 
     @InjectMocks
-    private GetAssessmentOverallInsightService service;
+    private GetAssessmentInsightService service;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -46,7 +45,7 @@ class GetAssessmentOverallInsightServiceTest {
     private GetAssessmentInsightHelper getAssessmentInsightHelper;
 
     @Test
-    void testGetOverallAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testGetAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(false);
@@ -59,7 +58,7 @@ class GetAssessmentOverallInsightServiceTest {
     }
 
     @Test
-    void testGetOverallAssessmentInsight_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
+    void testGetAssessmentInsight_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
@@ -72,14 +71,10 @@ class GetAssessmentOverallInsightServiceTest {
     }
 
     @Test
-    void testGetOverallAssessmentInsight_whenHelperReturnsInsight_thenReturnsSameInsight() {
+    void testGetAssessmentInsight_whenHelperReturnsInsight_thenReturnsSameInsight() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        var insight = new Insight(null,
-            new Insight.InsightDetail("insight", LocalDateTime.now(), true),
-            true,
-            true,
-            LocalDateTime.now());
+        var insight = InsightMother.defaultInsight();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -90,10 +85,7 @@ class GetAssessmentOverallInsightServiceTest {
 
         var result = service.getAssessmentInsight(param);
 
-        assertEquals(insight.defaultInsight(), result.defaultInsight());
-        assertEquals(insight.assessorInsight(), result.assessorInsight());
-        assertEquals(insight.editable(), result.editable());
-        assertEquals(insight.approved(), result.approved());
+        assertEquals(insight, result);
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
@@ -102,8 +94,8 @@ class GetAssessmentOverallInsightServiceTest {
         return paramBuilder.build();
     }
 
-    private GetAssessmentOverallInsightUseCase.Param.ParamBuilder paramBuilder() {
-        return GetAssessmentOverallInsightUseCase.Param.builder()
+    private GetAssessmentInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAssessmentInsightUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }

@@ -36,7 +36,7 @@ public class GetSubjectInsightHelper {
                 insight.getInsightBy() == null
                     ? getDefaultInsight(assessmentResult, insight, editable)
                     : getAssessorInsight(assessmentResult, insight, editable))
-            .orElse(new Insight(null, null, editable, false, null));
+            .orElse(new Insight(null, null, editable, false));
     }
 
     public Map<Long, Insight> getSubjectInsights(AssessmentResult assessmentResult, UUID currentUserId) {
@@ -56,11 +56,11 @@ public class GetSubjectInsightHelper {
         return new Insight(
             new InsightDetail(insight.getInsight(),
                 insight.getInsightTime(),
-                isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime())),
+                isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()),
+                insight.getLastModificationTime()),
             null,
             editable,
-            insight.isApproved(),
-            insight.getLastModificationTime());
+            insight.isApproved());
     }
 
     private Insight getAssessorInsight(AssessmentResult assessmentResult, SubjectInsight insight, boolean editable) {
@@ -68,10 +68,10 @@ public class GetSubjectInsightHelper {
             null,
             new InsightDetail(insight.getInsight(),
                 insight.getInsightTime(),
-                isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime())),
+                isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()),
+                insight.getLastModificationTime()),
             editable,
-            insight.isApproved(),
-            insight.getLastModificationTime());
+            insight.isApproved());
     }
 
     private boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightLastModificationTime) {

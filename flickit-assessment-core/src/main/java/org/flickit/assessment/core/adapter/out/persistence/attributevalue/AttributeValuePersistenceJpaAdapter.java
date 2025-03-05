@@ -8,7 +8,10 @@ import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.Attribu
 import org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel.MaturityLevelMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.Answer;
+import org.flickit.assessment.core.application.domain.AnswerOption;
+import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.port.out.attributevalue.CreateAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -104,13 +107,18 @@ public class AttributeValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var entities = repository.findByAssessmentResultId(assessmentResultId);
-        Map<Long, MaturityLevel> maturityLevelMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
+        var maturityLevelMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
             .collect(toMap(MaturityLevelJpaEntity::getId,
                 entity -> MaturityLevelMapper.mapToDomainModel(entity, null)));
+        var attributeMap = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
+            .collect(toMap(AttributeJpaEntity::getId, Function.identity()));
 
         return entities.stream()
             .map(entity ->
-                mapToDomainModel(entity, maturityLevelMap.get(entity.getMaturityLevelId())))
+                mapToDomainModel(entity,
+                    AttributeMapper.mapToDomainModel(attributeMap.get(entity.getAttributeId())),
+                    null,
+                    maturityLevelMap.get(entity.getMaturityLevelId())))
             .toList();
     }
 

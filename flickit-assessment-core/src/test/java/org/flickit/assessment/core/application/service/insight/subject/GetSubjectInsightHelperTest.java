@@ -54,7 +54,6 @@ class GetSubjectInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertNull(result.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightsPort);
     }
 
@@ -73,10 +72,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(subjectInsight.getInsight(), result.assessorInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertFalse(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightsPort);
     }
 
@@ -96,10 +95,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(subjectInsight.getInsight(), result.assessorInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertFalse(result.assessorInsight().isValid());
         assertFalse(result.editable());
         assertTrue(result.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightsPort);
     }
 
@@ -119,10 +118,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(subjectInsight.getInsight(), result.assessorInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightsPort);
     }
 
@@ -141,10 +140,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(result.defaultInsight());
         assertEquals(subjectInsight.getInsight(), result.defaultInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertFalse(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightsPort);
     }
 
@@ -163,10 +162,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(result.defaultInsight());
         assertEquals(subjectInsight.getInsight(), result.defaultInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertTrue(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightsPort);
     }
 
@@ -186,10 +185,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(result.defaultInsight());
         assertEquals(subjectInsight.getInsight(), result.defaultInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertTrue(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightsPort);
     }
 
@@ -210,10 +209,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(resultInsight.assessorInsight());
         assertEquals(subjectInsight.getInsight(), resultInsight.assessorInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), resultInsight.assessorInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.assessorInsight().lastModificationTime());
         assertFalse(resultInsight.assessorInsight().isValid());
         assertTrue(resultInsight.editable());
         assertFalse(resultInsight.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightPort);
     }
 
@@ -234,10 +233,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(resultInsight.assessorInsight());
         assertEquals(subjectInsight.getInsight(), resultInsight.assessorInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), resultInsight.assessorInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.assessorInsight().lastModificationTime());
         assertFalse(resultInsight.assessorInsight().isValid());
         assertFalse(resultInsight.editable());
         assertTrue(resultInsight.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightPort);
     }
 
@@ -258,10 +257,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(resultInsight.assessorInsight());
         assertEquals(subjectInsight.getInsight(), resultInsight.assessorInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), resultInsight.assessorInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.assessorInsight().lastModificationTime());
         assertTrue(resultInsight.assessorInsight().isValid());
         assertTrue(resultInsight.editable());
         assertTrue(resultInsight.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightPort);
     }
 
@@ -281,10 +280,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(resultInsight.defaultInsight());
         assertEquals(subjectInsight.getInsight(), resultInsight.defaultInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), resultInsight.defaultInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.defaultInsight().lastModificationTime());
         assertFalse(resultInsight.defaultInsight().isValid());
         assertTrue(resultInsight.editable());
         assertFalse(resultInsight.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightPort);
     }
 
@@ -304,10 +303,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(resultInsight.defaultInsight());
         assertEquals(subjectInsight.getInsight(), resultInsight.defaultInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), resultInsight.defaultInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.defaultInsight().lastModificationTime());
         assertTrue(resultInsight.defaultInsight().isValid());
         assertTrue(resultInsight.editable());
         assertFalse(resultInsight.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightPort);
     }
 
@@ -328,10 +327,10 @@ class GetSubjectInsightHelperTest {
         assertNotNull(resultInsight.defaultInsight());
         assertEquals(subjectInsight.getInsight(), resultInsight.defaultInsight().insight());
         assertEquals(subjectInsight.getInsightTime(), resultInsight.defaultInsight().creationTime());
+        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.defaultInsight().lastModificationTime());
         assertTrue(resultInsight.defaultInsight().isValid());
         assertTrue(resultInsight.editable());
         assertTrue(resultInsight.approved());
-        assertEquals(subjectInsight.getLastModificationTime(), resultInsight.lastModificationTime());
         verifyNoInteractions(loadSubjectInsightPort);
     }
 }

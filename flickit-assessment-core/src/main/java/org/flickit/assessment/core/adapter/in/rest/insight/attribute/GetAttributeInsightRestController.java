@@ -2,8 +2,9 @@ package org.flickit.assessment.core.adapter.in.rest.insight.attribute;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
+import org.flickit.assessment.core.adapter.in.rest.insight.attribute.GetAttributeInsightResponseDto.InsightDetail;
+import org.flickit.assessment.core.application.domain.insight.Insight;
 import org.flickit.assessment.core.application.port.in.insight.attribute.GetAttributeInsightUseCase;
-import org.flickit.assessment.core.application.port.in.insight.attribute.GetAttributeInsightUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,15 +21,28 @@ public class GetAttributeInsightRestController {
     private final UserContext userContext;
 
     @GetMapping("/assessments/{assessmentId}/attributes/{attributeId}/insight")
-    public ResponseEntity<Result> getAttributeInsight(
+    public ResponseEntity<GetAttributeInsightResponseDto> getAttributeInsight(
         @PathVariable("assessmentId") UUID assessmentId,
         @PathVariable("attributeId") Long attributeId) {
         UUID currentUserId = userContext.getUser().id();
-        var response = useCase.getInsight(toParam(assessmentId, attributeId, currentUserId));
+        var response = toResponse(useCase.getInsight(toParam(assessmentId, attributeId, currentUserId)));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private GetAttributeInsightUseCase.Param toParam(UUID assessmentId, Long attributeId, UUID currentUserId) {
         return new GetAttributeInsightUseCase.Param(assessmentId, attributeId, currentUserId);
+    }
+
+    private GetAttributeInsightResponseDto toResponse(Insight insight) {
+        return new GetAttributeInsightResponseDto(toInsightDetail(insight.defaultInsight()),
+            toInsightDetail(insight.defaultInsight()),
+            insight.editable(),
+            insight.approved());
+    }
+
+    private InsightDetail toInsightDetail(Insight.InsightDetail insightDetail) {
+        return insightDetail != null
+            ? new InsightDetail(insightDetail.insight(), insightDetail.creationTime(), insightDetail.isValid())
+            : null;
     }
 }

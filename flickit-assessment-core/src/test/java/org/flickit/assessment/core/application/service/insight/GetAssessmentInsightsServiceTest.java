@@ -4,12 +4,13 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.*;
+import org.flickit.assessment.core.application.domain.AssessmentResult;
+import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.domain.insight.Insight;
 import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase;
-import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase.AttributeModel;
-import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase.InsightModel;
-import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
@@ -73,7 +74,7 @@ class GetAssessmentInsightsServiceTest {
     void testGetAssessmentInsightsService_whenCurrentUserDoesNotHaveRequiredPermissions_thenThrowAccessDeniedException() {
         var param = createParam(Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentInsights(param));
@@ -92,7 +93,7 @@ class GetAssessmentInsightsServiceTest {
     void testGetAssessmentInsightsService_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
@@ -114,7 +115,7 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
@@ -163,7 +164,7 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
@@ -212,7 +213,7 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
@@ -261,7 +262,7 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
@@ -314,7 +315,7 @@ class GetAssessmentInsightsServiceTest {
         assertMaturityLevel(assessmentResult.getMaturityLevel(), assessment.maturityLevel());
     }
 
-    private void assertMaturityLevel(MaturityLevel expected, AssessmentListItem.MaturityLevel actual) {
+    private void assertMaturityLevel(MaturityLevel expected, MaturityLevelModel actual) {
         assertEquals(expected.getId(), actual.id());
         assertEquals(expected.getTitle(), actual.title());
         assertEquals(expected.getValue(), actual.value());
@@ -328,14 +329,14 @@ class GetAssessmentInsightsServiceTest {
         assertNull(insight.approved());
     }
 
-    private void assertSubject(SubjectValue subjectValue1, GetAssessmentInsightsUseCase.Subject subject) {
-        assertEquals(subjectValue1.getSubject().getId(), subject.id());
-        assertEquals(subjectValue1.getSubject().getTitle(), subject.title());
-        assertEquals(subjectValue1.getSubject().getDescription(), subject.description());
-        assertEquals(subjectValue1.getSubject().getIndex(), subject.index());
-        assertEquals(subjectValue1.getSubject().getWeight(), subject.weight());
-        assertMaturityLevel(subjectValue1.getMaturityLevel(), subject.maturityLevel());
-        assertEquals(subjectValue1.getConfidenceValue(), subject.confidenceValue());
+    private void assertSubject(SubjectValue expected, SubjectModel actual) {
+        assertEquals(expected.getSubject().getId(), actual.id());
+        assertEquals(expected.getSubject().getTitle(), actual.title());
+        assertEquals(expected.getSubject().getDescription(), actual.description());
+        assertEquals(expected.getSubject().getIndex(), actual.index());
+        assertEquals(expected.getSubject().getWeight(), actual.weight());
+        assertMaturityLevel(expected.getMaturityLevel(), actual.maturityLevel());
+        assertEquals(expected.getConfidenceValue(), actual.confidenceValue());
     }
 
     private void assertAttribute(AttributeValue expectedAttributeValue, AttributeModel actualAttribute) {
@@ -348,10 +349,20 @@ class GetAssessmentInsightsServiceTest {
     }
 
     private void assertInsight(Insight actual, InsightModel expected) {
-        assertEquals(actual.defaultInsight(), expected.defaultInsight());
-        assertEquals(actual.assessorInsight(), expected.assessorInsight());
+        assertInsightDetail(actual.defaultInsight(), expected.defaultInsight());
+        assertInsightDetail(actual.assessorInsight(), expected.assessorInsight());
         assertEquals(actual.editable(), expected.editable());
         assertEquals(actual.approved(), expected.approved());
+    }
+
+    private void assertInsightDetail(Insight.InsightDetail expected, InsightModel.InsightDetail actual) {
+        if (expected == null)
+            assertNull(actual);
+        else {
+            assertEquals(expected.insight(), actual.insight());
+            assertEquals(expected.creationTime(), actual.creationTime());
+            assertEquals(expected.isValid(), actual.isValid());
+        }
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {

@@ -4,17 +4,16 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.insight.Insight;
 import org.flickit.assessment.core.application.port.in.insight.subject.GetSubjectInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
+import org.flickit.assessment.core.test.fixture.application.InsightMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -76,11 +75,7 @@ class GetSubjectInsightServiceTest {
     void testGetSubjectInsight_whenHelperReturnsInsight_thenReturnsSameInsight() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
-        var insight = new Insight(null,
-            new Insight.InsightDetail("insight", LocalDateTime.now(), true),
-            true,
-            true,
-            LocalDateTime.now());
+        var insight = InsightMother.defaultInsight();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
             .thenReturn(true);
@@ -91,10 +86,7 @@ class GetSubjectInsightServiceTest {
 
         var result = service.getSubjectInsight(param);
 
-        assertEquals(insight.defaultInsight(), result.defaultInsight());
-        assertEquals(insight.assessorInsight(), result.assessorInsight());
-        assertEquals(insight.editable(), result.editable());
-        assertEquals(insight.approved(), result.approved());
+        assertEquals(insight, result);
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {

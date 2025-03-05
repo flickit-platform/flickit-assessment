@@ -45,7 +45,6 @@ class GetAssessmentInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertNull(result.lastModificationTime());
     }
 
     @Test
@@ -61,9 +60,9 @@ class GetAssessmentInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(assessmentInsight.getInsight(), result.assessorInsight().insight());
         assertEquals(assessmentInsight.getInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(assessmentInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
-        assertEquals(assessmentInsight.getLastModificationTime(), result.lastModificationTime());
     }
 
     @Test
@@ -78,11 +77,11 @@ class GetAssessmentInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(assessmentInsight.getInsight(), result.assessorInsight().insight());
         assertEquals(assessmentInsight.getInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(assessmentInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertFalse(result.assessorInsight().isValid());
         assertNull(result.defaultInsight());
         assertFalse(result.editable());
         assertFalse(result.approved());
-        assertEquals(assessmentInsight.getLastModificationTime(), result.lastModificationTime());
     }
 
     @Test
@@ -97,11 +96,11 @@ class GetAssessmentInsightHelperTest {
         assertNotNull(result.defaultInsight().insight());
         assertEquals(assessmentInsight.getInsight(), result.defaultInsight().insight());
         assertEquals(assessmentInsight.getInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(assessmentInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertTrue(result.defaultInsight().isValid());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertEquals(assessmentInsight.getLastModificationTime(), result.lastModificationTime());
     }
 
     @Test
@@ -119,10 +118,10 @@ class GetAssessmentInsightHelperTest {
         assertNotNull(result.defaultInsight().insight());
         assertEquals(assessmentInsight.getInsight(), result.defaultInsight().insight());
         assertEquals(assessmentInsight.getInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(assessmentInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertFalse(result.defaultInsight().isValid());
         assertNull(result.assessorInsight());
         assertFalse(result.editable());
         assertTrue(result.approved());
-        assertEquals(assessmentInsight.getLastModificationTime(), result.lastModificationTime());
     }
 }

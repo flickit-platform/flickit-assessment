@@ -45,7 +45,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
     @Override
     public Result getAssessmentInsights(Param param) {
-        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
@@ -77,17 +77,17 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
             toInsight(assessmentInsight, assessmentInsight.editable()));
     }
 
-    private AssessmentListItem.MaturityLevel toMaturityLevel(MaturityLevel maturityLevel) {
-        return new AssessmentListItem.MaturityLevel(maturityLevel.getId(),
+    private MaturityLevelModel toMaturityLevel(MaturityLevel maturityLevel) {
+        return new MaturityLevelModel(maturityLevel.getId(),
             maturityLevel.getTitle(),
             maturityLevel.getValue(),
             maturityLevel.getIndex());
     }
 
-    private List<Subject> buildSubject(Param param,
-                                       AssessmentResult assessmentResult,
-                                       Map<Long, Insight> subjectsInsightMap,
-                                       Map<Long, Insight> attributesInsightMap) {
+    private List<SubjectModel> buildSubject(Param param,
+                                            AssessmentResult assessmentResult,
+                                            Map<Long, Insight> subjectsInsightMap,
+                                            Map<Long, Insight> attributesInsightMap) {
         var subjectValues = loadSubjectValuePort.loadAll(assessmentResult.getId());
         var attributeValuesMap = loadAttributeValuePort.loadAll(assessmentResult.getId()).stream()
             .collect(toMap(attributeValue -> attributeValue.getAttribute().getId(), Function.identity()));
@@ -108,14 +108,14 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
             ).toList();
     }
 
-    private Subject toSubject(SubjectValue subjectValue,
-                              Map<Long, Insight> subjectsInsightMap,
-                              boolean subjectInsightEditable,
-                              Map<Long, AttributeValue> attributeValuesMap,
-                              Map<Long, Insight> attributesInsightMap,
-                              boolean attributeInsightEditable) {
+    private SubjectModel toSubject(SubjectValue subjectValue,
+                                   Map<Long, Insight> subjectsInsightMap,
+                                   boolean subjectInsightEditable,
+                                   Map<Long, AttributeValue> attributeValuesMap,
+                                   Map<Long, Insight> attributesInsightMap,
+                                   boolean attributeInsightEditable) {
         var subject = subjectValue.getSubject();
-        return new Subject(
+        return new SubjectModel(
             subject.getId(),
             subject.getTitle(),
             subject.getDescription(),
@@ -130,8 +130,17 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
     private InsightModel toInsight(Insight insight, boolean editable) {
         return insight != null
-            ? new InsightModel(insight.defaultInsight(), insight.assessorInsight(), insight.editable(), insight.approved())
+            ? new InsightModel(toInsightDetail(insight.defaultInsight()),
+            toInsightDetail(insight.assessorInsight()),
+            insight.editable(),
+            insight.approved())
             : new InsightModel(null, null, editable, null);
+    }
+
+    private InsightModel.InsightDetail toInsightDetail(Insight.InsightDetail insightDetail) {
+        return insightDetail != null
+            ? new InsightModel.InsightDetail(insightDetail.insight(), insightDetail.creationTime(), insightDetail.isValid())
+            : null;
     }
 
     private List<AttributeModel> buildAttributes(List<Attribute> attributes,
@@ -158,13 +167,13 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     }
 
     private Issues buildIssues(Assessment assessment,
-                               List<Subject> subjects,
+                               List<SubjectModel> subjects,
                                Insight assessmentInsight,
                                Map<Long, Insight> subjectsInsightMap,
                                Map<Long, Insight> attributesInsightMap,
                                LocalDateTime lastCalculationTime) {
         var subjectsInsights = subjects.stream()
-            .map(Subject::insight)
+            .map(SubjectModel::insight)
             .toList();
         var attributesInsights = subjects.stream()
             .flatMap(s -> s.attributes().stream())
@@ -241,8 +250,10 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
     private Predicate<Insight> isExpired(LocalDateTime lastCalculationTime) {
         return insight -> {
-            if (insight.assessorInsight() != null || insight.defaultInsight() != null)
-                return insight.lastModificationTime().isBefore(lastCalculationTime);
+            if (insight.assessorInsight() != null)
+                return insight.assessorInsight().lastModificationTime().isBefore(lastCalculationTime);
+            if (insight.defaultInsight() != null)
+                return insight.defaultInsight().lastModificationTime().isBefore(lastCalculationTime);
             return false;
         };
     }
