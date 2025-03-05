@@ -34,17 +34,6 @@ public class AttributeValueMapper {
         );
     }
 
-    public static AttributeValue mapToDomainModel(AttributeValueJpaEntity entity, MaturityLevel maturityLevel) {
-        return new AttributeValue(
-            entity.getId(),
-            null,
-            null,
-            null,
-            maturityLevel,
-            entity.getConfidenceValue()
-        );
-    }
-
     public static AttributeValue mapToDomainModel(AttributeValueJpaEntity entity,
                                                   Attribute attribute,
                                                   List<Answer> answers,
