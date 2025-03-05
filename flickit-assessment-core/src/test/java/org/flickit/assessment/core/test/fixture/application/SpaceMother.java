@@ -14,7 +14,7 @@ public class SpaceMother {
         return new Space(++id,
             "title",
             ownerId,
-            SpaceType.PERSONAL,
+            SpaceType.BASIC,
             LocalDateTime.now());
     }
 

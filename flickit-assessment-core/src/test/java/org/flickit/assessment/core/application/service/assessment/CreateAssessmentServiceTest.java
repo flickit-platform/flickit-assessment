@@ -95,13 +95,13 @@ class CreateAssessmentServiceTest {
     private final Attribute qa5 = AttributeMother.simpleAttribute();
 
     private final List<Subject> expectedSubjects = List.of(
-        new Subject(1L, "subject2", 1, List.of(qa1, qa2)),
-        new Subject(2L, "subject1", 1, List.of(qa3, qa4)),
-        new Subject(3L, "subject3", 1, List.of(qa5))
+        new Subject(1L, "subject2", "description2", 1, List.of(qa1, qa2)),
+        new Subject(2L, "subject1", "description1", 1, List.of(qa3, qa4)),
+        new Subject(3L, "subject3", "description3",1, List.of(qa5))
     );
 
     @Test
-    void testCreateAssessment_ValidParam_PersistsAndReturnsId() {
+    void testCreateAssessment_whenValidValidParam_thenPersistsAndReturnsId() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
         var expectedId = UUID.randomUUID();
@@ -139,10 +139,12 @@ class CreateAssessmentServiceTest {
         assertEquals(expectedId, grantPortAssessmentId.getAllValues().get(1));
         assertEquals(param.getCurrentUserId(), grantPortUserId.getAllValues().get(1));
         assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().get(1));
+
+        verify(appSpecProperties).getSpace();
     }
 
     @Test
-    void testCreateAssessment_CurrentUserIsSpaceOwner_PersistOneAssessmentUserRole() {
+    void testCreateAssessment_whenCurrentUserIsSpaceOwner_thenPersistOneAssessmentUserRole() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(param.getCurrentUserId());
         var expectedId = UUID.randomUUID();
@@ -176,10 +178,12 @@ class CreateAssessmentServiceTest {
         assertEquals(expectedId, grantPortAssessmentId.getAllValues().getFirst());
         assertEquals(param.getCurrentUserId(), grantPortUserId.getAllValues().getFirst());
         assertEquals(AssessmentUserRole.MANAGER.getId(), grantPortRoleId.getAllValues().getFirst());
+
+        verify(appSpecProperties).getSpace();
     }
 
     @Test
-    void testCreateAssessment_ValidParamPersonalSpaceAndPublicKit_PersistsAssessmentResult() {
+    void testCreateAssessment_whenValidParametersWithPersonalSpaceAndPublicKit_thenPersistsAssessmentResult() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
         var assessmentId = UUID.randomUUID();
@@ -202,10 +206,12 @@ class CreateAssessmentServiceTest {
         assertEquals(assessmentId, createPortParam.getValue().assessmentId());
         assertNotNull(createPortParam.getValue().lastModificationTime());
         assertFalse(createPortParam.getValue().isCalculateValid());
+
+        verify(appSpecProperties).getSpace();
     }
 
     @Test
-    void testCreateAssessment_ValidParam_PersistsSubjectValues() {
+    void testCreateAssessment_whenValidParam_thenPersistsSubjectValues() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
 
@@ -215,7 +221,6 @@ class CreateAssessmentServiceTest {
             new Subject(3L, "subject3", "description3", 1, List.of(qa5))
         );
 
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedSubjects);
@@ -226,10 +231,12 @@ class CreateAssessmentServiceTest {
 
         verify(createSubjectValuePort, times(1)).persistAll(anyList(), any());
         verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
+
+        verify(appSpecProperties).getSpace();
     }
 
     @Test
-    void testCreateAssessment_ValidCommand_PersistsAttributeValue() {
+    void testCreateAssessment_whenValidCommand_thenPersistsAttributeValue() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
 
@@ -239,7 +246,6 @@ class CreateAssessmentServiceTest {
             new Subject(3L, "subject3", "description3", 1, List.of(qa5))
         );
 
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedSubjects);
@@ -250,20 +256,23 @@ class CreateAssessmentServiceTest {
 
         verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
         verify(createAttributeValuePort, times(1)).persistAll(anySet(), any());
+        verify(appSpecProperties).getSpace();
     }
 
     @Test
-    void testCreateAssessment_WhenUserDoesNotHaveAccessToSpace_ThenThrowsReturnUpgradeRequiredException() {
+    void testCreateAssessment_whenUserDoesNotHaveAccessToSpace_thenThrowsReturnUpgradeRequiredException() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAssessment(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(appSpecProperties);
     }
 
     @Test
-    void testCreateAssessment_WhenUserDoesNotHaveAccessToKit_ThenThrowsException() {
+    void testCreateAssessment_whenUserDoesNotHaveAccessToKit_thenThrowsException() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
@@ -271,10 +280,12 @@ class CreateAssessmentServiceTest {
 
         var throwable = assertThrows(ValidationException.class, () -> service.createAssessment(param));
         assertEquals(CREATE_ASSESSMENT_KIT_NOT_ALLOWED, throwable.getMessageKey());
+
+        verifyNoInteractions(appSpecProperties);
     }
 
     @Test
-    void testCreateAssessment_WhenSpaceIsPersonalAndExceedsMaxAssessmentLimits_ThenThrowsException() {
+    void testCreateAssessment_whenSpaceIsPersonalAndExceedsMaxAssessmentLimits_thenThrowsException() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
         var kit = AssessmentKitMother.kit();
@@ -287,10 +298,12 @@ class CreateAssessmentServiceTest {
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
         assertEquals(CREATE_ASSESSMENT_PERSONAL_SPACE_ASSESSMENTS_MAX, throwable.getMessage());
+
+        verify(appSpecProperties).getSpace();
     }
 
     @Test
-    void testCreateAssessment_WhenSpaceIsPersonalAndAssessmentKitIsPrivate_ThenThrowsException() {
+    void testCreateAssessment_whenSpaceIsPersonalAndAssessmentKitIsPrivate_thenThrowsException() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
 
@@ -302,10 +315,12 @@ class CreateAssessmentServiceTest {
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
         assertEquals(CREATE_ASSESSMENT_PERSONAL_SPACE_PRIVATE_KIT_MAX, throwable.getMessage());
+
+        verify(appSpecProperties).getSpace();
     }
 
     @Test
-    void testCreateAssessment_WhenSpaceIsPremiumAndSubscriptionExpired_ThenThrowsException() {
+    void testCreateAssessment_whenSpaceIsPremiumAndSubscriptionExpired_thenThrowsException() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPremiumExpiredSpace(UUID.randomUUID());
         var kit = AssessmentKitMother.kit();
@@ -318,15 +333,16 @@ class CreateAssessmentServiceTest {
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
         assertEquals(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, throwable.getMessage());
+
+        verifyNoInteractions(appSpecProperties);
     }
 
     private AppSpecProperties appSpecProperties() {
         var properties = new AppSpecProperties();
-        var space = new AppSpecProperties.Space();
-        space.setMaxPersonalSpaces(1);
-        space.setMaxPersonalSpaceAssessments(2);
-        space.setMaxPersonalSpaceMembers(3);
-        properties.setSpace(space);
+        properties.setSpace(new AppSpecProperties.Space());
+        properties.getSpace().setMaxBasicSpaces(1);
+        properties.getSpace().setMaxBasicSpaceAssessments(2);
+        properties.getSpace().setMaxBasicSpaceMembers(3);
         return properties;
     }
 

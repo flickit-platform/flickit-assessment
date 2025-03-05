@@ -16,17 +16,17 @@ public class AssessmentKitMother {
             "title" + id,
             id,
             language,
-            MaturityLevelMother.allLevels());
             MaturityLevelMother.allLevels(),
-            true);
+            Boolean.TRUE);
     }
 
     public static AssessmentKit publicKit() {
         return new AssessmentKit(id++,
             "title" + id,
             id,
+            KitLanguage.EN,
             MaturityLevelMother.allLevels(),
-            false);
+            Boolean.FALSE);
     }
 
     public static AssessmentKit AssessmentKitWithoutActiveKitVersion() {
@@ -34,8 +34,7 @@ public class AssessmentKitMother {
             "title" + id,
             null,
             KitLanguage.EN,
-            MaturityLevelMother.allLevels());
             MaturityLevelMother.allLevels(),
-            true);
+            Boolean.TRUE);
     }
 }
