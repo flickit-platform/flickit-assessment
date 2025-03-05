@@ -130,8 +130,17 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
     private InsightModel toInsight(Insight insight, boolean editable) {
         return insight != null
-            ? new InsightModel(insight.defaultInsight(), insight.assessorInsight(), insight.editable(), insight.approved())
+            ? new InsightModel(toInsightDetail(insight.defaultInsight()),
+            toInsightDetail(insight.assessorInsight()),
+            insight.editable(),
+            insight.approved())
             : new InsightModel(null, null, editable, null);
+    }
+
+    private InsightModel.InsightDetail toInsightDetail(Insight.InsightDetail insightDetail) {
+        return insightDetail != null
+            ? new InsightModel.InsightDetail(insightDetail.insight(), insightDetail.creationTime(), insightDetail.isValid())
+            : null;
     }
 
     private List<AttributeModel> buildAttributes(List<Attribute> attributes,
@@ -241,8 +250,10 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
     private Predicate<Insight> isExpired(LocalDateTime lastCalculationTime) {
         return insight -> {
-            if (insight.assessorInsight() != null || insight.defaultInsight() != null)
-                return insight.lastModificationTime().isBefore(lastCalculationTime);
+            if (insight.assessorInsight() != null)
+                return insight.assessorInsight().lastModificationTime().isBefore(lastCalculationTime);
+            if (insight.defaultInsight() != null)
+                return insight.defaultInsight().lastModificationTime().isBefore(lastCalculationTime);
             return false;
         };
     }

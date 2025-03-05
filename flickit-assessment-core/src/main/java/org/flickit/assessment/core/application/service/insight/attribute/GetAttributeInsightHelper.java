@@ -35,7 +35,7 @@ public class GetAttributeInsightHelper {
             .map(insight -> isAiInsightValid(insight)
                 ? getAiInsight(assessmentResult, insight, editable)
                 : getDefaultInsight(assessmentResult, insight, editable))
-            .orElse(new Insight(null, null, editable, null, null));
+            .orElse(new Insight(null, null, editable, null));
     }
 
     public Map<Long, Insight> getAttributeInsights(AssessmentResult assessmentResult, UUID currentUserId) {
@@ -56,15 +56,17 @@ public class GetAttributeInsightHelper {
     private Insight getAiInsight(AssessmentResult assessmentResult, AttributeInsight insight, boolean editable) {
         var aiInsight = new InsightDetail(insight.getAiInsight(),
             insight.getAiInsightTime(),
-            isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()));
-        return new Insight(aiInsight, null, editable, insight.isApproved(), insight.getLastModificationTime());
+            isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()),
+            insight.getLastModificationTime());
+        return new Insight(aiInsight, null, editable, insight.isApproved());
     }
 
     private Insight getDefaultInsight(AssessmentResult assessmentResult, AttributeInsight insight, boolean editable) {
         var assessorInsight = new InsightDetail(insight.getAssessorInsight(),
             insight.getAssessorInsightTime(),
-            isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()));
-        return new Insight(null, assessorInsight, editable, insight.isApproved(), insight.getLastModificationTime());
+            isValid(assessmentResult.getLastCalculationTime(), insight.getLastModificationTime()),
+            insight.getLastModificationTime());
+        return new Insight(null, assessorInsight, editable, insight.isApproved());
     }
 
     private boolean isValid(LocalDateTime lastCalculationTime, LocalDateTime insightLastModificationTime) {

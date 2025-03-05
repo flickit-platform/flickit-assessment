@@ -349,10 +349,20 @@ class GetAssessmentInsightsServiceTest {
     }
 
     private void assertInsight(Insight actual, InsightModel expected) {
-        assertEquals(actual.defaultInsight(), expected.defaultInsight());
-        assertEquals(actual.assessorInsight(), expected.assessorInsight());
+        assertInsightDetail(actual.defaultInsight(), expected.defaultInsight());
+        assertInsightDetail(actual.assessorInsight(), expected.assessorInsight());
         assertEquals(actual.editable(), expected.editable());
         assertEquals(actual.approved(), expected.approved());
+    }
+
+    private void assertInsightDetail(Insight.InsightDetail expected, InsightModel.InsightDetail actual) {
+        if (expected == null)
+            assertNull(actual);
+        else {
+            assertEquals(expected.insight(), actual.insight());
+            assertEquals(expected.creationTime(), actual.creationTime());
+            assertEquals(expected.isValid(), actual.isValid());
+        }
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {

@@ -54,7 +54,6 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertNull(result.approved());
-        assertNull(result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -70,7 +69,6 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertFalse(result.editable());
         assertNull(result.approved());
-        assertNull(result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -91,10 +89,10 @@ class GetAttributeInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(attributeInsight.getAssessorInsight(), result.assessorInsight().insight());
         assertEquals(attributeInsight.getAssessorInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -114,10 +112,10 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertEquals(attributeInsight.getAiInsight(), result.defaultInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertTrue(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -137,10 +135,10 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertEquals(attributeInsight.getAiInsight(), result.defaultInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertFalse(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -160,10 +158,10 @@ class GetAttributeInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(attributeInsight.getAssessorInsight(), result.assessorInsight().insight());
         assertEquals(attributeInsight.getAssessorInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertFalse(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -179,11 +177,11 @@ class GetAttributeInsightHelperTest {
         assertNotNull(result.defaultInsight());
         assertEquals(attributeInsight.getAiInsight(), result.defaultInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertFalse(result.defaultInsight().isValid());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -199,11 +197,11 @@ class GetAttributeInsightHelperTest {
         assertNotNull(result.defaultInsight());
         assertEquals(attributeInsight.getAiInsight(), result.defaultInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertTrue(result.defaultInsight().isValid());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightsPort);
     }
 
@@ -225,10 +223,10 @@ class GetAttributeInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(attributeInsight.getAssessorInsight(), result.assessorInsight().insight());
         assertEquals(attributeInsight.getAssessorInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertTrue(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -250,10 +248,10 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertEquals(attributeInsight.getAiInsight(), result.defaultInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertTrue(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -275,10 +273,10 @@ class GetAttributeInsightHelperTest {
         assertNull(result.assessorInsight());
         assertEquals(attributeInsight.getAiInsight(), result.defaultInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertFalse(result.defaultInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -300,10 +298,10 @@ class GetAttributeInsightHelperTest {
         assertNotNull(result.assessorInsight());
         assertEquals(attributeInsight.getAssessorInsight(), result.assessorInsight().insight());
         assertEquals(attributeInsight.getAssessorInsightTime(), result.assessorInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.assessorInsight().lastModificationTime());
         assertFalse(result.assessorInsight().isValid());
         assertTrue(result.editable());
         assertTrue(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -321,11 +319,11 @@ class GetAttributeInsightHelperTest {
         assertNotNull(result.defaultInsight());
         assertEquals(attributeInsight.getAiInsight(), result.defaultInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertFalse(result.defaultInsight().isValid());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 
@@ -343,11 +341,11 @@ class GetAttributeInsightHelperTest {
         assertNotNull(result.defaultInsight());
         assertEquals(attributeInsight.getAiInsight(), result.defaultInsight().insight());
         assertEquals(attributeInsight.getAiInsightTime(), result.defaultInsight().creationTime());
+        assertEquals(attributeInsight.getLastModificationTime(), result.defaultInsight().lastModificationTime());
         assertTrue(result.defaultInsight().isValid());
         assertNull(result.assessorInsight());
         assertTrue(result.editable());
         assertFalse(result.approved());
-        assertEquals(attributeInsight.getLastModificationTime(), result.lastModificationTime());
         verifyNoInteractions(loadAttributeInsightPort);
     }
 }
