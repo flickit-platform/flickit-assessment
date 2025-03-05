@@ -77,5 +77,6 @@ public class AppSpecProperties {
 
         int maxBasicSpaces = 1;
         int maxBasicSpaceAssessments = 2;
+        int maxBasicSpaceMembers = 3;
     }
 }
