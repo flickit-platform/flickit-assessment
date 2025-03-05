@@ -31,3 +31,4 @@ public class GetAssessmentInsightsRestController {
         return new Param(assessmentId, currentUserId);
     }
 }
+
