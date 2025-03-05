@@ -34,7 +34,7 @@ public class GetAssessmentOverallInsightRestController {
 
     private GetAssessmentOverallInsightResponseDto toResponse(Insight insight) {
         return new GetAssessmentOverallInsightResponseDto(toInsightDetail(insight.defaultInsight()),
-            toInsightDetail(insight.defaultInsight()),
+            toInsightDetail(insight.assessorInsight()),
             insight.editable(),
             insight.approved());
     }

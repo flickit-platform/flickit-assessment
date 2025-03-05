@@ -36,7 +36,7 @@ public class GetSubjectInsightRestController {
 
     private GetSubjectInsightResponseDto toResponse(Insight insight) {
         return new GetSubjectInsightResponseDto(toInsightDetail(insight.defaultInsight()),
-            toInsightDetail(insight.defaultInsight()),
+            toInsightDetail(insight.assessorInsight()),
             insight.editable(),
             insight.approved());
     }
