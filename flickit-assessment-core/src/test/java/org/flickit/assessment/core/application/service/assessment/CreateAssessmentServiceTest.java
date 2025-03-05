@@ -283,7 +283,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsPremiumAndSubscriptionExpired_thenThrowsException() {
-        var premiumExpiredSpace = SpaceMother.createPremiumExpiredSpace(UUID.randomUUID());
+        var premiumExpiredSpace = SpaceMother.createExpiredPremiumSpace(UUID.randomUUID());
         var kit = AssessmentKitMother.kit();
 
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(premiumExpiredSpace);

@@ -18,7 +18,7 @@ public class SpaceMother {
             LocalDateTime.now());
     }
 
-    public static Space createPremiumExpiredSpace(UUID ownerId) {
+    public static Space createExpiredPremiumSpace(UUID ownerId) {
         return new Space(++id,
             "title",
             ownerId,
