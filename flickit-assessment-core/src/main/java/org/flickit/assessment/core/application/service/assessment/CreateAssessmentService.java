@@ -1,6 +1,7 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.notification.SendNotification;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
@@ -84,11 +85,11 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private void validatePlan(Param param, Space space, boolean isKitPrivate) {
         if (space.getType().equals(SpaceType.BASIC) && countAssessmentsPort.countSpaceAssessments(param.getSpaceId()) >= appSpecProperties.getSpace().getMaxBasicSpaceAssessments())
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX);
+            throw new UpgradeRequiredException(MessageBundle.message(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX, appSpecProperties.getSpace().getMaxBasicSpaceAssessments()));
         if (isKitPrivate && space.getType().equals(SpaceType.BASIC))
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_MAX);
         if (space.getType().equals(SpaceType.PREMIUM) && space.getSubscriptionExpiry().isBefore(LocalDateTime.now()))
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
+            throw new UpgradeRequiredException(MessageBundle.message(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, space.getSubscriptionExpiry()));
     }
 
     private CreateAssessmentPort.Param toParam(Param param) {
