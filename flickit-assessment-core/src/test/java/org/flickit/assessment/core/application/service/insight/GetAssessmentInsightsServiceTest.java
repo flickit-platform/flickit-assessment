@@ -74,7 +74,7 @@ class GetAssessmentInsightsServiceTest {
     void testGetAssessmentInsightsService_whenCurrentUserDoesNotHaveRequiredPermissions_thenThrowAccessDeniedException() {
         var param = createParam(Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentInsights(param));
@@ -93,7 +93,7 @@ class GetAssessmentInsightsServiceTest {
     void testGetAssessmentInsightsService_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
@@ -115,7 +115,7 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
@@ -164,7 +164,7 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
@@ -213,7 +213,7 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
@@ -262,7 +262,7 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT))
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
