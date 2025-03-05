@@ -5,8 +5,8 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.insight.Insight;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GetAssessmentInsightServiceTest {
+class GetAssessmentOverallInsightServiceTest {
 
     @InjectMocks
-    private GetAssessmentInsightService service;
+    private GetAssessmentOverallInsightService service;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -46,7 +46,7 @@ class GetAssessmentInsightServiceTest {
     private GetAssessmentInsightHelper getAssessmentInsightHelper;
 
     @Test
-    void testGetAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testGetOverallAssessmentInsight_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(false);
@@ -59,7 +59,7 @@ class GetAssessmentInsightServiceTest {
     }
 
     @Test
-    void testGetAssessmentInsight_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
+    void testGetOverallAssessmentInsight_whenAssessmentResultNotFound_thenThrowResourceNotFoundException() {
         var param = createParam(Param.ParamBuilder::build);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_REPORT)).thenReturn(true);
@@ -72,7 +72,7 @@ class GetAssessmentInsightServiceTest {
     }
 
     @Test
-    void testGetAssessmentInsight_whenHelperReturnsInsight_thenReturnsSameInsight() {
+    void testGetOverallAssessmentInsight_whenHelperReturnsInsight_thenReturnsSameInsight() {
         var param = createParam(Param.ParamBuilder::build);
         var assessmentResult = AssessmentResultMother.validResult();
         var insight = new Insight(null,
@@ -102,8 +102,8 @@ class GetAssessmentInsightServiceTest {
         return paramBuilder.build();
     }
 
-    private GetAssessmentInsightUseCase.Param.ParamBuilder paramBuilder() {
-        return GetAssessmentInsightUseCase.Param.builder()
+    private GetAssessmentOverallInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAssessmentOverallInsightUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }

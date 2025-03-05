@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
 
-public interface GetAssessmentInsightUseCase {
+public interface GetAssessmentOverallInsightUseCase {
 
     Result getAssessmentInsight(Param param);
 

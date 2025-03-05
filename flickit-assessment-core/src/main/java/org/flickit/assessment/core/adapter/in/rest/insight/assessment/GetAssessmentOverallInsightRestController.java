@@ -2,9 +2,9 @@ package org.flickit.assessment.core.adapter.in.rest.insight.assessment;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase.Param;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase.Result;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +15,9 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-public class GetAssessmentInsightRestController {
+public class GetAssessmentOverallInsightRestController {
 
-    private final GetAssessmentInsightUseCase useCase;
+    private final GetAssessmentOverallInsightUseCase useCase;
     private final UserContext userContext;
 
     @GetMapping("assessments/{assessmentId}/overall-insight")

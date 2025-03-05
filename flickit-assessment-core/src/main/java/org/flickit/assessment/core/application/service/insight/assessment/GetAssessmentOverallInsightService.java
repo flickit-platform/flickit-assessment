@@ -6,7 +6,7 @@ import org.flickit.assessment.common.application.port.out.ValidateAssessmentResu
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.insight.Insight;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +18,7 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetAssessmentInsightService implements GetAssessmentInsightUseCase {
+public class GetAssessmentOverallInsightService implements GetAssessmentOverallInsightUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;

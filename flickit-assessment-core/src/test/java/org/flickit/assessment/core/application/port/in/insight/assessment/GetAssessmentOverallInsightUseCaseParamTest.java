@@ -11,30 +11,30 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class GetAssessmentInsightUseCaseParamTest {
+class GetAssessmentOverallInsightUseCaseParamTest {
 
     @Test
-    void testGetAssessmentInsightUseCaseParam_assessmentIdParamIsNull_ErrorMessage() {
+    void testGetAssessmentOverallInsightUseCaseParam_assessmentIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
         assertThat(throwable).hasMessage("assessmentId: " + GET_ASSESSMENT_INSIGHT_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test
-    void testGetAssessmentInsightUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
+    void testGetAssessmentOverallInsightUseCaseParam_currentUserIdParamIsNull_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.currentUserId(null)));
         assertThat(throwable).hasMessage("currentUserId: " + COMMON_CURRENT_USER_ID_NOT_NULL);
     }
 
-    private void createParam(Consumer<GetAssessmentInsightUseCase.Param.ParamBuilder> changer) {
+    private void createParam(Consumer<GetAssessmentOverallInsightUseCase.Param.ParamBuilder> changer) {
         var paramBuilder = paramBuilder();
         changer.accept(paramBuilder);
         paramBuilder.build();
     }
 
-    private GetAssessmentInsightUseCase.Param.ParamBuilder paramBuilder() {
-        return GetAssessmentInsightUseCase.Param.builder()
+    private GetAssessmentOverallInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAssessmentOverallInsightUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
