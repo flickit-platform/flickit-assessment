@@ -60,9 +60,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
         var assessment = buildAssessment(assessmentResult, assessmentInsight);
         var subjects = buildSubject(param, assessmentResult, subjectsInsightMap, attributesInsightMap);
-        var issues = buildIssues(assessment,
-            subjects,
-            assessmentInsight,
+        var issues = buildIssues(assessmentInsight,
             subjectsInsightMap,
             attributesInsightMap,
             assessmentResult.getLastCalculationTime());
@@ -92,7 +90,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
                                             Map<Long, Insight> subjectsInsightMap,
                                             Map<Long, Insight> attributesInsightMap) {
         var subjectValues = loadSubjectValuePort.loadAll(assessmentResult.getId());
-        var attributeValuesMap = loadAttributeValuePort.loadAll(assessmentResult.getId()).stream()
+        var attributeIdToValueMap = loadAttributeValuePort.loadAll(assessmentResult.getId()).stream()
             .collect(toMap(attributeValue -> attributeValue.getAttribute().getId(), Function.identity()));
         var subjectInsightEditable = assessmentAccessChecker.isAuthorized(param.getAssessmentId(),
             param.getCurrentUserId(),
@@ -103,18 +101,18 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
         return subjectValues.stream()
             .map(subjectValue -> toSubject(subjectValue,
-                subjectsInsightMap,
+                subjectsInsightMap.get(subjectValue.getSubject().getId()),
                 subjectInsightEditable,
-                attributeValuesMap,
+                attributeIdToValueMap,
                 attributesInsightMap,
                 attributeInsightEditable)
             ).toList();
     }
 
     private SubjectModel toSubject(SubjectValue subjectValue,
-                                   Map<Long, Insight> subjectsInsightMap,
+                                   Insight subjectInsight,
                                    boolean subjectInsightEditable,
-                                   Map<Long, AttributeValue> attributeValuesMap,
+                                   Map<Long, AttributeValue> attributeIdToValueMap,
                                    Map<Long, Insight> attributesInsightMap,
                                    boolean attributeInsightEditable) {
         var subject = subjectValue.getSubject();
@@ -126,8 +124,8 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
             subject.getWeight(),
             toMaturityLevel(subjectValue.getMaturityLevel()),
             subjectValue.getConfidenceValue(),
-            toInsight(subjectsInsightMap.get(subject.getId()), subjectInsightEditable),
-            buildAttributes(subject.getAttributes(), attributeValuesMap, attributesInsightMap, attributeInsightEditable)
+            toInsight(subjectInsight, subjectInsightEditable),
+            buildAttributes(subject.getAttributes(), attributeIdToValueMap, attributesInsightMap, attributeInsightEditable)
         );
     }
 
@@ -147,17 +145,20 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     }
 
     private List<AttributeModel> buildAttributes(List<Attribute> attributes,
-                                                 Map<Long, AttributeValue> attributeValuesMap,
+                                                 Map<Long, AttributeValue> attributeIdToValueMap,
                                                  Map<Long, Insight> attributesInsightMap,
                                                  boolean editable) {
         return attributes.stream()
-            .map(attribute -> toAttribute(attribute, attributeValuesMap, attributesInsightMap, editable))
+            .map(attribute -> toAttribute(attribute,
+                attributeIdToValueMap,
+                attributesInsightMap.get(attribute.getId()),
+                editable))
             .toList();
     }
 
     private AttributeModel toAttribute(Attribute attribute,
                                        Map<Long, AttributeValue> attributeValuesMap,
-                                       Map<Long, Insight> attributesInsightMap,
+                                       Insight attributeInsight,
                                        boolean editable) {
         return new AttributeModel(attribute.getId(),
             attribute.getTitle(),
@@ -166,33 +167,26 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
             attribute.getWeight(),
             toMaturityLevel(attributeValuesMap.get(attribute.getId()).getMaturityLevel()),
             attributeValuesMap.get(attribute.getId()).getConfidenceValue(),
-            toInsight(attributesInsightMap.get(attribute.getId()), editable));
+            toInsight(attributeInsight, editable));
     }
 
-    private Issues buildIssues(Assessment assessment,
-                               List<SubjectModel> subjects,
-                               Insight assessmentInsight,
+    private Issues buildIssues(Insight assessmentInsight,
                                Map<Long, Insight> subjectsInsightMap,
                                Map<Long, Insight> attributesInsightMap,
                                LocalDateTime lastCalculationTime) {
-        var subjectsInsights = subjects.stream()
-            .map(SubjectModel::insight)
-            .toList();
-        var attributesInsights = subjects.stream()
-            .flatMap(s -> s.attributes().stream())
-            .map(AttributeModel::insight)
-            .toList();
+        var subjectsInsights = subjectsInsightMap.values().stream().toList();
+        var attributesInsights = attributesInsightMap.values().stream().toList();
 
-        int notGeneratedInsights = countNotGeneratedInsights(assessment.insight(), subjectsInsights, attributesInsights);
-        int unapprovedInsights = countUnapprovedInsights(assessment.insight(), subjectsInsights, attributesInsights);
+        int notGeneratedInsights = countNotGeneratedInsights(assessmentInsight, subjectsInsights, attributesInsights);
+        int unapprovedInsights = countUnapprovedInsights(assessmentInsight, subjectsInsights, attributesInsights);
         int expiredInsights = countExpiredInsights(assessmentInsight, subjectsInsightMap, attributesInsightMap, lastCalculationTime);
 
         return new Issues(notGeneratedInsights, unapprovedInsights, expiredInsights);
     }
 
-    private int countNotGeneratedInsights(InsightModel assessmentInsight,
-                                          List<InsightModel> subjectsInsights,
-                                          List<InsightModel> attributesInsights) {
+    private int countNotGeneratedInsights(Insight assessmentInsight,
+                                          List<Insight> subjectsInsights,
+                                          List<Insight> attributesInsights) {
         var assessmentInsightUnapproved = (int) Optional.of(assessmentInsight)
             .filter(isNotGenerated()).stream()
             .count();
@@ -206,13 +200,13 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
         return assessmentInsightUnapproved + notGeneratedSubjectsInsightsCount + notGeneratedAttributesInsightsCount;
     }
 
-    private Predicate<InsightModel> isNotGenerated() {
+    private Predicate<Insight> isNotGenerated() {
         return insight -> insight.defaultInsight() == null && insight.assessorInsight() == null;
     }
 
-    private int countUnapprovedInsights(InsightModel assessmentInsight,
-                                        List<InsightModel> subjectsInsights,
-                                        List<InsightModel> attributesInsights) {
+    private int countUnapprovedInsights(Insight assessmentInsight,
+                                        List<Insight> subjectsInsights,
+                                        List<Insight> attributesInsights) {
         var assessmentInsightUnapproved = (int) Optional.of(assessmentInsight)
             .filter(isUnapproved()).stream()
             .count();
@@ -226,7 +220,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
         return assessmentInsightUnapproved + unapprovedSubjectsInsightsCount + unapprovedAttributesInsightsCount;
     }
 
-    private Predicate<InsightModel> isUnapproved() {
+    private Predicate<Insight> isUnapproved() {
         return insight -> {
             if (insight.approved() != null || insight.defaultInsight() != null)
                 return !Boolean.TRUE.equals(insight.approved());
