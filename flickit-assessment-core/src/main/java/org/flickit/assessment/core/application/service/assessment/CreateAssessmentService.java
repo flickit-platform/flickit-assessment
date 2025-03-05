@@ -84,9 +84,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
     private void validatePlan(Param param, Space space, boolean isKitPrivate) {
         if (space.getType().equals(SpaceType.BASIC) && countAssessmentsPort.countSpaceAssessments(param.getSpaceId()) >= appSpecProperties.getSpace().getMaxBasicSpaceAssessments())
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_PERSONAL_SPACE_ASSESSMENTS_MAX);
+            throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX);
         if (isKitPrivate && space.getType().equals(SpaceType.BASIC))
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_PERSONAL_SPACE_PRIVATE_KIT_MAX);
+            throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_MAX);
         if (space.getType().equals(SpaceType.PREMIUM) && space.getSubscriptionExpiry().isBefore(LocalDateTime.now()))
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
     }

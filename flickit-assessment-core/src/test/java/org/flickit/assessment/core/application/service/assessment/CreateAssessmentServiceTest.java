@@ -297,7 +297,7 @@ class CreateAssessmentServiceTest {
         when(countAssessmentsPort.countSpaceAssessments(param.getSpaceId())).thenReturn(2);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
-        assertEquals(CREATE_ASSESSMENT_PERSONAL_SPACE_ASSESSMENTS_MAX, throwable.getMessage());
+        assertEquals(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX, throwable.getMessage());
 
         verify(appSpecProperties).getSpace();
     }
@@ -314,7 +314,7 @@ class CreateAssessmentServiceTest {
         when(countAssessmentsPort.countSpaceAssessments(param.getSpaceId())).thenReturn(0);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
-        assertEquals(CREATE_ASSESSMENT_PERSONAL_SPACE_PRIVATE_KIT_MAX, throwable.getMessage());
+        assertEquals(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_MAX, throwable.getMessage());
 
         verify(appSpecProperties).getSpace();
     }
