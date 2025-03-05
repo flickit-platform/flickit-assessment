@@ -331,5 +331,13 @@ public class ErrorMessageKey {
 
     public static final String APPROVE_EXPIRED_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "approve-expired-insights.assessmentId.notNull";
 
+    public static final String GET_COMMENT_LIST_QUESTION_ID_NOT_NULL = "get-comment-list.questionId.notNull";
+    public static final String GET_COMMENT_LIST_ASSESSMENT_ID_NOT_NULL = "get-comment-list.assessmentId.notNull";
+    public static final String GET_COMMENT_LIST_SIZE_MIN = "get-comment-list.size.min";
+    public static final String GET_COMMENT_LIST_SIZE_MAX = "get-comment-list.size.max";
+    public static final String GET_COMMENT_LIST_PAGE_MIN = "get-comment-list.page.min";
+
+    public static final String RESOLVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL = "resolve-assessment-comments.assessmentId.notNull";
+
     public static final String GET_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights.assessmentId.notNull";
 }
