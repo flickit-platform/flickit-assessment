@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.service.assessment;
 
 
-import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
@@ -257,7 +256,6 @@ class CreateAssessmentServiceTest {
     @Test
     void testCreateAssessment_whenSpaceIsPersonalAndExceedsMaxAssessmentLimits_thenThrowsException() {
         var kit = AssessmentKitMother.kit();
-        var expectedMessage = MessageBundle.message(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX, appSpecProperties().getSpace().getMaxBasicSpaceAssessments());
 
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
@@ -266,7 +264,7 @@ class CreateAssessmentServiceTest {
         when(countAssessmentsPort.countSpaceAssessments(param.getSpaceId())).thenReturn(2);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
-        assertEquals(expectedMessage, throwable.getMessage());
+        assertEquals(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX, throwable.getMessage());
     }
 
     @Test
@@ -287,7 +285,6 @@ class CreateAssessmentServiceTest {
     void testCreateAssessment_whenSpaceIsPremiumAndSubscriptionExpired_thenThrowsException() {
         var premiumExpiredSpace = SpaceMother.createPremiumExpiredSpace(UUID.randomUUID());
         var kit = AssessmentKitMother.kit();
-        var expectedMessage = MessageBundle.message(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, premiumExpiredSpace.getSubscriptionExpiry());
 
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(premiumExpiredSpace);
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
@@ -295,7 +292,7 @@ class CreateAssessmentServiceTest {
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(kit);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
-        assertEquals(expectedMessage, throwable.getMessage());
+        assertEquals(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, throwable.getMessage());
 
         verifyNoInteractions(appSpecProperties);
     }
