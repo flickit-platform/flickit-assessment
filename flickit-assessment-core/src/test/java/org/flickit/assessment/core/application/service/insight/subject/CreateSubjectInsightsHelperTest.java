@@ -4,11 +4,10 @@ import org.flickit.assessment.common.application.MessageBundle;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
-import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.Subject;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.core.application.service.insight.subject.CreateSubjectInsightsHelper.SubjectInsightParam;
@@ -48,12 +47,12 @@ class CreateSubjectInsightsHelperTest {
     private LoadSubjectValuePort loadSubjectValuePort;
 
     @Mock
-    private LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private CountMaturityLevelsPort countMaturityLevelsPort;
 
     private final AssessmentResult assessmentResult = validResult();
     private final SubjectValue subjectValue = SubjectValueMother.createSubjectValue();
     private final Subject subject = subjectValue.getSubject();
-    private final List<MaturityLevel> maturityLevels = MaturityLevelMother.allLevels();
+    private final int maturityLevelsCount = MaturityLevelMother.allLevels().size();
     private final SubjectInsightsParam subjectInsightsParam =
         createSubjectInsightsParam(SubjectInsightsParamBuilder::build);
     private final SubjectInsightParam subjectInsightParam =
@@ -67,7 +66,7 @@ class CreateSubjectInsightsHelperTest {
         var exception = assertThrows(ResourceNotFoundException.class, () -> helper.createSubjectInsight(subjectInsightParam));
         assertEquals(SUBJECT_NOT_FOUND, exception.getMessage());
 
-        verifyNoInteractions(loadSubjectValuePort, loadMaturityLevelsPort);
+        verifyNoInteractions(loadSubjectValuePort, countMaturityLevelsPort);
     }
 
     @Test
@@ -76,8 +75,8 @@ class CreateSubjectInsightsHelperTest {
             .thenReturn(Optional.of(subject));
         when(loadSubjectValuePort.load(assessmentResult.getId(), subjectInsightParam.subjectId()))
             .thenReturn(subjectValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevelsCount);
 
         var result = helper.createSubjectInsight(subjectInsightParam);
 
@@ -99,8 +98,8 @@ class CreateSubjectInsightsHelperTest {
         var paramWithPersianLocale = createSubjectInsightParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
         when(loadSubjectValuePort.load(assessmentResult.getId(), paramWithPersianLocale.subjectId()))
             .thenReturn(subjectValue);
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevelsCount);
 
         var result = helper.createSubjectInsight(paramWithPersianLocale);
 
@@ -119,8 +118,8 @@ class CreateSubjectInsightsHelperTest {
     void testCreateSubjectInsights_whenSubjectValueDoesNotExist_thenReturnEmptyList() {
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of());
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevelsCount);
 
         var result = helper.createSubjectInsights(subjectInsightsParam);
 
@@ -133,8 +132,8 @@ class CreateSubjectInsightsHelperTest {
     void testCreateSubjectInsights_whenSubjectIdIsValid_thenReturnSubjectInsight() {
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), subjectInsightsParam.subjectIds()))
             .thenReturn(List.of(subjectValue));
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevelsCount);
 
         var result = helper.createSubjectInsights(subjectInsightsParam);
         assertFalse(result.isEmpty());
@@ -157,8 +156,8 @@ class CreateSubjectInsightsHelperTest {
         var paramWithPersianLocale = createSubjectInsightsParam(b -> b.locale(Locale.of(KitLanguage.FA.getCode())));
         when(loadSubjectValuePort.loadAll(assessmentResult.getId(), paramWithPersianLocale.subjectIds()))
             .thenReturn(List.of(subjectValue));
-        when(loadMaturityLevelsPort.loadByKitVersionId(assessmentResult.getKitVersionId()))
-            .thenReturn(maturityLevels);
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(maturityLevelsCount);
 
         var result = helper.createSubjectInsights(paramWithPersianLocale);
         assertFalse(result.isEmpty());
@@ -184,7 +183,7 @@ class CreateSubjectInsightsHelperTest {
             (int) Math.ceil(subjectValue.getConfidenceValue()),
             subjectValue.getSubject().getTitle(),
             subjectValue.getMaturityLevel().getIndex(),
-            maturityLevels.size(),
+            maturityLevelsCount,
             subjectValue.getMaturityLevel().getTitle(),
             subjectValue.getSubject().getAttributes().size(),
             subjectValue.getSubject().getTitle());
