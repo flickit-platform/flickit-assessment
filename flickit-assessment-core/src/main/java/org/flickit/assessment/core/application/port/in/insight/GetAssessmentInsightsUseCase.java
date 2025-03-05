@@ -47,10 +47,10 @@ public interface GetAssessmentInsightsUseCase {
                       boolean isCalculateValid,
                       boolean isConfidenceValid,
                       InsightModel insight,
-                      Kit kit) {
+                      KitModel kit) {
     }
 
-    record Kit(int maturityLevelsCount) {
+    record KitModel(int maturityLevelsCount) {
     }
 
     record SubjectModel(Long id,

@@ -75,7 +75,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
             assessmentResult.getIsCalculateValid(),
             assessmentResult.getIsConfidenceValid(),
             toInsight(assessmentInsight, assessmentInsight.editable()),
-            new Kit(countMaturityLevelsPort.count(assessmentResult.getKitVersionId())));
+            new KitModel(countMaturityLevelsPort.count(assessmentResult.getKitVersionId())));
     }
 
     private MaturityLevelModel toMaturityLevel(MaturityLevel maturityLevel) {
