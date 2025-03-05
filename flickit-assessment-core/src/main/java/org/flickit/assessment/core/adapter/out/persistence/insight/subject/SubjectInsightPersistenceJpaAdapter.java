@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.out.insight.subject.*;
+import org.flickit.assessment.data.jpa.AbstractEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.insight.subject.SubjectInsightJpaRepository;
 import org.springframework.stereotype.Component;
@@ -64,6 +65,7 @@ public class SubjectInsightPersistenceJpaAdapter implements
     public void updateAll(List<SubjectInsight> subjectInsights) {
         var entities = subjectInsights.stream()
             .map(SubjectInsightMapper::mapToJpaEntity)
+            .peek(AbstractEntity::markAsNotNew)
             .toList();
         repository.saveAll(entities);
     }
