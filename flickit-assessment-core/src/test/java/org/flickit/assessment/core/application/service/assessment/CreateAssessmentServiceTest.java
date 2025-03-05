@@ -102,7 +102,7 @@ class CreateAssessmentServiceTest {
     );
 
     @Test
-    void testCreateAssessment_whenValidValidParam_thenPersistsAndReturnsId() {
+    void testCreateAssessment_whenValidValidParameters_thenPersistsAndReturnsId() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
         var expectedId = UUID.randomUUID();
@@ -212,7 +212,7 @@ class CreateAssessmentServiceTest {
     }
 
     @Test
-    void testCreateAssessment_whenValidParam_thenPersistsSubjectValues() {
+    void testCreateAssessment_whenValidParameters_thenPersistsSubjectValues() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
 
@@ -240,12 +240,6 @@ class CreateAssessmentServiceTest {
     void testCreateAssessment_whenValidCommand_thenPersistsAttributeValue() {
         var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
         var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
-
-        List<Subject> expectedSubjects = List.of(
-            new Subject(1L, "subject2", "description2", 1, List.of(qa1, qa2)),
-            new Subject(2L, "subject1", "description1", 1, List.of(qa3, qa4)),
-            new Subject(3L, "subject3", "description3", 1, List.of(qa5))
-        );
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
