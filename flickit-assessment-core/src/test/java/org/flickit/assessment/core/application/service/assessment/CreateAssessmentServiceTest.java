@@ -342,7 +342,6 @@ class CreateAssessmentServiceTest {
         properties.setSpace(new AppSpecProperties.Space());
         properties.getSpace().setMaxBasicSpaces(1);
         properties.getSpace().setMaxBasicSpaceAssessments(2);
-        properties.getSpace().setMaxBasicSpaceMembers(3);
         return properties;
     }
 
