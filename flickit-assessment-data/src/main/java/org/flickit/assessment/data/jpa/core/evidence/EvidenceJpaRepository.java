@@ -75,6 +75,21 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
                         @Param("lastModifiedBy") UUID lastModifiedBy,
                         @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
+    @Modifying
+    @Query("""
+            UPDATE EvidenceJpaEntity e
+            SET e.resolved = true,
+                e.lastModifiedBy = :lastModifiedBy,
+                e.lastModificationTime = :lastModificationTime
+            WHERE e.assessmentId = :assessmentId
+                    AND e.deleted = false
+                    AND e.type IS NULL
+                    AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    void resolveAllAssessmentComments(@Param("assessmentId") UUID assessmentId,
+                                      @Param("lastModifiedBy") UUID lastModifiedBy,
+                                      @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
     @Query("""
             SELECT COUNT(DISTINCT e.questionId)
             FROM EvidenceJpaEntity e
@@ -185,19 +200,4 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
         """)
     int countQuestionUnresolvedComments(@Param("assessmentId") UUID assessmentId,
                                         @Param("questionId") long questionId);
-
-    @Modifying
-    @Query("""
-            UPDATE EvidenceJpaEntity e
-            SET e.resolved = true,
-                e.lastModifiedBy = :lastModifiedBy,
-                e.lastModificationTime = :lastModificationTime
-            WHERE e.assessmentId = :assessmentId
-                    AND e.deleted = false
-                    AND e.type IS NULL
-                    AND (e.resolved IS NULL OR e.resolved = false)
-        """)
-    void resolveAllAssessmentComments(@Param("assessmentId") UUID assessmentId,
-                                      @Param("lastModifiedBy") UUID lastModifiedBy,
-                                      @Param("lastModificationTime") LocalDateTime lastModificationTime);
 }

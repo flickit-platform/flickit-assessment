@@ -22,9 +22,7 @@ public class ResolveAssessmentCommentsRestController {
     @PutMapping("/assessments/{assessmentId}/resolve-comments")
     public ResponseEntity<Void> resolveAssessmentComments(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
-
         useCase.resolveAllComments(toParam(assessmentId, currentUserId));
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
