@@ -87,7 +87,8 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX);
         if (isKitPrivate && space.getType().equals(SpaceType.BASIC))
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED);
-        if (space.getType().equals(SpaceType.PREMIUM) && space.getSubscriptionExpiry().isBefore(LocalDateTime.now()))
+        if (space.getType().equals(SpaceType.PREMIUM) &&
+            space.getSubscriptionExpiry() != null && space.getSubscriptionExpiry().isBefore(LocalDateTime.now()))
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
     }
 
