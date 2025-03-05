@@ -4,8 +4,8 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase;
-import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightUseCase.Param;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase;
+import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentOverallInsightUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.InsightMother;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class GetAssessmentInsightServiceTest {
 
     @InjectMocks
-    private GetAssessmentInsightService service;
+    private GetAssessmentOverallInsightService service;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -94,8 +94,8 @@ class GetAssessmentInsightServiceTest {
         return paramBuilder.build();
     }
 
-    private GetAssessmentInsightUseCase.Param.ParamBuilder paramBuilder() {
-        return GetAssessmentInsightUseCase.Param.builder()
+    private GetAssessmentOverallInsightUseCase.Param.ParamBuilder paramBuilder() {
+        return GetAssessmentOverallInsightUseCase.Param.builder()
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
