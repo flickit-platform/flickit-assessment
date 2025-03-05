@@ -106,19 +106,17 @@ public class AttributeValuePersistenceJpaAdapter implements
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var entities = repository.findByAssessmentResultId(assessmentResultId);
+        var views = repository.findAllWithAttributeByAssessmentResultId(assessmentResultId);
+
         var maturityLevelMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
             .collect(toMap(MaturityLevelJpaEntity::getId,
                 entity -> MaturityLevelMapper.mapToDomainModel(entity, null)));
-        var attributeMap = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
-            .collect(toMap(AttributeJpaEntity::getId, Function.identity()));
 
-        return entities.stream()
-            .map(entity ->
-                mapToDomainModel(entity,
-                    AttributeMapper.mapToDomainModel(attributeMap.get(entity.getAttributeId())),
+        return views.stream()
+            .map(view -> mapToDomainModel(view.getAttributeValue(),
+                    AttributeMapper.mapToDomainModel(view.getAttribute()),
                     null,
-                    maturityLevelMap.get(entity.getMaturityLevelId())))
+                    maturityLevelMap.get(view.getAttributeValue().getMaturityLevelId())))
             .toList();
     }
 
