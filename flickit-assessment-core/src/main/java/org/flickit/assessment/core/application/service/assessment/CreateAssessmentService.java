@@ -73,7 +73,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
 
         var assessmentKit = loadAssessmentKitPort.loadAssessmentKit(param.getKitId());
         var space = loadSpacePort.loadSpace(param.getSpaceId());
-        validatePlan(param, space, assessmentKit.getIsPrivate());
+        validateSpace(param, space, assessmentKit.getIsPrivate());
 
         UUID id = createAssessmentPort.persist(toParam(param));
         createAssessmentResult(id, assessmentKit.getKitVersion());
@@ -83,11 +83,11 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         return new Result(id, new CreateAssessmentNotificationCmd(param.getKitId(), param.getCurrentUserId()));
     }
 
-    private void validatePlan(Param param, Space space, boolean isKitPrivate) {
+    private void validateSpace(Param param, Space space, boolean isKitPrivate) {
         if (space.getType().equals(SpaceType.BASIC) && countAssessmentsPort.countSpaceAssessments(param.getSpaceId()) >= appSpecProperties.getSpace().getMaxBasicSpaceAssessments())
             throw new UpgradeRequiredException(MessageBundle.message(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX, appSpecProperties.getSpace().getMaxBasicSpaceAssessments()));
         if (isKitPrivate && space.getType().equals(SpaceType.BASIC))
-            throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_MAX);
+            throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED);
         if (space.getType().equals(SpaceType.PREMIUM) && space.getSubscriptionExpiry().isBefore(LocalDateTime.now()))
             throw new UpgradeRequiredException(MessageBundle.message(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, space.getSubscriptionExpiry()));
     }

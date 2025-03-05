@@ -17,12 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CreateAssessmentUseCaseParamTest {
 
     @Test
-    void testCreateAssessmentUseCaseParam_ShortTitleIsEmptyString_ShouldNotReturnError() {
-        assertDoesNotThrow(() -> createParam(b -> b.shortTitle(null)));
-        assertDoesNotThrow(() -> createParam(b -> b.shortTitle("          ")));
-    }
-
-    @Test
     void testCreateAssessmentUseCaseParam_TitleParamViolatesConstraints_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.title(null)));
@@ -43,6 +37,9 @@ class CreateAssessmentUseCaseParamTest {
         throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.shortTitle(RandomStringUtils.random(101, true, true))));
         assertThat(throwable).hasMessage("shortTitle: " + CREATE_ASSESSMENT_SHORT_TITLE_SIZE_MAX);
+
+        assertDoesNotThrow(() -> createParam(b -> b.shortTitle(null)));
+        assertDoesNotThrow(() -> createParam(b -> b.shortTitle("          ")));
     }
 
     @Test
