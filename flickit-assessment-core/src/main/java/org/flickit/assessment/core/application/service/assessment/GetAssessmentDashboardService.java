@@ -5,26 +5,37 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.common.util.ClassUtils;
+import org.flickit.assessment.core.application.domain.AssessmentReport;
+import org.flickit.assessment.core.application.domain.AssessmentReportMetadata;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.ConfidenceLevel;
+import org.flickit.assessment.core.application.domain.insight.AssessmentInsight;
+import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
+import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.in.assessment.GetAssessmentDashboardUseCase;
 import org.flickit.assessment.core.application.port.out.adviceitem.CountAdviceItemsPort;
+import org.flickit.assessment.core.application.port.out.answer.CountAnswersPort;
 import org.flickit.assessment.core.application.port.out.answer.CountLowConfidenceAnswersPort;
 import org.flickit.assessment.core.application.port.out.assessment.GetAssessmentProgressPort;
-import org.flickit.assessment.core.application.port.out.assessmentinsight.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.assessmentreport.LoadAssessmentReportPort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
-import org.flickit.assessment.core.application.port.out.attributeinsight.LoadAttributeInsightsPort;
 import org.flickit.assessment.core.application.port.out.evidence.CountEvidencesPort;
+import org.flickit.assessment.core.application.port.out.insight.assessment.LoadAssessmentInsightPort;
+import org.flickit.assessment.core.application.port.out.insight.attribute.LoadAttributeInsightsPort;
+import org.flickit.assessment.core.application.port.out.insight.subject.LoadSubjectInsightsPort;
 import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
-import org.flickit.assessment.core.application.port.out.subjectinsight.LoadSubjectInsightsPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_DASHBOARD;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.util.ClassUtils.countProvidedFields;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Slf4j
@@ -44,6 +55,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
     private final CountLowConfidenceAnswersPort countLowConfidenceAnswersPort;
     private final LoadSubjectInsightsPort loadSubjectInsightsPort;
     private final LoadAssessmentInsightPort loadAssessmentInsightPort;
+    private final LoadAssessmentReportPort loadAssessmentReportPort;
+    private final CountAnswersPort countAnswersPort;
 
     @Override
     public Result getAssessmentDashboard(Param param) {
@@ -53,10 +66,13 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()).
             orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_DASHBOARD_ASSESSMENT_RESULT_NOT_FOUND));
 
+        var assessmentReport = loadAssessmentReportPort.load(param.getAssessmentId()).orElse(null);
+
         return new Result(
             buildQuestionsResult(param.getAssessmentId(), assessmentResult.getId()),
             buildInsightsResult(assessmentResult),
-            buildAdvices(assessmentResult.getId())
+            buildAdvices(assessmentResult.getId()),
+            buildReport(assessmentReport)
         );
     }
 
@@ -65,8 +81,9 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var questionsCount = progress.questionsCount();
         var answersCount = progress.answersCount();
         var lowConfidenceAnswersCount = countLowConfidenceAnswersPort.countWithConfidenceLessThan(assessmentResultId, ConfidenceLevel.SOMEWHAT_UNSURE);
-        var answeredQuestionsWithEvidenceCount = countEvidencesPort.countQuestionsHavingEvidence(assessmentId);
+        var answeredQuestionsWithEvidenceCount = countEvidencesPort.countAnsweredQuestionsHavingEvidence(assessmentId);
         var unresolvedCommentsCount = countEvidencesPort.countUnresolvedComments(assessmentId);
+        var unapprovedAnswers = countAnswersPort.countUnapprovedAnswers(assessmentResultId);
 
         return new Result.Questions(
             questionsCount,
@@ -74,7 +91,8 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
             questionsCount - answersCount,
             lowConfidenceAnswersCount,
             answersCount - answeredQuestionsWithEvidenceCount,
-            unresolvedCommentsCount);
+            unresolvedCommentsCount,
+            unapprovedAnswers);
     }
 
     private Result.Insights buildInsightsResult(AssessmentResult assessmentResult) {
@@ -82,32 +100,15 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var expectedInsightsCount = attributesCount + subjectsCount + 1;
 
-        var attributeInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
+        var attributesInsights = loadAttributeInsightsPort.loadInsights(assessmentResult.getId());
         var subjectsInsights = loadSubjectInsightsPort.loadSubjectInsights(assessmentResult.getId());
         var assessmentInsight = loadAssessmentInsightPort.loadByAssessmentResultId(assessmentResult.getId()).orElse(null);
-        var totalGeneratedInsights = attributeInsights.size() + subjectsInsights.size() + (assessmentInsight == null ? 0 : 1);
+        var totalGeneratedInsights = attributesInsights.size() + subjectsInsights.size() + (assessmentInsight == null ? 0 : 1);
 
         var lastCalculationTime = assessmentResult.getLastCalculationTime();
-        var expiredAttributeInsightsCount = Math.toIntExact(attributeInsights.stream()
-            .map(e -> {
-                if (e.getAiInsightTime() == null) {
-                    return e.getAssessorInsightTime();
-                } else if (e.getAssessorInsightTime() == null) {
-                    return e.getAiInsightTime();
-                } else {
-                    return e.getAiInsightTime().isBefore(e.getAssessorInsightTime())
-                        ? e.getAssessorInsightTime()
-                        : e.getAiInsightTime();
-                }
-            })
-            .filter(latestInsightTime -> latestInsightTime != null && latestInsightTime.isBefore(lastCalculationTime))
-            .count());
 
-        var expiredSubjectsInsightsCount = Math.toIntExact(subjectsInsights.stream()
-            .filter(e -> e.getInsightTime().isBefore(lastCalculationTime))
-            .count());
-
-        int assessmentInsightExpired = assessmentInsight != null && assessmentInsight.getInsightTime().isBefore(lastCalculationTime) ? 1 : 0;
+        int unapprovedInsightsCount = countUnapprovedInsights(attributesInsights, subjectsInsights, assessmentInsight);
+        int expiredInsightsCount = countExpiredInsights(attributesInsights, subjectsInsights, assessmentInsight, lastCalculationTime);
 
         int notGenerated = Math.max(expectedInsightsCount - totalGeneratedInsights, 0);
         if (totalGeneratedInsights > expectedInsightsCount) {
@@ -118,13 +119,61 @@ public class GetAssessmentDashboardService implements GetAssessmentDashboardUseC
         return new Result.Insights(
             expectedInsightsCount,
             notGenerated,
-            0,
-            expiredAttributeInsightsCount + expiredSubjectsInsightsCount + assessmentInsightExpired
-        );
+            unapprovedInsightsCount,
+            expiredInsightsCount);
+    }
+
+    private int countUnapprovedInsights(List<AttributeInsight> attributesInsights,
+                                        List<SubjectInsight> subjectsInsights,
+                                        AssessmentInsight assessmentInsight) {
+        var unapprovedAttributeInsightsCount = (int) attributesInsights.stream()
+            .filter(e -> !e.isApproved())
+            .count();
+
+        var unapprovedSubjectsInsightsCount = (int) subjectsInsights.stream()
+            .filter(e -> !e.isApproved())
+            .count();
+
+        int assessmentInsightUnapproved = assessmentInsight != null && !assessmentInsight.isApproved() ? 1 : 0;
+
+        return unapprovedAttributeInsightsCount + unapprovedSubjectsInsightsCount + assessmentInsightUnapproved;
+    }
+
+    private int countExpiredInsights(List<AttributeInsight> attributesInsights,
+                                     List<SubjectInsight> subjectsInsights,
+                                     AssessmentInsight assessmentInsight,
+                                     LocalDateTime lastCalculationTime) {
+        var expiredAttributeInsightsCount = (int) attributesInsights.stream()
+            .filter(e -> e.getLastModificationTime().isBefore(lastCalculationTime))
+            .count();
+
+        var expiredSubjectsInsightsCount = (int) subjectsInsights.stream()
+            .filter(e -> e.getLastModificationTime().isBefore(lastCalculationTime))
+            .count();
+
+        int assessmentInsightExpired = assessmentInsight != null && assessmentInsight.getLastModificationTime().isBefore(lastCalculationTime) ? 1 : 0;
+
+        return expiredAttributeInsightsCount + expiredSubjectsInsightsCount + assessmentInsightExpired;
     }
 
     private Result.Advices buildAdvices(UUID assessmentResultId) {
         var adviceItemsCount = loadAdvicesDashboardPort.countAdviceItems(assessmentResultId);
         return new Result.Advices(adviceItemsCount);
+    }
+
+    private Result.Report buildReport(AssessmentReport assessmentReport) {
+        int allFieldsCount = ClassUtils.countAllFields(AssessmentReportMetadata.class);
+
+        if (assessmentReport == null)
+            return new Result.Report(true, allFieldsCount, 0, allFieldsCount);
+        if (assessmentReport.getMetadata() == null)
+            return new Result.Report(!assessmentReport.isPublished(), allFieldsCount, 0, allFieldsCount);
+
+        int providedFieldsCount = countProvidedFields(assessmentReport.getMetadata());
+
+        return new Result.Report(!assessmentReport.isPublished(),
+            Math.max(allFieldsCount - providedFieldsCount, 0),
+            providedFieldsCount,
+            allFieldsCount);
     }
 }

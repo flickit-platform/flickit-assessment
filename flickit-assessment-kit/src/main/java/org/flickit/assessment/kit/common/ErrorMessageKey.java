@@ -29,7 +29,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_BY_DSL_CHANGE_UNSUPPORTED = "update-kit-by-dsl.change.unsupported";
 
     public static final String GET_KIT_DSL_DOWNLOAD_LINK_FILE_PATH_NOT_FOUND = "get-kit-dsl-download-link.filePath.notFound";
-    public static final String GET_KIT_DSL_DOWNLOAD_LINK_KIT_ID_NOT_NULL =  "get-kit-dsl-download-link.kitId.notNull";
+    public static final String GET_KIT_DSL_DOWNLOAD_LINK_KIT_ID_NOT_NULL = "get-kit-dsl-download-link.kitId.notNull";
 
     public static final String GRANT_USER_ACCESS_TO_KIT_KIT_ID_NOT_NULL = "grant-user-access-to-kit.kitId.notNull";
     public static final String GRANT_USER_ACCESS_TO_KIT_USER_ID_NOT_NULL = "grant-user-access-to-kit.userId.notNull";
@@ -47,6 +47,7 @@ public class ErrorMessageKey {
     public static final String GET_KIT_TAG_LIST_SIZE_MAX = "get-kit-tag-list.size.max";
 
     public static final String GET_KIT_LIST_IS_PRIVATE_NOT_NULL = "get-kit-list.isPrivate.notNull";
+    public static final String GET_KIT_LIST_LANGS_INVALID = "get-kit-list.langs.invalid";
     public static final String GET_KIT_LIST_PAGE_MIN = "get-kit-list.page.min";
     public static final String GET_KIT_LIST_SIZE_MIN = "get-kit-list.size.min";
     public static final String GET_KIT_LIST_SIZE_MAX = "get-kit-list.size.max";
@@ -87,6 +88,7 @@ public class ErrorMessageKey {
     public static final String CREATE_KIT_BY_DSL_IS_PRIVATE_NOT_NULL = "create-kit-by-dsl.isPrivate.notNull";
     public static final String CREATE_KIT_BY_DSL_TAG_IDS_NOT_NULL = "create-kit-by-dsl.tag-ids.notNull";
     public static final String CREATE_KIT_BY_DSL_EXPERT_GROUP_ID_NOT_NULL = "create-kit-by-dsl.expert-group-id.notNull";
+    public static final String CREATE_KIT_BY_DSL_LANGUAGE_INVALID = "create-kit-by-dsl.kitLanguage.invalid";
 
     public static final String GET_KIT_STATS_KIT_ID_NOT_NULL = "get-kit-stats.kitId.notNull";
 
@@ -102,6 +104,7 @@ public class ErrorMessageKey {
     public static final String UPDATE_KIT_INFO_ABOUT_SIZE_MAX = "update-kit-info.about.size.max";
     public static final String UPDATE_KIT_INFO_TAGS_SIZE_MIN = "update-kit-info.tags.size.min";
     public static final String UPDATE_KIT_INFO_TAG_ID_NOT_FOUND = "update-kit-info.tagId.notFound";
+    public static final String UPDATE_KIT_INFO_KIT_LANGUAGE_INVALID = "update-kit-info.kitLanguage.invalid";
 
     public static final String GET_KIT_DETAIL_KIT_ID_NOT_NULL = "get-kit-detail.kitId.notNull";
 
@@ -236,6 +239,7 @@ public class ErrorMessageKey {
     public static final String CREATE_ASSESSMENT_KIT_IS_PRIVATE_NOT_NULL = "create-assessment-kit.isPrivate.notNull";
     public static final String CREATE_ASSESSMENT_KIT_TAG_IDS_NOT_NULL = "create-assessment-kit.tagIds.notNull";
     public static final String CREATE_ASSESSMENT_KIT_STATUS_DUPLICATE = "create-assessment-kit.kitStatus.duplicate";
+    public static final String CREATE_ASSESSMENT_KIT_LANGUAGE_INVALID = "create-assessment-kit.kitLanguage.invalid";
 
     public static final String ACTIVATE_KIT_VERSION_KIT_VERSION_ID_NOT_NULL = "activate-kit-version.kitVersionId.notNull";
     public static final String ACTIVATE_KIT_VERSION_STATUS_INVALID = "activate-kit-version.status.invalid";
@@ -330,7 +334,7 @@ public class ErrorMessageKey {
     public static final String CREATE_QUESTION_HINT_SIZE_MAX = "create-question.hint.size.max";
     public static final String CREATE_QUESTION_MAY_NOT_BE_APPLICABLE_NOT_NULL = "create-question.mayNotBeApplicable.notNull";
     public static final String CREATE_QUESTION_ADVISABLE_NOT_NULL = "create-question.advisable.notNull";
-    public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL= "create-question.questionnaireId.notNull";
+    public static final String CREATE_QUESTION_QUESTIONNAIRE_ID_NOT_NULL = "create-question.questionnaireId.notNull";
     public static final String CREATE_QUESTION_INDEX_DUPLICATE = "create-question.index.duplicate";
     public static final String CREATE_QUESTION_IMPACT_DUPLICATE = "create-question-impact.duplicate";
 
@@ -469,9 +473,9 @@ public class ErrorMessageKey {
     public static final String VALIDATE_KIT_VERSION_SUBJECT_ATTRIBUTE_NOT_NULL = "validate-kit-version.subject-attribute.notNull";
     public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_QUESTION_NOT_NULL = "validate-kit-version.questionnaire-question.notNull";
     public static final String VALIDATE_KIT_VERSION_SUBJECT_NOT_NULL = "validate-kit-version.subject.notNull";
-    public static final String VALIDATE_KIT_VERSION_QUESTION_NOT_NULL= "validate-kit-version.question.notNull";
-    public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL= "validate-kit-version.questionnaire.notNull";
-    public static final String VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL= "validate-kit-version.maturityLevel.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTION_NOT_NULL = "validate-kit-version.question.notNull";
+    public static final String VALIDATE_KIT_VERSION_QUESTIONNAIRE_NOT_NULL = "validate-kit-version.questionnaire.notNull";
+    public static final String VALIDATE_KIT_VERSION_MATURITY_LEVEL_NOT_NULL = "validate-kit-version.maturityLevel.notNull";
 
     public static final String UPDATE_KIT_CUSTOM_KIT_CUSTOM_ID_NOT_NULL = "update-kit-custom.kitCustomId.notNull";
     public static final String UPDATE_KIT_CUSTOM_KIT_ID_NOT_NULL = "update-kit-custom.kitId.notNull";

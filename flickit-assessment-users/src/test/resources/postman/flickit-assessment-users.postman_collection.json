@@ -706,6 +706,34 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Space Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/space-types",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"space-types"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1036,56 +1064,30 @@
 		{
 			"name": "Tenant",
 			"item": [
-				{
-					"name": "Get Tenant Info",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/tenant/info",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"tenant",
-								"info"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Tenant Logo",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/tenant/logo",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"tenant",
-								"logo"
-							]
-						}
-					},
-					"response": []
-				}
+                {
+                    "name": "Get Tenant",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                              "key": "Accept-Language",
+                              "value": "{{accept_langage}}",
+                              "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/{{api_path}}/tenant",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "{{api_path}}",
+                                "tenant"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
 			]
 		},
 		{
@@ -1278,6 +1280,34 @@
 								"{{api_path}}",
 								"user-profile",
 								"picture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Create Space",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/check-create-space",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"check-create-space"
 							]
 						}
 					},

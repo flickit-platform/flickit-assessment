@@ -43,8 +43,8 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
         return new PaginatedResponse<>(items,
             result.getPage(),
             result.getSize(),
-            result.getOrder(),
             result.getSort(),
+            result.getOrder(),
             result.getTotal());
     }
 
@@ -66,8 +66,8 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
 
     private Result toResult(LoadAttributeScoreDetailPort.Result item) {
         return new Result(
-            item.questionnaireTitle(),
-            new Result.Question(item.questionIndex(), item.questionTitle(), item.questionWeight(), item.evidenceCount()),
-            new Result.Answer(item.optionIndex(), item.optionTitle(), item.answerIsNotApplicable(), item.answerScore(), item.weightedScore(), item.confidence()));
+            new Result.Questionnaire(item.questionnaireId(), item.questionnaireTitle()),
+            new Result.Question(item.questionId(), item.questionIndex(), item.questionTitle(), item.questionWeight(), item.evidenceCount()),
+            new Result.Answer(item.optionIndex(), item.optionTitle(), item.answerIsNotApplicable(), item.gainedScore(), item.missedScore(), item.confidence()));
     }
 }

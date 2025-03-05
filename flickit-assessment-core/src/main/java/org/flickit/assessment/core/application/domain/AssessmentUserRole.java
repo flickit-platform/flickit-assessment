@@ -70,7 +70,6 @@ public enum AssessmentUserRole {
             CALCULATE_CONFIDENCE,
             VIEW_ASSESSMENT_LIST,
             VIEW_ASSESSMENT_PROGRESS,
-            VIEW_ASSESSMENT,
             VIEW_SUBJECT_PROGRESS,
             VIEW_SUBJECT_REPORT,
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
@@ -80,6 +79,7 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
             VIEW_EVIDENCE_LIST,
+            VIEW_COMMENT_LIST,
             UPDATE_EVIDENCE,
             ADD_EVIDENCE_ATTACHMENT,
             DELETE_EVIDENCE_ATTACHMENT,
@@ -97,10 +97,17 @@ public enum AssessmentUserRole {
             MANAGE_KIT_CUSTOM,
             MANAGE_ADVICE_ITEM,
             RESOLVE_COMMENT,
+            RESOLVE_OWN_COMMENT,
             VIEW_DASHBOARD,
             APPROVE_ATTRIBUTE_INSIGHT,
             APPROVE_SUBJECT_INSIGHT,
-            APPROVE_ASSIGNMENT_INSIGHT)),
+            APPROVE_ASSIGNMENT_INSIGHT,
+            MANAGE_REPORT_METADATA,
+            PUBLISH_ASSESSMENT_REPORT,
+            VIEW_REPORT_PREVIEW,
+            APPROVE_ANSWER,
+            APPROVE_ALL_ASSESSMENT_INSIGHTS,
+            GENERATE_ALL_ASSESSMENT_INSIGHTS)),
         MANAGER_PERMISSIONS(Set.of(
             CREATE_ASSESSMENT,
             DELETE_ASSESSMENT,
@@ -119,6 +126,7 @@ public enum AssessmentUserRole {
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
             VIEW_EVIDENCE_LIST,
+            VIEW_COMMENT_LIST,
             UPDATE_EVIDENCE,
             VIEW_EVIDENCE_ATTACHMENT,
             ADD_EVIDENCE_ATTACHMENT,
@@ -127,9 +135,14 @@ public enum AssessmentUserRole {
             VIEW_QUESTIONNAIRE_QUESTIONS,
             ANSWER_QUESTION,
             VIEW_EVIDENCE,
-            RESOLVE_COMMENT)),
+            RESOLVE_OWN_COMMENT)),
         REPORT_VIEWER_PERMISSIONS(Set.of(
-            GRANT_ACCESS_TO_REPORT));
+            VIEW_ASSESSMENT,
+            GRANT_ACCESS_TO_REPORT,
+            VIEW_GRAPHICAL_REPORT,
+            VIEW_ASSESSMENT_ATTRIBUTES,
+            VIEW_ASSESSMENT_MATURITY_LEVELS
+        ));
 
         private final Set<AssessmentPermission> permissions;
     }

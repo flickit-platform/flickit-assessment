@@ -51,14 +51,11 @@ public class CreateAssessorAdviceNarrationService implements CreateAssessorAdvic
     }
 
     private void handleExistingAdviceNarration(Param param, AdviceNarration adviceNarration) {
-        AdviceNarration updated = new AdviceNarration(adviceNarration.getId(),
-            adviceNarration.getAssessmentResultId(),
-            adviceNarration.getAiNarration(),
+        var updateParam = new UpdateAdviceNarrationPort.AssessorNarrationParam(adviceNarration.getId(),
             param.getAssessorNarration(),
-            adviceNarration.getAiNarrationTime(),
             LocalDateTime.now(),
             param.getCurrentUserId());
-        updateAdviceNarrationPort.updateAssessorNarration(updated);
+        updateAdviceNarrationPort.updateAssessorNarration(updateParam);
     }
 
     private void handleNewAdviceNarration(UUID assessmentResultId, Param param) {

@@ -35,6 +35,17 @@ class GetAttributeScoreDetailServiceTest {
     private AssessmentAccessChecker assessmentAccessChecker;
 
     @Test
+    void testGetAttributeScoreDetail_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+        var param = createParam(GetAttributeScoreDetailUseCase.Param.ParamBuilder::build);
+
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL))
+            .thenReturn(false);
+
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreDetail(param));
+        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    }
+
+    @Test
     void testGetAttributeScoreDetail_ValidParam() {
         var param = createParam(GetAttributeScoreDetailUseCase.Param.ParamBuilder::build);
 
@@ -58,6 +69,9 @@ class GetAttributeScoreDetailServiceTest {
         var result = service.getAttributeScoreDetail(param);
 
         assertNotNull(result);
+        assertNotNull(result.getItems());
+        assertEquals(portResult.getItems().size(), result.getItems().size());
+        assertPaginationProperties(portResult, result);
     }
 
     @Test
@@ -66,11 +80,11 @@ class GetAttributeScoreDetailServiceTest {
 
         PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult = new PaginatedResponse<>(
             List.of(),
-            1,
+            0,
             10,
             "title",
             "desc",
-            1
+            0
         );
         when(loadAttributeScoreDetailPort.loadScoreDetail(any())).thenReturn(portResult);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL))
@@ -79,17 +93,20 @@ class GetAttributeScoreDetailServiceTest {
         var result = service.getAttributeScoreDetail(param);
 
         assertNotNull(result);
+        assertNotNull(result.getItems());
+        assertEquals(portResult.getItems().size(), result.getItems().size());
+        assertPaginationProperties(portResult, result);
     }
 
-    @Test
-    void testGetAttributeScoreDetail_InvalidCurrentUser_ThrowsException() {
-        var param = createParam(GetAttributeScoreDetailUseCase.Param.ParamBuilder::build);
-
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL))
-            .thenReturn(false);
-
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreDetail(param));
-        assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+    private void assertPaginationProperties(PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult,
+                                            PaginatedResponse<GetAttributeScoreDetailUseCase.Result> result) {
+        assertAll(
+            () -> assertEquals(portResult.getSize(), result.getSize()),
+            () -> assertEquals(portResult.getTotal(), result.getTotal()),
+            () -> assertEquals(portResult.getOrder(), result.getOrder()),
+            () -> assertEquals(portResult.getPage(), result.getPage()),
+            () -> assertEquals(portResult.getSort(), result.getSort())
+        );
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
@@ -112,45 +129,51 @@ class GetAttributeScoreDetailServiceTest {
 
     private LoadAttributeScoreDetailPort.Result questionWithScore(int weight, double score) {
         return new LoadAttributeScoreDetailPort.Result(
+            333L,
             "title",
+            123L,
             1,
             "Do you have CI/CD?",
             weight,
             2,
             "Yes",
             false,
-            score,
             weight * score,
+            score,
             1,
             2);
     }
 
     private LoadAttributeScoreDetailPort.Result questionWithoutAnswer() {
         return new LoadAttributeScoreDetailPort.Result(
+            333L,
             "title",
+            124L,
             1,
             "Do you have CI/CD?",
             4,
             null,
             null,
             false,
-            null,
             0.0,
+            null,
             1,
             3);
     }
 
     private LoadAttributeScoreDetailPort.Result questionMarkedAsNotApplicable() {
         return new LoadAttributeScoreDetailPort.Result(
+            333L,
             "title",
+            125L,
             1,
             "Do you have CI/CD?",
             1,
             null,
             null,
             true,
-            null,
             0.0,
+            null,
             1,
             0);
     }

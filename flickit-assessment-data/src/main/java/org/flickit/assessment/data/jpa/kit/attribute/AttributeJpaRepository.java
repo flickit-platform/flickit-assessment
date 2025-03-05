@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.attribute;
 
+import org.flickit.assessment.data.jpa.core.attribute.AttributeMaturityLevelSubjectView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,8 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     List<AttributeJpaEntity> findAllByIdInAndKitVersionIdAndSubjectId(List<Long> ids, long kitVersionId, long subjectId);
 
+    int countByKitVersionId(long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE AttributeJpaEntity a
@@ -58,6 +61,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
 
     @Query("""
             SELECT
+                qr.id as questionnaireId,
                 qr.title as questionnaireTitle,
                 qsn.id as questionId,
                 qsn.index as questionIndex,
@@ -74,8 +78,12 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 END as answerScore,
                 CASE
                     WHEN ans.isNotApplicable = true THEN NULL
-                    ELSE COALESCE(ao.value, 0.0) * qi.weight
-                END as weightedScore,
+                    ELSE ROUND(COALESCE(ao.value, 0.0) * qi.weight, 2)
+                END AS gainedScore,
+                CASE
+                    WHEN ans.isNotApplicable = true THEN NULL
+                    ELSE ROUND(qi.weight - COALESCE(ao.value, 0.0) * qi.weight, 2)
+                END AS missedScore,
                 COUNT(e.id) as evidenceCount
             FROM QuestionJpaEntity qsn
             LEFT JOIN AnswerJpaEntity ans on ans.questionId = qsn.id and ans.assessmentResult.id = :assessmentResultId
@@ -87,7 +95,7 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 AND qi.maturityLevelId = :maturityLevelId
                 AND qsn.kitVersionId = :kitVersionId
             GROUP BY
-                qr.title, qsn.id, qsn.index, qsn.title,
+                qr.id, qr.title, qsn.id, qsn.index, qsn.title,
                 ans, qi, ao.index, ao.title, ao.value
         """)
     Page<ImpactFullQuestionsView> findImpactFullQuestionsScore(@Param("assessmentId") UUID assessmentId,
@@ -144,5 +152,17 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                                                @Param("attributeId") Long attributeId,
                                                @Param("maturityLevelId") Long maturityLevelId);
 
-    int countByKitVersionId(long kitVersionId);
+    @Query("""
+            SELECT
+                at AS attribute,
+                av AS attributeValue,
+                ml AS maturityLevel,
+                su AS subject
+            FROM AttributeJpaEntity at
+            JOIN AttributeValueJpaEntity av ON at.id = av.attributeId AND av.assessmentResult.kitVersionId = at.kitVersionId
+            JOIN MaturityLevelJpaEntity ml ON av.maturityLevelId = ml.id AND at.kitVersionId = ml.kitVersionId
+            JOIN SubjectJpaEntity su ON su.id = at.subjectId AND su.kitVersionId = ml.kitVersionId
+            WHERE av.assessmentResult.assessment.id = :assessmentId
+        """)
+    List<AttributeMaturityLevelSubjectView> findAllByAssessmentIdWithSubjectAndMaturityLevel(@Param("assessmentId") UUID assessmentId);
 }

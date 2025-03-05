@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.flickit.assessment.core.test.fixture.application.AnswerHistoryMother.history;
-import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithNotApplicableTrue;
+import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithNotApplicableFalse;
 import static org.flickit.assessment.core.test.fixture.application.AnswerMother.answerWithQuestionIdAndNotApplicableTrue;
 import static org.flickit.assessment.core.test.fixture.application.AnswerOptionMother.optionOne;
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,7 +65,7 @@ class GetAnswerHistoryListServiceTest {
         int page = 1;
         var param = new GetAnswerHistoryListUseCase.Param(assessmentId, questionId, currentUserId, size, page);
 
-        AnswerHistory history1 = history(answerWithNotApplicableTrue(optionOne()));
+        AnswerHistory history1 = history(answerWithNotApplicableFalse(optionOne()));
         AnswerHistory history2 = history(answerWithQuestionIdAndNotApplicableTrue(questionId));
 
         var expected = new PaginatedResponse<>(List.of(history2, history1), page, size, "desc", "creationTime", 2);
@@ -88,6 +88,8 @@ class GetAnswerHistoryListServiceTest {
 
         assertNotNull(result.getItems().get(1).answer().selectedOption());
         assertEquals(history1.getAnswer().getSelectedOption().getId(), result.getItems().get(1).answer().selectedOption().id());
+        assertEquals(history1.getAnswer().getSelectedOption().getIndex(), result.getItems().get(1).answer().selectedOption().index());
+        assertEquals(history1.getAnswer().getSelectedOption().getTitle(), result.getItems().get(1).answer().selectedOption().title());
         assertEquals(history1.getAnswer().getConfidenceLevelId(), result.getItems().get(1).answer().confidenceLevel().getId());
         assertEquals(history1.getCreatedBy().getId(), result.getItems().get(1).createdBy().id());
         assertEquals(history1.getCreatedBy().getDisplayName(), result.getItems().get(1).createdBy().displayName());

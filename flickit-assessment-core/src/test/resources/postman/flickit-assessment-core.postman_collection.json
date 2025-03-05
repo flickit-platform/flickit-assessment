@@ -10,6 +10,45 @@
 			"name": "Answer",
 			"item": [
 				{
+					"name": "Approve Answer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"questionId\": 1997\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/70c58eab-3d5f-48aa-9ffb-07802e5ea48f/approve-answer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"70c58eab-3d5f-48aa-9ffb-07802e5ea48f",
+								"approve-answer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Submit Answer",
 					"request": {
 						"method": "PUT",
@@ -577,6 +616,46 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Grant Access to Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"a.sedaghat1372@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/grant-report-access",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"grant-report-access"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -623,157 +702,6 @@
 								"assessments",
 								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
 								"analysis-input"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "AssessmentInsight",
-			"item": [
-				{
-					"name": "Create Assessment Insight",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/insights",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
-								"insights"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Assessment Insight",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/insights",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"e4f4a1cc-f80f-4b30-aaea-27f642a3965b",
-								"insights"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Init Assessment Insight",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/59fc1611-372f-4921-b7a0-5c2f299b5144/init-insight",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"59fc1611-372f-4921-b7a0-5c2f299b5144",
-								"init-insight"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Approve Assessment Insight",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/approve-insight",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"53028c27-83f5-4c10-9105-56e2a4f58a09",
-								"approve-insight"
 							]
 						}
 					},
@@ -1177,6 +1105,37 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Graphical Report Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/users-with-report-access",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"users-with-report-access"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1275,122 +1234,15 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "AttributeInsight",
-			"item": [
-				{
-					"name": "Approve Attribute Insight",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/6185a789-60a6-4c39-8670-21a1b057dee0/attributes/2311/approve-insight",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"6185a789-60a6-4c39-8670-21a1b057dee0",
-								"attributes",
-								"2311",
-								"approve-insight"
-							]
-						}
-					},
-					"response": []
 				},
 				{
-					"name": "Create Attribute AI Insight",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/ai-report/attributes/1523",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
-								"ai-report",
-								"attributes",
-								"1523"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Attribute Insight",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"assessorInsight\" : \"Assessor Insight\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/0b711637-89c8-473b-bf20-b4f78af9f5f8/ai-report/attributes/1961",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"0b711637-89c8-473b-bf20-b4f78af9f5f8",
-								"ai-report",
-								"attributes",
-								"1961"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Attribute Insight",
+					"name": "Get Assessment Attributes",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{authorization_header}}",
-								"type": "text"
+								"value": "{{authorization_header}}"
 							},
 							{
 								"key": "Accept-Language",
@@ -1399,17 +1251,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/ai-report/attributes/1104",
+							"raw": "{{base_url}}/{{api_path}}/assessments/8280e75b-ed71-4c82-9fac-920c52efb26c/attributes",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"53028c27-83f5-4c10-9105-56e2a4f58a09",
-								"ai-report",
-								"attributes",
-								"1104"
+								"8280e75b-ed71-4c82-9fac-920c52efb26c",
+								"attributes"
 							]
 						}
 					},
@@ -1493,6 +1343,60 @@
 							"path": [
 								"{{api_path}}",
 								"evidences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Comment List",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/comments?questionId=8657&assessmentId=53028c27-83f5-4c10-9105-56e2a4f58a09&size=10&page=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "questionId",
+									"value": "8657"
+								},
+								{
+									"key": "assessmentId",
+									"value": "53028c27-83f5-4c10-9105-56e2a4f58a09"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								}
 							]
 						}
 					},
@@ -2004,51 +1908,10 @@
 			]
 		},
 		{
-			"name": "SubjectInsight",
+			"name": "Question",
 			"item": [
 				{
-					"name": "Create Subject Insight",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{authorization_header}}"
-							},
-							{
-								"key": "Accept-Language",
-								"value": "{{accept_language}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"insight\" : \"Assessor Insight\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/insights/subjects/15",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{api_path}}",
-								"assessments",
-								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
-								"insights",
-								"subjects",
-								"15"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Subject Insight",
+					"name": "Get Assessment Question Issues",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -2063,7 +1926,44 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/insights/subjects/15",
+							"raw": "{{base_url}}/{{api_path}}/assessments/4a298d20-d1ba-42f6-bbfe-03b6c5e28678/questions/19169/issues",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"4a298d20-d1ba-42f6-bbfe-03b6c5e28678",
+								"questions",
+								"19169",
+								"issues"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AssessmentReport",
+			"item": [
+				{
+					"name": "Report Assessment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/graphical-report",
 							"host": [
 								"{{base_url}}"
 							],
@@ -2071,16 +1971,555 @@
 								"{{api_path}}",
 								"assessments",
 								"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
-								"insights",
-								"subjects",
-								"15"
+								"graphical-report"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Approve Subject Insight",
+					"name": "Get Assessment Report Metadata",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/27c48fa6-97ff-4fd6-8c3d-259106468f11/report-metadata",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"27c48fa6-97ff-4fd6-8c3d-259106468f11",
+								"report-metadata"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Assessment Report Metadata",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"intro\": \"intro\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/27c48fa6-97ff-4fd6-8c3d-259106468f11/report-metadata",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"27c48fa6-97ff-4fd6-8c3d-259106468f11",
+								"report-metadata"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Report Publish status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"published\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/70c58eab-3d5f-48aa-9ffb-07802e5ea48f/report-publish-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"70c58eab-3d5f-48aa-9ffb-07802e5ea48f",
+								"report-publish-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Insight",
+			"item": [
+				{
+					"name": "Assessment",
+					"item": [
+						{
+							"name": "Approve Assessment Insight",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/approve-overall-insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"53028c27-83f5-4c10-9105-56e2a4f58a09",
+										"approve-overall-insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Assessment Insight",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/b1a47e40-4d89-4dc0-aabb-4dabc95ec457/overall-insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"b1a47e40-4d89-4dc0-aabb-4dabc95ec457",
+										"overall-insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Assessment Insight",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"insight\" : \"Some Insight\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/e4f4a1cc-f80f-4b30-aaea-27f642a3965b/overall-insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"e4f4a1cc-f80f-4b30-aaea-27f642a3965b",
+										"overall-insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Init Assessment Insight",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/59fc1611-372f-4921-b7a0-5c2f299b5144/init-overall-insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"59fc1611-372f-4921-b7a0-5c2f299b5144",
+										"init-overall-insight"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Subject",
+					"item": [
+						{
+							"name": "Approve Subject Insight",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/subjects/464/approve-insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"f2b6317f-eb3c-49d0-99c8-e70e49533fac",
+										"subjects",
+										"464",
+										"approve-insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Subject Insight",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"insight\" : \"Assessor Insight\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/subjects/15/insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+										"subjects",
+										"15",
+										"insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Subject Insight",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/1124cf20-51eb-4de6-ae6f-096fb4d92adb/subjects/15/insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"1124cf20-51eb-4de6-ae6f-096fb4d92adb",
+										"subjects",
+										"15",
+										"insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Init Subject Insight",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/subjects/464/init-insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"f2b6317f-eb3c-49d0-99c8-e70e49533fac",
+										"subjects",
+										"464",
+										"init-insight"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Attribute",
+					"item": [
+						{
+							"name": "Approve Attribute Insight",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/6185a789-60a6-4c39-8670-21a1b057dee0/attributes/2311/approve-insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"6185a789-60a6-4c39-8670-21a1b057dee0",
+										"attributes",
+										"2311",
+										"approve-insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Attribute AI Insight",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/8ded0da4-9509-40ad-8701-7b6322cb5862/attributes/2078/ai-insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"8ded0da4-9509-40ad-8701-7b6322cb5862",
+										"attributes",
+										"2078",
+										"ai-insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Attribute Insight",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"assessorInsight\" : \"Assessor Insight\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/0b711637-89c8-473b-bf20-b4f78af9f5f8/attributes/1961/insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"0b711637-89c8-473b-bf20-b4f78af9f5f8",
+										"attributes",
+										"1961",
+										"insight"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Attribute Insight",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{authorization_header}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "{{accept_language}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/attributes/1104/insight",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{api_path}}",
+										"assessments",
+										"53028c27-83f5-4c10-9105-56e2a4f58a09",
+										"attributes",
+										"1104",
+										"insight"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Approve All Assessment Insights",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -2091,39 +2530,120 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/subjects/464/approve-insight",
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/approve-insights",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{api_path}}",
 								"assessments",
-								"f2b6317f-eb3c-49d0-99c8-e70e49533fac",
-								"subjects",
-								"464",
-								"approve-insight"
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"approve-insights"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Init Subject Insight",
+					"name": "Approve Expired Insights",
 					"request": {
-						"method": "POST",
-                      "header": [
-                        {
-                          "key": "Authorization",
-                          "value": "{{authorization_header}}"
-                        },
-                        {
-                          "key": "Accept-Language",
-                          "value": "{{accept_language}}",
-                          "type": "text"
-                        }
-                      ],
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/subjects/464/init-insight",
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/approve-expired-insights",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"approve-expired-insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate All Assessment Insights",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/generate-insights",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"generate-insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Regenerate Expired Insights",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/regenerate-expired-insights",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"regenerate-expired-insights"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "MaturityLevel",
+			"item": [
+				{
+					"name": "Get Assessment Maturity Levels",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/f2b6317f-eb3c-49d0-99c8-e70e49533fac/maturity-levels",
 							"host": [
 								"{{base_url}}"
 							],
@@ -2131,9 +2651,7 @@
 								"{{api_path}}",
 								"assessments",
 								"f2b6317f-eb3c-49d0-99c8-e70e49533fac",
-								"subjects",
-								"464",
-								"init-insight"
+								"maturity-levels"
 							]
 						}
 					},

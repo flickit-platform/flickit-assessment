@@ -1,6 +1,7 @@
 package org.flickit.assessment.kit.application.service.assessmentkit;
 
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaEntity;
 import org.flickit.assessment.kit.application.port.in.assessmentkit.GetKitListUseCase.Param;
 import org.flickit.assessment.kit.application.port.out.assessmentkit.CountKitListStatsPort;
@@ -18,7 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,7 +47,7 @@ class GetKitListServiceTest {
 
     @Test
     void testGetKitList_GettingPublicKitsValidParams_ValidResult() {
-        var param = new Param(Boolean.FALSE, 0, 10, UUID.randomUUID());
+        var param = createParam(Param.ParamBuilder::build);
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
@@ -60,7 +63,7 @@ class GetKitListServiceTest {
         );
         var sampleTag = KitTagMother.createKitTag("sample tag");
 
-        when(loadPublishedKitListPort.loadPublicKits(param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPublicKits(Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
@@ -89,12 +92,14 @@ class GetKitListServiceTest {
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
         assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
 
-        verify(loadPublishedKitListPort, never()).loadPrivateKits(any(), anyInt(), anyInt());
+        verify(loadPublishedKitListPort, never()).loadPrivateKits(any(), any(), anyInt(), anyInt());
     }
 
     @Test
     void testGetKitList_GettingPrivateKitsValidParams_ValidResult() {
-        var param = new Param(Boolean.TRUE, 0, 10, UUID.randomUUID());
+        var param = createParam(p -> p
+            .isPrivate(true)
+            .langs(null));
         var assessmentKit = AssessmentKitMother.simpleKit();
         var kitId = assessmentKit.getId();
         var kitIds = List.of(kitId);
@@ -110,7 +115,7 @@ class GetKitListServiceTest {
         );
         var sampleTag = KitTagMother.createKitTag("sample tag");
 
-        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), null, param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(kitIds))
             .thenReturn(List.of(new CountKitListStatsPort.Result(kitId, 3, 15)));
@@ -139,12 +144,12 @@ class GetKitListServiceTest {
         assertEquals(expertGroup.getTitle(), item.expertGroup().title());
         assertEquals(expertGroupPictureUrl, item.expertGroup().picture());
 
-        verify(loadPublishedKitListPort, never()).loadPublicKits(anyInt(), anyInt());
+        verify(loadPublishedKitListPort, never()).loadPublicKits(isNull(), anyInt(), anyInt());
     }
 
     @Test
     void testGetKitList_GettingPrivateKitsValidParams_EmptyResult() {
-        var param = new Param(Boolean.TRUE, 0, 10, UUID.randomUUID());
+        var param = createParam(p -> p.isPrivate(true));
 
         var expectedKitsPage = new PaginatedResponse<LoadPublishedKitListPort.Result>(List.of(),
             0,
@@ -154,7 +159,7 @@ class GetKitListServiceTest {
             0
         );
 
-        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), param.getPage(), param.getSize()))
+        when(loadPublishedKitListPort.loadPrivateKits(param.getCurrentUserId(), Set.of(KitLanguage.EN), param.getPage(), param.getSize()))
             .thenReturn(expectedKitsPage);
         when(countKitStatsPort.countKitsStats(List.of())).thenReturn(List.of());
         when(loadKitTagListPort.loadByKitIds(List.of())).thenReturn(List.of());
@@ -168,7 +173,22 @@ class GetKitListServiceTest {
         assertEquals(expectedKitsPage.getTotal(), kitList.getTotal());
         assertEquals(expectedKitsPage.getItems().size(), kitList.getItems().size());
 
-        verify(loadPublishedKitListPort, never()).loadPublicKits(anyInt(), anyInt());
+        verify(loadPublishedKitListPort, never()).loadPublicKits(any(), anyInt(), anyInt());
         verify(createFileDownloadLinkPort, never()).createDownloadLink(anyString(), any());
+    }
+
+    private Param createParam(Consumer<Param.ParamBuilder> changer) {
+        var paramBuilder = paramBuilder();
+        changer.accept(paramBuilder);
+        return paramBuilder.build();
+    }
+
+    private Param.ParamBuilder paramBuilder() {
+        return Param.builder()
+            .isPrivate(false)
+            .langs(Set.of(KitLanguage.EN.name()))
+            .page(0)
+            .size(10)
+            .currentUserId(UUID.randomUUID());
     }
 }

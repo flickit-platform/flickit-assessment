@@ -15,7 +15,9 @@ import java.util.UUID;
 
 public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEntity, UUID>, JpaSpecificationExecutor<AssessmentJpaEntity> {
 
-    boolean existsByIdAndDeletedFalse(@Param(value = "id") UUID id);
+    boolean existsByIdAndDeletedFalse(UUID id);
+
+    Optional<AssessmentJpaEntity> findByIdAndDeletedFalse(UUID id);
 
     int countBySpaceIdAndDeletedFalse(long spaceId);
 
@@ -50,11 +52,15 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
                 r as assessmentResult,
                 CASE
                     WHEN ur.roleId = :managerRoleId OR space.ownerId = :userId THEN TRUE ELSE FALSE
-                END as manageable
+                END as manageable,
+                CASE
+                    WHEN arp IS NOT NULL AND COALESCE(arp.published, FALSE) = TRUE THEN TRUE ELSE FALSE
+                END as hasReport
             FROM AssessmentJpaEntity a
             LEFT JOIN AssessmentResultJpaEntity r ON a.id = r.assessment.id
             LEFT JOIN AssessmentUserRoleJpaEntity ur ON a.id = ur.assessmentId AND ur.userId = :userId
             LEFT JOIN SpaceJpaEntity space ON a.spaceId = space.id
+            LEFT JOIN AssessmentReportJpaEntity arp ON r.id = arp.assessmentResultId
             WHERE a.spaceId = :spaceId
                 AND a.deleted=false
                 AND r.lastModificationTime = (SELECT MAX(ar.lastModificationTime) FROM AssessmentResultJpaEntity ar WHERE ar.assessment.id = a.id)
@@ -102,7 +108,7 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
             JOIN SpaceJpaEntity s ON a.spaceId = s.id
             WHERE a.id = :id AND a.deleted = FALSE
         """)
-    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalse(@Param(value = "id") UUID id);
+    Optional<AssessmentKitSpaceJoinView> findByIdAndDeletedFalseWithKitAndSpace(@Param(value = "id") UUID id);
 
     @Modifying
     @Query("""
@@ -150,7 +156,12 @@ public interface AssessmentJpaRepository extends JpaRepository<AssessmentJpaEnti
             WHERE a.id = :id
         """)
     void updateKitCustomId(@Param("id") UUID id, @Param("kitCustomId") long kitCustomId);
+
+    @Query("""
+            SELECT k.languageId
+            FROM AssessmentKitJpaEntity k
+            JOIN AssessmentJpaEntity a ON k.id = a.assessmentKitId
+            WHERE a.id = :assessmentId
+        """)
+    Optional<Integer> loadKitLanguageByAssessmentId(@Param("assessmentId") UUID assessmentId);
 }
-
-
-

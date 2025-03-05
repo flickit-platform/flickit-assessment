@@ -1,11 +1,26 @@
 package org.flickit.assessment.common.application.domain.space;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.MessageBundle;
+
+@Getter
+@RequiredArgsConstructor
 public enum SpaceType {
-    PERSONAL,
+
+    BASIC,
     PREMIUM;
+
+    public String getTitle() {
+        return MessageBundle.message(getClass().getSimpleName() + "_" + name());
+    }
 
     public int getId() {
         return this.ordinal();
+    }
+
+    public String getCode() {
+        return name();
     }
 
     public static SpaceType valueOfById(int id) {

@@ -1,5 +1,6 @@
 package org.flickit.assessment.data.jpa.kit.assessmentkit;
 
+import jakarta.annotation.Nullable;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,10 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJpaEntity, Long> {
 
@@ -73,21 +71,33 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
             SELECT k AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
-            WHERE k.published = TRUE AND k.isPrivate = FALSE
+            WHERE k.published = TRUE
+                AND k.isPrivate = FALSE
+                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(Pageable pageable);
+    Page<KitWithExpertGroupView> findAllPublishedAndNotPrivateOrderByTitle(@Nullable
+                                                                           @Param("languageIds")
+                                                                           Collection<Integer> languageIds,
+                                                                           Pageable pageable);
 
     @Query("""
             SELECT k AS kit, g AS expertGroup
             FROM AssessmentKitJpaEntity k
             LEFT JOIN ExpertGroupJpaEntity g ON k.expertGroupId = g.id
             JOIN KitUserAccessJpaEntity kua ON k.id = kua.kitId
-            WHERE k.published = TRUE AND k.isPrivate = TRUE
+            WHERE k.published = TRUE
+                AND k.isPrivate = TRUE
                 AND kua.userId = :userId
+                AND (:languageIds IS NULL OR k.languageId IN :languageIds)
             ORDER BY k.title
         """)
-    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId") UUID userId, Pageable pageable);
+    Page<KitWithExpertGroupView> findAllPublishedAndPrivateByUserIdOrderByTitle(@Param("userId")
+                                                                                UUID userId,
+                                                                                @Nullable
+                                                                                @Param("languageIds")
+                                                                                Collection<Integer> languageIds,
+                                                                                Pageable pageable);
 
     @Query("""
             SELECT
@@ -121,7 +131,7 @@ public interface AssessmentKitJpaRepository extends JpaRepository<AssessmentKitJ
                 AND (:includeUnpublished = TRUE OR k.published = TRUE)
                 AND (k.isPrivate = FALSE OR kua.userId IS NOT NULL)
             ORDER BY k.published DESC, k.lastModificationTime DESC
-    """)
+        """)
     Page<KitWithDraftVersionIdView> findExpertGroupKitsOrderByPublishedAndModificationTimeDesc(
         @Param("expertGroupId") long expertGroupId,
         @Param("userId") UUID userId,

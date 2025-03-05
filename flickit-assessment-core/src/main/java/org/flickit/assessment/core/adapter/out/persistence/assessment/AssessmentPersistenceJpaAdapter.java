@@ -108,7 +108,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
                     null,
-                    true);
+                    false);
             }).toList();
 
         return new PaginatedResponse<>(
@@ -168,7 +168,7 @@ public class AssessmentPersistenceJpaAdapter implements
                     e.getAssessmentResult().getIsCalculateValid(),
                     e.getAssessmentResult().getIsConfidenceValid(),
                     e.getManageable(),
-                    true);
+                    e.getHasReport());
             }).toList();
 
 
@@ -209,7 +209,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public Optional<Assessment> getAssessmentById(UUID assessmentId) {
-        Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalse(assessmentId);
+        Optional<AssessmentKitSpaceJoinView> entity = repository.findByIdAndDeletedFalseWithKitAndSpace(assessmentId);
         if (entity.isEmpty())
             throw new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND);
         return entity.map(AssessmentMapper::mapToDomainModel);
@@ -230,7 +230,7 @@ public class AssessmentPersistenceJpaAdapter implements
 
     @Override
     public void updateKitCustomId(UUID id, long kitCustomId) {
-        AssessmentKitSpaceJoinView view = repository.findByIdAndDeletedFalse(id)
+        AssessmentKitSpaceJoinView view = repository.findByIdAndDeletedFalseWithKitAndSpace(id)
             .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
 
         if (!kitCustomRepository.existsByIdAndKitId(kitCustomId, view.getKit().getId()))

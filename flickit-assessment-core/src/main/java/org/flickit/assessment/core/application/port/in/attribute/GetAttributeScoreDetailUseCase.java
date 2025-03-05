@@ -54,7 +54,7 @@ public interface GetAttributeScoreDetailUseCase {
             this.attributeId = attributeId;
             this.maturityLevelId = maturityLevelId;
             this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : Sort.DEFAULT.name();
-            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DEFAULT.name();
+            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DESC.name();
             this.size = size;
             this.page = page;
             this.currentUserId = currentUserId;
@@ -67,27 +67,30 @@ public interface GetAttributeScoreDetailUseCase {
         public enum Sort {
             QUESTIONNAIRE("questionnaire"),
             WEIGHT("weight"),
-            SCORE("score"),
-            WEIGHTED_SCORE("weightedScore"),
+            GAINED_SCORE("gainedScore"),
+            MISSED_SCORE("missedScore"),
             CONFIDENCE("confidence"),
             EVIDENCE_COUNT("evidenceCount");
 
             private final String title;
 
-            public static final Sort DEFAULT = QUESTIONNAIRE;
+            public static final Sort DEFAULT = WEIGHT;
         }
     }
 
-    record Result(String questionnaire, Question question, Answer answer) {
+    record Result(Questionnaire questionnaire, Question question, Answer answer) {
 
-        public record Question(int index, String title, int weight, int evidenceCount) {
+        public record Questionnaire(long id, String title) {
+        }
+
+        public record Question(long id, int index, String title, int weight, int evidenceCount) {
         }
 
         public record Answer(Integer index,
                              String title,
                              Boolean isNotApplicable,
-                             Double score,
-                             Double weightedScore,
+                             Double gainedScore,
+                             Double missedScore,
                              Integer confidenceLevel) {
         }
     }
