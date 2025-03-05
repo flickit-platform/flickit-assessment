@@ -10,7 +10,7 @@ public class SpaceMother {
 
     static long id = 0;
 
-    public static Space createPersonalSpaceWithOwnerId(UUID ownerId) {
+    public static Space createBasicSpaceWithOwnerId(UUID ownerId) {
         return new Space(++id,
             "title",
             ownerId,

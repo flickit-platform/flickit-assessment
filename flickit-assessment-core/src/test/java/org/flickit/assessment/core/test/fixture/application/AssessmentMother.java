@@ -3,7 +3,6 @@ package org.flickit.assessment.core.test.fixture.application;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.core.application.domain.Assessment;
 import org.flickit.assessment.core.application.domain.AssessmentListItem;
-import org.flickit.assessment.core.application.domain.Space;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -25,7 +24,7 @@ public class AssessmentMother {
             "My Assessment " + counter,
             "Short title" + counter,
             AssessmentKitMother.kitWithLanguage(language),
-            SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID()),
+            SpaceMother.createBasicSpaceWithOwnerId(UUID.randomUUID()),
             234L,
             LocalDateTime.now(),
             LocalDateTime.now(),
@@ -43,7 +42,7 @@ public class AssessmentMother {
             "My Assessment " + counter,
             "Short title" + counter,
             AssessmentKitMother.AssessmentKitWithoutActiveKitVersion(),
-            SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID()),
+            SpaceMother.createBasicSpaceWithOwnerId(UUID.randomUUID()),
             234L,
             LocalDateTime.now(),
             LocalDateTime.now(),

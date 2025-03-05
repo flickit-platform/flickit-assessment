@@ -6,10 +6,7 @@ import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.common.exception.ValidationException;
-import org.flickit.assessment.core.application.domain.AssessmentKit;
-import org.flickit.assessment.core.application.domain.AssessmentUserRole;
-import org.flickit.assessment.core.application.domain.Attribute;
-import org.flickit.assessment.core.application.domain.Subject;
+import org.flickit.assessment.core.application.domain.*;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase;
 import org.flickit.assessment.core.application.port.in.assessment.CreateAssessmentUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessment.CountAssessmentsPort;
@@ -101,12 +98,12 @@ class CreateAssessmentServiceTest {
         new Subject(3L, "subject3", "description3", 1, List.of(qa5))
     );
 
+    private final Param param = createParam(Param.ParamBuilder::build);
+    private final Space space = SpaceMother.createBasicSpaceWithOwnerId(UUID.randomUUID());
+    private final UUID expectedId = UUID.randomUUID();
+
     @Test
     void testCreateAssessment_whenValidValidParameters_thenPersistsAndReturnsId() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-        var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
-        var expectedId = UUID.randomUUID();
-
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
@@ -146,16 +143,14 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenCurrentUserIsSpaceOwner_thenPersistOneAssessmentUserRole() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-        var space = SpaceMother.createPersonalSpaceWithOwnerId(param.getCurrentUserId());
-        var expectedId = UUID.randomUUID();
+        var spaceUserOwner = SpaceMother.createBasicSpaceWithOwnerId(param.getCurrentUserId());
 
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(any())).thenReturn(expectedResponse);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(spaceUserOwner);
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
@@ -185,13 +180,9 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenValidParametersWithPersonalSpaceAndPublicKit_thenPersistsAssessmentResult() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-        var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
-        var assessmentId = UUID.randomUUID();
-
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(assessmentId);
+        when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         UUID expectedResultId = UUID.randomUUID();
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
         List<Subject> expectedResponse = List.of();
@@ -204,7 +195,7 @@ class CreateAssessmentServiceTest {
         ArgumentCaptor<CreateAssessmentResultPort.Param> createPortParam = ArgumentCaptor.forClass(CreateAssessmentResultPort.Param.class);
         verify(createAssessmentResultPort).persist(createPortParam.capture());
 
-        assertEquals(assessmentId, createPortParam.getValue().assessmentId());
+        assertEquals(expectedId, createPortParam.getValue().assessmentId());
         assertNotNull(createPortParam.getValue().lastModificationTime());
         assertFalse(createPortParam.getValue().isCalculateValid());
 
@@ -213,9 +204,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenValidParameters_thenPersistsSubjectValues() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-        var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
-
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedSubjects);
@@ -232,9 +220,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenValidCommand_thenPersistsAttributeValue() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-        var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
-
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedSubjects);
@@ -250,8 +235,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenUserDoesNotHaveAccessToSpace_thenThrowsReturnUpgradeRequiredException() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAssessment(param));
@@ -262,8 +245,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenUserDoesNotHaveAccessToKit_thenThrowsException() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.empty());
 
@@ -275,8 +256,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsPersonalAndExceedsMaxAssessmentLimits_thenThrowsException() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-        var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
         var kit = AssessmentKitMother.kit();
         var expectedMessage = MessageBundle.message(CREATE_ASSESSMENT_BASIC_SPACE_ASSESSMENTS_MAX, appSpecProperties().getSpace().getMaxBasicSpaceAssessments());
 
@@ -292,9 +271,6 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsPersonalAndAssessmentKitIsPrivate_thenThrowsException() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-        var space = SpaceMother.createPersonalSpaceWithOwnerId(UUID.randomUUID());
-
         when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
@@ -309,16 +285,14 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsPremiumAndSubscriptionExpired_thenThrowsException() {
-        var param = createParam(CreateAssessmentUseCase.Param.ParamBuilder::build);
-        var space = SpaceMother.createPremiumExpiredSpace(UUID.randomUUID());
+        var premiumExpiredSpace = SpaceMother.createPremiumExpiredSpace(UUID.randomUUID());
         var kit = AssessmentKitMother.kit();
-        var expectedMessage = MessageBundle.message(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, space.getSubscriptionExpiry());
+        var expectedMessage = MessageBundle.message(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED, premiumExpiredSpace.getSubscriptionExpiry());
 
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(premiumExpiredSpace);
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(kit);
-
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createAssessment(param));
         assertEquals(expectedMessage, throwable.getMessage());
