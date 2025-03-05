@@ -33,7 +33,10 @@ public class AttributeValueMother {
 
         return new AttributeValue(UUID.randomUUID(),
             AttributeMother.withIdQuestionsAndWeight(attributeId, questions, weight),
-            answers);
+            answers,
+            null,
+            MaturityLevelMother.levelTwo(),
+            15.154);
     }
 
     public static AttributeValue hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(int weight, long attributeId) {

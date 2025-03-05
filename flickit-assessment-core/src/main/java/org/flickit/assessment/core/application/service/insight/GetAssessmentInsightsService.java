@@ -38,10 +38,10 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     private final LoadAssessmentResultPort loadAssessmentResultPort;
     private final ValidateAssessmentResultPort validateAssessmentResultPort;
     private final GetAssessmentInsightHelper getAssessmentInsightHelper;
-    private final LoadSubjectValuePort loadSubjectValuePort;
     private final GetSubjectInsightHelper getSubjectInsightHelper;
-    private final LoadAttributeValuePort loadAttributeValuePort;
     private final GetAttributeInsightHelper getAttributeInsightHelper;
+    private final LoadSubjectValuePort loadSubjectValuePort;
+    private final LoadAttributeValuePort loadAttributeValuePort;
 
     @Override
     public Result getAssessmentInsights(Param param) {
@@ -58,8 +58,12 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
         var assessment = buildAssessment(assessmentResult, assessmentInsight);
         var subjects = buildSubject(param, assessmentResult, subjectsInsightMap, attributesInsightMap);
-        var issues = buildIssues(assessment, subjects, assessmentInsight, subjectsInsightMap, attributesInsightMap, assessmentResult.getLastCalculationTime()
-        );
+        var issues = buildIssues(assessment,
+            subjects,
+            assessmentInsight,
+            subjectsInsightMap,
+            attributesInsightMap,
+            assessmentResult.getLastCalculationTime());
         return new Result(assessment, subjects, issues);
     }
 
@@ -127,7 +131,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     private InsightModel toInsight(Insight insight, boolean editable) {
         return insight != null
             ? new InsightModel(insight.defaultInsight(), insight.assessorInsight(), insight.editable(), insight.approved())
-            : new InsightModel(null, null, editable, false);
+            : new InsightModel(null, null, editable, null);
     }
 
     private List<AttributeModel> buildAttributes(List<Attribute> attributes,
@@ -170,9 +174,8 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
         int notGeneratedInsights = countNotGeneratedInsights(assessment.insight(), subjectsInsights, attributesInsights);
         int unapprovedInsights = countUnapprovedInsights(assessment.insight(), subjectsInsights, attributesInsights);
         int expiredInsights = countExpiredInsights(assessmentInsight, subjectsInsightMap, attributesInsightMap, lastCalculationTime);
-        return new Issues(notGeneratedInsights,
-            unapprovedInsights,
-            expiredInsights);
+
+        return new Issues(notGeneratedInsights, unapprovedInsights, expiredInsights);
     }
 
     private int countNotGeneratedInsights(InsightModel assessmentInsight,
@@ -187,6 +190,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
         var notGeneratedAttributesInsightsCount = (int) attributesInsights.stream()
             .filter(isNotGenerated())
             .count();
+
         return assessmentInsightUnapproved + notGeneratedSubjectsInsightsCount + notGeneratedAttributesInsightsCount;
     }
 
@@ -211,7 +215,11 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     }
 
     private Predicate<InsightModel> isUnapproved() {
-        return insight -> !Boolean.TRUE.equals(insight.approved());
+        return insight -> {
+            if (insight.approved() != null || insight.defaultInsight() != null)
+                return !Boolean.TRUE.equals(insight.approved());
+            return false;
+        };
     }
 
     private int countExpiredInsights(Insight assessmentInsight,
