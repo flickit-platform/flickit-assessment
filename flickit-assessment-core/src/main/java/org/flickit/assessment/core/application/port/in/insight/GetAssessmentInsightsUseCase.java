@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
-import org.flickit.assessment.core.application.domain.AssessmentListItem;
 import org.flickit.assessment.core.application.domain.insight.Insight.InsightDetail;
 
 import java.util.List;
@@ -37,17 +36,23 @@ public interface GetAssessmentInsightsUseCase {
     }
 
     record Result(Assessment assessment,
-                  List<Subject> subjects,
+                  List<SubjectModel> subjects,
                   Issues issues) {
     }
 
     record Assessment(UUID id,
                       String title,
-                      AssessmentListItem.MaturityLevel maturityLevel,
+                      MaturityLevelModel maturityLevel,
                       Double confidenceValue,
                       boolean isCalculateValid,
                       boolean isConfidenceValid,
                       InsightModel insight) {
+    }
+
+    record MaturityLevelModel(long id,
+                              String title,
+                              int value,
+                              int index) {
     }
 
     record InsightModel(InsightDetail defaultInsight,
@@ -56,15 +61,15 @@ public interface GetAssessmentInsightsUseCase {
                         Boolean approved) {
     }
 
-    record Subject(Long id,
-                   String title,
-                   String description,
-                   Integer index,
-                   Integer weight,
-                   AssessmentListItem.MaturityLevel maturityLevel,
-                   Double confidenceValue,
-                   InsightModel insight,
-                   List<AttributeModel> attributes) {
+    record SubjectModel(Long id,
+                        String title,
+                        String description,
+                        Integer index,
+                        Integer weight,
+                        MaturityLevelModel maturityLevel,
+                        Double confidenceValue,
+                        InsightModel insight,
+                        List<AttributeModel> attributes) {
     }
 
     record AttributeModel(Long id,
@@ -72,7 +77,7 @@ public interface GetAssessmentInsightsUseCase {
                           String description,
                           Integer index,
                           Integer weight,
-                          AssessmentListItem.MaturityLevel maturityLevel,
+                          MaturityLevelModel maturityLevel,
                           Double confidenceValue,
                           InsightModel insight) {
     }

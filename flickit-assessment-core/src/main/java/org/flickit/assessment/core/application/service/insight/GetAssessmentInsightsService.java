@@ -77,17 +77,17 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
             toInsight(assessmentInsight, assessmentInsight.editable()));
     }
 
-    private AssessmentListItem.MaturityLevel toMaturityLevel(MaturityLevel maturityLevel) {
-        return new AssessmentListItem.MaturityLevel(maturityLevel.getId(),
+    private MaturityLevelModel toMaturityLevel(MaturityLevel maturityLevel) {
+        return new MaturityLevelModel(maturityLevel.getId(),
             maturityLevel.getTitle(),
             maturityLevel.getValue(),
             maturityLevel.getIndex());
     }
 
-    private List<Subject> buildSubject(Param param,
-                                       AssessmentResult assessmentResult,
-                                       Map<Long, Insight> subjectsInsightMap,
-                                       Map<Long, Insight> attributesInsightMap) {
+    private List<SubjectModel> buildSubject(Param param,
+                                            AssessmentResult assessmentResult,
+                                            Map<Long, Insight> subjectsInsightMap,
+                                            Map<Long, Insight> attributesInsightMap) {
         var subjectValues = loadSubjectValuePort.loadAll(assessmentResult.getId());
         var attributeValuesMap = loadAttributeValuePort.loadAll(assessmentResult.getId()).stream()
             .collect(toMap(attributeValue -> attributeValue.getAttribute().getId(), Function.identity()));
@@ -108,14 +108,14 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
             ).toList();
     }
 
-    private Subject toSubject(SubjectValue subjectValue,
-                              Map<Long, Insight> subjectsInsightMap,
-                              boolean subjectInsightEditable,
-                              Map<Long, AttributeValue> attributeValuesMap,
-                              Map<Long, Insight> attributesInsightMap,
-                              boolean attributeInsightEditable) {
+    private SubjectModel toSubject(SubjectValue subjectValue,
+                                   Map<Long, Insight> subjectsInsightMap,
+                                   boolean subjectInsightEditable,
+                                   Map<Long, AttributeValue> attributeValuesMap,
+                                   Map<Long, Insight> attributesInsightMap,
+                                   boolean attributeInsightEditable) {
         var subject = subjectValue.getSubject();
-        return new Subject(
+        return new SubjectModel(
             subject.getId(),
             subject.getTitle(),
             subject.getDescription(),
@@ -158,13 +158,13 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     }
 
     private Issues buildIssues(Assessment assessment,
-                               List<Subject> subjects,
+                               List<SubjectModel> subjects,
                                Insight assessmentInsight,
                                Map<Long, Insight> subjectsInsightMap,
                                Map<Long, Insight> attributesInsightMap,
                                LocalDateTime lastCalculationTime) {
         var subjectsInsights = subjects.stream()
-            .map(Subject::insight)
+            .map(SubjectModel::insight)
             .toList();
         var attributesInsights = subjects.stream()
             .flatMap(s -> s.attributes().stream())
