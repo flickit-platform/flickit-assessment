@@ -10,6 +10,7 @@ import org.flickit.assessment.core.application.domain.insight.Insight;
 import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.core.application.service.insight.assessment.GetAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.GetAttributeInsightHelper;
@@ -42,6 +43,7 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     private final GetAttributeInsightHelper getAttributeInsightHelper;
     private final LoadSubjectValuePort loadSubjectValuePort;
     private final LoadAttributeValuePort loadAttributeValuePort;
+    private final CountMaturityLevelsPort countMaturityLevelsPort;
 
     @Override
     public Result getAssessmentInsights(Param param) {
@@ -74,7 +76,8 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
             assessmentResult.getConfidenceValue(),
             assessmentResult.getIsCalculateValid(),
             assessmentResult.getIsConfidenceValid(),
-            toInsight(assessmentInsight, assessmentInsight.editable()));
+            toInsight(assessmentInsight, assessmentInsight.editable()),
+            new Kit(countMaturityLevelsPort.count(assessmentResult.getKitVersionId())));
     }
 
     private MaturityLevelModel toMaturityLevel(MaturityLevel maturityLevel) {

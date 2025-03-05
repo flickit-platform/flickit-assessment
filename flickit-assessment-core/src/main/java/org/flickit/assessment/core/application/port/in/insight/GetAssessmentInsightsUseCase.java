@@ -46,23 +46,11 @@ public interface GetAssessmentInsightsUseCase {
                       Double confidenceValue,
                       boolean isCalculateValid,
                       boolean isConfidenceValid,
-                      InsightModel insight) {
+                      InsightModel insight,
+                      Kit kit) {
     }
 
-    record MaturityLevelModel(long id,
-                              String title,
-                              int value,
-                              int index) {
-    }
-
-    record InsightModel(InsightDetail defaultInsight,
-                        InsightDetail assessorInsight,
-                        boolean editable,
-                        Boolean approved) {
-        public record InsightDetail(String insight,
-                                    LocalDateTime creationTime,
-                                    boolean isValid) {
-        }
+    record Kit(int maturityLevelsCount) {
     }
 
     record SubjectModel(Long id,
@@ -89,5 +77,21 @@ public interface GetAssessmentInsightsUseCase {
     record Issues(int notGenerated,
                   int unapproved,
                   int expired) {
+    }
+
+    record MaturityLevelModel(long id,
+                              String title,
+                              int value,
+                              int index) {
+    }
+
+    record InsightModel(InsightDetail defaultInsight,
+                        InsightDetail assessorInsight,
+                        boolean editable,
+                        Boolean approved) {
+        public record InsightDetail(String insight,
+                                    LocalDateTime creationTime,
+                                    boolean isValid) {
+        }
     }
 }

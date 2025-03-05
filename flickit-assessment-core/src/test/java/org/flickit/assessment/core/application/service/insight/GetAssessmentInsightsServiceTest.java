@@ -13,12 +13,14 @@ import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsi
 import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.flickit.assessment.core.application.service.insight.assessment.GetAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.GetAttributeInsightHelper;
 import org.flickit.assessment.core.application.service.insight.subject.GetSubjectInsightHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.InsightMother;
+import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,6 +70,9 @@ class GetAssessmentInsightsServiceTest {
     @Mock
     private GetAttributeInsightHelper getAttributeInsightHelper;
 
+    @Mock
+    private CountMaturityLevelsPort countMaturityLevelsPort;
+
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
 
     @Test
@@ -86,7 +91,8 @@ class GetAssessmentInsightsServiceTest {
             loadSubjectValuePort,
             getSubjectInsightHelper,
             loadAttributeValuePort,
-            getAttributeInsightHelper);
+            getAttributeInsightHelper,
+            countMaturityLevelsPort);
     }
 
     @Test
@@ -105,7 +111,8 @@ class GetAssessmentInsightsServiceTest {
             loadSubjectValuePort,
             getSubjectInsightHelper,
             loadAttributeValuePort,
-            getAttributeInsightHelper);
+            getAttributeInsightHelper,
+            countMaturityLevelsPort);
     }
 
     @Test
@@ -120,6 +127,8 @@ class GetAssessmentInsightsServiceTest {
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(MaturityLevelMother.allLevels().size());
         when(getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId()))
             .thenReturn(emptyInsight);
         when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
@@ -171,6 +180,8 @@ class GetAssessmentInsightsServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId()))
             .thenReturn(expiredInsight);
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(MaturityLevelMother.allLevels().size());
         when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(List.of(subjectValue1));
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
@@ -222,6 +233,8 @@ class GetAssessmentInsightsServiceTest {
             .thenReturn(assessmentInsight);
         when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(List.of(subjectValue1));
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(MaturityLevelMother.allLevels().size());
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of(subjectValue1.getSubject().getId(), subjectInsight));
         when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
@@ -271,6 +284,8 @@ class GetAssessmentInsightsServiceTest {
             .thenReturn(assessmentInsight);
         when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(List.of(subjectValue1));
+        when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
+            .thenReturn(MaturityLevelMother.allLevels().size());
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of(subjectValue1.getSubject().getId(), defaultInsight));
         when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
