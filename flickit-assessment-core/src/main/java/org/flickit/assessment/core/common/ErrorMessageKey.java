@@ -338,4 +338,6 @@ public class ErrorMessageKey {
     public static final String GET_COMMENT_LIST_PAGE_MIN = "get-comment-list.page.min";
 
     public static final String RESOLVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL = "resolve-assessment-comments.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights.assessmentId.notNull";
 }
