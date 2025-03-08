@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ALL_ANSWERS;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -32,7 +31,6 @@ class ApproveAssessmentAnswersServiceTest {
     @Mock
     private ApproveAnswerPort approveAnswerPort;
 
-
     private final ApproveAssessmentAnswersUseCase.Param param = createParam(ApproveAssessmentAnswersUseCase.Param.ParamBuilder::build);
 
     @Test
@@ -48,7 +46,7 @@ class ApproveAssessmentAnswersServiceTest {
     }
 
     @Test
-    void testApproveAllAnswers_whenParametersAreValid_thenSuccessfullyApproved() {
+    void testApproveAllAnswers_whenParametersAreValid_thenSuccessfullyApprove() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
             .thenReturn(true);
 
