@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ALL_ANSWERS;
-import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
 @Service
 @Transactional
@@ -22,7 +22,7 @@ public class ApproveAssessmentAnswersService implements ApproveAssessmentAnswers
     @Override
     public void approveAllAnswers(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
-            throw new AccessDeniedException(COMMON_CURRENT_USER_ID_NOT_NULL);
+            throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         approveAnswerPort.approveAll(param.getAssessmentId(), param.getCurrentUserId());
     }

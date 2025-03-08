@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ALL_ANSWERS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +33,7 @@ class ApproveAssessmentAnswersServiceTest {
     private ApproveAnswerPort approveAnswerPort;
 
 
-    private ApproveAssessmentAnswersUseCase.Param param = createParam(ApproveAssessmentAnswersUseCase.Param.ParamBuilder::build);
+    private final ApproveAssessmentAnswersUseCase.Param param = createParam(ApproveAssessmentAnswersUseCase.Param.ParamBuilder::build);
 
     @Test
     void testApproveAllAnswers_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
@@ -41,7 +42,7 @@ class ApproveAssessmentAnswersServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.approveAllAnswers(param));
 
-        assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_ID_NOT_NULL);
+        assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(approveAnswerPort);
     }
