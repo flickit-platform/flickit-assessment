@@ -61,10 +61,18 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
 
         var assessment = buildAssessment(assessmentResult, assessmentInsight);
         var subjects = buildSubject(param, assessmentResult, subjectsInsightMap, attributesInsightMap);
+
+        var subjectsCount = subjects.size();
+        var attributesCount = subjects.stream()
+            .flatMap(s -> s.attributes().stream())
+            .toList().size();
+
         var issues = buildIssues(assessmentInsight,
             subjectsInsightMap,
             attributesInsightMap,
-            assessmentResult.getLastCalculationTime());
+            assessmentResult.getLastCalculationTime(),
+            subjectsCount,
+            attributesCount);
         return new Result(assessment, subjects, issues);
     }
 
@@ -138,36 +146,28 @@ public class GetAssessmentInsightsService implements GetAssessmentInsightsUseCas
     private Issues buildIssues(Insight assessmentInsight,
                                Map<Long, Insight> subjectsInsightMap,
                                Map<Long, Insight> attributesInsightMap,
-                               LocalDateTime lastCalculationTime) {
+                               LocalDateTime lastCalculationTime,
+                               int subjectsCount,
+                               int attributesCount) {
         var subjectsInsights = subjectsInsightMap.values().stream().toList();
         var attributesInsights = attributesInsightMap.values().stream().toList();
 
-        int notGeneratedInsights = countNotGeneratedInsights(assessmentInsight, subjectsInsights, attributesInsights);
+        var expectedInsightsCount = attributesCount + subjectsCount + 1;
+        var totalGeneratedInsights = attributesInsights.size() +
+            subjectsInsights.size() +
+            (Insight.isNotGenerated().test(assessmentInsight) ? 0 : 1);
+
+        int notGeneratedInsights = Math.max(expectedInsightsCount - totalGeneratedInsights, 0);
         int unapprovedInsights = countUnapprovedInsights(assessmentInsight, subjectsInsights, attributesInsights);
         int expiredInsights = countExpiredInsights(assessmentInsight, subjectsInsightMap, attributesInsightMap, lastCalculationTime);
 
         return new Issues(notGeneratedInsights, unapprovedInsights, expiredInsights);
     }
 
-    private int countNotGeneratedInsights(Insight assessmentInsight,
-                                          List<Insight> subjectsInsights,
-                                          List<Insight> attributesInsights) {
-        var assessmentInsightUnapproved = Insight.isNotGenerated().test(assessmentInsight) ? 0 : 1;
-
-        var notGeneratedSubjectsInsightsCount = subjectsInsights.stream()
-            .filter(Insight.isNotGenerated())
-            .toList().size();
-        var notGeneratedAttributesInsightsCount = attributesInsights.stream()
-            .filter(Insight.isNotGenerated())
-            .toList().size();
-
-        return assessmentInsightUnapproved + notGeneratedSubjectsInsightsCount + notGeneratedAttributesInsightsCount;
-    }
-
     private int countUnapprovedInsights(Insight assessmentInsight,
                                         List<Insight> subjectsInsights,
                                         List<Insight> attributesInsights) {
-        var assessmentInsightUnapproved = Insight.isUnapproved().test(assessmentInsight) ? 0 : 1;
+        var assessmentInsightUnapproved = Insight.isUnapproved().test(assessmentInsight) ? 1 : 0;
 
         var unapprovedSubjectsInsightsCount = subjectsInsights.stream()
             .filter(Insight.isUnapproved())
