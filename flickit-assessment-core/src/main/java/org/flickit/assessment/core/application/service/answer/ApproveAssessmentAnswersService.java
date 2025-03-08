@@ -1,9 +1,9 @@
-package org.flickit.assessment.core.application.service.evidence;
+package org.flickit.assessment.core.application.service.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
-import org.flickit.assessment.core.application.port.in.evidence.ApproveAssessmentAnswersUseCase;
+import org.flickit.assessment.core.application.port.in.answer.ApproveAssessmentAnswersUseCase;
 import org.flickit.assessment.core.application.port.out.answer.ApproveAnswerPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
