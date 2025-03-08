@@ -1,9 +1,9 @@
-package org.flickit.assessment.core.adapter.in.rest.evidence;
+package org.flickit.assessment.core.adapter.in.rest.answer;
 
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.config.jwt.UserContext;
-import org.flickit.assessment.core.application.port.in.evidence.ApproveAssessmentAnswersUseCase;
-import org.flickit.assessment.core.application.port.in.evidence.ApproveAssessmentAnswersUseCase.Param;
+import org.flickit.assessment.core.application.port.in.answer.ApproveAssessmentAnswersUseCase;
+import org.flickit.assessment.core.application.port.in.answer.ApproveAssessmentAnswersUseCase.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
