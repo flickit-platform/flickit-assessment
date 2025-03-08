@@ -9,7 +9,6 @@ import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.domain.insight.Insight;
-import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase;
 import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
@@ -321,7 +320,7 @@ class GetAssessmentInsightsServiceTest {
         assertEquals(1, result.issues().expired());
     }
 
-    private void assertAssessment(AssessmentResult assessmentResult, GetAssessmentInsightsUseCase.Assessment assessment) {
+    private void assertAssessment(AssessmentResult assessmentResult, AssessmentModel assessment) {
         assertEquals(assessmentResult.getAssessment().getId(), assessment.id());
         assertEquals(assessmentResult.getAssessment().getTitle(), assessment.title());
         assertEquals(assessmentResult.getConfidenceValue(), assessment.confidenceValue());
@@ -364,18 +363,18 @@ class GetAssessmentInsightsServiceTest {
     }
 
     private void assertInsight(Insight actual, InsightModel expected) {
-        assertInsightDetail(actual.defaultInsight(), expected.defaultInsight());
-        assertInsightDetail(actual.assessorInsight(), expected.assessorInsight());
-        assertEquals(actual.editable(), expected.editable());
-        assertEquals(actual.approved(), expected.approved());
+        assertInsightDetail(actual.getDefaultInsight(), expected.defaultInsight());
+        assertInsightDetail(actual.getAssessorInsight(), expected.assessorInsight());
+        assertEquals(actual.isEditable(), expected.editable());
+        assertEquals(actual.getApproved(), expected.approved());
     }
 
     private void assertInsightDetail(Insight.InsightDetail expected, InsightModel.InsightDetail actual) {
         if (expected == null)
             assertNull(actual);
         else {
-            assertEquals(expected.insight(), actual.insight());
-            assertEquals(expected.creationTime(), actual.creationTime());
+            assertEquals(expected.getInsight(), actual.insight());
+            assertEquals(expected.getCreationTime(), actual.creationTime());
             assertEquals(expected.isValid(), actual.isValid());
         }
     }

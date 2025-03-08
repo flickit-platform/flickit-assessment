@@ -34,15 +34,15 @@ public class GetAttributeInsightRestController {
     }
 
     private GetAttributeInsightResponseDto toResponse(Insight insight) {
-        return new GetAttributeInsightResponseDto(toInsightDetail(insight.defaultInsight()),
-            toInsightDetail(insight.assessorInsight()),
-            insight.editable(),
-            insight.approved());
+        return new GetAttributeInsightResponseDto(toInsightDetail(insight.getDefaultInsight()),
+            toInsightDetail(insight.getAssessorInsight()),
+            insight.isEditable(),
+            insight.getApproved());
     }
 
     private InsightDetail toInsightDetail(Insight.InsightDetail insightDetail) {
         return insightDetail != null
-            ? new InsightDetail(insightDetail.insight(), insightDetail.creationTime(), insightDetail.isValid())
+            ? new InsightDetail(insightDetail.getInsight(), insightDetail.getCreationTime(), insightDetail.isValid())
             : null;
     }
 }
