@@ -7,7 +7,7 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
-import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
+import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subject.LoadSubjectPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
 import org.springframework.stereotype.Service;
@@ -28,14 +28,13 @@ public class CreateSubjectInsightsHelper {
 
     private final LoadSubjectPort loadSubjectPort;
     private final LoadSubjectValuePort loadSubjectValuePort;
-    private final LoadMaturityLevelsPort loadMaturityLevelsPort;
+    private final CountMaturityLevelsPort countMaturityLevelsPort;
 
     public SubjectInsight createSubjectInsight(SubjectInsightParam param) {
         var subject = loadSubjectPort.loadByIdAndKitVersionId(param.subjectId(), param.assessmentResult().getKitVersionId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBJECT_NOT_FOUND));
         var subjectValues = loadSubjectValuePort.load(param.assessmentResult().getId(), subject.getId());
-        int maturityLevelsSize = loadMaturityLevelsPort.loadByKitVersionId(param.assessmentResult().getKitVersionId())
-            .size();
+        int maturityLevelsSize = countMaturityLevelsPort.count(param.assessmentResult().getKitVersionId());
 
         return new SubjectInsight(param.assessmentResult().getId(),
             subject.getId(),
@@ -54,8 +53,7 @@ public class CreateSubjectInsightsHelper {
 
     public List<SubjectInsight> createSubjectInsights(SubjectInsightsParam param) {
         var subjectValues = loadSubjectValuePort.loadAll(param.assessmentResult().getId(), param.subjectIds());
-        int maturityLevelsSize = loadMaturityLevelsPort.loadByKitVersionId(param.assessmentResult().getKitVersionId())
-            .size();
+        int maturityLevelsSize = countMaturityLevelsPort.count(param.assessmentResult().getKitVersionId());
 
         return subjectValues.stream()
             .map(sv -> new SubjectInsight(param.assessmentResult().getId(),

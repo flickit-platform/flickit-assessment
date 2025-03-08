@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.insight.AttributeInsight;
 import org.flickit.assessment.core.application.port.out.insight.attribute.*;
+import org.flickit.assessment.data.jpa.AbstractEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.insight.attribute.AttributeInsightJpaRepository;
 import org.springframework.stereotype.Component;
@@ -65,6 +66,7 @@ public class AttributeInsightPersistenceJpaAdapter implements
     public void updateAiInsights(List<AiParam> attributeInsight) {
         var entities = attributeInsight.stream()
             .map(AttributeInsightMapper::mapToJpaEntity)
+            .peek(AbstractEntity::markAsNotNew)
             .toList();
         repository.saveAll(entities);
     }

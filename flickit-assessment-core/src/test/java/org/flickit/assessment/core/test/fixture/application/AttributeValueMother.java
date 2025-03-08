@@ -5,6 +5,7 @@ import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.domain.AttributeValue;
 import org.flickit.assessment.core.application.domain.Question;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,10 @@ public class AttributeValueMother {
 
         return new AttributeValue(UUID.randomUUID(),
             AttributeMother.withIdQuestionsAndWeight(attributeId, questions, weight),
-            answers);
+            answers,
+            new HashSet<>(),
+            MaturityLevelMother.levelTwo(),
+            15.154);
     }
 
     public static AttributeValue hasPartialScoreOnLevel2AndFullScoreOnLevel3WithWeight(int weight, long attributeId) {

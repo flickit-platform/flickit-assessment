@@ -24,6 +24,7 @@ import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaEntity;
 import org.flickit.assessment.data.jpa.kit.answeroption.AnswerOptionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaEntity;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
+import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.AttributeImpactfulQuestionsView;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
@@ -37,6 +38,7 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.attributevalue.AttributeValueMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
@@ -97,6 +99,25 @@ public class AttributeValuePersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(MATURITY_LEVEL_ID_NOT_FOUND));
 
         return mapToDomainModel(attributeValueEntity, attribute, answers, maturityLevel);
+    }
+
+    @Override
+    public List<AttributeValue> loadAll(UUID assessmentResultId) {
+        var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var views = repository.findAllWithAttributeByAssessmentResultId(assessmentResultId);
+
+        var maturityLevelMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
+            .collect(toMap(MaturityLevelJpaEntity::getId,
+                entity -> MaturityLevelMapper.mapToDomainModel(entity, null)));
+
+        return views.stream()
+            .map(view -> mapToDomainModel(view.getAttributeValue(),
+                    AttributeMapper.mapToDomainModel(view.getAttribute()),
+                    null,
+                    maturityLevelMap.get(view.getAttributeValue().getMaturityLevelId())))
+            .toList();
     }
 
     private List<Question> loadQuestionsByAttributeIdAndKitVersionId(Long attributeId, Long kitVersionId) {
