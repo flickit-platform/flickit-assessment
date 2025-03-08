@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ASSESSMENT_ANSWERS_ASSESSMENT_ID_NOT_NULL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ApproveAssessmentAnswersUseCaseParamTest {
@@ -17,7 +17,7 @@ class ApproveAssessmentAnswersUseCaseParamTest {
     void testApproveAssessmentAnswersUseCaseParam_assessmentIdParamViolatesConstraint_ErrorMessage() {
         var throwable = assertThrows(ConstraintViolationException.class,
             () -> createParam(b -> b.assessmentId(null)));
-        assertThat(throwable).hasMessage("assessmentId: " + APPROVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL);
+        assertThat(throwable).hasMessage("assessmentId: " + APPROVE_ASSESSMENT_ANSWERS_ASSESSMENT_ID_NOT_NULL);
     }
 
     @Test

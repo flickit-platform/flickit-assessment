@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
-import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL;
+import static org.flickit.assessment.core.common.ErrorMessageKey.APPROVE_ASSESSMENT_ANSWERS_ASSESSMENT_ID_NOT_NULL;
 
 public interface ApproveAssessmentAnswersUseCase {
 
@@ -19,7 +19,7 @@ public interface ApproveAssessmentAnswersUseCase {
     @EqualsAndHashCode(callSuper = false)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = APPROVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = APPROVE_ASSESSMENT_ANSWERS_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

@@ -337,5 +337,5 @@ public class ErrorMessageKey {
     public static final String GET_COMMENT_LIST_SIZE_MAX = "get-comment-list.size.max";
     public static final String GET_COMMENT_LIST_PAGE_MIN = "get-comment-list.page.min";
 
-    public static final String APPROVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL = "approve-assessment-comments.assessmentId.notNull";
+    public static final String APPROVE_ASSESSMENT_ANSWERS_ASSESSMENT_ID_NOT_NULL = "approve-assessment-answers.assessmentId.notNull";
 }
