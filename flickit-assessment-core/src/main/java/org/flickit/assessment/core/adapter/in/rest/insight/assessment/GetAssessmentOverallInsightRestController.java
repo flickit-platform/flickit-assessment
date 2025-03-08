@@ -33,15 +33,15 @@ public class GetAssessmentOverallInsightRestController {
     }
 
     private GetAssessmentOverallInsightResponseDto toResponse(Insight insight) {
-        return new GetAssessmentOverallInsightResponseDto(toInsightDetail(insight.defaultInsight()),
-            toInsightDetail(insight.assessorInsight()),
-            insight.editable(),
-            insight.approved());
+        return new GetAssessmentOverallInsightResponseDto(toInsightDetail(insight.getDefaultInsight()),
+            toInsightDetail(insight.getAssessorInsight()),
+            insight.isEditable(),
+            insight.getApproved());
     }
 
     private InsightDetail toInsightDetail(Insight.InsightDetail insightDetail) {
         return insightDetail != null
-            ? new InsightDetail(insightDetail.insight(), insightDetail.creationTime(), insightDetail.isValid())
+            ? new InsightDetail(insightDetail.getInsight(), insightDetail.getCreationTime(), insightDetail.isValid())
             : null;
     }
 }
