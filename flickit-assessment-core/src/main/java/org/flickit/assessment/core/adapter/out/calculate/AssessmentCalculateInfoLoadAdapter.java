@@ -210,13 +210,7 @@ public class AssessmentCalculateInfoLoadAdapter implements LoadCalculateInfoPort
             Long attributeId = qavEntity.getAttributeId();
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            Attribute attribute = new Attribute(
-                attributeId,
-                attributeIdToEntityMap.get(attributeId).getTitle(),
-                null,
-                attributeIdToEntityMap.get(attributeId).getWeight(),
-                impactfulQuestions
-            );
+            Attribute attribute = AttributeMapper.mapToDomainModel(attributeIdToEntityMap.get(attributeId), impactfulQuestions);
 
             AttributeValue attributeValue = new AttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
             attrIdToValue.put(attribute.getId(), attributeValue);

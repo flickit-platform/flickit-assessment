@@ -1349,6 +1349,60 @@
 					"response": []
 				},
 				{
+					"name": "Get Comment List",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/comments?questionId=8657&assessmentId=53028c27-83f5-4c10-9105-56e2a4f58a09&size=10&page=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "questionId",
+									"value": "8657"
+								},
+								{
+									"key": "assessmentId",
+									"value": "53028c27-83f5-4c10-9105-56e2a4f58a09"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Delete Evidence",
 					"request": {
 						"method": "DELETE",
@@ -1548,6 +1602,37 @@
 								"evidences",
 								"29cc6345-b1e7-4d4c-a049-74ec4e275dfb",
 								"resolve"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resolve Assessment Comments",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "{{accept_language}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/resolve-comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"resolve-comments"
 							]
 						}
 					},
@@ -2105,7 +2190,7 @@
 							"response": []
 						},
 						{
-							"name": "Get Assessment Insight",
+							"name": "Get Assessment Overall Insight",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -2537,6 +2622,32 @@
 								"assessments",
 								"53028c27-83f5-4c10-9105-56e2a4f58a09",
 								"generate-insights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assessment Insights",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization_header}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{api_path}}/assessments/53028c27-83f5-4c10-9105-56e2a4f58a09/insights",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{api_path}}",
+								"assessments",
+								"53028c27-83f5-4c10-9105-56e2a4f58a09",
+								"insights"
 							]
 						}
 					},

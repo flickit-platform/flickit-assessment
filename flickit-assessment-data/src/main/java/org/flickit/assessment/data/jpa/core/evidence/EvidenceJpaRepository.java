@@ -30,12 +30,14 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
             FROM EvidenceJpaEntity e
             LEFT JOIN EvidenceAttachmentJpaEntity a ON e.id = a.evidenceId
             WHERE e.questionId = :questionId AND e.assessmentId = :assessmentId AND e.deleted = false
-                    AND ((e.type IS NULL AND (e.resolved IS NULL OR e.resolved = false))
-                        OR (e.type IS NOT NULL AND e.resolved IS NULL))
+                AND CASE WHEN (:hasType = TRUE)
+                        THEN (e.type IS NOT NULL AND e.resolved IS NULL)
+                        ELSE (e.type IS NULL AND (e.resolved IS NULL OR e.resolved = false)) END
             GROUP BY e.id, e.description, e.type, e.createdBy, e.lastModificationTime
         """)
     Page<EvidenceWithAttachmentsCountView> findByQuestionIdAndAssessmentId(@Param("questionId") Long questionId,
                                                                            @Param("assessmentId") UUID assessmentId,
+                                                                           @Param("hasType") Boolean hasType,
                                                                            Pageable pageable);
 
     @Modifying
@@ -72,6 +74,21 @@ public interface EvidenceJpaRepository extends JpaRepository<EvidenceJpaEntity, 
     void resolveComment(@Param("evidenceId") UUID evidenceId,
                         @Param("lastModifiedBy") UUID lastModifiedBy,
                         @Param("lastModificationTime") LocalDateTime lastModificationTime);
+
+    @Modifying
+    @Query("""
+            UPDATE EvidenceJpaEntity e
+            SET e.resolved = true,
+                e.lastModifiedBy = :lastModifiedBy,
+                e.lastModificationTime = :lastModificationTime
+            WHERE e.assessmentId = :assessmentId
+                    AND e.deleted = false
+                    AND e.type IS NULL
+                    AND (e.resolved IS NULL OR e.resolved = false)
+        """)
+    void resolveAllAssessmentComments(@Param("assessmentId") UUID assessmentId,
+                                      @Param("lastModifiedBy") UUID lastModifiedBy,
+                                      @Param("lastModificationTime") LocalDateTime lastModificationTime);
 
     @Query("""
             SELECT COUNT(DISTINCT e.questionId)

@@ -16,6 +16,7 @@ public class AttributeMapper {
     public static Attribute mapToDomainModel(AttributeJpaEntity entity) {
         return new Attribute(
             entity.getId(),
+            entity.getIndex(),
             entity.getTitle(),
             entity.getDescription(),
             entity.getWeight(),
@@ -26,6 +27,7 @@ public class AttributeMapper {
     public static Attribute mapToDomainModel(AttributeJpaEntity entity, List<Question> questions) {
         return new Attribute(
             entity.getId(),
+            entity.getIndex(),
             entity.getTitle(),
             entity.getDescription(),
             entity.getWeight(),
