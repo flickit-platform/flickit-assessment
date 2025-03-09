@@ -11,6 +11,7 @@ import org.flickit.assessment.users.application.port.out.user.LoadUserPort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.flickit.assessment.users.common.MessageKey.NOTIFICATION_TITLE_CREATE_PREMIUM_SPACE;
@@ -33,8 +34,10 @@ public class CreatePremiumSpaceNotificationCreator implements NotificationCreato
             return List.of();
         }
 
+        var formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+        var formattedDateTime = cmd.space().getCreationTime().format(formatter);
+        var spaceModel = new CreatePremiumSpaceNotificationPayload.SpaceModel(cmd.space().getTitle(), formattedDateTime);
         var userModel = new CreatePremiumSpaceNotificationPayload.UserModel(user.getDisplayName(), user.getEmail());
-        var spaceModel = new CreatePremiumSpaceNotificationPayload.SpaceModel(cmd.space().getTitle(), cmd.space().getCreationTime().toString());
         var title = MessageBundle.message(NOTIFICATION_TITLE_CREATE_PREMIUM_SPACE);
         var payload = new CreatePremiumSpaceNotificationPayload(userModel, spaceModel);
 
