@@ -20,7 +20,7 @@ public class ApproveAssessmentAnswersRestController {
     private final UserContext userContext;
 
     @PutMapping("/assessments/{assessmentId}/approve-answers")
-    ResponseEntity<Void> approveAssessmentAnswers(@PathVariable("assessmentId") UUID assessmentId) {
+    public ResponseEntity<Void> approveAssessmentAnswers(@PathVariable("assessmentId") UUID assessmentId) {
         var currentUserId = userContext.getUser().id();
 
         useCase.approveAllAnswers(toParam(assessmentId, currentUserId));
