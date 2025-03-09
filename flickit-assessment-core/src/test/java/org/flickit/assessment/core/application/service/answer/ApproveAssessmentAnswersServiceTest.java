@@ -2,19 +2,29 @@ package org.flickit.assessment.core.application.service.answer;
 
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.in.answer.ApproveAssessmentAnswersUseCase;
 import org.flickit.assessment.core.application.port.out.answer.ApproveAnswerPort;
+import org.flickit.assessment.core.application.port.out.answer.LoadAnswerPort;
+import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
+import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.test.fixture.application.AnswerMother;
+import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ALL_ANSWERS;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
@@ -31,6 +41,15 @@ class ApproveAssessmentAnswersServiceTest {
     @Mock
     private ApproveAnswerPort approveAnswerPort;
 
+    @Mock
+    private LoadAssessmentResultPort loadAssessmentResultPort;
+
+    @Mock
+    private LoadAnswerPort loadAnswerPort;
+
+    @Mock
+    private CreateAnswerHistoryPort createAnswerHistoryPort;
+
     private final ApproveAssessmentAnswersUseCase.Param param = createParam(ApproveAssessmentAnswersUseCase.Param.ParamBuilder::build);
 
     @Test
@@ -42,17 +61,43 @@ class ApproveAssessmentAnswersServiceTest {
 
         assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_NOT_ALLOWED);
 
-        verifyNoInteractions(approveAnswerPort);
+        verifyNoInteractions(approveAnswerPort,
+            loadAssessmentResultPort,
+            loadAnswerPort,
+            createAnswerHistoryPort);
+    }
+
+    @Test
+    void testApproveAllAnswers_whenAssessmentResultDoesNotHaveRequiredPermission_thenThrowResourceNotFoundException() {
+        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
+            .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.approveAllAnswers(param));
+
+        assertThat(throwable.getMessage()).isEqualTo(COMMON_ASSESSMENT_RESULT_NOT_FOUND);
+
+        verifyNoInteractions(approveAnswerPort,
+            loadAnswerPort,
+            createAnswerHistoryPort);
     }
 
     @Test
     void testApproveAllAnswers_whenParametersAreValid_thenSuccessfullyApprove() {
+        var assessmentResult = AssessmentResultMother.validResult();
+        var answerList = List.of(AnswerMother.fullScore(1), AnswerMother.fullScore(2), AnswerMother.fullScore(3));
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
             .thenReturn(true);
+        when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
+            .thenReturn(Optional.of(assessmentResult));
+        when(loadAnswerPort.loadAll(assessmentResult.getId(), AnswerStatus.UNAPPROVED))
+            .thenReturn(answerList);
 
         service.approveAllAnswers(param);
 
         verify(approveAnswerPort).approveAll(param.getAssessmentId(), param.getCurrentUserId());
+        verify(createAnswerHistoryPort).persistAll(any(), any());
     }
 
     private ApproveAssessmentAnswersUseCase.Param createParam(Consumer<ApproveAssessmentAnswersUseCase.Param.ParamBuilder> changer) {
