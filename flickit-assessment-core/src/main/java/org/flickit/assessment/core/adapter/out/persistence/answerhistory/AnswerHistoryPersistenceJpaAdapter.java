@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
+import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
+import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaRepository;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaEntity;
 import org.flickit.assessment.data.jpa.core.answerhistory.AnswerHistoryJpaRepository;
@@ -18,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -49,6 +53,21 @@ public class AnswerHistoryPersistenceJpaAdapter implements
 
         AnswerHistoryJpaEntity savedEntity = repository.save(mapCreateParamToJpaEntity(answerHistory, assessmentResult, answer));
         return savedEntity.getId();
+    }
+
+    @Override
+    public void persistAll(List<AnswerHistory> answerHistories, UUID assessmentResultId) {
+        var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
+            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
+        Map<Long, AnswerJpaEntity> answersJpa = answerRepository.findByAssessmentResultId(assessmentResult.getId()).stream()
+            .filter(e -> e.getStatus().equals(AnswerStatus.APPROVED.getId()))
+            .collect(toMap(AnswerJpaEntity::getQuestionId, answerJpaEntity -> answerJpaEntity));
+
+        List<AnswerHistoryJpaEntity> answerHistoriesJpa = answerHistories.stream()
+            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answersJpa.get(e.getAnswer().getQuestionId())))
+            .toList();
+
+        repository.saveAll(answerHistoriesJpa);
     }
 
     @Override
