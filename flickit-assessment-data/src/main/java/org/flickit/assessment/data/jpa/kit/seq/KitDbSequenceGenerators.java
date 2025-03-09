@@ -66,6 +66,10 @@ public class KitDbSequenceGenerators {
         return sequenceGenerator.generate("fak_answer_range_id_seq");
     }
 
+    public Long generateMeasureId() {
+        return sequenceGenerator.generate("fak_measure_id_seq");
+    }
+
     public Long generateKitCustomId() {
         return sequenceGenerator.generate("fak_kit_custom_id_seq");
     }
