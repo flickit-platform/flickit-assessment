@@ -7,10 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.common.application.domain.kit.KitLanguage;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.adapter.out.minio.MinioAdapter;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
 import org.flickit.assessment.core.application.domain.report.AssessmentReportItem;
-import org.flickit.assessment.core.application.domain.report.AssessmentReportItem.Space;
 import org.flickit.assessment.core.application.domain.report.AssessmentSubjectReportItem;
 import org.flickit.assessment.core.application.domain.report.AttributeReportItem;
 import org.flickit.assessment.core.application.domain.report.QuestionnaireReportItem;
@@ -37,12 +35,8 @@ import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaEntity;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireListItemView;
 import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaEntity;
-import org.flickit.assessment.data.jpa.users.expertgroup.ExpertGroupJpaRepository;
-import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -57,18 +51,13 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 @AllArgsConstructor
 public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfoPort {
 
-    private static final Duration EXPIRY_DURATION = Duration.ofDays(1);
-
     private final AssessmentJpaRepository assessmentRepository;
     private final AssessmentResultJpaRepository assessmentResultRepo;
     private final SubjectValueJpaRepository subjectValueRepo;
     private final AssessmentKitJpaRepository assessmentKitRepository;
-    private final ExpertGroupJpaRepository expertGroupRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final SubjectJpaRepository subjectRepository;
     private final AttributeValueJpaRepository attributeValueJpaRepository;
-    private final MinioAdapter minioAdapter;
-    private final SpaceJpaRepository spaceRepository;
     private final AssessmentInsightJpaRepository assessmentInsightRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
     private final AttributeInsightJpaRepository attributeInsightRepository;
@@ -93,9 +82,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
         var questionnaireViews = questionnaireRepository.findAllWithQuestionCountByKitVersionId(assessmentResultEntity.getKitVersionId(), null).getContent();
 
-        var expertGroupEntity = expertGroupRepository.findById(assessmentKitEntity.getExpertGroupId())
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_EXPERT_GROUP_NOT_FOUND));
-
         var kitVersionId = assessmentResultEntity.getKitVersionId();
         var maturityLevels = maturityLevelRepository.findAllByKitVersionIdOrderByIndex(kitVersionId)
             .stream().map(e -> mapToDomainModel(e, null)).toList();
@@ -103,37 +89,24 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
         var idToMaturityLevel = maturityLevels.stream()
             .collect(toMap(MaturityLevel::getId, Function.identity()));
 
-        var spaceEntity = spaceRepository.findById(assessment.getSpaceId())
-            .orElseThrow(() -> new ResourceNotFoundException(REPORT_ASSESSMENT_SPACE_NOT_FOUND));
-
         var assessmentReportItem = new AssessmentReportItem(assessmentId,
             assessmentResultEntity.getId(),
             assessment.getTitle(),
-            assessment.getShortTitle(),
             assessmentInsight,
-            buildAssessmentKitItem(expertGroupEntity, assessmentKitEntity, maturityLevels, questionnaireViews),
+            buildAssessmentKitItem(assessmentKitEntity, maturityLevels, questionnaireViews),
             idToMaturityLevel.get(assessmentResultEntity.getMaturityLevelId()),
             assessmentResultEntity.getConfidenceValue(),
-            assessmentResultEntity.getIsCalculateValid(),
-            assessmentResultEntity.getIsConfidenceValid(),
-            assessment.getCreationTime(),
-            assessment.getLastModificationTime(),
-            new Space(spaceEntity.getId(), spaceEntity.getTitle()));
+            assessment.getCreationTime()
+        );
 
         var subjects = buildSubjectReportItems(assessmentResultEntity, idToMaturityLevel);
 
         return new Result(assessmentReportItem, subjects);
     }
 
-    private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(ExpertGroupJpaEntity expertGroupEntity,
-                                                                          AssessmentKitJpaEntity assessmentKitEntity,
+    private AssessmentReportItem.AssessmentKitItem buildAssessmentKitItem(AssessmentKitJpaEntity assessmentKitEntity,
                                                                           List<MaturityLevel> maturityLevels,
                                                                           List<QuestionnaireListItemView> questionnaireItemViews) {
-        AssessmentReportItem.AssessmentKitItem.ExpertGroup expertGroup =
-            new AssessmentReportItem.AssessmentKitItem.ExpertGroup(expertGroupEntity.getId(),
-                expertGroupEntity.getTitle(),
-                minioAdapter.createDownloadLink(expertGroupEntity.getPicture(), EXPIRY_DURATION));
-
         var questionnaireReportItems = questionnaireItemViews.stream().map(this::buildQuestionnaireReportItems).toList();
         int questionsCount = questionnaireReportItems.stream()
             .mapToInt(QuestionnaireReportItem::questionCount)
@@ -141,14 +114,12 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
 
         return new AssessmentReportItem.AssessmentKitItem(assessmentKitEntity.getId(),
             assessmentKitEntity.getTitle(),
-            assessmentKitEntity.getSummary(),
-            assessmentKitEntity.getAbout(),
             KitLanguage.valueOfById(assessmentKitEntity.getLanguageId()),
             maturityLevels.size(),
             questionsCount,
             maturityLevels,
-            questionnaireReportItems,
-            expertGroup);
+            questionnaireReportItems
+        );
     }
 
     private QuestionnaireReportItem buildQuestionnaireReportItems(QuestionnaireListItemView itemView) {
@@ -205,7 +176,6 @@ public class LoadAssessmentReportInfoAdapter implements LoadAssessmentReportInfo
                 return new AssessmentSubjectReportItem(e.getId(),
                     e.getTitle(),
                     e.getIndex(),
-                    e.getDescription(),
                     insight,
                     subjectIdToSubjectValue.get(e.getId()).getConfidenceValue(),
                     subjectMaturityLevel,

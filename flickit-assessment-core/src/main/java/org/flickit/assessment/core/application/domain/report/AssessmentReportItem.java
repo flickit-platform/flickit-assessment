@@ -10,35 +10,18 @@ import java.util.UUID;
 public record AssessmentReportItem(UUID id,
                                    UUID assessmentResultId,
                                    String title,
-                                   String shortTitle,
                                    String insight,
                                    AssessmentKitItem assessmentKit,
                                    MaturityLevel maturityLevel,
                                    Double confidenceValue,
-                                   boolean isCalculateValid,
-                                   boolean isConfidenceValid,
-                                   LocalDateTime creationTime,
-                                   LocalDateTime lastModificationTime,
-                                   Space space) {
-
+                                   LocalDateTime creationTime) {
     public record AssessmentKitItem(
         Long id,
         String title,
-        String summary,
-        String about,
         KitLanguage language,
         Integer maturityLevelCount,
         Integer questionsCount,
         List<MaturityLevel> maturityLevels,
-        List<QuestionnaireReportItem> questionnaires,
-        ExpertGroup expertGroup) {
-
-        public record ExpertGroup(Long id, String title, String picture) {
-        }
-    }
-
-    public record Space(
-        Long id,
-        String title) {
+        List<QuestionnaireReportItem> questionnaires) {
     }
 }
