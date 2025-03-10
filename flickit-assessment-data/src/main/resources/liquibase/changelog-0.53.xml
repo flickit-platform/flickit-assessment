@@ -59,4 +59,12 @@
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"/>
     </changeSet>
+
+    <changeSet id="0.53-05" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="status" type="tinyint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
