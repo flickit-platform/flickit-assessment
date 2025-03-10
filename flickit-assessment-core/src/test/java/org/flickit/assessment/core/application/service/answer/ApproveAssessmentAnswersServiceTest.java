@@ -86,8 +86,8 @@ class ApproveAssessmentAnswersServiceTest {
     @Test
     void testApproveAllAnswers_whenParametersAreValid_thenSuccessfullyApprove() {
         var assessmentResult = AssessmentResultMother.validResult();
-        var answerList = List.of(AnswerMother.fullScore(1), AnswerMother.partialScore(2, 1),
-                AnswerMother.fullScore(1), AnswerMother.answerWithNotApplicableTrue(null),
+        var answerList = List.of(AnswerMother.noScore(1), AnswerMother.noScore(2),
+                AnswerMother.answerWithNotApplicableTrue(null),
                 AnswerMother.answerWithNotApplicableFalse(null));
         //The last one answer should be filtered
         var filteredAnswerList = answerList.subList(0, answerList.size() - 1);
