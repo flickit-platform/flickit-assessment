@@ -21,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -65,14 +64,14 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .map(Answer::getId)
             .toList();
 
-        Map<UUID, AnswerJpaEntity> answersJpa = answerRepository.findAllById(answerIds).stream()
+        var answerIdToAnswerJpa = answerRepository.findAllById(answerIds).stream()
             .collect(Collectors.toMap(AnswerJpaEntity::getId, Function.identity()));
 
-        List<AnswerHistoryJpaEntity> answerHistoriesJpa = answerHistories.stream()
-            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answersJpa.get(e.getAnswer().getId())))
+        var answerHistoryJpaList = answerHistories.stream()
+            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answerIdToAnswerJpa.get(e.getAnswer().getId())))
             .toList();
 
-        repository.saveAll(answerHistoriesJpa);
+        repository.saveAll(answerHistoryJpaList);
     }
 
     @Override
