@@ -19,8 +19,8 @@ public class SpaceMapper {
             space.getTitle(),
             space.getType().getId(),
             space.getOwnerId(),
+            space.getStatus().getId(),
             space.getSubscriptionExpiry(),
-            SpaceStatus.ACTIVE.getId(), //TODO: Should be changed
             space.getCreationTime(),
             space.getLastModificationTime(),
             space.getCreatedBy(),
@@ -36,6 +36,7 @@ public class SpaceMapper {
             entity.getTitle(),
             SpaceType.valueOfById(entity.getType()),
             entity.getOwnerId(),
+            SpaceStatus.valueOfById(entity.getStatus()),
             entity.getSubscriptionExpiry(),
             entity.getCreationTime(),
             entity.getLastModificationTime(),
