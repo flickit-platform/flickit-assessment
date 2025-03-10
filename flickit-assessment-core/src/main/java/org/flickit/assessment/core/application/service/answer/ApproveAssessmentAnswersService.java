@@ -44,7 +44,10 @@ public class ApproveAssessmentAnswersService implements ApproveAssessmentAnswers
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
                 .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var answers = loadAnswerPort.loadAll(assessmentResult.getId(), AnswerStatus.UNAPPROVED);
+        var answers = loadAnswerPort.loadAll(assessmentResult.getId(), AnswerStatus.UNAPPROVED).stream()
+                .filter(ans -> ans.getSelectedOption() != null || Boolean.TRUE.equals(ans.getIsNotApplicable()))
+                .toList();
+
         var answerHistories = answers.stream()
                 .map(e -> toAnswerHistory(e, param.getCurrentUserId(), assessmentResult.getId()))
                 .toList();

@@ -86,7 +86,11 @@ class ApproveAssessmentAnswersServiceTest {
     @Test
     void testApproveAllAnswers_whenParametersAreValid_thenSuccessfullyApprove() {
         var assessmentResult = AssessmentResultMother.validResult();
-        var answerList = List.of(AnswerMother.fullScore(1), AnswerMother.partialScore(2, 1), AnswerMother.fullScore(1));
+        var answerList = List.of(AnswerMother.fullScore(1), AnswerMother.partialScore(2, 1),
+                AnswerMother.fullScore(1), AnswerMother.answerWithNotApplicableTrue(null),
+                AnswerMother.answerWithNotApplicableFalse(null));
+        //The last one answer should be filtered
+        var filteredAnswerList = answerList.subList(0, answerList.size() - 1);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
                 .thenReturn(true);
@@ -100,7 +104,7 @@ class ApproveAssessmentAnswersServiceTest {
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AnswerHistory>> argumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(createAnswerHistoryPort).persistAll(argumentCaptor.capture(), eq(assessmentResult.getId()));
-        assertThat(argumentCaptor.getValue()).zipSatisfy(answerList, (actual, expected) -> {
+        assertThat(argumentCaptor.getValue()).zipSatisfy(filteredAnswerList, (actual, expected) -> {
             assertThat(AnswerStatus.APPROVED).isEqualTo(actual.getAnswer().getAnswerStatus());
             assertThat(expected.getConfidenceLevelId()).isEqualTo(actual.getAnswer().getConfidenceLevelId());
             assertThat(expected.getSelectedOption()).isEqualTo(actual.getAnswer().getSelectedOption());
