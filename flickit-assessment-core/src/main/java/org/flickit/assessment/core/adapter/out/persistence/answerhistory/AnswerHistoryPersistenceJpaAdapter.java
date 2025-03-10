@@ -3,8 +3,8 @@ package org.flickit.assessment.core.adapter.out.persistence.answerhistory;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
-import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
 import org.flickit.assessment.data.jpa.core.answer.AnswerJpaEntity;
@@ -59,12 +59,17 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     public void persistAll(List<AnswerHistory> answerHistories, UUID assessmentResultId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
-        Map<Long, AnswerJpaEntity> answersJpa = answerRepository.findByAssessmentResultId(assessmentResult.getId()).stream()
-            .filter(e -> e.getStatus().equals(AnswerStatus.APPROVED.getId()))
-            .collect(toMap(AnswerJpaEntity::getQuestionId, answerJpaEntity -> answerJpaEntity));
+
+        var answerIds = answerHistories.stream()
+            .map(AnswerHistory::getAnswer)
+            .map(Answer::getId)
+            .toList();
+
+        Map<UUID, AnswerJpaEntity> answersJpa = answerRepository.findAllById(answerIds).stream()
+            .collect(Collectors.toMap(AnswerJpaEntity::getId, Function.identity()));
 
         List<AnswerHistoryJpaEntity> answerHistoriesJpa = answerHistories.stream()
-            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answersJpa.get(e.getAnswer().getQuestionId())))
+            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answersJpa.get(e.getAnswer().getId())))
             .toList();
 
         repository.saveAll(answerHistoriesJpa);
