@@ -27,6 +27,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapCreateParamToJpaEntity;
 import static org.flickit.assessment.core.adapter.out.persistence.answerhistory.AnswerHistoryMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -57,7 +58,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
     @Override
     public void persistAll(List<AnswerHistory> answerHistories, UUID assessmentResultId) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
-            .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var answerIds = answerHistories.stream()
             .map(AnswerHistory::getAnswer)
