@@ -1,8 +1,9 @@
-package org.flickit.assessment.common.application.domain.space;
+package org.flickit.assessment.users.application.domain;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 class SpaceStatusTest {
 

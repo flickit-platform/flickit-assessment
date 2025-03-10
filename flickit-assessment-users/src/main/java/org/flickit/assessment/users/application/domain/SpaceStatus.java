@@ -1,4 +1,4 @@
-package org.flickit.assessment.common.application.domain.space;
+package org.flickit.assessment.users.application.domain;
 
 public enum SpaceStatus {
 
