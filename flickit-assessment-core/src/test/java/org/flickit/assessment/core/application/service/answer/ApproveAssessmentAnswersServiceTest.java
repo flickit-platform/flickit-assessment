@@ -60,7 +60,6 @@ class ApproveAssessmentAnswersServiceTest {
                 .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.approveAllAnswers(param));
-
         assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(approveAnswerPort,
@@ -110,7 +109,7 @@ class ApproveAssessmentAnswersServiceTest {
             assertThat(actual.getAnswer().getSelectedOption()).isEqualTo(expected.getSelectedOption());
             assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
             assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
-            assertThat(assessmentResult.getId()).isEqualTo(actual.getAssessmentResultId());
+            assertThat(actual.getAssessmentResultId()).isEqualTo(assessmentResult.getId());
         });
 
         verify(approveAnswerPort).approveAll(assessmentResult.getId(), param.getCurrentUserId());
