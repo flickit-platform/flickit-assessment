@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
 
 import static org.flickit.assessment.users.application.service.constant.SpaceConstants.NOT_DELETED_DELETION_TIME;
 
@@ -19,6 +20,7 @@ public class SpaceMapper {
             space.getType().getId(),
             space.getOwnerId(),
             space.getSubscriptionExpiry(),
+            SpaceStatus.ACTIVE.getId(), //TODO: Should be changed
             space.getCreationTime(),
             space.getLastModificationTime(),
             space.getCreatedBy(),
