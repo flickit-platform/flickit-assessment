@@ -100,17 +100,16 @@ class ApproveAssessmentAnswersServiceTest {
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AnswerHistory>> argumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(createAnswerHistoryPort).persistAll(argumentCaptor.capture(), eq(assessmentResult.getId()));
-
-        verify(approveAnswerPort).approveAll(assessmentResult.getId(), param.getCurrentUserId());
-
         assertThat(argumentCaptor.getValue()).zipSatisfy(answerList, (actual, expected) -> {
-            assertThat(AnswerStatus.APPROVED).isEqualTo(expected.getAnswerStatus());
+            assertThat(AnswerStatus.APPROVED).isEqualTo(actual.getAnswer().getAnswerStatus());
             assertThat(expected.getConfidenceLevelId()).isEqualTo(actual.getAnswer().getConfidenceLevelId());
             assertThat(expected.getSelectedOption()).isEqualTo(actual.getAnswer().getSelectedOption());
             assertThat(expected.getQuestionId()).isEqualTo(actual.getAnswer().getQuestionId());
             assertThat(expected.getQuestionId()).isEqualTo(actual.getAnswer().getQuestionId());
             assertThat(assessmentResult.getId()).isEqualTo(actual.getAssessmentResultId());
         });
+
+        verify(approveAnswerPort).approveAll(assessmentResult.getId(), param.getCurrentUserId());
     }
 
     private ApproveAssessmentAnswersUseCase.Param createParam(Consumer<ApproveAssessmentAnswersUseCase.Param.ParamBuilder> changer) {
