@@ -4,7 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0.52-01" author="Mahdi Rezazadeh">
+    <changeSet id="0.53-01" author="Mahdi Rezazadeh">
         <createTable tableName="fak_measure">
             <column autoIncrement="true" name="id" type="bigint">
                 <constraints nullable="false"/>
@@ -39,19 +39,19 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0.52-02" author="Mahdi Rezazadeh">
+    <changeSet id="0.53-02" author="Mahdi Rezazadeh">
         <addPrimaryKey tableName="fak_measure"
                        columnNames="id, kit_version_id"
                        constraintName="pk_fak_measure"/>
     </changeSet>
 
-    <changeSet id="0.52-03" author="Mahdi Rezazadeh">
+    <changeSet id="0.53-03" author="Mahdi Rezazadeh">
         <createSequence sequenceName="fak_measure_id_seq"
                         dataType="bigint"
                         startValue="1"/>
     </changeSet>
 
-    <changeSet id="0.52-04" author="Mahdi Rezazadeh">
+    <changeSet id="0.53-04" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fak_measure"
                                  baseColumnNames="kit_version_id"
                                  constraintName="fk_fak_measure_kitversion"
