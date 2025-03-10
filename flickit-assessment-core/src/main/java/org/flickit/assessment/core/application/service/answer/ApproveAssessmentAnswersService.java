@@ -49,7 +49,7 @@ public class ApproveAssessmentAnswersService implements ApproveAssessmentAnswers
                 .map(e -> toAnswerHistory(e, param.getCurrentUserId(), assessmentResult.getId()))
                 .toList();
 
-        approveAnswerPort.approveAll(param.getAssessmentId(), param.getCurrentUserId());
+        approveAnswerPort.approveAll(assessmentResult.getId(), param.getCurrentUserId());
         createAnswerHistoryPort.persistAll(answerHistories, assessmentResult.getId());
     }
 

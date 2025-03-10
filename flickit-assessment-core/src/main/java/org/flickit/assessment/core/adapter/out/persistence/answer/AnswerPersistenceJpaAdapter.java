@@ -143,10 +143,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public void approveAll(UUID assessmentId, UUID approvedBy) {
-        var assessmentResult = assessmentResultRepo.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
-            .orElseThrow(() -> new ResourceNotFoundException(ASSESSMENT_ID_NOT_FOUND));
-
-        repository.approveByAssessmentResultId(assessmentResult.getId(), approvedBy, AnswerStatus.APPROVED.getId());
+    public void approveAll(UUID assessmentResultId, UUID approvedBy) {
+        repository.approveByAssessmentResultId(assessmentResultId, approvedBy, AnswerStatus.APPROVED.getId());
     }
 }

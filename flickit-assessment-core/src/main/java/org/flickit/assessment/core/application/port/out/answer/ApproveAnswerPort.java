@@ -6,5 +6,5 @@ public interface ApproveAnswerPort {
 
     void approve(UUID answerId, UUID approvedBy);
 
-    void approveAll(UUID assessmentId, UUID approvedBy);
+    void approveAll(UUID assessmentResultId, UUID approvedBy);
 }
