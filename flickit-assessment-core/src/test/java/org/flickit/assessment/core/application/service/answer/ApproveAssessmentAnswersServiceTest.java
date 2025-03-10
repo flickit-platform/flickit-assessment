@@ -105,11 +105,11 @@ class ApproveAssessmentAnswersServiceTest {
         ArgumentCaptor<List<AnswerHistory>> argumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(createAnswerHistoryPort).persistAll(argumentCaptor.capture(), eq(assessmentResult.getId()));
         assertThat(argumentCaptor.getValue()).zipSatisfy(filteredAnswerList, (actual, expected) -> {
-            assertThat(AnswerStatus.APPROVED).isEqualTo(actual.getAnswer().getAnswerStatus());
-            assertThat(expected.getConfidenceLevelId()).isEqualTo(actual.getAnswer().getConfidenceLevelId());
-            assertThat(expected.getSelectedOption()).isEqualTo(actual.getAnswer().getSelectedOption());
-            assertThat(expected.getQuestionId()).isEqualTo(actual.getAnswer().getQuestionId());
-            assertThat(expected.getQuestionId()).isEqualTo(actual.getAnswer().getQuestionId());
+            assertThat(actual.getAnswer().getAnswerStatus()).isEqualTo(AnswerStatus.APPROVED);
+            assertThat(actual.getAnswer().getConfidenceLevelId()).isEqualTo(expected.getConfidenceLevelId());
+            assertThat(actual.getAnswer().getSelectedOption()).isEqualTo(expected.getSelectedOption());
+            assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
+            assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
             assertThat(assessmentResult.getId()).isEqualTo(actual.getAssessmentResultId());
         });
 
