@@ -57,30 +57,30 @@ class ApproveAssessmentAnswersServiceTest {
     @Test
     void testApproveAllAnswers_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
-            .thenReturn(false);
+                .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.approveAllAnswers(param));
 
         assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(approveAnswerPort,
-            loadAssessmentResultPort,
-            loadAnswerPort,
-            createAnswerHistoryPort);
+                loadAssessmentResultPort,
+                loadAnswerPort,
+                createAnswerHistoryPort);
     }
 
     @Test
     void testApproveAllAnswers_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
-            .thenReturn(true);
+                .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.approveAllAnswers(param));
         assertThat(throwable.getMessage()).isEqualTo(COMMON_ASSESSMENT_RESULT_NOT_FOUND);
 
         verifyNoInteractions(approveAnswerPort,
-            loadAnswerPort,
-            createAnswerHistoryPort);
+                loadAnswerPort,
+                createAnswerHistoryPort);
     }
 
     @Test
@@ -89,11 +89,11 @@ class ApproveAssessmentAnswersServiceTest {
         var answerList = List.of(AnswerMother.fullScore(1), AnswerMother.partialScore(2, 1), AnswerMother.fullScore(1));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
-            .thenReturn(true);
+                .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-            .thenReturn(Optional.of(assessmentResult));
+                .thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.loadAll(assessmentResult.getId(), AnswerStatus.UNAPPROVED))
-            .thenReturn(answerList);
+                .thenReturn(answerList);
 
         service.approveAllAnswers(param);
 
@@ -101,15 +101,15 @@ class ApproveAssessmentAnswersServiceTest {
         ArgumentCaptor<List<AnswerHistory>> argumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(createAnswerHistoryPort).persistAll(argumentCaptor.capture(), eq(assessmentResult.getId()));
 
-        verify(approveAnswerPort).approveAll(param.getAssessmentId(), param.getCurrentUserId());
+        verify(approveAnswerPort).approveAll(assessmentResult.getId(), param.getCurrentUserId());
 
         assertThat(argumentCaptor.getValue()).zipSatisfy(answerList, (actual, expected) -> {
             assertThat(AnswerStatus.APPROVED).isEqualTo(expected.getAnswerStatus());
-            assertThat(actual.getAnswer().getConfidenceLevelId()).isEqualTo(expected.getConfidenceLevelId());
-            assertThat(actual.getAnswer().getSelectedOption()).isEqualTo(expected.getSelectedOption());
-            assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
-            assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
-            assertThat(actual.getAssessmentResultId()).isEqualTo(assessmentResult.getId());
+            assertThat(expected.getConfidenceLevelId()).isEqualTo(actual.getAnswer().getConfidenceLevelId());
+            assertThat(expected.getSelectedOption()).isEqualTo(actual.getAnswer().getSelectedOption());
+            assertThat(expected.getQuestionId()).isEqualTo(actual.getAnswer().getQuestionId());
+            assertThat(expected.getQuestionId()).isEqualTo(actual.getAnswer().getQuestionId());
+            assertThat(assessmentResult.getId()).isEqualTo(actual.getAssessmentResultId());
         });
     }
 
@@ -121,7 +121,7 @@ class ApproveAssessmentAnswersServiceTest {
 
     private ApproveAssessmentAnswersUseCase.Param.ParamBuilder paramBuilder() {
         return ApproveAssessmentAnswersUseCase.Param.builder()
-            .assessmentId(UUID.randomUUID())
-            .currentUserId(UUID.randomUUID());
+                .assessmentId(UUID.randomUUID())
+                .currentUserId(UUID.randomUUID());
     }
 }
