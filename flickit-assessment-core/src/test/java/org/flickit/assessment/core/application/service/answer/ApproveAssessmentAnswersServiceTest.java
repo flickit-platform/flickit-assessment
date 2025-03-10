@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.answer;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.in.answer.ApproveAssessmentAnswersUseCase;
 import org.flickit.assessment.core.application.port.out.answer.ApproveAnswerPort;
@@ -13,6 +14,7 @@ import org.flickit.assessment.core.test.fixture.application.AnswerMother;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,7 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.APPROVE_ALL_ANSWERS;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -68,13 +70,12 @@ class ApproveAssessmentAnswersServiceTest {
     }
 
     @Test
-    void testApproveAllAnswers_whenAssessmentResultDoesNotHaveRequiredPermission_thenThrowResourceNotFoundException() {
+    void testApproveAllAnswers_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.approveAllAnswers(param));
-
         assertThat(throwable.getMessage()).isEqualTo(COMMON_ASSESSMENT_RESULT_NOT_FOUND);
 
         verifyNoInteractions(approveAnswerPort,
@@ -85,7 +86,7 @@ class ApproveAssessmentAnswersServiceTest {
     @Test
     void testApproveAllAnswers_whenParametersAreValid_thenSuccessfullyApprove() {
         var assessmentResult = AssessmentResultMother.validResult();
-        var answerList = List.of(AnswerMother.fullScore(1), AnswerMother.fullScore(2), AnswerMother.fullScore(3));
+        var answerList = List.of(AnswerMother.fullScore(1), AnswerMother.partialScore(2, 1), AnswerMother.fullScore(1));
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
             .thenReturn(true);
@@ -96,8 +97,20 @@ class ApproveAssessmentAnswersServiceTest {
 
         service.approveAllAnswers(param);
 
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<AnswerHistory>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(createAnswerHistoryPort).persistAll(argumentCaptor.capture(), eq(assessmentResult.getId()));
+
         verify(approveAnswerPort).approveAll(param.getAssessmentId(), param.getCurrentUserId());
-        verify(createAnswerHistoryPort).persistAll(any(), any());
+
+        assertThat(argumentCaptor.getValue()).zipSatisfy(answerList, (actual, expected) -> {
+            assertThat(AnswerStatus.APPROVED).isEqualTo(expected.getAnswerStatus());
+            assertThat(actual.getAnswer().getConfidenceLevelId()).isEqualTo(expected.getConfidenceLevelId());
+            assertThat(actual.getAnswer().getSelectedOption()).isEqualTo(expected.getSelectedOption());
+            assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
+            assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
+            assertThat(actual.getAssessmentResultId()).isEqualTo(assessmentResult.getId());
+        });
     }
 
     private ApproveAssessmentAnswersUseCase.Param createParam(Consumer<ApproveAssessmentAnswersUseCase.Param.ParamBuilder> changer) {
