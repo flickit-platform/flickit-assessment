@@ -48,6 +48,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
         Map<String, Long> postUpdateQuestionnaires = ctx.get(KEY_QUESTIONNAIRES);
+        Map<String, Long> postUpdateMeasures = ctx.get(KEY_MEASURE);
         Map<String, Long> postUpdateAttributes = ctx.get(KEY_ATTRIBUTES);
         Map<String, Long> postUpdateMaturityLevels = ctx.get(KEY_MATURITY_LEVELS);
 
@@ -78,6 +79,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
         // Assuming that new questionnaires have been created in QuestionnairePersister
         newQuestionnaireCodes.forEach(code -> createQuestions(dslQuestionnaireToQuestionsMap.get(code),
             postUpdateQuestionnaires,
+            postUpdateMeasures,
             postUpdateAttributes,
             postUpdateMaturityLevels,
             savedKit.getActiveVersionId(),
@@ -109,6 +111,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             savedQuestionnaireToQuestionsMap,
             dslQuestionnaireToQuestionsMap,
             postUpdateQuestionnaires,
+            postUpdateMeasures,
             postUpdateAttributes,
             postUpdateMaturityLevels,
             savedKit.getActiveVersionId(),
@@ -122,6 +125,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     private boolean haveNewQuestionsBeenAdded(Map<String, Map<String, Question>> savedQuestionnaireToQuestionsMap,
                                               Map<String, Map<String, QuestionDslModel>> dslQuestionnaireToQuestionsMap,
                                               Map<String, Long> postUpdateQuestionnaires,
+                                              Map<String, Long> postUpdateMeasures,
                                               Map<String, Long> postUpdateAttributes,
                                               Map<String, Long> postUpdateMaturityLevels,
                                               long kitVersionId,
@@ -140,6 +144,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
             createQuestions(newDslQuestionsMap,
                 postUpdateQuestionnaires,
+                postUpdateMeasures,
                 postUpdateAttributes,
                 postUpdateMaturityLevels,
                 kitVersionId,
@@ -152,20 +157,22 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
     }
 
     private void createQuestions(Map<String, QuestionDslModel> dslQuestions,
-                                    Map<String, Long> questionnaires,
-                                    Map<String, Long> attributes,
-                                    Map<String, Long> maturityLevels,
-                                    long kitVersionId,
-                                    UUID currentUserId) {
+                                 Map<String, Long> questionnaires,
+                                 Map<String, Long> measures,
+                                 Map<String, Long> attributes,
+                                 Map<String, Long> maturityLevels,
+                                 long kitVersionId,
+                                 UUID currentUserId) {
         if (dslQuestions == null || dslQuestions.isEmpty())
             return;
 
         dslQuestions.values().forEach(dslQuestion -> {
             Long questionnaireId = questionnaires.get(dslQuestion.getQuestionnaireCode());
+            Long measureId = measures.get(dslQuestion.getQuestionnaireCode());
             var createAnswerRangeParam = new CreateAnswerRangePort.Param(kitVersionId, null, null, false, currentUserId);
             long answerRangeId = createAnswerRangePort.persist(createAnswerRangeParam);
 
-            var createParam = toCreateQuestionParam(kitVersionId, questionnaireId, answerRangeId, currentUserId, dslQuestion);
+            var createParam = toCreateQuestionParam(kitVersionId, questionnaireId, measureId, answerRangeId, currentUserId, dslQuestion);
             Long questionId = createQuestionPort.persist(createParam);
             log.debug("Question[id={}, code={}, questionnaireCode={}] created.",
                 questionId, dslQuestion.getCode(), questionnaires.get(dslQuestion.getQuestionnaireCode()));
@@ -184,6 +191,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     private CreateQuestionPort.Param toCreateQuestionParam(Long kitVersionId,
                                                            Long questionnaireId,
+                                                           Long measureId,
                                                            Long answerRangeId,
                                                            UUID currentUserId,
                                                            QuestionDslModel dslQuestion) {
@@ -196,6 +204,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
             dslQuestion.isAdvisable(),
             kitVersionId,
             questionnaireId,
+            measureId,
             answerRangeId,
             currentUserId);
     }
