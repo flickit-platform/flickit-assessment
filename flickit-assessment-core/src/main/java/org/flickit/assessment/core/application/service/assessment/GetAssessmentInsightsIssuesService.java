@@ -28,7 +28,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
-import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHTS_ISSUES_ASSESSMENT_RESULT_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -50,7 +50,7 @@ public class GetAssessmentInsightsIssuesService implements GetAssessmentInsights
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
-            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND));
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ASSESSMENT_INSIGHTS_ISSUES_ASSESSMENT_RESULT_NOT_FOUND));
         validateAssessmentResultPort.validate(param.getAssessmentId());
 
         var assessmentInsight = getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId());
