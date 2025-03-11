@@ -8,7 +8,10 @@ import org.flickit.assessment.kit.application.domain.KitVersionStatus;
 import org.flickit.assessment.kit.application.port.in.questionnaire.DeleteQuestionnaireUseCase;
 import org.flickit.assessment.kit.application.port.out.expertgroup.LoadExpertGroupOwnerPort;
 import org.flickit.assessment.kit.application.port.out.kitversion.LoadKitVersionPort;
+import org.flickit.assessment.kit.application.port.out.measure.DeleteMeasurePort;
+import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.questionnaire.DeleteQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.questionnaire.LoadQuestionnairePort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +27,10 @@ public class DeleteQuestionnaireService implements DeleteQuestionnaireUseCase {
 
     private final LoadKitVersionPort loadKitVersionPort;
     private final LoadExpertGroupOwnerPort loadExpertGroupOwnerPort;
+    private final LoadQuestionnairePort loadQuestionnairePort;
+    private final LoadMeasurePort loadMeasurePort;
     private final DeleteQuestionnairePort deleteQuestionnairePort;
+    private final DeleteMeasurePort deleteMeasurePort;
 
     @Override
     public void deleteQuestionnaire(Param param) {
@@ -36,6 +42,10 @@ public class DeleteQuestionnaireService implements DeleteQuestionnaireUseCase {
         if (!KitVersionStatus.UPDATING.equals(kitVersion.getStatus()))
             throw new ValidationException(DELETE_QUESTIONNAIRE_NOT_ALLOWED);
 
+        var questionnaire = loadQuestionnairePort.load(param.getKitVersionId(), param.getQuestionnaireId());
+        var measure = loadMeasurePort.loadByCode(param.getKitVersionId(), questionnaire.getCode());
+
         deleteQuestionnairePort.delete(param.getQuestionnaireId(), param.getKitVersionId());
+        deleteMeasurePort.delete(measure.getId(), param.getKitVersionId());
     }
 }

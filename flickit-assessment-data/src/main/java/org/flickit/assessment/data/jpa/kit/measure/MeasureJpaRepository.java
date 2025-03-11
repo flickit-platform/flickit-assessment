@@ -38,4 +38,6 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
     );
 
     Optional<MeasureJpaEntity> findByCode(String code);
+
+    void deleteByIdAndKitVersionId(long measureId, long kitVersionId);
 }

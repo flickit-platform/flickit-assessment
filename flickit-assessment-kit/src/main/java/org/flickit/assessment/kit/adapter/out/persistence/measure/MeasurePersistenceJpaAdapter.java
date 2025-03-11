@@ -7,6 +7,7 @@ import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
 import org.flickit.assessment.data.jpa.kit.seq.KitDbSequenceGenerators;
 import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
+import org.flickit.assessment.kit.application.port.out.measure.DeleteMeasurePort;
 import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.measure.UpdateMeasurePort;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,8 @@ import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_F
 public class MeasurePersistenceJpaAdapter implements
     CreateMeasurePort,
     LoadMeasurePort,
-    UpdateMeasurePort {
+    UpdateMeasurePort,
+    DeleteMeasurePort {
 
     private final MeasureJpaRepository repository;
     private final KitDbSequenceGenerators sequenceGenerators;
@@ -48,9 +50,17 @@ public class MeasurePersistenceJpaAdapter implements
     }
 
     @Override
-    public Measure loadByCode(String code) {
+    public Measure loadByCode(Long kitVersionId, String code) {
         return repository.findByCode(code)
             .map(MeasureMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public void delete(long measureId, long kitVersionId) {
+        if (!repository.existsByIdAndKitVersionId(measureId, kitVersionId))
+            throw new ResourceNotFoundException(MEASURE_ID_NOT_FOUND);
+
+        repository.deleteByIdAndKitVersionId(measureId, kitVersionId);
     }
 }

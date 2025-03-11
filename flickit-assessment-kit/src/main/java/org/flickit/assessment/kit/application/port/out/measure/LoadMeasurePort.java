@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.Measure;
 
 public interface LoadMeasurePort {
 
-    Measure loadByCode(String code);
+    Measure loadByCode(Long kitVersionId, String code);
 }
