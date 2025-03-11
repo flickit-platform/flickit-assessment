@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.insight;
 
+import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -27,8 +28,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.random.RandomGenerator;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
@@ -162,7 +167,7 @@ class GetAssessmentInsightsServiceTest {
         for (int attributeIndex = 0; attributeIndex < result.subjects().getFirst().attributes().size(); attributeIndex++) {
             var expectedAttributeValue = attributeValues1.get(attributeIndex);
             var actualAttribute = result.subjects().getFirst().attributes().get(attributeIndex);
-            assertAttribute(expectedAttributeValue, actualAttribute);
+            assertAttribute(expectedAttributeValue, actualAttribute, attributeScoreMap.get(actualAttribute.id()));
             assertEmptyEditableInsight(actualAttribute.insight());
         }
 
@@ -218,7 +223,7 @@ class GetAssessmentInsightsServiceTest {
         for (int attributeIndex = 0; attributeIndex < result.subjects().getFirst().attributes().size(); attributeIndex++) {
             var expectedAttributeValue = attributeValues1.get(attributeIndex);
             var actualAttribute = result.subjects().getFirst().attributes().get(attributeIndex);
-            assertAttribute(expectedAttributeValue, actualAttribute);
+            assertAttribute(expectedAttributeValue, actualAttribute, attributeScoreMap.get(actualAttribute.id()));
             assertEmptyEditableInsight(actualAttribute.insight());
         }
 
@@ -275,7 +280,7 @@ class GetAssessmentInsightsServiceTest {
         for (int attributeIndex = 0; attributeIndex < result.subjects().getFirst().attributes().size(); attributeIndex++) {
             var expectedAttributeValue = attributeValues1.get(attributeIndex);
             var actualAttribute = result.subjects().getFirst().attributes().get(attributeIndex);
-            assertAttribute(expectedAttributeValue, actualAttribute);
+            assertAttribute(expectedAttributeValue, actualAttribute, attributeScoreMap.get(actualAttribute.id()));
             assertEmptyEditableInsight(actualAttribute.insight());
         }
 
@@ -335,7 +340,7 @@ class GetAssessmentInsightsServiceTest {
         for (int attributeIndex = 0; attributeIndex < result.subjects().getFirst().attributes().size(); attributeIndex++) {
             var expectedAttributeValue = attributeValues1.get(attributeIndex);
             var actualAttribute = result.subjects().getFirst().attributes().get(attributeIndex);
-            assertAttribute(expectedAttributeValue, actualAttribute);
+            assertAttribute(expectedAttributeValue, actualAttribute, attributeScoreMap.get(actualAttribute.id()));
             assertInsight(defaultInsight, actualAttribute.insight());
         }
 
@@ -345,13 +350,11 @@ class GetAssessmentInsightsServiceTest {
     }
 
     private List<LoadAttributeMaturityScoresPort.MaturityLevelScore> createAttributeMaturityScores() {
-        var index = 10.0;
-        List<LoadAttributeMaturityScoresPort.MaturityLevelScore> maturityScores = new ArrayList<>();
+        RandomGenerator random = RandomGenerator.getDefault();
 
-        for (MaturityLevel ml : allLevels()) {
-            maturityScores.add(new LoadAttributeMaturityScoresPort.MaturityLevelScore(ml, index += 10));
-        }
-        return maturityScores;
+        return allLevels().stream()
+            .map(ml -> new LoadAttributeMaturityScoresPort.MaturityLevelScore(ml, random.nextDouble(0, 100)))
+            .toList();
     }
 
     private void assertAssessment(AssessmentResult assessmentResult, AssessmentModel assessment) {
@@ -387,13 +390,21 @@ class GetAssessmentInsightsServiceTest {
         assertEquals(expected.getConfidenceValue(), actual.confidenceValue());
     }
 
-    private void assertAttribute(AttributeValue expectedAttributeValue, AttributeModel actualAttribute) {
+    private void assertAttribute(AttributeValue expectedAttributeValue,
+                                 AttributeModel actualAttribute,
+                                 List<LoadAttributeMaturityScoresPort.MaturityLevelScore> attributeScores) {
         assertEquals(expectedAttributeValue.getAttribute().getId(), actualAttribute.id());
         assertEquals(expectedAttributeValue.getAttribute().getTitle(), actualAttribute.title());
         assertEquals(expectedAttributeValue.getAttribute().getDescription(), actualAttribute.description());
         assertEquals(expectedAttributeValue.getAttribute().getIndex(), actualAttribute.index());
         assertEquals(expectedAttributeValue.getAttribute().getWeight(), actualAttribute.weight());
         assertMaturityLevel(expectedAttributeValue.getMaturityLevel(), actualAttribute.maturityLevel());
+
+        Assertions.assertThat(actualAttribute.maturityScoreModels())
+            .zipSatisfy(attributeScores, (actual, expected) -> {
+                assertEquals(expected.maturityLevel().getId(), actual.maturityLevel().id());
+                assertEquals(expected.score(), actual.score());
+            });
     }
 
     private void assertInsight(Insight actual, InsightModel expected) {
