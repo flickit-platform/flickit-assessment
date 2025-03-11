@@ -43,7 +43,7 @@ class MeasureCreateKitPersisterTest {
     }
 
     @Test
-    void testPersist_whenDslQuestionnairesIsValid_thenPersistMeasuresFromQuestionnaires() {
+    void testMeasureCreateKitPersister_whenDslQuestionnairesIsValid_thenPersistMeasuresFromQuestionnaires() {
         var dslQOne = domainToDslModel(questionnaireWithTitle("Clean Architecture"));
         var dslQTwo = domainToDslModel(questionnaireWithTitle("Code Quality"));
         var dslModel = AssessmentKitDslModel.builder()
