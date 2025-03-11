@@ -40,6 +40,7 @@ import static org.flickit.assessment.kit.test.fixture.application.AttributeMothe
 import static org.flickit.assessment.kit.test.fixture.application.Constants.*;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelThree;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelTwo;
+import static org.flickit.assessment.kit.test.fixture.application.MeasureMother.measureFromQuestionnaire;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother.questionnaireWithTitle;
@@ -91,6 +92,7 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
             List.of(kitContext.level()),
             List.of(kitContext.questionnaire()),
+            List.of(kitContext.measure()),
             List.of());
 
         AssessmentKitDslModel dslKit = createKitDslModel(QUESTION_TITLE1, 1, 1, optionOne().getTitle());
@@ -98,6 +100,7 @@ class QuestionUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(kitContext.level()).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(kitContext.questionnaire()).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_MEASURE, Stream.of(kitContext.measure()).collect(toMap(Measure::getCode, Measure::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(kitContext.attribute()).collect(toMap(Attribute::getCode, Attribute::getId)));
         persister.persist(ctx, savedKit, dslKit, UUID.randomUUID());
 
@@ -116,8 +119,9 @@ class QuestionUpdateKitPersisterTest {
     @Test
     void testQuestionUpdateKitPersister_QuestionAddedWithNewQuestionnaire_AddQuestionAndOptionsToDatabase() {
         var savedQuestionnaire1 = questionnaireWithTitle("DevOps");
+        var measure = measureFromQuestionnaire(savedQuestionnaire1);
         savedQuestionnaire1.setQuestions(List.of());
-        AssessmentKit savedKit = completeKit(List.of(), List.of(), List.of(savedQuestionnaire1), List.of());
+        AssessmentKit savedKit = completeKit(List.of(), List.of(), List.of(savedQuestionnaire1), List.of(measure), List.of());
 
         KitContext kitContext = createKitContext();
 
@@ -133,6 +137,7 @@ class QuestionUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(kitContext.level()).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(savedQuestionnaire1, kitContext.questionnaire()).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_MEASURE, Stream.of(kitContext.measure()).collect(toMap(Measure::getCode, Measure::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(kitContext.attribute()).collect(toMap(Attribute::getCode, Attribute::getId)));
         UUID currentUserId = UUID.randomUUID();
         persister.persist(ctx, savedKit, dslKit, currentUserId);
@@ -171,6 +176,7 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
             List.of(kitContext.level()),
             List.of(kitContext.questionnaire()),
+            List.of(kitContext.measure()),
             List.of());
 
         doNothing().when(updateQuestionPort).update(any(UpdateQuestionPort.Param.class));
@@ -219,6 +225,7 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
             List.of(kitContext.level(), levelThree),
             List.of(kitContext.questionnaire()),
+            List.of(kitContext.measure()),
             List.of());
 
         var expectedQuestionImpactId = 413591L;
@@ -273,6 +280,7 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
             List.of(kitContext.level(), levelThree),
             List.of(kitContext.questionnaire()),
+            List.of(kitContext.measure()),
             List.of());
 
         doNothing().when(deleteQuestionImpactPort).delete(savedImpact2.getId(), savedImpact2.getKitVersionId());
@@ -304,6 +312,7 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
             List.of(kitContext.level()),
             List.of(kitContext.questionnaire()),
+            List.of(kitContext.measure()),
             List.of());
 
         AssessmentKitDslModel dslKit = createKitDslModel(QUESTION_TITLE1, 2, 1, optionOne().getTitle());
@@ -342,6 +351,7 @@ class QuestionUpdateKitPersisterTest {
         AssessmentKit savedKit = completeKit(List.of(subjectWithAttributes("subject", List.of(kitContext.attribute()))),
             List.of(kitContext.level()),
             List.of(kitContext.questionnaire()),
+            List.of(kitContext.measure()),
             List.of());
 
         doNothing().when(updateAnswerOptionPort).updateTitle(any(UpdateAnswerOptionPort.UpdateTitleParam.class));
@@ -378,7 +388,8 @@ class QuestionUpdateKitPersisterTest {
     void testQuestionUpdateKitPersister_QuestionAddedWithOldQuestionnaire_SaveQuestionWithItsOptions() {
         KitContext kitContext = createKitContext();
         kitContext.questionnaire().setQuestions(List.of());
-        var savedKit = AssessmentKitMother.completeKit(List.of(), List.of(kitContext.level()), List.of(kitContext.questionnaire()), List.of());
+        var savedKit = AssessmentKitMother.completeKit(List.of(), List.of(kitContext.level()),
+            List.of(kitContext.questionnaire()), List.of(kitContext.measure()), List.of());
 
         var dslKit = createKitDslModel(QUESTION_TITLE1, 1, 1, optionOne().getTitle());
 
@@ -392,6 +403,7 @@ class QuestionUpdateKitPersisterTest {
         UpdateKitPersisterContext ctx = new UpdateKitPersisterContext();
         ctx.put(KEY_MATURITY_LEVELS, Stream.of(kitContext.level()).collect(toMap(MaturityLevel::getCode, MaturityLevel::getId)));
         ctx.put(KEY_QUESTIONNAIRES, Stream.of(kitContext.questionnaire()).collect(toMap(Questionnaire::getCode, Questionnaire::getId)));
+        ctx.put(KEY_MEASURE, Stream.of(kitContext.measure()).collect(toMap(Measure::getCode, Measure::getId)));
         ctx.put(KEY_ATTRIBUTES, Stream.of(kitContext.attribute()).collect(toMap(Attribute::getCode, Attribute::getId)));
         UUID currentUserId = UUID.randomUUID();
         persister.persist(ctx, savedKit, dslKit, currentUserId);
@@ -426,6 +438,7 @@ class QuestionUpdateKitPersisterTest {
     private KitContext createKitContext() {
         var levelTwo = levelTwo();
         var questionnaire = questionnaireWithTitle(QUESTIONNAIRE_TITLE1);
+        var measure = measureFromQuestionnaire(questionnaire);
         var question = createQuestion(QUESTION_CODE1, QUESTION_TITLE1, 1, null, false, true, 25L, questionnaire.getId());
         var attribute = createAttribute(ATTRIBUTE_CODE1, ATTRIBUTE_TITLE1, 1, "", 1);
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
@@ -434,7 +447,7 @@ class QuestionUpdateKitPersisterTest {
         question.setOptions(List.of(answerOption1, answerOption2));
         question.setImpacts(List.of(impact));
         questionnaire.setQuestions(List.of(question));
-        return new KitContext(levelTwo, questionnaire, question, attribute, impact, answerOption1, answerOption2);
+        return new KitContext(levelTwo, questionnaire, measure, question, attribute, impact, answerOption1, answerOption2);
     }
 
     private AssessmentKitDslModel createKitDslModel(String questionTitle,
@@ -519,6 +532,7 @@ class QuestionUpdateKitPersisterTest {
     private record KitContext(
         MaturityLevel level,
         Questionnaire questionnaire,
+        Measure measure,
         Question question,
         Attribute attribute,
         QuestionImpact impact,
