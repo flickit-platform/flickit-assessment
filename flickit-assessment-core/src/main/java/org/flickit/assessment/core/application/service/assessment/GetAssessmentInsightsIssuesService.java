@@ -64,13 +64,12 @@ public class GetAssessmentInsightsIssuesService implements GetAssessmentInsights
             .flatMap(s -> s.attributes().stream())
             .toList().size();
 
-        var issues = buildIssues(assessmentInsight,
+        return buildIssues(assessmentInsight,
             subjectsInsightMap,
             attributesInsightMap,
             assessmentResult.getLastCalculationTime(),
             subjectsCount,
             attributesCount);
-        return new Result(issues.notGenerated(), issues.unapproved(), issues.expired());
     }
 
     private List<SubjectModel> buildSubject(Param param,
@@ -129,7 +128,7 @@ public class GetAssessmentInsightsIssuesService implements GetAssessmentInsights
             .toList();
     }
 
-    private Issues buildIssues(Insight assessmentInsight,
+    private Result buildIssues(Insight assessmentInsight,
                                Map<Long, Insight> subjectsInsightMap,
                                Map<Long, Insight> attributesInsightMap,
                                LocalDateTime lastCalculationTime,
@@ -147,7 +146,7 @@ public class GetAssessmentInsightsIssuesService implements GetAssessmentInsights
         int unapprovedInsights = countUnapprovedInsights(assessmentInsight, subjectsInsights, attributesInsights);
         int expiredInsights = countExpiredInsights(assessmentInsight, subjectsInsightMap, attributesInsightMap, lastCalculationTime);
 
-        return new Issues(notGeneratedInsights, unapprovedInsights, expiredInsights);
+        return new Result(notGeneratedInsights, unapprovedInsights, expiredInsights);
     }
 
     private int countUnapprovedInsights(Insight assessmentInsight,

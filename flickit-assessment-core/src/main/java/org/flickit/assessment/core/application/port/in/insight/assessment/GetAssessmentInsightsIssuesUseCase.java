@@ -79,11 +79,6 @@ public interface GetAssessmentInsightsIssuesUseCase {
         }
     }
 
-    record Issues(int notGenerated,
-                  int unapproved,
-                  int expired) {
-    }
-
     record MaturityLevelModel(long id, String title, int value, int index) {
 
         public static MaturityLevelModel of(MaturityLevel maturityLevel) {
