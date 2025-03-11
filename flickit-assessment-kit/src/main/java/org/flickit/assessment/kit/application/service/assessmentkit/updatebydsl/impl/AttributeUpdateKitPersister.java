@@ -31,7 +31,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
 
     @Override
     public int order() {
-        return 4;
+        return 5;
     }
 
     @Override

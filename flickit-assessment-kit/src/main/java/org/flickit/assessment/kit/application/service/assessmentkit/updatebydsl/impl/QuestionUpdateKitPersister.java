@@ -39,7 +39,7 @@ public class QuestionUpdateKitPersister implements UpdateKitPersister {
 
     @Override
     public int order() {
-        return 6;
+        return 7;
     }
 
     @Override

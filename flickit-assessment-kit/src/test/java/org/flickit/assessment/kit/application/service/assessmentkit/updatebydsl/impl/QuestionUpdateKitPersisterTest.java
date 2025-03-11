@@ -17,6 +17,7 @@ import org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.
 import org.flickit.assessment.kit.test.fixture.application.AssessmentKitMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionnaireDslModelMother;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -78,6 +79,11 @@ class QuestionUpdateKitPersisterTest {
 
     @Mock
     private CreateAnswerRangePort createAnswerRangePort;
+
+    @Test
+    void testOrder() {
+        Assertions.assertEquals(7, persister.order());
+    }
 
     @Test
     void testQuestionUpdateKitPersister_SameInputsAsDatabaseData_NoChange() {
