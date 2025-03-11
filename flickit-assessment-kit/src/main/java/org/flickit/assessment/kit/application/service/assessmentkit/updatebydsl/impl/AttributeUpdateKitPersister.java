@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_ATTRIBUTES;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_SUBJECTS;
 
 @Slf4j
@@ -89,7 +90,7 @@ public class AttributeUpdateKitPersister implements UpdateKitPersister {
             .collect(Collectors.toMap(Attribute::getCode, Attribute::getId));
         attrCodeToAttrId.putAll(savedNewAttrCodeToIdMap);
 
-        ctx.put(UpdateKitPersisterContext.KEY_ATTRIBUTES, attrCodeToAttrId);
+        ctx.put(KEY_ATTRIBUTES, attrCodeToAttrId);
         log.debug("Final attributes: {}", attrCodeToAttrId);
 
         return new UpdateKitPersisterResult(isMajorUpdate);
