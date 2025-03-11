@@ -12,6 +12,7 @@ import org.flickit.assessment.data.jpa.kit.assessmentkit.AssessmentKitJpaReposit
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
@@ -21,6 +22,7 @@ import org.flickit.assessment.kit.adapter.out.persistence.answerrange.AnswerRang
 import org.flickit.assessment.kit.adapter.out.persistence.attribute.AttributeMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.levelcompetence.MaturityLevelCompetenceMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.maturitylevel.MaturityLevelMapper;
+import org.flickit.assessment.kit.adapter.out.persistence.measure.MeasureMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.question.QuestionMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.kit.adapter.out.persistence.questionnaire.QuestionnaireMapper;
@@ -48,6 +50,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
     private final SubjectJpaRepository subjectRepository;
     private final AttributeJpaRepository attributeRepository;
     private final QuestionnaireJpaRepository questionnaireRepository;
+    private final MeasureJpaRepository measureJpaRepository;
     private final QuestionJpaRepository questionRepository;
     private final QuestionImpactJpaRepository questionImpactRepository;
     private final AnswerOptionJpaRepository answerOptionRepository;
@@ -88,6 +91,10 @@ public class LoadAssessmentKitFullInfoAdapter implements
             .toList();
         setQuestions(questionnaires, questions);
 
+        List<Measure> measures = measureJpaRepository.findAllByKitVersionIdOrderByIndex(activeVersionId).stream()
+            .map(MeasureMapper::mapToDomainModel)
+            .toList();
+
         List<AnswerRange> reusableAnswerRanges = answerRangeRepository.findAllByKitVersionId(activeVersionId).stream()
             .filter(AnswerRangeJpaEntity::isReusable)
             .map(a -> {
@@ -113,6 +120,7 @@ public class LoadAssessmentKitFullInfoAdapter implements
             subjects,
             levels,
             questionnaires,
+            measures,
             reusableAnswerRanges,
             activeVersionId);
     }
