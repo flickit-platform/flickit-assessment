@@ -42,4 +42,20 @@ public class SpaceMother {
             UUID.randomUUID()
         );
     }
+
+    public static Space inactiveSpace(UUID ownerId) {
+        return new Space(
+            id++,
+            "Code" + id,
+            "Title",
+            SpaceType.PREMIUM,
+            ownerId,
+            SpaceStatus.INACTIVE,
+            LocalDateTime.now().minusMonths(3),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        );
+    }
 }
