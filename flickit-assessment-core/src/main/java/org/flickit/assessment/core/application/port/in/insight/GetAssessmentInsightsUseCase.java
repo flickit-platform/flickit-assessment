@@ -75,10 +75,12 @@ public interface GetAssessmentInsightsUseCase {
                           Integer weight,
                           MaturityLevelModel maturityLevel,
                           Double confidenceValue,
+                          List<MaturityScoreModel> maturityScoreModels,
                           InsightModel insight) {
 
         public static AttributeModel of(Attribute attribute,
                                         AttributeValue attributeValue,
+                                        List<MaturityScoreModel> maturityScoreModels,
                                         Insight attributeInsight,
                                         boolean editable) {
             return new AttributeModel(attribute.getId(),
@@ -88,8 +90,12 @@ public interface GetAssessmentInsightsUseCase {
                 attribute.getWeight(),
                 MaturityLevelModel.of(attributeValue.getMaturityLevel()),
                 attributeValue.getConfidenceValue(),
+                maturityScoreModels,
                 InsightModel.of(attributeInsight, editable));
         }
+    }
+
+    record MaturityScoreModel(MaturityLevelModel maturityLevel, Double score) {
     }
 
     record Issues(int notGenerated,
