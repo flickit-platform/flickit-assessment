@@ -8,7 +8,10 @@ import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerR
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext;
-import org.flickit.assessment.kit.test.fixture.application.*;
+import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
+import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
+import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
+import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +34,7 @@ import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMo
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.optionTwo;
 import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
 import static org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother.levelTwo;
+import static org.flickit.assessment.kit.test.fixture.application.MeasureMother.measureFromQuestionnaire;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionImpactMother.createQuestionImpact;
 import static org.flickit.assessment.kit.test.fixture.application.QuestionMother.createQuestion;
 import static org.flickit.assessment.kit.test.fixture.application.dsl.AnswerOptionDslModelMother.answerOptionDslModel;
@@ -77,6 +81,7 @@ class QuestionCreateKitPersisterTest {
 
         var levelTwo = levelTwo();
         var questionnaire = QuestionnaireMother.questionnaireWithTitle("DevOps");
+        var measure = measureFromQuestionnaire(questionnaire);
         var question = createQuestion(answerRangeId, questionnaire.getId());
         var attribute = attributeWithTitle("Agility");
         var impact = createQuestionImpact(attribute.getId(), levelTwo.getId(), 1, question.getId());
@@ -114,6 +119,7 @@ class QuestionCreateKitPersisterTest {
 
         CreateKitPersisterContext context = new CreateKitPersisterContext();
         context.put(KEY_QUESTIONNAIRES, Map.of(questionnaire.getCode(), questionnaire.getId()));
+        context.put(KEY_MEASURE, Map.of(measure.getCode(), measure.getId()));
         context.put(KEY_ATTRIBUTES, Map.of(attribute.getCode(), attribute.getId()));
         context.put(KEY_MATURITY_LEVELS, Map.of(levelTwo.getCode(), levelTwo.getId()));
 
@@ -135,6 +141,7 @@ class QuestionCreateKitPersisterTest {
         UUID currentUserId = UUID.randomUUID();
 
         var questionnaire = QuestionnaireMother.questionnaireWithTitle("devops");
+        var measure = measureFromQuestionnaire(questionnaire);
         var answerRange = AnswerRangeMother.createReusableAnswerRangeWithTwoOptions(1);
         var question = QuestionMother.createQuestion(answerRange.getId(), questionnaire.getId());
         var attribute = attributeWithTitle("flexibility");
@@ -162,6 +169,7 @@ class QuestionCreateKitPersisterTest {
 
         CreateKitPersisterContext context = new CreateKitPersisterContext();
         context.put(KEY_QUESTIONNAIRES, Map.of(questionnaire.getCode(), questionnaire.getId()));
+        context.put(KEY_MEASURE, Map.of(measure.getCode(), measure.getId()));
         context.put(KEY_ATTRIBUTES, Map.of(attribute.getCode(), attribute.getId()));
         context.put(KEY_MATURITY_LEVELS, Map.of(maturityLevel.getCode(), maturityLevel.getId()));
         context.put(KEY_ANSWER_RANGES, Map.of(answerRange.getCode(), answerRange.getId()));
