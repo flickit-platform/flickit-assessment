@@ -40,6 +40,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
     @Override
     public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId) {
         Map<String, Long> questionnaires = ctx.get(KEY_QUESTIONNAIRES);
+        Map<String, Long> measures = ctx.get(KEY_MEASURE);
         Map<String, Long> attributes = ctx.get(KEY_ATTRIBUTES);
         Map<String, Long> maturityLevels = ctx.get(KEY_MATURITY_LEVELS);
         Map<String, Long> answerRanges = ctx.get(KEY_ANSWER_RANGES);
@@ -51,6 +52,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             createQuestions(
                 dslQuestionnaireToQuestionsMap.get(code),
                 questionnaires.get(code),
+                measures.get(code),
                 attributes,
                 maturityLevels,
                 answerRanges,
@@ -62,6 +64,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
 
     private void createQuestions(Map<String, QuestionDslModel> dslQuestions,
                                  Long questionnaireId,
+                                 Long measureId,
                                  Map<String, Long> attributes,
                                  Map<String, Long> maturityLevels,
                                  Map<String, Long> answerRanges,
@@ -72,12 +75,13 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             return;
 
         dslQuestions.values().forEach(dslQuestion ->
-            createQuestion(dslQuestion, questionnaireId, attributes, maturityLevels, answerRanges, kitVersionId, currentUserId)
+            createQuestion(dslQuestion, questionnaireId, measureId, attributes, maturityLevels, answerRanges, kitVersionId, currentUserId)
         );
     }
 
     private void createQuestion(QuestionDslModel dslQuestion,
                                 Long questionnaireId,
+                                Long measureId,
                                 Map<String, Long> attributes,
                                 Map<String, Long> maturityLevels,
                                 Map<String, Long> answerRanges,
@@ -100,6 +104,7 @@ public class QuestionCreateKitPersister implements CreateKitPersister {
             dslQuestion.isAdvisable(),
             kitVersionId,
             questionnaireId,
+            measureId,
             answerRangeId,
             currentUserId
         );
