@@ -15,6 +15,7 @@ public interface CreateQuestionPort {
         Boolean advisable,
         Long kitVersionId,
         Long questionnaireId,
+        Long measureId,
         Long answerRangeId,
         UUID createdBy) {
     }
