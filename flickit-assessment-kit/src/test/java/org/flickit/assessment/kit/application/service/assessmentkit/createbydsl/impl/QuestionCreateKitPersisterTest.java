@@ -8,10 +8,7 @@ import org.flickit.assessment.kit.application.port.out.answerrange.CreateAnswerR
 import org.flickit.assessment.kit.application.port.out.question.CreateQuestionPort;
 import org.flickit.assessment.kit.application.port.out.questionimpact.CreateQuestionImpactPort;
 import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext;
-import org.flickit.assessment.kit.test.fixture.application.AnswerRangeMother;
-import org.flickit.assessment.kit.test.fixture.application.MaturityLevelMother;
-import org.flickit.assessment.kit.test.fixture.application.QuestionMother;
-import org.flickit.assessment.kit.test.fixture.application.QuestionnaireMother;
+import org.flickit.assessment.kit.test.fixture.application.*;
 import org.flickit.assessment.kit.test.fixture.application.dsl.MaturityLevelDslModelMother;
 import org.flickit.assessment.kit.test.fixture.application.dsl.QuestionDslModelMother;
 import org.jetbrains.annotations.NotNull;
@@ -29,10 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_ANSWER_RANGES;
-import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_MATURITY_LEVELS;
-import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_ATTRIBUTES;
-import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_QUESTIONNAIRES;
+import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.*;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.optionOne;
 import static org.flickit.assessment.kit.test.fixture.application.AnswerOptionMother.optionTwo;
 import static org.flickit.assessment.kit.test.fixture.application.AttributeMother.attributeWithTitle;
