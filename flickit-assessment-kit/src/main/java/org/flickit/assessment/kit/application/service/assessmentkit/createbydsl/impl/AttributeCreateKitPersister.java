@@ -28,7 +28,7 @@ public class AttributeCreateKitPersister implements CreateKitPersister {
 
     @Override
     public int order() {
-        return 4;
+        return 5;
     }
 
     @Override

@@ -72,7 +72,7 @@ class QuestionCreateKitPersisterTest {
 
     @Test
     void testOrder() {
-        Assertions.assertEquals(6, persister.order());
+        Assertions.assertEquals(7, persister.order());
     }
 
     @Test
