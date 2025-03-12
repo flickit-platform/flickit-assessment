@@ -35,13 +35,10 @@ public class CreateSpaceService implements CreateSpaceUseCase {
     @Override
     @SendNotification
     public Result createSpace(Param param) {
-        var space = mapToDomain(param);
-        var maxBasicSpaces = appSpecProperties.getSpace().getMaxBasicSpaces();
-        boolean isBasicSpaceLimitReached = SpaceType.BASIC.getCode().equals(param.getType())
-            && countSpacesPort.countBasicSpaces(param.getCurrentUserId()) >= maxBasicSpaces;
+        if (SpaceType.BASIC == SpaceType.valueOf(param.getType()))
+            checkBasicLimit(param.getCurrentUserId());
 
-        if (isBasicSpaceLimitReached)
-            throw new UpgradeRequiredException(CREATE_SPACE_BASIC_SPACE_MAX);
+        var space = mapToDomain(param);
 
         long id = createSpacePort.persist(space);
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
@@ -52,6 +49,14 @@ public class CreateSpaceService implements CreateSpaceUseCase {
         }
 
         return new CreateBasic(id);
+    }
+
+    private void checkBasicLimit(UUID currentUserId) {
+        var maxBasicSpaces = appSpecProperties.getSpace().getMaxBasicSpaces();
+        var userBasicSpacesCount = countSpacesPort.countBasicSpaces(currentUserId);
+
+        if (userBasicSpacesCount >= maxBasicSpaces)
+            throw new UpgradeRequiredException(CREATE_SPACE_BASIC_SPACE_MAX);
     }
 
     private Space mapToDomain(Param param) {
