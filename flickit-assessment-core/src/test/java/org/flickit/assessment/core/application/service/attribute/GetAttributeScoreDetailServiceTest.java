@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
@@ -79,6 +80,13 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result.getItems());
         assertEquals(portResult.getItems().size(), result.getItems().size());
         assertPaginationProperties(portResult, result);
+
+        assertThat(result.getItems())
+            .zipSatisfy(portResult.getItems(), (actual, expected) -> {
+                assertEquals(expected.gainedScore(), actual.answer().gainedScore());
+                assertEquals(expected.missedScore(), actual.answer().missedScore());
+                assertEquals(expected.confidence(), actual.answer().confidenceLevel());
+            });
     }
 
     @Test
