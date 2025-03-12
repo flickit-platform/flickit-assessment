@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +36,9 @@ class GetAttributeScoreDetailServiceTest {
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
 
+    @Mock
+    private LoadAttributeScoresPort loadAttributeScoresPort;
+
     @Test
     void testGetAttributeScoreDetail_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAttributeScoreDetailUseCase.Param.ParamBuilder::build);
@@ -43,6 +48,8 @@ class GetAttributeScoreDetailServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadAttributeScoreDetailPort, loadAttributeScoresPort);
     }
 
     @Test
