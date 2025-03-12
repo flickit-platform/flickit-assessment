@@ -29,6 +29,7 @@ import static org.flickit.assessment.common.application.domain.assessment.Assess
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,59 +58,62 @@ class ApproveAssessmentAnswersServiceTest {
     @Test
     void testApproveAllAnswers_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
-                .thenReturn(false);
+            .thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.approveAllAnswers(param));
         assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(approveAnswerPort,
-                loadAssessmentResultPort,
-                loadAnswerPort,
-                createAnswerHistoryPort);
+            loadAssessmentResultPort,
+            loadAnswerPort,
+            createAnswerHistoryPort);
     }
 
     @Test
     void testApproveAllAnswers_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
         var throwable = assertThrows(ResourceNotFoundException.class, () -> service.approveAllAnswers(param));
         assertThat(throwable.getMessage()).isEqualTo(COMMON_ASSESSMENT_RESULT_NOT_FOUND);
 
         verifyNoInteractions(approveAnswerPort,
-                loadAnswerPort,
-                createAnswerHistoryPort);
+            loadAnswerPort,
+            createAnswerHistoryPort);
     }
 
     @Test
     void testApproveAllAnswers_whenParametersAreValid_thenSuccessfullyApprove() {
         var assessmentResult = AssessmentResultMother.validResult();
-        var answerList = List.of(AnswerMother.noScore(1), AnswerMother.noScore(2),
-                AnswerMother.answerWithNotApplicableTrue(null),
-                AnswerMother.answerWithNotApplicableFalse(null));
-        //The last one answer should be filtered
+        var answerList = List.of(AnswerMother.noScore(1),
+            AnswerMother.noScore(2),
+            AnswerMother.answerWithNotApplicableTrue(null),
+            AnswerMother.answerWithNotApplicableFalse(null));
+        //The last answer should be filtered
         var filteredAnswerList = answerList.subList(0, answerList.size() - 1);
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
-                .thenReturn(true);
+            .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
-                .thenReturn(Optional.of(assessmentResult));
+            .thenReturn(Optional.of(assessmentResult));
         when(loadAnswerPort.loadAll(assessmentResult.getId(), AnswerStatus.UNAPPROVED))
-                .thenReturn(answerList);
+            .thenReturn(answerList);
 
         service.approveAllAnswers(param);
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<AnswerHistory>> argumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(createAnswerHistoryPort).persistAll(argumentCaptor.capture(), eq(assessmentResult.getId()));
-        assertThat(argumentCaptor.getValue()).zipSatisfy(filteredAnswerList, (actual, expected) -> {
-            assertThat(actual.getAnswer().getAnswerStatus()).isEqualTo(AnswerStatus.APPROVED);
-            assertThat(actual.getAnswer().getConfidenceLevelId()).isEqualTo(expected.getConfidenceLevelId());
-            assertThat(actual.getAnswer().getSelectedOption()).isEqualTo(expected.getSelectedOption());
-            assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
-            assertThat(actual.getAnswer().getQuestionId()).isEqualTo(expected.getQuestionId());
-            assertThat(actual.getAssessmentResultId()).isEqualTo(assessmentResult.getId());
+
+        assertThat(argumentCaptor.getValue())
+            .zipSatisfy(filteredAnswerList, (actual, expected) -> {
+                assertEquals(AnswerStatus.APPROVED, actual.getAnswer().getAnswerStatus());
+                assertEquals(expected.getConfidenceLevelId(), actual.getAnswer().getConfidenceLevelId());
+                assertEquals(expected.getSelectedOption(), actual.getAnswer().getSelectedOption());
+                assertEquals(expected.getQuestionId(), actual.getAnswer().getQuestionId());
+                assertEquals(expected.getQuestionId(), actual.getAnswer().getQuestionId());
+                assertEquals(assessmentResult.getId(), actual.getAssessmentResultId());
         });
 
         verify(approveAnswerPort).approveAll(assessmentResult.getId(), param.getCurrentUserId());
@@ -123,7 +127,7 @@ class ApproveAssessmentAnswersServiceTest {
 
     private ApproveAssessmentAnswersUseCase.Param.ParamBuilder paramBuilder() {
         return ApproveAssessmentAnswersUseCase.Param.builder()
-                .assessmentId(UUID.randomUUID())
-                .currentUserId(UUID.randomUUID());
+            .assessmentId(UUID.randomUUID())
+            .currentUserId(UUID.randomUUID());
     }
 }

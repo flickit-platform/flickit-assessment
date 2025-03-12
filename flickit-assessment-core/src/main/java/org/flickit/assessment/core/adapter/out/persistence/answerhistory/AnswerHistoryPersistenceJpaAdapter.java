@@ -64,7 +64,7 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .toList();
 
         var answerIdToEntityMap = answerRepository.findAllById(answerIds).stream()
-            .collect(Collectors.toMap(AnswerJpaEntity::getId, Function.identity()));
+            .collect(toMap(AnswerJpaEntity::getId, Function.identity()));
 
         var answerHistoryEntities = answerHistories.stream()
             .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answerIdToEntityMap.get(e.getAnswer().getId())))
