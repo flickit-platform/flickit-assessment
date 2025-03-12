@@ -6,6 +6,7 @@ import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.domain.notification.CreatePremiumSpaceNotificationCmd;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
@@ -60,6 +61,7 @@ public class CreateSpaceService implements CreateSpaceUseCase {
             param.getTitle(),
             SpaceType.valueOf(param.getType()),
             param.getCurrentUserId(),
+            SpaceStatus.ACTIVE,
             null,
             creationTime,
             creationTime,

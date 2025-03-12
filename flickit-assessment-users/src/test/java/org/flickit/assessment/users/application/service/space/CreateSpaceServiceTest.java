@@ -4,6 +4,7 @@ import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CountSpacesPort;
@@ -80,6 +81,7 @@ class CreateSpaceServiceTest {
         var capturedSpace = spaceCaptor.getValue();
         assertEquals(param.getTitle(), capturedSpace.getTitle());
         assertEquals(generateSlugCode(param.getTitle()), capturedSpace.getCode());
+        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
         SpaceType expectedSpaceType = SpaceType.valueOf(param.getType());
         assertEquals(expectedSpaceType.getId(), capturedSpace.getType().getId());
         assertEquals(expectedSpaceType.getCode(), capturedSpace.getType().getCode());
@@ -110,6 +112,7 @@ class CreateSpaceServiceTest {
         var capturedSpace = spaceCaptor.getValue();
         assertEquals(param.getTitle(), capturedSpace.getTitle());
         assertEquals(generateSlugCode(param.getTitle()), capturedSpace.getCode());
+        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
         SpaceType expectedSpaceType = SpaceType.valueOf(param.getType());
         assertEquals(expectedSpaceType.getId(), capturedSpace.getType().getId());
         assertEquals(expectedSpaceType.getCode(), capturedSpace.getType().getCode());

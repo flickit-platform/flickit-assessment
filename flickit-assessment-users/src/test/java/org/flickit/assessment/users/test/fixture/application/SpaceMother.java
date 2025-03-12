@@ -2,6 +2,7 @@ package org.flickit.assessment.users.test.fixture.application;
 
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class SpaceMother {
             "Title",
             SpaceType.BASIC,
             ownerId,
+            SpaceStatus.ACTIVE,
             null,
             LocalDateTime.now(),
             LocalDateTime.now(),
@@ -32,6 +34,23 @@ public class SpaceMother {
             "Title",
             SpaceType.PREMIUM,
             ownerId,
+            SpaceStatus.ACTIVE,
+            LocalDateTime.now().minusMonths(3),
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            UUID.randomUUID(),
+            UUID.randomUUID()
+        );
+    }
+
+    public static Space inactiveSpace(UUID ownerId) {
+        return new Space(
+            id++,
+            "Code" + id,
+            "Title",
+            SpaceType.PREMIUM,
+            ownerId,
+            SpaceStatus.INACTIVE,
             LocalDateTime.now().minusMonths(3),
             LocalDateTime.now(),
             LocalDateTime.now(),

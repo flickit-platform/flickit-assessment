@@ -5,6 +5,7 @@ import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,6 +35,7 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
         assertEquals(request.title(), loadedSpace.getTitle());
         assertEquals(generateSlugCode(request.title()), loadedSpace.getCode());
         assertEquals(getCurrentUserId(), loadedSpace.getOwnerId());
+        assertEquals(SpaceStatus.ACTIVE.getId(), loadedSpace.getStatus());
         assertEquals(getCurrentUserId(), loadedSpace.getCreatedBy());
         assertEquals(getCurrentUserId(), loadedSpace.getLastModifiedBy());
         assertNotNull(loadedSpace.getCreationTime());
