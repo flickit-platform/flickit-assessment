@@ -34,6 +34,9 @@ public class SpaceJpaEntity {
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
+    @Column(name = "status", nullable = false)
+    private int status;
+
     @Column(name = "subscription_expiry")
     private LocalDateTime subscriptionExpiry;
 
