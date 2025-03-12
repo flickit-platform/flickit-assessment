@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.flickit.assessment.kit.application.domain.AssessmentKit;
 import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
-import org.flickit.assessment.kit.application.domain.dsl.BaseDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
 import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
 import org.flickit.assessment.kit.application.port.out.measure.UpdateMeasurePort;
@@ -19,10 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.application.service.assessmentkit.updatebydsl.UpdateKitPersisterContext.KEY_MEASURE;
 
 @Slf4j
@@ -44,23 +43,25 @@ public class MeasureUpdateKitPersister implements UpdateKitPersister {
                                             AssessmentKit savedKit,
                                             AssessmentKitDslModel dslKit,
                                             UUID currentUserId) {
-        List<Measure> savedMeasures = savedKit.getMeasures();
-        List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
+        var savedMeasures = savedKit.getMeasures();
+        var dslQuestionnaires = dslKit.getQuestionnaires();
 
-        Map<String, Measure> savedMeasureCodesMap = savedMeasures.stream().collect(Collectors.toMap(Measure::getCode, i -> i));
-        Map<String, QuestionnaireDslModel> dslQuestionnaireCodesMap = dslQuestionnaires.stream().collect(Collectors.toMap(BaseDslModel::getCode, i -> i));
+        var savedMeasureCodesMap = savedMeasures.stream()
+            .collect(toMap(Measure::getCode, Function.identity()));
+        var dslQuestionnaireCodesMap = dslQuestionnaires.stream()
+            .collect(toMap(QuestionnaireDslModel::getCode, Function.identity()));
 
-        List<String> newQuestionnairesCodes = dslQuestionnaireCodesMap.keySet().stream()
+        var newQuestionnairesCodes = dslQuestionnaireCodesMap.keySet().stream()
             .filter(i -> !savedMeasureCodesMap.containsKey(i))
             .toList();
-        List<String> sameMeasuresCodes = savedMeasureCodesMap.keySet().stream()
+        var sameMeasuresCodes = savedMeasureCodesMap.keySet().stream()
             .filter(dslQuestionnaireCodesMap::containsKey)
             .toList();
 
         List<Measure> finalMeasures = new ArrayList<>();
 
         newQuestionnairesCodes.forEach(i ->
-            finalMeasures.add(createMeasureFromQuestionnaire(dslQuestionnaireCodesMap.get(i),
+            finalMeasures.add(createMeasure(dslQuestionnaireCodesMap.get(i),
                 savedKit.getActiveVersionId(),
                 currentUserId)));
         sameMeasuresCodes.forEach(i ->
@@ -69,14 +70,14 @@ public class MeasureUpdateKitPersister implements UpdateKitPersister {
                 dslQuestionnaireCodesMap.get(i),
                 currentUserId)));
 
-        Map<String, Long> measureCodeToIdMap = finalMeasures.stream().collect(Collectors.toMap(Measure::getCode, Measure::getId));
+        var measureCodeToIdMap = finalMeasures.stream().collect(toMap(Measure::getCode, Measure::getId));
         ctx.put(KEY_MEASURE, measureCodeToIdMap);
         log.debug("Final measures: {}", measureCodeToIdMap);
 
         return new UpdateKitPersisterResult(!newQuestionnairesCodes.isEmpty());
     }
 
-    private Measure createMeasureFromQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitVersionId, UUID currentUserId) {
+    private Measure createMeasure(QuestionnaireDslModel newQuestionnaire, long kitVersionId, UUID currentUserId) {
         var createParam = new Measure(
             null,
             newQuestionnaire.getCode(),
@@ -87,7 +88,7 @@ public class MeasureUpdateKitPersister implements UpdateKitPersister {
             LocalDateTime.now()
         );
 
-        long persistedId = createMeasurePort.persist(createParam, kitVersionId, currentUserId);
+        var persistedId = createMeasurePort.persist(createParam, kitVersionId, currentUserId);
         log.debug("Measure[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return new Measure(

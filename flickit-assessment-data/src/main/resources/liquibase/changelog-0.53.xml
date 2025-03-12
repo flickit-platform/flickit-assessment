@@ -79,7 +79,7 @@
     </changeSet>
 
     <changeSet id="0.53-06" author="Mahdi Rezazadeh">
-        <sql> select setval('fak_measure_id_seq', max(id) + 1)
+        <sql> select setval('fak_measure_id_seq', max(id))
               from fak_measure</sql>
     </changeSet>
 

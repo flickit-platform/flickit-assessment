@@ -73,7 +73,7 @@ public class MeasurePersistenceJpaAdapter implements
 
     @Override
     public Measure loadByCode(Long kitVersionId, String code) {
-        return repository.findByCode(code)
+        return repository.findByKitVersionIdAndCode(kitVersionId, code)
             .map(MeasureMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND));
     }

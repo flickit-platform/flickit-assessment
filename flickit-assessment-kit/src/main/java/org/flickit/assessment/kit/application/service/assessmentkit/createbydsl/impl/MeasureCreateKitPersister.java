@@ -44,19 +44,19 @@ public class MeasureCreateKitPersister implements CreateKitPersister {
         log.debug("Final measures: {}", measureCodeToIdMap);
     }
 
-    private Long createMeasure(QuestionnaireDslModel newMeasure, long kitVersionId, UUID currentUserId) {
+    private Long createMeasure(QuestionnaireDslModel newQuestionnaire, long kitVersionId, UUID currentUserId) {
         var createParam = new Measure(
             null,
-            newMeasure.getCode(),
-            newMeasure.getTitle(),
-            newMeasure.getIndex(),
-            newMeasure.getDescription(),
+            newQuestionnaire.getCode(),
+            newQuestionnaire.getTitle(),
+            newQuestionnaire.getIndex(),
+            newQuestionnaire.getDescription(),
             LocalDateTime.now(),
             LocalDateTime.now()
         );
 
         long persistedId = createMeasurePort.persist(createParam, kitVersionId, currentUserId);
-        log.debug("Measure[id={}, code={}] created.", persistedId, newMeasure.getCode());
+        log.debug("Measure[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return persistedId;
     }

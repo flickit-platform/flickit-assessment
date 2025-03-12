@@ -44,7 +44,7 @@ public class UpdateQuestionnaireOrdersService implements UpdateQuestionnaireOrde
 
         updateQuestionnairePort.updateOrders(toUpdatePortParam(param));
 
-        var measureUpdatePortParam = createMeasureUpdateParam(param);
+        var measureUpdatePortParam = createMeasureUpdateParam(param, kitVersion.getKit().getId());
         updateMeasurePort.updateOrders(measureUpdatePortParam);
     }
 
@@ -58,8 +58,8 @@ public class UpdateQuestionnaireOrdersService implements UpdateQuestionnaireOrde
             param.getCurrentUserId());
     }
 
-    private UpdateMeasurePort.UpdateOrderParam createMeasureUpdateParam(Param param) {
-        var questionnaireIdToCode = loadQuestionnairesPort.loadByKitId(param.getKitVersionId()).stream()
+    private UpdateMeasurePort.UpdateOrderParam createMeasureUpdateParam(Param param, Long kitId) {
+        var questionnaireIdToCode = loadQuestionnairesPort.loadByKitId(kitId).stream()
             .collect(toMap(Questionnaire::getId, Questionnaire::getCode));
         var codeToMeasureId = loadMeasurePort.loadAllByKitVersionId(param.getKitVersionId()).stream()
             .collect(toMap(Measure::getCode, Measure::getId));
