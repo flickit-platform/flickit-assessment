@@ -7,8 +7,8 @@ import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.AssessmentResult;
 import org.flickit.assessment.core.application.port.in.insight.assessment.GetAssessmentInsightsIssuesUseCase;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
+import org.flickit.assessment.core.application.port.out.attribute.CountAttributesPort;
+import org.flickit.assessment.core.application.port.out.subject.CountSubjectsPort;
 import org.flickit.assessment.core.application.service.insight.assessment.GetAssessmentInsightHelper;
 import org.flickit.assessment.core.application.service.insight.attribute.GetAttributeInsightHelper;
 import org.flickit.assessment.core.application.service.insight.subject.GetSubjectInsightHelper;
@@ -53,18 +53,21 @@ class GetAssessmentInsightsIssuesServiceTest {
     private GetAssessmentInsightHelper getAssessmentInsightHelper;
 
     @Mock
-    private LoadSubjectValuePort loadSubjectValuePort;
-
-    @Mock
     private GetSubjectInsightHelper getSubjectInsightHelper;
-
-    @Mock
-    private LoadAttributeValuePort loadAttributeValuePort;
 
     @Mock
     private GetAttributeInsightHelper getAttributeInsightHelper;
 
+    @Mock
+    private CountSubjectsPort countSubjectsPort;
+
+    @Mock
+    private CountAttributesPort countAttributesPort;
+
     private final AssessmentResult assessmentResult = AssessmentResultMother.validResult();
+
+    private final int subjectCount = 5;
+    private final int attributeCount = 7;
 
     @Test
     void testGetAssessmentInsightsIssues_whenCurrentUserDoesNotHaveRequiredPermissions_thenThrowAccessDeniedException() {
@@ -79,9 +82,9 @@ class GetAssessmentInsightsIssuesServiceTest {
         verifyNoInteractions(loadAssessmentResultPort,
             validateAssessmentResultPort,
             getAssessmentInsightHelper,
-            loadSubjectValuePort,
+            countSubjectsPort,
             getSubjectInsightHelper,
-            loadAttributeValuePort,
+            countAttributesPort,
             getAttributeInsightHelper);
     }
 
@@ -98,9 +101,9 @@ class GetAssessmentInsightsIssuesServiceTest {
 
         verifyNoInteractions(validateAssessmentResultPort,
             getAssessmentInsightHelper,
-            loadSubjectValuePort,
+            countSubjectsPort,
             getSubjectInsightHelper,
-            loadAttributeValuePort,
+            countAttributesPort,
             getAttributeInsightHelper);
     }
 
@@ -108,8 +111,6 @@ class GetAssessmentInsightsIssuesServiceTest {
     void testGetAssessmentInsightsIssues_whenNoInsightExists_thenReturnsEmptyInsights() {
         var param = createParam(GetAssessmentInsightsIssuesUseCase.Param.ParamBuilder::build);
         var emptyInsight = InsightMother.emptyInsight();
-        var subjectValue1 = SubjectValueMother.createSubjectValue();
-        var attributeValues1 = subjectValue1.getAttributeValues();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
@@ -118,22 +119,18 @@ class GetAssessmentInsightsIssuesServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId()))
             .thenReturn(emptyInsight);
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
-            .thenReturn(List.of(subjectValue1));
+        when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId()))
+            .thenReturn(subjectCount);
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
-        when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
-            .thenReturn(attributeValues1);
+        when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId()))
+            .thenReturn(attributeCount);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
-            .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
-            .thenReturn(true);
 
         var result = service.getInsightsIssues(param);
 
-        assertEquals(4, result.notGenerated());
+        assertEquals(13, result.notGenerated());
         assertEquals(0, result.unapproved());
         assertEquals(0, result.expired());
     }
@@ -142,8 +139,6 @@ class GetAssessmentInsightsIssuesServiceTest {
     void testGetAssessmentInsightsIssues_whenAssessmentInsightIsExpired_thenReturnsExpiredInsight() {
         var param = createParam(GetAssessmentInsightsIssuesUseCase.Param.ParamBuilder::build);
         var expiredInsight = InsightMother.defaultInsightWithMinLastModificationTime();
-        var subjectValue1 = SubjectValueMother.createSubjectValue();
-        var attributeValues1 = subjectValue1.getAttributeValues();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
@@ -152,22 +147,18 @@ class GetAssessmentInsightsIssuesServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId()))
             .thenReturn(expiredInsight);
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
-            .thenReturn(List.of(subjectValue1));
+        when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId()))
+            .thenReturn(subjectCount);
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
-        when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
-            .thenReturn(attributeValues1);
+        when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId()))
+            .thenReturn(attributeCount);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
-            .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
-            .thenReturn(true);
 
         var result = service.getInsightsIssues(param);
 
-        assertEquals(3, result.notGenerated());
+        assertEquals(12, result.notGenerated());
         assertEquals(0, result.unapproved());
         assertEquals(1, result.expired());
     }
@@ -178,7 +169,6 @@ class GetAssessmentInsightsIssuesServiceTest {
         var assessmentInsight = InsightMother.defaultInsightWithMinLastModificationTime();
         var subjectInsight = InsightMother.unapprovedAssessorInsightWithMinLastModificationTime();
         var subjectValue1 = SubjectValueMother.createSubjectValue();
-        var attributeValues1 = subjectValue1.getAttributeValues();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
@@ -187,22 +177,18 @@ class GetAssessmentInsightsIssuesServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId()))
             .thenReturn(assessmentInsight);
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
-            .thenReturn(List.of(subjectValue1));
+        when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId()))
+            .thenReturn(subjectCount);
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of(subjectValue1.getSubject().getId(), subjectInsight));
-        when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
-            .thenReturn(attributeValues1);
+        when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId()))
+            .thenReturn(attributeCount);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
-            .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
-            .thenReturn(true);
 
         var result = service.getInsightsIssues(param);
 
-        assertEquals(2, result.notGenerated());
+        assertEquals(11, result.notGenerated());
         assertEquals(1, result.unapproved());
         assertEquals(2, result.expired());
     }
@@ -222,20 +208,16 @@ class GetAssessmentInsightsIssuesServiceTest {
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId()))
             .thenReturn(assessmentInsight);
-        when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
-            .thenReturn(List.of(subjectValue1));
+        when(countSubjectsPort.countSubjects(assessmentResult.getKitVersionId()))
+            .thenReturn(List.of(subjectValue1).size());
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of(subjectValue1.getSubject().getId(), defaultInsight));
-        when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
-            .thenReturn(attributeValues1);
+        when(countAttributesPort.countAttributes(assessmentResult.getKitVersionId()))
+            .thenReturn(List.of(attributeValues1).size());
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of(
                 attributeValues1.getFirst().getAttribute().getId(), defaultInsight,
                 attributeValues1.get(1).getAttribute().getId(), defaultInsight));
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
-            .thenReturn(true);
-        when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_ATTRIBUTE_INSIGHT))
-            .thenReturn(true);
 
         var result = service.getInsightsIssues(param);
 
@@ -255,5 +237,4 @@ class GetAssessmentInsightsIssuesServiceTest {
             .assessmentId(UUID.randomUUID())
             .currentUserId(UUID.randomUUID());
     }
-
 }
