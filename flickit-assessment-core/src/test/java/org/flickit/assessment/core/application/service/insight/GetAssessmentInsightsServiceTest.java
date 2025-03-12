@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.application.service.insight;
 
+import org.assertj.core.api.Assertions;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.port.out.ValidateAssessmentResultPort;
 import org.flickit.assessment.common.exception.AccessDeniedException;
@@ -11,6 +12,7 @@ import org.flickit.assessment.core.application.domain.SubjectValue;
 import org.flickit.assessment.core.application.domain.insight.Insight;
 import org.flickit.assessment.core.application.port.in.insight.GetAssessmentInsightsUseCase.*;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
+import org.flickit.assessment.core.application.port.out.attributematurityscore.LoadAttributeMaturityScoresPort;
 import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.subjectvalue.LoadSubjectValuePort;
@@ -19,7 +21,6 @@ import org.flickit.assessment.core.application.service.insight.attribute.GetAttr
 import org.flickit.assessment.core.application.service.insight.subject.GetSubjectInsightHelper;
 import org.flickit.assessment.core.test.fixture.application.AssessmentResultMother;
 import org.flickit.assessment.core.test.fixture.application.InsightMother;
-import org.flickit.assessment.core.test.fixture.application.MaturityLevelMother;
 import org.flickit.assessment.core.test.fixture.application.SubjectValueMother;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,10 +33,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.random.RandomGenerator;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.common.ErrorMessageKey.GET_ASSESSMENT_INSIGHT_ASSESSMENT_RESULT_NOT_FOUND;
+import static org.flickit.assessment.core.test.fixture.application.MaturityLevelMother.allLevels;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -68,6 +71,9 @@ class GetAssessmentInsightsServiceTest {
 
     @Mock
     private GetAttributeInsightHelper getAttributeInsightHelper;
+
+    @Mock
+    private LoadAttributeMaturityScoresPort loadAttributeMaturityScoresPort;
 
     @Mock
     private CountMaturityLevelsPort countMaturityLevelsPort;
@@ -121,13 +127,17 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
+        var scores = createAttributeMaturityScores();
+        var attributeScoreMap = Map.of(attributeValues1.getFirst().getAttribute().getId(), scores,
+            attributeValues1.getLast().getAttribute().getId(), scores);
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
         doNothing().when(validateAssessmentResultPort).validate(param.getAssessmentId());
         when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
-            .thenReturn(MaturityLevelMother.allLevels().size());
+            .thenReturn(allLevels().size());
         when(getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId()))
             .thenReturn(emptyInsight);
         when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
@@ -136,6 +146,7 @@ class GetAssessmentInsightsServiceTest {
             .thenReturn(Map.of());
         when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(attributeValues1);
+        when(loadAttributeMaturityScoresPort.loadAll(assessmentResult.getId())).thenReturn(attributeScoreMap);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
@@ -156,7 +167,7 @@ class GetAssessmentInsightsServiceTest {
         for (int attributeIndex = 0; attributeIndex < result.subjects().getFirst().attributes().size(); attributeIndex++) {
             var expectedAttributeValue = attributeValues1.get(attributeIndex);
             var actualAttribute = result.subjects().getFirst().attributes().get(attributeIndex);
-            assertAttribute(expectedAttributeValue, actualAttribute);
+            assertAttribute(expectedAttributeValue, actualAttribute, attributeScoreMap.get(actualAttribute.id()));
             assertEmptyEditableInsight(actualAttribute.insight());
         }
 
@@ -172,6 +183,10 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
+        var scores = createAttributeMaturityScores();
+        var attributeScoreMap = Map.of(attributeValues1.getFirst().getAttribute().getId(), scores,
+            attributeValues1.getLast().getAttribute().getId(), scores);
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -180,13 +195,15 @@ class GetAssessmentInsightsServiceTest {
         when(getAssessmentInsightHelper.getAssessmentInsight(assessmentResult, param.getCurrentUserId()))
             .thenReturn(expiredInsight);
         when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
-            .thenReturn(MaturityLevelMother.allLevels().size());
+            .thenReturn(allLevels().size());
         when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(List.of(subjectValue1));
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
         when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(attributeValues1);
+        when(loadAttributeMaturityScoresPort.loadAll(assessmentResult.getId()))
+            .thenReturn(attributeScoreMap);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
@@ -206,7 +223,7 @@ class GetAssessmentInsightsServiceTest {
         for (int attributeIndex = 0; attributeIndex < result.subjects().getFirst().attributes().size(); attributeIndex++) {
             var expectedAttributeValue = attributeValues1.get(attributeIndex);
             var actualAttribute = result.subjects().getFirst().attributes().get(attributeIndex);
-            assertAttribute(expectedAttributeValue, actualAttribute);
+            assertAttribute(expectedAttributeValue, actualAttribute, attributeScoreMap.get(actualAttribute.id()));
             assertEmptyEditableInsight(actualAttribute.insight());
         }
 
@@ -223,6 +240,10 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
+        var scores = createAttributeMaturityScores();
+        var attributeScoreMap = Map.of(attributeValues1.getFirst().getAttribute().getId(), scores,
+            attributeValues1.getLast().getAttribute().getId(), scores);
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -233,11 +254,13 @@ class GetAssessmentInsightsServiceTest {
         when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(List.of(subjectValue1));
         when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
-            .thenReturn(MaturityLevelMother.allLevels().size());
+            .thenReturn(allLevels().size());
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of(subjectValue1.getSubject().getId(), subjectInsight));
         when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(attributeValues1);
+        when(loadAttributeMaturityScoresPort.loadAll(assessmentResult.getId()))
+            .thenReturn(attributeScoreMap);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of());
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), CREATE_SUBJECT_INSIGHT))
@@ -257,7 +280,7 @@ class GetAssessmentInsightsServiceTest {
         for (int attributeIndex = 0; attributeIndex < result.subjects().getFirst().attributes().size(); attributeIndex++) {
             var expectedAttributeValue = attributeValues1.get(attributeIndex);
             var actualAttribute = result.subjects().getFirst().attributes().get(attributeIndex);
-            assertAttribute(expectedAttributeValue, actualAttribute);
+            assertAttribute(expectedAttributeValue, actualAttribute, attributeScoreMap.get(actualAttribute.id()));
             assertEmptyEditableInsight(actualAttribute.insight());
         }
 
@@ -274,6 +297,10 @@ class GetAssessmentInsightsServiceTest {
         var subjectValue1 = SubjectValueMother.createSubjectValue();
         var attributeValues1 = subjectValue1.getAttributeValues();
 
+        var scores = createAttributeMaturityScores();
+        var attributeScoreMap = Map.of(attributeValues1.getFirst().getAttribute().getId(), scores,
+            attributeValues1.getLast().getAttribute().getId(), scores);
+
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ASSESSMENT_INSIGHTS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
@@ -284,11 +311,13 @@ class GetAssessmentInsightsServiceTest {
         when(loadSubjectValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(List.of(subjectValue1));
         when(countMaturityLevelsPort.count(assessmentResult.getKitVersionId()))
-            .thenReturn(MaturityLevelMother.allLevels().size());
+            .thenReturn(allLevels().size());
         when(getSubjectInsightHelper.getSubjectInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of(subjectValue1.getSubject().getId(), defaultInsight));
         when(loadAttributeValuePort.loadAll(assessmentResult.getId()))
             .thenReturn(attributeValues1);
+        when(loadAttributeMaturityScoresPort.loadAll(assessmentResult.getId()))
+            .thenReturn(attributeScoreMap);
         when(getAttributeInsightHelper.getAttributeInsights(assessmentResult, param.getCurrentUserId()))
             .thenReturn(Map.of(
                 attributeValues1.getFirst().getAttribute().getId(), defaultInsight,
@@ -311,13 +340,21 @@ class GetAssessmentInsightsServiceTest {
         for (int attributeIndex = 0; attributeIndex < result.subjects().getFirst().attributes().size(); attributeIndex++) {
             var expectedAttributeValue = attributeValues1.get(attributeIndex);
             var actualAttribute = result.subjects().getFirst().attributes().get(attributeIndex);
-            assertAttribute(expectedAttributeValue, actualAttribute);
+            assertAttribute(expectedAttributeValue, actualAttribute, attributeScoreMap.get(actualAttribute.id()));
             assertInsight(defaultInsight, actualAttribute.insight());
         }
 
         assertEquals(0, result.issues().notGenerated());
         assertEquals(1, result.issues().unapproved());
         assertEquals(1, result.issues().expired());
+    }
+
+    private List<LoadAttributeMaturityScoresPort.MaturityLevelScore> createAttributeMaturityScores() {
+        RandomGenerator random = RandomGenerator.getDefault();
+
+        return allLevels().stream()
+            .map(ml -> new LoadAttributeMaturityScoresPort.MaturityLevelScore(ml, random.nextDouble(0, 100)))
+            .toList();
     }
 
     private void assertAssessment(AssessmentResult assessmentResult, AssessmentModel assessment) {
@@ -353,13 +390,21 @@ class GetAssessmentInsightsServiceTest {
         assertEquals(expected.getConfidenceValue(), actual.confidenceValue());
     }
 
-    private void assertAttribute(AttributeValue expectedAttributeValue, AttributeModel actualAttribute) {
+    private void assertAttribute(AttributeValue expectedAttributeValue,
+                                 AttributeModel actualAttribute,
+                                 List<LoadAttributeMaturityScoresPort.MaturityLevelScore> attributeScores) {
         assertEquals(expectedAttributeValue.getAttribute().getId(), actualAttribute.id());
         assertEquals(expectedAttributeValue.getAttribute().getTitle(), actualAttribute.title());
         assertEquals(expectedAttributeValue.getAttribute().getDescription(), actualAttribute.description());
         assertEquals(expectedAttributeValue.getAttribute().getIndex(), actualAttribute.index());
         assertEquals(expectedAttributeValue.getAttribute().getWeight(), actualAttribute.weight());
         assertMaturityLevel(expectedAttributeValue.getMaturityLevel(), actualAttribute.maturityLevel());
+
+        Assertions.assertThat(actualAttribute.maturityScoreModels())
+            .zipSatisfy(attributeScores, (actual, expected) -> {
+                assertEquals(expected.maturityLevel().getId(), actual.maturityLevel().id());
+                assertEquals(expected.score(), actual.score());
+            });
     }
 
     private void assertInsight(Insight actual, InsightModel expected) {
