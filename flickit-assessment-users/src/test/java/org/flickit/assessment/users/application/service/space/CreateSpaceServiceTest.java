@@ -136,7 +136,6 @@ class CreateSpaceServiceTest {
 
         assertInstanceOf(CreateSpaceUseCase.CreatePremium.class, result);
         verifyNoInteractions(countSpacesPort);
-
     }
 
     AppSpecProperties appSpecProperties() {
