@@ -31,7 +31,7 @@ public class SpacePersistenceJpaAdapter implements
     CountSpaceAssessmentPort,
     DeleteSpacePort,
     UpdateSpacePort,
-    CountSpacePort {
+    CountSpacesPort {
 
     private final SpaceJpaRepository repository;
 

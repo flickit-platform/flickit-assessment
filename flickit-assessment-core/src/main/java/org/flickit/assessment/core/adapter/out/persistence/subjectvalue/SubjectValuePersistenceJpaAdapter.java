@@ -79,6 +79,23 @@ public class SubjectValuePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<SubjectValue> loadAll(UUID assessmentResultId) {
+        var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+        var subjectValues = repository.findAllWithSubjectByAssessmentResultId(assessmentResultId);
+        var maturityLevelIdToEntityMap = maturityLevelRepository.findAllByKitVersionId(assessmentResult.getKitVersionId())
+            .stream().collect(toMap(MaturityLevelJpaEntity::getId, Function.identity()));
+        var subjectIdToAttributesMap = attributeRepository.findAllByKitVersionId(assessmentResult.getKitVersionId()).stream()
+            .collect(groupingBy(AttributeJpaEntity::getSubjectId));
+
+        return subjectValues.stream()
+            .map(sv -> SubjectValueMapper.mapToDomainModel(sv,
+                maturityLevelIdToEntityMap.get(sv.getSubjectValue().getMaturityLevelId()),
+                subjectIdToAttributesMap.get(sv.getSubject().getId())))
+            .toList();
+    }
+
+    @Override
     public List<SubjectValue> loadAll(UUID assessmentResultId, Collection<Long> subjectIds) {
         var assessmentResult = assessmentResultRepository.findById(assessmentResultId)
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));

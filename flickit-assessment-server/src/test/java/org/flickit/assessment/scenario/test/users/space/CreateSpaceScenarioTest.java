@@ -78,10 +78,10 @@ class CreateSpaceScenarioTest extends AbstractScenarioTest {
         firstCreateResponse.then()
             .statusCode(201);
 
-        var createdSpaceId = firstCreateResponse.body().path("id");
+        Number createdSpaceId = firstCreateResponse.body().path("id");
 
         // Delete created space
-        spaceHelper.delete(context, createdSpaceId.toString())
+        spaceHelper.delete(context, createdSpaceId)
             .then()
             .statusCode(204);
 

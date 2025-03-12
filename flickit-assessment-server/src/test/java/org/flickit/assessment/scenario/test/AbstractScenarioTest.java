@@ -17,6 +17,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.UUID;
@@ -27,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Testcontainers
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = {
+    "app.spec.space.max-basic-spaces=2"
+})
 public abstract class AbstractScenarioTest {
 
     protected ScenarioContext context;

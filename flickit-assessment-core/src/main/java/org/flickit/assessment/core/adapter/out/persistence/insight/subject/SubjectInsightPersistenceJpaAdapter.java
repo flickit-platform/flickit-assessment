@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.insight.SubjectInsight;
 import org.flickit.assessment.core.application.port.out.insight.subject.*;
+import org.flickit.assessment.data.jpa.AbstractEntity;
 import org.flickit.assessment.data.jpa.core.assessmentresult.AssessmentResultJpaRepository;
 import org.flickit.assessment.data.jpa.core.insight.subject.SubjectInsightJpaRepository;
 import org.springframework.stereotype.Component;
@@ -61,6 +62,15 @@ public class SubjectInsightPersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateAll(List<SubjectInsight> subjectInsights) {
+        var entities = subjectInsights.stream()
+            .map(SubjectInsightMapper::mapToJpaEntity)
+            .peek(AbstractEntity::markAsNotNew)
+            .toList();
+        repository.saveAll(entities);
+    }
+
+    @Override
     public List<SubjectInsight> loadSubjectInsights(UUID assessmentResultId) {
         return repository.findByAssessmentResultId(assessmentResultId)
             .stream()
@@ -85,5 +95,13 @@ public class SubjectInsightPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         repository.approveAll(assessmentResult.getId(), lastModificationTime);
+    }
+
+    @Override
+    public void approveAll(UUID assessmentId, Collection<Long> subjectIds, LocalDateTime lastModificationTime) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
+
+        repository.approveBySubjectIds(assessmentResult.getId(), subjectIds, lastModificationTime);
     }
 }

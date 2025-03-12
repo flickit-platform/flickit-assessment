@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.flickit.assessment.common.application.SelfValidating;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
-import org.flickit.assessment.common.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,9 +16,6 @@ import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
 public interface GetEvidenceListUseCase {
 
-    /**
-     * @throws ResourceNotFoundException if no assessment found by the given assessmentId
-     */
     PaginatedResponse<EvidenceListItem> getEvidenceList(Param param);
 
     @Value
@@ -59,8 +55,8 @@ public interface GetEvidenceListUseCase {
                             Integer attachmentsCount,
                             User createdBy,
                             Boolean editable,
-                            Boolean deletable,
-                            boolean resolvable) {}
+                            Boolean deletable) {
+    }
 
     record User(UUID id,
                 String displayName,

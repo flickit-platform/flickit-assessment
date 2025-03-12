@@ -39,7 +39,7 @@ public interface AssessmentInsightJpaRepository extends JpaRepository<Assessment
             UPDATE AssessmentInsightJpaEntity a
             SET a.approved = true,
                 a.lastModificationTime = :lastModificationTime
-            WHERE a.assessmentResultId = :assessmentResultId AND a.approved = false
+            WHERE a.assessmentResultId = :assessmentResultId
         """)
     void approve(@Param("assessmentResultId") UUID assessmentResultId,
                  @Param("lastModificationTime") LocalDateTime lastModificationTime);

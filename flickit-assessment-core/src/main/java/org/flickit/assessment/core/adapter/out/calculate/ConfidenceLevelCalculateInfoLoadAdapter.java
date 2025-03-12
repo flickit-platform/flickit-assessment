@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
 import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
@@ -32,6 +33,7 @@ import org.flickit.assessment.data.jpa.kit.subject.SubjectJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -183,22 +185,15 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
      * @return a map of each attributeId to it's corresponding attributeValue
      */
     private Map<Long, AttributeValue> buildAttributeValues(Context context, List<AttributeJpaEntity> attributeEntities) {
-        Map<Long, Integer> attributeIdToWeightMap = attributeEntities.stream()
-            .collect(toMap(AttributeJpaEntity::getId, AttributeJpaEntity::getWeight));
+        Map<Long, AttributeJpaEntity> attributeIdToEntityMap = attributeEntities.stream()
+            .collect(toMap(AttributeJpaEntity::getId, Function.identity()));
 
         Map<Long, AttributeValue> attributeIdToValueMap = new HashMap<>();
         for (AttributeValueJpaEntity qavEntity : context.allAttributeValueEntities) {
             long attributeId = qavEntity.getAttributeId();
             List<Question> impactfulQuestions = questionsWithImpact(context.impactfulQuestions.get(attributeId));
             List<Answer> impactfulAnswers = answersOfImpactfulQuestions(impactfulQuestions, context);
-            Attribute attribute = new Attribute(
-                attributeId,
-                null,
-                null,
-                attributeIdToWeightMap.get(attributeId),
-                impactfulQuestions
-            );
-
+            Attribute attribute = AttributeMapper.mapToDomainModel(attributeIdToEntityMap.get(attributeId), impactfulQuestions);
             var attributeValue = new AttributeValue(qavEntity.getId(), attribute, impactfulAnswers);
 
             attributeIdToValueMap.put(attribute.getId(), attributeValue);
@@ -242,13 +237,7 @@ public class ConfidenceLevelCalculateInfoLoadAdapter implements LoadConfidenceLe
                 if (entity.getAnswerOptionId() != null) {
                     answerOption = new AnswerOption(entity.getAnswerOptionId(), null, null, null);
                 }
-                return new Answer(
-                    entity.getId(),
-                    answerOption,
-                    entity.getQuestionId(),
-                    entity.getConfidenceLevelId(),
-                    entity.getIsNotApplicable(),
-                    AnswerStatus.valueOfById(entity.getStatus()));
+                return AnswerMapper.mapToDomainModel(entity, answerOption);
             }).toList();
     }
 
