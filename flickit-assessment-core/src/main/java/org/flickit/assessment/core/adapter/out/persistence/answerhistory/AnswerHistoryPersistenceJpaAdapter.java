@@ -3,7 +3,6 @@ package org.flickit.assessment.core.adapter.out.persistence.answerhistory;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.port.out.answerhistory.CreateAnswerHistoryPort;
 import org.flickit.assessment.core.application.port.out.answerhistory.LoadAnswerHistoryListPort;
@@ -61,18 +60,17 @@ public class AnswerHistoryPersistenceJpaAdapter implements
             .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
         var answerIds = answerHistories.stream()
-            .map(AnswerHistory::getAnswer)
-            .map(Answer::getId)
+            .map(history -> history.getAnswer().getId())
             .toList();
 
-        var answerIdToAnswerJpa = answerRepository.findAllById(answerIds).stream()
+        var answerIdToEntityMap = answerRepository.findAllById(answerIds).stream()
             .collect(Collectors.toMap(AnswerJpaEntity::getId, Function.identity()));
 
-        var answerHistoryJpaList = answerHistories.stream()
-            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answerIdToAnswerJpa.get(e.getAnswer().getId())))
+        var answerHistoryEntities = answerHistories.stream()
+            .map(e -> mapCreateParamToJpaEntity(e, assessmentResult, answerIdToEntityMap.get(e.getAnswer().getId())))
             .toList();
 
-        repository.saveAll(answerHistoryJpaList);
+        repository.saveAll(answerHistoryEntities);
     }
 
     @Override
