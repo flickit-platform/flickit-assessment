@@ -15,8 +15,6 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
 
     List<AnswerJpaEntity> findByAssessmentResultId(UUID assessmentResultId);
 
-    List<AnswerJpaEntity> findByAssessmentResultIdAndStatus(UUID assessmentResultId, int status);
-
     @Query("""
             SELECT COUNT(a) as answerCount
             FROM AnswerJpaEntity a
@@ -135,5 +133,16 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             WHERE a.id IN :answerIds
         """)
     void approveByAnswerIds(@Param("answerIds") List<UUID> answerIds,
+                            @Param("lastModifiedBy") UUID lastModifiedBy,
                             @Param("status") Integer status);
+
+    @Query("""
+            SELECT a
+            FROM AnswerJpaEntity a
+            WHERE a.assessmentResult.id = :assessmentResultId
+                AND (a.status = :status)
+                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+        """)
+    List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
+                                                                   @Param("status") int status);
 }

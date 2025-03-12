@@ -85,8 +85,8 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Answer> loadAll(UUID assessmentResultId, AnswerStatus answerStatus) {
-        return repository.findByAssessmentResultIdAndStatus(assessmentResultId, answerStatus.getId()).stream()
+    public List<Answer> loadAllUnapproved(UUID assessmentResultId) {
+        return repository.findAnswersByAssessmentResultIdAndStatus(assessmentResultId, AnswerStatus.UNAPPROVED.getId()).stream()
             .map(AnswerMapper::mapToDomainModel)
             .toList();
     }
@@ -144,6 +144,6 @@ public class AnswerPersistenceJpaAdapter implements
 
     @Override
     public void approveAll(List <UUID> answerIds, UUID approvedBy) {
-        repository.approveByAnswerIds(answerIds, AnswerStatus.APPROVED.getId());
+        repository.approveByAnswerIds(answerIds, approvedBy ,AnswerStatus.APPROVED.getId());
     }
 }

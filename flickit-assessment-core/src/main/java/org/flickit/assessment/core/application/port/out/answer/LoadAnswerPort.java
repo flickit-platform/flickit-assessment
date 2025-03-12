@@ -1,7 +1,6 @@
 package org.flickit.assessment.core.application.port.out.answer;
 
 import org.flickit.assessment.core.application.domain.Answer;
-import org.flickit.assessment.core.application.domain.AnswerStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,5 +10,5 @@ public interface LoadAnswerPort {
 
     Optional<Answer> load(UUID assessmentResultId, Long questionId);
 
-    List<Answer> loadAll(UUID assessmentResultId, AnswerStatus answerStatus);
+    List<Answer> loadAllUnapproved(UUID assessmentResultId);
 }

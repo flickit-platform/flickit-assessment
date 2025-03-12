@@ -6,7 +6,6 @@ import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
-import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.domain.FullUser;
 import org.flickit.assessment.core.application.port.in.answer.ApproveAssessmentAnswersUseCase;
 import org.flickit.assessment.core.application.port.out.answer.ApproveAnswerPort;
@@ -44,8 +43,7 @@ public class ApproveAssessmentAnswersService implements ApproveAssessmentAnswers
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
                 .orElseThrow(() -> new ResourceNotFoundException(COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var answers = loadAnswerPort.loadAll(assessmentResult.getId(), AnswerStatus.UNAPPROVED).stream()
-                .filter(ans -> ans.getSelectedOption() != null || Boolean.TRUE.equals(ans.getIsNotApplicable()))
+        var answers = loadAnswerPort.loadAllUnapproved(assessmentResult.getId()).stream()
                 .toList();
 
         var answerHistories = answers.stream()

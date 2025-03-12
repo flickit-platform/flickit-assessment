@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.answer;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.AnswerHistory;
 import org.flickit.assessment.core.application.domain.AnswerStatus;
 import org.flickit.assessment.core.application.port.in.answer.ApproveAssessmentAnswersUseCase;
@@ -88,16 +89,16 @@ class ApproveAssessmentAnswersServiceTest {
         var assessmentResult = AssessmentResultMother.validResult();
         var answerList = List.of(AnswerMother.noScore(1),
             AnswerMother.noScore(2),
-            AnswerMother.answerWithNotApplicableTrue(null),
-            AnswerMother.answerWithNotApplicableFalse(null));
-        //The last answer should be filtered
-        var filteredAnswerList = answerList.subList(0, answerList.size() - 1);
+            AnswerMother.answerWithNotApplicableTrue(null));
+        var answerIds = answerList.stream()
+            .map(Answer::getId)
+            .toList();
 
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), APPROVE_ALL_ANSWERS))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId()))
             .thenReturn(Optional.of(assessmentResult));
-        when(loadAnswerPort.loadAll(assessmentResult.getId(), AnswerStatus.UNAPPROVED))
+        when(loadAnswerPort.loadAllUnapproved(assessmentResult.getId()))
             .thenReturn(answerList);
 
         service.approveAllAnswers(param);
@@ -107,16 +108,16 @@ class ApproveAssessmentAnswersServiceTest {
         verify(createAnswerHistoryPort).persistAll(argumentCaptor.capture(), eq(assessmentResult.getId()));
 
         assertThat(argumentCaptor.getValue())
-            .zipSatisfy(filteredAnswerList, (actual, expected) -> {
+            .zipSatisfy(answerList, (actual, expected) -> {
                 assertEquals(AnswerStatus.APPROVED, actual.getAnswer().getAnswerStatus());
                 assertEquals(expected.getConfidenceLevelId(), actual.getAnswer().getConfidenceLevelId());
                 assertEquals(expected.getSelectedOption(), actual.getAnswer().getSelectedOption());
                 assertEquals(expected.getQuestionId(), actual.getAnswer().getQuestionId());
                 assertEquals(expected.getQuestionId(), actual.getAnswer().getQuestionId());
                 assertEquals(assessmentResult.getId(), actual.getAssessmentResultId());
-        });
+            });
 
-        verify(approveAnswerPort).approveAll(assessmentResult.getId(), param.getCurrentUserId());
+        verify(approveAnswerPort).approveAll(answerIds, param.getCurrentUserId());
     }
 
     private ApproveAssessmentAnswersUseCase.Param createParam(Consumer<ApproveAssessmentAnswersUseCase.Param.ParamBuilder> changer) {
