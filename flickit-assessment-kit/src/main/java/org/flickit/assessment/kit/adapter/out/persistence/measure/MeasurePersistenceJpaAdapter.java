@@ -79,7 +79,7 @@ public class MeasurePersistenceJpaAdapter implements
     }
 
     @Override
-    public List<Measure> loadAllByKitVersionId(Long kitVersionId) {
+    public List<Measure> loadAll(Long kitVersionId) {
         return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
             .map(MeasureMapper::mapToDomainModel)
             .toList();

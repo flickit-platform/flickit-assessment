@@ -61,7 +61,7 @@ public class UpdateQuestionnaireOrdersService implements UpdateQuestionnaireOrde
     private UpdateMeasurePort.UpdateOrderParam createMeasureUpdateParam(Param param, Long kitId) {
         var questionnaireIdToCode = loadQuestionnairesPort.loadByKitId(kitId).stream()
             .collect(toMap(Questionnaire::getId, Questionnaire::getCode));
-        var codeToMeasureId = loadMeasurePort.loadAllByKitVersionId(param.getKitVersionId()).stream()
+        var codeToMeasureId = loadMeasurePort.loadAll(param.getKitVersionId()).stream()
             .collect(toMap(Measure::getCode, Measure::getId));
         return toMeasureUpdatePortParam(param, questionnaireIdToCode, codeToMeasureId);
     }
