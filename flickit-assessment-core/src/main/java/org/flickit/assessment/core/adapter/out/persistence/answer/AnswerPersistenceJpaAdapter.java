@@ -143,7 +143,7 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
-    public void approveAll(UUID assessmentResultId, UUID approvedBy) {
-        repository.approveByAssessmentResultId(assessmentResultId, approvedBy, AnswerStatus.APPROVED.getId());
+    public void approveAll(List <UUID> answerIds, UUID approvedBy) {
+        repository.approveByAnswerIds(answerIds, AnswerStatus.APPROVED.getId());
     }
 }

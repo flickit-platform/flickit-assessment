@@ -132,11 +132,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
             UPDATE AnswerJpaEntity a
                 SET a.status = :status,
                     a.lastModifiedBy = :lastModifiedBy
-            WHERE a.assessmentResult.id = :assessmentResultId
-                AND a.status = 1
-                AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
+            WHERE a.id IN :answerIds
         """)
-    void approveByAssessmentResultId(@Param("assessmentResultId") UUID assessmentResultId,
-                                     @Param("lastModifiedBy") UUID lastModifiedBy,
-                                     @Param("status") Integer status);
+    void approveByAnswerIds(@Param("answerIds") List<UUID> answerIds,
+                            @Param("status") Integer status);
 }

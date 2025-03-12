@@ -52,7 +52,11 @@ public class ApproveAssessmentAnswersService implements ApproveAssessmentAnswers
                 .map(e -> toAnswerHistory(e, param.getCurrentUserId(), assessmentResult.getId()))
                 .toList();
 
-        approveAnswerPort.approveAll(assessmentResult.getId(), param.getCurrentUserId());
+        var answerIds = answers.stream()
+            .map(Answer::getId)
+            .toList();
+
+        approveAnswerPort.approveAll(answerIds, param.getCurrentUserId());
         createAnswerHistoryPort.persistAll(answerHistories, assessmentResult.getId());
     }
 
