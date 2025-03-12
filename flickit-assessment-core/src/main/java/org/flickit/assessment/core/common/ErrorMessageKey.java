@@ -340,4 +340,9 @@ public class ErrorMessageKey {
     public static final String RESOLVE_ASSESSMENT_COMMENTS_ASSESSMENT_ID_NOT_NULL = "resolve-assessment-comments.assessmentId.notNull";
 
     public static final String GET_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights.assessmentId.notNull";
+
+    public static final String GET_ATTRIBUTE_MEASURES_ASSESSMENT_ID_NOT_NULL = "get-attribute-measures.assessmentId.notNull";
+    public static final String GET_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL = "get-attribute-measures.attributeId.notNull";
+    public static final String GET_ATTRIBUTE_MEASURES_SORT_INVALID = "get-attribute-measures.sort.invalid";
+    public static final String GET_ATTRIBUTE_MEASURES_ORDER_INVALID = "get-attribute-measures.order.invalid";
 }
