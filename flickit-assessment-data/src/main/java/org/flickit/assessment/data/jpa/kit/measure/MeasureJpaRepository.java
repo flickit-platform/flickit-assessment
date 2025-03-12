@@ -17,7 +17,7 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
-    Optional<MeasureJpaEntity> findByKitVersionIdAndCode(Long kitVersionId, String code);
+    Optional<MeasureJpaEntity> findByCodeAndKitVersionId(String code, Long kitVersionId);
 
     void deleteByIdAndKitVersionId(long measureId, long kitVersionId);
 

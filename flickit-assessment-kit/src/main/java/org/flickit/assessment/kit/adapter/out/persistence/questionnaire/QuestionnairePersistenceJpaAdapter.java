@@ -153,7 +153,7 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
-    public Questionnaire load(Long kitVersionId, Long id) {
+    public Questionnaire load(Long id, Long kitVersionId) {
         return repository.findByIdAndKitVersionId(id, kitVersionId)
             .map(QuestionnaireMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));

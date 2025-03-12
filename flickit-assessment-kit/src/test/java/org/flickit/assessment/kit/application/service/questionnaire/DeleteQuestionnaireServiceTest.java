@@ -99,8 +99,8 @@ class DeleteQuestionnaireServiceTest {
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(ownerId);
         doNothing().when(deleteQuestionnairePort).delete(param.getQuestionnaireId(), param.getKitVersionId());
-        when(loadQuestionnairePort.load(param.getKitVersionId(), param.getQuestionnaireId())).thenReturn(questionnaire);
-        when(loadMeasurePort.loadByCode(param.getKitVersionId(), questionnaire.getCode())).thenReturn(measure);
+        when(loadQuestionnairePort.load(param.getQuestionnaireId(), param.getKitVersionId())).thenReturn(questionnaire);
+        when(loadMeasurePort.loadByCode(questionnaire.getCode(), param.getKitVersionId())).thenReturn(measure);
 
         service.deleteQuestionnaire(param);
 

@@ -39,8 +39,8 @@ public class CreateQuestionService implements CreateQuestionUseCase {
     }
 
     private CreateQuestionPort.Param toParam(Param param) {
-        var questionnaire = loadQuestionnairePort.load(param.getKitVersionId(), param.getQuestionnaireId());
-        var measure = loadMeasurePort.loadByCode(param.getKitVersionId(), questionnaire.getCode());
+        var questionnaire = loadQuestionnairePort.load(param.getQuestionnaireId(), param.getKitVersionId());
+        var measure = loadMeasurePort.loadByCode(questionnaire.getCode(), param.getKitVersionId());
         return new CreateQuestionPort.Param(Question.generateCode(param.getIndex()),
             param.getTitle(),
             param.getIndex(),
