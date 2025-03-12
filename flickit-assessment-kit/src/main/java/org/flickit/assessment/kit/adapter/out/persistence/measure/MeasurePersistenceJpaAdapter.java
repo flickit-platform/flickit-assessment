@@ -12,8 +12,10 @@ import org.flickit.assessment.kit.application.port.out.measure.LoadMeasurePort;
 import org.flickit.assessment.kit.application.port.out.measure.UpdateMeasurePort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_FOUND;
 
 @Component
@@ -50,10 +52,37 @@ public class MeasurePersistenceJpaAdapter implements
     }
 
     @Override
+    public void updateOrders(UpdateOrderParam param) {
+        var idToIndex = param.orders().stream()
+            .collect(toMap(
+                UpdateOrderParam.MeasureOrder::measureId,
+                UpdateOrderParam.MeasureOrder::index));
+
+        var entities = repository.findAllByIdInAndKitVersionId(idToIndex.keySet(), param.kitVersionId());
+        if (entities.size() != param.orders().size())
+            throw new ResourceNotFoundException(MEASURE_ID_NOT_FOUND);
+
+        entities.forEach(x -> {
+            var newIndex = idToIndex.get(x.getId());
+            x.setIndex(newIndex);
+            x.setLastModificationTime(param.lastModificationTime());
+            x.setLastModifiedBy(param.lastModifiedBy());
+        });
+        repository.saveAll(entities);
+    }
+
+    @Override
     public Measure loadByCode(Long kitVersionId, String code) {
         return repository.findByCode(code)
             .map(MeasureMapper::mapToDomainModel)
             .orElseThrow(() -> new ResourceNotFoundException(MEASURE_ID_NOT_FOUND));
+    }
+
+    @Override
+    public List<Measure> loadAllByKitVersionId(Long kitVersionId) {
+        return repository.findAllByKitVersionIdOrderByIndex(kitVersionId).stream()
+            .map(MeasureMapper::mapToDomainModel)
+            .toList();
     }
 
     @Override

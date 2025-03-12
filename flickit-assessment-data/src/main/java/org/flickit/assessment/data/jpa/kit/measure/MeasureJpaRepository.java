@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,4 +41,6 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
     Optional<MeasureJpaEntity> findByCode(String code);
 
     void deleteByIdAndKitVersionId(long measureId, long kitVersionId);
+
+    List<MeasureJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
 }
