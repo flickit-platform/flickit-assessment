@@ -17,6 +17,12 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
 
+    Optional<MeasureJpaEntity> findByKitVersionIdAndCode(Long kitVersionId, String code);
+
+    void deleteByIdAndKitVersionId(long measureId, long kitVersionId);
+
+    List<MeasureJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
+
     @Modifying
     @Query("""
             UPDATE MeasureJpaEntity m
@@ -37,10 +43,4 @@ public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, Me
                 @Param(value = "lastModificationTime") LocalDateTime lastModificationTime,
                 @Param(value = "lastModifiedBy") UUID lastModifiedBy
     );
-
-    Optional<MeasureJpaEntity> findByCode(String code);
-
-    void deleteByIdAndKitVersionId(long measureId, long kitVersionId);
-
-    List<MeasureJpaEntity> findAllByIdInAndKitVersionId(Collection<Long> ids, long kitVersionId);
 }
