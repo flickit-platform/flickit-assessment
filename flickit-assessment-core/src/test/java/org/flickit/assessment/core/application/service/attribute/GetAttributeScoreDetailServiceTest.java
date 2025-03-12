@@ -135,9 +135,6 @@ class GetAttributeScoreDetailServiceTest {
             1,
             "Do you have CI/CD?",
             weight,
-            2,
-            "Yes",
-            false,
             weight * score,
             score,
             1,
@@ -154,9 +151,6 @@ class GetAttributeScoreDetailServiceTest {
             4,
             null,
             null,
-            false,
-            0.0,
-            null,
             1,
             3);
     }
@@ -170,9 +164,6 @@ class GetAttributeScoreDetailServiceTest {
             "Do you have CI/CD?",
             1,
             null,
-            null,
-            true,
-            0.0,
             null,
             1,
             0);
