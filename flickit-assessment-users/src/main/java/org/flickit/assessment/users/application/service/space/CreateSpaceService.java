@@ -36,7 +36,6 @@ public class CreateSpaceService implements CreateSpaceUseCase {
     public Result createSpace(Param param) {
         var space = mapToDomain(param);
         var maxBasicSpaces = appSpecProperties.getSpace().getMaxBasicSpaces();
-
         boolean isBasicSpaceLimitReached = SpaceType.BASIC.getCode().equals(param.getType())
             && countSpacesPort.countBasicSpaces(param.getCurrentUserId()) >= maxBasicSpaces;
 
