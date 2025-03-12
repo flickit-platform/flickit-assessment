@@ -86,6 +86,15 @@ class GetAttributeScoreDetailServiceTest {
                 assertEquals(expected.gainedScore(), actual.answer().gainedScore());
                 assertEquals(expected.missedScore(), actual.answer().missedScore());
                 assertEquals(expected.confidence(), actual.answer().confidenceLevel());
+
+                assertEquals(expected.questionId() , actual.question().id());
+                assertEquals(expected.questionTitle(), actual.question().title());
+                assertEquals(expected.questionIndex(), actual.question().index());
+                assertEquals(expected.questionWeight(), actual.question().weight());
+                assertEquals(expected.evidenceCount(), actual.question().evidenceCount());
+
+                assertEquals(expected.questionnaireId(), actual.questionnaire().id());
+                assertEquals(expected.questionnaireTitle(), actual.questionnaire().title());
             });
     }
 
