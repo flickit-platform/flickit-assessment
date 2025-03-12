@@ -51,12 +51,14 @@ class CreateSpaceServiceTest {
     @Spy
     AppSpecProperties appSpecProperties = appSpecProperties();
 
-    private final CreateSpaceUseCase.Param param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
     private final int maxBasicSpaces = 1;
 
     @Test
     void testCreateSpace_whenReachedBasicSpaceLimit_thenShouldThrowUpgradeRequiredException() {
-        when(countSpacesPort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces);
+        var param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
+
+        when(countSpacesPort.countBasicSpaces(param.getCurrentUserId()))
+            .thenReturn(maxBasicSpaces);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createSpace(param));
         assertEquals(CREATE_SPACE_BASIC_SPACE_MAX, throwable.getMessage());
@@ -99,53 +101,24 @@ class CreateSpaceServiceTest {
     }
 
     @Test
-    void testCreateSpace_whenValidParamsWithPremiumSpace_thenSuccessfullyCreateSpace() {
-        var premiumParam = createParam(b -> b.type(SpaceType.PREMIUM.getCode()));
-
-        service.createSpace(premiumParam);
-
-        verify(createSpacePort).persist(spaceCaptor.capture());
-        var capturedSpace = spaceCaptor.getValue();
-        assertEquals(premiumParam.getTitle(), capturedSpace.getTitle());
-        assertEquals(generateSlugCode(premiumParam.getTitle()), capturedSpace.getCode());
-        SpaceType expectedSpaceType = SpaceType.valueOf(premiumParam.getType());
-        assertEquals(expectedSpaceType.getId(), capturedSpace.getType().getId());
-        assertEquals(expectedSpaceType.getCode(), capturedSpace.getType().getCode());
-        assertEquals(expectedSpaceType.getTitle(), capturedSpace.getType().getTitle());
-        assertEquals(premiumParam.getCurrentUserId(), capturedSpace.getCreatedBy());
-        assertEquals(premiumParam.getCurrentUserId(), capturedSpace.getLastModifiedBy());
-        assertNotNull(capturedSpace.getCreationTime());
-        assertNotNull(capturedSpace.getLastModificationTime());
-
-        verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
-        var capturedAccess = userAccessCaptor.getValue();
-        long createdSpaceId = 0L;
-        assertEquals(createdSpaceId, capturedAccess.getSpaceId());
-        assertEquals(premiumParam.getCurrentUserId(), capturedAccess.getCreatedBy());
-        assertEquals(premiumParam.getCurrentUserId(), capturedAccess.getUserId());
-
-        verify(appSpecProperties, times(1)).getSpace();
-        verifyNoInteractions(countSpacesPort);
-
-    }
-
-    @Test
     void testCreateSpace_whenValidParamsAndSpaceIsPremium_thenSuccessfulSpaceCreationWithNotification() {
         var param = createParam(b -> b.type(SpaceType.PREMIUM.getCode()));
 
         var result = service.createSpace(param);
 
-        ArgumentCaptor<Space> createSpaceCaptor = ArgumentCaptor.forClass(Space.class);
-        verify(createSpacePort).persist(createSpaceCaptor.capture());
-        var capturedSpace = createSpaceCaptor.getValue();
+        verify(createSpacePort).persist(spaceCaptor.capture());
+        var capturedSpace = spaceCaptor.getValue();
         assertEquals(param.getTitle(), capturedSpace.getTitle());
         assertEquals(generateSlugCode(param.getTitle()), capturedSpace.getCode());
+        SpaceType expectedSpaceType = SpaceType.valueOf(param.getType());
+        assertEquals(expectedSpaceType.getId(), capturedSpace.getType().getId());
+        assertEquals(expectedSpaceType.getCode(), capturedSpace.getType().getCode());
+        assertEquals(expectedSpaceType.getTitle(), capturedSpace.getType().getTitle());
         assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
         assertNotNull(capturedSpace.getCreationTime());
         assertNotNull(capturedSpace.getLastModificationTime());
 
-        ArgumentCaptor<SpaceUserAccess> userAccessCaptor = ArgumentCaptor.forClass(SpaceUserAccess.class);
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
         var capturedAccess = userAccessCaptor.getValue();
         assertEquals(result.id(), capturedAccess.getSpaceId());
@@ -160,6 +133,10 @@ class CreateSpaceServiceTest {
         assertEquals(SpaceType.PREMIUM.getCode(), premiumResult.notificationCmd().space().getType().getCode());
         assertNotNull(premiumResult.notificationCmd().space().getCreationTime());
         assertEquals(param.getTitle(), premiumResult.notificationCmd().space().getTitle());
+
+        assertInstanceOf(CreateSpaceUseCase.CreatePremium.class, result);
+        verifyNoInteractions(countSpacesPort);
+
     }
 
     AppSpecProperties appSpecProperties() {
