@@ -9,7 +9,7 @@ import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.domain.notification.CreatePremiumSpaceNotificationCmd;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.CountSpacePort;
+import org.flickit.assessment.users.application.port.out.space.CountSpacesPort;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.springframework.stereotype.Service;
@@ -28,20 +28,21 @@ public class CreateSpaceService implements CreateSpaceUseCase {
 
     private final CreateSpacePort createSpacePort;
     private final CreateSpaceUserAccessPort createSpaceUserAccessPort;
-    private final CountSpacePort countSpacePort;
+    private final CountSpacesPort countSpacesPort;
     private final AppSpecProperties appSpecProperties;
 
     @Override
     @SendNotification
     public Result createSpace(Param param) {
         var space = mapToDomain(param);
-        long id = createSpacePort.persist(space);
         var maxBasicSpaces = appSpecProperties.getSpace().getMaxBasicSpaces();
         boolean isBasicSpaceLimitReached = SpaceType.BASIC.getCode().equals(param.getType())
-            && countSpacePort.countBasicSpaces(param.getCurrentUserId()) >= maxBasicSpaces;
-        if (isBasicSpaceLimitReached)
+            && countSpacesPort.countBasicSpaces(param.getCurrentUserId()) >= maxBasicSpaces;
+        if (isBasicSpaceLimitReached) {
             throw new UpgradeRequiredException(CREATE_SPACE_BASIC_SPACE_MAX);
+        }
 
+        long id = createSpacePort.persist(space);
         createOwnerAccessToSpace(id, param.getCurrentUserId(), param.getCurrentUserId());
 
         if (SpaceType.PREMIUM == SpaceType.valueOf(param.getType())) {

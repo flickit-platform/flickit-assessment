@@ -2,12 +2,11 @@ package org.flickit.assessment.users.application.service.space;
 
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
-import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.users.application.domain.Space;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
-import org.flickit.assessment.users.application.port.out.space.CountSpacePort;
+import org.flickit.assessment.users.application.port.out.space.CountSpacesPort;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
 import org.flickit.assessment.users.application.port.out.spaceuseraccess.CreateSpaceUserAccessPort;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,6 @@ import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.flickit.assessment.users.common.ErrorMessageKey.CREATE_SPACE_BASIC_SPACE_MAX;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,15 +39,8 @@ class CreateSpaceServiceTest {
     @Mock
     CreateSpaceUserAccessPort createSpaceUserAccessPort;
 
-    @Spy
-    AppSpecProperties appSpecProperties = appSpecProperties();
-
-
     @Mock
-    CountSpacePort countSpacePort;
-
-    @Spy
-    AppSpecProperties appSpecProperties = appSpecProperties();
+    CountSpacesPort countSpacesPort;
 
     @Captor
     ArgumentCaptor<Space> spaceCaptor;
@@ -57,13 +48,15 @@ class CreateSpaceServiceTest {
     @Captor
     ArgumentCaptor<SpaceUserAccess> userAccessCaptor;
 
+    @Spy
+    AppSpecProperties appSpecProperties = appSpecProperties();
+
     private final CreateSpaceUseCase.Param param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
-    private final long createdSpaceId = 0L;
-    private final int maxBasicSpaces = 2;
+    private final int maxBasicSpaces = 1;
 
     @Test
     void testCreateSpace_whenReachedBasicSpaceLimit_thenShouldThrowUpgradeRequiredException() {
-        when(countSpacePort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces);
+        when(countSpacesPort.countBasicSpaces(param.getCurrentUserId())).thenReturn(maxBasicSpaces);
 
         var throwable = assertThrows(UpgradeRequiredException.class, () -> service.createSpace(param));
         assertEquals(CREATE_SPACE_BASIC_SPACE_MAX, throwable.getMessage());
@@ -76,12 +69,10 @@ class CreateSpaceServiceTest {
     void testCreateSpace_whenValidParamsAndSpaceIsBasic_thenSuccessfulSpaceCreationWithoutNotification() {
         var param = createParam(CreateSpaceUseCase.Param.ParamBuilder::build);
 
-        var result = service.createSpace(param);
-    void testCreateSpace_whenValidParamsWithBasicSpace_thenSuccessfullyCreateSpace() {
-        when(countSpacePort.countBasicSpaces(param.getCurrentUserId()))
+        when(countSpacesPort.countBasicSpaces(param.getCurrentUserId()))
             .thenReturn(maxBasicSpaces - 1);
 
-        service.createSpace(param);
+        var result = service.createSpace(param);
 
         verify(createSpacePort).persist(spaceCaptor.capture());
         var capturedSpace = spaceCaptor.getValue();
@@ -103,6 +94,8 @@ class CreateSpaceServiceTest {
         assertEquals(param.getCurrentUserId(), capturedAccess.getUserId());
 
         verify(appSpecProperties, times(1)).getSpace();
+
+        assertInstanceOf(CreateSpaceUseCase.CreateBasic.class, result);
     }
 
     @Test
@@ -126,21 +119,14 @@ class CreateSpaceServiceTest {
 
         verify(createSpaceUserAccessPort).persist(userAccessCaptor.capture());
         var capturedAccess = userAccessCaptor.getValue();
+        long createdSpaceId = 0L;
         assertEquals(createdSpaceId, capturedAccess.getSpaceId());
         assertEquals(premiumParam.getCurrentUserId(), capturedAccess.getCreatedBy());
         assertEquals(premiumParam.getCurrentUserId(), capturedAccess.getUserId());
 
         verify(appSpecProperties, times(1)).getSpace();
-        verifyNoInteractions(countSpacePort);
-    }
+        verifyNoInteractions(countSpacesPort);
 
-    AppSpecProperties appSpecProperties() {
-        AppSpecProperties properties = new AppSpecProperties();
-        properties.setSpace(new AppSpecProperties.Space());
-        properties.getSpace().setMaxBasicSpaces(maxBasicSpaces);
-        return properties;
-
-        assertInstanceOf(CreateSpaceUseCase.CreateBasic.class, result);
     }
 
     @Test
