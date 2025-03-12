@@ -60,7 +60,15 @@
                                  onDelete="CASCADE"/>
     </changeSet>
 
-    <changeSet id="0.53-05" author="Mahdi Rezazadeh">
+    <changeSet id="0.53-05" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="status" type="tinyint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.53-06" author="Mahdi Rezazadeh">
         <sql>
             INSERT INTO fak_measure(id, kit_version_id, title, code, index, description, creation_time,
                                     last_modification_time, created_by, last_modified_by)
@@ -78,12 +86,12 @@
         </sql>
     </changeSet>
 
-    <changeSet id="0.53-06" author="Mahdi Rezazadeh">
+    <changeSet id="0.53-07" author="Mahdi Rezazadeh">
         <sql> select setval('fak_measure_id_seq', max(id))
               from fak_measure</sql>
     </changeSet>
 
-    <changeSet id="0.53-07" author="Mahdi Rezazadeh">
+    <changeSet id="0.53-08" author="Mahdi Rezazadeh">
         <addColumn tableName="fak_question">
             <column name="measure_id" type="bigint" valueComputed="questionnaire_id">
                 <constraints nullable="false"/>
@@ -91,7 +99,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="0.53-08" author="Mahdi Rezazadeh">
+    <changeSet id="0.53-09" author="Mahdi Rezazadeh">
         <addForeignKeyConstraint baseTableName="fak_question"
                                  baseColumnNames="measure_id, kit_version_id"
                                  constraintName="fk_fak_question_measure"

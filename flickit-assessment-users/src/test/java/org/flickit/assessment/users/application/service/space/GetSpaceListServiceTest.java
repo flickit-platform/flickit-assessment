@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.data.jpa.users.user.UserJpaEntity;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.port.in.space.GetSpaceListUseCase;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort;
 import org.flickit.assessment.users.application.port.out.space.LoadSpaceListPort.Result;
@@ -38,9 +39,11 @@ class GetSpaceListServiceTest {
         var param = createParam(GetSpaceListUseCase.Param.ParamBuilder::build);
         var space1 = SpaceMother.basicSpace(param.getCurrentUserId());
         var space2 = SpaceMother.premiumSpace(UUID.randomUUID());
+        var space3 = SpaceMother.inactiveSpace(UUID.randomUUID());
         var spacePortList = List.of(
             new LoadSpaceListPort.Result(space1, "owner1", 2, 5),
-            new LoadSpaceListPort.Result(space2, "owner2", 4, 3));
+            new LoadSpaceListPort.Result(space2, "owner2", 4, 3),
+            new LoadSpaceListPort.Result(space3, "owner3", 4, 6));
 
         PaginatedResponse<LoadSpaceListPort.Result> paginatedResponse = new PaginatedResponse<>(
             spacePortList,
@@ -69,6 +72,7 @@ class GetSpaceListServiceTest {
                 assertEquals(expected.space().getTitle(), actual.title());
                 assertEquals(expected.space().getOwnerId(), actual.owner().id());
                 assertEquals(expected.ownerName(), actual.owner().displayName());
+                assertEquals(SpaceStatus.ACTIVE.equals(expected.space().getStatus()), actual.isActive());
                 assertEquals(expected.space().getLastModificationTime(), actual.lastModificationTime());
                 assertEquals(expected.space().getType().getCode(), actual.type().code());
                 assertEquals(expected.space().getType().getTitle(), actual.type().title());
