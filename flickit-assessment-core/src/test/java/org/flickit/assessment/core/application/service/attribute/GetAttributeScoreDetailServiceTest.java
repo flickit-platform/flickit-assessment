@@ -80,22 +80,7 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result.getItems());
         assertEquals(portResult.getItems().size(), result.getItems().size());
         assertPaginationProperties(portResult, result);
-
-        assertThat(result.getItems())
-            .zipSatisfy(portResult.getItems(), (actual, expected) -> {
-                assertEquals(expected.gainedScore(), actual.answer().gainedScore());
-                assertEquals(expected.missedScore(), actual.answer().missedScore());
-                assertEquals(expected.confidence(), actual.answer().confidenceLevel());
-
-                assertEquals(expected.questionId() , actual.question().id());
-                assertEquals(expected.questionTitle(), actual.question().title());
-                assertEquals(expected.questionIndex(), actual.question().index());
-                assertEquals(expected.questionWeight(), actual.question().weight());
-                assertEquals(expected.evidenceCount(), actual.question().evidenceCount());
-
-                assertEquals(expected.questionnaireId(), actual.questionnaire().id());
-                assertEquals(expected.questionnaireTitle(), actual.questionnaire().title());
-            });
+        assertItems(result.getItems(), portResult);
     }
 
     @Test
@@ -120,6 +105,7 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result.getItems());
         assertEquals(portResult.getItems().size(), result.getItems().size());
         assertPaginationProperties(portResult, result);
+        assertItems(result.getItems(), portResult);
     }
 
     private void assertPaginationProperties(PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult,
@@ -131,6 +117,24 @@ class GetAttributeScoreDetailServiceTest {
             () -> assertEquals(portResult.getPage(), result.getPage()),
             () -> assertEquals(portResult.getSort(), result.getSort())
         );
+    }
+
+    private static void assertItems(List<GetAttributeScoreDetailUseCase.Result> items, PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult) {
+        assertThat(items)
+            .zipSatisfy(portResult.getItems(), (actual, expected) -> {
+                assertEquals(expected.gainedScore(), actual.answer().gainedScore());
+                assertEquals(expected.missedScore(), actual.answer().missedScore());
+                assertEquals(expected.confidence(), actual.answer().confidenceLevel());
+
+                assertEquals(expected.questionId(), actual.question().id());
+                assertEquals(expected.questionTitle(), actual.question().title());
+                assertEquals(expected.questionIndex(), actual.question().index());
+                assertEquals(expected.questionWeight(), actual.question().weight());
+                assertEquals(expected.evidenceCount(), actual.question().evidenceCount());
+
+                assertEquals(expected.questionnaireId(), actual.questionnaire().id());
+                assertEquals(expected.questionnaireTitle(), actual.questionnaire().title());
+            });
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
