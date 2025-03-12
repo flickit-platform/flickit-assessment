@@ -128,8 +128,8 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
     @Modifying
     @Query("""
             UPDATE AnswerJpaEntity a
-                SET a.status = :status,
-                    a.lastModifiedBy = :approvedBy
+            SET a.status = :status,
+                a.lastModifiedBy = :approvedBy
             WHERE a.id IN :answerIds
         """)
     void approveByAnswerIds(@Param("answerIds") List<UUID> answerIds,
