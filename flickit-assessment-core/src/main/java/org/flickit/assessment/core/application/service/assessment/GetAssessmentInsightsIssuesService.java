@@ -57,20 +57,6 @@ public class GetAssessmentInsightsIssuesService implements GetAssessmentInsights
         var subjectsCount = countSubjectsPort.countSubjects(assessmentResult.getKitVersionId());
         var attributesCount = countAttributesPort.countAttributes(assessmentResult.getKitVersionId());
 
-        return buildIssues(assessmentInsight,
-            subjectsInsights,
-            attributesInsights,
-            assessmentResult.getLastCalculationTime(),
-            subjectsCount,
-            attributesCount);
-    }
-
-    private Result buildIssues(Insight assessmentInsight,
-                               List<Insight> subjectsInsights,
-                               List<Insight> attributesInsights,
-                               LocalDateTime lastCalculationTime,
-                               int subjectsCount,
-                               int attributesCount) {
         var expectedInsightsCount = attributesCount + subjectsCount + 1;
         var totalGeneratedInsights = attributesInsights.size() +
             subjectsInsights.size() +
@@ -78,7 +64,7 @@ public class GetAssessmentInsightsIssuesService implements GetAssessmentInsights
 
         int notGeneratedInsights = Math.max(expectedInsightsCount - totalGeneratedInsights, 0);
         int unapprovedInsights = countUnapprovedInsights(assessmentInsight, subjectsInsights, attributesInsights);
-        int expiredInsights = countExpiredInsights(assessmentInsight, subjectsInsights, attributesInsights, lastCalculationTime);
+        int expiredInsights = countExpiredInsights(assessmentInsight, subjectsInsights, attributesInsights, assessmentResult.getLastCalculationTime());
 
         return new Result(notGeneratedInsights, unapprovedInsights, expiredInsights);
     }
