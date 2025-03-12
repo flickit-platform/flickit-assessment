@@ -3,6 +3,7 @@ package org.flickit.assessment.users.application.service.space;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.users.application.domain.Space;
+import org.flickit.assessment.users.application.domain.SpaceStatus;
 import org.flickit.assessment.users.application.domain.SpaceUserAccess;
 import org.flickit.assessment.users.application.port.in.space.CreateSpaceUseCase;
 import org.flickit.assessment.users.application.port.out.space.CreateSpacePort;
@@ -49,6 +50,7 @@ class CreateSpaceServiceTest {
         var capturedSpace = createSpaceCaptor.getValue();
         assertEquals(param.getTitle(), capturedSpace.getTitle());
         assertEquals(generateSlugCode(param.getTitle()), capturedSpace.getCode());
+        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
         assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
         assertNotNull(capturedSpace.getCreationTime());
@@ -75,6 +77,7 @@ class CreateSpaceServiceTest {
         var capturedSpace = createSpaceCaptor.getValue();
         assertEquals(param.getTitle(), capturedSpace.getTitle());
         assertEquals(generateSlugCode(param.getTitle()), capturedSpace.getCode());
+        assertEquals(SpaceStatus.ACTIVE, capturedSpace.getStatus());
         assertEquals(param.getCurrentUserId(), capturedSpace.getCreatedBy());
         assertEquals(param.getCurrentUserId(), capturedSpace.getLastModifiedBy());
         assertNotNull(capturedSpace.getCreationTime());
