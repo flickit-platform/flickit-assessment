@@ -2,10 +2,10 @@ package org.flickit.assessment.kit.application.service.assessmentkit.createbydsl
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.flickit.assessment.kit.application.domain.Questionnaire;
+import org.flickit.assessment.kit.application.domain.Measure;
 import org.flickit.assessment.kit.application.domain.dsl.AssessmentKitDslModel;
 import org.flickit.assessment.kit.application.domain.dsl.QuestionnaireDslModel;
-import org.flickit.assessment.kit.application.port.out.questionnaire.CreateQuestionnairePort;
+import org.flickit.assessment.kit.application.port.out.measure.CreateMeasurePort;
 import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersister;
 import org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext;
 import org.springframework.stereotype.Service;
@@ -16,36 +16,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_QUESTIONNAIRES;
+import static org.flickit.assessment.kit.application.service.assessmentkit.createbydsl.CreateKitPersisterContext.KEY_MEASURE;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class QuestionnaireCreateKitPersister implements CreateKitPersister {
+public class MeasureCreateKitPersister implements CreateKitPersister {
 
-    private final CreateQuestionnairePort createQuestionnairePort;
+    private final CreateMeasurePort createMeasurePort;
 
     @Override
     public int order() {
-        return 3;
+        return 4;
     }
 
     @Override
     public void persist(CreateKitPersisterContext ctx, AssessmentKitDslModel dslKit, Long kitVersionId, UUID currentUserId) {
         List<QuestionnaireDslModel> dslQuestionnaires = dslKit.getQuestionnaires();
 
-        Map<String, Long> questionnaireCodeToIdMap = new HashMap<>();
+        Map<String, Long> measureCodeToIdMap = new HashMap<>();
         dslQuestionnaires.forEach(q -> {
-            Long persistedQuestionnaireId = createQuestionnaire(q, kitVersionId, currentUserId);
-            questionnaireCodeToIdMap.put(q.getCode(), persistedQuestionnaireId);
+            Long persistedMeasureId = createMeasure(q, kitVersionId, currentUserId);
+            measureCodeToIdMap.put(q.getCode(), persistedMeasureId);
         });
 
-        ctx.put(KEY_QUESTIONNAIRES, questionnaireCodeToIdMap);
-        log.debug("Final questionnaires: {}", questionnaireCodeToIdMap);
+        ctx.put(KEY_MEASURE, measureCodeToIdMap);
+        log.debug("Final measures: {}", measureCodeToIdMap);
     }
 
-    private Long createQuestionnaire(QuestionnaireDslModel newQuestionnaire, long kitVersionId, UUID currentUserId) {
-        var createParam = new Questionnaire(
+    private Long createMeasure(QuestionnaireDslModel newQuestionnaire, long kitVersionId, UUID currentUserId) {
+        var createParam = new Measure(
             null,
             newQuestionnaire.getCode(),
             newQuestionnaire.getTitle(),
@@ -55,8 +55,8 @@ public class QuestionnaireCreateKitPersister implements CreateKitPersister {
             LocalDateTime.now()
         );
 
-        long persistedId = createQuestionnairePort.persist(createParam, kitVersionId, currentUserId);
-        log.debug("Questionnaire[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
+        long persistedId = createMeasurePort.persist(createParam, kitVersionId, currentUserId);
+        log.debug("Measure[id={}, code={}] created.", persistedId, newQuestionnaire.getCode());
 
         return persistedId;
     }
