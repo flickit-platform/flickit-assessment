@@ -144,5 +144,5 @@ public interface AnswerJpaRepository extends JpaRepository<AnswerJpaEntity, UUID
                 AND (a.answerOptionId IS NOT NULL OR a.isNotApplicable = true)
         """)
     List<AnswerJpaEntity> findAnswersByAssessmentResultIdAndStatus(@Param("assessmentResultId") UUID assessmentResultId,
-                                                                   @Param("status") int status);
+                                                                   @Param("status") Integer status);
 }
