@@ -5,14 +5,13 @@ import org.flickit.assessment.common.application.domain.assessment.AssessmentAcc
 import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
@@ -79,16 +78,22 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     }
 
     private Result toResult(LoadAttributeScoreDetailPort.Result item, double maxPossibleScore) {
-        double gainedScorePercentage = maxPossibleScore > 0 ? (item.gainedScore() / maxPossibleScore) * 100 : 0.0;
-        double missedScorePercentage = maxPossibleScore > 0 ? (item.missedScore() / maxPossibleScore) * 100 : 0.0;
+        Double gainedScore = item.gainedScore();
+        Double missedScore = item.missedScore();
+        Double gainedScorePercentage = calculatePercentage(gainedScore, maxPossibleScore);
+        Double missedScorePercentage = calculatePercentage(missedScore, maxPossibleScore);
 
         return new Result(
             new Result.Questionnaire(item.questionnaireId(), item.questionnaireTitle()),
             new Result.Question(item.questionId(), item.questionIndex(), item.questionTitle(), item.questionWeight(), item.evidenceCount()),
-            new Result.Answer(item.gainedScore(),
-                item.missedScore(),
-                BigDecimal.valueOf(gainedScorePercentage).setScale(2, RoundingMode.HALF_UP).doubleValue(),
-                BigDecimal.valueOf(missedScorePercentage).setScale(2, RoundingMode.HALF_UP).doubleValue(),
-                item.confidence()));
+            new Result.Answer(gainedScore, missedScore, gainedScorePercentage, missedScorePercentage, item.confidence())
+        );
+    }
+
+    private Double calculatePercentage(Double score, double maxPossibleScore) {
+        if (score == null || maxPossibleScore <= 0) {
+            return null;
+        }
+        return MathUtils.round((score / maxPossibleScore) * 100, 2);
     }
 }

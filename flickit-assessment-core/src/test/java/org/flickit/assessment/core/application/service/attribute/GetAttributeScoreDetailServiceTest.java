@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.attribute;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
@@ -12,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -71,8 +70,9 @@ class GetAttributeScoreDetailServiceTest {
         var questionWithHalfScore = questionWithScore(2, 0.5);
         var questionWithoutScore = questionWithScore(1, 0.0);
         var questionWithoutAnswer = questionWithoutAnswer();
+        var questionMarkedAsNotApplicable = questionMarkedAsNotApplicable();
         PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult = new PaginatedResponse<>(
-            List.of(questionWithFullScore, questionWithHalfScore, questionWithoutScore, questionWithoutAnswer),
+            List.of(questionWithFullScore, questionWithHalfScore, questionWithoutScore, questionMarkedAsNotApplicable, questionWithoutAnswer),
             1,
             10,
             "title",
@@ -90,7 +90,9 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result.getItems());
         assertEquals(portResult.getItems().size(), result.getItems().size());
         assertPaginationProperties(portResult, result);
-        assertItems(result.getItems(), portResult);
+
+        var expectedMaxPossibleScore = 5 + 4 + 3 + 3; // Last question is excluded because it's marked as notApplicable.
+        assertItems(result.getItems(), portResult, expectedMaxPossibleScore);
     }
 
     @Test
@@ -115,7 +117,9 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result.getItems());
         assertEquals(portResult.getItems().size(), result.getItems().size());
         assertPaginationProperties(portResult, result);
-        assertItems(result.getItems(), portResult);
+
+        var expectedMaxPossibleScore = 0;
+        assertItems(result.getItems(), portResult, expectedMaxPossibleScore);
     }
 
     private void assertPaginationProperties(PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult,
@@ -129,29 +133,32 @@ class GetAttributeScoreDetailServiceTest {
         );
     }
 
-    private static void assertItems(List<GetAttributeScoreDetailUseCase.Result> items, PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult) {
-        var expectedMaxPossibleScore = 5 + 4 + 3 + 3; // Last question is excluded because it's marked as notApplicable.
-
+    private static void assertItems(List<GetAttributeScoreDetailUseCase.Result> items, PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult, int expectedMaxPossibleScore) {
         assertThat(items)
             .zipSatisfy(portResult.getItems(), (actual, expected) -> {
-                var expectedGainedScorePercentage = BigDecimal.valueOf(
-                    (expected.gainedScore() / expectedMaxPossibleScore) * 100).setScale(2, RoundingMode.HALF_UP).doubleValue();
-                var expectedMissedScorePercentage = BigDecimal.valueOf(
-                    (expected.missedScore() / expectedMaxPossibleScore) * 100).setScale(2, RoundingMode.HALF_UP).doubleValue();
-                assertEquals(expected.gainedScore(), actual.answer().gainedScore());
-                assertEquals(expected.missedScore(), actual.answer().missedScore());
-                assertEquals(expectedGainedScorePercentage, actual.answer().gainedScorePercentage());
-                assertEquals(expectedMissedScorePercentage, actual.answer().missedScorePercentage());
-                assertEquals(expected.confidence(), actual.answer().confidenceLevel());
+                if (expected.gainedScore() == null) {
+                    assertNull(actual.answer().gainedScore());
+                    assertNull(actual.answer().missedScore());
+                    assertNull(actual.answer().gainedScorePercentage());
+                    assertNull(actual.answer().missedScorePercentage());
+                } else {
+                    var expectedGainedScorePercentage = MathUtils.round((expected.gainedScore() / expectedMaxPossibleScore) * 100, 2);
+                    var expectedMissedScorePercentage = MathUtils.round((expected.missedScore() / expectedMaxPossibleScore) * 100, 2);
+                    assertEquals(expected.gainedScore(), actual.answer().gainedScore());
+                    assertEquals(expected.missedScore(), actual.answer().missedScore());
+                    assertEquals(expectedGainedScorePercentage, actual.answer().gainedScorePercentage());
+                    assertEquals(expectedMissedScorePercentage, actual.answer().missedScorePercentage());
+                    assertEquals(expected.confidence(), actual.answer().confidenceLevel());
 
-                assertEquals(expected.questionId(), actual.question().id());
-                assertEquals(expected.questionTitle(), actual.question().title());
-                assertEquals(expected.questionIndex(), actual.question().index());
-                assertEquals(expected.questionWeight(), actual.question().weight());
-                assertEquals(expected.evidenceCount(), actual.question().evidenceCount());
+                    assertEquals(expected.questionId(), actual.question().id());
+                    assertEquals(expected.questionTitle(), actual.question().title());
+                    assertEquals(expected.questionIndex(), actual.question().index());
+                    assertEquals(expected.questionWeight(), actual.question().weight());
+                    assertEquals(expected.evidenceCount(), actual.question().evidenceCount());
 
-                assertEquals(expected.questionnaireId(), actual.questionnaire().id());
-                assertEquals(expected.questionnaireTitle(), actual.questionnaire().title());
+                    assertEquals(expected.questionnaireId(), actual.questionnaire().id());
+                    assertEquals(expected.questionnaireTitle(), actual.questionnaire().title());
+                }
             });
     }
 
