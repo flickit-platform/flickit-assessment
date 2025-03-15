@@ -32,6 +32,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
+            null,
             id++);
     }
 
@@ -52,12 +53,14 @@ public class AssessmentKitMother {
             null,
             null,
             null,
+            null,
             id++);
     }
 
     public static AssessmentKit completeKit(List<Subject> subjects,
                                             List<MaturityLevel> maturityLevels,
                                             List<Questionnaire> questionnaires,
+                                            List<Measure> measures,
                                             List<AnswerRange> reusableAnswerRanges) {
         return new AssessmentKit(
             id++,
@@ -74,6 +77,7 @@ public class AssessmentKitMother {
             subjects,
             maturityLevels,
             questionnaires,
+            measures,
             reusableAnswerRanges,
             id++);
     }
@@ -95,6 +99,7 @@ public class AssessmentKitMother {
             maturityLevels,
             null,
             null,
+            null,
             id++);
     }
 
@@ -114,6 +119,28 @@ public class AssessmentKitMother {
             null,
             null,
             questionnaires,
+            null,
+            null,
+            id++);
+    }
+
+    public static AssessmentKit kitWithMeasures(List<Measure> measures) {
+        return new AssessmentKit(
+            id++,
+            CODE + id,
+            TITLE + id,
+            SUMMARY,
+            ABOUT,
+            KitLanguage.EN,
+            LocalDateTime.now(),
+            LocalDateTime.now(),
+            Boolean.TRUE,
+            Boolean.FALSE,
+            EXPERT_GROUP_ID,
+            null,
+            null,
+            null,
+            measures,
             null,
             id++);
     }
@@ -138,6 +165,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
+            null,
             answerRanges,
             id++);
     }
@@ -156,6 +184,7 @@ public class AssessmentKitMother {
             isPrivate,
             EXPERT_GROUP_ID,
             subjects,
+            null,
             null,
             null,
             null,
@@ -179,6 +208,7 @@ public class AssessmentKitMother {
             null,
             questionnaires,
             null,
+            null,
             id++);
     }
 
@@ -199,6 +229,7 @@ public class AssessmentKitMother {
             null,
             null,
             null,
+            null,
             id++);
     }
 
@@ -215,6 +246,7 @@ public class AssessmentKitMother {
             Boolean.TRUE,
             Boolean.FALSE,
             EXPERT_GROUP_ID,
+            null,
             null,
             null,
             null,

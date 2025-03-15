@@ -34,7 +34,8 @@ public class QuestionnairePersistenceJpaAdapter implements
     UpdateQuestionnairePort,
     LoadQuestionnairesPort,
     LoadKitQuestionnaireDetailPort,
-    DeleteQuestionnairePort {
+    DeleteQuestionnairePort,
+    LoadQuestionnairePort {
 
     private final QuestionnaireJpaRepository repository;
     private final AssessmentKitJpaRepository assessmentKitRepository;
@@ -149,5 +150,12 @@ public class QuestionnairePersistenceJpaAdapter implements
             throw new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND);
 
         repository.deleteByIdAndKitVersionId(questionnaireId, kitVersionId);
+    }
+
+    @Override
+    public Questionnaire load(Long id, Long kitVersionId) {
+        return repository.findByIdAndKitVersionId(id, kitVersionId)
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .orElseThrow(() -> new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
     }
 }
