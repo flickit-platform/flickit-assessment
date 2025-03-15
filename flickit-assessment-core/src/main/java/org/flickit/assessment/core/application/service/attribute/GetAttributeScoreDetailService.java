@@ -31,7 +31,6 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
         checkUserAccess(param.getAssessmentId(), param.getCurrentUserId());
 
         var stats = loadAttributeScoresPort.loadScores(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId());
-
         double maxPossibleScore = stats.stream()
             .filter(result -> !Boolean.TRUE.equals(result.answerIsNotApplicable()))
             .mapToDouble(LoadAttributeScoresPort.Result::questionWeight)
