@@ -91,8 +91,8 @@ class GetAttributeScoreDetailServiceTest {
         assertEquals(portResult.getItems().size(), result.getItems().size());
         assertPaginationProperties(portResult, result);
 
-        var expectedMaxPossibleScore = 5 + 4 + 3 + 3; // Last question is excluded because it's marked as notApplicable.
-        assertItems(result.getItems(), portResult, expectedMaxPossibleScore);
+        var maxPossibleScore = 5 + 4 + 3 + 3; // Last question is excluded because it's marked as notApplicable.
+        assertItems(result.getItems(), portResult, maxPossibleScore);
     }
 
     @Test
