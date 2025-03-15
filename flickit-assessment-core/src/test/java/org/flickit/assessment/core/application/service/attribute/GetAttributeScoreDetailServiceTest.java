@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -57,13 +59,20 @@ class GetAttributeScoreDetailServiceTest {
     void testGetAttributeScoreDetail_ValidParam() {
         var param = createParam(GetAttributeScoreDetailUseCase.Param.ParamBuilder::build);
 
+        List<LoadAttributeScoresPort.Result> scores = List.of(
+            new LoadAttributeScoresPort.Result(1L, 5, 1.0, false),
+            new LoadAttributeScoresPort.Result(2L, 4, 0.5, false),
+            new LoadAttributeScoresPort.Result(3L, 3, 0.0, false),
+            new LoadAttributeScoresPort.Result(4L, 3, 0.0, false),
+            new LoadAttributeScoresPort.Result(5L, 1, 0.0, true)
+        );
+
         var questionWithFullScore = questionWithScore(4, 1.0);
         var questionWithHalfScore = questionWithScore(2, 0.5);
         var questionWithoutScore = questionWithScore(1, 0.0);
         var questionWithoutAnswer = questionWithoutAnswer();
-        var questionMarkedAsNotApplicable = questionMarkedAsNotApplicable();
         PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult = new PaginatedResponse<>(
-            List.of(questionWithFullScore, questionWithHalfScore, questionWithoutScore, questionWithoutAnswer, questionMarkedAsNotApplicable),
+            List.of(questionWithFullScore, questionWithHalfScore, questionWithoutScore, questionWithoutAnswer),
             1,
             10,
             "title",
@@ -73,6 +82,7 @@ class GetAttributeScoreDetailServiceTest {
 
         when(loadAttributeScoreDetailPort.loadScoreDetail(any())).thenReturn(portResult);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(true);
+        when(loadAttributeScoresPort.loadScores(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId())).thenReturn(scores);
 
         var result = service.getAttributeScoreDetail(param);
 
@@ -120,10 +130,18 @@ class GetAttributeScoreDetailServiceTest {
     }
 
     private static void assertItems(List<GetAttributeScoreDetailUseCase.Result> items, PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult) {
+        var expectedMaxPossibleScore = 5 + 4 + 3 + 3; // Last question is excluded because it's marked as notApplicable.
+
         assertThat(items)
             .zipSatisfy(portResult.getItems(), (actual, expected) -> {
+                var expectedGainedScorePercentage = BigDecimal.valueOf(
+                    (expected.gainedScore() / expectedMaxPossibleScore) * 100).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                var expectedMissedScorePercentage = BigDecimal.valueOf(
+                    (expected.missedScore() / expectedMaxPossibleScore) * 100).setScale(2, RoundingMode.HALF_UP).doubleValue();
                 assertEquals(expected.gainedScore(), actual.answer().gainedScore());
                 assertEquals(expected.missedScore(), actual.answer().missedScore());
+                assertEquals(expectedGainedScorePercentage, actual.answer().gainedScorePercentage());
+                assertEquals(expectedMissedScorePercentage, actual.answer().missedScorePercentage());
                 assertEquals(expected.confidence(), actual.answer().confidenceLevel());
 
                 assertEquals(expected.questionId(), actual.question().id());
