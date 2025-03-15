@@ -122,6 +122,13 @@ public class QuestionnairePersistenceJpaAdapter implements
     }
 
     @Override
+    public List<Questionnaire> loadAll(long kitVersionId) {
+        return repository.findAllByKitVersionId(kitVersionId).stream()
+            .map(QuestionnaireMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
     public LoadKitQuestionnaireDetailPort.Result loadKitQuestionnaireDetail(Long questionnaireId, Long kitVersionId) {
         QuestionnaireJpaEntity questionnaireEntity = repository.findByIdAndKitVersionId(questionnaireId, kitVersionId)
             .orElseThrow(() ->  new ResourceNotFoundException(QUESTIONNAIRE_ID_NOT_FOUND));
