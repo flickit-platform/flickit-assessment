@@ -72,7 +72,7 @@ class GetAttributeScoreDetailServiceTest {
         var questionWithoutAnswer = questionWithoutAnswer();
         var questionMarkedAsNotApplicable = questionMarkedAsNotApplicable();
         PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult = new PaginatedResponse<>(
-            List.of(questionWithFullScore, questionWithHalfScore, questionWithoutScore, questionMarkedAsNotApplicable, questionWithoutAnswer),
+            List.of(questionWithFullScore, questionWithHalfScore, questionWithoutScore, questionWithoutAnswer, questionMarkedAsNotApplicable),
             1,
             10,
             "title",
