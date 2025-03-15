@@ -81,7 +81,7 @@ class UpdateQuestionnaireOrdersServiceTest {
 
         when(loadKitVersionPort.load(param.getKitVersionId())).thenReturn(kitVersion);
         when(loadExpertGroupOwnerPort.loadOwnerId(kitVersion.getKit().getExpertGroupId())).thenReturn(param.getCurrentUserId());
-        when(loadQuestionnairesPort.loadByKitId(kitVersion.getKit().getId())).thenReturn(List.of(questionnaire1, questionnaire2));
+        when(loadQuestionnairesPort.loadAll(param.getKitVersionId())).thenReturn(List.of(questionnaire1, questionnaire2));
         when(loadMeasurePort.loadAll(param.getKitVersionId())).thenReturn(List.of(measure1, measure2));
 
         service.changeOrders(param);
