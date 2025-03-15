@@ -88,6 +88,8 @@ public interface GetAttributeScoreDetailUseCase {
 
         public record Answer(Double gainedScore,
                              Double missedScore,
+                             Double gainedScorePercentage,
+                             Double missedScorePercentage,
                              Integer confidenceLevel) {
         }
     }
