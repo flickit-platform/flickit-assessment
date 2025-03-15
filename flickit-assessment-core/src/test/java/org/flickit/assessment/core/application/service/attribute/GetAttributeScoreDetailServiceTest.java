@@ -5,21 +5,26 @@ import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoreDetailPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeScoresPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_SCORE_DETAIL;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 import static org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase.Param;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +39,9 @@ class GetAttributeScoreDetailServiceTest {
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
 
+    @Mock
+    private LoadAttributeScoresPort loadAttributeScoresPort;
+
     @Test
     void testGetAttributeScoreDetail_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         var param = createParam(GetAttributeScoreDetailUseCase.Param.ParamBuilder::build);
@@ -43,19 +51,28 @@ class GetAttributeScoreDetailServiceTest {
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeScoreDetail(param));
         assertEquals(COMMON_CURRENT_USER_NOT_ALLOWED, throwable.getMessage());
+
+        verifyNoInteractions(loadAttributeScoreDetailPort, loadAttributeScoresPort);
     }
 
     @Test
     void testGetAttributeScoreDetail_ValidParam() {
         var param = createParam(GetAttributeScoreDetailUseCase.Param.ParamBuilder::build);
 
+        List<LoadAttributeScoresPort.Result> scores = List.of(
+            new LoadAttributeScoresPort.Result(1L, 5, 1.0, false),
+            new LoadAttributeScoresPort.Result(2L, 4, 0.5, false),
+            new LoadAttributeScoresPort.Result(3L, 3, 0.0, false),
+            new LoadAttributeScoresPort.Result(4L, 3, 0.0, false),
+            new LoadAttributeScoresPort.Result(5L, 1, 0.0, true)
+        );
+
         var questionWithFullScore = questionWithScore(4, 1.0);
         var questionWithHalfScore = questionWithScore(2, 0.5);
         var questionWithoutScore = questionWithScore(1, 0.0);
         var questionWithoutAnswer = questionWithoutAnswer();
-        var questionMarkedAsNotApplicable = questionMarkedAsNotApplicable();
         PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult = new PaginatedResponse<>(
-            List.of(questionWithFullScore, questionWithHalfScore, questionWithoutScore, questionWithoutAnswer, questionMarkedAsNotApplicable),
+            List.of(questionWithFullScore, questionWithHalfScore, questionWithoutScore, questionWithoutAnswer),
             1,
             10,
             "title",
@@ -65,6 +82,7 @@ class GetAttributeScoreDetailServiceTest {
 
         when(loadAttributeScoreDetailPort.loadScoreDetail(any())).thenReturn(portResult);
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_SCORE_DETAIL)).thenReturn(true);
+        when(loadAttributeScoresPort.loadScores(param.getAssessmentId(), param.getAttributeId(), param.getMaturityLevelId())).thenReturn(scores);
 
         var result = service.getAttributeScoreDetail(param);
 
@@ -72,6 +90,7 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result.getItems());
         assertEquals(portResult.getItems().size(), result.getItems().size());
         assertPaginationProperties(portResult, result);
+        assertItems(result.getItems(), portResult);
     }
 
     @Test
@@ -96,6 +115,7 @@ class GetAttributeScoreDetailServiceTest {
         assertNotNull(result.getItems());
         assertEquals(portResult.getItems().size(), result.getItems().size());
         assertPaginationProperties(portResult, result);
+        assertItems(result.getItems(), portResult);
     }
 
     private void assertPaginationProperties(PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult,
@@ -107,6 +127,32 @@ class GetAttributeScoreDetailServiceTest {
             () -> assertEquals(portResult.getPage(), result.getPage()),
             () -> assertEquals(portResult.getSort(), result.getSort())
         );
+    }
+
+    private static void assertItems(List<GetAttributeScoreDetailUseCase.Result> items, PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult) {
+        var expectedMaxPossibleScore = 5 + 4 + 3 + 3; // Last question is excluded because it's marked as notApplicable.
+
+        assertThat(items)
+            .zipSatisfy(portResult.getItems(), (actual, expected) -> {
+                var expectedGainedScorePercentage = BigDecimal.valueOf(
+                    (expected.gainedScore() / expectedMaxPossibleScore) * 100).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                var expectedMissedScorePercentage = BigDecimal.valueOf(
+                    (expected.missedScore() / expectedMaxPossibleScore) * 100).setScale(2, RoundingMode.HALF_UP).doubleValue();
+                assertEquals(expected.gainedScore(), actual.answer().gainedScore());
+                assertEquals(expected.missedScore(), actual.answer().missedScore());
+                assertEquals(expectedGainedScorePercentage, actual.answer().gainedScorePercentage());
+                assertEquals(expectedMissedScorePercentage, actual.answer().missedScorePercentage());
+                assertEquals(expected.confidence(), actual.answer().confidenceLevel());
+
+                assertEquals(expected.questionId(), actual.question().id());
+                assertEquals(expected.questionTitle(), actual.question().title());
+                assertEquals(expected.questionIndex(), actual.question().index());
+                assertEquals(expected.questionWeight(), actual.question().weight());
+                assertEquals(expected.evidenceCount(), actual.question().evidenceCount());
+
+                assertEquals(expected.questionnaireId(), actual.questionnaire().id());
+                assertEquals(expected.questionnaireTitle(), actual.questionnaire().title());
+            });
     }
 
     private Param createParam(Consumer<Param.ParamBuilder> changer) {
@@ -135,9 +181,6 @@ class GetAttributeScoreDetailServiceTest {
             1,
             "Do you have CI/CD?",
             weight,
-            2,
-            "Yes",
-            false,
             weight * score,
             score,
             1,
@@ -154,9 +197,6 @@ class GetAttributeScoreDetailServiceTest {
             4,
             null,
             null,
-            false,
-            0.0,
-            null,
             1,
             3);
     }
@@ -170,9 +210,6 @@ class GetAttributeScoreDetailServiceTest {
             "Do you have CI/CD?",
             1,
             null,
-            null,
-            true,
-            0.0,
             null,
             1,
             0);
