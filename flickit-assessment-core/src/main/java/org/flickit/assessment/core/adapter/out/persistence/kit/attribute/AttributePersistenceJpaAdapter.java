@@ -66,6 +66,7 @@ public class AttributePersistenceJpaAdapter implements
                 view.getQuestionIndex(),
                 view.getQuestionTitle(),
                 view.getQuestionImpact().getWeight(),
+                view.getAnswer().getIsNotApplicable(),
                 view.getGainedScore(),
                 view.getMissedScore(),
                 view.getAnswer() != null && view.getAnswer().getConfidenceLevelId() != null ? view.getAnswer().getConfidenceLevelId() : null,
