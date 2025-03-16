@@ -53,7 +53,6 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
     @Autowired
     SpaceTestHelper spaceHelper;
 
-    int assessmentsCountBefore;
     int assessmentResultsCountBefore;
     int attributeValuesCountBefore;
     int subjectValuesCountBefore;
@@ -61,7 +60,6 @@ class CreateAssessmentScenarioTest extends AbstractScenarioTest {
 
     @BeforeEach
     void before() {
-        assessmentsCountBefore = jpaTemplate.count(AssessmentJpaEntity.class);
         assessmentResultsCountBefore = jpaTemplate.count(AssessmentResultJpaEntity.class);
         attributeValuesCountBefore = jpaTemplate.count(AttributeJpaEntity.class);
         subjectValuesCountBefore = jpaTemplate.count(SubjectJpaEntity.class);
