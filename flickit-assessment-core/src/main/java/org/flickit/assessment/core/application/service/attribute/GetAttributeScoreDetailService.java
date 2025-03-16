@@ -90,8 +90,8 @@ public class GetAttributeScoreDetailService implements GetAttributeScoreDetailUs
     }
 
     private Double calculatePercentage(Double score, double maxPossibleScore) {
-        if (score == null || maxPossibleScore <= 0) {
-            return null;
+        if (maxPossibleScore <= 0) {
+            return 0.0;
         }
         return MathUtils.round((score / maxPossibleScore) * 100, 2);
     }
