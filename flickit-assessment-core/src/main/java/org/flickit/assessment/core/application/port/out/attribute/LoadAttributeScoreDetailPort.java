@@ -24,6 +24,7 @@ public interface LoadAttributeScoreDetailPort {
                   int questionIndex,
                   String questionTitle,
                   int questionWeight,
+                  Boolean answerIsNotApplicable,
                   Double gainedScore,
                   Double missedScore,
                   Integer confidence,
