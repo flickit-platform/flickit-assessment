@@ -37,6 +37,14 @@ class CreateSpaceUseCaseParamsTest {
             () -> createParam(b -> b.type("SomeThing")));
         assertThat(throwable).hasMessage("type: " + CREATE_SPACE_TYPE_INVALID);
 
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.type("  ")));
+        assertThat(throwable).hasMessage("type: " + CREATE_SPACE_TYPE_NOT_NULL);
+
+        throwable = assertThrows(ConstraintViolationException.class,
+            () -> createParam(b -> b.type(null)));
+        assertThat(throwable).hasMessage("type: " + CREATE_SPACE_TYPE_NOT_NULL);
+
         assertDoesNotThrow(
             () -> createParam(b -> b.type("PREMIUM")));
     }

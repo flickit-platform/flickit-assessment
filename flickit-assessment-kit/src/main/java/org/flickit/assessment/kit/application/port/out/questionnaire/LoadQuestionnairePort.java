@@ -4,5 +4,5 @@ import org.flickit.assessment.kit.application.domain.Questionnaire;
 
 public interface LoadQuestionnairePort {
 
-    Questionnaire load(Long kitVersionId, Long id);
+    Questionnaire load(Long id, Long kitVersionId);
 }

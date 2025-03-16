@@ -85,6 +85,13 @@ public class AnswerPersistenceJpaAdapter implements
     }
 
     @Override
+    public List<Answer> loadAllUnapproved(UUID assessmentResultId) {
+        return repository.findAnswersByAssessmentResultIdAndStatus(assessmentResultId, AnswerStatus.UNAPPROVED.getId()).stream()
+            .map(AnswerMapper::mapToDomainModel)
+            .toList();
+    }
+
+    @Override
     public void update(UpdateAnswerPort.Param param) {
         var answer = repository.findById(param.answerId())
             .orElseThrow(() -> new ResourceNotFoundException(SUBMIT_ANSWER_ANSWER_ID_NOT_FOUND));
@@ -133,5 +140,10 @@ public class AnswerPersistenceJpaAdapter implements
     @Override
     public void approve(UUID answerId, UUID approvedBy) {
         repository.approve(answerId, approvedBy, AnswerStatus.APPROVED.getId());
+    }
+
+    @Override
+    public void approveAll(List <UUID> answerIds, UUID approvedBy) {
+        repository.approveByAnswerIds(answerIds, approvedBy ,AnswerStatus.APPROVED.getId());
     }
 }

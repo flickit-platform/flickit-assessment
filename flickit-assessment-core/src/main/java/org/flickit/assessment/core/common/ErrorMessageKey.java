@@ -341,6 +341,11 @@ public class ErrorMessageKey {
 
     public static final String GET_ASSESSMENT_INSIGHTS_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights.assessmentId.notNull";
 
+    public static final String APPROVE_ASSESSMENT_ANSWERS_ASSESSMENT_ID_NOT_NULL = "approve-assessment-answers.assessmentId.notNull";
+
+    public static final String GET_ASSESSMENT_INSIGHTS_ISSUES_ASSESSMENT_ID_NOT_NULL = "get-assessment-insights-issues.assessmentId.notNull";
+    public static final String GET_ASSESSMENT_INSIGHTS_ISSUES_ASSESSMENT_RESULT_NOT_FOUND = "get-assessment-insights-issues.assessmentResult.notFound";
+
     public static final String GET_ATTRIBUTE_MEASURES_ASSESSMENT_ID_NOT_NULL = "get-attribute-measures.assessmentId.notNull";
     public static final String GET_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL = "get-attribute-measures.attributeId.notNull";
     public static final String GET_ATTRIBUTE_MEASURES_SORT_INVALID = "get-attribute-measures.sort.invalid";

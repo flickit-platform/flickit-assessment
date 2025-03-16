@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface LoadMeasurePort {
 
-    Measure loadByCode(Long kitVersionId, String code);
+    Measure loadByCode(String code, Long kitVersionId);
 
-    List<Measure> loadAllByKitVersionId(Long kitVersionId);
+    List<Measure> loadAll(Long kitVersionId);
 }
