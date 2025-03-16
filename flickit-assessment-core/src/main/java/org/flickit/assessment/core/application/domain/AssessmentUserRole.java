@@ -75,7 +75,8 @@ public enum AssessmentUserRole {
             VIEW_ASSESSMENT_QUESTIONNAIRE_LIST,
             VIEW_EVIDENCE_ATTACHMENT,
             EXPORT_ASSESSMENT_REPORT,
-            VIEW_ASSESSMENT_INSIGHTS)),
+            VIEW_ASSESSMENT_INSIGHTS,
+            VIEW_ATTRIBUTE_MEASURES)),
         COMMENTER_PERMISSIONS(Set.of(
             ADD_EVIDENCE,
             DELETE_EVIDENCE,
