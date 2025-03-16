@@ -136,11 +136,11 @@ class GetAttributeScoreDetailServiceTest {
     private static void assertItems(List<GetAttributeScoreDetailUseCase.Result> items, PaginatedResponse<LoadAttributeScoreDetailPort.Result> portResult, int expectedMaxPossibleScore) {
         assertThat(items)
             .zipSatisfy(portResult.getItems(), (actual, expected) -> {
-                if (expected.gainedScore() == null) {
-                    assertNull(actual.answer().gainedScore());
-                    assertNull(actual.answer().missedScore());
-                    assertNull(actual.answer().gainedScorePercentage());
-                    assertNull(actual.answer().missedScorePercentage());
+                if (Boolean.TRUE.equals(expected.answerIsNotApplicable())) {
+                    assertEquals(0, actual.answer().gainedScore());
+                    assertEquals(0, actual.answer().missedScore());
+                    assertEquals(0, actual.answer().gainedScorePercentage());
+                    assertEquals(0, actual.answer().missedScorePercentage());
                 } else {
                     var expectedGainedScorePercentage = MathUtils.round((expected.gainedScore() / expectedMaxPossibleScore) * 100, 2);
                     var expectedMissedScorePercentage = MathUtils.round((expected.missedScore() / expectedMaxPossibleScore) * 100, 2);
@@ -188,6 +188,7 @@ class GetAttributeScoreDetailServiceTest {
             1,
             "Do you have CI/CD?",
             weight,
+            Boolean.FALSE,
             weight * score,
             score,
             1,
@@ -195,6 +196,7 @@ class GetAttributeScoreDetailServiceTest {
     }
 
     private LoadAttributeScoreDetailPort.Result questionWithoutAnswer() {
+        int weight = 4;
         return new LoadAttributeScoreDetailPort.Result(
             333L,
             "title",
@@ -202,8 +204,9 @@ class GetAttributeScoreDetailServiceTest {
             1,
             "Do you have CI/CD?",
             4,
-            null,
-            null,
+            Boolean.FALSE,
+            0.0,
+            (double) weight,
             1,
             3);
     }
@@ -216,8 +219,9 @@ class GetAttributeScoreDetailServiceTest {
             1,
             "Do you have CI/CD?",
             1,
-            null,
-            null,
+            Boolean.TRUE,
+            0.0,
+            0.0,
             1,
             0);
     }
