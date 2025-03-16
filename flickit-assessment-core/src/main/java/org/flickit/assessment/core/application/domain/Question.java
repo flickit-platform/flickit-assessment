@@ -17,6 +17,7 @@ public class Question {
     private final Boolean mayNotBeApplicable;
     private final List<QuestionImpact> impacts;
     private final Questionnaire questionnaire;
+    private final Measure measure;
     @Setter
     private List<AnswerOption> options;
 

@@ -2,6 +2,7 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.question;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.flickit.assessment.core.application.domain.Measure;
 import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.domain.QuestionImpact;
 import org.flickit.assessment.core.application.domain.Questionnaire;
@@ -20,6 +21,7 @@ public class QuestionMapper {
             null,
             null,
             impacts,
+            null,
             null
         );
     }
@@ -32,7 +34,8 @@ public class QuestionMapper {
             entity.getHint(),
             entity.getMayNotBeApplicable(),
             impacts,
-            new Questionnaire(entity.getQuestionnaireId(), null)
+            new Questionnaire(entity.getQuestionnaireId(), null),
+            new Measure(entity.getMeasureId(), null)
         );
     }
 
@@ -44,7 +47,8 @@ public class QuestionMapper {
             entity.getHint(),
             entity.getMayNotBeApplicable(),
             null,
-            questionnaire
+            questionnaire,
+            null
         );
     }
 }
