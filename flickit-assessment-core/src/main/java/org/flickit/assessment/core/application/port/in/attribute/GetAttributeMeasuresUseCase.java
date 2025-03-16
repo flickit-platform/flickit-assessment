@@ -65,7 +65,7 @@ public interface GetAttributeMeasuresUseCase {
     }
 
     record Result(List<Measure> measures) {
-        record Measure(String title,
+        public record Measure(String title,
                        Double impactPercentage,
                        Double promisedScore,
                        Double gainedScore,
