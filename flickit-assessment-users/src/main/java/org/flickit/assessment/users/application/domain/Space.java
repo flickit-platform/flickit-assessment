@@ -2,6 +2,7 @@ package org.flickit.assessment.users.application.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 
 import java.time.LocalDateTime;

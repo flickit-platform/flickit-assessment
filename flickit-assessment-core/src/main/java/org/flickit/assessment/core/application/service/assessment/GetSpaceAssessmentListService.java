@@ -3,9 +3,12 @@ package org.flickit.assessment.core.application.service.assessment;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentPermissionChecker;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.core.application.port.in.assessment.GetSpaceAssessmentListUseCase;
 import org.flickit.assessment.core.application.port.out.assessment.LoadAssessmentListPort;
+import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.core.application.port.out.spaceuseraccess.CheckSpaceAccessPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,19 +17,23 @@ import java.util.List;
 
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.*;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.core.common.ErrorMessageKey.GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class GetSpaceAssessmentListService implements GetSpaceAssessmentListUseCase {
 
+    private final LoadSpacePort loadSpacePort;
     private final LoadAssessmentListPort loadAssessmentsBySpace;
     private final CheckSpaceAccessPort checkSpaceAccessPort;
     private final AssessmentPermissionChecker assessmentPermissionChecker;
 
     @Override
     public PaginatedResponse<SpaceAssessmentListItem> getAssessmentList(Param param) {
-        if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
+        var space = loadSpacePort.loadSpace(param.getSpaceId())
+            .orElseThrow(() -> new ResourceNotFoundException(GET_SPACE_ASSESSMENT_LIST_SPACE_ID_NOT_FOUND));
+        if (SpaceStatus.INACTIVE.equals(space.getStatus()) || !checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         var assessmentListItemPaginatedResponse = loadAssessmentsBySpace.loadSpaceAssessments(
