@@ -1,4 +1,4 @@
-package org.flickit.assessment.users.application.domain;
+package org.flickit.assessment.common.application.domain.space;
 
 import org.junit.jupiter.api.Test;
 
