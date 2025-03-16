@@ -40,7 +40,8 @@ public class GetSpaceRestController {
             result.editable(),
             result.space().getLastModificationTime(),
             result.membersCount(),
-            result.assessmentsCount()
+            result.assessmentsCount(),
+            result.canCreateAssessment()
         );
     }
 }
