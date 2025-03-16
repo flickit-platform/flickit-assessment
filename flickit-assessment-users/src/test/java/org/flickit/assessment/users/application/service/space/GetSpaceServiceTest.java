@@ -65,7 +65,7 @@ class GetSpaceServiceTest {
     @Test
     void testGetSpace_whenCurrentUserIsSpaceOwner_thenReturnSpaceWithEditableTrue() {
         var space = basicSpace(param.getCurrentUserId());
-        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments-1);
+        var portResult = new LoadSpaceDetailsPort.Result(space, 1, maxBasicAssessments - 1);
 
         when(checkSpaceAccessPort.checkIsMember(param.getId(), param.getCurrentUserId())).thenReturn(true);
         when(loadSpaceDetailsPort.loadSpace(param.getId())).thenReturn(portResult);
@@ -107,10 +107,10 @@ class GetSpaceServiceTest {
     }
 
     private AppSpecProperties appSpecProperties() {
-        var appSpecProperties = new AppSpecProperties();
-        appSpecProperties.setSpace(new AppSpecProperties.Space());
-        appSpecProperties.getSpace().setMaxBasicSpaceAssessments(maxBasicAssessments);
-        return appSpecProperties;
+        var properties = new AppSpecProperties();
+        properties.setSpace(new AppSpecProperties.Space());
+        properties.getSpace().setMaxBasicSpaceAssessments(maxBasicAssessments);
+        return properties;
     }
 
     private GetSpaceUseCase.Param createParam(Consumer<GetSpaceUseCase.Param.ParamBuilder> changer) {
