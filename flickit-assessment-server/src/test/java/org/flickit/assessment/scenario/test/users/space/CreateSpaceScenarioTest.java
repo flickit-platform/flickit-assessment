@@ -6,7 +6,7 @@ import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaEntity;
 import org.flickit.assessment.data.jpa.users.spaceuseraccess.SpaceUserAccessJpaEntity;
 import org.flickit.assessment.scenario.test.AbstractScenarioTest;
-import org.flickit.assessment.users.application.domain.SpaceStatus;
+import org.flickit.assessment.common.application.domain.space.SpaceStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
