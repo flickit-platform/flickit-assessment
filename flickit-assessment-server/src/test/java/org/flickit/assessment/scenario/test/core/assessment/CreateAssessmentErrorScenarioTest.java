@@ -9,16 +9,21 @@ import org.flickit.assessment.scenario.test.kit.kitdsl.KitDslTestHelper;
 import org.flickit.assessment.scenario.test.kit.tag.KitTagTestHelper;
 import org.flickit.assessment.scenario.test.users.expertgroup.ExpertGroupTestHelper;
 import org.flickit.assessment.scenario.test.users.space.SpaceTestHelper;
+import org.flickit.assessment.scenario.test.users.spaceuseraccess.SpaceUserAccessTestHelper;
+import org.flickit.assessment.users.adapter.in.rest.user.CreateUserRequestDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
 import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
+import static org.flickit.assessment.scenario.fixture.request.AddSpaceMemberRequestDtoMother.addSpaceMemberRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateSpaceRequestDtoMother.createSpaceRequestDto;
+import static org.flickit.assessment.scenario.fixture.request.CreateUserRequestDtoMother.createUserRequestDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -42,11 +47,80 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
     @Autowired
     SpaceTestHelper spaceHelper;
 
+    @Autowired
+    SpaceUserAccessTestHelper spaceUserAccessHelper;
+
+    @Test
+    void createAssessment_currentUserIsNotSpaceMember() {
+        var spaceId = createSpace();
+
+        // Change currentUser which is not an owner of the expert group
+        context.getNextCurrentUser();
+        var kitId = createKit(false);
+        kitHelper.publishKit(context, kitId);
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
+            .spaceId(spaceId)
+            .assessmentKitId(kitId));
+
+        var error = assessmentHelper.create(context, request)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(ACCESS_DENIED, error.code());
+        assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
+    @Test
+    void createAssessment_currentUserDoesNotHaveAccessToPrivateKit() {
+        var spaceId = createSpace();
+
+        // Create a private kit
+        var kitId = createKit(true);
+        kitHelper.publishKit(context, kitId);
+
+        // Create a user intended for addition to the space
+        var createUserRequest = createUserRequestDto();
+        var newUserId = createUser(createUserRequest);
+
+        // Add the created user to the space
+        var addRequest = addSpaceMemberRequestDto(b -> b.email(createUserRequest.email()));
+        var response = spaceUserAccessHelper.create(context, spaceId, addRequest);
+        response.then()
+            .statusCode(200);
+
+        // Set new user as currentUser which is not a member of the expert group and does not have access to kit
+        context.setCurrentUser(newUserId);
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
+            .spaceId(spaceId)
+            .assessmentKitId(kitId));
+
+        var error = assessmentHelper.create(context, request)
+            .then()
+            .statusCode(400)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(INVALID_INPUT, error.code());
+        assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
     @Test
     void createAssessment_duplicateTitle() {
         var spaceId = createSpace();
 
-        var kitId = createKit();
+        var kitId = createKit(false);
         kitHelper.publishKit(context, kitId);
 
         var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
@@ -72,40 +146,13 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         assertEquals(countBefore, countAfter);
     }
 
-    @Test
-    void createAssessment_currentUserIsNotSpaceMember() {
-        var spaceId = createSpace();
-
-        // Change currentUser which is not an owner of the expert group
-        context.getNextCurrentUser();
-        var kitId = createKit();
-        kitHelper.publishKit(context, kitId);
-
-        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
-
-        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
-            .spaceId(spaceId)
-            .assessmentKitId(kitId));
-
-        var error = assessmentHelper.create(context, request)
-            .then()
-            .statusCode(403)
-            .extract().as(ErrorResponseDto.class);
-
-        assertEquals(ACCESS_DENIED, error.code());
-        assertNotNull(error.message());
-
-        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
-        assertEquals(countBefore, countAfter);
-    }
-
     private Long createSpace() {
         var response = spaceHelper.create(context, createSpaceRequestDto());
         Number id = response.path("id");
         return id.longValue();
     }
 
-    private Long createKit() {
+    private Long createKit(boolean isPrivate) {
         Long expertGroupId = createExpertGroup();
         Long kitDslId = uploadDsl(expertGroupId);
         Long kitTagId = kitTagHelper.createKitTag();
@@ -114,6 +161,7 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
             .expertGroupId(expertGroupId)
             .kitDslId(kitDslId)
             .tagIds(List.of(kitTagId))
+            .isPrivate(isPrivate)
         );
 
         var response = kitHelper.create(context, request);
@@ -133,5 +181,10 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         var response = kitDslHelper.uploadDsl(context, "dummy-dsl.zip", "dsl.json", expertGroupId);
         Number id = response.path("kitDslId");
         return id.longValue();
+    }
+
+    private UUID createUser(CreateUserRequestDto requestDto) {
+        var response = userHelper.create(requestDto);
+        return UUID.fromString(response.path("userId"));
     }
 }
