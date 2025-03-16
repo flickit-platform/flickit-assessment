@@ -7,12 +7,12 @@ import java.util.UUID;
 
 public class SubjectInsightMother {
 
-    public static SubjectInsight defaultSubjectInsight(LocalDateTime insightTime, LocalDateTime insightLastCalculationTime, boolean approved) {
+    public static SubjectInsight defaultSubjectInsight(LocalDateTime insightTime, LocalDateTime insightLastModificationTime, boolean approved) {
         return new SubjectInsight(UUID.randomUUID(),
             2L,
             "insight",
             insightTime,
-            insightLastCalculationTime,
+            insightLastModificationTime,
             null,
             approved);
     }

@@ -11,6 +11,7 @@ public class SubjectMother {
 
     public static Subject subjectWithWeightAndAttributes(int weight, List<Attribute> attributes) {
         return new Subject(++id,
+            (int) id,
             "subject",
             "description" + id,
             weight,

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0.53-01" author="Mahdi Rezazadeh">
+        <createTable tableName="fak_measure">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="kit_version_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="index" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modification_time" type="${datetime_with_time_zone_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0.53-02" author="Mahdi Rezazadeh">
+        <addPrimaryKey tableName="fak_measure"
+                       columnNames="id, kit_version_id"
+                       constraintName="pk_fak_measure"/>
+    </changeSet>
+
+    <changeSet id="0.53-03" author="Mahdi Rezazadeh">
+        <createSequence sequenceName="fak_measure_id_seq"
+                        dataType="bigint"
+                        startValue="1"/>
+    </changeSet>
+
+    <changeSet id="0.53-04" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_measure"
+                                 baseColumnNames="kit_version_id"
+                                 constraintName="fk_fak_measure_kitversion"
+                                 referencedTableName="fak_kit_version"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="0.53-05" author="Maziyar Gerami">
+        <addColumn tableName="fau_space">
+            <column name="status" type="tinyint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.53-06" author="Mahdi Rezazadeh">
+        <sql>
+            INSERT INTO fak_measure(id, kit_version_id, title, code, index, description, creation_time,
+                                    last_modification_time, created_by, last_modified_by)
+            SELECT q.id                     AS id,
+                   q.kit_version_id         AS kit_version_id,
+                   q.title                  AS title,
+                   q.code                   AS code,
+                   q.index                  AS index,
+                   q.description            AS description,
+                   q.creation_time          AS creation_time,
+                   q.last_modification_date AS last_modification_time,
+                   q.created_by             AS created_by,
+                   q.last_modified_by       AS last_modified_by
+            FROM fak_questionnaire q
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.53-07" author="Mahdi Rezazadeh">
+        <sql> select setval('fak_measure_id_seq', max(id))
+              from fak_measure</sql>
+    </changeSet>
+
+    <changeSet id="0.53-08" author="Mahdi Rezazadeh">
+        <addColumn tableName="fak_question">
+            <column name="measure_id" type="bigint" valueComputed="questionnaire_id">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="0.53-09" author="Mahdi Rezazadeh">
+        <addForeignKeyConstraint baseTableName="fak_question"
+                                 baseColumnNames="measure_id, kit_version_id"
+                                 constraintName="fk_fak_question_measure"
+                                 referencedTableName="fak_measure"
+                                 referencedColumnNames="id, kit_version_id"
+                                 deferrable="true"
+                                 initiallyDeferred="true"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

@@ -46,6 +46,7 @@ public interface GetSpaceListUseCase {
                          String title,
                          Owner owner,
                          Type type,
+                         boolean isActive,
                          LocalDateTime lastModificationTime,
                          int membersCount,
                          int assessmentsCount) {

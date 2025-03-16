@@ -3,6 +3,7 @@ package org.flickit.assessment.core.adapter.out.persistence.kit.maturitylevel;
 import lombok.RequiredArgsConstructor;
 import org.flickit.assessment.core.application.domain.LevelCompetence;
 import org.flickit.assessment.core.application.domain.MaturityLevel;
+import org.flickit.assessment.core.application.port.out.maturitylevel.CountMaturityLevelsPort;
 import org.flickit.assessment.core.application.port.out.maturitylevel.LoadMaturityLevelsPort;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaEntity;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityJoinCompetenceView;
@@ -20,7 +21,8 @@ import static org.flickit.assessment.core.adapter.out.persistence.kit.maturityle
 @Component("coreMaturityLevelPersistenceJpaAdapter")
 @RequiredArgsConstructor
 public class MaturityLevelPersistenceJpaAdapter implements
-    LoadMaturityLevelsPort {
+    LoadMaturityLevelsPort,
+    CountMaturityLevelsPort {
 
     private final MaturityLevelJpaRepository repository;
 
@@ -58,5 +60,10 @@ public class MaturityLevelPersistenceJpaAdapter implements
             entity.getId(),
             entity.getValue(),
             entity.getEffectiveLevelId());
+    }
+
+    @Override
+    public int count(long kitVersionId) {
+        return repository.countByKitVersionId(kitVersionId);
     }
 }

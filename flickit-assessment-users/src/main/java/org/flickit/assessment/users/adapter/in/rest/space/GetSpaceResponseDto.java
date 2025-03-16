@@ -9,7 +9,8 @@ public record GetSpaceResponseDto(long id,
                                   boolean editable,
                                   LocalDateTime lastModificationTime,
                                   int membersCount,
-                                  int assessmentsCount) {
+                                  int assessmentsCount,
+                                  boolean canCreateAssessment) {
 
     public record SpaceTypeDto(String code, String title) {
     }

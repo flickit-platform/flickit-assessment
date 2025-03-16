@@ -30,6 +30,8 @@ public interface MaturityLevelJpaRepository extends JpaRepository<MaturityLevelJ
 
     List<MaturityLevelJpaEntity> findAllByKitVersionId(long kitVersionId);
 
+    int countByKitVersionId(long kitVersionId);
+
     @Query("""
             SELECT l as maturityLevel,
                 c as levelCompetence

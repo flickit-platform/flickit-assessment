@@ -10,5 +10,7 @@ public interface LoadSubjectValuePort {
 
     SubjectValue load(UUID assessmentResultId, long subjectId);
 
+    List<SubjectValue> loadAll(UUID assessmentResultId);
+
     List<SubjectValue> loadAll(UUID assessmentResultId, Collection<Long> subjectId);
 }

@@ -49,6 +49,10 @@ public class ScenarioContext {
         return getCurrentUser();
     }
 
+    public void setCurrentUser(UUID userId) {
+        this.currentUser = new CurrentUser(userId);
+    }
+
     private void clearUser() {
         currentUser = null;
     }

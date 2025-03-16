@@ -11,6 +11,7 @@ public class ErrorMessageKey {
     public static final String KIT_ID_NOT_FOUND = "kit.id.notFound";
     public static final String EXPERT_GROUP_ID_NOT_FOUND = "expert-group.id.notFound";
     public static final String QUESTIONNAIRE_ID_NOT_FOUND = "questionnaire.id.notFound";
+    public static final String MEASURE_ID_NOT_FOUND = "measure.id.notFound";
     public static final String QUESTION_ID_NOT_FOUND = "question.id.notFound";
     public static final String ATTRIBUTE_ID_NOT_FOUND = "attribute.id.notFound";
     public static final String MATURITY_LEVEL_ID_NOT_FOUND = "maturity-level.id.notFound";

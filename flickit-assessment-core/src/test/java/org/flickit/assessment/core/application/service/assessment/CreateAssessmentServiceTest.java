@@ -62,6 +62,9 @@ class CreateAssessmentServiceTest {
     private CreateAttributeValuePort createAttributeValuePort;
 
     @Mock
+    private LoadAssessmentKitVersionIdPort loadAssessmentKitVersionIdPort;
+
+    @Mock
     private CheckSpaceAccessPort checkSpaceAccessPort;
 
     @Mock
@@ -201,35 +204,77 @@ class CreateAssessmentServiceTest {
         verify(appSpecProperties).getSpace();
     }
 
-    @Test
-    void testCreateAssessment_whenValidParameters_thenPersistsSubjectValues() {
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+    void testCreateAssessment_ValidParam_PersistsSubjectValues() {
+        long assessmentKitId = 1L;
+        long kitVersionId = 123L;
+        UUID createdBy = UUID.randomUUID();
+        Param param = new Param(
+            1L,
+            "title example",
+            "short title",
+            assessmentKitId,
+            createdBy
+        );
+
+        Attribute qa1 = AttributeMother.simpleAttribute();
+        Attribute qa2 = AttributeMother.simpleAttribute();
+        Attribute qa3 = AttributeMother.simpleAttribute();
+        Attribute qa4 = AttributeMother.simpleAttribute();
+        Attribute qa5 = AttributeMother.simpleAttribute();
+
+        List<Subject> expectedSubjects = List.of(
+            new Subject(2L, 2, "subject2", "description2", 1, List.of(qa3, qa4)),
+            new Subject(1L, 1, "subject1", "description1", 1, List.of(qa1, qa2)),
+            new Subject(3L, 3, "subject3", "description3", 1, List.of(qa5))
+        );
+
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), createdBy)).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedSubjects);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
+        when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
+        when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(UUID.randomUUID());
 
         service.createAssessment(param);
 
         verify(createSubjectValuePort, times(1)).persistAll(anyList(), any());
         verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
-
-        verify(appSpecProperties).getSpace();
     }
 
     @Test
-    void testCreateAssessment_whenValidCommand_thenPersistsAttributeValue() {
-        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
+    void testCreateAssessment_ValidCommand_PersistsAttributeValue() {
+        long assessmentKitId = 1L;
+        Long kitVersionId = 123L;
+        UUID currentUserId = UUID.randomUUID();
+        Param param = new Param(
+            1L,
+            "title example",
+            "short title",
+            assessmentKitId,
+            currentUserId
+        );
+        Attribute qa1 = AttributeMother.simpleAttribute();
+        Attribute qa2 = AttributeMother.simpleAttribute();
+        Attribute qa3 = AttributeMother.simpleAttribute();
+        Attribute qa4 = AttributeMother.simpleAttribute();
+        Attribute qa5 = AttributeMother.simpleAttribute();
+
+        List<Subject> expectedSubjects = List.of(
+            new Subject(1L, 1, "subject2", "description2", 1, List.of(qa1, qa2)),
+            new Subject(2L, 2, "subject1", "description1", 1, List.of(qa3, qa4)),
+            new Subject(3L, 3, "subject3", "description3", 1, List.of(qa5))
+        );
+
+        when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), currentUserId)).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
-        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedSubjects);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
-        when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
+        when(loadAssessmentKitVersionIdPort.loadVersionId(assessmentKitId)).thenReturn(kitVersionId);
+        when(loadSubjectsPort.loadByKitVersionIdWithAttributes(kitVersionId)).thenReturn(expectedSubjects);
+        when(loadSpaceOwnerPort.loadOwnerId(any())).thenReturn(UUID.randomUUID());
 
         service.createAssessment(param);
 
+        verify(loadSpaceOwnerPort, times(1)).loadOwnerId(any());
         verify(grantUserAssessmentRolePort, times(2)).persist(any(), any(UUID.class), anyInt());
         verify(createAttributeValuePort, times(1)).persistAll(anySet(), any());
-        verify(appSpecProperties).getSpace();
     }
 
     @Test

@@ -73,15 +73,15 @@ public interface AttributeJpaRepository extends JpaRepository<AttributeJpaEntity
                 ao.value as optionValue,
                 CASE
                     WHEN ans IS NULL THEN 0.0
-                    WHEN ans.isNotApplicable = true THEN NULL
+                    WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ao.value
                 END as answerScore,
                 CASE
-                    WHEN ans.isNotApplicable = true THEN NULL
+                    WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(COALESCE(ao.value, 0.0) * qi.weight, 2)
                 END AS gainedScore,
                 CASE
-                    WHEN ans.isNotApplicable = true THEN NULL
+                    WHEN ans.isNotApplicable = true THEN 0.0
                     ELSE ROUND(qi.weight - COALESCE(ao.value, 0.0) * qi.weight, 2)
                 END AS missedScore,
                 COUNT(e.id) as evidenceCount

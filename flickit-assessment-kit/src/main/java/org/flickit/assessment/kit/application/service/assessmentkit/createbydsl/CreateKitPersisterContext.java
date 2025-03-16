@@ -18,6 +18,7 @@ public class CreateKitPersisterContext {
 
     public static final String KEY_MATURITY_LEVELS = "MATURITY_LEVELS";
     public static final String KEY_QUESTIONNAIRES = "QUESTIONNAIRES";
+    public static final String KEY_MEASURE = "MEASURE";
     public static final String KEY_SUBJECTS = "SUBJECTS";
     public static final String KEY_ATTRIBUTES = "ATTRIBUTES";
     public static final String KEY_ANSWER_RANGES = "ANSWER_RANGES";
