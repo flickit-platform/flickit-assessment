@@ -20,7 +20,7 @@ import static org.flickit.assessment.scenario.fixture.request.GrantUserAccessToK
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GrantUserAccessToKitScenarioTest extends AbstractScenarioTest {
+class GrantUserAccessToKitScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     KitTestHelper kitHelper;
