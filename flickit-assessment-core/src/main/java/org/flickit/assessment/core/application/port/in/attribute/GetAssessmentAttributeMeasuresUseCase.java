@@ -13,24 +13,24 @@ import java.util.UUID;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_ID_NOT_NULL;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 
-public interface GetAttributeMeasuresUseCase {
+public interface GetAssessmentAttributeMeasuresUseCase {
 
-    Result getAttributeMeasures(Param param);
+    Result getAssessmentAttributeMeasures(Param param);
 
     @Value
     @EqualsAndHashCode(callSuper = true)
     class Param extends SelfValidating<Param> {
 
-        @NotNull(message = GET_ATTRIBUTE_MEASURES_ASSESSMENT_ID_NOT_NULL)
+        @NotNull(message = GET_ASSESSMENT_ATTRIBUTE_MEASURES_ASSESSMENT_ID_NOT_NULL)
         UUID assessmentId;
 
-        @NotNull(message = GET_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL)
+        @NotNull(message = GET_ASSESSMENT_ATTRIBUTE_MEASURES_ATTRIBUTE_ID_NOT_NULL)
         Long attributeId;
 
-        @EnumValue(enumClass = Sort.class, message = GET_ATTRIBUTE_MEASURES_SORT_INVALID)
+        @EnumValue(enumClass = Sort.class, message = GET_ASSESSMENT_ATTRIBUTE_MEASURES_SORT_INVALID)
         String sort;
 
-        @EnumValue(enumClass = Order.class, message = GET_ATTRIBUTE_MEASURES_ORDER_INVALID)
+        @EnumValue(enumClass = Order.class, message = GET_ASSESSMENT_ATTRIBUTE_MEASURES_INVALID)
         String order;
 
         @NotNull(message = COMMON_CURRENT_USER_ID_NOT_NULL)

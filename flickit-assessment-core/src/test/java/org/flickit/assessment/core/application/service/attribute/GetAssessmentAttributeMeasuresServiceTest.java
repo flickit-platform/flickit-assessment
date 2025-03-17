@@ -3,7 +3,7 @@ package org.flickit.assessment.core.application.service.attribute;
 import org.flickit.assessment.common.application.domain.assessment.AssessmentAccessChecker;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeMeasuresUseCase.Param;
+import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase.Param;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
 import org.flickit.assessment.core.application.port.out.measure.LoadMeasuresPort;
@@ -32,13 +32,13 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class GetAttributeMeasuresServiceTest {
+class GetAssessmentAttributeMeasuresServiceTest {
 
     private final Param param = createParam(Param.ParamBuilder::build);
 
 
     @InjectMocks
-    private GetAttributeMeasuresService service;
+    private GetAssessmentAttributeMeasuresService service;
 
     @Mock
     private AssessmentAccessChecker assessmentAccessChecker;
@@ -53,30 +53,30 @@ class GetAttributeMeasuresServiceTest {
     private LoadAttributeQuestionsPort loadAttributeQuestionsPort;
 
     @Test
-    void testGetAttributeMeasures_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testGetAssessmentAttributeMeasures_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
             .thenReturn(false);
 
-        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAttributeMeasures(param));
+        var throwable = assertThrows(AccessDeniedException.class, () -> service.getAssessmentAttributeMeasures(param));
         assertThat(throwable.getMessage()).isEqualTo(COMMON_CURRENT_USER_NOT_ALLOWED);
 
         verifyNoInteractions(loadAssessmentResultPort, loadMeasuresPort, loadAttributeQuestionsPort);
     }
 
     @Test
-    void testApproveAllAnswers_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
+    void testGetAssessmentAttributeMeasures_whenAssessmentResultDoesNotExist_thenThrowResourceNotFoundException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
             .thenReturn(true);
         when(loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())).thenReturn(Optional.empty());
 
-        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAttributeMeasures(param));
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.getAssessmentAttributeMeasures(param));
         assertThat(throwable.getMessage()).isEqualTo(COMMON_ASSESSMENT_RESULT_NOT_FOUND);
 
         verifyNoInteractions(loadMeasuresPort, loadAttributeQuestionsPort);
     }
 
     @Test
-    void testApproveAllAnswers_whenParamIsValid_thenReturnsResult() {
+    void testGetAssessmentAttributeMeasures_whenParamIsValid_thenReturnsResult() {
         var assessmentResult = AssessmentResultMother.validResult();
         var measure1 = MeasureMother.createMeasure();
         var measure2 = MeasureMother.createMeasure();
@@ -97,7 +97,7 @@ class GetAttributeMeasuresServiceTest {
         when(loadMeasuresPort.loadAll(List.of(measure1.getId(), measure2.getId()), assessmentResult.getKitVersionId()))
             .thenReturn(List.of(measure1, measure2));
 
-        var result = service.getAttributeMeasures(param);
+        var result = service.getAssessmentAttributeMeasures(param);
 
         assertEquals(2, result.measures().size());
 

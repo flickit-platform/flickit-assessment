@@ -10,8 +10,8 @@ import org.flickit.assessment.common.util.MathUtils;
 import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.Measure;
 import org.flickit.assessment.core.application.domain.QuestionImpact;
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeMeasuresUseCase;
-import org.flickit.assessment.core.application.port.in.attribute.GetAttributeMeasuresUseCase.Param.Sort;
+import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase;
+import org.flickit.assessment.core.application.port.in.attribute.GetAssessmentAttributeMeasuresUseCase.Param.Sort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
 import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
 import org.flickit.assessment.core.application.port.out.measure.LoadMeasuresPort;
@@ -28,7 +28,7 @@ import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase {
+public class GetAssessmentAttributeMeasuresService implements GetAssessmentAttributeMeasuresUseCase {
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
@@ -36,7 +36,7 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
     private final LoadAttributeQuestionsPort loadAttributeQuestionsPort;
 
     @Override
-    public Result getAttributeMeasures(Param param) {
+    public Result getAssessmentAttributeMeasures(Param param) {
         if (!assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
