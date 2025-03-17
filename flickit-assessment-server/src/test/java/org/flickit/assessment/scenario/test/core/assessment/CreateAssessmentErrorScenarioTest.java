@@ -1,5 +1,7 @@
 package org.flickit.assessment.scenario.test.core.assessment;
 
+import io.restassured.response.Response;
+import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.api.ErrorResponseDto;
 import org.flickit.assessment.data.jpa.core.assessment.AssessmentJpaEntity;
 import org.flickit.assessment.scenario.fixture.request.CreateAssessmentRequestDtoMother;
@@ -17,8 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
-import static org.flickit.assessment.common.exception.api.ErrorCodes.ACCESS_DENIED;
-import static org.flickit.assessment.common.exception.api.ErrorCodes.INVALID_INPUT;
+import static org.flickit.assessment.common.exception.api.ErrorCodes.*;
 import static org.flickit.assessment.scenario.fixture.request.AddSpaceMemberRequestDtoMother.addSpaceMemberRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateExpertGroupRequestDtoMother.createExpertGroupRequestDto;
 import static org.flickit.assessment.scenario.fixture.request.CreateKitByDslRequestDtoMother.createKitByDslRequestDto;
@@ -49,6 +50,9 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
     @Autowired
     SpaceUserAccessTestHelper spaceUserAccessHelper;
+
+    @Autowired
+    AppSpecProperties appSpecProperties;
 
     @Test
     void createAssessment_currentUserIsNotSpaceMember() {
@@ -144,6 +148,43 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
 
         final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
         assertEquals(countBefore, countAfter);
+    }
+
+    @Test
+    void createAssessment_basicAssessmentsReachedLimit() {
+        var limit = appSpecProperties.getSpace().getMaxBasicSpaceAssessments();
+        var spaceId = createSpace();
+
+        var kitId = createKit(false);
+        kitHelper.publishKit(context, kitId);
+        // #assessments = limit
+        createAssessments(spaceId, kitId, limit);
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        // Create another assessment
+        var error = createAssessment(spaceId, kitId)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(UPGRADE_REQUIRED, error.code());
+        assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
+    private void createAssessments(long spaceId, long kitId, int limit) {
+        for (int i = 0; i < limit; i++)
+            createAssessment(spaceId, kitId);
+    }
+
+    private Response createAssessment(Long spaceId, Long kitId) {
+        var request = CreateAssessmentRequestDtoMother.createAssessmentRequestDto(a -> a
+            .spaceId(spaceId)
+            .assessmentKitId(kitId));
+        return assessmentHelper.create(context, request);
     }
 
     private Long createSpace() {
