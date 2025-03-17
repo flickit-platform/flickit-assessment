@@ -175,6 +175,27 @@ class CreateAssessmentErrorScenarioTest extends AbstractScenarioTest {
         assertEquals(countBefore, countAfter);
     }
 
+    @Test
+    void createAssessment_privateKitAndBasicSpace() {
+        var spaceId = createSpace();
+
+        var kitId = createKit(true);
+        kitHelper.publishKit(context, kitId);
+
+        final int countBefore = jpaTemplate.count(AssessmentJpaEntity.class);
+
+        var error = createAssessment(spaceId, kitId)
+            .then()
+            .statusCode(403)
+            .extract().as(ErrorResponseDto.class);
+
+        assertEquals(UPGRADE_REQUIRED, error.code());
+        assertNotNull(error.message());
+
+        final int countAfter = jpaTemplate.count(AssessmentJpaEntity.class);
+        assertEquals(countBefore, countAfter);
+    }
+
     private void createAssessments(long spaceId, long kitId, int limit) {
         for (int i = 0; i < limit; i++)
             createAssessment(spaceId, kitId);
