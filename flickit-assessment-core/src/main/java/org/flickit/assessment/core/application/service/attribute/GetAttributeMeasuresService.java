@@ -128,7 +128,7 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
         return order * switch (Sort.valueOf(param.getSort())) {
             case Sort.TITLE -> m1.title().compareTo(m2.title());
             case Sort.IMPACT_PERCENTAGE -> m1.impactPercentage().compareTo(m2.impactPercentage());
-            case Sort.PROMISED_SCORE -> m1.maxPossibleScore().compareTo(m2.maxPossibleScore());
+            case Sort.MAX_POSSIBLE_SCORE -> m1.maxPossibleScore().compareTo(m2.maxPossibleScore());
             case Sort.GAINED_SCORE -> m1.gainedScore().compareTo(m2.gainedScore());
             case Sort.MISSED_SCORE -> m1.missedScore().compareTo(m2.missedScore());
             case Sort.GAINED_SCORE_PERCENTAGE -> m1.gainedScorePercentage().compareTo(m2.gainedScorePercentage());

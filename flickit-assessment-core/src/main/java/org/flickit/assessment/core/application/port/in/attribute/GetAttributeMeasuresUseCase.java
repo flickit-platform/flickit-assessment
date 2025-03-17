@@ -50,15 +50,13 @@ public interface GetAttributeMeasuresUseCase {
         @RequiredArgsConstructor
         @JsonFormat(shape = JsonFormat.Shape.OBJECT)
         public enum Sort {
-            TITLE("title"),
-            IMPACT_PERCENTAGE("impactPercentage"),
-            PROMISED_SCORE("promisedScore"),
-            GAINED_SCORE("gainedScore"),
-            MISSED_SCORE("missedScore"),
-            GAINED_SCORE_PERCENTAGE("gainedScorePercentage"),
-            MISSED_SCORE_PERCENTAGE("missedScorePercentage");
-
-            private final String title;
+            TITLE,
+            IMPACT_PERCENTAGE,
+            MAX_POSSIBLE_SCORE,
+            GAINED_SCORE,
+            MISSED_SCORE,
+            GAINED_SCORE_PERCENTAGE,
+            MISSED_SCORE_PERCENTAGE;
 
             public static final Sort DEFAULT = TITLE;
         }
