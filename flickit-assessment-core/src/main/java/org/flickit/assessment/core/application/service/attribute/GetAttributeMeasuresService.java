@@ -124,7 +124,7 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
     }
 
     private int createComparator(Result.Measure m1, Result.Measure m2, Param param) {
-        int order = Order.ASC.equals(Order.valueOf(param.getOrder())) ? 1 : -1;
+        int order = Order.DESC.equals(Order.valueOf(param.getOrder())) ? -1 : 1;
         return order * switch (Sort.valueOf(param.getSort())) {
             case Sort.TITLE -> m1.title().compareTo(m2.title());
             case Sort.IMPACT_PERCENTAGE -> m1.impactPercentage().compareTo(m2.impactPercentage());

@@ -41,7 +41,7 @@ public interface GetAttributeMeasuresUseCase {
             this.assessmentId = assessmentId;
             this.attributeId = attributeId;
             this.sort = sort != null && !sort.isBlank() ? sort.strip().toUpperCase() : Sort.DEFAULT.name();
-            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.DESC.name();
+            this.order = order != null && !order.isBlank() ? order.strip().toUpperCase() : Order.ASC.name();
             this.currentUserId = currentUserId;
             this.validateSelf();
         }
