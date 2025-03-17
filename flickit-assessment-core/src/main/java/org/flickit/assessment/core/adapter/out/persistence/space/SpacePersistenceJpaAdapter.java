@@ -8,6 +8,7 @@ import org.flickit.assessment.core.application.port.out.space.LoadSpacePort;
 import org.flickit.assessment.data.jpa.users.space.SpaceJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
@@ -35,10 +36,8 @@ public class SpacePersistenceJpaAdapter implements
     }
 
     @Override
-    public Space loadSpace(long spaceId) {
-        var space = repository.findById(spaceId)
-            .orElseThrow(() -> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND));
-
-        return SpaceMapper.mapToDomain(space);
+    public Optional<Space> loadSpace(long spaceId) {
+        return repository.findByIdAndDeletedFalse(spaceId)
+            .map(SpaceMapper::mapToDomain);
     }
 }

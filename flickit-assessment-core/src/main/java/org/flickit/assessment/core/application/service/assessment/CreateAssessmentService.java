@@ -5,6 +5,7 @@ import org.flickit.assessment.common.application.domain.notification.SendNotific
 import org.flickit.assessment.common.application.domain.space.SpaceType;
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.AssessmentUserRole;
@@ -35,6 +36,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.common.util.SlugCodeUtil.generateSlugCode;
 import static org.flickit.assessment.core.application.domain.AssessmentUserRole.MANAGER;
 import static org.flickit.assessment.core.application.service.constant.AssessmentConstants.NOT_DELETED_DELETION_TIME;
@@ -64,6 +66,9 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
     @Override
     @SendNotification
     public Result createAssessment(Param param) {
+        var space = loadSpacePort.loadSpace(param.getSpaceId())
+            .orElseThrow(() -> new ResourceNotFoundException(COMMON_SPACE_ID_NOT_FOUND));
+
         if (!checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId()))
             throw new AccessDeniedException(COMMON_CURRENT_USER_NOT_ALLOWED);
 
@@ -71,7 +76,6 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
             throw new ValidationException(CREATE_ASSESSMENT_KIT_NOT_ALLOWED);
 
         var assessmentKit = loadAssessmentKitPort.loadAssessmentKit(param.getKitId());
-        var space = loadSpacePort.loadSpace(param.getSpaceId());
         validateSpace(param, space, assessmentKit.getIsPrivate());
 
         UUID id = createAssessmentPort.persist(toParam(param));
@@ -88,7 +92,7 @@ public class CreateAssessmentService implements CreateAssessmentUseCase {
         if (isKitPrivate && space.getType().equals(SpaceType.BASIC))
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_BASIC_SPACE_PRIVATE_KIT_NOT_ALLOWED);
         if (space.getType().equals(SpaceType.PREMIUM) &&
-            space.getSubscriptionExpiry() != null && space.getSubscriptionExpiry().isBefore(LocalDateTime.now()))
+            space.getSubscriptionExpiry() != null && LocalDateTime.now().isAfter(space.getSubscriptionExpiry()))
             throw new UpgradeRequiredException(CREATE_ASSESSMENT_PREMIUM_SPACE_EXPIRED);
     }
 

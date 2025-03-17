@@ -3,6 +3,7 @@ package org.flickit.assessment.core.application.service.assessment;
 
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
+import org.flickit.assessment.common.exception.ResourceNotFoundException;
 import org.flickit.assessment.common.exception.UpgradeRequiredException;
 import org.flickit.assessment.common.exception.ValidationException;
 import org.flickit.assessment.core.application.domain.*;
@@ -36,6 +37,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
+import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_SPACE_ID_NOT_FOUND;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -102,13 +104,21 @@ class CreateAssessmentServiceTest {
     private final UUID expectedId = UUID.randomUUID();
 
     @Test
-    void testCreateAssessment_whenValidValidParameters_thenPersistsAndReturnsId() {
+    void testCreateAssessment_whenSpaceNotFound_thenThrowResourceNotFoundException() {
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.empty());
+
+        var throwable = assertThrows(ResourceNotFoundException.class, () -> service.createAssessment(param));
+        assertEquals(COMMON_SPACE_ID_NOT_FOUND, throwable.getMessage());
+    }
+
+    @Test
+    void testCreateAssessment_whenValidParameters_thenPersistsAndReturnsId() {
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedResponse);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
@@ -149,7 +159,7 @@ class CreateAssessmentServiceTest {
         when(createAssessmentPort.persist(any(CreateAssessmentPort.Param.class))).thenReturn(expectedId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedResponse);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(spaceUserOwner);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(spaceUserOwner));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
 
         CreateAssessmentUseCase.Result result = service.createAssessment(param);
@@ -186,7 +196,7 @@ class CreateAssessmentServiceTest {
         when(createAssessmentResultPort.persist(any(CreateAssessmentResultPort.Param.class))).thenReturn(expectedResultId);
         List<Subject> expectedResponse = List.of();
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedResponse);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
 
         service.createAssessment(param);
@@ -207,7 +217,7 @@ class CreateAssessmentServiceTest {
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedSubjects);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
 
         service.createAssessment(param);
 
@@ -221,7 +231,7 @@ class CreateAssessmentServiceTest {
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
         when(loadSubjectsPort.loadByKitVersionIdWithAttributes(publicKit.getKitVersion())).thenReturn(expectedSubjects);
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
 
         service.createAssessment(param);
 
@@ -232,6 +242,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenUserDoesNotHaveAccessToSpace_thenThrowsReturnUpgradeRequiredException() {
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(false);
 
         var throwable = assertThrows(AccessDeniedException.class, () -> service.createAssessment(param));
@@ -242,6 +253,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenUserDoesNotHaveAccessToKit_thenThrowsException() {
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.empty());
 
@@ -254,7 +266,7 @@ class CreateAssessmentServiceTest {
     @Test
     void testCreateAssessment_whenSpaceIsPersonalAndExceedsMaxAssessmentLimits_thenThrowsException() {
 
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
@@ -266,7 +278,7 @@ class CreateAssessmentServiceTest {
 
     @Test
     void testCreateAssessment_whenSpaceIsPersonalAndAssessmentKitIsPrivate_thenThrowsException() {
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(space);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(space));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(privateKit);
@@ -282,7 +294,7 @@ class CreateAssessmentServiceTest {
     void testCreateAssessment_whenSpaceIsPremiumAndSubscriptionExpired_thenThrowsException() {
         var premiumExpiredSpace = SpaceMother.createExpiredPremiumSpace(UUID.randomUUID());
 
-        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(premiumExpiredSpace);
+        when(loadSpacePort.loadSpace(param.getSpaceId())).thenReturn(Optional.of(premiumExpiredSpace));
         when(checkSpaceAccessPort.checkIsMember(param.getSpaceId(), param.getCurrentUserId())).thenReturn(true);
         when(checkKitAccessPort.checkAccess(param.getKitId(), param.getCurrentUserId())).thenReturn(Optional.of(param.getKitId()));
         when(loadAssessmentKitPort.loadAssessmentKit(param.getKitId())).thenReturn(publicKit);
