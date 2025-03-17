@@ -2,6 +2,7 @@ package org.flickit.assessment.scenario.test.kit.assessmentkit;
 
 import io.restassured.response.Response;
 import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.CreateKitByDslRequestDto;
+import org.flickit.assessment.kit.adapter.in.rest.assessmentkit.GrantUserAccessToKitRequestDto;
 import org.flickit.assessment.scenario.test.ScenarioContext;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,18 @@ public class KitTestHelper {
             .body(request)
             .when()
             .post("/assessment-core/api/assessment-kits/create-by-dsl")
+            .then()
+            .extract()
+            .response();
+    }
+
+    public Response grantUserAccessToKit(ScenarioContext context, GrantUserAccessToKitRequestDto request, long id) {
+        return given()
+            .contentType(JSON)
+            .auth().oauth2(context.getCurrentUser().getJwt())
+            .body(request)
+            .when()
+            .post("/assessment-core/api/assessment-kits/" + id + "/users")
             .then()
             .extract()
             .response();
