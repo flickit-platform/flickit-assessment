@@ -18,7 +18,7 @@ import java.util.UUID;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.kit.common.ErrorMessageKey.MEASURE_ID_NOT_FOUND;
 
-@Component("kitMeasurePersistenceJpaAdapter")
+@Component
 @RequiredArgsConstructor
 public class MeasurePersistenceJpaAdapter implements
     CreateMeasurePort,
