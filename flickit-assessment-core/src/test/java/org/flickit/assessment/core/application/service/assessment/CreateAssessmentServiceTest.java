@@ -1,6 +1,5 @@
 package org.flickit.assessment.core.application.service.assessment;
 
-
 import org.flickit.assessment.common.config.AppSpecProperties;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
