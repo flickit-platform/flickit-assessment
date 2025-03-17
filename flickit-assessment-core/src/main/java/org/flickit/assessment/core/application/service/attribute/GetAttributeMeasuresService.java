@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
@@ -47,7 +46,7 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
         var attributeQuestions = loadAttributeQuestionsPort.loadApplicableQuestions(param.getAssessmentId(), param.getAttributeId());
 
         var questionsDto = attributeQuestions.stream().map(r -> {
-            double avgWeight = r.question().getImpacts().stream()
+            var avgWeight = r.question().getImpacts().stream()
                 .mapToInt(QuestionImpact::getWeight)
                 .average()
                 .orElse(0.0); // Default to 0 if there are no impacts
@@ -61,13 +60,13 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
         }).toList();
 
         var attributeMaxPossibleScore = questionsDto.stream()
-            .mapToDouble(v -> v.weight)
+            .mapToDouble(QuestionDto::weight)
             .sum();
 
         var measureIdToQuestions = questionsDto.stream()
             .collect(groupingBy(QuestionDto::measureId));
 
-        Map<Long, Double> measureIdToMaxPossibleScore = questionsDto.stream()
+        var measureIdToMaxPossibleScore = questionsDto.stream()
             .collect(groupingBy(
                 QuestionDto::measureId,
                 summingDouble(QuestionDto::weight) // Sum weights for each measureId
@@ -95,23 +94,24 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
                                         List<QuestionDto> questions,
                                         double measureMaxPossibleScore,
                                         double attributeMaxPossibleScore) {
-        double impactPercentage = attributeMaxPossibleScore != 0
+        var impactPercentage = attributeMaxPossibleScore != 0
             ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
             : 0.0;
 
         var gainedScore = 0.0;
-        var missedScore = 0.0;
 
         for (QuestionDto question : questions) {
-            var answer = question.answer;
+            var answer = question.answer();
             if (answer != null && answer.getSelectedOption() != null) {
-                gainedScore += answer.getSelectedOption().getValue() * question.weight;
-                missedScore += question.weight - (answer.getSelectedOption().getValue() * question.weight);
+                gainedScore += answer.getSelectedOption().getValue() * question.weight();
             }
         }
 
+        gainedScore = MathUtils.round(gainedScore, 2);
+        var missedScore = measureMaxPossibleScore - gainedScore;
+
         return new Result.Measure(measure.getTitle(),
-            impactPercentage,
+            MathUtils.round(impactPercentage, 2),
             measureMaxPossibleScore,
             gainedScore,
             missedScore,
@@ -124,7 +124,7 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
     }
 
     private int createComparator(Result.Measure m1, Result.Measure m2, Param param) {
-        int order = Order.DESC.equals(Order.valueOf(param.getOrder())) ? -1 : 1;
+        var order = Order.DESC.equals(Order.valueOf(param.getOrder())) ? -1 : 1;
         return order * switch (Sort.valueOf(param.getSort())) {
             case Sort.TITLE -> m1.title().compareTo(m2.title());
             case Sort.IMPACT_PERCENTAGE -> m1.impactPercentage().compareTo(m2.impactPercentage());
