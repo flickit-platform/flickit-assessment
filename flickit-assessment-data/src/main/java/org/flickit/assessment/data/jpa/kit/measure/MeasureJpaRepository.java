@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public interface MeasureJpaRepository extends JpaRepository<MeasureJpaEntity, MeasureJpaEntity.EntityId> {
 
+    List<MeasureJpaEntity> findAllByKitVersionId(long kitVersionId);
+
     List<MeasureJpaEntity> findAllByKitVersionIdOrderByIndex(Long activeVersionId);
 
     boolean existsByIdAndKitVersionId(long id, long kitVersionId);
