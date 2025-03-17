@@ -66,12 +66,12 @@ public interface GetAttributeMeasuresUseCase {
 
     record Result(List<Measure> measures) {
         public record Measure(String title,
-                       Double impactPercentage,
-                       Double promisedScore,
-                       Double gainedScore,
-                       Double missedScore,
-                       Double gainedScorePercentage,
-                       Double missedScorePercentage) {
+                              Double impactPercentage,
+                              Double maxPossibleScore,
+                              Double gainedScore,
+                              Double missedScore,
+                              Double gainedScorePercentage,
+                              Double missedScorePercentage) {
         }
     }
 }

@@ -6,15 +6,15 @@ import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.error.ErrorMessageKey;
 import org.flickit.assessment.common.exception.AccessDeniedException;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
-import org.flickit.assessment.core.application.domain.AttributeValue;
+import org.flickit.assessment.common.util.MathUtils;
+import org.flickit.assessment.core.application.domain.Answer;
 import org.flickit.assessment.core.application.domain.Measure;
-import org.flickit.assessment.core.application.domain.Question;
 import org.flickit.assessment.core.application.domain.QuestionImpact;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeMeasuresUseCase;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeMeasuresUseCase.Param.Sort;
 import org.flickit.assessment.core.application.port.out.assessmentresult.LoadAssessmentResultPort;
-import org.flickit.assessment.core.application.port.out.attributevalue.LoadAttributeValuePort;
-import org.flickit.assessment.core.application.port.out.measure.LoadMeasureScoresPort;
+import org.flickit.assessment.core.application.port.out.attribute.LoadAttributeQuestionsPort;
+import org.flickit.assessment.core.application.port.out.measure.LoadMeasuresPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 import static org.flickit.assessment.common.application.domain.assessment.AssessmentPermission.VIEW_ATTRIBUTE_MEASURES;
 import static org.flickit.assessment.common.error.ErrorMessageKey.COMMON_CURRENT_USER_NOT_ALLOWED;
 
@@ -34,8 +33,8 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
 
     private final AssessmentAccessChecker assessmentAccessChecker;
     private final LoadAssessmentResultPort loadAssessmentResultPort;
-    private final LoadAttributeValuePort loadAttributeValuePort;
-    private final LoadMeasureScoresPort loadMeasureScoresPort;
+    private final LoadMeasuresPort loadMeasuresPort;
+    private final LoadAttributeQuestionsPort loadAttributeQuestionsPort;
 
     @Override
     public Result getAttributeMeasures(Param param) {
@@ -45,63 +44,83 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
         var assessmentResult = loadAssessmentResultPort.loadByAssessmentId(param.getAssessmentId())
             .orElseThrow(() -> new ResourceNotFoundException(ErrorMessageKey.COMMON_ASSESSMENT_RESULT_NOT_FOUND));
 
-        var attributeValue = loadAttributeValuePort.load(assessmentResult.getId(), param.getAttributeId());
+        var attributeQuestions = loadAttributeQuestionsPort.loadApplicableQuestions(param.getAssessmentId(), param.getAttributeId());
 
-        var measureToQuestions = attributeValue.getAttribute().getQuestions().stream()
-            .collect(groupingBy(Question::getMeasure));
+        var questionsDto = attributeQuestions.stream().map(r -> {
+            double avgWeight = r.question().getImpacts().stream()
+                .mapToInt(QuestionImpact::getWeight)
+                .average()
+                .orElse(0.0); // Default to 0 if there are no impacts
 
-        var measureIds = measureToQuestions.keySet().stream()
-            .map(Measure::getId)
+            return new QuestionDto(
+                r.question().getId(),
+                MathUtils.round(avgWeight, 2),
+                r.question().getMeasure().getId(),
+                r.answer()
+            );
+        }).toList();
+
+        var attributeMaxPossibleScore = questionsDto.stream()
+            .mapToDouble(v -> v.weight)
+            .sum();
+
+        var measureIdToQuestions = questionsDto.stream()
+            .collect(groupingBy(QuestionDto::measureId));
+
+        Map<Long, Double> measureIdToMaxPossibleScore = questionsDto.stream()
+            .collect(groupingBy(
+                QuestionDto::measureId,
+                summingDouble(QuestionDto::weight) // Sum weights for each measureId
+            ));
+
+        var measureIds = measureIdToQuestions.keySet().stream()
             .toList();
 
-        var measureTotalScoresMap = loadMeasureScoresPort.loadAll(measureIds, assessmentResult.getKitVersionId())
-            .stream().collect(toMap(LoadMeasureScoresPort.Result::id, Function.identity()));
+        var idToMeasureMap = loadMeasuresPort.loadAll(measureIds, assessmentResult.getKitVersionId())
+            .stream().collect(toMap(Measure::getId, Function.identity()));
 
-        return new Result(measureToQuestions.entrySet().stream()
-            .map(entry -> createMeasure(attributeValue, entry.getKey(), entry.getValue(), measureTotalScoresMap))
+        var resultMeasures = measureIdToQuestions.entrySet().stream()
+            .map(entry -> buildMeasure(
+                idToMeasureMap.get(entry.getKey()),
+                entry.getValue(),
+                measureIdToMaxPossibleScore.get(entry.getKey()),
+                attributeMaxPossibleScore))
             .sorted((m1, m2) -> createComparator(m1, m2, param))
-            .toList());
+            .toList();
+
+        return new Result(resultMeasures);
     }
 
-    private Result.Measure createMeasure(AttributeValue attributeValue,
-                                         Measure measure,
-                                         List<Question> questions,
-                                         Map<Long, LoadMeasureScoresPort.Result> measureMap) {
-        var totalAttributeMeasureScore = questions.stream()
-            .mapToDouble(q -> q.getImpacts().stream()
-                .mapToDouble(QuestionImpact::getWeight)
-                .average()
-                .orElse(0))
-            .sum();
+    private Result.Measure buildMeasure(Measure measure,
+                                        List<QuestionDto> questions,
+                                        double measureMaxPossibleScore,
+                                        double attributeMaxPossibleScore) {
+        double impactPercentage = attributeMaxPossibleScore != 0
+            ? (measureMaxPossibleScore / attributeMaxPossibleScore) * 100
+            : 0.0;
 
-        var questionIdToScoreMap = questions.stream()
-            .collect(toMap(Question::getId,
-                q -> q.getImpacts().stream().mapToDouble(QuestionImpact::getWeight)
-                    .average()
-                    .orElse(0)));
+        var gainedScore = 0.0;
+        var missedScore = 0.0;
 
-        var promisedScore = questionIdToScoreMap.values().stream()
-            .mapToDouble(s -> s)
-            .sum();
+        for (QuestionDto question : questions) {
+            var answer = question.answer;
+            if (answer != null && answer.getSelectedOption() != null) {
+                gainedScore += answer.getSelectedOption().getValue() * question.weight;
+                missedScore += question.weight - (answer.getSelectedOption().getValue() * question.weight);
+            }
+        }
 
-        var gainedScore = attributeValue.getAnswers().stream()
-            .filter(a -> questionIdToScoreMap.containsKey(a.getQuestionId()))
-//            TODO calculate correct value of selected option
-            .mapToDouble(a -> a.getSelectedOption().getValue() * questionIdToScoreMap.get(a.getQuestionId()))
-            .sum();
-
-        var missedScore = promisedScore - gainedScore;
-
-        double measureTotalScore = measureMap.get(measure.getId()).score();
-
-        return new Result.Measure(measureMap.get(measure.getId()).title(),
-            totalAttributeMeasureScore / measureTotalScore,
-            promisedScore,
+        return new Result.Measure(measure.getTitle(),
+            impactPercentage,
+            measureMaxPossibleScore,
             gainedScore,
             missedScore,
-            gainedScore / measureTotalScore,
-            missedScore / measureTotalScore
+            MathUtils.round((gainedScore / attributeMaxPossibleScore) * 100, 2),
+            MathUtils.round((missedScore / attributeMaxPossibleScore) * 100, 2)
         );
+    }
+
+    record QuestionDto(long id, double weight, long measureId, Answer answer) {
     }
 
     private int createComparator(Result.Measure m1, Result.Measure m2, Param param) {
@@ -109,7 +128,7 @@ public class GetAttributeMeasuresService implements GetAttributeMeasuresUseCase 
         return order * switch (Sort.valueOf(param.getSort())) {
             case Sort.TITLE -> m1.title().compareTo(m2.title());
             case Sort.IMPACT_PERCENTAGE -> m1.impactPercentage().compareTo(m2.impactPercentage());
-            case Sort.PROMISED_SCORE -> m1.promisedScore().compareTo(m2.promisedScore());
+            case Sort.PROMISED_SCORE -> m1.maxPossibleScore().compareTo(m2.maxPossibleScore());
             case Sort.GAINED_SCORE -> m1.gainedScore().compareTo(m2.gainedScore());
             case Sort.MISSED_SCORE -> m1.missedScore().compareTo(m2.missedScore());
             case Sort.GAINED_SCORE_PERCENTAGE -> m1.gainedScorePercentage().compareTo(m2.gainedScorePercentage());
