@@ -1,5 +1,6 @@
 package org.flickit.assessment.core.test.fixture.application;
 
+import org.flickit.assessment.core.application.domain.Measure;
 import org.flickit.assessment.core.application.domain.Question;
 
 import java.util.List;
@@ -70,5 +71,12 @@ public class QuestionMother {
             List.of(QuestionImpactMother.onLevelThree(1, attributeId), QuestionImpactMother.onLevelFour(1, anotherAttributeId)),
             QuestionnaireMother.createQuestionnaire(),
             MeasureMother.createMeasure());
+    }
+
+    public static Question withMeasure(Measure measure) {
+        return new Question(id++, "question" + id, index++, null, Boolean.FALSE,
+            List.of(QuestionImpactMother.onLevelTwo(1, 15L)),
+            QuestionnaireMother.createQuestionnaire(),
+            measure);
     }
 }
