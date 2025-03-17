@@ -34,9 +34,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GetAssessmentAttributeMeasuresServiceTest {
 
-    private final Param param = createParam(Param.ParamBuilder::build);
-
-
     @InjectMocks
     private GetAssessmentAttributeMeasuresService service;
 
@@ -52,8 +49,10 @@ class GetAssessmentAttributeMeasuresServiceTest {
     @Mock
     private LoadAttributeQuestionsPort loadAttributeQuestionsPort;
 
+    private final Param param = createParam(Param.ParamBuilder::build);
+
     @Test
-    void testGetAssessmentAttributeMeasures_whenUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
+    void testGetAssessmentAttributeMeasures_whenCurrentUserDoesNotHaveRequiredPermission_thenThrowAccessDeniedException() {
         when(assessmentAccessChecker.isAuthorized(param.getAssessmentId(), param.getCurrentUserId(), VIEW_ATTRIBUTE_MEASURES))
             .thenReturn(false);
 
@@ -76,7 +75,7 @@ class GetAssessmentAttributeMeasuresServiceTest {
     }
 
     @Test
-    void testGetAssessmentAttributeMeasures_whenParamIsValid_thenReturnsResult() {
+    void testGetAssessmentAttributeMeasures_whenParamIsValid_thenReturnResult() {
         var assessmentResult = AssessmentResultMother.validResult();
         var measure1 = MeasureMother.createMeasure();
         var measure2 = MeasureMother.createMeasure();
@@ -128,8 +127,8 @@ class GetAssessmentAttributeMeasuresServiceTest {
         return Param.builder()
             .assessmentId(UUID.randomUUID())
             .attributeId(554L)
-            .sort("title")
-            .order("ASC")
+            .sort("impact_percentage")
+            .order("desc")
             .currentUserId(UUID.randomUUID());
     }
 }

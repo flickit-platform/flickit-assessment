@@ -59,7 +59,7 @@ class GetAssessmentAttributeMeasuresUseCaseParamTest {
         return Param.builder()
             .assessmentId(UUID.randomUUID())
             .attributeId(554L)
-            .sort("title")
+            .sort("impact_percentage")
             .order("ASC")
             .currentUserId(UUID.randomUUID());
     }
