@@ -8,6 +8,7 @@ import org.flickit.assessment.data.jpa.kit.answerrange.AnswerRangeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.attribute.AttributeJpaRepository;
 import org.flickit.assessment.data.jpa.kit.levelcompetence.LevelCompetenceJpaRepository;
 import org.flickit.assessment.data.jpa.kit.maturitylevel.MaturityLevelJpaRepository;
+import org.flickit.assessment.data.jpa.kit.measure.MeasureJpaRepository;
 import org.flickit.assessment.data.jpa.kit.question.QuestionJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionimpact.QuestionImpactJpaRepository;
 import org.flickit.assessment.data.jpa.kit.questionnaire.QuestionnaireJpaRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
 
     private final QuestionnaireJpaRepository questionnaireRepository;
+    private final MeasureJpaRepository measureRepository;
     private final QuestionJpaRepository questionRepository;
     private final MaturityLevelJpaRepository maturityLevelRepository;
     private final SubjectJpaRepository subjectRepository;
@@ -36,6 +38,12 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
     public void cloneKit(Param param) {
         var questionnaireEntities = questionnaireRepository.findAllByKitVersionId(param.activeKitVersionId());
         questionnaireEntities.forEach(entity -> {
+            entityManager.detach(entity);
+            entity.prepareForClone(param.updatingKitVersionId(), param.clonedBy(), param.cloneTime());
+        });
+
+        var measureEntities = measureRepository.findAllByKitVersionId(param.activeKitVersionId());
+        measureEntities.forEach(entity -> {
             entityManager.detach(entity);
             entity.prepareForClone(param.updatingKitVersionId(), param.clonedBy(), param.cloneTime());
         });
@@ -89,6 +97,7 @@ public class CloneKitPersistenceJpaAdapter implements CloneKitPort {
         });
 
         questionnaireRepository.saveAll(questionnaireEntities);
+        measureRepository.saveAll(measureEntities);
         questionRepository.saveAll(questionEntities);
         maturityLevelRepository.saveAll(maturityLevelEntities);
         subjectRepository.saveAll(subjectEntities);
