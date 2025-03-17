@@ -7,6 +7,10 @@ import org.flickit.assessment.common.application.domain.crud.Order;
 import org.flickit.assessment.common.application.domain.crud.PaginatedResponse;
 import org.flickit.assessment.common.application.domain.kitcustom.KitCustomData;
 import org.flickit.assessment.common.exception.ResourceNotFoundException;
+import org.flickit.assessment.core.adapter.out.persistence.answer.AnswerMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.answeroption.AnswerOptionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.question.QuestionMapper;
+import org.flickit.assessment.core.adapter.out.persistence.kit.questionimpact.QuestionImpactMapper;
 import org.flickit.assessment.core.application.domain.Attribute;
 import org.flickit.assessment.core.application.port.in.attribute.GetAttributeScoreDetailUseCase;
 import org.flickit.assessment.core.application.port.out.attribute.*;
@@ -27,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static org.flickit.assessment.core.adapter.out.persistence.kit.attribute.AttributeMapper.mapToDomainModel;
 import static org.flickit.assessment.core.common.ErrorMessageKey.*;
@@ -38,7 +43,8 @@ public class AttributePersistenceJpaAdapter implements
     LoadAttributePort,
     LoadAttributeScoresPort,
     CountAttributesPort,
-    LoadAttributesPort {
+    LoadAttributesPort,
+    LoadAttributeQuestionsPort {
 
     private final AttributeJpaRepository repository;
     private final AssessmentResultJpaRepository assessmentResultRepository;
@@ -180,5 +186,31 @@ public class AttributePersistenceJpaAdapter implements
             .collect(toMap(
                 Attribute::getId,
                 e -> attributeIdToCustomWeight.getOrDefault(e.getId(), e.getWeight())));
+    }
+
+    @Override
+    public List<LoadAttributeQuestionsPort.Result> loadApplicableQuestions(UUID assessmentId,
+                                                                           long attributeId) {
+        var assessmentResult = assessmentResultRepository.findFirstByAssessment_IdOrderByLastModificationTimeDesc(assessmentId)
+            .orElseThrow(() -> new ResourceNotFoundException(GET_ATTRIBUTE_SCORE_STATS_ASSESSMENT_RESULT_NOT_FOUND));
+
+        var views = repository.findAttributeQuestionsAndAnswers(assessmentResult.getId(),
+            assessmentResult.getKitVersionId(),
+            attributeId);
+
+        var map = views.stream()
+            .collect(groupingBy(v -> v.getQuestion().getId()));
+
+        return map.values().stream()
+            .map(attributeImpactFullQuestionsViews -> {
+                var impacts = attributeImpactFullQuestionsViews.stream()
+                    .map(i -> QuestionImpactMapper.mapToDomainModel(i.getQuestionImpact()))
+                    .toList();
+                var question = QuestionMapper.mapToDomainModel(attributeImpactFullQuestionsViews.getFirst().getQuestion(), impacts);
+                var answer = AnswerMapper.mapToDomainModel(attributeImpactFullQuestionsViews.getFirst().getAnswer(),
+                    AnswerOptionMapper.mapToDomainModel(attributeImpactFullQuestionsViews.getFirst().getAnswerOption()));
+                return new LoadAttributeQuestionsPort.Result(question, answer);
+            })
+            .toList();
     }
 }
